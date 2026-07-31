@@ -317,7 +317,10 @@ def strategy_performance(
                 sr.status AS run_status, sr.candidate_count, sr.selected_count
             FROM strategy_runs sr
             JOIN ingestion_runs ir ON ir.id = sr.ingestion_run_id AND ir.status = 'COMPLETED'
-            WHERE (:strategy_key IS NULL OR sr.strategy_key = :strategy_key)
+            WHERE (
+                CAST(:strategy_key AS varchar) IS NULL
+                OR sr.strategy_key = CAST(:strategy_key AS varchar)
+            )
               AND (CAST(:data_date AS date) IS NULL OR sr.data_date = CAST(:data_date AS date))
             ORDER BY sr.strategy_key, sr.data_date DESC, ir.completed_at DESC, sr.id DESC
         ),
@@ -329,7 +332,10 @@ def strategy_performance(
                 sp.average_return_pct, sp.reason
             FROM chosen_runs cr
             JOIN strategy_performance sp ON sp.strategy_run_id = cr.id
-            WHERE (:horizon IS NULL OR sp.horizon = :horizon)
+            WHERE (
+                CAST(:horizon AS varchar) IS NULL
+                OR sp.horizon = CAST(:horizon AS varchar)
+            )
         )
     """
     params = {"strategy_key": strategy_key, "horizon": horizon, "data_date": data_date}
