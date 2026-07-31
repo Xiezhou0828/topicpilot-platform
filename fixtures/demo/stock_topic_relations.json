@@ -1,0 +1,7 @@
+[
+  {"stockCode": "DEMO-A1", "topicSlug": "edge-ai", "relationType": "PRIMARY", "weight": 1.0, "evidenceSummary": "Synthetic issuer profile links this demo company to edge computing.", "metadata": {"synthetic": true}},
+  {"stockCode": "DEMO-A1", "topicSlug": "digital-infrastructure", "relationType": "RELATED", "weight": 0.5, "evidenceSummary": null, "metadata": {"synthetic": true}},
+  {"stockCode": "DEMO-B2", "topicSlug": "clean-energy", "relationType": "PRIMARY", "weight": 1.0, "evidenceSummary": "Synthetic issuer profile links this demo company to clean energy.", "metadata": {"synthetic": true}},
+  {"stockCode": "DEMO-C3", "topicSlug": "cloud-security", "relationType": "PRIMARY", "weight": 1.0, "evidenceSummary": "Synthetic issuer profile links this demo company to cloud security.", "metadata": {"synthetic": true}},
+  {"stockCode": "DEMO-D4", "topicSlug": "edge-ai", "relationType": "SECONDARY", "weight": null, "evidenceSummary": null, "metadata": {"synthetic": true, "nullExample": true}}
+]

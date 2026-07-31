@@ -1,0 +1,269 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://topicpilot.example/schemas/enterprise_bundle.v1.schema.json",
+  "title": "TopicPilot enterprise_bundle.v1",
+  "description": "Public/private interchange contract for the rebuildable PostgreSQL read model.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "manifest",
+    "stocks",
+    "topics",
+    "topicHierarchy",
+    "stockTopicRelations",
+    "dailySnapshots",
+    "strategyCandidates",
+    "strategyPerformance"
+  ],
+  "properties": {
+    "manifest": { "$ref": "#/$defs/manifest" },
+    "stocks": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/stock" } },
+    "topics": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/topic" } },
+    "topicHierarchy": { "type": "array", "items": { "$ref": "#/$defs/topicHierarchy" } },
+    "stockTopicRelations": { "type": "array", "items": { "$ref": "#/$defs/stockTopicRelation" } },
+    "dailySnapshots": { "$ref": "#/$defs/dailySnapshots" },
+    "strategyCandidates": { "$ref": "#/$defs/strategyCandidates" },
+    "strategyPerformance": { "type": "array", "items": { "$ref": "#/$defs/strategyPerformance" } }
+  },
+  "$defs": {
+    "metadata": { "type": "object", "additionalProperties": true },
+    "nullableNumber": { "type": ["number", "null"] },
+    "nullableInteger": { "type": ["integer", "null"] },
+    "nullableString": { "type": ["string", "null"] },
+    "manifest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["contractVersion", "bundleVersion", "dataDate", "generatedAt", "source", "files"],
+      "properties": {
+        "contractVersion": { "const": "enterprise_bundle.v1" },
+        "bundleVersion": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "dataDate": { "type": "string", "format": "date" },
+        "generatedAt": { "type": "string", "format": "date-time" },
+        "source": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "name", "classification"],
+          "properties": {
+            "kind": { "enum": ["synthetic", "private_snapshot"] },
+            "name": { "type": "string", "minLength": 1, "maxLength": 160 },
+            "classification": { "enum": ["PUBLIC_SYNTHETIC", "PRIVATE_FORMAL"] },
+            "metadata": { "$ref": "#/$defs/metadata" }
+          }
+        },
+        "files": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "stocks",
+            "topics",
+            "topicHierarchy",
+            "stockTopicRelations",
+            "dailySnapshots",
+            "strategyCandidates",
+            "strategyPerformance"
+          ],
+          "properties": {
+            "stocks": { "const": "stocks.json" },
+            "topics": { "const": "topics.json" },
+            "topicHierarchy": { "const": "topic_hierarchy.json" },
+            "stockTopicRelations": { "const": "stock_topic_relations.json" },
+            "dailySnapshots": { "const": "daily_snapshots.json" },
+            "strategyCandidates": { "const": "strategy_candidates.json" },
+            "strategyPerformance": { "const": "strategy_performance.json" }
+          }
+        }
+      }
+    },
+    "stock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "name", "market", "industry", "active", "metadata"],
+      "properties": {
+        "code": { "type": "string", "pattern": "^[A-Z0-9-]{2,16}$" },
+        "name": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "market": { "type": "string", "minLength": 1, "maxLength": 32 },
+        "industry": { "$ref": "#/$defs/nullableString" },
+        "active": { "type": "boolean" },
+        "metadata": { "$ref": "#/$defs/metadata" }
+      }
+    },
+    "topic": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["slug", "name", "groupName", "topicType", "enabled", "metadata"],
+      "properties": {
+        "slug": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+        "name": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "groupName": { "$ref": "#/$defs/nullableString" },
+        "topicType": { "type": "string", "minLength": 1, "maxLength": 64 },
+        "enabled": { "type": "boolean" },
+        "metadata": { "$ref": "#/$defs/metadata" }
+      }
+    },
+    "topicHierarchy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["parentSlug", "childSlug", "weight", "enabled", "metadata"],
+      "properties": {
+        "parentSlug": { "type": "string" },
+        "childSlug": { "type": "string" },
+        "weight": { "$ref": "#/$defs/nullableNumber" },
+        "enabled": { "type": "boolean" },
+        "metadata": { "$ref": "#/$defs/metadata" }
+      }
+    },
+    "stockTopicRelation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["stockCode", "topicSlug", "relationType", "weight", "evidenceSummary", "metadata"],
+      "properties": {
+        "stockCode": { "type": "string" },
+        "topicSlug": { "type": "string" },
+        "relationType": { "enum": ["PRIMARY", "SECONDARY", "RELATED"] },
+        "weight": { "$ref": "#/$defs/nullableNumber" },
+        "evidenceSummary": { "$ref": "#/$defs/nullableString" },
+        "metadata": { "$ref": "#/$defs/metadata" }
+      }
+    },
+    "dailySnapshots": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["marketSnapshots", "stockSnapshots", "topicSnapshots", "dataQualityEvents"],
+      "properties": {
+        "marketSnapshots": { "type": "array", "minItems": 14, "items": { "$ref": "#/$defs/marketSnapshot" } },
+        "stockSnapshots": { "type": "array", "items": { "$ref": "#/$defs/stockSnapshot" } },
+        "topicSnapshots": { "type": "array", "items": { "$ref": "#/$defs/topicSnapshot" } },
+        "dataQualityEvents": { "type": "array", "items": { "$ref": "#/$defs/dataQualityEvent" } }
+      }
+    },
+    "marketSnapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["dataDate", "generatedAt", "market", "status", "totalStocks", "advanceCount", "declineCount", "unchangedCount", "unavailableCount", "metadata"],
+      "properties": {
+        "dataDate": { "type": "string", "format": "date" },
+        "generatedAt": { "type": "string", "format": "date-time" },
+        "market": { "type": "string" },
+        "status": { "enum": ["COMPLETE", "PARTIAL", "FAILED", "NOT_RUN"] },
+        "totalStocks": { "$ref": "#/$defs/nullableInteger" },
+        "advanceCount": { "$ref": "#/$defs/nullableInteger" },
+        "declineCount": { "$ref": "#/$defs/nullableInteger" },
+        "unchangedCount": { "$ref": "#/$defs/nullableInteger" },
+        "unavailableCount": { "$ref": "#/$defs/nullableInteger" },
+        "metadata": { "$ref": "#/$defs/metadata" }
+      }
+    },
+    "stockSnapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["dataDate", "stockCode", "price", "changePct", "volume", "ma5", "ma20", "rs20", "technicalState", "chipScore", "dataFreshness", "metadata"],
+      "properties": {
+        "dataDate": { "type": "string", "format": "date" },
+        "stockCode": { "type": "string" },
+        "price": { "$ref": "#/$defs/nullableNumber" },
+        "changePct": { "$ref": "#/$defs/nullableNumber" },
+        "volume": { "$ref": "#/$defs/nullableInteger" },
+        "ma5": { "$ref": "#/$defs/nullableNumber" },
+        "ma20": { "$ref": "#/$defs/nullableNumber" },
+        "rs20": { "$ref": "#/$defs/nullableNumber" },
+        "technicalState": { "$ref": "#/$defs/nullableString" },
+        "chipScore": { "$ref": "#/$defs/nullableNumber" },
+        "dataFreshness": { "$ref": "#/$defs/nullableString" },
+        "metadata": { "$ref": "#/$defs/metadata" }
+      }
+    },
+    "topicSnapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["dataDate", "topicSlug", "score", "grade", "strengthState", "advanceCount", "declineCount", "unchangedCount", "unavailableCount", "coveragePct", "metadata"],
+      "properties": {
+        "dataDate": { "type": "string", "format": "date" },
+        "topicSlug": { "type": "string" },
+        "score": { "$ref": "#/$defs/nullableNumber" },
+        "grade": { "type": ["string", "null"], "enum": ["X", "S", "A", "B", "D", null] },
+        "strengthState": { "$ref": "#/$defs/nullableString" },
+        "advanceCount": { "$ref": "#/$defs/nullableInteger" },
+        "declineCount": { "$ref": "#/$defs/nullableInteger" },
+        "unchangedCount": { "$ref": "#/$defs/nullableInteger" },
+        "unavailableCount": { "$ref": "#/$defs/nullableInteger" },
+        "coveragePct": { "$ref": "#/$defs/nullableNumber" },
+        "metadata": { "$ref": "#/$defs/metadata" }
+      }
+    },
+    "dataQualityEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["dataDate", "severity", "eventCode", "message", "entityType", "entityKey", "metadata"],
+      "properties": {
+        "dataDate": { "type": "string", "format": "date" },
+        "severity": { "enum": ["INFO", "WARNING", "ERROR"] },
+        "eventCode": { "type": "string", "minLength": 1 },
+        "message": { "type": "string", "minLength": 1 },
+        "entityType": { "$ref": "#/$defs/nullableString" },
+        "entityKey": { "$ref": "#/$defs/nullableString" },
+        "metadata": { "$ref": "#/$defs/metadata" }
+      }
+    },
+    "strategyCandidates": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["strategyRuns", "candidates"],
+      "properties": {
+        "strategyRuns": { "type": "array", "minItems": 6, "maxItems": 6, "items": { "$ref": "#/$defs/strategyRun" } },
+        "candidates": { "type": "array", "items": { "$ref": "#/$defs/strategyCandidate" } }
+      }
+    },
+    "strategyRun": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["strategyKey", "name", "modelVersion", "dataDate", "status", "candidateCount", "selectedCount", "metadata"],
+      "properties": {
+        "strategyKey": { "enum": ["MAS", "MAV", "TMC", "BB", "PB", "KD"] },
+        "name": { "type": "string", "minLength": 1 },
+        "modelVersion": { "type": "string", "minLength": 1 },
+        "dataDate": { "type": "string", "format": "date" },
+        "status": { "enum": ["COMPLETE", "COMPLETE_EMPTY"] },
+        "candidateCount": { "type": "integer", "minimum": 0 },
+        "selectedCount": { "type": "integer", "minimum": 0 },
+        "metadata": { "$ref": "#/$defs/metadata" }
+      }
+    },
+    "strategyCandidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["strategyKey", "modelVersion", "dataDate", "stockCode", "rank", "score", "reason", "price", "selected", "triggerPrice", "supportPrice", "invalidationPrice", "metadata"],
+      "properties": {
+        "strategyKey": { "enum": ["MAS", "MAV", "TMC", "BB", "PB", "KD"] },
+        "modelVersion": { "type": "string" },
+        "dataDate": { "type": "string", "format": "date" },
+        "stockCode": { "type": "string" },
+        "rank": { "type": "integer", "minimum": 1 },
+        "score": { "$ref": "#/$defs/nullableNumber" },
+        "reason": { "$ref": "#/$defs/nullableString" },
+        "price": { "$ref": "#/$defs/nullableNumber" },
+        "selected": { "type": "boolean" },
+        "triggerPrice": { "$ref": "#/$defs/nullableNumber" },
+        "supportPrice": { "$ref": "#/$defs/nullableNumber" },
+        "invalidationPrice": { "$ref": "#/$defs/nullableNumber" },
+        "metadata": { "$ref": "#/$defs/metadata" }
+      }
+    },
+    "strategyPerformance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["strategyKey", "modelVersion", "dataDate", "horizon", "status", "sampleCount", "winRatePct", "averageReturnPct", "reason", "metadata"],
+      "properties": {
+        "strategyKey": { "enum": ["MAS", "MAV", "TMC", "BB", "PB", "KD"] },
+        "modelVersion": { "type": "string" },
+        "dataDate": { "type": "string", "format": "date" },
+        "horizon": { "enum": ["T+1", "T+3", "T+5", "T+10", "T+20", "T+30"] },
+        "status": { "enum": ["AVAILABLE", "NOT_DUE", "NO_CANDIDATES"] },
+        "sampleCount": { "$ref": "#/$defs/nullableInteger" },
+        "winRatePct": { "$ref": "#/$defs/nullableNumber" },
+        "averageReturnPct": { "$ref": "#/$defs/nullableNumber" },
+        "reason": { "$ref": "#/$defs/nullableString" },
+        "metadata": { "$ref": "#/$defs/metadata" }
+      }
+    }
+  }
+}

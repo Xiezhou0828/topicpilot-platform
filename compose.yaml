@@ -1,0 +1,106 @@
+name: topicpilot-platform
+
+x-api-build: &api-build
+  context: .
+  dockerfile: infra/docker/api.Dockerfile
+
+x-api-env: &api-env
+  DATABASE_URL: ${DATABASE_URL:-postgresql+psycopg://topicpilot:topicpilot_local_only@postgres:5432/topicpilot}
+  TOPICPILOT_LOG_LEVEL: ${TOPICPILOT_LOG_LEVEL:-INFO}
+  TOPICPILOT_DEMO_MODE: ${TOPICPILOT_DEMO_MODE:-true}
+  TOPICPILOT_BUNDLE_PATH: ${TOPICPILOT_BUNDLE_PATH:-/fixtures/demo}
+  TOPICPILOT_FRESHNESS_DAYS: ${TOPICPILOT_FRESHNESS_DAYS:-3}
+  TOPICPILOT_CORS_ORIGINS: ${TOPICPILOT_CORS_ORIGINS:-http://localhost:3000}
+  UVICORN_APP: ${UVICORN_APP:-topicpilot_api.main:app}
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-topicpilot}
+      POSTGRES_USER: ${POSTGRES_USER:-topicpilot}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-topicpilot_local_only}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - topicpilot-postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 5s
+    restart: unless-stopped
+
+  migrate:
+    build: *api-build
+    environment: *api-env
+    command: ["/bin/sh", "-c", "alembic upgrade head"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"
+
+  seed:
+    build: *api-build
+    environment: *api-env
+    command:
+      - /bin/sh
+      - -c
+      - topicpilot-import "$${TOPICPILOT_BUNDLE_PATH}" --schema /fixtures/schema/enterprise_bundle.v1.schema.json
+    volumes:
+      - ./fixtures:/fixtures:ro
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    restart: "no"
+
+  api:
+    build: *api-build
+    environment: *api-env
+    ports:
+      - "${API_PORT:-8000}:8000"
+    depends_on:
+      seed:
+        condition: service_completed_successfully
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://localhost:8000/healthz', timeout=3)"
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 15s
+    restart: unless-stopped
+
+  web:
+    build:
+      context: .
+      dockerfile: infra/docker/web.Dockerfile
+      args:
+        NEXT_PUBLIC_API_BASE_URL: ${PUBLIC_API_BASE_URL:-http://localhost:8000}
+    environment:
+      NEXT_PUBLIC_API_BASE_URL: ${PUBLIC_API_BASE_URL:-http://localhost:8000}
+      HOST: 0.0.0.0
+      PORT: 3000
+    ports:
+      - "${WEB_PORT:-3000}:3000"
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://localhost:3000').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+    restart: unless-stopped
+
+volumes:
+  topicpilot-postgres:

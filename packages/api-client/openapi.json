@@ -1,0 +1,1900 @@
+{
+  "components": {
+    "schemas": {
+      "CandidateResponse": {
+        "properties": {
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "dataDate": {
+            "format": "date",
+            "title": "Datadate",
+            "type": "string"
+          },
+          "invalidationPrice": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Invalidationprice"
+          },
+          "modelVersion": {
+            "title": "Modelversion",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "price": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price"
+          },
+          "rank": {
+            "title": "Rank",
+            "type": "integer"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          },
+          "score": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Score"
+          },
+          "selected": {
+            "title": "Selected",
+            "type": "boolean"
+          },
+          "strategyKey": {
+            "title": "Strategykey",
+            "type": "string"
+          },
+          "supportPrice": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Supportprice"
+          },
+          "triggerPrice": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Triggerprice"
+          }
+        },
+        "required": [
+          "strategyKey",
+          "modelVersion",
+          "dataDate",
+          "rank",
+          "code",
+          "name",
+          "score",
+          "reason",
+          "price",
+          "selected",
+          "triggerPrice",
+          "supportPrice",
+          "invalidationPrice"
+        ],
+        "title": "CandidateResponse",
+        "type": "object"
+      },
+      "Constituent": {
+        "properties": {
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "relationType": {
+            "title": "Relationtype",
+            "type": "string"
+          },
+          "weight": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Weight"
+          }
+        },
+        "required": [
+          "code",
+          "name",
+          "relationType",
+          "weight"
+        ],
+        "title": "Constituent",
+        "type": "object"
+      },
+      "DataStatus": {
+        "properties": {
+          "ageDays": {
+            "title": "Agedays",
+            "type": "integer"
+          },
+          "bundleHash": {
+            "title": "Bundlehash",
+            "type": "string"
+          },
+          "bundleVersion": {
+            "title": "Bundleversion",
+            "type": "string"
+          },
+          "classification": {
+            "title": "Classification",
+            "type": "string"
+          },
+          "completedAt": {
+            "format": "date-time",
+            "title": "Completedat",
+            "type": "string"
+          },
+          "contractVersion": {
+            "title": "Contractversion",
+            "type": "string"
+          },
+          "dataDate": {
+            "format": "date",
+            "title": "Datadate",
+            "type": "string"
+          },
+          "freshness": {
+            "title": "Freshness",
+            "type": "string"
+          },
+          "generatedAt": {
+            "format": "date-time",
+            "title": "Generatedat",
+            "type": "string"
+          },
+          "rowCounts": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "Rowcounts",
+            "type": "object"
+          },
+          "sourceKind": {
+            "title": "Sourcekind",
+            "type": "string"
+          },
+          "sourceName": {
+            "title": "Sourcename",
+            "type": "string"
+          }
+        },
+        "required": [
+          "contractVersion",
+          "bundleVersion",
+          "bundleHash",
+          "dataDate",
+          "generatedAt",
+          "completedAt",
+          "sourceKind",
+          "sourceName",
+          "classification",
+          "freshness",
+          "ageDays",
+          "rowCounts"
+        ],
+        "title": "DataStatus",
+        "type": "object"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail",
+            "type": "array"
+          }
+        },
+        "title": "HTTPValidationError",
+        "type": "object"
+      },
+      "HealthResponse": {
+        "properties": {
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "title": "HealthResponse",
+        "type": "object"
+      },
+      "Page_CandidateResponse_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/CandidateResponse"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "limit": {
+            "title": "Limit",
+            "type": "integer"
+          },
+          "offset": {
+            "title": "Offset",
+            "type": "integer"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "limit",
+          "offset"
+        ],
+        "title": "Page[CandidateResponse]",
+        "type": "object"
+      },
+      "Page_StockSummary_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/StockSummary"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "limit": {
+            "title": "Limit",
+            "type": "integer"
+          },
+          "offset": {
+            "title": "Offset",
+            "type": "integer"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "limit",
+          "offset"
+        ],
+        "title": "Page[StockSummary]",
+        "type": "object"
+      },
+      "Page_StrategyPerformanceResponse_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/StrategyPerformanceResponse"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "limit": {
+            "title": "Limit",
+            "type": "integer"
+          },
+          "offset": {
+            "title": "Offset",
+            "type": "integer"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "limit",
+          "offset"
+        ],
+        "title": "Page[StrategyPerformanceResponse]",
+        "type": "object"
+      },
+      "Page_StrategyResponse_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/StrategyResponse"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "limit": {
+            "title": "Limit",
+            "type": "integer"
+          },
+          "offset": {
+            "title": "Offset",
+            "type": "integer"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "limit",
+          "offset"
+        ],
+        "title": "Page[StrategyResponse]",
+        "type": "object"
+      },
+      "Page_TopicRotationResponse_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/TopicRotationResponse"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "limit": {
+            "title": "Limit",
+            "type": "integer"
+          },
+          "offset": {
+            "title": "Offset",
+            "type": "integer"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "limit",
+          "offset"
+        ],
+        "title": "Page[TopicRotationResponse]",
+        "type": "object"
+      },
+      "Page_TopicSummary_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/TopicSummary"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "limit": {
+            "title": "Limit",
+            "type": "integer"
+          },
+          "offset": {
+            "title": "Offset",
+            "type": "integer"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "limit",
+          "offset"
+        ],
+        "title": "Page[TopicSummary]",
+        "type": "object"
+      },
+      "SnapshotResponse": {
+        "additionalProperties": true,
+        "properties": {
+          "dataDate": {
+            "format": "date",
+            "title": "Datadate",
+            "type": "string"
+          },
+          "generatedAt": {
+            "format": "date-time",
+            "title": "Generatedat",
+            "type": "string"
+          },
+          "snapshotVersion": {
+            "title": "Snapshotversion",
+            "type": "string"
+          }
+        },
+        "required": [
+          "snapshotVersion",
+          "generatedAt",
+          "dataDate"
+        ],
+        "title": "SnapshotResponse",
+        "type": "object"
+      },
+      "StockResponse": {
+        "properties": {
+          "active": {
+            "title": "Active",
+            "type": "boolean"
+          },
+          "changePct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Changepct"
+          },
+          "chipScore": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Chipscore"
+          },
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "dataDate": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Datadate"
+          },
+          "dataFreshness": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Datafreshness"
+          },
+          "industry": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Industry"
+          },
+          "ma20": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ma20"
+          },
+          "ma5": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ma5"
+          },
+          "market": {
+            "title": "Market",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "price": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price"
+          },
+          "rs20": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rs20"
+          },
+          "technicalState": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Technicalstate"
+          },
+          "topics": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/TopicReference"
+            },
+            "title": "Topics",
+            "type": "array"
+          },
+          "volume": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Volume"
+          }
+        },
+        "required": [
+          "code",
+          "name",
+          "market",
+          "industry",
+          "active",
+          "dataDate",
+          "price",
+          "changePct",
+          "volume",
+          "ma5",
+          "ma20",
+          "rs20",
+          "technicalState",
+          "chipScore",
+          "dataFreshness"
+        ],
+        "title": "StockResponse",
+        "type": "object"
+      },
+      "StockSummary": {
+        "properties": {
+          "active": {
+            "title": "Active",
+            "type": "boolean"
+          },
+          "changePct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Changepct"
+          },
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "dataDate": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Datadate"
+          },
+          "dataFreshness": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Datafreshness"
+          },
+          "industry": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Industry"
+          },
+          "market": {
+            "title": "Market",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "price": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price"
+          },
+          "technicalState": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Technicalstate"
+          },
+          "volume": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Volume"
+          }
+        },
+        "required": [
+          "code",
+          "name",
+          "market",
+          "industry",
+          "active",
+          "dataDate",
+          "price",
+          "changePct",
+          "volume",
+          "technicalState",
+          "dataFreshness"
+        ],
+        "title": "StockSummary",
+        "type": "object"
+      },
+      "StrategyPerformanceResponse": {
+        "properties": {
+          "averageReturnPct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Averagereturnpct"
+          },
+          "candidateCount": {
+            "title": "Candidatecount",
+            "type": "integer"
+          },
+          "dataDate": {
+            "format": "date",
+            "title": "Datadate",
+            "type": "string"
+          },
+          "horizon": {
+            "title": "Horizon",
+            "type": "string"
+          },
+          "modelVersion": {
+            "title": "Modelversion",
+            "type": "string"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          },
+          "runStatus": {
+            "title": "Runstatus",
+            "type": "string"
+          },
+          "sampleCount": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Samplecount"
+          },
+          "selectedCount": {
+            "title": "Selectedcount",
+            "type": "integer"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "strategyKey": {
+            "title": "Strategykey",
+            "type": "string"
+          },
+          "strategyName": {
+            "title": "Strategyname",
+            "type": "string"
+          },
+          "winRatePct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Winratepct"
+          }
+        },
+        "required": [
+          "strategyKey",
+          "strategyName",
+          "modelVersion",
+          "dataDate",
+          "runStatus",
+          "candidateCount",
+          "selectedCount",
+          "horizon",
+          "status",
+          "sampleCount",
+          "winRatePct",
+          "averageReturnPct",
+          "reason"
+        ],
+        "title": "StrategyPerformanceResponse",
+        "type": "object"
+      },
+      "StrategyResponse": {
+        "properties": {
+          "candidateCount": {
+            "title": "Candidatecount",
+            "type": "integer"
+          },
+          "dataDate": {
+            "format": "date",
+            "title": "Datadate",
+            "type": "string"
+          },
+          "modelVersion": {
+            "title": "Modelversion",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "selectedCount": {
+            "title": "Selectedcount",
+            "type": "integer"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "strategyKey": {
+            "title": "Strategykey",
+            "type": "string"
+          }
+        },
+        "required": [
+          "strategyKey",
+          "name",
+          "modelVersion",
+          "dataDate",
+          "status",
+          "candidateCount",
+          "selectedCount"
+        ],
+        "title": "StrategyResponse",
+        "type": "object"
+      },
+      "TopicReference": {
+        "properties": {
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "relationType": {
+            "title": "Relationtype",
+            "type": "string"
+          },
+          "slug": {
+            "title": "Slug",
+            "type": "string"
+          },
+          "weight": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Weight"
+          }
+        },
+        "required": [
+          "slug",
+          "name",
+          "relationType",
+          "weight"
+        ],
+        "title": "TopicReference",
+        "type": "object"
+      },
+      "TopicResponse": {
+        "properties": {
+          "constituentCount": {
+            "title": "Constituentcount",
+            "type": "integer"
+          },
+          "constituents": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/Constituent"
+            },
+            "title": "Constituents",
+            "type": "array"
+          },
+          "coveragePct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Coveragepct"
+          },
+          "dataDate": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Datadate"
+          },
+          "enabled": {
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "grade": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Grade"
+          },
+          "groupName": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Groupname"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "score": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Score"
+          },
+          "slug": {
+            "title": "Slug",
+            "type": "string"
+          },
+          "strengthState": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Strengthstate"
+          },
+          "topicType": {
+            "title": "Topictype",
+            "type": "string"
+          }
+        },
+        "required": [
+          "slug",
+          "name",
+          "groupName",
+          "topicType",
+          "enabled",
+          "dataDate",
+          "score",
+          "grade",
+          "strengthState",
+          "coveragePct",
+          "constituentCount"
+        ],
+        "title": "TopicResponse",
+        "type": "object"
+      },
+      "TopicRotationResponse": {
+        "properties": {
+          "change": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Change"
+          },
+          "days": {
+            "title": "Days",
+            "type": "integer"
+          },
+          "groupName": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Groupname"
+          },
+          "latestCoveragePct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latestcoveragepct"
+          },
+          "latestDate": {
+            "format": "date",
+            "title": "Latestdate",
+            "type": "string"
+          },
+          "latestGrade": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latestgrade"
+          },
+          "latestScore": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latestscore"
+          },
+          "latestStrengthState": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lateststrengthstate"
+          },
+          "pointCount": {
+            "title": "Pointcount",
+            "type": "integer"
+          },
+          "topicName": {
+            "title": "Topicname",
+            "type": "string"
+          },
+          "topicSlug": {
+            "title": "Topicslug",
+            "type": "string"
+          }
+        },
+        "required": [
+          "topicSlug",
+          "topicName",
+          "groupName",
+          "latestDate",
+          "latestScore",
+          "latestGrade",
+          "latestStrengthState",
+          "latestCoveragePct",
+          "change",
+          "pointCount",
+          "days"
+        ],
+        "title": "TopicRotationResponse",
+        "type": "object"
+      },
+      "TopicSummary": {
+        "properties": {
+          "constituentCount": {
+            "title": "Constituentcount",
+            "type": "integer"
+          },
+          "coveragePct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Coveragepct"
+          },
+          "dataDate": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Datadate"
+          },
+          "enabled": {
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "grade": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Grade"
+          },
+          "groupName": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Groupname"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "score": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Score"
+          },
+          "slug": {
+            "title": "Slug",
+            "type": "string"
+          },
+          "strengthState": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Strengthstate"
+          },
+          "topicType": {
+            "title": "Topictype",
+            "type": "string"
+          }
+        },
+        "required": [
+          "slug",
+          "name",
+          "groupName",
+          "topicType",
+          "enabled",
+          "dataDate",
+          "score",
+          "grade",
+          "strengthState",
+          "coveragePct",
+          "constituentCount"
+        ],
+        "title": "TopicSummary",
+        "type": "object"
+      },
+      "ValidationError": {
+        "properties": {
+          "ctx": {
+            "title": "Context",
+            "type": "object"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "title": "Location",
+            "type": "array"
+          },
+          "msg": {
+            "title": "Message",
+            "type": "string"
+          },
+          "type": {
+            "title": "Error Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError",
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "description": "Read-only API backed by a rebuildable PostgreSQL read model. The public deployment contains synthetic data only.",
+    "title": "TopicPilot Enterprise Read API",
+    "version": "0.1.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/v1/analytics/strategy-performance": {
+      "get": {
+        "operationId": "performance_api_v1_analytics_strategy_performance_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "strategy_key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Strategy Key"
+            }
+          },
+          {
+            "in": "query",
+            "name": "horizon",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Horizon"
+            }
+          },
+          {
+            "in": "query",
+            "name": "data_date",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Data Date"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_StrategyPerformanceResponse_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Performance",
+        "tags": [
+          "analytics"
+        ]
+      }
+    },
+    "/api/v1/analytics/topic-rotation": {
+      "get": {
+        "operationId": "rotation_api_v1_analytics_topic_rotation_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "days",
+            "required": false,
+            "schema": {
+              "default": 14,
+              "maximum": 60,
+              "minimum": 2,
+              "title": "Days",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_TopicRotationResponse_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Rotation",
+        "tags": [
+          "analytics"
+        ]
+      }
+    },
+    "/api/v1/meta/data-status": {
+      "get": {
+        "operationId": "api_data_status_api_v1_meta_data_status_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DataStatus"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Api Data Status",
+        "tags": [
+          "metadata"
+        ]
+      }
+    },
+    "/api/v1/snapshot/latest": {
+      "get": {
+        "operationId": "snapshot_latest_api_v1_snapshot_latest_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SnapshotResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Snapshot Latest",
+        "tags": [
+          "compatibility"
+        ]
+      }
+    },
+    "/api/v1/stocks": {
+      "get": {
+        "operationId": "stocks_api_v1_stocks_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_StockSummary_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Stocks",
+        "tags": [
+          "stocks"
+        ]
+      }
+    },
+    "/api/v1/stocks/{code}": {
+      "get": {
+        "operationId": "stock_api_v1_stocks__code__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "code",
+            "required": true,
+            "schema": {
+              "title": "Code",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StockResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Stock",
+        "tags": [
+          "stocks"
+        ]
+      }
+    },
+    "/api/v1/strategies": {
+      "get": {
+        "operationId": "strategies_api_v1_strategies_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_StrategyResponse_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Strategies",
+        "tags": [
+          "strategies"
+        ]
+      }
+    },
+    "/api/v1/strategies/{key}/candidates": {
+      "get": {
+        "operationId": "candidates_api_v1_strategies__key__candidates_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "title": "Key",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "data_date",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Data Date"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_CandidateResponse_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Candidates",
+        "tags": [
+          "strategies"
+        ]
+      }
+    },
+    "/api/v1/topics": {
+      "get": {
+        "operationId": "topics_api_v1_topics_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_TopicSummary_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Topics",
+        "tags": [
+          "topics"
+        ]
+      }
+    },
+    "/api/v1/topics/{slug}": {
+      "get": {
+        "operationId": "topic_api_v1_topics__slug__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "slug",
+            "required": true,
+            "schema": {
+              "title": "Slug",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TopicResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Topic",
+        "tags": [
+          "topics"
+        ]
+      }
+    },
+    "/healthz": {
+      "get": {
+        "operationId": "healthz_healthz_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Healthz",
+        "tags": [
+          "operations"
+        ]
+      }
+    },
+    "/readyz": {
+      "get": {
+        "operationId": "readyz_readyz_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "503": {
+            "description": "Database unavailable"
+          }
+        },
+        "summary": "Readyz",
+        "tags": [
+          "operations"
+        ]
+      }
+    }
+  }
+}

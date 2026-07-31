@@ -1,0 +1,23 @@
+{
+  "contractVersion": "enterprise_bundle.v1",
+  "bundleVersion": "public-demo-2026-07-31.v1",
+  "dataDate": "2026-07-31",
+  "generatedAt": "2026-07-31T08:00:00Z",
+  "source": {
+    "kind": "synthetic",
+    "name": "TopicPilot public portfolio demo",
+    "classification": "PUBLIC_SYNTHETIC",
+    "metadata": {
+      "notice": "All issuers, symbols, prices, scores, and performance values are artificial."
+    }
+  },
+  "files": {
+    "stocks": "stocks.json",
+    "topics": "topics.json",
+    "topicHierarchy": "topic_hierarchy.json",
+    "stockTopicRelations": "stock_topic_relations.json",
+    "dailySnapshots": "daily_snapshots.json",
+    "strategyCandidates": "strategy_candidates.json",
+    "strategyPerformance": "strategy_performance.json"
+  }
+}

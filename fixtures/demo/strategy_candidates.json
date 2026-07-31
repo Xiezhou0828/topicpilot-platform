@@ -1,0 +1,18 @@
+{
+  "strategyRuns": [
+    {"strategyKey":"MAS","name":"Moving Average Strength","modelVersion":"demo-1.0","dataDate":"2026-07-31","status":"COMPLETE","candidateCount":1,"selectedCount":1,"metadata":{"synthetic":true}},
+    {"strategyKey":"MAV","name":"Moving Average Volume","modelVersion":"demo-1.0","dataDate":"2026-07-31","status":"COMPLETE","candidateCount":1,"selectedCount":1,"metadata":{"synthetic":true}},
+    {"strategyKey":"TMC","name":"Topic Momentum Confirmation","modelVersion":"demo-1.0","dataDate":"2026-07-31","status":"COMPLETE","candidateCount":1,"selectedCount":1,"metadata":{"synthetic":true}},
+    {"strategyKey":"BB","name":"Breakout Base","modelVersion":"demo-1.0","dataDate":"2026-07-31","status":"COMPLETE","candidateCount":1,"selectedCount":1,"metadata":{"synthetic":true}},
+    {"strategyKey":"PB","name":"Pullback","modelVersion":"demo-1.0","dataDate":"2026-07-31","status":"COMPLETE","candidateCount":1,"selectedCount":1,"metadata":{"synthetic":true}},
+    {"strategyKey":"KD","name":"KD Recovery","modelVersion":"demo-1.0","dataDate":"2026-07-31","status":"COMPLETE","candidateCount":1,"selectedCount":1,"metadata":{"synthetic":true}}
+  ],
+  "candidates": [
+    {"strategyKey":"MAS","modelVersion":"demo-1.0","dataDate":"2026-07-31","stockCode":"DEMO-A1","rank":1,"score":82.5,"reason":"Synthetic trend-strength example.","price":45.2,"selected":true,"triggerPrice":45.5,"supportPrice":43.8,"invalidationPrice":42.9,"metadata":{"synthetic":true}},
+    {"strategyKey":"MAV","modelVersion":"demo-1.0","dataDate":"2026-07-31","stockCode":"DEMO-C3","rank":1,"score":79.0,"reason":"Synthetic price-and-volume example.","price":56.4,"selected":true,"triggerPrice":56.8,"supportPrice":54.9,"invalidationPrice":53.8,"metadata":{"synthetic":true}},
+    {"strategyKey":"TMC","modelVersion":"demo-1.0","dataDate":"2026-07-31","stockCode":"DEMO-A1","rank":1,"score":77.5,"reason":"Synthetic topic-momentum example.","price":45.2,"selected":true,"triggerPrice":45.5,"supportPrice":43.8,"invalidationPrice":42.9,"metadata":{"synthetic":true}},
+    {"strategyKey":"BB","modelVersion":"demo-1.0","dataDate":"2026-07-31","stockCode":"DEMO-C3","rank":1,"score":75.0,"reason":"Synthetic base-breakout example.","price":56.4,"selected":true,"triggerPrice":56.8,"supportPrice":54.9,"invalidationPrice":53.8,"metadata":{"synthetic":true}},
+    {"strategyKey":"PB","modelVersion":"demo-1.0","dataDate":"2026-07-31","stockCode":"DEMO-B2","rank":1,"score":68.0,"reason":"Synthetic controlled-pullback example.","price":31.0,"selected":true,"triggerPrice":31.4,"supportPrice":30.2,"invalidationPrice":29.8,"metadata":{"synthetic":true}},
+    {"strategyKey":"KD","modelVersion":"demo-1.0","dataDate":"2026-07-31","stockCode":"DEMO-D4","rank":1,"score":null,"reason":"Synthetic null-handling candidate.","price":null,"selected":true,"triggerPrice":null,"supportPrice":null,"invalidationPrice":null,"metadata":{"synthetic":true,"nullReason":"Quote intentionally unavailable"}}
+  ]
+}

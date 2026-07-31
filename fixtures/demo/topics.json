@@ -1,0 +1,6 @@
+[
+  {"slug": "digital-infrastructure", "name": "Digital Infrastructure", "groupName": null, "topicType": "MAJOR_GROUP", "enabled": true, "metadata": {"synthetic": true}},
+  {"slug": "edge-ai", "name": "Edge AI", "groupName": "Digital Infrastructure", "topicType": "APPLICATION", "enabled": true, "metadata": {"synthetic": true}},
+  {"slug": "cloud-security", "name": "Cloud Security", "groupName": "Digital Infrastructure", "topicType": "APPLICATION", "enabled": true, "metadata": {"synthetic": true}},
+  {"slug": "clean-energy", "name": "Clean Energy", "groupName": "Sustainable Systems", "topicType": "INDUSTRY", "enabled": true, "metadata": {"synthetic": true}}
+]

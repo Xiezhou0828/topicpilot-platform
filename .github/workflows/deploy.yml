@@ -1,0 +1,90 @@
+name: Manual release handoff
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_ref:
+        description: Commit, tag, or branch to release
+        required: true
+        default: main
+      deploy_api:
+        description: Trigger the protected Render deploy hook
+        required: true
+        type: boolean
+        default: false
+      package_web:
+        description: Build and package the validated Sites frontend artifact
+        required: true
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate release revision
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.release_ref }}
+      - name: Require a committed revision
+        run: git rev-parse --verify HEAD
+      - name: Validate Compose and Render configuration
+        run: |
+          docker compose config --quiet
+          test -s render.yaml
+
+  deploy-api:
+    name: Trigger Render API deployment
+    if: ${{ inputs.deploy_api }}
+    needs: validate
+    runs-on: ubuntu-latest
+    environment: production-api
+    steps:
+      - name: Trigger protected deploy hook
+        env:
+          RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+        run: |
+          if [ -z "$RENDER_DEPLOY_HOOK_URL" ]; then
+            echo "RENDER_DEPLOY_HOOK_URL is not configured in production-api." >&2
+            exit 1
+          fi
+          curl --fail --silent --show-error --request POST "$RENDER_DEPLOY_HOOK_URL"
+
+  package-web:
+    name: Package Sites frontend
+    if: ${{ inputs.package_web }}
+    needs: validate
+    runs-on: ubuntu-latest
+    environment: production-web
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.release_ref }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22.13.0"
+          cache: npm
+          cache-dependency-path: apps/web/package-lock.json
+      - name: Install and build
+        env:
+          NEXT_PUBLIC_API_BASE_URL: ${{ vars.PUBLIC_API_BASE_URL }}
+        run: |
+          if [ -z "$NEXT_PUBLIC_API_BASE_URL" ]; then
+            echo "PUBLIC_API_BASE_URL is not configured in production-web." >&2
+            exit 1
+          fi
+          npm ci --prefix apps/web
+          npm test --prefix apps/web
+          npm run build --prefix apps/web
+      - name: Upload validated Sites build
+        uses: actions/upload-artifact@v4
+        with:
+          name: topicpilot-sites-build-${{ github.run_number }}
+          path: |
+            apps/web/dist
+            apps/web/.openai/hosting.json
+          if-no-files-found: error
+          retention-days: 7

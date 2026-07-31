@@ -1,0 +1,4 @@
+[
+  {"parentSlug": "digital-infrastructure", "childSlug": "edge-ai", "weight": 1.0, "enabled": true, "metadata": {"synthetic": true}},
+  {"parentSlug": "digital-infrastructure", "childSlug": "cloud-security", "weight": null, "enabled": true, "metadata": {"synthetic": true, "nullExample": true}}
+]

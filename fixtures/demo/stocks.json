@@ -1,0 +1,6 @@
+[
+  {"code": "DEMO-A1", "name": "Aster Systems", "market": "DEMO", "industry": "Synthetic Hardware", "active": true, "metadata": {"synthetic": true}},
+  {"code": "DEMO-B2", "name": "Boreal Energy", "market": "DEMO", "industry": "Synthetic Energy", "active": true, "metadata": {"synthetic": true}},
+  {"code": "DEMO-C3", "name": "Cipher Cloud", "market": "DEMO", "industry": null, "active": true, "metadata": {"synthetic": true}},
+  {"code": "DEMO-D4", "name": "Delta Components", "market": "DEMO", "industry": "Synthetic Components", "active": true, "metadata": {"synthetic": true, "nullExample": true}}
+]

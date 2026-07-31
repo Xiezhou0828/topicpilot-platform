@@ -1,0 +1,20 @@
+{
+  "name": "topicpilot-platform",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Public portfolio implementation of TopicPilot's enterprise read platform.",
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "scripts": {
+    "web:install": "npm ci --prefix apps/web",
+    "web:dev": "npm run dev --prefix apps/web",
+    "web:lint": "npm run lint --prefix apps/web",
+    "web:test": "npm test --prefix apps/web",
+    "web:build": "npm run build --prefix apps/web",
+    "compose:config": "docker compose config",
+    "compose:up": "docker compose up --build",
+    "compose:down": "docker compose down --remove-orphans",
+    "compose:reset": "docker compose down --volumes --remove-orphans"
+  }
+}
