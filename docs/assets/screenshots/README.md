@@ -1,7 +1,7 @@
 # Screenshot and demo capture checklist
 
-This directory intentionally contains placeholders only. Do not add fabricated
-screenshots or unverified deployment URLs.
+`dashboard.png` is a browser-verified capture of the public synthetic-data
+deployment. Do not add fabricated screenshots or unverified deployment URLs.
 
 Capture these artifacts after the synthetic stack and public deployment pass:
 

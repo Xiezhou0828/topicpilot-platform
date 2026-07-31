@@ -51,5 +51,7 @@ test("starter preview assets and dependency are removed", async () => {
 
 test("hosting declaration remains stateless", async () => {
   const hosting = JSON.parse(await readFile(new URL("../.openai/hosting.json", import.meta.url), "utf8"));
-  assert.deepEqual(hosting, { d1: null, r2: null });
+  assert.equal(hosting.d1, null);
+  assert.equal(hosting.r2, null);
+  assert.match(hosting.project_id, /^appgprj_/);
 });

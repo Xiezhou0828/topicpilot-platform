@@ -3,7 +3,7 @@ import { AppFrame } from "./components/AppFrame";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://topicpilot-platform.pages.dev"),
+  metadataBase: new URL("https://topicpilot-platform.game0962046460.chatgpt.site"),
   title: {
     default: "TopicPilot Platform｜金融資料研究工作台",
     template: "%s｜TopicPilot Platform",

@@ -1,5 +1,12 @@
 # TopicPilot Platform
 
+[![CI](https://github.com/Xiezhou0828/topicpilot-platform/actions/workflows/ci.yml/badge.svg)](https://github.com/Xiezhou0828/topicpilot-platform/actions/workflows/ci.yml)
+[![Live demo](https://img.shields.io/badge/demo-live-a8ef60)](https://topicpilot-platform.game0962046460.chatgpt.site/)
+
+**[Open the public synthetic-data demo](https://topicpilot-platform.game0962046460.chatgpt.site/)**
+
+![TopicPilot Platform synthetic-data dashboard](docs/assets/screenshots/dashboard.png)
+
 TopicPilot Platform is a public, synthetic-data portfolio implementation of an
 enterprise read platform for market-theme research. It demonstrates how a
 spreadsheet-driven workflow can be migrated safely to PostgreSQL, FastAPI, and
@@ -8,6 +15,11 @@ React without a big-bang cutover.
 > **Demo data only:** every fixture in this repository is synthetic. The UI and
 > API are educational software demonstrations, not financial advice, trading
 > signals, or a source of live market data.
+
+The hosted portfolio currently uses the clearly labelled synthetic fallback
+mode. The complete FastAPI-to-PostgreSQL path is exercised by Docker Compose
+and GitHub Actions; attaching a hosted API later only requires setting
+`NEXT_PUBLIC_API_BASE_URL`.
 
 ## What this project demonstrates
 
