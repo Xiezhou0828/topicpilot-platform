@@ -441,6 +441,10 @@
       "SnapshotResponse": {
         "additionalProperties": true,
         "properties": {
+          "classification": {
+            "title": "Classification",
+            "type": "string"
+          },
           "dataDate": {
             "format": "date",
             "title": "Datadate",
@@ -458,6 +462,7 @@
         },
         "required": [
           "snapshotVersion",
+          "classification",
           "generatedAt",
           "dataDate"
         ],

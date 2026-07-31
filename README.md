@@ -5,8 +5,6 @@
 
 **[Open the public synthetic-data demo](https://topicpilot-platform.game0962046460.chatgpt.site/)**
 
-![TopicPilot Platform synthetic-data dashboard](docs/assets/screenshots/dashboard.png)
-
 TopicPilot Platform is a public, synthetic-data portfolio implementation of an
 enterprise read platform for market-theme research. It demonstrates how a
 spreadsheet-driven workflow can be migrated safely to PostgreSQL, FastAPI, and
@@ -26,7 +24,8 @@ and GitHub Actions; attaching a hosted API later only requires setting
 - A PostgreSQL 16 read model with versioned Alembic migrations.
 - Transactional, hashed, and idempotent `enterprise_bundle.v1` ingestion.
 - Read-only FastAPI endpoints with generated OpenAPI documentation.
-- A React and TypeScript dashboard using the API rather than direct Sheet reads.
+- The original React and TypeScript TopicPilot frontend, with only its shared
+  data-access layer redirected from R2/JSON to FastAPI/PostgreSQL.
 - Docker Compose orchestration for database, migrations, seed, API, and web.
 - CI checks for linting, tests, empty-database migration, OpenAPI drift,
   container smoke testing, and accidental secrets.
@@ -94,7 +93,7 @@ flowchart LR
       V -. "private/manual only" .-> I
       I --> DB[("PostgreSQL read model")]
       DB --> API["FastAPI read API"]
-      API --> WEB["React / TypeScript"]
+      API --> WEB["Existing TopicPilot React UI"]
       DB --> BI["Power BI-ready SQL views"]
     end
 ```
@@ -194,13 +193,16 @@ topics, six stable strategy identifiers (`MAS`, `MAV`, `TMC`, `BB`, `PB`, and
   and the protected manual workflow triggers deployment.
 - **Web:** the existing vinext starter is validated and handed to Sites. Runtime
   values are managed by the hosting surface, not committed to the repository.
+  No parallel frontend pages are maintained: the existing TopicPilot routes and
+  layout consume the enterprise snapshot through `SnapshotProvider`.
 
 Render free services can sleep while idle. The public UI must treat an initial
 API timeout as a cold start, show a neutral “service waking up” state, and retry
 with a bounded backoff. See the [deployment guide](docs/operations/deployment.md).
 
-No deployed URL is committed here. Add a verified demo URL only after the
-deployment owner has completed the security and data-policy checklist.
+The verified public synthetic-data deployment is linked at the top of this
+README. It falls back to the committed synthetic bundle while a hosted FastAPI
+service is absent or waking.
 
 ## Documentation map
 

@@ -356,6 +356,7 @@ def assemble_snapshot(session: Session, run: IngestionRun) -> dict[str, Any]:
     market_status = market["status"] if market else "NOT_RUN"
     return {
         "snapshotVersion": SNAPSHOT_VERSION,
+        "classification": run.classification,
         "generatedAt": run.generated_at,
         "dataDate": run.data_date,
         "compatibilityNotes": [

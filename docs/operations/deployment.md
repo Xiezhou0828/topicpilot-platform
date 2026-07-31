@@ -63,11 +63,12 @@ Do not store a Render API key when a service-scoped deploy hook is sufficient.
 Render documents that free web services spin down after 15 minutes without
 inbound traffic and take roughly one minute to spin back up. The frontend must:
 
-1. Display a neutral “service waking up” state after the initial network delay.
-2. Retry only network/5xx failures with bounded exponential backoff.
-3. Stop after the documented UI timeout and offer a manual retry.
+1. Keep the original TopicPilot layout visible while the API is waking.
+2. Retry only network/5xx failures with bounded backoff.
+3. Stop after the documented UI timeout and switch to the clearly labelled
+   public synthetic bundle instead of replacing the page design.
 4. Never treat a 4xx contract error as a cold start.
-5. Keep stale or unavailable data labels distinct from warming state.
+5. Keep live, stale, unavailable, and synthetic states visibly distinct.
 
 See [Render Free documentation](https://render.com/docs/free) and the
 [Blueprint reference](https://render.com/docs/blueprint-spec).
@@ -81,7 +82,8 @@ The frontend is a vinext Sites project and keeps its existing npm lockfile.
 Before handoff:
 
 1. Set the `production-web` GitHub environment variable
-   `PUBLIC_API_BASE_URL` to the verified HTTPS Render API origin.
+   `PUBLIC_API_BASE_URL` to the verified HTTPS Render API origin. The release
+   workflow exposes it to the existing frontend as `NEXT_PUBLIC_API_BASE_URL`.
 2. Run the manual release workflow with `package_web=true`.
 3. Verify the uploaded artifact came from the approved revision and includes
    `apps/web/dist` plus `.openai/hosting.json`.
@@ -93,7 +95,9 @@ Before handoff:
    invented placeholder URL.
 
 No D1 or R2 binding is required for v1 because PostgreSQL/FastAPI own the public
-read path.
+read path. This changes the data-access layer only; the original TopicPilot
+routes, navigation, styling, favorites, guide, and AI Studio remain the public
+frontend.
 
 ## CORS and browser verification
 

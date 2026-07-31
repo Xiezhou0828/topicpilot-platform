@@ -1,0 +1,31 @@
+{
+  "fixtureType": "SYNTHETIC_FIXTURE",
+  "purpose": "FRONTEND-STOCK-SCREENER-001 unit tests only; never a production snapshot source",
+  "cases": {
+    "match": {
+      "price": 100,
+      "screener": {
+        "close": 100, "ma20": 90, "ma60": 80, "ma20SlopePct": 1, "daysAboveMa20": 1, "reclaimedMa20": true,
+        "movingAverageAlignment": "多頭排列", "structureState": "多頭結構", "rs5Pct": 2, "rs20Pct": 4, "rsState": "雙週期領先",
+        "distanceTo20DayHighPct": -2, "breakout20DayHigh": true, "macdHistTurnedPositive": true, "macdGoldenCross": true, "difAboveZero": true,
+        "kdGoldenCross": true, "kdLowGoldenCross": true, "kdMidLowGoldenCross": true, "rsi14": 60, "volumeRatio": 1.5, "volumeStatus": "量能健康",
+        "upVolumeRatio": 1.4, "breakoutWithVolume": true, "pullbackVolumeShrinkRatio": 0.7, "restartConfirmed": true,
+        "foreignBuyStreakDays": 4, "trustBuyStreakDays": 3, "institutionsInSync": true, "foreignFiveDayBuyPct": 4, "trustFiveDayBuyPct": 2,
+        "largeHolderWeeklyChangePp": 0.2
+      }
+    },
+    "miss": {
+      "price": 500,
+      "screener": {
+        "close": 70, "ma20": 90, "ma60": 80, "ma20SlopePct": -1, "daysAboveMa20": 0, "reclaimedMa20": false,
+        "movingAverageAlignment": "空頭排列", "structureState": "空頭結構", "rs5Pct": -2, "rs20Pct": -4, "rsState": "雙週期落後",
+        "distanceTo20DayHighPct": -9, "breakout20DayHigh": false, "macdHistTurnedPositive": false, "macdGoldenCross": false, "difAboveZero": false,
+        "kdGoldenCross": false, "kdLowGoldenCross": false, "kdMidLowGoldenCross": false, "rsi14": 80, "volumeRatio": 0.8, "volumeStatus": "量能不足",
+        "upVolumeRatio": 0.7, "breakoutWithVolume": false, "pullbackVolumeShrinkRatio": 1.1, "restartConfirmed": false,
+        "foreignBuyStreakDays": 0, "trustBuyStreakDays": 0, "institutionsInSync": false, "foreignFiveDayBuyPct": -1, "trustFiveDayBuyPct": 0,
+        "largeHolderWeeklyChangePp": -0.2
+      }
+    },
+    "missing": { "price": null, "screener": {} }
+  }
+}

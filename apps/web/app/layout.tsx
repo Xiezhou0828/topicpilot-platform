@@ -1,46 +1,33 @@
-import type { Metadata } from "next";
-import { AppFrame } from "./components/AppFrame";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import { SnapshotProvider } from "./lib/snapshot-store";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://topicpilot-platform.game0962046460.chatgpt.site"),
-  title: {
-    default: "TopicPilot Platform｜金融資料研究工作台",
-    template: "%s｜TopicPilot Platform",
-  },
-  description:
-    "以 PostgreSQL、FastAPI 與 React 打造的金融資料 read platform 公開展示，呈現資料血緣、題材輪動與策略研究流程。",
-  icons: {
-    icon: "/favicon.svg",
-    shortcut: "/favicon.svg",
-  },
+  title: "題材領航｜題材資金流向儀表",
+  description: "TopicPilot 原版前端與企業資料管線的公開合成資料展示。",
   openGraph: {
+    title: "題材領航｜題材資金流向儀表",
+    description: "保留原版前端，資料由 FastAPI／PostgreSQL read model 提供。",
     type: "website",
-    locale: "zh_TW",
-    siteName: "TopicPilot Platform",
-    title: "TopicPilot Platform｜從市場資料到可驗證的研究流程",
-    description: "一套以 API contract、資料品質與可重現分析為核心的金融資料產品。",
-    images: [
-      {
-        url: "/og.png",
-        width: 1731,
-        height: 909,
-        alt: "TopicPilot Platform enterprise read model",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "TopicPilot Platform",
-    description: "Financial data read platform · PostgreSQL · FastAPI · React",
-    images: ["/og.png"],
+    images: ["/og-topic-pilot.png"],
   },
 };
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+};
+
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL?.trim().replace(/\/+$/, "");
+  const snapshotApiUrl = process.env.NEXT_PUBLIC_SNAPSHOT_API_URL?.trim()
+    || (apiBaseUrl ? `${apiBaseUrl}/api/v1/snapshot/latest` : undefined);
+
   return (
-    <html lang="zh-Hant">
-      <body><AppFrame>{children}</AppFrame></body>
+    <html lang="zh-Hant" data-snapshot-api-url={snapshotApiUrl}>
+      <body>
+        <SnapshotProvider>{children}</SnapshotProvider>
+      </body>
     </html>
   );
 }

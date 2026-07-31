@@ -371,6 +371,8 @@ export interface components {
         };
         /** SnapshotResponse */
         SnapshotResponse: {
+            /** Classification */
+            classification: string;
             /**
              * Datadate
              * Format: date

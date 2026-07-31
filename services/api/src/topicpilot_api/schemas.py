@@ -181,5 +181,6 @@ class SnapshotResponse(ApiModel):
     model_config = ConfigDict(extra="allow")
 
     snapshot_version: str = Field(alias="snapshotVersion")
+    classification: str
     generated_at: datetime = Field(alias="generatedAt")
     data_date: date = Field(alias="dataDate")

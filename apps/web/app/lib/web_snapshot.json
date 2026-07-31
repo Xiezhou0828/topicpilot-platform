@@ -1,0 +1,1193 @@
+{
+  "snapshotVersion": "enterprise-db-001",
+  "classification": "PUBLIC_SYNTHETIC",
+  "generatedAt": "2026-07-31T08:00:00Z",
+  "dataDate": "2026-07-31",
+  "compatibilityNotes": [
+    "This public portfolio uses only synthetic issuers, prices, scores, and performance values.",
+    "Private-only market decisions, observations, positions, and licensed content are omitted."
+  ],
+  "contracts": {
+    "enterpriseBundle": {
+      "version": "enterprise_bundle.v1"
+    },
+    "strategyRegistry": {
+      "version": "enterprise-strategy-registry-001"
+    },
+    "strategyCandidates": {
+      "version": "enterprise-strategy-candidates-001"
+    },
+    "strategyPerformance": {
+      "version": "enterprise-strategy-performance-001"
+    }
+  },
+  "quoteMeta": {
+    "status": "PARTIAL",
+    "dataDate": "2026-07-31",
+    "updatedAt": "2026-07-31T08:00:00Z",
+    "source": "TopicPilot public portfolio demo",
+    "totalSymbols": 4,
+    "successSymbols": 3,
+    "failedSymbols": 1,
+    "failedCodes": [
+      "DEMO-D4"
+    ]
+  },
+  "marketSession": {
+    "market": "DEMO",
+    "timezone": "Asia/Taipei",
+    "currentDate": "2026-07-31",
+    "latestTradingDate": "2026-07-31",
+    "isTradingDay": true,
+    "session": "CLOSED",
+    "reason": "Historical enterprise read model",
+    "nextTradingDate": null
+  },
+  "quality": {
+    "priceRows": 3,
+    "technicalRows": 3,
+    "chipRows": 3,
+    "fundamentalRows": 0,
+    "entryRows": 0,
+    "dailyObservationRows": 0,
+    "dailyObservationSource": null,
+    "entrySource": null,
+    "universe": 4,
+    "missingPrice": [
+      "DEMO-D4"
+    ],
+    "missingTechnical": [
+      "DEMO-D4"
+    ],
+    "missingChip": [
+      "DEMO-D4"
+    ],
+    "missingFundamental": [
+      "DEMO-A1",
+      "DEMO-B2",
+      "DEMO-C3",
+      "DEMO-D4"
+    ],
+    "missingEntry": [
+      "DEMO-A1",
+      "DEMO-B2",
+      "DEMO-C3",
+      "DEMO-D4"
+    ],
+    "unavailableTechnicalFields": []
+  },
+  "market": {
+    "indices": []
+  },
+  "topics": [
+    {
+      "slug": "digital-infrastructure",
+      "name": "Digital Infrastructure",
+      "group": null,
+      "type": "MAJOR_GROUP",
+      "grade": null,
+      "strengthState": null,
+      "score": null,
+      "strengthScore": null,
+      "stockCount": 1,
+      "observedCount": null,
+      "breadthRatio": null,
+      "leaders": [
+        "DEMO-A1"
+      ]
+    },
+    {
+      "slug": "edge-ai",
+      "name": "Edge AI",
+      "group": "Digital Infrastructure",
+      "type": "APPLICATION",
+      "grade": "A",
+      "strengthState": "WARMING",
+      "score": 4.6,
+      "strengthScore": 4.6,
+      "stockCount": 2,
+      "observedCount": 1,
+      "breadthRatio": 50,
+      "leaders": [
+        "DEMO-A1",
+        "DEMO-D4"
+      ]
+    },
+    {
+      "slug": "cloud-security",
+      "name": "Cloud Security",
+      "group": "Digital Infrastructure",
+      "type": "APPLICATION",
+      "grade": "A",
+      "strengthState": "WARMING",
+      "score": 4.4,
+      "strengthScore": 4.4,
+      "stockCount": 1,
+      "observedCount": 1,
+      "breadthRatio": 100,
+      "leaders": [
+        "DEMO-C3"
+      ]
+    },
+    {
+      "slug": "clean-energy",
+      "name": "Clean Energy",
+      "group": "Sustainable Systems",
+      "type": "INDUSTRY",
+      "grade": null,
+      "strengthState": null,
+      "score": null,
+      "strengthScore": null,
+      "stockCount": 1,
+      "observedCount": null,
+      "breadthRatio": null,
+      "leaders": [
+        "DEMO-B2"
+      ]
+    }
+  ],
+  "topicGroups": [
+    {
+      "name": "Digital Infrastructure",
+      "children": [
+        "Edge AI",
+        "Cloud Security"
+      ],
+      "childCount": 2
+    }
+  ],
+  "topicRelations": [
+    {
+      "stockCode": "DEMO-A1",
+      "stockName": "Aster Systems",
+      "topicSlug": "edge-ai",
+      "topicName": "Edge AI",
+      "groupName": "Digital Infrastructure",
+      "relationType": "PRIMARY",
+      "weight": 1,
+      "evidenceSummary": "Synthetic issuer profile links this demo company to edge computing."
+    },
+    {
+      "stockCode": "DEMO-A1",
+      "stockName": "Aster Systems",
+      "topicSlug": "digital-infrastructure",
+      "topicName": "Digital Infrastructure",
+      "groupName": null,
+      "relationType": "RELATED",
+      "weight": 0.5,
+      "evidenceSummary": null
+    },
+    {
+      "stockCode": "DEMO-B2",
+      "stockName": "Boreal Energy",
+      "topicSlug": "clean-energy",
+      "topicName": "Clean Energy",
+      "groupName": "Sustainable Systems",
+      "relationType": "PRIMARY",
+      "weight": 1,
+      "evidenceSummary": "Synthetic issuer profile links this demo company to clean energy."
+    },
+    {
+      "stockCode": "DEMO-C3",
+      "stockName": "Cipher Cloud",
+      "topicSlug": "cloud-security",
+      "topicName": "Cloud Security",
+      "groupName": "Digital Infrastructure",
+      "relationType": "PRIMARY",
+      "weight": 1,
+      "evidenceSummary": "Synthetic issuer profile links this demo company to cloud security."
+    },
+    {
+      "stockCode": "DEMO-D4",
+      "stockName": "Delta Components",
+      "topicSlug": "edge-ai",
+      "topicName": "Edge AI",
+      "groupName": "Digital Infrastructure",
+      "relationType": "SECONDARY",
+      "weight": null,
+      "evidenceSummary": null
+    }
+  ],
+  "topicStrengthHistory": [
+    {
+      "slug": "digital-infrastructure",
+      "topic": "Digital Infrastructure",
+      "points": []
+    },
+    {
+      "slug": "edge-ai",
+      "topic": "Edge AI",
+      "points": [
+        {
+          "date": "2026-07-14",
+          "score": 1,
+          "grade": "B",
+          "strengthState": "STABLE"
+        },
+        {
+          "date": "2026-07-15",
+          "score": 1.4,
+          "grade": "B",
+          "strengthState": "WARMING"
+        },
+        {
+          "date": "2026-07-16",
+          "score": 1.2,
+          "grade": "B",
+          "strengthState": "STABLE"
+        },
+        {
+          "date": "2026-07-17",
+          "score": 1.7,
+          "grade": "B",
+          "strengthState": "WARMING"
+        },
+        {
+          "date": "2026-07-20",
+          "score": 2.1,
+          "grade": "B",
+          "strengthState": "WARMING"
+        },
+        {
+          "date": "2026-07-21",
+          "score": 2.4,
+          "grade": "B",
+          "strengthState": "WARMING"
+        },
+        {
+          "date": "2026-07-22",
+          "score": 2,
+          "grade": "B",
+          "strengthState": "COOLING"
+        },
+        {
+          "date": "2026-07-23",
+          "score": 2.6,
+          "grade": "B",
+          "strengthState": "WARMING"
+        },
+        {
+          "date": "2026-07-24",
+          "score": 3,
+          "grade": "A",
+          "strengthState": "WARMING"
+        },
+        {
+          "date": "2026-07-27",
+          "score": 2.8,
+          "grade": "B",
+          "strengthState": "STABLE"
+        },
+        {
+          "date": "2026-07-28",
+          "score": 3.3,
+          "grade": "A",
+          "strengthState": "WARMING"
+        },
+        {
+          "date": "2026-07-29",
+          "score": 3.7,
+          "grade": "A",
+          "strengthState": "WARMING"
+        },
+        {
+          "date": "2026-07-30",
+          "score": 4.1,
+          "grade": "A",
+          "strengthState": "WARMING"
+        },
+        {
+          "date": "2026-07-31",
+          "score": 4.6,
+          "grade": "A",
+          "strengthState": "WARMING"
+        }
+      ]
+    },
+    {
+      "slug": "cloud-security",
+      "topic": "Cloud Security",
+      "points": [
+        {
+          "date": "2026-07-14",
+          "score": 2,
+          "grade": "B",
+          "strengthState": "STABLE"
+        },
+        {
+          "date": "2026-07-15",
+          "score": 2.3,
+          "grade": "B",
+          "strengthState": "WARMING"
+        },
+        {
+          "date": "2026-07-16",
+          "score": 2.5,
+          "grade": "B",
+          "strengthState": "WARMING"
+        },
+        {
+          "date": "2026-07-17",
+          "score": 2.2,
+          "grade": "B",
+          "strengthState": "STABLE"
+        },
+        {
+          "date": "2026-07-20",
+          "score": 2.7,
+          "grade": "B",
+          "strengthState": "WARMING"
+        },
+        {
+          "date": "2026-07-21",
+          "score": 2.6,
+          "grade": "B",
+          "strengthState": "STABLE"
+        },
+        {
+          "date": "2026-07-22",
+          "score": 2.3,
+          "grade": "B",
+          "strengthState": "COOLING"
+        },
+        {
+          "date": "2026-07-23",
+          "score": 2.8,
+          "grade": "B",
+          "strengthState": "WARMING"
+        },
+        {
+          "date": "2026-07-24",
+          "score": 3.1,
+          "grade": "A",
+          "strengthState": "WARMING"
+        },
+        {
+          "date": "2026-07-27",
+          "score": 3.4,
+          "grade": "A",
+          "strengthState": "WARMING"
+        },
+        {
+          "date": "2026-07-28",
+          "score": 3.8,
+          "grade": "A",
+          "strengthState": "WARMING"
+        },
+        {
+          "date": "2026-07-29",
+          "score": 3.6,
+          "grade": "A",
+          "strengthState": "STABLE"
+        },
+        {
+          "date": "2026-07-30",
+          "score": 4,
+          "grade": "A",
+          "strengthState": "WARMING"
+        },
+        {
+          "date": "2026-07-31",
+          "score": 4.4,
+          "grade": "A",
+          "strengthState": "WARMING"
+        }
+      ]
+    },
+    {
+      "slug": "clean-energy",
+      "topic": "Clean Energy",
+      "points": [
+        {
+          "date": "2026-07-14",
+          "score": 0.5,
+          "grade": "B",
+          "strengthState": "STABLE"
+        },
+        {
+          "date": "2026-07-15",
+          "score": 0.8,
+          "grade": "B",
+          "strengthState": "WARMING"
+        },
+        {
+          "date": "2026-07-16",
+          "score": 0.6,
+          "grade": "B",
+          "strengthState": "STABLE"
+        },
+        {
+          "date": "2026-07-17",
+          "score": 0.4,
+          "grade": "B",
+          "strengthState": "COOLING"
+        },
+        {
+          "date": "2026-07-20",
+          "score": 0.9,
+          "grade": "B",
+          "strengthState": "WARMING"
+        },
+        {
+          "date": "2026-07-21",
+          "score": 1.1,
+          "grade": "B",
+          "strengthState": "WARMING"
+        },
+        {
+          "date": "2026-07-22",
+          "score": 0.7,
+          "grade": "B",
+          "strengthState": "COOLING"
+        },
+        {
+          "date": "2026-07-23",
+          "score": 1,
+          "grade": "B",
+          "strengthState": "WARMING"
+        },
+        {
+          "date": "2026-07-24",
+          "score": 1.4,
+          "grade": "B",
+          "strengthState": "WARMING"
+        },
+        {
+          "date": "2026-07-27",
+          "score": 1.2,
+          "grade": "B",
+          "strengthState": "STABLE"
+        },
+        {
+          "date": "2026-07-28",
+          "score": 1.6,
+          "grade": "B",
+          "strengthState": "WARMING"
+        },
+        {
+          "date": "2026-07-29",
+          "score": 1.8,
+          "grade": "B",
+          "strengthState": "WARMING"
+        },
+        {
+          "date": "2026-07-30",
+          "score": 2.1,
+          "grade": "B",
+          "strengthState": "WARMING"
+        },
+        {
+          "date": "2026-07-31",
+          "score": null,
+          "grade": null,
+          "strengthState": null
+        }
+      ]
+    }
+  ],
+  "strategyRegistry": {
+    "version": "enterprise-strategy-registry-001",
+    "dataDate": "2026-07-31",
+    "strategies": [
+      {
+        "strategyId": "MAS",
+        "name": "Moving Average Strength",
+        "modelVersion": "demo-1.0",
+        "batchDate": "2026-07-31",
+        "batchStatus": "COMPLETE",
+        "candidateCount": 1,
+        "selectedCount": 1,
+        "rankingCount": 1,
+        "missingReason": null
+      },
+      {
+        "strategyId": "MAV",
+        "name": "Moving Average Volume",
+        "modelVersion": "demo-1.0",
+        "batchDate": "2026-07-31",
+        "batchStatus": "COMPLETE",
+        "candidateCount": 1,
+        "selectedCount": 1,
+        "rankingCount": 1,
+        "missingReason": null
+      },
+      {
+        "strategyId": "TMC",
+        "name": "Topic Momentum Confirmation",
+        "modelVersion": "demo-1.0",
+        "batchDate": "2026-07-31",
+        "batchStatus": "COMPLETE",
+        "candidateCount": 1,
+        "selectedCount": 1,
+        "rankingCount": 1,
+        "missingReason": null
+      },
+      {
+        "strategyId": "BB",
+        "name": "Breakout Base",
+        "modelVersion": "demo-1.0",
+        "batchDate": "2026-07-31",
+        "batchStatus": "COMPLETE",
+        "candidateCount": 1,
+        "selectedCount": 1,
+        "rankingCount": 1,
+        "missingReason": null
+      },
+      {
+        "strategyId": "PB",
+        "name": "Pullback",
+        "modelVersion": "demo-1.0",
+        "batchDate": "2026-07-31",
+        "batchStatus": "COMPLETE",
+        "candidateCount": 1,
+        "selectedCount": 1,
+        "rankingCount": 1,
+        "missingReason": null
+      },
+      {
+        "strategyId": "KD",
+        "name": "KD Recovery",
+        "modelVersion": "demo-1.0",
+        "batchDate": "2026-07-31",
+        "batchStatus": "COMPLETE",
+        "candidateCount": 1,
+        "selectedCount": 1,
+        "rankingCount": 1,
+        "missingReason": null
+      }
+    ]
+  },
+  "strategyCandidates": [
+    {
+      "strategyId": "MAS",
+      "strategyKey": "2026-07-31|MAS|DEMO-A1|demo-1.0",
+      "modelVersion": "demo-1.0",
+      "batchDate": "2026-07-31",
+      "rank": 1,
+      "code": "DEMO-A1",
+      "name": "Aster Systems",
+      "majorGroup": "Digital Infrastructure",
+      "fineTopic": "Edge AI",
+      "score": 82.5,
+      "reason": "Synthetic trend-strength example.",
+      "price": 45.2,
+      "dataDate": "2026-07-31",
+      "dataTime": "2026-07-31T08:00:00Z",
+      "selected": true,
+      "trigger": 45.5,
+      "support": 43.8,
+      "invalidation": 42.9
+    },
+    {
+      "strategyId": "MAV",
+      "strategyKey": "2026-07-31|MAV|DEMO-C3|demo-1.0",
+      "modelVersion": "demo-1.0",
+      "batchDate": "2026-07-31",
+      "rank": 1,
+      "code": "DEMO-C3",
+      "name": "Cipher Cloud",
+      "majorGroup": "Digital Infrastructure",
+      "fineTopic": "Cloud Security",
+      "score": 79,
+      "reason": "Synthetic price-and-volume example.",
+      "price": 56.4,
+      "dataDate": "2026-07-31",
+      "dataTime": "2026-07-31T08:00:00Z",
+      "selected": true,
+      "trigger": 56.8,
+      "support": 54.9,
+      "invalidation": 53.8
+    },
+    {
+      "strategyId": "TMC",
+      "strategyKey": "2026-07-31|TMC|DEMO-A1|demo-1.0",
+      "modelVersion": "demo-1.0",
+      "batchDate": "2026-07-31",
+      "rank": 1,
+      "code": "DEMO-A1",
+      "name": "Aster Systems",
+      "majorGroup": "Digital Infrastructure",
+      "fineTopic": "Edge AI",
+      "score": 77.5,
+      "reason": "Synthetic topic-momentum example.",
+      "price": 45.2,
+      "dataDate": "2026-07-31",
+      "dataTime": "2026-07-31T08:00:00Z",
+      "selected": true,
+      "trigger": 45.5,
+      "support": 43.8,
+      "invalidation": 42.9
+    },
+    {
+      "strategyId": "BB",
+      "strategyKey": "2026-07-31|BB|DEMO-C3|demo-1.0",
+      "modelVersion": "demo-1.0",
+      "batchDate": "2026-07-31",
+      "rank": 1,
+      "code": "DEMO-C3",
+      "name": "Cipher Cloud",
+      "majorGroup": "Digital Infrastructure",
+      "fineTopic": "Cloud Security",
+      "score": 75,
+      "reason": "Synthetic base-breakout example.",
+      "price": 56.4,
+      "dataDate": "2026-07-31",
+      "dataTime": "2026-07-31T08:00:00Z",
+      "selected": true,
+      "trigger": 56.8,
+      "support": 54.9,
+      "invalidation": 53.8
+    },
+    {
+      "strategyId": "PB",
+      "strategyKey": "2026-07-31|PB|DEMO-B2|demo-1.0",
+      "modelVersion": "demo-1.0",
+      "batchDate": "2026-07-31",
+      "rank": 1,
+      "code": "DEMO-B2",
+      "name": "Boreal Energy",
+      "majorGroup": "Sustainable Systems",
+      "fineTopic": "Clean Energy",
+      "score": 68,
+      "reason": "Synthetic controlled-pullback example.",
+      "price": 31,
+      "dataDate": "2026-07-31",
+      "dataTime": "2026-07-31T08:00:00Z",
+      "selected": true,
+      "trigger": 31.4,
+      "support": 30.2,
+      "invalidation": 29.8
+    },
+    {
+      "strategyId": "KD",
+      "strategyKey": "2026-07-31|KD|DEMO-D4|demo-1.0",
+      "modelVersion": "demo-1.0",
+      "batchDate": "2026-07-31",
+      "rank": 1,
+      "code": "DEMO-D4",
+      "name": "Delta Components",
+      "majorGroup": null,
+      "fineTopic": null,
+      "score": null,
+      "reason": "Synthetic null-handling candidate.",
+      "price": null,
+      "dataDate": "2026-07-31",
+      "dataTime": "2026-07-31T08:00:00Z",
+      "selected": true,
+      "trigger": null,
+      "support": null,
+      "invalidation": null
+    }
+  ],
+  "strategyPerformance": [
+    {
+      "strategyId": "MAS",
+      "strategyKey": "MAS",
+      "name": "Moving Average Strength",
+      "modelVersion": "demo-1.0",
+      "dataDate": "2026-07-31",
+      "status": "AVAILABLE",
+      "sampleCount": 1,
+      "availableHorizonCount": 4,
+      "horizons": {
+        "T+1": {
+          "status": "AVAILABLE",
+          "sampleCount": 24,
+          "winRate": 62.5,
+          "avgReturnPct": 1.2,
+          "reason": null
+        },
+        "T+3": {
+          "status": "AVAILABLE",
+          "sampleCount": 22,
+          "winRate": 59.1,
+          "avgReturnPct": 1.8,
+          "reason": null
+        },
+        "T+5": {
+          "status": "AVAILABLE",
+          "sampleCount": 20,
+          "winRate": 60,
+          "avgReturnPct": 2.4,
+          "reason": null
+        },
+        "T+10": {
+          "status": "AVAILABLE",
+          "sampleCount": 16,
+          "winRate": 56.3,
+          "avgReturnPct": 2.9,
+          "reason": null
+        },
+        "T+20": {
+          "status": "NOT_DUE",
+          "sampleCount": null,
+          "winRate": null,
+          "avgReturnPct": null,
+          "reason": "Synthetic samples have not matured."
+        },
+        "T+30": {
+          "status": "NOT_DUE",
+          "sampleCount": null,
+          "winRate": null,
+          "avgReturnPct": null,
+          "reason": "Synthetic samples have not matured."
+        }
+      },
+      "source": "PostgreSQL synthetic read model"
+    },
+    {
+      "strategyId": "MAV",
+      "strategyKey": "MAV",
+      "name": "Moving Average Volume",
+      "modelVersion": "demo-1.0",
+      "dataDate": "2026-07-31",
+      "status": "AVAILABLE",
+      "sampleCount": 1,
+      "availableHorizonCount": 4,
+      "horizons": {
+        "T+1": {
+          "status": "AVAILABLE",
+          "sampleCount": 21,
+          "winRate": 57.1,
+          "avgReturnPct": 0.9,
+          "reason": null
+        },
+        "T+3": {
+          "status": "AVAILABLE",
+          "sampleCount": 20,
+          "winRate": 60,
+          "avgReturnPct": 1.6,
+          "reason": null
+        },
+        "T+5": {
+          "status": "AVAILABLE",
+          "sampleCount": 18,
+          "winRate": 61.1,
+          "avgReturnPct": 2.1,
+          "reason": null
+        },
+        "T+10": {
+          "status": "AVAILABLE",
+          "sampleCount": 14,
+          "winRate": 57.1,
+          "avgReturnPct": 2.5,
+          "reason": null
+        },
+        "T+20": {
+          "status": "NOT_DUE",
+          "sampleCount": null,
+          "winRate": null,
+          "avgReturnPct": null,
+          "reason": "Synthetic samples have not matured."
+        },
+        "T+30": {
+          "status": "NOT_DUE",
+          "sampleCount": null,
+          "winRate": null,
+          "avgReturnPct": null,
+          "reason": "Synthetic samples have not matured."
+        }
+      },
+      "source": "PostgreSQL synthetic read model"
+    },
+    {
+      "strategyId": "TMC",
+      "strategyKey": "TMC",
+      "name": "Topic Momentum Confirmation",
+      "modelVersion": "demo-1.0",
+      "dataDate": "2026-07-31",
+      "status": "AVAILABLE",
+      "sampleCount": 1,
+      "availableHorizonCount": 4,
+      "horizons": {
+        "T+1": {
+          "status": "AVAILABLE",
+          "sampleCount": 19,
+          "winRate": 63.2,
+          "avgReturnPct": 1.3,
+          "reason": null
+        },
+        "T+3": {
+          "status": "AVAILABLE",
+          "sampleCount": 18,
+          "winRate": 66.7,
+          "avgReturnPct": 2,
+          "reason": null
+        },
+        "T+5": {
+          "status": "AVAILABLE",
+          "sampleCount": 17,
+          "winRate": 64.7,
+          "avgReturnPct": 2.8,
+          "reason": null
+        },
+        "T+10": {
+          "status": "AVAILABLE",
+          "sampleCount": 12,
+          "winRate": 58.3,
+          "avgReturnPct": 3.2,
+          "reason": null
+        },
+        "T+20": {
+          "status": "NOT_DUE",
+          "sampleCount": null,
+          "winRate": null,
+          "avgReturnPct": null,
+          "reason": "Synthetic samples have not matured."
+        },
+        "T+30": {
+          "status": "NOT_DUE",
+          "sampleCount": null,
+          "winRate": null,
+          "avgReturnPct": null,
+          "reason": "Synthetic samples have not matured."
+        }
+      },
+      "source": "PostgreSQL synthetic read model"
+    },
+    {
+      "strategyId": "BB",
+      "strategyKey": "BB",
+      "name": "Breakout Base",
+      "modelVersion": "demo-1.0",
+      "dataDate": "2026-07-31",
+      "status": "AVAILABLE",
+      "sampleCount": 1,
+      "availableHorizonCount": 4,
+      "horizons": {
+        "T+1": {
+          "status": "AVAILABLE",
+          "sampleCount": 16,
+          "winRate": 56.3,
+          "avgReturnPct": 0.8,
+          "reason": null
+        },
+        "T+3": {
+          "status": "AVAILABLE",
+          "sampleCount": 15,
+          "winRate": 60,
+          "avgReturnPct": 1.7,
+          "reason": null
+        },
+        "T+5": {
+          "status": "AVAILABLE",
+          "sampleCount": 14,
+          "winRate": 57.1,
+          "avgReturnPct": 2,
+          "reason": null
+        },
+        "T+10": {
+          "status": "AVAILABLE",
+          "sampleCount": 10,
+          "winRate": 60,
+          "avgReturnPct": 2.7,
+          "reason": null
+        },
+        "T+20": {
+          "status": "NOT_DUE",
+          "sampleCount": null,
+          "winRate": null,
+          "avgReturnPct": null,
+          "reason": "Synthetic samples have not matured."
+        },
+        "T+30": {
+          "status": "NOT_DUE",
+          "sampleCount": null,
+          "winRate": null,
+          "avgReturnPct": null,
+          "reason": "Synthetic samples have not matured."
+        }
+      },
+      "source": "PostgreSQL synthetic read model"
+    },
+    {
+      "strategyId": "PB",
+      "strategyKey": "PB",
+      "name": "Pullback",
+      "modelVersion": "demo-1.0",
+      "dataDate": "2026-07-31",
+      "status": "AVAILABLE",
+      "sampleCount": 1,
+      "availableHorizonCount": 4,
+      "horizons": {
+        "T+1": {
+          "status": "AVAILABLE",
+          "sampleCount": 18,
+          "winRate": 55.6,
+          "avgReturnPct": 0.6,
+          "reason": null
+        },
+        "T+3": {
+          "status": "AVAILABLE",
+          "sampleCount": 17,
+          "winRate": 58.8,
+          "avgReturnPct": 1.1,
+          "reason": null
+        },
+        "T+5": {
+          "status": "AVAILABLE",
+          "sampleCount": 15,
+          "winRate": 60,
+          "avgReturnPct": 1.5,
+          "reason": null
+        },
+        "T+10": {
+          "status": "AVAILABLE",
+          "sampleCount": 11,
+          "winRate": 54.5,
+          "avgReturnPct": 1.9,
+          "reason": null
+        },
+        "T+20": {
+          "status": "NOT_DUE",
+          "sampleCount": null,
+          "winRate": null,
+          "avgReturnPct": null,
+          "reason": "Synthetic samples have not matured."
+        },
+        "T+30": {
+          "status": "NOT_DUE",
+          "sampleCount": null,
+          "winRate": null,
+          "avgReturnPct": null,
+          "reason": "Synthetic samples have not matured."
+        }
+      },
+      "source": "PostgreSQL synthetic read model"
+    },
+    {
+      "strategyId": "KD",
+      "strategyKey": "KD",
+      "name": "KD Recovery",
+      "modelVersion": "demo-1.0",
+      "dataDate": "2026-07-31",
+      "status": "AVAILABLE",
+      "sampleCount": 1,
+      "availableHorizonCount": 3,
+      "horizons": {
+        "T+1": {
+          "status": "AVAILABLE",
+          "sampleCount": 12,
+          "winRate": 50,
+          "avgReturnPct": 0.3,
+          "reason": null
+        },
+        "T+3": {
+          "status": "AVAILABLE",
+          "sampleCount": 11,
+          "winRate": 54.5,
+          "avgReturnPct": 0.7,
+          "reason": null
+        },
+        "T+5": {
+          "status": "AVAILABLE",
+          "sampleCount": 9,
+          "winRate": 55.6,
+          "avgReturnPct": 1,
+          "reason": null
+        },
+        "T+10": {
+          "status": "NOT_DUE",
+          "sampleCount": null,
+          "winRate": null,
+          "avgReturnPct": null,
+          "reason": "Synthetic samples have not matured."
+        },
+        "T+20": {
+          "status": "NOT_DUE",
+          "sampleCount": null,
+          "winRate": null,
+          "avgReturnPct": null,
+          "reason": "Synthetic samples have not matured."
+        },
+        "T+30": {
+          "status": "NOT_DUE",
+          "sampleCount": null,
+          "winRate": null,
+          "avgReturnPct": null,
+          "reason": "Synthetic samples have not matured."
+        }
+      },
+      "source": "PostgreSQL synthetic read model"
+    }
+  ],
+  "dailyObservation": [],
+  "entrySetups": [],
+  "stocks": {
+    "DEMO-A1": {
+      "code": "DEMO-A1",
+      "name": "Aster Systems",
+      "price": {
+        "close": 45.2,
+        "changePct": 1.35,
+        "volume": 2300,
+        "dataDate": "2026-07-31"
+      },
+      "technical": {
+        "MA5": 44.1,
+        "MA20": 42,
+        "RS20%": 4.8,
+        "state": "UPTREND"
+      },
+      "chip": {
+        "score": 2.8
+      },
+      "risk": {
+        "dataFreshness": "CURRENT"
+      },
+      "topicMain": "Edge AI",
+      "topicSub": null,
+      "topicMainWeight": 1,
+      "topicSubWeight": null,
+      "topicRelations": [
+        {
+          "stockCode": "DEMO-A1",
+          "stockName": "Aster Systems",
+          "topicSlug": "edge-ai",
+          "topicName": "Edge AI",
+          "groupName": "Digital Infrastructure",
+          "relationType": "PRIMARY",
+          "weight": 1,
+          "evidenceSummary": "Synthetic issuer profile links this demo company to edge computing."
+        },
+        {
+          "stockCode": "DEMO-A1",
+          "stockName": "Aster Systems",
+          "topicSlug": "digital-infrastructure",
+          "topicName": "Digital Infrastructure",
+          "groupName": null,
+          "relationType": "RELATED",
+          "weight": 0.5,
+          "evidenceSummary": null
+        }
+      ],
+      "quality": {
+        "synthetic": true
+      }
+    },
+    "DEMO-B2": {
+      "code": "DEMO-B2",
+      "name": "Boreal Energy",
+      "price": {
+        "close": 31,
+        "changePct": -0.64,
+        "volume": 1010,
+        "dataDate": "2026-07-31"
+      },
+      "technical": {
+        "MA5": 30.9,
+        "MA20": 30.5,
+        "RS20%": 0.9,
+        "state": "RANGE"
+      },
+      "chip": {
+        "score": 0.4
+      },
+      "risk": {
+        "dataFreshness": "CURRENT"
+      },
+      "topicMain": "Clean Energy",
+      "topicSub": null,
+      "topicMainWeight": 1,
+      "topicSubWeight": null,
+      "topicRelations": [
+        {
+          "stockCode": "DEMO-B2",
+          "stockName": "Boreal Energy",
+          "topicSlug": "clean-energy",
+          "topicName": "Clean Energy",
+          "groupName": "Sustainable Systems",
+          "relationType": "PRIMARY",
+          "weight": 1,
+          "evidenceSummary": "Synthetic issuer profile links this demo company to clean energy."
+        }
+      ],
+      "quality": {
+        "synthetic": true
+      }
+    },
+    "DEMO-C3": {
+      "code": "DEMO-C3",
+      "name": "Cipher Cloud",
+      "price": {
+        "close": 56.4,
+        "changePct": 1.08,
+        "volume": 2450,
+        "dataDate": "2026-07-31"
+      },
+      "technical": {
+        "MA5": 55.3,
+        "MA20": 53.4,
+        "RS20%": 5,
+        "state": "UPTREND"
+      },
+      "chip": {
+        "score": 3.2
+      },
+      "risk": {
+        "dataFreshness": "CURRENT"
+      },
+      "topicMain": "Cloud Security",
+      "topicSub": null,
+      "topicMainWeight": 1,
+      "topicSubWeight": null,
+      "topicRelations": [
+        {
+          "stockCode": "DEMO-C3",
+          "stockName": "Cipher Cloud",
+          "topicSlug": "cloud-security",
+          "topicName": "Cloud Security",
+          "groupName": "Digital Infrastructure",
+          "relationType": "PRIMARY",
+          "weight": 1,
+          "evidenceSummary": "Synthetic issuer profile links this demo company to cloud security."
+        }
+      ],
+      "quality": {
+        "synthetic": true
+      }
+    },
+    "DEMO-D4": {
+      "code": "DEMO-D4",
+      "name": "Delta Components",
+      "price": {
+        "close": null,
+        "changePct": null,
+        "volume": null,
+        "dataDate": "2026-07-31"
+      },
+      "technical": {
+        "MA5": 17,
+        "MA20": 17.4,
+        "RS20%": null,
+        "state": null
+      },
+      "chip": {
+        "score": null
+      },
+      "risk": {
+        "dataFreshness": "PARTIAL"
+      },
+      "topicMain": null,
+      "topicSub": "Edge AI",
+      "topicMainWeight": null,
+      "topicSubWeight": null,
+      "topicRelations": [
+        {
+          "stockCode": "DEMO-D4",
+          "stockName": "Delta Components",
+          "topicSlug": "edge-ai",
+          "topicName": "Edge AI",
+          "groupName": "Digital Infrastructure",
+          "relationType": "SECONDARY",
+          "weight": null,
+          "evidenceSummary": null
+        }
+      ],
+      "quality": {
+        "synthetic": true,
+        "nullExample": true
+      }
+    }
+  }
+}

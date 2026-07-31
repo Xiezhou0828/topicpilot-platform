@@ -16,7 +16,7 @@ unchanged.
 | Bundle validator/importer | Verifies hashes and references, then performs one transaction | PostgreSQL read model only |
 | PostgreSQL | Rebuildable normalized dimensions, snapshots, lineage, and analytics views | No formal-system writes |
 | FastAPI | Anonymous read API, health, readiness, and OpenAPI | No |
-| React frontend | Public synthetic-data experience | No |
+| Existing React frontend | Original TopicPilot UI; only the centralized snapshot adapter changes | No |
 | Power BI | Optional analysis client for the approved SQL views | No |
 
 ## Trust boundaries
@@ -39,7 +39,7 @@ flowchart TB
     subgraph T3["Public runtime boundary"]
       DB[("Synthetic PostgreSQL")]
       API["Read-only FastAPI"]
-      UI["Public React UI"]
+      UI["Existing TopicPilot React UI"]
       DB --> API --> UI
     end
 
@@ -51,6 +51,12 @@ flowchart TB
 Private files, private URLs, credentials, holdings, licensed quotes, and raw
 news text must not cross into the public repository or deployment. Production
 API requests never reach Google Sheets.
+
+The public platform does not introduce a replacement dashboard. The existing
+`/`, `/topics`, `/watchlist`, `/favorites`, `/guide`, `/studio`, and
+`/stocks/:code` routes remain the user interface. `SnapshotProvider` first
+requests `/api/v1/snapshot/latest` and uses the same-version synthetic bundle
+only as the labelled public fallback.
 
 ## Availability model
 
