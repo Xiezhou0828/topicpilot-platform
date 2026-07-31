@@ -281,7 +281,7 @@ def topic_rotation(
                 (array_agg(w.score ORDER BY w.data_date DESC))[1]
                   - (array_agg(w.score ORDER BY w.data_date ASC))[1] AS change,
                 count(*)::integer AS point_count,
-                :days::integer AS days
+                CAST(:days AS integer) AS days
             FROM windowed w
             JOIN topics t ON t.id = w.topic_id
             GROUP BY t.id, t.slug, t.name, t.group_name
