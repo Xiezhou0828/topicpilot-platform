@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+import json
 from functools import lru_cache
+from typing import Annotated
 
 from pydantic import Field, field_validator
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
 
 class Settings(BaseSettings):
@@ -18,7 +20,10 @@ class Settings(BaseSettings):
         default="postgresql+psycopg://topicpilot:topicpilot@localhost:5432/topicpilot",
         validation_alias="DATABASE_URL",
     )
-    cors_origins: tuple[str, ...] = ("http://localhost:3000", "http://localhost:5173")
+    cors_origins: Annotated[tuple[str, ...], NoDecode] = (
+        "http://localhost:3000",
+        "http://localhost:5173",
+    )
     freshness_days: int = Field(default=3, ge=0, le=30)
     log_level: str = "INFO"
 
@@ -26,6 +31,12 @@ class Settings(BaseSettings):
     @classmethod
     def parse_cors_origins(cls, value: object) -> object:
         if isinstance(value, str):
+            raw = value.strip()
+            if raw.startswith("["):
+                decoded = json.loads(raw)
+                if not isinstance(decoded, list):
+                    raise ValueError("CORS origins JSON must be an array")
+                return tuple(str(item).strip() for item in decoded if str(item).strip())
             return tuple(item.strip() for item in value.split(",") if item.strip())
         return value
 
