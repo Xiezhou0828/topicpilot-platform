@@ -45,7 +45,7 @@ export function AccountMenu() {
 }
 
 export function PrimaryNav({ currentPath }: { currentPath: string }) {
-  return <header className="tp-primary-nav"><Link href="/" className="tp-wordmark"><span className="tp-mark">T</span><span>TopicPilot</span></Link><nav className="tp-nav-links" aria-label="主要導覽">{navItems.map(([label, href]) => <Link key={href} href={href} className={currentPath === href ? "is-active" : ""}>{label}</Link>)}</nav><div className="tp-header-actions"><GlobalSearchShell /><NotificationPlaceholder /><AccountMenu /></div></header>;
+  return <header className="tp-primary-nav"><div className="tp-header-left"><Link href="/" className="tp-wordmark"><span className="tp-mark">T</span><span>TopicPilot</span></Link><nav className="tp-nav-links" aria-label="主要導覽">{navItems.map(([label, href]) => <Link key={href} href={href} className={currentPath === href ? "is-active" : ""}>{label}</Link>)}</nav></div><div className="tp-header-right"><GlobalSearchShell /><NotificationPlaceholder /><AccountMenu /></div></header>;
 }
 
 export function AppShell({ children, currentPath }: { children: React.ReactNode; currentPath: string }) {

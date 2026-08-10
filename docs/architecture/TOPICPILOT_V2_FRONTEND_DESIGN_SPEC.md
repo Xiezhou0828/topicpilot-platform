@@ -58,24 +58,24 @@ Secondary or hidden surfaces:
 - System policy, Leader Set, data-source, and model transparency details belong under settings, research, or admin-style secondary surfaces.
 - The existing React customer UI remains the customer surface; this blueprint does not propose a replacement frontend.
 
-### Global Header Freeze — FROZEN / PM-APPROVED / TASK-001C
+### Global Header Information Architecture — FROZEN / PM-APPROVED / TASK-FE-HEADER-002
 
-The V2 customer frontend uses one shared desktop App Shell header on every V2 customer route. The header is a single horizontal workspace bar; it must not be split into a primary navigation row plus a second utility/search row.
+The V2 customer frontend uses one shared desktop App Shell header on every V2 customer route. The header is a single horizontal workspace bar divided into two information groups: a **Left Group** and a **Right Group**. It must not be split into a primary navigation row plus a second utility/search row.
 
 Header layout, from left to right:
 
 ```text
-TopicPilot | 今日市場  題材  股票  收藏  機會  AI研究室 | 搜尋股票、題材...  通知  帳號
+[T] TopicPilot  今日市場  題材  股票  收藏  機會  AI研究室       搜尋股票、題材...  通知  帳號
 ```
 
-- **Logo:** `TopicPilot` wordmark on the left.
-- **Desktop navigation:** the complete frozen IA remains expanded in the center: `今日市場`, `題材`, `股票`, `收藏`, `機會`, `AI研究室`. Active navigation uses `#8A7462`; hover is a very light warm-neutral treatment.
-- **Global Search:** lives inside the shared header on the right, uses a white 260–300px field with placeholder `搜尋股票、題材...`, preserves `Ctrl+K`, and is a dummy shell only until a search API contract is approved. The shell is extensible to stocks, stock codes, and topics.
+- **Left Group:** contains the `TopicPilot` wordmark and the complete expanded primary navigation: `今日市場`, `題材`, `股票`, `收藏`, `機會`, `AI研究室`. Logo and navigation are one information group and stay naturally close to the left; navigation is not centered as a SaaS or marketing-site layout. The logo is weight 700, navigation is weight 500, and the active item is weight 600 with `#8A7462`.
+- **Right Group:** contains Global Search, Notification, and Account; the group stays aligned to the right with the search control shortened to a balanced 260–300px range.
+- **Global Search:** lives inside the Right Group, uses a white 260–300px field with placeholder `搜尋股票、題材...`, preserves `Ctrl+K`, and is a dummy shell only until a search API contract is approved. The shell is extensible to stocks, stock codes, and topics.
 - **Notification:** the Bell remains in the header as an outline control. Its current panel is a placeholder for future topic warming/cooling, S/A/B, and favorite reminders; no notification API is connected.
 - **Account:** the header uses an outline account control. Its placeholder dropdown contains `登入 / 建立帳號`, `會員方案`, `說明中心`, `意見回饋`, and `Settings`. Login and account APIs are deferred.
 - **Removed:** the desktop hamburger is not part of the V2 customer header. Settings and help are integrated into the Account menu; duplicate search, notification, settings, and help bars below the header are removed.
 - **Freshness boundary:** `盤中更新`, `尚未連接資料`, and other freshness/data-state presentation remains inside 今日市場 content. It is not promoted into a global header status.
-- **Rhythm:** the header remains a consistent 72px desktop bar; V2 page content begins with a compact vertical gap so the workspace reads like a financial tool rather than a landing page.
+- **Rhythm:** the header remains a consistent 72px desktop bar; logo-to-navigation spacing is compact and natural, navigation item spacing remains comfortable, and V2 page content begins with a compact vertical gap so the workspace reads like a financial tool rather than a landing page.
 - **Style:** preserve the Modern Financial Workspace direction: light mode, warm off-white page, white surfaces, `#8A7462` brand, subtle borders, restrained hover, and no neon, gradient, glass, glow, or heavy shadow.
 
 ### DEFERRED / FUTURE
