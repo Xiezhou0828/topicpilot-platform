@@ -1,5 +1,6 @@
 import rawSnapshotJson from "./web_snapshot.json";
 import type { RawSnapshot, RawStock, RawTopic } from "./types";
+import { getPreviewTopicIdentities, getPreviewTopicIdentity, groupNameLabel, readableFreshness, readableTopicState, topicNameLabel } from "./topic-preview";
 
 export type TopicSource = "api" | "synthetic-snapshot" | "unavailable";
 
@@ -58,15 +59,6 @@ type SyntheticRelation = {
   weight: number | null;
 };
 
-const STATE_LABELS: Record<string, string> = {
-  BROAD_STRENGTH: "全面走強",
-  BROAD: "全面走強",
-  LEADER_FIRST: "龍頭先行",
-  WARMING: "急升溫",
-  COOLING: "退潮",
-  DIVERGENCE: "高檔分歧",
-};
-
 const ROLE_LABELS: Record<string, "代表股" | "核心股" | "關聯股"> = {
   PRIMARY: "代表股",
   REPRESENTATIVE: "代表股",
@@ -85,9 +77,7 @@ function apiBaseUrl(): string | null {
 }
 
 function readableState(value: string | null | undefined): string {
-  if (!value) return "資料待更新";
-  const normalized = value.trim();
-  return STATE_LABELS[normalized.toUpperCase()] ?? normalized;
+  return readableTopicState(value);
 }
 
 function roleFor(value: string | null | undefined): "代表股" | "核心股" | "關聯股" {
@@ -95,7 +85,12 @@ function roleFor(value: string | null | undefined): "代表股" | "核心股" | 
 }
 
 function summaryFromApi(item: ApiTopicSummary): TopicSummary {
-  return { ...item, readableState: readableState(item.strengthState) };
+  return {
+    ...item,
+    name: topicNameLabel(item.slug, item.name),
+    groupName: groupNameLabel(item.groupName),
+    readableState: readableState(item.strengthState),
+  };
 }
 
 function rawTopicSlug(topic: RawTopic): string | null {
@@ -108,8 +103,8 @@ function rawTopicSummary(topic: RawTopic): TopicSummary | null {
   if (!slug) return null;
   return {
     slug,
-    name: topic.name,
-    groupName: topic.group ?? null,
+    name: topicNameLabel(slug, topic.name),
+    groupName: groupNameLabel(topic.group ?? null),
     topicType: topic.type ?? "UNKNOWN",
     enabled: true,
     dataDate: null,
@@ -127,9 +122,27 @@ function snapshot(): RawSnapshot {
 }
 
 function syntheticTopics(): TopicSummary[] {
-  return (snapshot().topics ?? [])
+  const snapshotTopics = (snapshot().topics ?? [])
     .map(rawTopicSummary)
     .filter((item): item is TopicSummary => item !== null);
+  const known = new Set(snapshotTopics.map((item) => item.slug));
+  const previewTopics = getPreviewTopicIdentities()
+    .filter(([slug]) => !known.has(slug))
+    .map(([slug, item]) => ({
+      slug,
+      name: item.name,
+      groupName: item.groupName,
+      topicType: "PREVIEW",
+      enabled: true,
+      dataDate: null,
+      score: item.score,
+      grade: item.grade,
+      strengthState: item.state,
+      readableState: item.state,
+      coveragePct: null,
+      constituentCount: item.constituents.length,
+    }));
+  return [...snapshotTopics, ...previewTopics];
 }
 
 function syntheticDetail(slug: string): TopicDetail | null {
@@ -138,6 +151,18 @@ function syntheticDetail(slug: string): TopicDetail | null {
   if (!summary) return null;
   const relations = (raw.topicRelations ?? []) as unknown as SyntheticRelation[];
   const stocks = raw.stocks ?? {};
+  const previewIdentity = getPreviewTopicIdentity(slug);
+  if (previewIdentity) {
+    return {
+      ...summary,
+      constituents: previewIdentity.constituents.map((item) => ({
+        ...item,
+        role: roleFor(item.relationType),
+        dataDate: null,
+        dataFreshness: "Preview",
+      })),
+    };
+  }
   return {
     ...summary,
     constituents: relations.filter((item) => item.topicSlug === slug).map((item) => {
@@ -152,7 +177,7 @@ function syntheticDetail(slug: string): TopicDetail | null {
         price: typeof price.close === "number" ? price.close : null,
         changePct: typeof price.changePct === "number" ? price.changePct : null,
         dataDate: typeof price.dataDate === "string" ? price.dataDate : null,
-        dataFreshness: stock?.risk?.dataFreshness ?? null,
+        dataFreshness: readableFreshness(stock?.risk?.dataFreshness ?? null),
       };
     }),
   };
@@ -204,6 +229,8 @@ export async function fetchTopic(slug: string): Promise<TopicResource<TopicDetai
     error: null,
     data: {
       ...detail,
+      name: topicNameLabel(detail.slug, detail.name),
+      groupName: groupNameLabel(detail.groupName),
       readableState: readableState(detail.strengthState),
       constituents: detail.constituents.map((item) => ({
         ...item,
@@ -226,5 +253,5 @@ export function scoreLabel(score: number | null): string {
 }
 
 export function sourceLabel(source: TopicSource): string {
-  return source === "api" ? "FastAPI / PostgreSQL read model" : source === "synthetic-snapshot" ? "公開合成 snapshot" : "資料來源未連線";
+  return source === "api" ? "正式 API" : source === "synthetic-snapshot" ? "Preview（等待正式 Read Model）" : "資料來源未連線";
 }

@@ -629,6 +629,14 @@ Lifecycle history, topic events, hierarchy ancestry beyond the available group f
 
 The implementation keeps the Modern Financial Workspace language: warm off-white page background, white surfaces, warm-gray borders, restrained shadows, `#8A7462` brand accents, warm-neutral role/grade chips, and Taiwan red/green only for actual constituent price movement when the snapshot supplies it. Desktop is primary; the list, unified role table, and `560px` drawer degrade responsively without changing the data contract.
 
+### 23.10 TASK-FE-003B V2 Preview Mode
+
+When a formal Topic read model exists, the frontend must use it for topic identity, name, score/strength, grade, readable state, data date, constituent count, and constituent rows. Missing read models do not block product-shape validation: lifecycle, summary copy, topic events, curated news, related topics, and heatmap layout may render a clearly labelled `Preview · 等待正式 Read Model` surface using frontend preview data.
+
+Preview data is additive and must never overwrite formal API fields. Every preview section carries its own badge; the page must not collapse into repeated generic `資料待更新` blocks. `Coming Soon` is reserved for a surface whose intended product shape is not yet known. Preview Heatmap/Treemap rectangles use current strength as an approximate visual input and Grade as a restrained neutral color layer; this is presentation-only preview behavior and does not define a business score or production ranking rule.
+
+Frontend labels must map backend English state, freshness, group, and topic names to the Chinese V2 vocabulary at the presentation boundary. Raw technical codes such as `WARMING`, `CURRENT`, `Breadth`, `Leadership`, and `Consensus` must not appear in the customer-facing Topic List or Topic Detail.
+
 ## 24. PM freeze amendment: Opportunity page / 機會
 
 **Decision status:** `FROZEN / PM-APPROVED`  
