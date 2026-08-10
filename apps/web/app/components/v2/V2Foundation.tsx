@@ -31,7 +31,7 @@ export function SearchInput({ placeholder = "搜尋題材、股票", ...props }:
 
 export function GlobalSearchShell() {
   const [open, setOpen] = useState(false);
-  return <div className="tp-global-search"><button className="tp-search-trigger" aria-expanded={open} aria-haspopup="dialog" onClick={() => setOpen(true)}><Search size={18} aria-hidden="true" /><span>搜尋股票、題材...</span><kbd>Ctrl K</kbd></button>{open && <div className="tp-search-popover" role="dialog" aria-label="全域搜尋"><SearchInput autoFocus placeholder="搜尋股票、題材..." /><p className="tp-muted">Dummy Search：股票、股號與題材搜尋將於後續串接 API。</p><button className="tp-close" onClick={() => setOpen(false)}>關閉</button></div>}</div>;
+  return <div className="tp-global-search"><button className="tp-search-trigger" aria-expanded={open} aria-haspopup="dialog" onClick={() => setOpen(true)}><Search size={18} aria-hidden="true" /><span>搜尋股票、題材...</span><kbd>Ctrl+K</kbd></button>{open && <div className="tp-search-popover" role="dialog" aria-label="全域搜尋"><SearchInput autoFocus placeholder="搜尋股票、題材..." /><p className="tp-muted">Dummy Search：股票、股號與題材搜尋將於後續串接 API。</p><button className="tp-close" onClick={() => setOpen(false)}>關閉</button></div>}</div>;
 }
 
 export function NotificationPlaceholder() {
