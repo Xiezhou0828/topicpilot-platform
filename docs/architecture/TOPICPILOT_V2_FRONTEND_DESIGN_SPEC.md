@@ -120,7 +120,7 @@ Home is intraday-first. Pre-market and post-market variants are deferred. The fi
 Sections, in order:
 
 1. **市場概況** — 一張橫向 Summary Card，呈現加權指數、OTC 指數、成交金額、上漲／下跌／平盤家數、漲停／跌停家數與更新時間。
-2. **今日市場重點** — 只有一段 concise deterministic summary。它不是新聞流，也不是 AI 對話或長文章。
+2. **今日市場重點** — 以 3–4 點條列呈現 concise deterministic summary，底部補一行低存在感的「今日一句話」。它不是新聞流，也不是 AI 對話或長文章。
 3. **今日主線 TOP3** — 固定三張可點擊題材卡，顯示名稱、S/A/B/D 等級與一句可讀狀態；不放股票、新聞或 Leader Table。
 4. **盤中重要事件** — 只記錄有意義的題材狀態轉換，例如升溫、分歧、退出主線；不記錄每分鐘流水帳。
 5. **快速升溫／快速退潮** — 左右兩欄，各最多三個題材，回答資金目前正在移動的方向。
@@ -476,7 +476,7 @@ The Home page is a fixed market-navigation workspace. The final V2 order is:
 1. **Shared App Shell header**
 2. **Page Header** — `今日市場`、副標與頁面 freshness/data state。
 3. **市場概況** — 加權指數、OTC 指數、成交金額、上漲／下跌／平盤、漲停／跌停、更新時間。
-4. **今日市場重點** — a single concise deterministic market reading。
+4. **今日市場重點** — a concise deterministic market reading presented as 3–4 bullets, followed by a low-presence one-line research focus。
 5. **今日主線 TOP3** — exactly three current themes, with grade and readable state; each routes to 題材。
 6. **盤中重要事件 Timeline** — meaningful topic state transitions only。
 7. **快速升溫／快速退潮** — two concise columns, at most three topics per side。

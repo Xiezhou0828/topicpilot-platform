@@ -11,8 +11,6 @@ import { useSnapshot } from "../../lib/snapshot-store";
 import type { MarketIndexView } from "../../lib/types";
 import {
   Card,
-  DataState,
-  Freshness,
   GradeChip,
   PageContainer,
   RoleChip,
@@ -138,11 +136,16 @@ export default function TodayMarketPage() {
     ...mockMarketMetrics.slice(6, 8),
     asOf ? { ...mockMarketMetrics[8], value: asOf, source: "live", note: "後端更新時間" } : mockMarketMetrics[8],
   ];
-  const freshnessState = !isSyntheticPreview && status.dataState === "LIVE" ? "盤中更新" : !isSyntheticPreview && status.dataState === "SNAPSHOT" ? "盤後更新" : "資料待更新";
+  const marketSession = bundle.qualityPanelData.freshness.marketSession;
+  const freshnessLabel = !isSyntheticPreview && status.dataState === "LIVE" && marketSession === "OPEN"
+    ? "盤中更新"
+    : !isSyntheticPreview && status.dataState === "SNAPSHOT"
+      ? "盤後更新"
+      : "資料待更新";
   return (
     <PageContainer className="tp-home-page-container" title="今日市場" description="從市場脈動開始，整理今天值得繼續研究的方向。">
       <div className="tp-home-page-status" aria-label="市場資料狀態">
-        {freshnessState === "資料待更新" ? <DataState state="資料待更新" /> : <Freshness state={freshnessState} asOf={asOf ?? "資料待更新"} />}
+        <span className="tp-home-live-status"><span className={`tp-home-live-status-dot tp-home-live-status-dot--${freshnessLabel === "盤中更新" ? "live" : freshnessLabel === "盤後更新" ? "after" : "pending"}`} aria-hidden="true" />{freshnessLabel}<time>{asOf ?? "待確認"}</time></span>
       </div>
 
       <div className="tp-home-content">
@@ -160,13 +163,19 @@ export default function TodayMarketPage() {
 
         <section className="tp-home-section" aria-labelledby="market-story-title">
           <Card className="tp-home-story-card">
-            <SectionHeading id="market-story-title" eyebrow="TODAY'S READ" title="今日市場重點" />
-            <p className="tp-home-story">AI伺服器仍為市場主線，BBU 高檔開始分歧，機器人盤中快速升溫；今天的研究重心從主線延伸到資金是否持續擴散。</p>
+            <SectionHeading id="market-story-title" title="今日市場重點" />
+            <ul className="tp-home-story-list">
+              <li>AI伺服器仍為市場主線。</li>
+              <li>BBU開始高檔分歧。</li>
+              <li>機器人盤中快速升溫。</li>
+              <li>今日觀察：AI是否開始向其他族群擴散。</li>
+            </ul>
+            <div className="tp-home-one-line"><span>今日一句話</span><strong>今天研究重心：觀察 AI 是否開始擴散。</strong></div>
           </Card>
         </section>
 
         <section className="tp-home-section" aria-labelledby="mainline-title">
-          <SectionHeading id="mainline-title" eyebrow="TOP 3" title="今日主線" description="先看最值得深入研究的三個題材，再進入題材頁查看完整脈絡。" link={{ label: "查看全部題材", href: "/topics" }} />
+          <SectionHeading id="mainline-title" title="今日主線" description="先看最值得深入研究的三個題材，再進入題材頁查看完整脈絡。" link={{ label: "查看全部題材", href: "/topics" }} />
           <div className="tp-home-mainline-grid">
             {mainlines.map((topic, index) => (
               <Link href="/topics" className="tp-home-mainline-card" key={topic.name}>
@@ -182,7 +191,7 @@ export default function TodayMarketPage() {
 
         <section className="tp-home-section" aria-labelledby="events-title">
           <Card className="tp-home-events-card">
-            <SectionHeading id="events-title" eyebrow="INTRADAY SIGNALS" title="盤中重要事件" description="只記錄真正值得注意的題材狀態轉換。" />
+            <SectionHeading id="events-title" title="盤中重要事件" description="只記錄真正值得注意的題材狀態轉換。" />
             <ol className="tp-home-events">
               {events.map((item) => (
                 <li key={`${item.time}-${item.topic}`}>
@@ -196,7 +205,7 @@ export default function TodayMarketPage() {
         </section>
 
         <section className="tp-home-section" aria-labelledby="rotation-title">
-          <SectionHeading id="rotation-title" eyebrow="CAPITAL ROTATION" title="快速升溫／快速退潮" description="用精簡清單看資金正在往哪裡移動。" />
+          <SectionHeading id="rotation-title" title="快速升溫／快速退潮" description="用精簡清單看資金正在往哪裡移動。" />
           <div className="tp-home-rotation-grid">
             <Card className="tp-home-rotation-card tp-home-rotation-card--warming">
               <div className="tp-home-rotation-heading"><TrendingUp size={18} aria-hidden="true" /><h3>快速升溫</h3><span>3 個題材</span></div>
@@ -215,7 +224,7 @@ export default function TodayMarketPage() {
 
         <section className="tp-home-section" aria-labelledby="opportunities-title">
           <Card className="tp-home-opportunities-card">
-            <SectionHeading id="opportunities-title" eyebrow="RESEARCH QUEUE" title="今日機會" description="只呈現研究入口，不在首頁完成推薦分析。" link={{ label: "查看更多", href: "/opportunities" }} />
+            <SectionHeading id="opportunities-title" title="今日機會" description="只呈現研究入口，不在首頁完成推薦分析。" link={{ label: "查看更多", href: "/opportunities" }} />
             <div className="tp-home-opportunity-list">
               {opportunities.map((item) => <Link href="/opportunities" key={item.name}><div><strong>{item.name}</strong><span>{item.note}</span></div><b>{item.count}</b><ChevronRight size={16} aria-hidden="true" /></Link>)}
             </div>
