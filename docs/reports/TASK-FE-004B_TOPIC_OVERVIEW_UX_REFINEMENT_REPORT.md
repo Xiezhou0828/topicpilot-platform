@@ -1,6 +1,6 @@
 # TASK-FE-004B｜Topic Overview UX Refinement V2 Report
 
-**Status:** Implemented; validation and deployment pending
+**Status:** Implemented; final validation and deployment pending
 **Route:** `/topics`
 **Product role:** Market Scan first; Topic Detail remains the research surface.
 
@@ -8,7 +8,7 @@
 
 - Removed the Topic Overview eyebrow and explanatory 10-second teaching copy from the page header.
 - Removed the duplicate local search from the page header. Global Search remains in the shared App Shell.
-- Moved `全部 / 走強 / 走弱` into the `今日題材地圖` header row and kept the Preview badge at the far right.
+- Moved `全部 / 轉強 / 轉弱` into the `今日題材地圖` header row and kept the Preview badge at the far right.
 - Removed the Market Rotation section from Topic Overview because its event-summary role overlaps with Home's intraday events.
 - Reworked the Kanban into a fixed-height Market Lane with compact scrollable lane bodies.
 - Changed lane labels to `S｜市場主線`, `A｜重點觀察`, `B｜輪動題材`, and `D｜等待確認`.

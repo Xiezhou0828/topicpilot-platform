@@ -7,7 +7,7 @@ import { fetchTopics, scoreLabel, type TopicResource, type TopicSummary } from "
 import { getTopicOverviewLifecycle, getTopicOverviewMeta, PREVIEW_LABEL, type TopicGrade, type TopicLifecycleStage, type TopicOverviewLifecycle, type TopicOverviewMeta } from "../../lib/topic-preview";
 import { AppShell, Card, DataState, EmptyState, PageContainer, Skeleton } from "./V2Foundation";
 
-type DirectionFilter = "全部" | "走強" | "走弱";
+type DirectionFilter = "全部" | "轉強" | "轉弱";
 type GradeFilter = "全部" | TopicGrade;
 type OverviewTopic = TopicSummary & { meta: TopicOverviewMeta };
 type LifecycleTopic = { topic: OverviewTopic; lifecycle: TopicOverviewLifecycle };
@@ -30,7 +30,7 @@ function isMarketTopic(topic: TopicSummary): boolean {
 }
 
 function filterByDirection(topic: OverviewTopic, filter: DirectionFilter): boolean {
-  return filter === "全部" || (filter === "走強" ? topic.meta.direction === "up" : topic.meta.direction === "down");
+  return filter === "全部" || (filter === "轉強" ? topic.meta.direction === "up" : topic.meta.direction === "down");
 }
 
 function PreviewBadge() {
@@ -127,7 +127,7 @@ export default function TopicListPage() {
     {!resource && <Card className="tp-topic-data-card"><div className="tp-topic-loading-row"><Skeleton /><Skeleton /><Skeleton /></div><Skeleton className="tp-topic-loading-table" /></Card>}
     {resource?.data && <>
       <section className="tp-topic-kanban-section" aria-labelledby="topic-kanban-title">
-        <div className="tp-topic-section-heading tp-topic-map-heading"><div><h2 id="topic-kanban-title">今日題材地圖</h2></div><div className="tp-topic-map-tools"><div className="tp-topic-filter-group" role="group" aria-label="今日方向篩選">{(["全部", "走強", "走弱"] as DirectionFilter[]).map((item) => <button type="button" key={item} className={directionFilter === item ? "is-active" : ""} onClick={() => setDirectionFilter(item)}>{item}</button>)}</div>{previewMode ? <PreviewBadge /> : <DataState state="AVAILABLE" />}</div></div>
+        <div className="tp-topic-section-heading tp-topic-map-heading"><div><h2 id="topic-kanban-title">今日題材地圖</h2></div><div className="tp-topic-map-tools"><div className="tp-topic-filter-group" role="group" aria-label="今日方向篩選">{(["全部", "轉強", "轉弱"] as DirectionFilter[]).map((item) => <button type="button" key={item} className={directionFilter === item ? "is-active" : ""} onClick={() => setDirectionFilter(item)}>{item}</button>)}</div>{previewMode ? <PreviewBadge /> : <DataState state="AVAILABLE" />}</div></div>
         <div className="tp-topic-kanban-board">{lanes.map((lane) => <section key={lane.grade} className={`tp-topic-kanban-lane tp-topic-kanban-lane--${lane.grade.toLowerCase()}`} aria-labelledby={`topic-lane-${lane.grade}`}>
           <header className="tp-topic-kanban-lane-header"><strong id={`topic-lane-${lane.grade}`}>{lane.label}</strong></header>
           <div className="tp-topic-kanban-lane-cards">{lane.topics.length ? lane.topics.map((topic) => <KanbanTopicCard topic={topic} key={topic.slug} />) : <p className="tp-topic-kanban-empty">—</p>}</div>
