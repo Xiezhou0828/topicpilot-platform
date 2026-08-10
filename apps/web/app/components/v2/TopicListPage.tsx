@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ChevronDown, ChevronRight, CircleHelp, Layers3, Search, Star } from "lucide-react";
+import { Activity, ChevronDown, ChevronRight, CircleHelp, Crown, Sprout, TrendingDown, TrendingUp, type LucideIcon, Layers3, Search, Star } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { fetchTopics, scoreLabel, type TopicResource, type TopicSummary } from "../../lib/topic-api";
 import { getTopicOverviewLifecycle, getTopicOverviewMeta, PREVIEW_LABEL, type TopicGrade, type TopicLifecycleStage, type TopicOverviewLifecycle, type TopicOverviewMeta } from "../../lib/topic-preview";
@@ -21,14 +21,22 @@ const GRADE_LANES: Array<{ grade: TopicGrade; label: string }> = [
 
 type DisplayLifecycleStage = "萌芽" | "發酵" | "主升" | "成熟" | "衰退";
 
-const LIFECYCLE_STAGES: DisplayLifecycleStage[] = ["萌芽", "發酵", "主升", "成熟", "衰退"];
+const LIFECYCLE_STAGES: Array<{ stage: DisplayLifecycleStage; hint: string; icon: LucideIcon }> = [
+  { stage: "萌芽", hint: "開始出現反應", icon: Sprout },
+  { stage: "發酵", hint: "關注度擴大", icon: Activity },
+  { stage: "主升", hint: "市場主流", icon: TrendingUp },
+  { stage: "成熟", hint: "高檔整理", icon: Crown },
+  { stage: "衰退", hint: "熱度下降", icon: TrendingDown },
+];
+
+const MAX_VISIBLE_LIFECYCLE_TOPICS = 4;
 
 const LIFECYCLE_HELP = [
-  { stage: "萌芽", description: "市場剛開始討論，通常只有少數股票反應。" },
-  { stage: "發酵", description: "題材開始擴散，更多股票加入。" },
-  { stage: "主升", description: "市場主流形成，資金集中。" },
-  { stage: "成熟", description: "進入高檔整理，市場開始分歧。" },
-  { stage: "衰退", description: "市場熱度下降，等待下一輪循環。" },
+  { stage: "萌芽", description: "題材開始出現市場反應，但尚未形成廣泛共識。" },
+  { stage: "發酵", description: "關注度與資金反應開始擴大，題材逐漸形成。" },
+  { stage: "主升", description: "題材形成明顯市場主線，代表股與相關股票同步活躍。" },
+  { stage: "成熟", description: "題材仍具有強度，但進入高檔或輪動整理階段。" },
+  { stage: "衰退", description: "市場關注與資金反應下降，題材影響力逐步減弱。" },
 ] as const;
 
 function gradeClass(grade: string | null): string {
@@ -43,10 +51,10 @@ function filterByDirection(topic: OverviewTopic, filter: DirectionFilter): boole
   return filter === "全部" || (filter === "轉強" ? topic.meta.direction === "up" : topic.meta.direction === "down");
 }
 
-function displayLifecycleStage(stage: TopicLifecycleStage): DisplayLifecycleStage {
+function displayLifecycleStage(stage: TopicLifecycleStage): DisplayLifecycleStage | null {
   if (stage === "高檔整理") return "成熟";
   if (stage === "退潮") return "衰退";
-  if (stage === "觀察") return "萌芽";
+  if (stage === "觀察") return null;
   return stage;
 }
 
@@ -58,13 +66,12 @@ function KanbanTopicCard({ topic }: { topic: OverviewTopic }) {
   const grade = topic.meta.laneGrade;
   return <Link href={`/topics/${topic.slug}`} className={`tp-topic-kanban-card tp-topic-direction--${topic.meta.direction} ${gradeClass(grade)}`}>
     <span className="tp-topic-direction-rail" aria-hidden="true" />
-    <span className="tp-topic-kanban-card-top"><strong>{topic.name}</strong><span className="tp-topic-direction-mark" aria-label={`今日方向 ${topic.meta.directionLabel}`}>{topic.meta.directionSymbol}</span></span>
-    <span className="tp-topic-kanban-score"><b>{scoreLabel(topic.score)}</b></span>
+    <span className="tp-topic-kanban-card-row"><strong>{topic.name}</strong><span className="tp-topic-kanban-card-meta"><b className="tp-topic-kanban-score-value">{scoreLabel(topic.score)}</b><span className="tp-topic-direction-mark" aria-label={`今日方向 ${topic.meta.directionLabel}`}>{topic.meta.directionSymbol}</span></span></span>
   </Link>;
 }
 
 function LifecycleChip({ item }: { item: LifecycleTopic }) {
-  return <Link href={`/topics/${item.topic.slug}`} className={`tp-topic-lifecycle-chip tp-topic-direction--${item.topic.meta.direction}`}>
+  return <Link href={`/topics/${item.topic.slug}`} className="tp-topic-lifecycle-chip">
     <span><b>{item.topic.name}</b><small>Day {item.lifecycle.day}</small></span>
     <strong>{scoreLabel(item.topic.score)}</strong>
   </Link>;
@@ -72,22 +79,24 @@ function LifecycleChip({ item }: { item: LifecycleTopic }) {
 
 function TopicLifecycle({ topics }: { topics: OverviewTopic[] }) {
   const [showHelp, setShowHelp] = useState(false);
+  const [expandedStage, setExpandedStage] = useState<DisplayLifecycleStage | null>(null);
   const stageMap = useMemo(() => {
-    const map = new Map<DisplayLifecycleStage, LifecycleTopic[]>(LIFECYCLE_STAGES.map((stage) => [stage, []]));
+    const map = new Map<DisplayLifecycleStage, LifecycleTopic[]>(LIFECYCLE_STAGES.map(({ stage }) => [stage, []]));
     topics.forEach((topic) => {
       const lifecycle = getTopicOverviewLifecycle(topic.slug);
       const stage = displayLifecycleStage(lifecycle.stage);
-      map.set(stage, [...(map.get(stage) ?? []), { topic, lifecycle }]);
+      if (stage) map.set(stage, [...(map.get(stage) ?? []), { topic, lifecycle }]);
     });
     return map;
   }, [topics]);
 
   return <section className="tp-topic-lifecycle-section" aria-labelledby="topic-lifecycle-title">
-    <div className="tp-topic-lifecycle-heading"><div className="tp-topic-lifecycle-heading-main"><h2 id="topic-lifecycle-title">題材生命週期</h2><span className="tp-topic-lifecycle-help-wrap"><button type="button" className="tp-topic-lifecycle-help-trigger" aria-label="題材生命週期說明" aria-expanded={showHelp} aria-haspopup="dialog" onClick={() => setShowHelp((value) => !value)}><CircleHelp size={18} aria-hidden="true" /></button>{showHelp && <div className="tp-topic-lifecycle-help" role="dialog" aria-label="題材生命週期說明"><strong>題材生命週期說明</strong>{LIFECYCLE_HELP.map((item) => <p key={item.stage}><b>{item.stage}</b><span>{item.description}</span></p>)}</div>}</span></div><PreviewBadge /></div>
-    <div className="tp-topic-lifecycle-track">{LIFECYCLE_STAGES.map((stage) => <section className="tp-topic-lifecycle-stage" key={stage} aria-labelledby={`topic-stage-${stage}`}>
-      <h3 id={`topic-stage-${stage}`}><span aria-hidden="true" />{stage}</h3>
-      <div className="tp-topic-lifecycle-items">{stageMap.get(stage)?.length ? stageMap.get(stage)?.map((item) => <LifecycleChip item={item} key={item.topic.slug} />) : <span className="tp-topic-lifecycle-empty">—</span>}</div>
-    </section>)}</div>
+    <div className="tp-topic-lifecycle-heading"><div className="tp-topic-lifecycle-heading-main"><h2 id="topic-lifecycle-title">題材生命週期</h2><span className="tp-topic-lifecycle-help-wrap"><button type="button" className="tp-topic-lifecycle-help-trigger" aria-label="題材生命週期說明" aria-expanded={showHelp} aria-haspopup="dialog" onClick={() => setShowHelp((value) => !value)}><CircleHelp size={18} aria-hidden="true" /></button>{showHelp && <div className="tp-topic-lifecycle-help" role="dialog" aria-label="題材生命週期說明"><strong>題材生命週期說明</strong>{LIFECYCLE_HELP.map((item) => <p key={item.stage}><b>{item.stage}</b><span>{item.description}</span></p>)}<p><b>Day N</b><span>代表題材目前連續停留於此生命階段的天數。</span></p><p className="tp-topic-lifecycle-help-note">這只是市場狀態描述，不是買賣建議。</p></div>}</span></div><PreviewBadge /></div>
+    <div className="tp-topic-lifecycle-track">{LIFECYCLE_STAGES.map(({ stage, hint, icon: StageIcon }) => { const items = stageMap.get(stage) ?? []; const isExpanded = expandedStage === stage; const visibleItems = isExpanded ? items : items.slice(0, MAX_VISIBLE_LIFECYCLE_TOPICS); const remaining = items.length - visibleItems.length; return <section className={`tp-topic-lifecycle-stage ${isExpanded ? "is-expanded" : ""}`} key={stage} aria-labelledby={`topic-stage-${stage}`}>
+      <header className="tp-topic-lifecycle-stage-header"><h3 id={`topic-stage-${stage}`}><StageIcon size={17} strokeWidth={1.8} aria-hidden="true" /><span>{stage}</span></h3><small>{hint}</small></header>
+      <div className="tp-topic-lifecycle-items">{visibleItems.length ? visibleItems.map((item) => <LifecycleChip item={item} key={item.topic.slug} />) : <span className="tp-topic-lifecycle-empty">—</span>}</div>
+      {items.length > MAX_VISIBLE_LIFECYCLE_TOPICS && <button type="button" className="tp-topic-lifecycle-expand" onClick={() => setExpandedStage(isExpanded ? null : stage)}>{isExpanded ? "收合 ↑" : `查看另外 ${remaining} 個 →`}</button>}
+    </section>; })}</div>
   </section>;
 }
 
@@ -148,7 +157,7 @@ export default function TopicListPage() {
         <div className="tp-topic-section-heading tp-topic-map-heading"><div><h2 id="topic-kanban-title">今日題材地圖</h2></div><div className="tp-topic-map-tools"><div className="tp-topic-filter-group" role="group" aria-label="今日方向篩選">{(["全部", "轉強", "轉弱"] as DirectionFilter[]).map((item) => <button type="button" key={item} className={directionFilter === item ? "is-active" : ""} onClick={() => setDirectionFilter(item)}>{item}</button>)}</div>{previewMode ? <PreviewBadge /> : <DataState state="AVAILABLE" />}</div></div>
         <div className="tp-topic-kanban-board">{lanes.map((lane) => <section key={lane.grade} className={`tp-topic-kanban-lane tp-topic-kanban-lane--${lane.grade.toLowerCase()}`} aria-labelledby={`topic-lane-${lane.grade}`}>
           <header className="tp-topic-kanban-lane-header"><strong id={`topic-lane-${lane.grade}`}>{lane.label}</strong></header>
-          <div className="tp-topic-kanban-lane-cards">{lane.topics.length ? lane.topics.map((topic) => <KanbanTopicCard topic={topic} key={topic.slug} />) : <p className="tp-topic-kanban-empty">—</p>}</div>
+          <div className="tp-topic-kanban-lane-cards" tabIndex={0} aria-label={`${lane.label}題材列表`}>{lane.topics.length ? lane.topics.map((topic) => <KanbanTopicCard topic={topic} key={topic.slug} />) : <p className="tp-topic-kanban-empty">—</p>}</div>
         </section>)}</div>
       </section>
 
