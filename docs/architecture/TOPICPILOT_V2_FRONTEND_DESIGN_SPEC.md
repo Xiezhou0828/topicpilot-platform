@@ -653,6 +653,16 @@ Below the Kanban, preserve these sections in order:
 
 Formal Topic API fields remain authoritative for topic identity, group, grade, score, state, date, and constituent count. Preview metadata may fill only missing Overview presentation fields (direction, event wording, and group navigation) and must never overwrite a non-null formal value. Topic Detail remains the home for lifecycle, topic events, constituents, representative/core/related roles, news, and related-topic research.
 
+### 23.12 TASK-FE-004B Topic Overview UX Refinement / Market Scan First
+
+The Topic Overview is a daily scan surface, not a landing page, dashboard, documentation page, or research page. Remove introductory teaching copy and duplicate local search from the page header; the global App Shell search remains authoritative. Direction filters sit in the `今日題材地圖` header, with the Preview badge at the far right when synthetic data is active.
+
+The Market Scan board is a fixed-height four-lane `Market Lane`: `S｜市場主線`, `A｜重點觀察`, `B｜輪動題材`, and `D｜等待確認`. Cards are compact and contain only topic name, today's score, one direction symbol (`↑`, `↓`, or `→`), and `深入研究 →`. Each lane may scroll internally; the whole page must not grow because one lane contains more cards. Topic direction styling is separate from Taiwan price colors.
+
+Replace Overview-level Market Rotation with a horizontal `Topic Lifecycle` stage timeline. Stages are `萌芽`, `發酵`, `主升`, `高檔整理`, `退潮`, and `觀察`. Each stage column contains compact topic chips with only topic name, `Day X`, and today's score. The current stage is communicated by the column header; do not repeat stage labels, lifecycle descriptions, or research commentary inside each chip. Each chip routes directly to Topic Detail.
+
+`依大族群瀏覽` and `全部題材` remain available. The complete list retains search, favorites, direction filtering, grade filtering, Topic Detail routing, and the compact factual fields already frozen for Topic Overview.
+
 ## 24. PM freeze amendment: Opportunity page / 機會
 
 **Decision status:** `FROZEN / PM-APPROVED`  

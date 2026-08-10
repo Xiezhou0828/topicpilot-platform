@@ -62,6 +62,7 @@ export type PreviewTopicIdentity = {
 
 export type TopicGrade = "S" | "A" | "B" | "D";
 export type TopicDirection = "up" | "down" | "flat";
+export type TopicLifecycleStage = "萌芽" | "發酵" | "主升" | "高檔整理" | "退潮" | "觀察";
 
 export type TopicOverviewMeta = {
   laneGrade: TopicGrade | null;
@@ -83,6 +84,11 @@ export type TopicRotationEvent = {
   fromGrade: TopicGrade | null;
   toGrade: TopicGrade | null;
   source: "api" | "preview";
+};
+
+export type TopicOverviewLifecycle = {
+  stage: TopicLifecycleStage;
+  day: number;
 };
 
 export const PREVIEW_LABEL = "Preview（Mock Data）· 等待正式 Read Model";
@@ -208,6 +214,29 @@ export function getTopicOverviewMeta(topic: { slug: string; grade: string | null
     directionSymbol: direction === "up" ? "↑" : direction === "down" ? "↓" : "→",
     groupName,
   };
+}
+
+const overviewLifecycleBySlug: Record<string, TopicOverviewLifecycle> = {
+  "ai-server": { stage: "主升", day: 8 },
+  bbu: { stage: "高檔整理", day: 3 },
+  "high-speed-transmission": { stage: "主升", day: 5 },
+  "edge-ai": { stage: "發酵", day: 6 },
+  "cloud-security": { stage: "觀察", day: 2 },
+  cpo: { stage: "發酵", day: 4 },
+  asic: { stage: "發酵", day: 4 },
+  robotics: { stage: "萌芽", day: 2 },
+  cooling: { stage: "主升", day: 5 },
+  pcb: { stage: "觀察", day: 4 },
+  abf: { stage: "觀察", day: 3 },
+  "heavy-power": { stage: "發酵", day: 3 },
+  "clean-energy": { stage: "退潮", day: 6 },
+  "energy-storage": { stage: "退潮", day: 3 },
+  "optical-communication": { stage: "觀察", day: 2 },
+  display: { stage: "退潮", day: 7 },
+};
+
+export function getTopicOverviewLifecycle(slug: string): TopicOverviewLifecycle {
+  return overviewLifecycleBySlug[slug] ?? { stage: "觀察", day: 1 };
 }
 
 const previewRotationEvents: TopicRotationEvent[] = [
