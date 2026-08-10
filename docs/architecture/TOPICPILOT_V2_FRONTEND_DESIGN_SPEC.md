@@ -613,6 +613,16 @@ Topic Detail uses an editorial/calm lifecycle timeline as a key visual anchor, n
 
 This amendment does not change the product's scoring policy or define browser-side inference. It records presentation and product decisions only.
 
+### 23.9 TASK-FE-003 Topic Detail Phase 1 UI prototype
+
+The first Topic Detail implementation is a static UI prototype at `/topics/[slug]`, with `/topics/ai-server` as the PM review route. It uses reasonable mock data only and does not connect to formal Topic, Stock, News, lifecycle, scoring, or recommendation APIs.
+
+The prototype reading order is: breadcrumb and topic identity; favorite action; grade, strength, lifecycle day, and stock-count metadata; short topic summary; 題材生命圖; 題材歷程 timeline; role-separated 代表股／核心股／關聯股 lists; collapsed 題材新聞; related-topic heat cards; and a restrained rectangular market-topic heat map at the bottom.
+
+Interaction is intentionally limited to prototype-level behavior: favorite state is local UI state, clicking a stock opens the shared-width `560px` Stock Detail Drawer mock, news expands from its collapsed default, and related-topic cards navigate to another `/topics/[slug]` mock route. No hover drawer, topic peek, animation system, API wiring, business scoring, or recommendation logic is introduced.
+
+The prototype continues the Modern Financial Workspace language: warm off-white page background, white surfaces, warm-gray borders, restrained shadows, `#8A7462` brand accents, warm-neutral role/grade chips, and Taiwan red/green only for mock price movement. Desktop is primary; the layout stacks the role cards, lifecycle track, related cards, and heat map responsively at mobile widths.
+
 ## 24. PM freeze amendment: Opportunity page / 機會
 
 **Decision status:** `FROZEN / PM-APPROVED`  
