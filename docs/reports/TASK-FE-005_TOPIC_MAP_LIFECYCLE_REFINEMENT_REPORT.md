@@ -1,6 +1,6 @@
 # Topic Page UI Refinement｜Topic Map + Topic Lifecycle
 
-**Status:** Implemented; validation and deployment pending
+**Status:** Implemented; deployed and verified
 **Route:** `/topics`
 **Scope:** Existing Topic Map and Topic Lifecycle presentation only
 
@@ -68,7 +68,12 @@ The Help dialog explains all five stages, `Day N` as consecutive days in the cur
 - `git diff --check` passed for the changed page and scoped stylesheet.
 - Full `tsc --noEmit` remains blocked by pre-existing errors outside this scope (`data-source.ts`, `snapshot-store.tsx`, `watchlist`, `vite.config.ts`, and worker globals).
 - Existing `npm test` build phase passed; the repository test suite currently reports 51 passing and 14 pre-existing failures tied to older route/source expectations outside this task.
-- Public interaction verification remains to be recorded after the final deployment: filter isolation, hidden Lane scrollbar, Stage expansion, Help, and responsive checks.
+- Public release 27 renders the four equal `276px` Market Lanes with uniform `56px` Tiles, plain arrows, score-before-arrow alignment, five Stage Panels, five consistent brand-brown icons, and no lifecycle scrollbar.
+- Public filter audit confirms `轉弱` changes Market Lane cards only; the Lifecycle remains at 12 displayed editorial rows across the same five stages.
+- Public Help audit confirms all five stage definitions, `Day N`, and the non-advice disclaimer are present; the Help dialog opens and closes.
+- Synthetic 10-topic expansion audit confirms default `4` visible, `查看另外 6 個 →`, expanded `10`, and a single-stage local expansion model.
+- Public lifecycle content contains no displayed `觀察` stage, no Market Rotation section, no circular direction icons, and no rounded lifecycle cards.
+- Deployed to `https://topicpilot-platform.game0962046460.chatgpt.site/topics`.
 
 ## 9. Scope check
 
