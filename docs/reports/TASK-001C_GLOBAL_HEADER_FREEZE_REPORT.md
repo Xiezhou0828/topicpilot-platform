@@ -92,4 +92,4 @@ Updated `docs/architecture/TOPICPILOT_V2_FRONTEND_DESIGN_SPEC.md` with a new **G
 - Local interaction smoke — Search opened with one `搜尋股票、題材...` input; Notification opened `通知中心`; Account opened all five PM-frozen menu items; hamburger/settings/help controls were absent.
 - Retained route smoke — `/market`, `/watchlist`, `/guide`, `/studio`, `/topics/intelligence`, and `/stocks/2330` returned without 404/not-found content.
 - Published HTTPS smoke — all six V2 routes returned HTTP 200 with the new header text and without the removed hamburger/old search labels.
-- Published Sites version: `5`, deployed successfully to `https://topicpilot-platform.game0962046460.chatgpt.site`.
+- Published Sites version: `6`, deployed successfully to `https://topicpilot-platform.game0962046460.chatgpt.site`.
