@@ -1,6 +1,6 @@
 # TASK-FE-003B — Topic Preview Enhancement Report
 
-**Status:** Implemented; validation and preview deployment pending
+**Status:** Implemented; deployed and verified
 **Scope:** V2 Topic List and Topic Detail only. Home, Stock, Watchlist, Opportunity, Backend schema/provider, and V1 remain unchanged.
 
 ## 1. 已改進項目
