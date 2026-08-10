@@ -509,7 +509,7 @@ No Home product or information-architecture decision remains open for this phase
 
 The Home hero no longer renders a duplicate `今日市場` H1 or a standalone freshness row. The global header identifies the current page. Freshness is shown only in the `市場概況` Card Header as one compact status treatment: `盤中更新`, `盤後更新`, or `資料待更新`, with a timestamp when available.
 
-The first viewport should show the market summary and the beginning of `今日市場重點` without requiring a scroll at the approved desktop width. The Summary Card keeps the two-row structure: primary `加權指數／OTC 指數／成交金額`, followed by `上漲／下跌／平盤／漲停／跌停／更新時間`, with compressed vertical padding and no chart, heatmap, or additional visualization. `今日市場重點` keeps its four bullets and `今日一句話` while using a compressed reading rhythm.
+The first viewport should show the market summary and the beginning of `今日市場重點` without requiring a scroll at the approved desktop width. The Summary Card keeps the two-row structure: primary `加權指數／OTC 指數／成交金額`, followed by `上漲／下跌／平盤／漲停／跌停／更新時間`, with compressed vertical padding and no chart, heatmap, or additional visualization. `今日市場重點` uses three inline scan-friendly bullets with bold topic names and keeps `今日一句話` as the separate PM research direction; it does not repeat a second `今日觀察` sentence.
 
 `今日主線` keeps exactly three compact cards with their S/A/B/D grade chips, readable state, and `進入題材頁` action. The action link is the only clickable element for each card; the entire card is not a link. `盤中重要事件`, `快速升溫／快速退潮`, and `今日機會` retain their current design and information order. No hover preview, stock popup, tooltip, chart, or new business logic is introduced.
 

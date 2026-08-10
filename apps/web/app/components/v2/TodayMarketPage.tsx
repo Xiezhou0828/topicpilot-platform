@@ -161,10 +161,9 @@ export default function TodayMarketPage() {
           <Card className="tp-home-story-card">
             <SectionHeading id="market-story-title" title="今日市場重點" />
             <ul className="tp-home-story-list">
-              <li>AI伺服器仍為市場主線。</li>
-              <li>BBU開始高檔分歧。</li>
-              <li>機器人盤中快速升溫。</li>
-              <li>今日觀察：AI是否開始向其他族群擴散。</li>
+              <li><strong>AI伺服器</strong>仍為市場主線。</li>
+              <li><strong>BBU</strong>開始高檔分歧。</li>
+              <li><strong>機器人</strong>盤中快速升溫。</li>
             </ul>
             <div className="tp-home-one-line"><span>今日一句話</span><strong>今天研究重心：觀察 AI 是否開始擴散。</strong></div>
           </Card>

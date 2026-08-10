@@ -3614,7 +3614,10 @@ tbody tr:hover td { background: rgba(86, 198, 189, 0.06); }
 .tp-home-live-status{white-space:nowrap}
 .tp-home-story-card{padding:14px 24px 12px}
 .tp-home-story-card .tp-home-section-heading{margin-bottom:8px}
-.tp-home-story-list{gap:3px;padding-bottom:9px;font-size:15px;line-height:1.35}
+.tp-home-story-list{display:flex;align-items:center;flex-wrap:wrap;gap:5px 24px;padding:0 0 8px;list-style:none;font-size:15px;line-height:1.4}
+.tp-home-story-list li{display:inline-flex;align-items:baseline;white-space:nowrap}
+.tp-home-story-list li::before{content:"•";margin-right:6px;color:var(--tp-color-brand-primary);font-size:18px;line-height:1}
+.tp-home-story-list strong{font-weight:600}
 .tp-home-one-line{gap:10px;padding-top:8px;font-size:12px}
 .tp-home-one-line strong{font-size:13px}
 .tp-home-mainline-card{min-height:180px;padding:18px;transition:border-color var(--tp-motion),box-shadow var(--tp-motion)}
