@@ -3813,3 +3813,42 @@ tbody tr:hover td { background: rgba(86, 198, 189, 0.06); }
 @media (max-width: 1100px){.tp-topic-kanban-lane{height:300px}.tp-topic-lifecycle-stage h3{padding-inline:10px}.tp-topic-lifecycle-items{padding:6px}.tp-topic-lifecycle-chip{padding-inline:6px}.tp-topic-overview-list-controls .tp-search-input{width:260px}}
 @media (max-width: 820px){.tp-topic-map-heading{align-items:flex-start}.tp-topic-map-tools{width:100%;justify-content:space-between}.tp-topic-lifecycle-track{grid-template-columns:repeat(3,minmax(0,1fr));overflow:visible}.tp-topic-lifecycle-stage:nth-child(3){border-right:0}.tp-topic-lifecycle-stage:nth-child(n+4){border-top:1px solid var(--tp-color-border)}.tp-topic-overview-list-controls{align-items:stretch;flex-wrap:wrap}.tp-topic-overview-list-controls .tp-search-input{width:min(100%,420px)}}
 @media (max-width: 600px){.tp-topic-map-heading{gap:10px}.tp-topic-map-tools{align-items:stretch;flex-direction:column}.tp-topic-map-tools .tp-preview-badge,.tp-topic-map-tools .tp-data-state{align-self:flex-end;margin-left:0}.tp-topic-kanban-lane{height:270px}.tp-topic-lifecycle-track{grid-template-columns:repeat(2,minmax(0,1fr))}.tp-topic-lifecycle-stage:nth-child(2n){border-right:0}.tp-topic-lifecycle-stage:nth-child(n+3){border-top:1px solid var(--tp-color-border)}.tp-topic-lifecycle-heading{align-items:flex-start;flex-direction:column}.tp-topic-overview-list-controls{padding:14px}.tp-topic-overview-list-controls .tp-topic-grade-filters{width:100%}.tp-topic-overview-list-controls .tp-topic-grade-filters button{flex:1}}
+
+/* TASK-FE-005: Topic Overview V3 — market scan and lifecycle use different visual levels. */
+.tp-topic-overview-page{padding-top:20px}
+.tp-topic-kanban-lane{height:276px}
+.tp-topic-kanban-lane-cards{scrollbar-width:none;-ms-overflow-style:none}
+.tp-topic-kanban-lane-cards::-webkit-scrollbar{width:0;height:0}
+.tp-topic-kanban-card{min-height:66px;height:66px;gap:4px;padding:9px 12px 8px 15px;grid-template-rows:auto auto}
+.tp-topic-kanban-card-top>strong{font-size:16px;line-height:1.25}
+.tp-topic-direction-mark{width:24px;height:24px;justify-content:center;border:1px solid currentColor;border-radius:50%;font-size:16px;font-weight:700;line-height:1}
+.tp-topic-kanban-score{display:flex;align-items:center;min-height:21px}
+.tp-topic-kanban-score b{font-size:21px;line-height:1.1}
+.tp-topic-kanban-drill{display:none}
+.tp-topic-direction-rail{width:3px}
+.tp-topic-lifecycle-section{gap:14px}
+.tp-topic-lifecycle-heading-main{display:flex;align-items:center;gap:8px}
+.tp-topic-lifecycle-heading h2{font-size:22px}
+.tp-topic-lifecycle-help-wrap{position:relative;display:inline-flex}
+.tp-topic-lifecycle-help-trigger{display:grid;place-items:center;width:28px;height:28px;border:1px solid var(--tp-color-border-strong);border-radius:50%;background:var(--tp-color-surface);color:var(--tp-color-text-secondary);cursor:pointer;transition:color var(--tp-motion),border-color var(--tp-motion),background var(--tp-motion)}
+.tp-topic-lifecycle-help-trigger:hover,.tp-topic-lifecycle-help-trigger:focus-visible{border-color:var(--tp-color-brand-primary);background:#fbf9f7;color:var(--tp-color-brand-primary);outline:2px solid #c8b9aa;outline-offset:2px}
+.tp-topic-lifecycle-help{position:absolute;z-index:10;top:36px;left:0;width:340px;padding:16px;background:var(--tp-color-surface);border:1px solid var(--tp-color-border);border-radius:var(--tp-radius-md);box-shadow:var(--tp-shadow-subtle)}
+.tp-topic-lifecycle-help>strong{display:block;margin-bottom:10px;font-size:14px;font-weight:600}
+.tp-topic-lifecycle-help p{display:grid;grid-template-columns:42px minmax(0,1fr);gap:8px;margin:0;padding:8px 0;border-top:1px solid var(--tp-color-border);font-size:12px;line-height:1.55}
+.tp-topic-lifecycle-help p b{color:var(--tp-color-brand-primary);font-weight:600}
+.tp-topic-lifecycle-help p span{color:var(--tp-color-text-secondary)}
+.tp-topic-lifecycle-track{position:relative;grid-template-columns:repeat(5,minmax(0,1fr));gap:0;border:0;border-radius:0;background:transparent;overflow:visible;padding-top:16px}
+.tp-topic-lifecycle-track::before{content:"";position:absolute;z-index:0;top:21px;left:8%;right:8%;height:1px;background:var(--tp-color-border-strong)}
+.tp-topic-lifecycle-stage{position:relative;z-index:1;min-height:0;border-right:0;padding:0 12px}
+.tp-topic-lifecycle-stage h3{display:flex;align-items:center;gap:8px;margin:0;padding:0 0 12px;border-bottom:1px solid var(--tp-color-border);background:transparent;font-size:15px;font-weight:600}
+.tp-topic-lifecycle-stage h3>span{display:block;width:12px;height:12px;border:2px solid var(--tp-color-brand-primary);border-radius:50%;background:var(--tp-color-surface)}
+.tp-topic-lifecycle-items{max-height:none;overflow:visible;gap:0;padding:0}
+.tp-topic-lifecycle-chip{min-height:45px;border:0;border-bottom:1px solid var(--tp-color-border);border-left:0!important;border-radius:0;background:transparent;padding:9px 2px}
+.tp-topic-lifecycle-chip:hover,.tp-topic-lifecycle-chip:focus-visible{border-color:var(--tp-color-border);background:#fbf9f7;color:var(--tp-color-brand-primary);outline:0}
+.tp-topic-lifecycle-chip b{font-size:14px}
+.tp-topic-lifecycle-chip>strong{font-size:15px}
+.tp-topic-lifecycle-empty{padding:12px 2px}
+
+@media (max-width: 1100px){.tp-topic-kanban-lane{height:260px}.tp-topic-lifecycle-stage{padding-inline:8px}.tp-topic-lifecycle-help{left:auto;right:0}}
+@media (max-width: 820px){.tp-topic-lifecycle-track{grid-template-columns:1fr;gap:0;padding-top:0}.tp-topic-lifecycle-track::before{top:0;bottom:0;left:6px;right:auto;width:1px;height:auto}.tp-topic-lifecycle-stage{padding:0 0 0 22px}.tp-topic-lifecycle-stage h3{padding:12px 0 10px}.tp-topic-lifecycle-stage h3>span{position:absolute;left:-22px}.tp-topic-lifecycle-stage:first-child h3{padding-top:0}.tp-topic-lifecycle-help{width:min(340px,calc(100vw - 48px))}}
+@media (max-width: 600px){.tp-topic-kanban-lane{height:240px}.tp-topic-overview-page{padding-top:16px}.tp-topic-lifecycle-heading{align-items:flex-start}.tp-topic-lifecycle-heading-main{gap:6px}.tp-topic-lifecycle-heading h2{font-size:21px}}

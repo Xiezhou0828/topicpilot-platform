@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ChevronDown, ChevronRight, Layers3, Search, Star } from "lucide-react";
+import { ChevronDown, ChevronRight, CircleHelp, Layers3, Search, Star } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { fetchTopics, scoreLabel, type TopicResource, type TopicSummary } from "../../lib/topic-api";
 import { getTopicOverviewLifecycle, getTopicOverviewMeta, PREVIEW_LABEL, type TopicGrade, type TopicLifecycleStage, type TopicOverviewLifecycle, type TopicOverviewMeta } from "../../lib/topic-preview";
@@ -19,7 +19,17 @@ const GRADE_LANES: Array<{ grade: TopicGrade; label: string }> = [
   { grade: "D", label: "D｜等待確認" },
 ];
 
-const LIFECYCLE_STAGES: TopicLifecycleStage[] = ["萌芽", "發酵", "主升", "高檔整理", "退潮", "觀察"];
+type DisplayLifecycleStage = "萌芽" | "發酵" | "主升" | "成熟" | "衰退";
+
+const LIFECYCLE_STAGES: DisplayLifecycleStage[] = ["萌芽", "發酵", "主升", "成熟", "衰退"];
+
+const LIFECYCLE_HELP = [
+  { stage: "萌芽", description: "市場剛開始討論，通常只有少數股票反應。" },
+  { stage: "發酵", description: "題材開始擴散，更多股票加入。" },
+  { stage: "主升", description: "市場主流形成，資金集中。" },
+  { stage: "成熟", description: "進入高檔整理，市場開始分歧。" },
+  { stage: "衰退", description: "市場熱度下降，等待下一輪循環。" },
+] as const;
 
 function gradeClass(grade: string | null): string {
   return `tp-grade-${(grade ?? "unknown").toLowerCase()}`;
@@ -33,6 +43,13 @@ function filterByDirection(topic: OverviewTopic, filter: DirectionFilter): boole
   return filter === "全部" || (filter === "轉強" ? topic.meta.direction === "up" : topic.meta.direction === "down");
 }
 
+function displayLifecycleStage(stage: TopicLifecycleStage): DisplayLifecycleStage {
+  if (stage === "高檔整理") return "成熟";
+  if (stage === "退潮") return "衰退";
+  if (stage === "觀察") return "萌芽";
+  return stage;
+}
+
 function PreviewBadge() {
   return <span className="tp-preview-badge">{PREVIEW_LABEL}</span>;
 }
@@ -42,8 +59,7 @@ function KanbanTopicCard({ topic }: { topic: OverviewTopic }) {
   return <Link href={`/topics/${topic.slug}`} className={`tp-topic-kanban-card tp-topic-direction--${topic.meta.direction} ${gradeClass(grade)}`}>
     <span className="tp-topic-direction-rail" aria-hidden="true" />
     <span className="tp-topic-kanban-card-top"><strong>{topic.name}</strong><span className="tp-topic-direction-mark" aria-label={`今日方向 ${topic.meta.directionLabel}`}>{topic.meta.directionSymbol}</span></span>
-    <span className="tp-topic-kanban-score"><small>今日分數</small><b>{scoreLabel(topic.score)}</b></span>
-    <span className="tp-topic-kanban-drill">深入研究 <ChevronRight size={14} aria-hidden="true" /></span>
+    <span className="tp-topic-kanban-score"><b>{scoreLabel(topic.score)}</b></span>
   </Link>;
 }
 
@@ -55,19 +71,21 @@ function LifecycleChip({ item }: { item: LifecycleTopic }) {
 }
 
 function TopicLifecycle({ topics }: { topics: OverviewTopic[] }) {
+  const [showHelp, setShowHelp] = useState(false);
   const stageMap = useMemo(() => {
-    const map = new Map<TopicLifecycleStage, LifecycleTopic[]>(LIFECYCLE_STAGES.map((stage) => [stage, []]));
+    const map = new Map<DisplayLifecycleStage, LifecycleTopic[]>(LIFECYCLE_STAGES.map((stage) => [stage, []]));
     topics.forEach((topic) => {
       const lifecycle = getTopicOverviewLifecycle(topic.slug);
-      map.set(lifecycle.stage, [...(map.get(lifecycle.stage) ?? []), { topic, lifecycle }]);
+      const stage = displayLifecycleStage(lifecycle.stage);
+      map.set(stage, [...(map.get(stage) ?? []), { topic, lifecycle }]);
     });
     return map;
   }, [topics]);
 
   return <section className="tp-topic-lifecycle-section" aria-labelledby="topic-lifecycle-title">
-    <div className="tp-topic-lifecycle-heading"><h2 id="topic-lifecycle-title">Topic Lifecycle</h2><PreviewBadge /></div>
+    <div className="tp-topic-lifecycle-heading"><div className="tp-topic-lifecycle-heading-main"><h2 id="topic-lifecycle-title">題材生命週期</h2><span className="tp-topic-lifecycle-help-wrap"><button type="button" className="tp-topic-lifecycle-help-trigger" aria-label="題材生命週期說明" aria-expanded={showHelp} aria-haspopup="dialog" onClick={() => setShowHelp((value) => !value)}><CircleHelp size={18} aria-hidden="true" /></button>{showHelp && <div className="tp-topic-lifecycle-help" role="dialog" aria-label="題材生命週期說明"><strong>題材生命週期說明</strong>{LIFECYCLE_HELP.map((item) => <p key={item.stage}><b>{item.stage}</b><span>{item.description}</span></p>)}</div>}</span></div><PreviewBadge /></div>
     <div className="tp-topic-lifecycle-track">{LIFECYCLE_STAGES.map((stage) => <section className="tp-topic-lifecycle-stage" key={stage} aria-labelledby={`topic-stage-${stage}`}>
-      <h3 id={`topic-stage-${stage}`}>{stage}</h3>
+      <h3 id={`topic-stage-${stage}`}><span aria-hidden="true" />{stage}</h3>
       <div className="tp-topic-lifecycle-items">{stageMap.get(stage)?.length ? stageMap.get(stage)?.map((item) => <LifecycleChip item={item} key={item.topic.slug} />) : <span className="tp-topic-lifecycle-empty">—</span>}</div>
     </section>)}</div>
   </section>;
@@ -90,13 +108,13 @@ export default function TopicListPage() {
   const overviewTopics = useMemo<OverviewTopic[]>(() => (resource?.data ?? [])
     .filter(isMarketTopic)
     .map((topic) => ({ ...topic, meta: getTopicOverviewMeta(topic, resource?.source !== "api") })), [resource]);
-  const scanTopics = useMemo(() => overviewTopics.filter((topic) => filterByDirection(topic, directionFilter)), [directionFilter, overviewTopics]);
+  const marketTopics = useMemo(() => overviewTopics.filter((topic) => filterByDirection(topic, directionFilter)), [directionFilter, overviewTopics]);
   const normalizedQuery = query.trim().toLocaleLowerCase("zh-TW");
-  const filteredTopics = useMemo(() => scanTopics.filter((topic) => {
+  const filteredTopics = useMemo(() => overviewTopics.filter((topic) => {
     const text = `${topic.name} ${topic.slug} ${topic.meta.groupName ?? ""}`.toLocaleLowerCase("zh-TW");
     return (!normalizedQuery || text.includes(normalizedQuery)) && (gradeFilter === "全部" || topic.meta.laneGrade === gradeFilter);
-  }), [gradeFilter, normalizedQuery, scanTopics]);
-  const lanes = useMemo(() => GRADE_LANES.map((lane) => ({ ...lane, topics: scanTopics.filter((topic) => topic.meta.laneGrade === lane.grade) })), [scanTopics]);
+  }), [gradeFilter, normalizedQuery, overviewTopics]);
+  const lanes = useMemo(() => GRADE_LANES.map((lane) => ({ ...lane, topics: marketTopics.filter((topic) => topic.meta.laneGrade === lane.grade) })), [marketTopics]);
   const groupRows = useMemo(() => {
     const groups = new Map<string, OverviewTopic[]>();
     overviewTopics.forEach((topic) => {
@@ -123,7 +141,7 @@ export default function TopicListPage() {
     });
   }
 
-  return <AppShell currentPath="/topics"><PageContainer title="題材" className="tp-topic-overview-page">
+  return <AppShell currentPath="/topics"><PageContainer title="題材" hideHeader className="tp-topic-overview-page">
     {!resource && <Card className="tp-topic-data-card"><div className="tp-topic-loading-row"><Skeleton /><Skeleton /><Skeleton /></div><Skeleton className="tp-topic-loading-table" /></Card>}
     {resource?.data && <>
       <section className="tp-topic-kanban-section" aria-labelledby="topic-kanban-title">
@@ -134,7 +152,7 @@ export default function TopicListPage() {
         </section>)}</div>
       </section>
 
-      <TopicLifecycle topics={scanTopics} />
+      <TopicLifecycle topics={overviewTopics} />
 
       <section className="tp-topic-groups-section" aria-labelledby="topic-groups-title">
         <div className="tp-topic-section-heading"><div><h2 id="topic-groups-title">依大族群瀏覽</h2></div></div>

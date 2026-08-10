@@ -663,6 +663,14 @@ Replace Overview-level Market Rotation with a horizontal `Topic Lifecycle` stage
 
 `依大族群瀏覽` and `全部題材` remain available. The complete list retains search, favorites, direction filtering, grade filtering, Topic Detail routing, and the compact factual fields already frozen for Topic Overview.
 
+### 23.13 TASK-FE-005 Topic Overview UI Refinement V3 / Product Positioning
+
+The Overview content header does not repeat `題材`; the shared navbar is the location indicator. The first content heading is `今日題材地圖`, with no introductory teaching copy. `全部 / 轉強 / 轉弱` is a Market Lane-only filter. It must not change Topic Lifecycle or the complete topic index.
+
+Market Lane remains the four-lane daily market scan: `S｜市場主線`, `A｜重點觀察`, `B｜輪動題材`, and `D｜等待確認`. The lane body may scroll internally, but scrollbar chrome is hidden. Cards are compact and contain only topic name, one neutral direction symbol, and today's score; the card itself routes to Topic Detail.
+
+The lifecycle surface is titled `題材生命週期` and uses five stages: `萌芽`, `發酵`, `主升`, `成熟`, and `衰退`. `高檔整理` is presented as `成熟`, `退潮` as `衰退`, and the non-lifecycle `觀察` preview state is normalized into the earliest displayed stage so the lifecycle view remains complete. A Help control explains the five stage meanings. The visual language is a connected process timeline, not a second Kanban. Each lifecycle row contains only topic name, `Day X`, today's score, and a direct Topic Detail link.
+
 ## 24. PM freeze amendment: Opportunity page / 機會
 
 **Decision status:** `FROZEN / PM-APPROVED`  
