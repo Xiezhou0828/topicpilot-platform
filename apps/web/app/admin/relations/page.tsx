@@ -1,0 +1,3 @@
+"use client"; /* eslint-disable @typescript-eslint/no-explicit-any */
+import {useEffect,useState} from "react"; import {AdminNav} from "../AdminNav"; const API=(process.env.NEXT_PUBLIC_API_BASE_URL||"http://localhost:8000").replace(/\/$/,"");
+export default function Relations(){const[d,setD]=useState<any>();useEffect(()=>{fetch(`${API}/api/v1/admin/relations`).then(r=>r.json()).then(setD)},[]);return <main className="adminShell"><AdminNav/><p className="eyebrow">RELATION EXPLORER</p><h1>Instrument / topic relations</h1><div className="adminTable">{d?.items?.map((x:any)=><div className="adminRow" key={x.id}><b>{x.instrument_id}</b><span>{x.topic_id}</span><span>{x.relation_type} · {x.relation_version}</span></div>)}</div></main>}

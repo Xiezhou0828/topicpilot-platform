@@ -1,0 +1,8 @@
+:root {
+  --tp-color-brand-primary: #8a7462; --tp-color-page: #f5f2ee; --tp-color-surface: #fff;
+  --tp-color-surface-muted: #faf8f5; --tp-color-text-primary: #2f2b27; --tp-color-text-secondary: #756e67;
+  --tp-color-border: #e3ddd6; --tp-color-border-strong: #cfc5bb; --tp-color-price-up: #c94b45; --tp-color-price-down: #2f8a67;
+  --tp-color-warning: #b87b2b; --tp-color-error: #b64c43; --tp-radius-sm: 10px; --tp-radius-md: 12px;
+  --tp-space-1: 8px; --tp-space-2: 16px; --tp-space-3: 24px; --tp-space-4: 32px; --tp-content-max: 1600px;
+  --tp-drawer-width: 560px; --tp-motion: 200ms ease; --tp-shadow-subtle: 0 2px 12px rgba(70, 54, 41, .06);
+}

@@ -1,0 +1,3 @@
+"use client"; /* eslint-disable @typescript-eslint/no-explicit-any */
+import Link from "next/link"; import {useEffect,useState} from "react"; import {AdminNav} from "../AdminNav"; const API=(process.env.NEXT_PUBLIC_API_BASE_URL||"http://localhost:8000").replace(/\/$/,"");
+export default function Imports(){const[d,setD]=useState<any>();useEffect(()=>{fetch(`${API}/api/v1/admin/imports`).then(r=>r.json()).then(setD)},[]);return <main className="adminShell"><AdminNav/><p className="eyebrow">IMPORT EVIDENCE</p><h1>Legacy imports</h1><div className="adminTable">{d?.items?.map((x:any)=><Link className="adminRow" href={`/admin/imports/${x.id}`} key={x.id}><b>{x.status}</b><span>{x.export_id}</span><span>{String(x.created_at)}</span></Link>)}</div></main>}

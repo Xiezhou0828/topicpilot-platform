@@ -24,7 +24,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     || (apiBaseUrl ? `${apiBaseUrl}/api/v1/snapshot/latest` : undefined);
 
   return (
-    <html lang="zh-Hant" data-snapshot-api-url={snapshotApiUrl}>
+    <html lang="zh-Hant" data-snapshot-api-url={snapshotApiUrl} data-api-base-url={apiBaseUrl}>
       <body>
         <SnapshotProvider>{children}</SnapshotProvider>
       </body>

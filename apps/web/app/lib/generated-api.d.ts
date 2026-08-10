@@ -4,6 +4,176 @@
  */
 
 export interface paths {
+    "/api/v1/admin/dashboard": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Dashboard */
+        get: operations["dashboard_api_v1_admin_dashboard_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/imports": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Imports */
+        get: operations["imports_api_v1_admin_imports_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/imports/{run_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Import Detail */
+        get: operations["import_detail_api_v1_admin_imports__run_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/instruments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Instruments */
+        get: operations["instruments_api_v1_admin_instruments_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/instruments/{instrument_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Instrument Detail */
+        get: operations["instrument_detail_api_v1_admin_instruments__instrument_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/markets": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Markets */
+        get: operations["markets_api_v1_admin_markets_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/relations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Relations */
+        get: operations["relations_api_v1_admin_relations_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/schema": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Schema */
+        get: operations["schema_api_v1_admin_schema_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/topics": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Topics */
+        get: operations["topics_api_v1_admin_topics_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/topics/{topic_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Topic Detail */
+        get: operations["topic_detail_api_v1_admin_topics__topic_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/analytics/strategy-performance": {
         parameters: {
             query?: never;
@@ -47,6 +217,74 @@ export interface paths {
         };
         /** Api Data Status */
         get: operations["api_data_status_api_v1_meta_data_status_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/operations/live/configuration": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Configuration */
+        get: operations["configuration_api_v1_operations_live_configuration_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/operations/live/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Status */
+        get: operations["status_api_v1_operations_live_status_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/operations/live/tracking": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Tracking */
+        get: operations["tracking_api_v1_operations_live_tracking_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/recommendations/latest": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Latest Recommendations */
+        get: operations["latest_recommendations_api_v1_recommendations_latest_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -106,6 +344,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/stocks/{code}/price-history": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Stock Price History */
+        get: operations["stock_price_history_api_v1_stocks__code__price_history_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/strategies": {
         parameters: {
             query?: never;
@@ -132,6 +387,23 @@ export interface paths {
         };
         /** Candidates */
         get: operations["candidates_api_v1_strategies__key__candidates_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/topic-intelligence/latest": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Latest Topic Intelligence */
+        get: operations["latest_topic_intelligence_api_v1_topic_intelligence_latest_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -303,10 +575,140 @@ export interface components {
             /** Status */
             status: string;
         };
+        /** HistoricalPriceHistoryResponse */
+        HistoricalPriceHistoryResponse: {
+            /** Availabilityreason */
+            availabilityReason: string | null;
+            /** Code */
+            code: string;
+            /** Items */
+            items: components["schemas"]["HistoricalPricePoint"][];
+            /** Market */
+            market: string;
+            /** Pointcount */
+            pointCount: number;
+            /**
+             * Requestedfrom
+             * Format: date
+             */
+            requestedFrom: string;
+            /**
+             * Requestedto
+             * Format: date
+             */
+            requestedTo: string;
+            /** Status */
+            status: string;
+        };
+        /** HistoricalPricePoint */
+        HistoricalPricePoint: {
+            /** Close */
+            close: number | null;
+            /** High */
+            high: number | null;
+            /** Low */
+            low: number | null;
+            /**
+             * Observedat
+             * Format: date-time
+             */
+            observedAt: string;
+            /** Open */
+            open: number | null;
+            /** Qualitystate */
+            qualityState: string;
+            /** Sourcecode */
+            sourceCode: string;
+            /**
+             * Tradingdate
+             * Format: date
+             */
+            tradingDate: string;
+            /** Volume */
+            volume: number | null;
+        };
+        /** LiveRunSummary */
+        LiveRunSummary: {
+            /** Completedat */
+            completedAt: string | null;
+            /** Id */
+            id: string;
+            /** Latencyms */
+            latencyMs: number | null;
+            /** Requestedcount */
+            requestedCount: number;
+            /**
+             * Startedat
+             * Format: date-time
+             */
+            startedAt: string;
+            /** Type */
+            type: string;
+        };
+        /** LiveStatusResponse */
+        LiveStatusResponse: {
+            /** Failurecode */
+            failureCode?: string | null;
+            /** Failurecount */
+            failureCount: number;
+            /** Failuremessage */
+            failureMessage?: string | null;
+            /** Freshnessstate */
+            freshnessState: string;
+            /** Heartbeatat */
+            heartbeatAt: string | null;
+            lastRun: components["schemas"]["LiveRunSummary"] | null;
+            /** Providerstatus */
+            providerStatus: string;
+            /** Retrycount */
+            retryCount: number;
+            /** Status */
+            status: string;
+            /** Successcount */
+            successCount: number;
+        };
+        /** LiveTrackingResponse */
+        LiveTrackingResponse: {
+            /** Freshnessstate */
+            freshnessState: string;
+            /** Instrumentcode */
+            instrumentCode: string;
+            /** Latestclose */
+            latestClose: number | null;
+            /** Market */
+            market: string;
+            /** Movingaverage */
+            movingAverage: number | null;
+            /** Movingaverageperiod */
+            movingAveragePeriod: number;
+            /** Movingaveragestate */
+            movingAverageState: string;
+            /** Observationcount */
+            observationCount: number;
+            /** Observedat */
+            observedAt: string | null;
+            /** Reason */
+            reason: string;
+            /** Updatemode */
+            updateMode: string;
+            /** Updatedat */
+            updatedAt: string | null;
+        };
         /** Page[CandidateResponse] */
         Page_CandidateResponse_: {
             /** Items */
             items: components["schemas"]["CandidateResponse"][];
+            /** Limit */
+            limit: number;
+            /** Offset */
+            offset: number;
+            /** Total */
+            total: number;
+        };
+        /** Page[LiveTrackingResponse] */
+        Page_LiveTrackingResponse_: {
+            /** Items */
+            items: components["schemas"]["LiveTrackingResponse"][];
             /** Limit */
             limit: number;
             /** Offset */
@@ -368,6 +770,69 @@ export interface components {
             offset: number;
             /** Total */
             total: number;
+        };
+        /** RecommendationComponent */
+        RecommendationComponent: {
+            /** Name */
+            name: string;
+            /** Value */
+            value: number | null;
+        };
+        /** RecommendationItemResponse */
+        RecommendationItemResponse: {
+            /** Candidateid */
+            candidateId: string;
+            /** Evidence */
+            evidence?: string[];
+            /** Label */
+            label: string;
+            /** Reason */
+            reason: string;
+            /** Status */
+            status: string;
+            topicContext: components["schemas"]["RecommendationTopicContext"] | null;
+            /** Topicid */
+            topicId: string;
+        };
+        /** RecommendationResponse */
+        RecommendationResponse: {
+            /** Asof */
+            asOf: string | null;
+            /** Contractversion */
+            contractVersion: string;
+            /** Items */
+            items?: components["schemas"]["RecommendationItemResponse"][];
+            /** Status */
+            status: string;
+        };
+        /** RecommendationTopicContext */
+        RecommendationTopicContext: {
+            /** Aggregationversion */
+            aggregationVersion: string | null;
+            /** Asof */
+            asOf: string | null;
+            /** Components */
+            components?: components["schemas"]["RecommendationComponent"][];
+            /** Confidence */
+            confidence: number | null;
+            /** Eligibility */
+            eligibility: string | null;
+            /** Evidencereference */
+            evidenceReference?: string[];
+            /** Featureruntimeversion */
+            featureRuntimeVersion: string | null;
+            /** Featuresetversion */
+            featureSetVersion: string | null;
+            /** Grade */
+            grade: string | null;
+            /** Policyid */
+            policyId: string | null;
+            /** Policyversion */
+            policyVersion: string | null;
+            /** Score */
+            score: number | null;
+            /** Scorerruntimeversion */
+            scorerRuntimeVersion: string | null;
         };
         /** SnapshotResponse */
         SnapshotResponse: {
@@ -503,6 +968,111 @@ export interface components {
             /** Strategykey */
             strategyKey: string;
         };
+        /** TopicIntelligenceComponent */
+        TopicIntelligenceComponent: {
+            /** Name */
+            name: string;
+            /** Value */
+            value: number | null;
+        };
+        /** TopicIntelligenceEvidence */
+        TopicIntelligenceEvidence: {
+            /** Aggregatestatus */
+            aggregateStatus: string;
+            /** Features */
+            features: components["schemas"]["TopicIntelligenceFeatureEvidence"][];
+            quality: components["schemas"]["TopicIntelligenceQuality"];
+            /** Qualityflags */
+            qualityFlags: string[];
+        };
+        /** TopicIntelligenceFeatureEvidence */
+        TopicIntelligenceFeatureEvidence: {
+            /** Coverage */
+            coverage: number | null;
+            /** Metadata */
+            metadata: {
+                [key: string]: unknown;
+            };
+            /** Name */
+            name: string;
+            /** Qualityflags */
+            qualityFlags: string[];
+            /** Status */
+            status: string;
+            /** Value */
+            value: unknown | null;
+            /** Version */
+            version: string;
+        };
+        /** TopicIntelligencePolicy */
+        TopicIntelligencePolicy: {
+            /** Policyid */
+            policyId: string;
+            /** Policyversion */
+            policyVersion: string;
+        };
+        /** TopicIntelligenceQuality */
+        TopicIntelligenceQuality: {
+            /** Coveragemean */
+            coverageMean: number | null;
+            /** Coveragemin */
+            coverageMin: number | null;
+            /** Insufficientfeaturecount */
+            insufficientFeatureCount: number;
+            /** Invalidfeaturecount */
+            invalidFeatureCount: number;
+            /** Readyfeaturecount */
+            readyFeatureCount: number;
+        };
+        /** TopicIntelligenceResponse */
+        TopicIntelligenceResponse: {
+            /**
+             * Asof
+             * Format: date
+             */
+            asOf: string;
+            /** Contractversion */
+            contractVersion: string;
+            /** Mode */
+            mode: string;
+            policy: components["schemas"]["TopicIntelligencePolicy"];
+            /** Status */
+            status: string;
+            /** Topics */
+            topics: components["schemas"]["TopicIntelligenceTopic"][];
+            versions: components["schemas"]["TopicIntelligenceVersions"];
+        };
+        /** TopicIntelligenceTopic */
+        TopicIntelligenceTopic: {
+            /** Components */
+            components: components["schemas"]["TopicIntelligenceComponent"][];
+            /** Confidence */
+            confidence: number | null;
+            /** Eligibility */
+            eligibility: string;
+            evidence: components["schemas"]["TopicIntelligenceEvidence"];
+            /** Grade */
+            grade: string | null;
+            /** Score */
+            score: number | null;
+            /** Status */
+            status: string;
+            /** Strength */
+            strength: string | null;
+            /** Topicid */
+            topicId: string;
+        };
+        /** TopicIntelligenceVersions */
+        TopicIntelligenceVersions: {
+            /** Aggregation */
+            aggregation: string;
+            /** Featureruntime */
+            featureRuntime: string;
+            /** Featureset */
+            featureSet: string;
+            /** Scorerruntime */
+            scorerRuntime: string;
+        };
         /** TopicReference */
         TopicReference: {
             /** Name */
@@ -619,6 +1189,326 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    dashboard_api_v1_admin_dashboard_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+        };
+    };
+    imports_api_v1_admin_imports_get: {
+        parameters: {
+            query?: {
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    import_detail_api_v1_admin_imports__run_id__get: {
+        parameters: {
+            query?: {
+                record_limit?: number;
+                record_offset?: number;
+                outcome?: string | null;
+                entity?: string | null;
+            };
+            header?: never;
+            path: {
+                run_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    instruments_api_v1_admin_instruments_get: {
+        parameters: {
+            query?: {
+                q?: string | null;
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    instrument_detail_api_v1_admin_instruments__instrument_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                instrument_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    markets_api_v1_admin_markets_get: {
+        parameters: {
+            query?: {
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    relations_api_v1_admin_relations_get: {
+        parameters: {
+            query?: {
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    schema_api_v1_admin_schema_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+        };
+    };
+    topics_api_v1_admin_topics_get: {
+        parameters: {
+            query?: {
+                q?: string | null;
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    topic_detail_api_v1_admin_topics__topic_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                topic_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     performance_api_v1_analytics_strategy_performance_get: {
         parameters: {
             query?: {
@@ -707,6 +1597,107 @@ export interface operations {
             };
         };
     };
+    configuration_api_v1_operations_live_configuration_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+        };
+    };
+    status_api_v1_operations_live_status_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LiveStatusResponse"];
+                };
+            };
+        };
+    };
+    tracking_api_v1_operations_live_tracking_get: {
+        parameters: {
+            query?: {
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_LiveTrackingResponse_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    latest_recommendations_api_v1_recommendations_latest_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RecommendationResponse"];
+                };
+            };
+            /** @description No approved Recommendation provider is configured */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     snapshot_latest_api_v1_snapshot_latest_get: {
         parameters: {
             query?: never;
@@ -790,6 +1781,49 @@ export interface operations {
             };
         };
     };
+    stock_price_history_api_v1_stocks__code__price_history_get: {
+        parameters: {
+            query: {
+                from: string;
+                to: string;
+                market?: string | null;
+                limit?: number;
+            };
+            header?: never;
+            path: {
+                code: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HistoricalPriceHistoryResponse"];
+                };
+            };
+            /** @description Ambiguous instrument identity */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     strategies_api_v1_strategies_get: {
         parameters: {
             query?: {
@@ -854,6 +1888,40 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
                 };
+            };
+        };
+    };
+    latest_topic_intelligence_api_v1_topic_intelligence_latest_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TopicIntelligenceResponse"];
+                };
+            };
+            /** @description Configured provider returned invalid evidence */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description No approved runtime provider is configured */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };
