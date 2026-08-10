@@ -1,6 +1,6 @@
 # TASK-FE-005｜Topic Overview UI Refinement V3 Report
 
-**Status:** Implemented; validation and deployment pending
+**Status:** Implemented; deployed and verified
 **Route:** `/topics`
 **Product role:** Market Scan first; Topic Lifecycle is a separate lifecycle-reading surface.
 
@@ -40,6 +40,14 @@ Only `/topics` Overview presentation and its local Preview presentation mapping 
 - Public structure audit for header removal, filter scope, four lanes, hidden lane scrollbars, compact cards, five lifecycle stages, Help dialog, and absence of `觀察` / `市場輪動`.
 - Public interaction audit for Market Lane filtering, unchanged lifecycle contents under filter, Help open/close, lifecycle Detail links, group navigation, list search, and favorites.
 
-## 6. Unchanged surfaces
+## 6. Final verification result
+
+- Production build passed; targeted ESLint and `git diff --check` passed for the changed Overview files.
+- Public release 24 shows no content `h1`, keeps `今日題材地圖` as the first content heading, and renders only five lifecycle stage headings: `萌芽 / 發酵 / 主升 / 成熟 / 衰退`.
+- Public structure audit confirms four `276px` Market Lanes, `66px` Kanban cards, hidden lane scrollbar chrome, no Market Rotation, and no lifecycle `觀察` stage.
+- Public interaction audit confirms `轉弱` filters only Market Lane cards while all 16 lifecycle chips remain; Help opens five explanations; list search returns one `AI伺服器` row; favorites and group expand/collapse remain functional.
+- Deployed to `https://topicpilot-platform.game0962046460.chatgpt.site/topics`.
+
+## 7. Unchanged surfaces
 
 Topic Detail remains the deep-research surface. Group browsing, full topic list search, favorites, grade filtering, and Detail routing remain available on Overview.
