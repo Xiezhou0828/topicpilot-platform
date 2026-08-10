@@ -3503,6 +3503,7 @@ tbody tr:hover td { background: rgba(86, 198, 189, 0.06); }
 .tp-home-mainline-card{display:flex;flex-direction:column;min-width:0;min-height:240px;padding:24px;background:var(--tp-color-surface);border:1px solid var(--tp-color-border);border-radius:var(--tp-radius-md);transition:border-color var(--tp-motion),box-shadow var(--tp-motion),transform var(--tp-motion)}
 .tp-home-mainline-card:hover,.tp-home-mainline-card:focus-visible{border-color:var(--tp-color-brand-primary);box-shadow:var(--tp-shadow-subtle);transform:translateY(-1px);outline:0}
 .tp-home-card-topline{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.tp-home-card-topline h3{margin:0;min-width:0;color:var(--tp-color-text-primary);font-size:24px;font-weight:600;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tp-home-card-index{color:var(--tp-color-text-secondary);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;letter-spacing:.08em}
 .tp-home-mainline-card h3{margin:22px 0 6px;color:var(--tp-color-text-primary);font-size:24px;font-weight:600}
 .tp-home-topic-state{margin:0;color:var(--tp-color-brand-primary);font-size:15px;font-weight:600}
@@ -3637,11 +3638,13 @@ tbody tr:hover td { background: rgba(86, 198, 189, 0.06); }
 .tp-home-page-container .tp-home-secondary-metrics .tp-home-metric{padding-top:6px;padding-bottom:4px}
 .tp-home-page-container .tp-home-story-card{padding:10px 20px 8px}
 .tp-home-page-container .tp-home-story-card .tp-home-section-heading{margin-bottom:4px}
-.tp-home-page-container .tp-home-story-list{padding-bottom:6px}
-.tp-home-page-container .tp-home-one-line{padding-top:6px}
+.tp-home-page-container .tp-home-story-card{padding-top:18px;padding-bottom:16px}
+.tp-home-page-container .tp-home-story-card .tp-home-section-heading{margin-bottom:10px}
+.tp-home-page-container .tp-home-story-list{gap:9px 24px;padding-bottom:10px;line-height:1.55}
+.tp-home-page-container .tp-home-one-line{padding-top:10px}
 .tp-home-page-container .tp-home-mainline-grid{gap:12px}
-.tp-home-page-container .tp-home-mainline-card{min-height:160px;padding:16px}
-.tp-home-page-container .tp-home-mainline-card h3{margin:10px 0 3px}
+.tp-home-page-container .tp-home-mainline-card{min-height:136px;padding:14px 16px}
+.tp-home-page-container .tp-home-mainline-card h3{margin:0}
 .tp-home-page-container .tp-home-topic-detail{margin:7px 0 8px;line-height:1.4}
 
 /* TASK-FE-003: Topic Detail Phase 1 static prototype. */

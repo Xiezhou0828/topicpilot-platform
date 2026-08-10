@@ -174,8 +174,10 @@ export default function TodayMarketPage() {
           <div className="tp-home-mainline-grid">
             {mainlines.map((topic) => (
               <article className="tp-home-mainline-card" key={topic.name}>
-                <div className="tp-home-card-topline"><GradeChip grade={topic.grade} /></div>
-                <h3>{topic.name}</h3>
+                <div className="tp-home-card-topline">
+                  <GradeChip grade={topic.grade} />
+                  <h3>{topic.name}</h3>
+                </div>
                 <p className="tp-home-topic-state">{topic.state}</p>
                 <p className="tp-home-topic-detail">{topic.detail}</p>
                 <Link href="/topics" className="tp-home-card-action">進入題材頁 <ChevronRight size={16} aria-hidden="true" /></Link>
