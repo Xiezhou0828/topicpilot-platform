@@ -60,6 +60,33 @@ export type PreviewTopicIdentity = {
   constituents: Array<{ code: string; name: string; relationType: string; weight: number | null; price: number | null; changePct: number | null }>;
 };
 
+export type TopicGrade = "S" | "A" | "B" | "D";
+export type TopicDirection = "up" | "down" | "flat";
+
+export type TopicOverviewMeta = {
+  laneGrade: TopicGrade | null;
+  direction: TopicDirection;
+  directionLabel: "走強" | "走弱" | "持平";
+  directionSymbol: "↑" | "↓" | "→";
+  groupName: string | null;
+};
+
+export type TopicRotationEvent = {
+  id: string;
+  occurredAt: string;
+  timeLabel: string;
+  topicSlug: string;
+  topicName: string;
+  action: string;
+  detail: string;
+  direction: TopicDirection;
+  fromGrade: TopicGrade | null;
+  toGrade: TopicGrade | null;
+  source: "api" | "preview";
+};
+
+export const PREVIEW_LABEL = "Preview（Mock Data）· 等待正式 Read Model";
+
 const previewIdentities: Record<string, PreviewTopicIdentity> = {
   "ai-server": {
     name: "AI伺服器", groupName: "電子", score: 92, grade: "S", state: "全面走強",
@@ -96,6 +123,38 @@ const previewIdentities: Record<string, PreviewTopicIdentity> = {
       { code: "8046", name: "南電", relationType: "CORE", weight: 0.7, price: 154, changePct: 0.3 },
     ],
   },
+  "high-speed-transmission": {
+    name: "高速傳輸", groupName: "電子", score: 88, grade: "S", state: "全面走強",
+    constituents: [{ code: "6442", name: "光聖", relationType: "PRIMARY", weight: 1, price: 1180, changePct: 4.1 }],
+  },
+  robotics: {
+    name: "機器人", groupName: "AI與自動化", score: 72, grade: "A", state: "開始轉強",
+    constituents: [{ code: "2049", name: "上銀", relationType: "PRIMARY", weight: 1, price: 286, changePct: 1.6 }],
+  },
+  cooling: {
+    name: "散熱", groupName: "電子", score: 69, grade: "A", state: "升溫中",
+    constituents: [{ code: "3017", name: "奇鋐", relationType: "PRIMARY", weight: 1, price: 742, changePct: 1.78 }],
+  },
+  abf: {
+    name: "ABF", groupName: "電子", score: 54, grade: "B", state: "量能回流",
+    constituents: [{ code: "3037", name: "欣興", relationType: "PRIMARY", weight: 1, price: 186, changePct: 0.3 }],
+  },
+  "heavy-power": {
+    name: "重電", groupName: "能源與儲能", score: 52, grade: "B", state: "盤整中",
+    constituents: [{ code: "1519", name: "華城", relationType: "PRIMARY", weight: 1, price: 612, changePct: -0.2 }],
+  },
+  "energy-storage": {
+    name: "儲能", groupName: "能源與儲能", score: 48, grade: "D", state: "動能轉弱",
+    constituents: [{ code: "2308", name: "台達電", relationType: "PRIMARY", weight: 1, price: 410, changePct: -1.1 }],
+  },
+  "optical-communication": {
+    name: "光通訊", groupName: "電子", score: 47, grade: "D", state: "持平",
+    constituents: [{ code: "3450", name: "聯鈞", relationType: "PRIMARY", weight: 1, price: 212, changePct: 0 }],
+  },
+  display: {
+    name: "面板", groupName: "電子", score: 34, grade: "D", state: "退潮",
+    constituents: [{ code: "2409", name: "友達", relationType: "PRIMARY", weight: 1, price: 12.4, changePct: -1.5 }],
+  },
 };
 
 export function getPreviewTopicIdentity(slug: string): PreviewTopicIdentity | null {
@@ -104,6 +163,64 @@ export function getPreviewTopicIdentity(slug: string): PreviewTopicIdentity | nu
 
 export function getPreviewTopicIdentities(): Array<[string, PreviewTopicIdentity]> {
   return Object.entries(previewIdentities);
+}
+
+const overviewMetaBySlug: Record<string, { grade: TopicGrade; direction: TopicDirection; groupName: string }> = {
+  "ai-server": { grade: "S", direction: "up", groupName: "電子" },
+  bbu: { grade: "S", direction: "down", groupName: "能源與儲能" },
+  "high-speed-transmission": { grade: "S", direction: "up", groupName: "電子" },
+  cpo: { grade: "A", direction: "up", groupName: "電子" },
+  asic: { grade: "A", direction: "up", groupName: "電子" },
+  robotics: { grade: "A", direction: "up", groupName: "AI與自動化" },
+  cooling: { grade: "A", direction: "flat", groupName: "電子" },
+  "edge-ai": { grade: "A", direction: "up", groupName: "數位基礎建設" },
+  "cloud-security": { grade: "A", direction: "up", groupName: "數位基礎建設" },
+  pcb: { grade: "B", direction: "flat", groupName: "電子" },
+  abf: { grade: "B", direction: "flat", groupName: "電子" },
+  "heavy-power": { grade: "B", direction: "up", groupName: "能源與儲能" },
+  "energy-storage": { grade: "D", direction: "down", groupName: "能源與儲能" },
+  "optical-communication": { grade: "D", direction: "flat", groupName: "電子" },
+  display: { grade: "D", direction: "down", groupName: "電子" },
+  "clean-energy": { grade: "D", direction: "down", groupName: "永續系統" },
+};
+
+function gradeValue(value: string | null | undefined): TopicGrade | null {
+  return value === "S" || value === "A" || value === "B" || value === "D" ? value : null;
+}
+
+function directionFromState(value: string | null | undefined): TopicDirection | null {
+  const normalized = (value ?? "").trim().toUpperCase();
+  if (/BROAD|WARM|HEAT|LEADER|ACTIVE|MAINLINE/.test(normalized) || /走強|升溫|轉強|回流/.test(value ?? "")) return "up";
+  if (/COOL|WEAK|DIVERG/.test(normalized) || /退潮|轉弱|分歧/.test(value ?? "")) return "down";
+  if (/STABLE/.test(normalized) || /盤整|持平|觀察/.test(value ?? "")) return "flat";
+  return null;
+}
+
+export function getTopicOverviewMeta(topic: { slug: string; grade: string | null; strengthState: string | null; groupName: string | null }, allowPreview: boolean): TopicOverviewMeta {
+  const preview = overviewMetaBySlug[topic.slug];
+  const direction = directionFromState(topic.strengthState) ?? (allowPreview ? preview?.direction : null) ?? "flat";
+  const laneGrade = gradeValue(topic.grade) ?? (allowPreview ? preview?.grade ?? null : null);
+  const groupName = topic.groupName ?? (allowPreview ? preview?.groupName ?? null : null);
+  return {
+    laneGrade,
+    direction,
+    directionLabel: direction === "up" ? "走強" : direction === "down" ? "走弱" : "持平",
+    directionSymbol: direction === "up" ? "↑" : direction === "down" ? "↓" : "→",
+    groupName,
+  };
+}
+
+const previewRotationEvents: TopicRotationEvent[] = [
+  { id: "rotation-1032", occurredAt: "2026-08-10T10:32:00+08:00", timeLabel: "10:32", topicSlug: "ai-server", topicName: "AI伺服器", action: "首次進入 S", detail: "市場主線確立，今日分數維持高檔。", direction: "up", fromGrade: "A", toGrade: "S", source: "preview" },
+  { id: "rotation-1018", occurredAt: "2026-08-10T10:18:00+08:00", timeLabel: "10:18", topicSlug: "cpo", topicName: "CPO", action: "升至 A", detail: "代表股與核心成員同步轉強。", direction: "up", fromGrade: "B", toGrade: "A", source: "preview" },
+  { id: "rotation-0954", occurredAt: "2026-08-10T09:54:00+08:00", timeLabel: "09:54", topicSlug: "high-speed-transmission", topicName: "高速傳輸", action: "今日新增升溫", detail: "資金開始擴散到高速傳輸鏈。", direction: "up", fromGrade: "A", toGrade: "S", source: "preview" },
+  { id: "rotation-0932", occurredAt: "2026-08-10T09:32:00+08:00", timeLabel: "09:32", topicSlug: "bbu", topicName: "BBU", action: "開始退潮", detail: "題材仍在 S 級，但族群內部出現分歧。", direction: "down", fromGrade: "S", toGrade: "S", source: "preview" },
+  { id: "rotation-0916", occurredAt: "2026-08-10T09:16:00+08:00", timeLabel: "09:16", topicSlug: "display", topicName: "面板", action: "跌出 S", detail: "市場注意力回到主線題材。", direction: "down", fromGrade: "S", toGrade: "D", source: "preview" },
+  { id: "rotation-0858", occurredAt: "2026-08-10T08:58:00+08:00", timeLabel: "08:58", topicSlug: "robotics", topicName: "機器人", action: "升至 A", detail: "開盤後出現第一批同步轉強成員。", direction: "up", fromGrade: "B", toGrade: "A", source: "preview" },
+];
+
+export function getPreviewTopicRotation(): TopicRotationEvent[] {
+  return previewRotationEvents;
 }
 
 const stages: PreviewLifecycleSegment[] = [

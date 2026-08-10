@@ -4,15 +4,15 @@ import Link from "next/link";
 import { ChevronRight, Layers3, Star, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { fetchTopic, roleRank, scoreLabel, sourceLabel, type TopicConstituent, type TopicDetail as TopicData, type TopicResource } from "../../lib/topic-api";
-import { getTopicPreview, type TopicPreview } from "../../lib/topic-preview";
+import { getTopicPreview, PREVIEW_LABEL, type TopicPreview } from "../../lib/topic-preview";
 import { AppShell, Card, DataState, EmptyState, GradeChip, PageContainer, RoleChip, Table } from "./V2Foundation";
 
 function TopicSectionHeading({ title, description, badge = true }: { title: string; description?: string; badge?: boolean }) {
-  return <div className="tp-topic-section-heading"><div><h2>{title}</h2>{description && <p>{description}</p>}</div>{badge && <span className="tp-preview-badge">Preview · 等待正式 Read Model</span>}</div>;
+  return <div className="tp-topic-section-heading"><div><h2>{title}</h2>{description && <p>{description}</p>}</div>{badge && <span className="tp-preview-badge">{PREVIEW_LABEL}</span>}</div>;
 }
 
 function PreviewBadge() {
-  return <span className="tp-preview-badge">Preview · 等待正式 Read Model</span>;
+  return <span className="tp-preview-badge">{PREVIEW_LABEL}</span>;
 }
 
 function priceLabel(value: number | null): string {

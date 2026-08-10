@@ -637,6 +637,22 @@ Preview data is additive and must never overwrite formal API fields. Every previ
 
 Frontend labels must map backend English state, freshness, group, and topic names to the Chinese V2 vocabulary at the presentation boundary. Raw technical codes such as `WARMING`, `CURRENT`, `Breadth`, `Leadership`, and `Consensus` must not appear in the customer-facing Topic List or Topic Detail.
 
+### 23.11 TASK-FE-004A Topic Overview / Market Scan
+
+`/topics` is the market-scan surface between Home and Topic Detail. Its job is to answer **"today, which topics exist and what market grade are they in?" within roughly ten seconds**. It is not a research page and must not pull Topic Detail content upward.
+
+The first viewport is a four-lane Kanban board ordered `S / A / B / D`. Each lane is a market classification, not an inferred ranking. A Kanban card contains only the topic name, today's topic score, today's direction (`↑ / ↓ / →`), and a clear `深入研究 →` route to Topic Detail. Do not place lifecycle, market commentary, news, constituents, representative stocks, or related-topic research inside these cards.
+
+Each Kanban card carries a restrained directional rail and arrow for scanability. Direction colors remain separate from Taiwan price colors: use brand taupe for strengthening, muted sage for weakening, and warm gray for flat unless a later token amendment changes this decision.
+
+Below the Kanban, preserve these sections in order:
+
+1. `市場輪動` — event rows sorted by event time, such as `今日新增升溫`, `開始退潮`, `首次進入 S`, `跌出 S`, `升至 A`, and `降至 B` when an authoritative event read model exists. If only the formal rotation summary is available, present its latest-date/change fields as a formal summary. If event fields are missing, use schema-compatible Preview Data with an explicit `Preview（Mock Data）· 等待正式 Read Model` badge.
+2. `依大族群瀏覽` — collapsible group navigation that exposes child topics and routes to Topic Detail. Group navigation is not a research summary.
+3. `全部題材` — searchable, favoritable, filterable compact rows containing only topic name, parent group, grade, today's score, today's direction, constituent count, and favorite action.
+
+Formal Topic API fields remain authoritative for topic identity, group, grade, score, state, date, and constituent count. Preview metadata may fill only missing Overview presentation fields (direction, event wording, and group navigation) and must never overwrite a non-null formal value. Topic Detail remains the home for lifecycle, topic events, constituents, representative/core/related roles, news, and related-topic research.
+
 ## 24. PM freeze amendment: Opportunity page / 機會
 
 **Decision status:** `FROZEN / PM-APPROVED`  

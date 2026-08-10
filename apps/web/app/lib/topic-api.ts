@@ -1,6 +1,6 @@
 import rawSnapshotJson from "./web_snapshot.json";
 import type { RawSnapshot, RawStock, RawTopic } from "./types";
-import { getPreviewTopicIdentities, getPreviewTopicIdentity, groupNameLabel, readableFreshness, readableTopicState, topicNameLabel } from "./topic-preview";
+import { getPreviewTopicIdentities, getPreviewTopicIdentity, getPreviewTopicRotation, groupNameLabel, PREVIEW_LABEL, readableFreshness, readableTopicState, topicNameLabel, type TopicDirection, type TopicRotationEvent } from "./topic-preview";
 
 export type TopicSource = "api" | "synthetic-snapshot" | "unavailable";
 
@@ -41,6 +41,8 @@ export type TopicResource<T> = {
   error: string | null;
 };
 
+export type TopicRotationResource = TopicResource<TopicRotationEvent[]>;
+
 type ApiTopicSummary = Omit<TopicSummary, "readableState"> & { readableState?: never };
 type ApiTopicDetail = Omit<TopicDetail, "readableState" | "constituents"> & {
   constituents: Array<{
@@ -49,6 +51,20 @@ type ApiTopicDetail = Omit<TopicDetail, "readableState" | "constituents"> & {
     relationType: string;
     weight: number | null;
   }>;
+};
+
+type ApiTopicRotation = {
+  change: number | null;
+  days: number;
+  groupName: string | null;
+  latestCoveragePct: number | null;
+  latestDate: string;
+  latestGrade: string | null;
+  latestScore: number | null;
+  latestStrengthState: string | null;
+  pointCount: number;
+  topicName: string;
+  topicSlug: string;
 };
 
 type SyntheticRelation = {
@@ -253,5 +269,47 @@ export function scoreLabel(score: number | null): string {
 }
 
 export function sourceLabel(source: TopicSource): string {
-  return source === "api" ? "正式 API" : source === "synthetic-snapshot" ? "Preview（等待正式 Read Model）" : "資料來源未連線";
+  return source === "api" ? "正式 API" : source === "synthetic-snapshot" ? PREVIEW_LABEL : "資料來源未連線";
+}
+
+function rotationDirection(change: number | null, strengthState: string | null): TopicDirection {
+  if (change !== null) return change > 0 ? "up" : change < 0 ? "down" : "flat";
+  const state = (strengthState ?? "").toUpperCase();
+  return /WARM|HEAT|ACTIVE|BROAD|MAINLINE/.test(state) ? "up" : /COOL|WEAK|DIVERG/.test(state) ? "down" : "flat";
+}
+
+function rotationAction(item: ApiTopicRotation): string {
+  if (item.change === null) return "輪動狀態待確認";
+  if (item.change > 0) return "強度上升";
+  if (item.change < 0) return "強度下降";
+  return "維持盤整";
+}
+
+function rotationFromApi(item: ApiTopicRotation): TopicRotationEvent {
+  const direction = rotationDirection(item.change, item.latestStrengthState);
+  const toGrade = item.latestGrade === "S" || item.latestGrade === "A" || item.latestGrade === "B" || item.latestGrade === "D" ? item.latestGrade : null;
+  return {
+    id: `api-rotation-${item.topicSlug}-${item.latestDate}`,
+    occurredAt: item.latestDate,
+    timeLabel: item.latestDate,
+    topicSlug: item.topicSlug,
+    topicName: topicNameLabel(item.topicSlug, item.topicName),
+    action: rotationAction(item),
+    detail: `${toGrade ? `目前 ${toGrade} 級` : "正式輪動摘要"} · ${item.pointCount} 個觀測點`,
+    direction,
+    fromGrade: null,
+    toGrade,
+    source: "api",
+  };
+}
+
+export async function fetchTopicRotation(): Promise<TopicRotationResource> {
+  const base = apiBaseUrl();
+  if (!base) return { source: "synthetic-snapshot", data: getPreviewTopicRotation(), error: null };
+  const result = await request<{ items: ApiTopicRotation[] }>("/api/v1/analytics/topic-rotation?days=14&limit=100&offset=0");
+  if (result.source === "api" && result.data?.items?.length) {
+    const data = result.data.items.map(rotationFromApi).sort((a, b) => b.occurredAt.localeCompare(a.occurredAt));
+    return { source: "api", data, error: null };
+  }
+  return { source: "synthetic-snapshot", data: getPreviewTopicRotation(), error: result.error ?? "正式輪動 read model 尚未提供完整事件欄位。" };
 }
