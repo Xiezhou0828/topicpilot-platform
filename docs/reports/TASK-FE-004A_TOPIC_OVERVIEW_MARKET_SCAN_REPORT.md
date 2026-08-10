@@ -1,6 +1,6 @@
 # TASK-FE-004A｜Topic Overview / Market Scan Implementation Report
 
-**Status:** Implemented; validation and deployment pending
+**Status:** Implemented; deployed and verified
 **Route:** `/topics`
 **Scope:** V2 Topic Overview only. Topic Detail remains the research surface.
 
@@ -54,4 +54,4 @@ When the backend supplies direction, rotation events, and hierarchy, the Preview
 - Targeted ESLint for changed V2 files: passed.
 - `npm run build`: passed; `/topics` and `/topics/:slug` are present in the route manifest.
 - Full-project ESLint scan: exceeded the execution window; no error output was produced before timeout, so targeted lint is the authoritative scoped lint result.
-- Public deployment verification: pending final deployment.
+- Public deployment verification: passed on `/topics` and `/topics/ai-server` after the final deployment.
