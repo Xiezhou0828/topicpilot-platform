@@ -619,15 +619,15 @@ Topic Detail uses an editorial/calm lifecycle timeline as a key visual anchor, n
 
 This amendment does not change the product's scoring policy or define browser-side inference. It records presentation and product decisions only.
 
-### 23.9 TASK-FE-003 Topic Detail Phase 1 UI prototype
+### 23.9 TASK-FE-003A Topic Backend integration
 
-The first Topic Detail implementation is a static UI prototype at `/topics/[slug]`, with `/topics/ai-server` as the PM review route. It uses reasonable mock data only and does not connect to formal Topic, Stock, News, lifecycle, scoring, or recommendation APIs.
+Topic Detail and Topic List now use the existing formal customer read models as their primary source. `/topics` calls `GET /api/v1/topics`; `/topics/[slug]` calls `GET /api/v1/topics/{slug}`. Home `今日主線` links to the real slug route, including `/topics/ai-server`, and the topic stock list opens the shared `560px` Stock Drawer shell.
 
-The prototype reading order is: breadcrumb and topic identity; favorite action; grade, strength, lifecycle day, and stock-count metadata; short topic summary; 題材生命圖; 題材歷程 timeline; role-separated 代表股／核心股／關聯股 lists; collapsed 題材新聞; related-topic heat cards; and a restrained rectangular market-topic heat map at the bottom.
+The formal API currently supplies topic identity, group/type, enabled state, data date, score, grade, strength state, coverage, constituent count, and constituent stock code/name/relation/weight. The frontend translates supported backend strength-state codes into the frozen retail-readable labels without calculating scores, grades, heatmap sizing, lifecycle, or recommendations. Constituent relation types are presented as the frozen neutral role chips `代表股 / 核心股 / 關聯股`.
 
-Interaction is intentionally limited to prototype-level behavior: favorite state is local UI state, clicking a stock opens the shared-width `560px` Stock Detail Drawer mock, news expands from its collapsed default, and related-topic cards navigate to another `/topics/[slug]` mock route. No hover drawer, topic peek, animation system, API wiring, business scoring, or recommendation logic is introduced.
+Lifecycle history, topic events, hierarchy ancestry beyond the available group field, curated news, related-topic read models, user-scoped favorite persistence, and constituent price/freshness fields are not present in the current customer Topic contract. Those surfaces remain visible as explicit `資料待更新` dependency states; no new business mock is added. If no API origin is configured for the public preview, the existing `web_snapshot.json` public synthetic snapshot is used as a clearly labelled display fallback only.
 
-The prototype continues the Modern Financial Workspace language: warm off-white page background, white surfaces, warm-gray borders, restrained shadows, `#8A7462` brand accents, warm-neutral role/grade chips, and Taiwan red/green only for mock price movement. Desktop is primary; the layout stacks the role cards, lifecycle track, related cards, and heat map responsively at mobile widths.
+The implementation keeps the Modern Financial Workspace language: warm off-white page background, white surfaces, warm-gray borders, restrained shadows, `#8A7462` brand accents, warm-neutral role/grade chips, and Taiwan red/green only for actual constituent price movement when the snapshot supplies it. Desktop is primary; the list, unified role table, and `560px` drawer degrade responsively without changing the data contract.
 
 ## 24. PM freeze amendment: Opportunity page / 機會
 

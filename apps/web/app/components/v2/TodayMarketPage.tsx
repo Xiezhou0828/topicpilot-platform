@@ -61,9 +61,9 @@ function liveMetric(index: MarketIndexView | null, fallback: MarketMetric): Mark
 }
 
 const mainlines = [
-  { name: "AI伺服器", grade: "S", state: "全面走強", detail: "量能與主流股同步，仍是今日市場核心方向。" },
-  { name: "BBU", grade: "S", state: "高檔整理", detail: "高位震盪加劇，留意族群內部開始分歧。" },
-  { name: "機器人", grade: "A", state: "快速升溫", detail: "盤中關注度上升，資金開始擴散至相關零組件。" },
+  { slug: "ai-server", name: "AI伺服器", grade: "S", state: "全面走強", detail: "量能與主流股同步，仍是今日市場核心方向。" },
+  { slug: "bbu", name: "BBU", grade: "S", state: "高檔整理", detail: "高位震盪加劇，留意族群內部開始分歧。" },
+  { slug: "robotics", name: "機器人", grade: "A", state: "快速升溫", detail: "盤中關注度上升，資金開始擴散至相關零組件。" },
 ] as const;
 
 const events = [
@@ -180,7 +180,7 @@ export default function TodayMarketPage() {
                 </div>
                 <p className="tp-home-topic-state">{topic.state}</p>
                 <p className="tp-home-topic-detail">{topic.detail}</p>
-                <Link href="/topics" className="tp-home-card-action">進入題材頁 <ChevronRight size={16} aria-hidden="true" /></Link>
+                <Link href={`/topics/${topic.slug}`} className="tp-home-card-action">進入題材頁 <ChevronRight size={16} aria-hidden="true" /></Link>
               </article>
             ))}
           </div>
