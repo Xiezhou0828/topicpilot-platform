@@ -474,7 +474,7 @@ This is sequencing guidance, not an implementation authorization:
 The Home page is a fixed market-navigation workspace. The final V2 order is:
 
 1. **Shared App Shell header**
-2. **Page Header** — `今日市場`、副標與頁面 freshness/data state。
+2. **Home hero** — no duplicate page H1; freshness/data state is presented inside the `市場概況` Card Header。
 3. **市場概況** — 加權指數、OTC 指數、成交金額、上漲／下跌／平盤、漲停／跌停、更新時間。
 4. **今日市場重點** — a concise deterministic market reading presented as 3–4 bullets, followed by a low-presence one-line research focus。
 5. **今日主線 TOP3** — exactly three current themes, with grade and readable state; each routes to 題材。
@@ -505,13 +505,17 @@ Home uses the **Modern Financial Workspace** direction: light mode first; warm n
 
 No Home product or information-architecture decision remains open for this phase. The first implementation uses a fixed development snapshot to complete layout, spacing, card hierarchy, and desktop rendering while market aggregates, freshness, event timeline, authenticated favorites summary, and opportunity teaser data remain integration dependencies. Pre-market/post-market variants, mobile redesign, and exact shared token values remain global or future-phase items.
 
-### 22.7 TASK-FE-002A Hero polish and data boundary
+### 22.7 TASK-FE-002C Home final UI freeze and data boundary
 
-The Home hero is intentionally compact and information-dense. The page header uses one `今日市場` H1, the approved subtitle, freshness/data state, and then `市場概況`; it does not repeat the current page as a small eyebrow above the H1. The `MARKET PULSE` English overline and the explanatory sentence under `市場概況` are removed from the formal first-screen presentation.
+The Home hero no longer renders a duplicate `今日市場` H1 or a standalone freshness row. The global header identifies the current page. Freshness is shown only in the `市場概況` Card Header as one compact status treatment: `盤中更新`, `盤後更新`, or `資料待更新`, with a timestamp when available.
 
-The first viewport should show the market summary and the beginning of `今日市場重點` without requiring a scroll at the approved desktop width. The Summary Card keeps the two-row structure: primary `加權指數／OTC 指數／成交金額`, followed by `上漲／下跌／平盤／漲停／跌停／更新時間`, with compressed vertical padding and no chart, heatmap, or additional visualization.
+The first viewport should show the market summary and the beginning of `今日市場重點` without requiring a scroll at the approved desktop width. The Summary Card keeps the two-row structure: primary `加權指數／OTC 指數／成交金額`, followed by `上漲／下跌／平盤／漲停／跌停／更新時間`, with compressed vertical padding and no chart, heatmap, or additional visualization. `今日市場重點` keeps its four bullets and `今日一句話` while using a compressed reading rhythm.
+
+`今日主線` keeps exactly three compact cards with their S/A/B/D grade chips, readable state, and `進入題材頁` action. The action link is the only clickable element for each card; the entire card is not a link. `盤中重要事件`, `快速升溫／快速退潮`, and `今日機會` retain their current design and information order. No hover preview, stock popup, tooltip, chart, or new business logic is introduced.
 
 The frontend consumes the existing read-only `GET /api/v1/snapshot/latest` path when the returned snapshot contains the relevant fields. Market indices, market breadth, and freshness timestamps are live-backend candidates only when present and usable; fields absent from the current public read model remain formal-language mock values and are documented in the TASK-FE-002A implementation report. Today Focus, ranked Top 3, event timeline, rotation, authenticated favorites, and opportunity preview remain unchanged mock or deferred surfaces until their authoritative APIs are available.
+
+**Freeze status:** Home is frozen after TASK-FE-002C. The next authorized surface is Topic Detail; no further Home layout changes are included in this phase.
 
 ## 23. PM freeze amendment: Topic Detail hierarchy, roles, and personal watch architecture
 

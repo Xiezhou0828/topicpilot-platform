@@ -103,7 +103,7 @@ function MetricValue({ metric }: { metric: MarketMetric }) {
   );
 }
 
-function SectionHeading({ id, eyebrow, title, description, link }: { id?: string; eyebrow?: string; title: string; description?: string; link?: { label: string; href: string } }) {
+function SectionHeading({ id, eyebrow, title, description, link, trailing }: { id?: string; eyebrow?: string; title: string; description?: string; link?: { label: string; href: string }; trailing?: React.ReactNode }) {
   return (
     <div className="tp-home-section-heading">
       <div>
@@ -111,7 +111,7 @@ function SectionHeading({ id, eyebrow, title, description, link }: { id?: string
         <h2 id={id}>{title}</h2>
         {description && <p>{description}</p>}
       </div>
-      {link && <Link className="tp-home-section-link" href={link.href}>{link.label}<ChevronRight size={16} aria-hidden="true" /></Link>}
+      {(trailing || link) && <div className="tp-home-section-heading-actions">{trailing}{link && <Link className="tp-home-section-link" href={link.href}>{link.label}<ChevronRight size={16} aria-hidden="true" /></Link>}</div>}
     </div>
   );
 }
@@ -143,15 +143,11 @@ export default function TodayMarketPage() {
       ? "盤後更新"
       : "資料待更新";
   return (
-    <PageContainer className="tp-home-page-container" title="今日市場" description="從市場脈動開始，整理今天值得繼續研究的方向。">
-      <div className="tp-home-page-status" aria-label="市場資料狀態">
-        <span className="tp-home-live-status"><span className={`tp-home-live-status-dot tp-home-live-status-dot--${freshnessLabel === "盤中更新" ? "live" : freshnessLabel === "盤後更新" ? "after" : "pending"}`} aria-hidden="true" />{freshnessLabel}<time>{asOf ?? "待確認"}</time></span>
-      </div>
-
+    <PageContainer className="tp-home-page-container" title="今日市場" hideHeader>
       <div className="tp-home-content">
         <section className="tp-home-section" aria-labelledby="market-overview-title">
           <Card className="tp-home-overview-card">
-            <SectionHeading id="market-overview-title" title="市場概況" />
+            <SectionHeading id="market-overview-title" title="市場概況" trailing={<span className="tp-home-live-status"><span className={`tp-home-live-status-dot tp-home-live-status-dot--${freshnessLabel === "盤中更新" ? "live" : freshnessLabel === "盤後更新" ? "after" : "pending"}`} aria-hidden="true" />{freshnessLabel}{asOf && <time>{asOf}</time>}</span>} />
             <div className="tp-home-primary-metrics">
               {marketMetrics.slice(0, 3).map((metric) => <MetricValue key={metric.label} metric={metric} />)}
             </div>
@@ -178,13 +174,13 @@ export default function TodayMarketPage() {
           <SectionHeading id="mainline-title" title="今日主線" description="先看最值得深入研究的三個題材，再進入題材頁查看完整脈絡。" link={{ label: "查看全部題材", href: "/topics" }} />
           <div className="tp-home-mainline-grid">
             {mainlines.map((topic, index) => (
-              <Link href="/topics" className="tp-home-mainline-card" key={topic.name}>
+              <article className="tp-home-mainline-card" key={topic.name}>
                 <div className="tp-home-card-topline"><span className="tp-home-card-index">0{index + 1}</span><GradeChip grade={topic.grade} /></div>
                 <h3>{topic.name}</h3>
                 <p className="tp-home-topic-state">{topic.state}</p>
                 <p className="tp-home-topic-detail">{topic.detail}</p>
-                <span className="tp-home-card-action">進入題材頁 <ChevronRight size={16} aria-hidden="true" /></span>
-              </Link>
+                <Link href="/topics" className="tp-home-card-action">進入題材頁 <ChevronRight size={16} aria-hidden="true" /></Link>
+              </article>
             ))}
           </div>
         </section>
