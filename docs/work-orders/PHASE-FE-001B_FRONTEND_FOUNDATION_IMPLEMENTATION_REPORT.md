@@ -26,8 +26,20 @@ V1 styles remain in `globals.css` for operational routes; V2 styles are scoped w
 
 - `npm run lint` — passed with 0 errors and 0 warnings after cleanup.
 - `npm run build` — passed; vinext generated all requested V2 routes and existing retained routes.
-- No visual screenshot was generated in this pass because the request did not provide a running browser/session; the build is ready for the PM visual review.
+- Deployed to the existing Sites project at [topicpilot-platform.game0962046460.chatgpt.site](https://topicpilot-platform.game0962046460.chatgpt.site/).
+- Saved Sites version: `4`; deployment completed successfully from commit `021bdcd44d3513bc6a629c39d7db003f6bb3dfe3`.
+- Browser smoke passed for `/`, `/topics`, `/stocks`, `/favorites`, `/opportunities`, and `/ai-studio`: each returned its expected URL, one matching page heading, and the full primary navigation.
+- Browser smoke passed for retained operational routes `/market`, `/watchlist`, `/guide`, `/studio`, `/topics/intelligence`, and `/stocks/2330`; no 404/not-found body was observed.
+- Global search shell interaction passed: trigger opened the disabled-search popover with the expected pending copy and close control.
+- Desktop visual review completed at the deployed URL; V2 rendered with warm off-white background, white surfaces, restrained borders, `#8A7462` brand, and no neon/glass/gradient treatment.
 
 ## Explicitly deferred
 
 Home, Topic, Stock, Favorites, Opportunity, and AI research business logic; search integration; API wiring; real tables; scoring; lifecycle/heatmap derivation; recommendation content; and V1 visual migration are deferred to later phases.
+
+## Deployment and rollback
+
+- Customer-facing V2 routes are live at the existing PM-accessible URL above.
+- The published site is versioned in Sites; rollback can be performed by redeploying the prior saved version (`3`) from the same Sites project.
+- Backend services, PostgreSQL, collector, scheduler, credentials, and V1 data workflows were not changed by this cutover.
+- PHASE-FE-002 business implementation was not started.
