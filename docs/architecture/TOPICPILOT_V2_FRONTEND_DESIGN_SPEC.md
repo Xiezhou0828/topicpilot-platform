@@ -97,34 +97,39 @@ AI研究室 stays in the IA as a Phase 2 premium differentiator. It must not blo
 
 ### FROZEN / CURRENT DECISION
 
-Home is intraday-first. Pre-market and post-market variants are deferred. The fixed V1 hierarchy is:
+Home is intraday-first. Pre-market and post-market variants are deferred. The fixed V2 hierarchy is:
 
 ```text
 ┌ 今日市場 ───────────────────────────────────────────────┐
-│ 市場概況   加權指數／櫃買／成交金額／漲跌家數／漲跌停／更新時間 │
-├ 今日市場一句話／今日市場重點 ───────────────────────────┤
-│ 3–5 個今日主線／熱門題材：等級、強度、可讀狀態               │
-├ 盤中正在發生 ──────────────────────────────────────────┤
-│ 有門檻的題材事件時間線：升溫、轉強、分歧、降溫、整理           │
-├ 升溫／降溫 ───────────────────────────────────────────┤
-│ 簡短清單，不放完整題材地圖                                   │
+│ 市場概況   加權指數／OTC／成交金額／漲跌家數／漲跌停／更新時間 │
+├ 今日市場重點 ──────────────────────────────────────────┤
+│ 一段 deterministic market reading                         │
+├ 今日主線 TOP3 ──────────────────────────────────────────┤
+│ 題材名稱／S-A-B-D 等級／可讀狀態 → 題材頁                  │
+├ 盤中重要事件 ───────────────────────────────────────────┤
+│ 有門檻的題材狀態轉換時間線                                 │
+├ 快速升溫／快速退潮 ─────────────────────────────────────┤
+│ 左右兩欄、各最多 3 個題材                                   │
+├ 我的收藏（登入後） ─────────────────────────────────────┤
+│ 登入後才顯示的收藏變化摘要                                  │
 ├ 今日機會 ─────────────────────────────────────────────┤
-│ 3–5 個研究候選摘要 → 機會頁                                  │
+│ 研究候選 teaser → 機會頁                                    │
 └───────────────────────────────────────────────────────┘
 ```
 
 Sections, in order:
 
-1. **市場概況** — 加權指數、櫃買指數、成交金額、上漲／下跌／平盤家數、漲停／跌停家數、current update time/freshness.
-2. **今日市場一句話／今日市場重點** — concise deterministic summary from TopicPilot data. It is not a news feed and not AI-flavored marketing copy. Example states: `主線仍在 AI伺服器`、`機器人盤中升溫`、`BBU 高檔分歧`.
-3. **今日主線／今日熱門題材** — 3–5 topics only. Show name, S/A/B/D, topic strength, and human-readable state: `全面走強`、`龍頭先行`、`開始升溫`、`高檔分歧`、`開始退潮`、`持續強勢`. Do not expose Breadth/Leadership terms on the card.
-4. **盤中正在發生** — a 5–10 minute refresh-aware event timeline. Candidate event labels include `急升溫`、`開始轉強`、`躍升主線`、`持續強勢`、`高檔分歧`、`主線轉弱`、`快速降溫`、`震盪整理`. Events require meaningful thresholding; do not emit one for every small score movement.
-5. **升溫／降溫** — concise lists, not a full topic map.
-6. **今日機會** — a restrained 3–5 candidate teaser linking to 機會; Home does not complete the recommendation analysis.
+1. **市場概況** — 一張橫向 Summary Card，呈現加權指數、OTC 指數、成交金額、上漲／下跌／平盤家數、漲停／跌停家數與更新時間。
+2. **今日市場重點** — 只有一段 concise deterministic summary。它不是新聞流，也不是 AI 對話或長文章。
+3. **今日主線 TOP3** — 固定三張可點擊題材卡，顯示名稱、S/A/B/D 等級與一句可讀狀態；不放股票、新聞或 Leader Table。
+4. **盤中重要事件** — 只記錄有意義的題材狀態轉換，例如升溫、分歧、退出主線；不記錄每分鐘流水帳。
+5. **快速升溫／快速退潮** — 左右兩欄，各最多三個題材，回答資金目前正在移動的方向。
+6. **我的收藏** — 僅登入後顯示的收藏變化摘要，不重建完整收藏頁。
+7. **今日機會** — 受限的研究候選 teaser，點擊進入機會頁；Home 不完成推薦分析。
 
 Explicit exclusions: no Home news feed, topic map/heatmap, long stock list, technical indicators as the primary visual, or AI branding as a visual gimmick. News belongs in Topic Detail and Stock Detail contexts.
 
-**API/data dependency to verify:** market aggregates, freshness, event labels, deterministic summary source, and the fields needed for topic cards must be confirmed against the existing API contracts before implementation.
+**API/data dependency to verify:** market aggregates, freshness, event labels, deterministic summary source, topic-card fields, authenticated saved-item summary, and opportunity teaser fields must be confirmed against the existing API contracts before production data wiring. The first visual implementation may use a clearly documented fixed development snapshot.
 
 ### FROZEN / CURRENT DECISION
 
@@ -459,49 +464,46 @@ This is sequencing guidance, not an implementation authorization:
 - The Product Direction and Surfaces Contract remains the source of truth for product semantics; this document is the page and visual blueprint beneath it.
 - Recommendation remains downstream, explainable, read-only, and fail-closed over unavailable/deferred Topic Intelligence according to the existing contracts.
 
-## 22. PM freeze: 今日市場 (Home) V1
+## 22. PM freeze: 今日市場 (Home) V2
 
 **Decision status:** `FROZEN / PM-FROZEN`  
-**Review gate:** only visual prototype review remains for this page. This freeze does not authorize frontend implementation.
+**Review gate:** the fixed visual hierarchy is approved for the first V2 implementation. Backend data wiring remains a separate integration boundary.
 
 ### 22.1 Final section order
 
-The Home page is a fixed market-navigation workspace. The final V1 order is:
+The Home page is a fixed market-navigation workspace. The final V2 order is:
 
-1. **Top navigation**
-2. **市場概況** — 加權指數、櫃買指數、成交金額、上漲／下跌／平盤、漲停／跌停、更新時間。
-3. **今日市場一句話** — a concise deterministic market reading.
-4. **今日主線 TOP3** — the three most important current themes, with grade and readable state.
-5. **盤中事件 Timeline** — meaningful topic state transitions only.
-6. **快速升溫 TOP3 / 快速降溫 TOP3** — concise warming and cooling rankings.
-7. **今日強勢股票 / 今日弱勢股票** — intraday rankings from the currently tracked intraday universe only.
-8. **今日機會** — a 3–5 item teaser linking to the dedicated 機會 page; Home does not complete recommendation analysis.
+1. **Shared App Shell header**
+2. **Page Header** — `今日市場`、副標與頁面 freshness/data state。
+3. **市場概況** — 加權指數、OTC 指數、成交金額、上漲／下跌／平盤、漲停／跌停、更新時間。
+4. **今日市場重點** — a single concise deterministic market reading。
+5. **今日主線 TOP3** — exactly three current themes, with grade and readable state; each routes to 題材。
+6. **盤中重要事件 Timeline** — meaningful topic state transitions only。
+7. **快速升溫／快速退潮** — two concise columns, at most three topics per side。
+8. **我的收藏** — authenticated-only compact change summary; hidden while signed out。
+9. **今日機會** — a restrained teaser linking to the dedicated 機會 page; Home does not complete recommendation analysis。
 
-The hierarchy is fixed in V1 and is not user-customizable.
+The hierarchy is fixed in V2 and is not user-customizable.
 
 ### 22.2 Home exclusions
 
-Home V1 explicitly does **not** contain a news feed, a topic heatmap/topic map, or a large K-line chart. These exclusions are intentional: TopicPilot is a market-navigation product, not a charting platform or news homepage, and current data capability does not justify occupying prime screen space with these surfaces. News belongs in relevant topic or stock detail contexts; topic visualization belongs on the 題材 page; charting is deferred.
+Home V2 explicitly does **not** contain a stock ranking, long stock list, news feed, topic heatmap/topic map, K-line chart, technical analysis chart, or AI chat. These exclusions are intentional: TopicPilot is a market-navigation product, not a stock-ranking, charting, news, or AI showcase surface. Stocks remain concentrated on 股票; topic visualization belongs on 題材; recommendation analysis remains concentrated on 機會.
 
 ### 22.3 Intraday event timeline
 
 The timeline records only significant, user-meaningful topic transitions. Supported examples include 首度升至 A、首度升至 S、開始高檔分歧、退出主線、快速升溫、快速降溫。 Do not emit an event for every small score, price, or rank movement. Each event should retain its timestamp, topic identity, transition label, and enough context for a user to understand what changed.
 
-### 22.4 Strong/weak stock rankings
+### 22.4 Home business boundary
 
-The Home strong/weak sections stay in V1, but they are explicitly **intraday rankings for stocks currently included in intraday tracking**. They are not rankings of the entire Taiwan market and must not be labeled or implied as a full-market Top 100. The UI must show plain-language scope wording such as:
-
-> 依目前納入盤中追蹤的股票排序，非全市場完整排行。
-
-Detailed ranking and the full stock universe remain available on 股票, including stocks that are only updated after close.
+Home is a market-navigation surface, not a stock-ranking surface. It must not contain `今日強勢股`、`今日弱勢股`、大量股票排行、完整股票列表、K 線、技術分析圖、完整題材地圖、新聞流或 AI 對話。股票資料集中於股票頁；推薦分析集中於機會頁；首頁的今日機會只負責提供下一步研究入口。
 
 ### 22.5 Frozen Home visual direction
 
 Home uses the **Modern Financial Workspace** direction: light mode first; warm neutral primary brand color `#8A7462`; white cards with very restrained shadows; importance expressed through hierarchy, typography, and spacing rather than many colors; Taiwan market red/green reserved for actual price movement; and S/A/B/D shown with restrained warm-neutral chips, never bright saturated grade colors or full-card fills.
 
-### 22.6 Remaining Home-specific review
+### 22.6 First implementation note
 
-No Home product or information-architecture decision remains open. The only remaining Home-specific gate is visual prototype review of hierarchy, spacing, card density, chip treatment, and desktop rendering. Pre-market/post-market variants, mobile redesign, and exact shared token values remain global or future-phase items, not blockers to this Home freeze.
+No Home product or information-architecture decision remains open for this phase. The first implementation uses a fixed development snapshot to complete layout, spacing, card hierarchy, and desktop rendering while market aggregates, freshness, event timeline, authenticated favorites summary, and opportunity teaser data remain integration dependencies. Pre-market/post-market variants, mobile redesign, and exact shared token values remain global or future-phase items.
 
 ## 23. PM freeze amendment: Topic Detail hierarchy, roles, and personal watch architecture
 
