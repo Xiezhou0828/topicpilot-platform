@@ -1,11 +1,14 @@
+"use client";
+
 import Link from "next/link";
 import {
   ArrowDownRight,
   ArrowUpRight,
   ChevronRight,
-  Clock3,
   TrendingUp,
 } from "lucide-react";
+import { useSnapshot } from "../../lib/snapshot-store";
+import type { MarketIndexView } from "../../lib/types";
 import {
   Card,
   DataState,
@@ -21,9 +24,10 @@ type MarketMetric = {
   change?: string;
   tone?: "up" | "down" | "neutral";
   note?: string;
+  source?: "live" | "mock";
 };
 
-const marketMetrics: MarketMetric[] = [
+const mockMarketMetrics: MarketMetric[] = [
   { label: "加權指數", value: "23,184.72", change: "+286.14  +1.25%", tone: "up", note: "較昨收" },
   { label: "OTC 指數", value: "248.31", change: "+2.18  +0.89%", tone: "up", note: "較昨收" },
   { label: "成交金額", value: "3,428 億", note: "估計值" },
@@ -34,6 +38,29 @@ const marketMetrics: MarketMetric[] = [
   { label: "跌停", value: "7", tone: "down" },
   { label: "更新時間", value: "10:48", note: "盤中快照" },
 ];
+
+function formatAsOf(value: string | null): string | null {
+  if (!value) return null;
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) return value;
+  return new Intl.DateTimeFormat("zh-TW", { timeZone: "Asia/Taipei", hour: "2-digit", minute: "2-digit", hour12: false }).format(parsed);
+}
+
+function findIndex(indices: MarketIndexView[], name: string): MarketIndexView | null {
+  const index = indices.find((item) => item.name === name);
+  return index && !index.pending && index.value !== "待接資料源" ? index : null;
+}
+
+function liveMetric(index: MarketIndexView | null, fallback: MarketMetric): MarketMetric {
+  if (!index) return fallback;
+  return {
+    ...fallback,
+    value: index.value,
+    change: index.change === null ? undefined : `${index.change > 0 ? "+" : ""}${index.change.toFixed(2)}%`,
+    source: "live",
+    note: index.asOf ? `後端快照 · ${formatAsOf(index.asOf) ?? index.asOf}` : "後端快照",
+  };
+}
 
 const mainlines = [
   { name: "AI伺服器", grade: "S", state: "全面走強", detail: "量能與主流股同步，仍是今日市場核心方向。" },
@@ -92,24 +119,42 @@ function SectionHeading({ id, eyebrow, title, description, link }: { id?: string
 }
 
 export default function TodayMarketPage() {
+  const { bundle, status } = useSnapshot();
+  const isSyntheticPreview = bundle.qualityPanelData.freshness.sourceLabel === "公開合成資料";
+  const canUseBackendData = bundle.source === "snapshot" && status.dataState !== "UNAVAILABLE" && !isSyntheticPreview;
+  const liveWeighted = canUseBackendData ? findIndex(bundle.homeData.marketIndices, "加權指數") : null;
+  const liveOtc = canUseBackendData ? findIndex(bundle.homeData.marketIndices, "櫃買指數") : null;
+  const liveBreadth = canUseBackendData ? bundle.marketRadar?.breadth : null;
+  const asOf = canUseBackendData
+    ? formatAsOf(bundle.qualityPanelData.freshness.quoteUpdatedAt) ?? formatAsOf(bundle.qualityPanelData.freshness.generatedAt)
+    : null;
+  const marketMetrics: MarketMetric[] = [
+    liveMetric(liveWeighted, mockMarketMetrics[0]),
+    liveMetric(liveOtc, mockMarketMetrics[1]),
+    mockMarketMetrics[2],
+    liveBreadth?.advance === null || liveBreadth?.advance === undefined ? mockMarketMetrics[3] : { ...mockMarketMetrics[3], value: liveBreadth.advance.toLocaleString("en-US"), source: "live", note: "後端快照" },
+    liveBreadth?.decline === null || liveBreadth?.decline === undefined ? mockMarketMetrics[4] : { ...mockMarketMetrics[4], value: liveBreadth.decline.toLocaleString("en-US"), source: "live", note: "後端快照" },
+    liveBreadth?.flat === null || liveBreadth?.flat === undefined ? mockMarketMetrics[5] : { ...mockMarketMetrics[5], value: liveBreadth.flat.toLocaleString("en-US"), source: "live", note: "後端快照" },
+    ...mockMarketMetrics.slice(6, 8),
+    asOf ? { ...mockMarketMetrics[8], value: asOf, source: "live", note: "後端更新時間" } : mockMarketMetrics[8],
+  ];
+  const freshnessState = !isSyntheticPreview && status.dataState === "LIVE" ? "盤中更新" : !isSyntheticPreview && status.dataState === "SNAPSHOT" ? "盤後更新" : "資料待更新";
   return (
-    <PageContainer eyebrow="今日市場" title="今日市場" description="從市場脈動開始，整理今天值得繼續研究的方向。">
+    <PageContainer className="tp-home-page-container" title="今日市場" description="從市場脈動開始，整理今天值得繼續研究的方向。">
       <div className="tp-home-page-status" aria-label="市場資料狀態">
-        <Freshness state="盤中更新" asOf="開發用固定快照 · 10:48" />
-        <DataState state="資料待更新" />
+        {freshnessState === "資料待更新" ? <DataState state="資料待更新" /> : <Freshness state={freshnessState} asOf={asOf ?? "資料待更新"} />}
       </div>
 
       <div className="tp-home-content">
         <section className="tp-home-section" aria-labelledby="market-overview-title">
           <Card className="tp-home-overview-card">
-            <SectionHeading id="market-overview-title" eyebrow="MARKET PULSE" title="市場概況" description="用一眼掌握今日市場的廣度與方向。" />
+            <SectionHeading id="market-overview-title" title="市場概況" />
             <div className="tp-home-primary-metrics">
               {marketMetrics.slice(0, 3).map((metric) => <MetricValue key={metric.label} metric={metric} />)}
             </div>
             <div className="tp-home-secondary-metrics">
               {marketMetrics.slice(3).map((metric) => <MetricValue key={metric.label} metric={metric} />)}
             </div>
-            <div className="tp-home-card-footnote"><Clock3 size={14} aria-hidden="true" />資料為開發用固定快照，正式版將由市場聚合 API 提供。</div>
           </Card>
         </section>
 

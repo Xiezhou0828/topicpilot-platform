@@ -3570,3 +3570,17 @@ tbody tr:hover td { background: rgba(86, 198, 189, 0.06); }
   .tp-home-events li:first-child{border-top:0}
   .tp-home-story{font-size:18px}
 }
+
+/* TASK-FE-002A: compress the Home hero into a denser financial-workspace first viewport. */
+.tp-home-page-container{padding-top:18px}
+.tp-home-page-container .tp-page-header h1{margin:0}
+.tp-home-page-container .tp-page-description{margin-top:6px}
+.tp-home-page-container .tp-home-page-status{margin-top:12px}
+.tp-home-page-container .tp-home-content{gap:24px;margin-top:16px}
+.tp-home-page-container .tp-home-overview-card{padding:18px 24px 12px}
+.tp-home-page-container .tp-home-overview-card .tp-home-section-heading{margin-bottom:14px}
+.tp-home-page-container .tp-home-primary-metrics .tp-home-metric{padding-bottom:14px}
+.tp-home-page-container .tp-home-secondary-metrics .tp-home-metric{padding-top:10px;padding-bottom:6px}
+.tp-home-page-container .tp-home-metric strong{font-size:23px}
+.tp-home-page-container .tp-home-secondary-metrics .tp-home-metric strong{font-size:18px}
+.tp-home-page-container .tp-home-overview-card .tp-home-card-footnote{display:none}

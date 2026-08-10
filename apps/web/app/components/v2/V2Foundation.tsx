@@ -52,8 +52,8 @@ export function AppShell({ children, currentPath }: { children: React.ReactNode;
   return <div className="tp-v2-shell"><PrimaryNav currentPath={currentPath} /><main className="tp-main">{children}</main></div>;
 }
 
-export function PageContainer({ eyebrow, title, description, children }: { eyebrow?: string; title: string; description?: string; children?: React.ReactNode }) {
-  return <div className="tp-page-container"><header className="tp-page-header">{eyebrow && <p className="tp-eyebrow">{eyebrow}</p>}<h1>{title}</h1>{description && <p className="tp-page-description">{description}</p>}</header>{children}</div>;
+export function PageContainer({ eyebrow, title, description, className = "", children }: { eyebrow?: string; title: string; description?: string; className?: string; children?: React.ReactNode }) {
+  return <div className={`tp-page-container ${className}`.trim()}><header className="tp-page-header">{eyebrow && <p className="tp-eyebrow">{eyebrow}</p>}<h1>{title}</h1>{description && <p className="tp-page-description">{description}</p>}</header>{children}</div>;
 }
 
 export function DataState({ state = "AVAILABLE" }: { state?: "AVAILABLE" | "STALE" | "UNAVAILABLE" | "PROVIDER_ERROR" | "盤中更新" | "盤後更新" | "資料待更新" }) {
