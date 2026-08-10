@@ -65,3 +65,4 @@ The updated screenshot shows the financial-information-platform composition: log
 - Local geometry smoke — Left Group starts at 32px and ends before the Right Group; Right Group ends at 1233px; search width is 276px.
 - Local interaction smoke — Search, Notification, and Account controls opened successfully; Account menu contained all five PM-frozen items.
 - Retained route smoke — `/market`, `/watchlist`, `/guide`, `/studio`, `/topics/intelligence`, and `/stocks/2330` returned without 404/not-found content.
+- Published Sites version `7` deployed successfully to `https://topicpilot-platform.game0962046460.chatgpt.site`.
