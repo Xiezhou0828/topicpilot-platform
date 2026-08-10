@@ -3628,6 +3628,22 @@ tbody tr:hover td { background: rgba(86, 198, 189, 0.06); }
 .tp-home-topic-detail{margin:9px 0 12px;font-size:13px;line-height:1.45}
 .tp-home-card-action:focus-visible{outline:2px solid #c8b9aa;outline-offset:3px;border-radius:4px}
 
+/* TASK-FE-002E: final Home first-screen fit — no redundant labels or card indices. */
+.tp-home-page-container{padding-top:8px}
+.tp-home-page-container .tp-home-content{gap:12px}
+.tp-home-page-container .tp-home-overview-card{padding-top:12px;padding-bottom:8px}
+.tp-home-page-container .tp-home-overview-card .tp-home-section-heading{margin-bottom:8px}
+.tp-home-page-container .tp-home-primary-metrics .tp-home-metric{padding-bottom:10px}
+.tp-home-page-container .tp-home-secondary-metrics .tp-home-metric{padding-top:6px;padding-bottom:4px}
+.tp-home-page-container .tp-home-story-card{padding:10px 20px 8px}
+.tp-home-page-container .tp-home-story-card .tp-home-section-heading{margin-bottom:4px}
+.tp-home-page-container .tp-home-story-list{padding-bottom:6px}
+.tp-home-page-container .tp-home-one-line{padding-top:6px}
+.tp-home-page-container .tp-home-mainline-grid{gap:12px}
+.tp-home-page-container .tp-home-mainline-card{min-height:160px;padding:16px}
+.tp-home-page-container .tp-home-mainline-card h3{margin:10px 0 3px}
+.tp-home-page-container .tp-home-topic-detail{margin:7px 0 8px;line-height:1.4}
+
 /* TASK-FE-003: Topic Detail Phase 1 static prototype. */
 .tp-topic-page{padding-top:28px}
 .tp-topic-detail-page{display:grid;gap:24px}

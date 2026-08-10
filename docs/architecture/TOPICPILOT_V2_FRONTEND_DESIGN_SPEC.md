@@ -517,6 +517,12 @@ The frontend consumes the existing read-only `GET /api/v1/snapshot/latest` path 
 
 **Freeze status:** Home is frozen after TASK-FE-002C. The next authorized surface is Topic Detail; no further Home layout changes are included in this phase.
 
+### 22.8 TASK-FE-002E Home first-screen final fix
+
+The Home Summary Card shows `更新時間` as the final factual field without an additional `盤中快照` helper line. The three `今日主線` cards do not display ordinal `01／02／03` labels; their topic name, state, grade chip, detail, and `進入題材頁` action remain unchanged.
+
+The first-screen vertical rhythm is tightened through spacing and the already-approved compact card treatment so that the three complete `今日主線` cards are visible at the approved desktop viewport. No market metric, story copy, card order, Header, or downstream Home section is changed by this fix.
+
 ## 23. PM freeze amendment: Topic Detail hierarchy, roles, and personal watch architecture
 
 **Decision status:** `FROZEN / CURRENT DECISION`  

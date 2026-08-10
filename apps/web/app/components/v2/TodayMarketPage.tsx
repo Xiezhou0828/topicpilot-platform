@@ -34,7 +34,7 @@ const mockMarketMetrics: MarketMetric[] = [
   { label: "平盤家數", value: "126", tone: "neutral" },
   { label: "漲停", value: "38", tone: "up" },
   { label: "跌停", value: "7", tone: "down" },
-  { label: "更新時間", value: "10:48", note: "盤中快照" },
+  { label: "更新時間", value: "10:48" },
 ];
 
 function formatAsOf(value: string | null): string | null {
@@ -134,7 +134,7 @@ export default function TodayMarketPage() {
     liveBreadth?.decline === null || liveBreadth?.decline === undefined ? mockMarketMetrics[4] : { ...mockMarketMetrics[4], value: liveBreadth.decline.toLocaleString("en-US"), source: "live", note: "後端快照" },
     liveBreadth?.flat === null || liveBreadth?.flat === undefined ? mockMarketMetrics[5] : { ...mockMarketMetrics[5], value: liveBreadth.flat.toLocaleString("en-US"), source: "live", note: "後端快照" },
     ...mockMarketMetrics.slice(6, 8),
-    asOf ? { ...mockMarketMetrics[8], value: asOf, source: "live", note: "後端更新時間" } : mockMarketMetrics[8],
+    asOf ? { ...mockMarketMetrics[8], value: asOf, source: "live" } : mockMarketMetrics[8],
   ];
   const marketSession = bundle.qualityPanelData.freshness.marketSession;
   const freshnessLabel = !isSyntheticPreview && status.dataState === "LIVE" && marketSession === "OPEN"
@@ -172,9 +172,9 @@ export default function TodayMarketPage() {
         <section className="tp-home-section" aria-labelledby="mainline-title">
           <SectionHeading id="mainline-title" title="今日主線" description="先看最值得深入研究的三個題材，再進入題材頁查看完整脈絡。" link={{ label: "查看全部題材", href: "/topics" }} />
           <div className="tp-home-mainline-grid">
-            {mainlines.map((topic, index) => (
+            {mainlines.map((topic) => (
               <article className="tp-home-mainline-card" key={topic.name}>
-                <div className="tp-home-card-topline"><span className="tp-home-card-index">0{index + 1}</span><GradeChip grade={topic.grade} /></div>
+                <div className="tp-home-card-topline"><GradeChip grade={topic.grade} /></div>
                 <h3>{topic.name}</h3>
                 <p className="tp-home-topic-state">{topic.state}</p>
                 <p className="tp-home-topic-detail">{topic.detail}</p>
