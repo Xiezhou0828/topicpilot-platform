@@ -49,7 +49,7 @@ Desktop V1 primary navigation:
 Top-right global utilities:
 
 ```text
-全站搜尋   通知   設定／更多
+全域搜尋   通知   帳號
 ```
 
 Secondary or hidden surfaces:
