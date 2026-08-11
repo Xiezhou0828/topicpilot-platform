@@ -3901,6 +3901,9 @@ tbody tr:hover td { background: rgba(86, 198, 189, 0.06); }
 @media(max-width:1000px){.tp-stock-workspace:has(.tp-stock-drawer),.tp-stock-workspace:has(.tp-stock-encyclopedia-drawer){grid-template-columns:minmax(0,1fr) 320px}.tp-stock-toolbar{flex-wrap:wrap}.tp-stock-resort{margin-left:auto}}
 @media(max-width:760px){.tp-stock-workspace,.tp-stock-workspace:has(.tp-stock-drawer),.tp-stock-workspace:has(.tp-stock-encyclopedia-drawer){grid-template-columns:1fr}.tp-stock-drawer{position:fixed;z-index:20;inset:12px;overflow:auto}.tp-stock-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.tp-stock-toolbar{align-items:stretch}.tp-stock-toolbar label{flex:1}.tp-stock-toolbar select{width:100%}.tp-stock-resort{margin-left:0}}
 
+/* TASK-FE-010: Desktop drawer is anchored below the shared 72px header and scrolls internally. */
+.tp-stock-encyclopedia-drawer--inline{top:0;height:calc(100vh - 72px);max-height:calc(100vh - 72px);overflow:hidden;border-radius:0;border-top:0;border-bottom:0;display:flex;flex-direction:column}.tp-stock-encyclopedia-drawer--inline .tp-stock-encyclopedia-header{position:sticky;top:0;z-index:1;background:var(--tp-color-surface)}.tp-stock-encyclopedia-drawer--inline .tp-stock-encyclopedia-body{min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:22px;flex:1;padding-top:2px}.tp-stock-encyclopedia-drawer--inline .tp-stock-encyclopedia-cta{margin-top:auto}
+
 /* TASK-FE-009: Topic Detail research workspace upper-half refinement. */
 .tp-topic-detail-card{padding:24px}
 .tp-topic-detail-lifecycle-card{display:grid;gap:0}
