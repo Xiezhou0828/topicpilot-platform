@@ -1,51 +1,23 @@
+import type { components } from "./generated-api";
+
 export type StockApiSource = "api" | "synthetic-snapshot" | "unavailable";
 
-export type StockApiRelation = {
-  topicId: string;
-  topicSlug: string;
-  topicName: string;
-  topicRole: "代表股" | "核心股" | "關聯股" | null;
-  relationType: string;
-  relationWeight: number | null;
-};
+type FormalStockRead = components["schemas"]["StockReadModel"];
+type FormalStockPage = components["schemas"]["StockReadModelPage"];
 
-export type StockApiItem = {
-  instrumentId: string;
-  symbol: string;
-  code: string;
-  name: string | null;
-  market: "TPE" | "TWO";
-  exchange: string | null;
-  listing: string | null;
-  active: boolean;
-  enabled: boolean;
-  price: number | null;
-  changePct: number | null;
-  volume: number | null;
-  observedAt: string | null;
-  retrievedAt: string | null;
-  dataFreshness: "盤中更新" | "盤後更新" | "資料待更新";
-  updateMode: "INTRADAY" | "POST_CLOSE" | "UNKNOWN";
-  marketStatus: string;
-  mainTopic: { slug?: string; name: string; grade?: string | null; state?: string | null } | null;
+export type StockApiRelation = components["schemas"]["StockTopicRelationRead"];
+
+export type StockApiMainTopic = {
+  name: string;
+  grade?: string | null;
+  state?: string | null;
+  lifecycle?: string | null;
+} | null;
+
+export type StockApiItem = Omit<FormalStockRead, "topicRelations" | "historyCoverage" | "mainTopic"> & {
   topicRelations: StockApiRelation[];
-  trackingMode: string;
-  trackingReason: string | null;
-  ma20State: string | null;
-  ma60State: string | null;
   historyCoverage: Record<string, unknown>;
-  favorite: Record<string, unknown> | null;
-  opportunity: Record<string, unknown> | null;
-  technicalEvidence: {
-    above20MA: boolean | null;
-    above60MA: boolean | null;
-    ma20: number | null;
-    ma60: number | null;
-    breakoutState: string | null;
-    technicalState: string | null;
-  } | null;
-  institutionFlows: Record<string, unknown> | null;
-  summary: string | null;
+  mainTopic: StockApiMainTopic;
 };
 
 export type StockApiResource = {
@@ -55,7 +27,7 @@ export type StockApiResource = {
   universe: Record<string, number>;
 };
 
-function apiBaseUrl(): string | null {
+export function getFormalApiBaseUrl(): string | null {
   const runtime = typeof document !== "undefined"
     ? document.documentElement.dataset.apiBaseUrl?.trim()
     : "";
@@ -63,44 +35,118 @@ function apiBaseUrl(): string | null {
   return configured ? configured.replace(/\/+$/, "") : null;
 }
 
-export async function fetchFormalStocks(query: {
-  market?: string;
-  topic?: string;
-  updateMode?: string;
-  sort?: string;
-} = {}): Promise<StockApiResource> {
-  const base = apiBaseUrl();
+export function hasFormalApiBaseUrl(): boolean {
+  return getFormalApiBaseUrl() !== null;
+}
+
+function normalizeStock(item: FormalStockRead): StockApiItem {
+  const topic = item.mainTopic;
+  return {
+    ...item,
+    topicRelations: item.topicRelations ?? [],
+    historyCoverage: item.historyCoverage ?? {},
+    mainTopic: topic && typeof topic.name === "string"
+      ? {
+          name: topic.name,
+          grade: typeof topic.grade === "string" ? topic.grade : null,
+          state: typeof topic.state === "string" ? topic.state : null,
+          lifecycle: typeof topic.lifecycle === "string" ? topic.lifecycle : null,
+        }
+      : null,
+  };
+}
+
+function unavailable(error: string): StockApiResource {
+  return { source: "unavailable", data: null, error, universe: {} };
+}
+
+async function fetchStockPage(
+  base: string,
+  query: Record<string, string>,
+  signal?: AbortSignal,
+): Promise<FormalStockPage> {
+  const params = new URLSearchParams(query);
+  const response = await fetch(`${base}/api/v2/stocks?${params.toString()}`, {
+    cache: "no-store",
+    signal,
+  });
+  if (!response.ok) throw new Error(`FastAPI stock list returned HTTP ${response.status}`);
+  return await response.json() as FormalStockPage;
+}
+
+export async function fetchFormalStocks(
+  query: {
+    market?: string;
+    topic?: string;
+    updateMode?: string;
+    sort?: string;
+  } = {},
+  options: { signal?: AbortSignal } = {},
+): Promise<StockApiResource> {
+  const base = getFormalApiBaseUrl();
   if (!base) {
     return {
       source: "synthetic-snapshot",
       data: null,
-      error: "尚未設定 FastAPI API origin。",
+      error: "Formal FastAPI origin is not configured; the page is running in explicit Preview mode.",
       universe: {},
     };
   }
-  const params = new URLSearchParams({ limit: "1000", sort: query.sort ?? "symbolAsc" });
-  if (query.market && query.market !== "all") params.set("market", query.market);
-  if (query.topic) params.set("topic", query.topic);
-  if (query.updateMode && query.updateMode !== "all") params.set("updateMode", query.updateMode);
+
+  const params: Record<string, string> = {
+    limit: "1000",
+    offset: "0",
+    sort: query.sort ?? "symbolAsc",
+  };
+  if (query.market && query.market !== "all") params.market = query.market;
+  if (query.topic) params.topic = query.topic;
+  if (query.updateMode && query.updateMode !== "all") params.updateMode = query.updateMode;
+
   try {
-    const response = await fetch(`${base}/api/v2/stocks?${params.toString()}`, { cache: "no-store" });
-    if (!response.ok) return { source: "unavailable", data: null, error: `FastAPI 回應 ${response.status}。`, universe: {} };
-    const payload = await response.json() as { items?: StockApiItem[]; universe?: Record<string, number> };
-    return { source: "api", data: payload.items ?? [], error: null, universe: payload.universe ?? {} };
-  } catch {
-    return { source: "unavailable", data: null, error: "FastAPI 目前無法連線。", universe: {} };
+    const first = await fetchStockPage(base, params, options.signal);
+    const items = first.items.map(normalizeStock);
+    let offset = items.length;
+    while (offset < first.total) {
+      const next = await fetchStockPage(base, { ...params, offset: String(offset) }, options.signal);
+      if (!next.items.length) break;
+      items.push(...next.items.map(normalizeStock));
+      offset += next.items.length;
+    }
+    if (items.length < first.total) {
+      return unavailable(`FastAPI stock list returned ${items.length}/${first.total} rows.`);
+    }
+    return {
+      source: "api",
+      data: items,
+      error: null,
+      universe: first.universe ?? {},
+    };
+  } catch (error) {
+    if (options.signal?.aborted) return unavailable("Formal stock request was cancelled.");
+    return unavailable(error instanceof Error ? error.message : "Formal stock request failed.");
   }
 }
 
-export async function fetchFormalStock(symbol: string): Promise<{ source: StockApiSource; data: StockApiItem | null; error: string | null }> {
-  const base = apiBaseUrl();
-  if (!base) return { source: "synthetic-snapshot", data: null, error: "尚未設定 FastAPI API origin。" };
+export async function fetchFormalStock(
+  symbol: string,
+): Promise<{ source: StockApiSource; data: StockApiItem | null; error: string | null }> {
+  const base = getFormalApiBaseUrl();
+  if (!base) {
+    return {
+      source: "synthetic-snapshot",
+      data: null,
+      error: "Formal FastAPI origin is not configured; the page is running in explicit Preview mode.",
+    };
+  }
   try {
     const response = await fetch(`${base}/api/v2/stocks/${encodeURIComponent(symbol)}`, { cache: "no-store" });
-    if (!response.ok) return { source: "unavailable", data: null, error: `FastAPI 回應 ${response.status}。` };
-    return { source: "api", data: await response.json() as StockApiItem, error: null };
-  } catch {
-    return { source: "unavailable", data: null, error: "FastAPI 目前無法連線。" };
+    if (!response.ok) throw new Error(`FastAPI stock detail returned HTTP ${response.status}`);
+    return { source: "api", data: normalizeStock(await response.json() as FormalStockRead), error: null };
+  } catch (error) {
+    return {
+      source: "unavailable",
+      data: null,
+      error: error instanceof Error ? error.message : "Formal stock detail request failed.",
+    };
   }
 }
-
