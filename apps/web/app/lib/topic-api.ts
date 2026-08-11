@@ -23,7 +23,7 @@ export type TopicConstituent = {
   code: string;
   name: string;
   relationType: string;
-  role: "代表股" | "核心股" | "關聯股";
+  role: "代表股" | "核心股" | "關聯股" | null;
   weight: number | null;
   price: number | null;
   changePct: number | null;
@@ -96,8 +96,8 @@ function readableState(value: string | null | undefined): string {
   return readableTopicState(value);
 }
 
-function roleFor(value: string | null | undefined): "代表股" | "核心股" | "關聯股" {
-  return ROLE_LABELS[(value ?? "").trim().toUpperCase()] ?? "關聯股";
+function roleFor(value: string | null | undefined): "代表股" | "核心股" | "關聯股" | null {
+  return ROLE_LABELS[(value ?? "").trim().toUpperCase()] ?? null;
 }
 
 function summaryFromApi(item: ApiTopicSummary): TopicSummary {
