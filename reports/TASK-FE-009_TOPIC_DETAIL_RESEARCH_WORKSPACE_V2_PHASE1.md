@@ -58,6 +58,7 @@
 
 - identity 與正式存在的欄位仍以 API 為準。
 - 三項 Topic Status 與 lifecycle 目前使用明確標示的 Preview presentation；不由 browser 從 score、role、price 或 constituent count 推導。
+- Lifecycle 的 Preview current stage/entry display 保留，但 Preview 的交易日數不呈現；Day N／交易日 duration 僅在正式 read model 欄位存在時顯示。
 - 股票表中的缺失題材表現、技術狀態顯示 `尚未提供`；缺失 role 顯示 `—`。
 - Preview 價格與漲跌資料只在 synthetic snapshot 明確存在時呈現，並在 Drawer 顯示 `Preview` 與 `資料待更新` 語意。
 
