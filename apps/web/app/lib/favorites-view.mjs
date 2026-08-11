@@ -1,4 +1,6 @@
 export const FAVORITES_STORAGE_KEY = "topic-pilot-favorites";
+export const TOPIC_FAVORITES_STORAGE_KEY = "topic-pilot-topic-favorites";
+export const FAVORITES_CHANGED_EVENT = "topic-pilot-favorites-changed";
 
 export function normalizeFavoriteCodes(value) {
   if (!Array.isArray(value)) return [];

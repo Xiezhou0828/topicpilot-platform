@@ -3,6 +3,7 @@ import { readFileSync } from "node:fs";
 import { test } from "node:test";
 import {
   FAVORITES_STORAGE_KEY,
+  TOPIC_FAVORITES_STORAGE_KEY,
   buildFavoriteEntries,
   filterFavoriteEntries,
   groupFavoriteEntries,
@@ -18,6 +19,7 @@ const stock = (code, name, parentGroup, topic) => ({
 
 test("existing local favorite format is preserved and normalized without a second key", () => {
   assert.equal(FAVORITES_STORAGE_KEY, "topic-pilot-favorites");
+  assert.equal(TOPIC_FAVORITES_STORAGE_KEY, "topic-pilot-topic-favorites");
   assert.deepEqual(normalizeFavoriteCodes(["DEMO-A1", " DEMO-B2 ", "DEMO-A1", "", null]), ["DEMO-A1", "DEMO-B2"]);
 });
 
@@ -63,15 +65,17 @@ test("search matches code, name, main group and topic without changing order", (
 });
 
 test("favorites route, navigation and shared change event are wired", () => {
-  const nav = readFileSync(new URL("../app/components/AppNav.tsx", import.meta.url), "utf8");
+  const nav = readFileSync(new URL("../app/components/v2/V2Foundation.tsx", import.meta.url), "utf8");
   const button = readFileSync(new URL("../app/components/FavoriteButton.tsx", import.meta.url), "utf8");
   const page = readFileSync(new URL("../app/favorites/page.tsx", import.meta.url), "utf8");
-  assert.match(nav, /href: "\/favorites", label: "我的觀察"/);
-  assert.match(button, /topic-pilot-favorites-changed/);
+  const workspace = readFileSync(new URL("../app/components/v2/FavoritesWorkspacePage.tsx", import.meta.url), "utf8");
+  assert.match(nav, /\["收藏", "\/favorites"\]/);
+  assert.match(button, /FAVORITES_CHANGED_EVENT/);
   assert.match(button, /window\.addEventListener\("storage"/);
-  assert.match(page, /自選資料僅保存在目前裝置/);
-  assert.match(page, /目前資料不存在/);
-  assert.match(page, /不代表系統推薦、持有或買進/);
-  assert.match(page, /role=\{stock && !unavailable \? "link"/);
-  assert.match(page, /event\.stopPropagation\(\)/);
+  assert.match(page, /FavoritesWorkspacePage/);
+  assert.match(workspace, /今日有變化/);
+  assert.match(workspace, /role="tablist"/);
+  assert.match(workspace, /StockEncyclopediaDrawer/);
+  assert.match(workspace, /href=\{`\/topics\/\$\{slug\}`\}/);
+  assert.doesNotMatch(workspace, /成本|張數|損益|買進|賣出|推薦/);
 });

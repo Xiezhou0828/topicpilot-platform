@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { FAVORITES_STORAGE_KEY, normalizeFavoriteCodes } from "../lib/favorites-view.mjs";
+import { FAVORITES_CHANGED_EVENT, FAVORITES_STORAGE_KEY, TOPIC_FAVORITES_STORAGE_KEY, normalizeFavoriteCodes } from "../lib/favorites-view.mjs";
 
 function readFavorites() {
   if (typeof window === "undefined") return [];
@@ -16,7 +16,7 @@ function readFavorites() {
 
 function writeFavorites(codes: string[]) {
   window.localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify(normalizeFavoriteCodes(codes)));
-  window.dispatchEvent(new CustomEvent("topic-pilot-favorites-changed"));
+  window.dispatchEvent(new CustomEvent(FAVORITES_CHANGED_EVENT));
 }
 
 export function FavoriteButton({ code }: { code: string }) {
@@ -25,10 +25,10 @@ export function FavoriteButton({ code }: { code: string }) {
   useEffect(() => {
     const sync = () => setFavorites(readFavorites());
     sync();
-    window.addEventListener("topic-pilot-favorites-changed", sync);
+    window.addEventListener(FAVORITES_CHANGED_EVENT, sync);
     window.addEventListener("storage", sync);
     return () => {
-      window.removeEventListener("topic-pilot-favorites-changed", sync);
+      window.removeEventListener(FAVORITES_CHANGED_EVENT, sync);
       window.removeEventListener("storage", sync);
     };
   }, []);
@@ -69,13 +69,48 @@ export function useFavoritesState() {
       setReady(true);
     };
     sync();
-    window.addEventListener("topic-pilot-favorites-changed", sync);
+    window.addEventListener(FAVORITES_CHANGED_EVENT, sync);
     window.addEventListener("storage", sync);
     return () => {
-      window.removeEventListener("topic-pilot-favorites-changed", sync);
+      window.removeEventListener(FAVORITES_CHANGED_EVENT, sync);
       window.removeEventListener("storage", sync);
     };
   }, []);
 
   return { codes: favorites, ready };
+}
+
+function readTopicFavorites() {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = window.localStorage.getItem(TOPIC_FAVORITES_STORAGE_KEY);
+    return raw ? normalizeFavoriteCodes(JSON.parse(raw)) : [];
+  } catch {
+    return [];
+  }
+}
+
+export function useTopicFavoritesState() {
+  const [slugs, setSlugs] = useState<string[]>([]);
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    const sync = () => { setSlugs(readTopicFavorites()); setReady(true); };
+    sync();
+    window.addEventListener(FAVORITES_CHANGED_EVENT, sync);
+    window.addEventListener("storage", sync);
+    return () => {
+      window.removeEventListener(FAVORITES_CHANGED_EVENT, sync);
+      window.removeEventListener("storage", sync);
+    };
+  }, []);
+
+  function toggle(slug: string) {
+    const next = slugs.includes(slug) ? slugs.filter((item) => item !== slug) : [...slugs, slug];
+    window.localStorage.setItem(TOPIC_FAVORITES_STORAGE_KEY, JSON.stringify(normalizeFavoriteCodes(next)));
+    setSlugs(next);
+    window.dispatchEvent(new CustomEvent(FAVORITES_CHANGED_EVENT));
+  }
+
+  return { slugs, ready, toggle };
 }

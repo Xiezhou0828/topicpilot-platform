@@ -6,6 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 import { fetchTopics, scoreLabel, type TopicResource, type TopicSummary } from "../../lib/topic-api";
 import { getTopicOverviewLifecycle, getTopicOverviewMeta, PREVIEW_LABEL, type TopicGrade, type TopicLifecycleStage, type TopicOverviewLifecycle, type TopicOverviewMeta } from "../../lib/topic-preview";
 import { AppShell, Card, DataState, EmptyState, PageContainer, Skeleton } from "./V2Foundation";
+import { useTopicFavoritesState } from "../FavoriteButton";
 
 type DirectionFilter = "全部" | "轉強" | "轉弱";
 type GradeFilter = "全部" | TopicGrade;
@@ -105,7 +106,8 @@ export default function TopicListPage() {
   const [query, setQuery] = useState("");
   const [directionFilter, setDirectionFilter] = useState<DirectionFilter>("全部");
   const [gradeFilter, setGradeFilter] = useState<GradeFilter>("全部");
-  const [favorites, setFavorites] = useState<Set<string>>(new Set());
+  const { slugs: favoriteSlugs, toggle: toggleTopicFavorite } = useTopicFavoritesState();
+  const favorites = useMemo(() => new Set(favoriteSlugs), [favoriteSlugs]);
   const [openGroups, setOpenGroups] = useState<Set<string>>(new Set());
 
   useEffect(() => {
@@ -133,14 +135,6 @@ export default function TopicListPage() {
     return Array.from(groups.entries()).sort(([a], [b]) => a.localeCompare(b, "zh-TW"));
   }, [overviewTopics]);
   const previewMode = resource?.source !== "api";
-
-  function toggleFavorite(slug: string) {
-    setFavorites((current) => {
-      const next = new Set(current);
-      if (next.has(slug)) next.delete(slug); else next.add(slug);
-      return next;
-    });
-  }
 
   function toggleGroup(group: string) {
     setOpenGroups((current) => {
@@ -175,7 +169,7 @@ export default function TopicListPage() {
         <div className="tp-topic-section-heading"><div><h2 id="topic-list-title">全部題材</h2></div></div>
         <Card className="tp-topic-overview-list-card"><div className="tp-topic-overview-list-controls"><label className="tp-search-input"><Search size={17} aria-hidden="true" /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="搜尋題材名稱或代號" /></label><div className="tp-topic-grade-filters" role="group" aria-label="等級篩選">{(["全部", "S", "A", "B", "D"] as GradeFilter[]).map((item) => <button type="button" key={item} className={gradeFilter === item ? "is-active" : ""} onClick={() => setGradeFilter(item)}>{item === "全部" ? "全部" : item}</button>)}</div></div>
           <div className="tp-topic-overview-list-head" aria-hidden="true"><span>題材名稱</span><span>大族群</span><span>等級</span><span>今日分數</span><span>今日方向</span><span>股票數</span><span>收藏</span></div>
-          <div className="tp-topic-overview-list-items">{filteredTopics.map((topic) => <div className="tp-topic-overview-list-row" key={topic.slug}><Link href={`/topics/${topic.slug}`} className="tp-topic-overview-list-link"><span className="tp-topic-overview-name"><b>{topic.name}</b><small>{topic.slug}</small></span><span>{topic.meta.groupName ?? "其他題材"}</span><span className={`tp-chip tp-grade-chip ${gradeClass(topic.meta.laneGrade)}`}>{topic.meta.laneGrade ?? "—"}</span><strong className="tp-topic-overview-score">{scoreLabel(topic.score)}</strong><span className={`tp-topic-overview-direction tp-topic-direction--${topic.meta.direction}`}><span>{topic.meta.directionSymbol}</span>{topic.meta.directionLabel}</span><span className="tp-topic-overview-count">{topic.constituentCount} 檔</span><ChevronRight size={16} aria-hidden="true" /></Link><button type="button" className={`tp-topic-row-star ${favorites.has(topic.slug) ? "is-active" : ""}`} aria-label={favorites.has(topic.slug) ? `取消收藏 ${topic.name}` : `收藏 ${topic.name}`} aria-pressed={favorites.has(topic.slug)} onClick={() => toggleFavorite(topic.slug)}><Star size={18} fill={favorites.has(topic.slug) ? "currentColor" : "none"} aria-hidden="true" /></button></div>)}</div>
+          <div className="tp-topic-overview-list-items">{filteredTopics.map((topic) => <div className="tp-topic-overview-list-row" key={topic.slug}><Link href={`/topics/${topic.slug}`} className="tp-topic-overview-list-link"><span className="tp-topic-overview-name"><b>{topic.name}</b><small>{topic.slug}</small></span><span>{topic.meta.groupName ?? "其他題材"}</span><span className={`tp-chip tp-grade-chip ${gradeClass(topic.meta.laneGrade)}`}>{topic.meta.laneGrade ?? "—"}</span><strong className="tp-topic-overview-score">{scoreLabel(topic.score)}</strong><span className={`tp-topic-overview-direction tp-topic-direction--${topic.meta.direction}`}><span>{topic.meta.directionSymbol}</span>{topic.meta.directionLabel}</span><span className="tp-topic-overview-count">{topic.constituentCount} 檔</span><ChevronRight size={16} aria-hidden="true" /></Link><button type="button" className={`tp-topic-row-star ${favorites.has(topic.slug) ? "is-active" : ""}`} aria-label={favorites.has(topic.slug) ? `取消收藏 ${topic.name}` : `收藏 ${topic.name}`} aria-pressed={favorites.has(topic.slug)} onClick={() => toggleTopicFavorite(topic.slug)}><Star size={18} fill={favorites.has(topic.slug) ? "currentColor" : "none"} aria-hidden="true" /></button></div>)}</div>
           {filteredTopics.length === 0 && <EmptyState title="找不到符合條件的題材" description="調整搜尋文字或篩選條件後再試一次。" />}
         </Card>
       </section>

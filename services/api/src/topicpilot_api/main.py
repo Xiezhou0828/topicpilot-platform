@@ -9,9 +9,12 @@ from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
+from topicpilot_api.admin import router as admin_router
 from topicpilot_api.config import Settings, get_settings
 from topicpilot_api.constants import STRATEGY_HORIZONS, STRATEGY_KEYS
 from topicpilot_api.database import get_db
+from topicpilot_api.home_read_model import build_home_read_model
+from topicpilot_api.live_api import router as live_router
 from topicpilot_api.problems import ApiProblem, NotFoundProblem, install_problem_handlers
 from topicpilot_api.repository import (
     data_status,
@@ -19,6 +22,7 @@ from topicpilot_api.repository import (
     get_topic,
     latest_completed_run,
     list_candidates,
+    list_price_history,
     list_stocks,
     list_strategies,
     list_topics,
@@ -29,6 +33,8 @@ from topicpilot_api.schemas import (
     CandidateResponse,
     DataStatus,
     HealthResponse,
+    HistoricalPriceHistoryResponse,
+    HomeResponse,
     Page,
     SnapshotResponse,
     StockResponse,
@@ -40,11 +46,18 @@ from topicpilot_api.schemas import (
     TopicSummary,
 )
 from topicpilot_api.snapshot import assemble_snapshot
+from topicpilot_api.topic_intelligence_api import router as topic_intelligence_router
+from topicpilot_api.topic_recommendation_api import router as recommendation_router
+from topicpilot_api.production_read_model_api import router as production_read_model_router
+from topicpilot_api.topic_snapshot_api import router as topic_snapshot_router
 
 DbSession = Annotated[Session, Depends(get_db)]
 Limit = Annotated[int, Query(ge=1, le=200)]
 Offset = Annotated[int, Query(ge=0)]
 OptionalDataDate = Annotated[date | None, Query()]
+HistoryFrom = Annotated[date, Query(alias="from")]
+HistoryTo = Annotated[date, Query(alias="to")]
+OptionalMarketCode = Annotated[str | None, Query(alias="market")]
 
 
 def create_app(settings: Settings | None = None) -> FastAPI:
@@ -66,6 +79,12 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         allow_headers=["Accept", "Content-Type"],
     )
     install_problem_handlers(application)
+    application.include_router(admin_router)
+    application.include_router(topic_intelligence_router)
+    application.include_router(recommendation_router)
+    application.include_router(production_read_model_router)
+    application.include_router(topic_snapshot_router)
+    application.include_router(live_router)
 
     @application.get("/healthz", response_model=HealthResponse, tags=["operations"])
     def healthz() -> dict[str, str]:
@@ -96,6 +115,10 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             raise NotFoundProblem("No completed bundle has been imported")
         return data_status(run, request.app.state.settings.freshness_days)
 
+    @application.get("/api/v2/home", response_model=HomeResponse, tags=["home"])
+    def home(session: DbSession) -> dict:
+        return build_home_read_model(session)
+
     @application.get(
         "/api/v1/snapshot/latest", response_model=SnapshotResponse, tags=["compatibility"]
     )
@@ -113,6 +136,29 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     @application.get("/api/v1/stocks/{code}", response_model=StockResponse, tags=["stocks"])
     def stock(code: str, session: DbSession) -> dict:
         return get_stock(session, code)
+
+    @application.get(
+        "/api/v1/stocks/{code}/price-history",
+        response_model=HistoricalPriceHistoryResponse,
+        tags=["market-data"],
+        responses={409: {"description": "Ambiguous instrument identity"}},
+    )
+    def stock_price_history(
+        code: str,
+        session: DbSession,
+        from_date: HistoryFrom,
+        to_date: HistoryTo,
+        market_code: OptionalMarketCode = None,
+        limit: Limit = 200,
+    ) -> dict:
+        if to_date < from_date:
+            raise ApiProblem(
+                422,
+                "Request validation failed",
+                "to must be on or after from",
+                "https://topicpilot.example/problems/validation",
+            )
+        return list_price_history(session, code, from_date, to_date, market_code, limit)
 
     @application.get("/api/v1/topics", response_model=Page[TopicSummary], tags=["topics"])
     def topics(session: DbSession, limit: Limit = 50, offset: Offset = 0) -> dict:

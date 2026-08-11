@@ -21,15 +21,15 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/admin/imports": {
+    "/api/v1/admin/schema": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Imports */
-        get: operations["imports_api_v1_admin_imports_get"];
+        /** Schema */
+        get: operations["schema_api_v1_admin_schema_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -38,15 +38,15 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/admin/imports/{run_id}": {
+    "/api/v1/admin/markets": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Import Detail */
-        get: operations["import_detail_api_v1_admin_imports__run_id__get"];
+        /** Markets */
+        get: operations["markets_api_v1_admin_markets_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -89,57 +89,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/admin/markets": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Markets */
-        get: operations["markets_api_v1_admin_markets_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/admin/relations": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Relations */
-        get: operations["relations_api_v1_admin_relations_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/admin/schema": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Schema */
-        get: operations["schema_api_v1_admin_schema_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/v1/admin/topics": {
         parameters: {
             query?: never;
@@ -174,15 +123,15 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/analytics/strategy-performance": {
+    "/api/v1/admin/relations": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Performance */
-        get: operations["performance_api_v1_analytics_strategy_performance_get"];
+        /** Relations */
+        get: operations["relations_api_v1_admin_relations_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -191,15 +140,15 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/analytics/topic-rotation": {
+    "/api/v1/admin/imports": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Rotation */
-        get: operations["rotation_api_v1_analytics_topic_rotation_get"];
+        /** Imports */
+        get: operations["imports_api_v1_admin_imports_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -208,15 +157,15 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/meta/data-status": {
+    "/api/v1/admin/imports/{run_id}": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Api Data Status */
-        get: operations["api_data_status_api_v1_meta_data_status_get"];
+        /** Import Detail */
+        get: operations["import_detail_api_v1_admin_imports__run_id__get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -225,15 +174,117 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/operations/live/configuration": {
+    "/api/v1/topic-intelligence/latest": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Configuration */
-        get: operations["configuration_api_v1_operations_live_configuration_get"];
+        /** Latest Topic Intelligence */
+        get: operations["latest_topic_intelligence_api_v1_topic_intelligence_latest_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/recommendations/latest": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Latest Recommendations */
+        get: operations["latest_recommendations_api_v1_recommendations_latest_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/stocks": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read the formal TPE/TWO stock universe */
+        get: operations["stocks_api_v2_stocks_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/stocks/{symbol}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read one formal stock */
+        get: operations["stock_api_v2_stocks__symbol__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/topics": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read the formal topic read model */
+        get: operations["topics_api_v2_topics_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/topics/{slug}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read one formal topic */
+        get: operations["topic_api_v2_topics__slug__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/topic-snapshots": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read V2 topic snapshots by date or history */
+        get: operations["list_topic_snapshots_api_v2_topic_snapshots_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -276,15 +327,83 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/recommendations/latest": {
+    "/api/v1/operations/live/configuration": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Latest Recommendations */
-        get: operations["latest_recommendations_api_v1_recommendations_latest_get"];
+        /** Configuration */
+        get: operations["configuration_api_v1_operations_live_configuration_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/healthz": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Healthz */
+        get: operations["healthz_healthz_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/readyz": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Readyz */
+        get: operations["readyz_readyz_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/meta/data-status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Api Data Status */
+        get: operations["api_data_status_api_v1_meta_data_status_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/home": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Home */
+        get: operations["home_api_v2_home_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -361,57 +480,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/strategies": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Strategies */
-        get: operations["strategies_api_v1_strategies_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/strategies/{key}/candidates": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Candidates */
-        get: operations["candidates_api_v1_strategies__key__candidates_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/topic-intelligence/latest": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Latest Topic Intelligence */
-        get: operations["latest_topic_intelligence_api_v1_topic_intelligence_latest_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/v1/topics": {
         parameters: {
             query?: never;
@@ -446,15 +514,15 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/healthz": {
+    "/api/v1/strategies": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Healthz */
-        get: operations["healthz_healthz_get"];
+        /** Strategies */
+        get: operations["strategies_api_v1_strategies_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -463,15 +531,49 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/readyz": {
+    "/api/v1/strategies/{key}/candidates": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Readyz */
-        get: operations["readyz_readyz_get"];
+        /** Candidates */
+        get: operations["candidates_api_v1_strategies__key__candidates_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/analytics/topic-rotation": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Rotation */
+        get: operations["rotation_api_v1_analytics_topic_rotation_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/analytics/strategy-performance": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Performance */
+        get: operations["performance_api_v1_analytics_strategy_performance_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -486,35 +588,35 @@ export interface components {
     schemas: {
         /** CandidateResponse */
         CandidateResponse: {
-            /** Code */
-            code: string;
+            /** Strategykey */
+            strategyKey: string;
+            /** Modelversion */
+            modelVersion: string;
             /**
              * Datadate
              * Format: date
              */
             dataDate: string;
-            /** Invalidationprice */
-            invalidationPrice: number | null;
-            /** Modelversion */
-            modelVersion: string;
-            /** Name */
-            name: string;
-            /** Price */
-            price: number | null;
             /** Rank */
             rank: number;
-            /** Reason */
-            reason: string | null;
+            /** Code */
+            code: string;
+            /** Name */
+            name: string;
             /** Score */
             score: number | null;
+            /** Reason */
+            reason: string | null;
+            /** Price */
+            price: number | null;
             /** Selected */
             selected: boolean;
-            /** Strategykey */
-            strategyKey: string;
-            /** Supportprice */
-            supportPrice: number | null;
             /** Triggerprice */
             triggerPrice: number | null;
+            /** Supportprice */
+            supportPrice: number | null;
+            /** Invalidationprice */
+            invalidationPrice: number | null;
         };
         /** Constituent */
         Constituent: {
@@ -529,41 +631,41 @@ export interface components {
         };
         /** DataStatus */
         DataStatus: {
-            /** Agedays */
-            ageDays: number;
-            /** Bundlehash */
-            bundleHash: string;
-            /** Bundleversion */
-            bundleVersion: string;
-            /** Classification */
-            classification: string;
-            /**
-             * Completedat
-             * Format: date-time
-             */
-            completedAt: string;
             /** Contractversion */
             contractVersion: string;
+            /** Bundleversion */
+            bundleVersion: string;
+            /** Bundlehash */
+            bundleHash: string;
             /**
              * Datadate
              * Format: date
              */
             dataDate: string;
-            /** Freshness */
-            freshness: string;
             /**
              * Generatedat
              * Format: date-time
              */
             generatedAt: string;
-            /** Rowcounts */
-            rowCounts: {
-                [key: string]: number;
-            };
+            /**
+             * Completedat
+             * Format: date-time
+             */
+            completedAt: string;
             /** Sourcekind */
             sourceKind: string;
             /** Sourcename */
             sourceName: string;
+            /** Classification */
+            classification: string;
+            /** Freshness */
+            freshness: string;
+            /** Agedays */
+            ageDays: number;
+            /** Rowcounts */
+            rowCounts: {
+                [key: string]: number;
+            };
         };
         /** HTTPValidationError */
         HTTPValidationError: {
@@ -577,16 +679,10 @@ export interface components {
         };
         /** HistoricalPriceHistoryResponse */
         HistoricalPriceHistoryResponse: {
-            /** Availabilityreason */
-            availabilityReason: string | null;
             /** Code */
             code: string;
-            /** Items */
-            items: components["schemas"]["HistoricalPricePoint"][];
             /** Market */
             market: string;
-            /** Pointcount */
-            pointCount: number;
             /**
              * Requestedfrom
              * Format: date
@@ -599,15 +695,20 @@ export interface components {
             requestedTo: string;
             /** Status */
             status: string;
+            /** Availabilityreason */
+            availabilityReason: string | null;
+            /** Pointcount */
+            pointCount: number;
+            /** Items */
+            items: components["schemas"]["HistoricalPricePoint"][];
         };
         /** HistoricalPricePoint */
         HistoricalPricePoint: {
-            /** Close */
-            close: number | null;
-            /** High */
-            high: number | null;
-            /** Low */
-            low: number | null;
+            /**
+             * Tradingdate
+             * Format: date
+             */
+            tradingDate: string;
             /**
              * Observedat
              * Format: date-time
@@ -615,161 +716,350 @@ export interface components {
             observedAt: string;
             /** Open */
             open: number | null;
-            /** Qualitystate */
-            qualityState: string;
-            /** Sourcecode */
-            sourceCode: string;
-            /**
-             * Tradingdate
-             * Format: date
-             */
-            tradingDate: string;
+            /** High */
+            high: number | null;
+            /** Low */
+            low: number | null;
+            /** Close */
+            close: number | null;
             /** Volume */
             volume: number | null;
+            /** Sourcecode */
+            sourceCode: string;
+            /** Qualitystate */
+            qualityState: string;
+        };
+        /** HomeDailyFocus */
+        HomeDailyFocus: {
+            /** Mode */
+            mode: string;
+            /** Temporary */
+            temporary: boolean;
+            /** Headline */
+            headline: string;
+            /** Bullets */
+            bullets?: string[];
+            /** Datadate */
+            dataDate: string | null;
+            /** Source */
+            source: string;
+        };
+        /** HomeDataQuality */
+        HomeDataQuality: {
+            /** Status */
+            status: string;
+            /** Source */
+            source: string;
+            /** Classification */
+            classification: string | null;
+            /** Temporarysections */
+            temporarySections?: string[];
+            /** Missingsections */
+            missingSections?: string[];
+            /** Notes */
+            notes?: string[];
+        };
+        /** HomeMarketHealth */
+        HomeMarketHealth: {
+            /** Market */
+            market: string;
+            /** Status */
+            status: string;
+            /** Totalstocks */
+            totalStocks: number | null;
+            /** Advance */
+            advance: number | null;
+            /** Decline */
+            decline: number | null;
+            /** Flat */
+            flat: number | null;
+            /** Unavailable */
+            unavailable: number | null;
+        };
+        /** HomeMarketOverview */
+        HomeMarketOverview: {
+            /** Datadate */
+            dataDate: string | null;
+            /** Updatedat */
+            updatedAt: string | null;
+            /** Datastatus */
+            dataStatus: string;
+            /** Trackedstockcount */
+            trackedStockCount: number;
+            /** Trackedtopiccount */
+            trackedTopicCount: number;
+            /** Latestsnapshottime */
+            latestSnapshotTime: string | null;
+            marketHealth: components["schemas"]["HomeMarketHealth"] | null;
+            /** Source */
+            source: string;
+        };
+        /** HomeMarketPulseEvent */
+        HomeMarketPulseEvent: {
+            /**
+             * Eventtime
+             * Format: date-time
+             */
+            eventTime: string;
+            /** Topic */
+            topic: string;
+            /** Eventtype */
+            eventType: string;
+            /** Description */
+            description: string;
+            /** Severity */
+            severity: string;
+            /** Topicslug */
+            topicSlug: string;
+            /** Source */
+            source: string;
+        };
+        /** HomeOpportunityStock */
+        HomeOpportunityStock: {
+            /** Code */
+            code: string;
+            /** Name */
+            name: string;
+            /** Strategykeys */
+            strategyKeys?: string[];
+            /** Score */
+            score: number | null;
+            /** Reason */
+            reason: string | null;
+            /** Datadate */
+            dataDate: string | null;
+        };
+        /** HomeOpportunityTopic */
+        HomeOpportunityTopic: {
+            /** Topic */
+            topic: string;
+            /** Topicslug */
+            topicSlug: string;
+            /** Grade */
+            grade: string | null;
+            /** Strength */
+            strength: number | null;
+            /** Currentstate */
+            currentState: string | null;
+            /** Summary */
+            summary: string;
+            /** Validatedstocks */
+            validatedStocks?: components["schemas"]["HomeOpportunityStock"][];
+            /** Temporary */
+            temporary: boolean;
+        };
+        /** HomeResponse */
+        HomeResponse: {
+            /** Contractversion */
+            contractVersion: string;
+            /** Asof */
+            asOf: string | null;
+            /** Generatedat */
+            generatedAt: string | null;
+            marketOverview: components["schemas"]["HomeMarketOverview"];
+            dailyFocus: components["schemas"]["HomeDailyFocus"];
+            /** Maintopics */
+            mainTopics?: components["schemas"]["HomeTopicCard"][];
+            /** Marketpulse */
+            marketPulse?: components["schemas"]["HomeMarketPulseEvent"][];
+            /** Heatingtopics */
+            heatingTopics?: components["schemas"]["HomeRotationTopic"][];
+            /** Coolingtopics */
+            coolingTopics?: components["schemas"]["HomeRotationTopic"][];
+            /** Opportunities */
+            opportunities?: components["schemas"]["HomeOpportunityTopic"][];
+            dataQuality: components["schemas"]["HomeDataQuality"];
+        };
+        /** HomeRotationTopic */
+        HomeRotationTopic: {
+            /** Topic */
+            topic: string;
+            /** Topicslug */
+            topicSlug: string;
+            /** Strengthdelta */
+            strengthDelta: number;
+            /** Currentgrade */
+            currentGrade: string;
+            /** Summary */
+            summary: string;
+        };
+        /** HomeTopicCard */
+        HomeTopicCard: {
+            /** Slug */
+            slug: string;
+            /** Name */
+            name: string;
+            /** Grade */
+            grade: string | null;
+            /** Strength */
+            strength: number | null;
+            /** Currentstate */
+            currentState: string | null;
+            /** Stockcount */
+            stockCount: number;
+            /** Summary */
+            summary: string;
+            /** Favorite */
+            favorite: boolean;
+            /** Datadate */
+            dataDate: string | null;
         };
         /** LiveRunSummary */
         LiveRunSummary: {
-            /** Completedat */
-            completedAt: string | null;
             /** Id */
             id: string;
-            /** Latencyms */
-            latencyMs: number | null;
-            /** Requestedcount */
-            requestedCount: number;
+            /** Type */
+            type: string;
             /**
              * Startedat
              * Format: date-time
              */
             startedAt: string;
-            /** Type */
-            type: string;
+            /** Completedat */
+            completedAt: string | null;
+            /** Latencyms */
+            latencyMs: number | null;
+            /** Requestedcount */
+            requestedCount: number;
         };
         /** LiveStatusResponse */
         LiveStatusResponse: {
-            /** Failurecode */
-            failureCode?: string | null;
-            /** Failurecount */
-            failureCount: number;
-            /** Failuremessage */
-            failureMessage?: string | null;
+            /** Status */
+            status: string;
+            lastRun: components["schemas"]["LiveRunSummary"] | null;
+            /** Providerstatus */
+            providerStatus: string;
             /** Freshnessstate */
             freshnessState: string;
             /** Heartbeatat */
             heartbeatAt: string | null;
-            lastRun: components["schemas"]["LiveRunSummary"] | null;
-            /** Providerstatus */
-            providerStatus: string;
-            /** Retrycount */
-            retryCount: number;
-            /** Status */
-            status: string;
             /** Successcount */
             successCount: number;
+            /** Failurecount */
+            failureCount: number;
+            /** Retrycount */
+            retryCount: number;
+            /**
+             * Skippedcount
+             * @default 0
+             */
+            skippedCount: number;
+            /** Universecounts */
+            universeCounts?: {
+                [key: string]: number;
+            };
+            /** Failurecode */
+            failureCode?: string | null;
+            /** Failuremessage */
+            failureMessage?: string | null;
+            /** Providerhealth */
+            providerHealth?: {
+                [key: string]: unknown;
+            }[];
         };
         /** LiveTrackingResponse */
         LiveTrackingResponse: {
-            /** Freshnessstate */
-            freshnessState: string;
             /** Instrumentcode */
             instrumentCode: string;
-            /** Latestclose */
-            latestClose: number | null;
             /** Market */
             market: string;
-            /** Movingaverage */
-            movingAverage: number | null;
-            /** Movingaverageperiod */
-            movingAveragePeriod: number;
+            /** Updatemode */
+            updateMode: string;
             /** Movingaveragestate */
             movingAverageState: string;
+            /** Movingaverageperiod */
+            movingAveragePeriod: number;
+            /** Latestclose */
+            latestClose: number | null;
+            /** Movingaverage */
+            movingAverage: number | null;
             /** Observationcount */
             observationCount: number;
             /** Observedat */
             observedAt: string | null;
-            /** Reason */
-            reason: string;
-            /** Updatemode */
-            updateMode: string;
             /** Updatedat */
             updatedAt: string | null;
+            /** Freshnessstate */
+            freshnessState: string;
+            /** Reason */
+            reason: string;
         };
         /** Page[CandidateResponse] */
         Page_CandidateResponse_: {
             /** Items */
             items: components["schemas"]["CandidateResponse"][];
+            /** Total */
+            total: number;
             /** Limit */
             limit: number;
             /** Offset */
             offset: number;
-            /** Total */
-            total: number;
         };
         /** Page[LiveTrackingResponse] */
         Page_LiveTrackingResponse_: {
             /** Items */
             items: components["schemas"]["LiveTrackingResponse"][];
+            /** Total */
+            total: number;
             /** Limit */
             limit: number;
             /** Offset */
             offset: number;
-            /** Total */
-            total: number;
         };
         /** Page[StockSummary] */
         Page_StockSummary_: {
             /** Items */
             items: components["schemas"]["StockSummary"][];
+            /** Total */
+            total: number;
             /** Limit */
             limit: number;
             /** Offset */
             offset: number;
-            /** Total */
-            total: number;
         };
         /** Page[StrategyPerformanceResponse] */
         Page_StrategyPerformanceResponse_: {
             /** Items */
             items: components["schemas"]["StrategyPerformanceResponse"][];
+            /** Total */
+            total: number;
             /** Limit */
             limit: number;
             /** Offset */
             offset: number;
-            /** Total */
-            total: number;
         };
         /** Page[StrategyResponse] */
         Page_StrategyResponse_: {
             /** Items */
             items: components["schemas"]["StrategyResponse"][];
+            /** Total */
+            total: number;
             /** Limit */
             limit: number;
             /** Offset */
             offset: number;
-            /** Total */
-            total: number;
         };
         /** Page[TopicRotationResponse] */
         Page_TopicRotationResponse_: {
             /** Items */
             items: components["schemas"]["TopicRotationResponse"][];
+            /** Total */
+            total: number;
             /** Limit */
             limit: number;
             /** Offset */
             offset: number;
-            /** Total */
-            total: number;
         };
         /** Page[TopicSummary] */
         Page_TopicSummary_: {
             /** Items */
             items: components["schemas"]["TopicSummary"][];
+            /** Total */
+            total: number;
             /** Limit */
             limit: number;
             /** Offset */
             offset: number;
-            /** Total */
-            total: number;
         };
         /** RecommendationComponent */
         RecommendationComponent: {
@@ -782,191 +1072,339 @@ export interface components {
         RecommendationItemResponse: {
             /** Candidateid */
             candidateId: string;
-            /** Evidence */
-            evidence?: string[];
-            /** Label */
-            label: string;
-            /** Reason */
-            reason: string;
-            /** Status */
-            status: string;
-            topicContext: components["schemas"]["RecommendationTopicContext"] | null;
             /** Topicid */
             topicId: string;
+            /** Label */
+            label: string;
+            /** Status */
+            status: string;
+            /** Reason */
+            reason: string;
+            topicContext: components["schemas"]["RecommendationTopicContext"] | null;
+            /** Evidence */
+            evidence?: string[];
         };
         /** RecommendationResponse */
         RecommendationResponse: {
-            /** Asof */
-            asOf: string | null;
             /** Contractversion */
             contractVersion: string;
-            /** Items */
-            items?: components["schemas"]["RecommendationItemResponse"][];
+            /** Asof */
+            asOf: string | null;
             /** Status */
             status: string;
+            /** Items */
+            items?: components["schemas"]["RecommendationItemResponse"][];
         };
         /** RecommendationTopicContext */
         RecommendationTopicContext: {
-            /** Aggregationversion */
-            aggregationVersion: string | null;
             /** Asof */
             asOf: string | null;
-            /** Components */
-            components?: components["schemas"]["RecommendationComponent"][];
-            /** Confidence */
-            confidence: number | null;
-            /** Eligibility */
-            eligibility: string | null;
-            /** Evidencereference */
-            evidenceReference?: string[];
-            /** Featureruntimeversion */
-            featureRuntimeVersion: string | null;
+            /** Scorerruntimeversion */
+            scorerRuntimeVersion: string | null;
             /** Featuresetversion */
             featureSetVersion: string | null;
-            /** Grade */
-            grade: string | null;
+            /** Featureruntimeversion */
+            featureRuntimeVersion: string | null;
+            /** Aggregationversion */
+            aggregationVersion: string | null;
             /** Policyid */
             policyId: string | null;
             /** Policyversion */
             policyVersion: string | null;
+            /** Eligibility */
+            eligibility: string | null;
             /** Score */
             score: number | null;
-            /** Scorerruntimeversion */
-            scorerRuntimeVersion: string | null;
+            /** Grade */
+            grade: string | null;
+            /** Confidence */
+            confidence: number | null;
+            /** Components */
+            components?: components["schemas"]["RecommendationComponent"][];
+            /** Evidencereference */
+            evidenceReference?: string[];
         };
         /** SnapshotResponse */
         SnapshotResponse: {
+            /** Snapshotversion */
+            snapshotVersion: string;
             /** Classification */
             classification: string;
-            /**
-             * Datadate
-             * Format: date
-             */
-            dataDate: string;
             /**
              * Generatedat
              * Format: date-time
              */
             generatedAt: string;
-            /** Snapshotversion */
-            snapshotVersion: string;
+            /**
+             * Datadate
+             * Format: date
+             */
+            dataDate: string;
         } & {
             [key: string]: unknown;
         };
-        /** StockResponse */
-        StockResponse: {
-            /** Active */
-            active: boolean;
-            /** Changepct */
-            changePct: number | null;
-            /** Chipscore */
-            chipScore: number | null;
+        /** StockReadModel */
+        StockReadModel: {
+            /** Instrumentid */
+            instrumentId: string;
+            /** Symbol */
+            symbol: string;
             /** Code */
             code: string;
-            /** Datadate */
-            dataDate: string | null;
-            /** Datafreshness */
-            dataFreshness: string | null;
-            /** Industry */
-            industry: string | null;
-            /** Ma20 */
-            ma20: number | null;
-            /** Ma5 */
-            ma5: number | null;
+            /** Name */
+            name: string | null;
             /** Market */
             market: string;
-            /** Name */
-            name: string;
+            /** Exchange */
+            exchange: string | null;
+            /** Listing */
+            listing: string | null;
+            /** Active */
+            active: boolean;
+            /** Enabled */
+            enabled: boolean;
             /** Price */
             price: number | null;
+            /** Changepct */
+            changePct: number | null;
+            /** Volume */
+            volume: number | null;
+            /** Observedat */
+            observedAt: string | null;
+            /** Retrievedat */
+            retrievedAt: string | null;
+            /** Datafreshness */
+            dataFreshness: string;
+            /** Updatemode */
+            updateMode: string;
+            /** Marketstatus */
+            marketStatus: string;
+            /** Maintopic */
+            mainTopic: {
+                [key: string]: unknown;
+            } | null;
+            /** Topicrelations */
+            topicRelations?: components["schemas"]["StockTopicRelationRead"][];
+            /** Trackingmode */
+            trackingMode: string;
+            /** Trackingreason */
+            trackingReason: string | null;
+            /** Ma20State */
+            ma20State: string | null;
+            /** Ma60State */
+            ma60State: string | null;
+            /** Historycoverage */
+            historyCoverage?: {
+                [key: string]: unknown;
+            };
+            /** Favorite */
+            favorite: {
+                [key: string]: unknown;
+            } | null;
+            /** Opportunity */
+            opportunity: {
+                [key: string]: unknown;
+            } | null;
+            technicalEvidence: components["schemas"]["StockTechnicalEvidence"] | null;
+            /** Institutionflows */
+            institutionFlows: {
+                [key: string]: unknown;
+            } | null;
+            /** Summary */
+            summary: string | null;
+        };
+        /** StockReadModelPage */
+        StockReadModelPage: {
+            /** Items */
+            items: components["schemas"]["StockReadModel"][];
+            /** Total */
+            total: number;
+            /** Limit */
+            limit: number;
+            /** Offset */
+            offset: number;
+            /** Query */
+            query: {
+                [key: string]: unknown;
+            };
+            /** Universe */
+            universe: {
+                [key: string]: number;
+            };
+        };
+        /** StockResponse */
+        StockResponse: {
+            /** Code */
+            code: string;
+            /** Name */
+            name: string;
+            /** Market */
+            market: string;
+            /** Industry */
+            industry: string | null;
+            /** Active */
+            active: boolean;
+            /** Datadate */
+            dataDate: string | null;
+            /** Price */
+            price: number | null;
+            /** Changepct */
+            changePct: number | null;
+            /** Volume */
+            volume: number | null;
+            /** Ma5 */
+            ma5: number | null;
+            /** Ma20 */
+            ma20: number | null;
             /** Rs20 */
             rs20: number | null;
             /** Technicalstate */
             technicalState: string | null;
+            /** Chipscore */
+            chipScore: number | null;
+            /** Datafreshness */
+            dataFreshness: string | null;
             /**
              * Topics
              * @default []
              */
             topics: components["schemas"]["TopicReference"][];
-            /** Volume */
-            volume: number | null;
         };
         /** StockSummary */
         StockSummary: {
-            /** Active */
-            active: boolean;
-            /** Changepct */
-            changePct: number | null;
             /** Code */
             code: string;
-            /** Datadate */
-            dataDate: string | null;
-            /** Datafreshness */
-            dataFreshness: string | null;
-            /** Industry */
-            industry: string | null;
-            /** Market */
-            market: string;
             /** Name */
             name: string;
+            /** Market */
+            market: string;
+            /** Industry */
+            industry: string | null;
+            /** Active */
+            active: boolean;
+            /** Datadate */
+            dataDate: string | null;
             /** Price */
             price: number | null;
-            /** Technicalstate */
-            technicalState: string | null;
+            /** Changepct */
+            changePct: number | null;
             /** Volume */
             volume: number | null;
+            /** Technicalstate */
+            technicalState: string | null;
+            /** Datafreshness */
+            dataFreshness: string | null;
+        };
+        /** StockTechnicalEvidence */
+        StockTechnicalEvidence: {
+            /** Above20Ma */
+            above20MA: boolean | null;
+            /** Above60Ma */
+            above60MA: boolean | null;
+            /** Ma20 */
+            ma20: number | null;
+            /** Ma60 */
+            ma60: number | null;
+            /** Breakoutstate */
+            breakoutState: string | null;
+            /** Technicalstate */
+            technicalState: string | null;
+        };
+        /** StockTopicRelationRead */
+        StockTopicRelationRead: {
+            /** Topicid */
+            topicId: string;
+            /** Topicslug */
+            topicSlug: string;
+            /** Topicname */
+            topicName: string;
+            /** Topicrole */
+            topicRole: string | null;
+            /** Relationtype */
+            relationType: string;
+            /** Relationweight */
+            relationWeight: number | null;
         };
         /** StrategyPerformanceResponse */
         StrategyPerformanceResponse: {
-            /** Averagereturnpct */
-            averageReturnPct: number | null;
-            /** Candidatecount */
-            candidateCount: number;
-            /**
-             * Datadate
-             * Format: date
-             */
-            dataDate: string;
-            /** Horizon */
-            horizon: string;
-            /** Modelversion */
-            modelVersion: string;
-            /** Reason */
-            reason: string | null;
-            /** Runstatus */
-            runStatus: string;
-            /** Samplecount */
-            sampleCount: number | null;
-            /** Selectedcount */
-            selectedCount: number;
-            /** Status */
-            status: string;
             /** Strategykey */
             strategyKey: string;
             /** Strategyname */
             strategyName: string;
-            /** Winratepct */
-            winRatePct: number | null;
-        };
-        /** StrategyResponse */
-        StrategyResponse: {
-            /** Candidatecount */
-            candidateCount: number;
+            /** Modelversion */
+            modelVersion: string;
             /**
              * Datadate
              * Format: date
              */
             dataDate: string;
-            /** Modelversion */
-            modelVersion: string;
-            /** Name */
-            name: string;
+            /** Runstatus */
+            runStatus: string;
+            /** Candidatecount */
+            candidateCount: number;
             /** Selectedcount */
             selectedCount: number;
+            /** Horizon */
+            horizon: string;
             /** Status */
             status: string;
+            /** Samplecount */
+            sampleCount: number | null;
+            /** Winratepct */
+            winRatePct: number | null;
+            /** Averagereturnpct */
+            averageReturnPct: number | null;
+            /** Reason */
+            reason: string | null;
+        };
+        /** StrategyResponse */
+        StrategyResponse: {
             /** Strategykey */
             strategyKey: string;
+            /** Name */
+            name: string;
+            /** Modelversion */
+            modelVersion: string;
+            /**
+             * Datadate
+             * Format: date
+             */
+            dataDate: string;
+            /** Status */
+            status: string;
+            /** Candidatecount */
+            candidateCount: number;
+            /** Selectedcount */
+            selectedCount: number;
+        };
+        /** TopicConstituentRead */
+        TopicConstituentRead: {
+            /** Instrumentid */
+            instrumentId: string;
+            /** Symbol */
+            symbol: string;
+            /** Code */
+            code: string;
+            /** Name */
+            name: string | null;
+            /** Role */
+            role: string | null;
+            /** Relationweight */
+            relationWeight: number | null;
+            /** Price */
+            price: number | null;
+            /** Changepct */
+            changePct: number | null;
+            /** Observedat */
+            observedAt: string | null;
+            /** Updatemode */
+            updateMode: string;
+            /** Freshness */
+            freshness: string;
+            /** Technicalstate */
+            technicalState: string | null;
+            /** Relativetopicstate */
+            relativeTopicState: string | null;
         };
         /** TopicIntelligenceComponent */
         TopicIntelligenceComponent: {
@@ -979,30 +1417,30 @@ export interface components {
         TopicIntelligenceEvidence: {
             /** Aggregatestatus */
             aggregateStatus: string;
-            /** Features */
-            features: components["schemas"]["TopicIntelligenceFeatureEvidence"][];
             quality: components["schemas"]["TopicIntelligenceQuality"];
             /** Qualityflags */
             qualityFlags: string[];
+            /** Features */
+            features: components["schemas"]["TopicIntelligenceFeatureEvidence"][];
         };
         /** TopicIntelligenceFeatureEvidence */
         TopicIntelligenceFeatureEvidence: {
-            /** Coverage */
-            coverage: number | null;
-            /** Metadata */
-            metadata: {
-                [key: string]: unknown;
-            };
             /** Name */
             name: string;
-            /** Qualityflags */
-            qualityFlags: string[];
+            /** Version */
+            version: string;
             /** Status */
             status: string;
             /** Value */
             value: unknown | null;
-            /** Version */
-            version: string;
+            /** Coverage */
+            coverage: number | null;
+            /** Qualityflags */
+            qualityFlags: string[];
+            /** Metadata */
+            metadata: {
+                [key: string]: unknown;
+            };
         };
         /** TopicIntelligencePolicy */
         TopicIntelligencePolicy: {
@@ -1013,79 +1451,176 @@ export interface components {
         };
         /** TopicIntelligenceQuality */
         TopicIntelligenceQuality: {
-            /** Coveragemean */
-            coverageMean: number | null;
-            /** Coveragemin */
-            coverageMin: number | null;
+            /** Readyfeaturecount */
+            readyFeatureCount: number;
             /** Insufficientfeaturecount */
             insufficientFeatureCount: number;
             /** Invalidfeaturecount */
             invalidFeatureCount: number;
-            /** Readyfeaturecount */
-            readyFeatureCount: number;
+            /** Coveragemin */
+            coverageMin: number | null;
+            /** Coveragemean */
+            coverageMean: number | null;
         };
         /** TopicIntelligenceResponse */
         TopicIntelligenceResponse: {
+            /** Contractversion */
+            contractVersion: string;
+            /** Mode */
+            mode: string;
+            /** Status */
+            status: string;
             /**
              * Asof
              * Format: date
              */
             asOf: string;
-            /** Contractversion */
-            contractVersion: string;
-            /** Mode */
-            mode: string;
+            versions: components["schemas"]["TopicIntelligenceVersions"];
             policy: components["schemas"]["TopicIntelligencePolicy"];
-            /** Status */
-            status: string;
             /** Topics */
             topics: components["schemas"]["TopicIntelligenceTopic"][];
-            versions: components["schemas"]["TopicIntelligenceVersions"];
         };
         /** TopicIntelligenceTopic */
         TopicIntelligenceTopic: {
-            /** Components */
-            components: components["schemas"]["TopicIntelligenceComponent"][];
-            /** Confidence */
-            confidence: number | null;
-            /** Eligibility */
-            eligibility: string;
-            evidence: components["schemas"]["TopicIntelligenceEvidence"];
-            /** Grade */
-            grade: string | null;
-            /** Score */
-            score: number | null;
-            /** Status */
-            status: string;
-            /** Strength */
-            strength: string | null;
             /** Topicid */
             topicId: string;
+            /** Status */
+            status: string;
+            /** Eligibility */
+            eligibility: string;
+            /** Score */
+            score: number | null;
+            /** Grade */
+            grade: string | null;
+            /** Strength */
+            strength: string | null;
+            /** Confidence */
+            confidence: number | null;
+            /** Components */
+            components: components["schemas"]["TopicIntelligenceComponent"][];
+            evidence: components["schemas"]["TopicIntelligenceEvidence"];
         };
         /** TopicIntelligenceVersions */
         TopicIntelligenceVersions: {
-            /** Aggregation */
-            aggregation: string;
-            /** Featureruntime */
-            featureRuntime: string;
             /** Featureset */
             featureSet: string;
+            /** Featureruntime */
+            featureRuntime: string;
+            /** Aggregation */
+            aggregation: string;
             /** Scorerruntime */
             scorerRuntime: string;
         };
+        /** TopicLifecycleRead */
+        TopicLifecycleRead: {
+            /** Currentstage */
+            currentStage: string | null;
+            /** Currentstageenteredat */
+            currentStageEnteredAt: string | null;
+            /** Currentstagetradingdays */
+            currentStageTradingDays: number | null;
+            /** History */
+            history?: components["schemas"]["TopicLifecycleSegmentRead"][];
+            /** Datastatus */
+            dataStatus: string;
+        };
+        /** TopicLifecycleSegmentRead */
+        TopicLifecycleSegmentRead: {
+            /** Stage */
+            stage: string;
+            /** Enteredat */
+            enteredAt: string | null;
+            /** Exitedat */
+            exitedAt: string | null;
+            /** Tradingdays */
+            tradingDays: number | null;
+            /** Current */
+            current: boolean;
+        };
+        /** TopicReadModel */
+        TopicReadModel: {
+            /** Topicid */
+            topicId: string;
+            /** Slug */
+            slug: string;
+            /** Name */
+            name: string;
+            /** Groupname */
+            groupName: string | null;
+            /** Topictype */
+            topicType: string;
+            /** Enabled */
+            enabled: boolean;
+            /** Datadate */
+            dataDate: string | null;
+            /** Score */
+            score: number | null;
+            /** Grade */
+            grade: string | null;
+            /** Direction */
+            direction: string | null;
+            /** Strengthstate */
+            strengthState: string | null;
+            /** Readablestate */
+            readableState: string;
+            /** Coveragepct */
+            coveragePct: number | null;
+            /** Constituentcount */
+            constituentCount: number;
+            /** Status */
+            status?: components["schemas"]["TopicStatusRead"][];
+            lifecycle: components["schemas"]["TopicLifecycleRead"];
+            /** Constituents */
+            constituents?: components["schemas"]["TopicConstituentRead"][];
+        };
+        /** TopicReadModelPage */
+        TopicReadModelPage: {
+            /** Items */
+            items: components["schemas"]["TopicReadModel"][];
+            /** Total */
+            total: number;
+            /** Limit */
+            limit: number;
+            /** Offset */
+            offset: number;
+            /** Query */
+            query: {
+                [key: string]: unknown;
+            };
+        };
         /** TopicReference */
         TopicReference: {
+            /** Slug */
+            slug: string;
             /** Name */
             name: string;
             /** Relationtype */
             relationType: string;
-            /** Slug */
-            slug: string;
             /** Weight */
             weight: number | null;
         };
         /** TopicResponse */
         TopicResponse: {
+            /** Slug */
+            slug: string;
+            /** Name */
+            name: string;
+            /** Groupname */
+            groupName: string | null;
+            /** Topictype */
+            topicType: string;
+            /** Enabled */
+            enabled: boolean;
+            /** Datadate */
+            dataDate: string | null;
+            /** Score */
+            score: number | null;
+            /** Grade */
+            grade: string | null;
+            /** Strengthstate */
+            strengthState: string | null;
+            /** Coveragepct */
+            coveragePct: number | null;
             /** Constituentcount */
             constituentCount: number;
             /**
@@ -1093,92 +1628,143 @@ export interface components {
              * @default []
              */
             constituents: components["schemas"]["Constituent"][];
-            /** Coveragepct */
-            coveragePct: number | null;
-            /** Datadate */
-            dataDate: string | null;
-            /** Enabled */
-            enabled: boolean;
-            /** Grade */
-            grade: string | null;
-            /** Groupname */
-            groupName: string | null;
-            /** Name */
-            name: string;
-            /** Score */
-            score: number | null;
-            /** Slug */
-            slug: string;
-            /** Strengthstate */
-            strengthState: string | null;
-            /** Topictype */
-            topicType: string;
         };
         /** TopicRotationResponse */
         TopicRotationResponse: {
-            /** Change */
-            change: number | null;
-            /** Days */
-            days: number;
+            /** Topicslug */
+            topicSlug: string;
+            /** Topicname */
+            topicName: string;
             /** Groupname */
             groupName: string | null;
-            /** Latestcoveragepct */
-            latestCoveragePct: number | null;
             /**
              * Latestdate
              * Format: date
              */
             latestDate: string;
-            /** Latestgrade */
-            latestGrade: string | null;
             /** Latestscore */
             latestScore: number | null;
+            /** Latestgrade */
+            latestGrade: string | null;
             /** Lateststrengthstate */
             latestStrengthState: string | null;
+            /** Latestcoveragepct */
+            latestCoveragePct: number | null;
+            /** Change */
+            change: number | null;
             /** Pointcount */
             pointCount: number;
-            /** Topicname */
-            topicName: string;
+            /** Days */
+            days: number;
+        };
+        /** TopicSnapshotPage */
+        TopicSnapshotPage: {
+            /** Items */
+            items: components["schemas"]["TopicSnapshotResponse"][];
+            /** Total */
+            total: number;
+            /** Limit */
+            limit: number;
+            /** Offset */
+            offset: number;
+            /** Query */
+            query: {
+                [key: string]: unknown;
+            };
+        };
+        /** TopicSnapshotResponse */
+        TopicSnapshotResponse: {
+            /**
+             * Snapshotdate
+             * Format: date
+             */
+            snapshotDate: string;
+            /** Topicid */
+            topicId: string;
             /** Topicslug */
             topicSlug: string;
+            /** Topicname */
+            topicName: string;
+            /** Parenttopic */
+            parentTopic: string | null;
+            /** Marketgrade */
+            marketGrade: string | null;
+            /** Topicscore */
+            topicScore: number | null;
+            /** Topicdirection */
+            topicDirection: string;
+            /** Stockcount */
+            stockCount: number;
+            /** Strongstockcount */
+            strongStockCount: number;
+            /** Weakstockcount */
+            weakStockCount: number;
+            /** Averagechange */
+            averageChange: number | null;
+            /** Observedstockcount */
+            observedStockCount: number;
+            /** Coveragepct */
+            coveragePct: number | null;
+            /** Datastatus */
+            dataStatus: string;
+            /** Scorestatus */
+            scoreStatus: string;
+            /** Calculationversion */
+            calculationVersion: string;
+            /**
+             * Updatedat
+             * Format: date-time
+             */
+            updatedAt: string;
+        };
+        /** TopicStatusRead */
+        TopicStatusRead: {
+            /** Key */
+            key: string;
+            /** State */
+            state: string | null;
+            /** Evidence */
+            evidence?: {
+                [key: string]: unknown;
+            };
         };
         /** TopicSummary */
         TopicSummary: {
-            /** Constituentcount */
-            constituentCount: number;
-            /** Coveragepct */
-            coveragePct: number | null;
-            /** Datadate */
-            dataDate: string | null;
-            /** Enabled */
-            enabled: boolean;
-            /** Grade */
-            grade: string | null;
-            /** Groupname */
-            groupName: string | null;
-            /** Name */
-            name: string;
-            /** Score */
-            score: number | null;
             /** Slug */
             slug: string;
-            /** Strengthstate */
-            strengthState: string | null;
+            /** Name */
+            name: string;
+            /** Groupname */
+            groupName: string | null;
             /** Topictype */
             topicType: string;
+            /** Enabled */
+            enabled: boolean;
+            /** Datadate */
+            dataDate: string | null;
+            /** Score */
+            score: number | null;
+            /** Grade */
+            grade: string | null;
+            /** Strengthstate */
+            strengthState: string | null;
+            /** Coveragepct */
+            coveragePct: number | null;
+            /** Constituentcount */
+            constituentCount: number;
         };
         /** ValidationError */
         ValidationError: {
-            /** Context */
-            ctx?: Record<string, never>;
-            /** Input */
-            input?: unknown;
             /** Location */
             loc: (string | number)[];
             /** Message */
             msg: string;
             /** Error Type */
             type: string;
+            /** Input */
+            input?: unknown;
+            /** Context */
+            ctx?: Record<string, never>;
         };
     };
     responses: never;
@@ -1211,12 +1797,9 @@ export interface operations {
             };
         };
     };
-    imports_api_v1_admin_imports_get: {
+    schema_api_v1_admin_schema_get: {
         parameters: {
-            query?: {
-                limit?: number;
-                offset?: number;
-            };
+            query?: never;
             header?: never;
             path?: never;
             cookie?: never;
@@ -1234,29 +1817,16 @@ export interface operations {
                     };
                 };
             };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
         };
     };
-    import_detail_api_v1_admin_imports__run_id__get: {
+    markets_api_v1_admin_markets_get: {
         parameters: {
             query?: {
-                record_limit?: number;
-                record_offset?: number;
-                outcome?: string | null;
-                entity?: string | null;
+                limit?: number;
+                offset?: number;
             };
             header?: never;
-            path: {
-                run_id: string;
-            };
+            path?: never;
             cookie?: never;
         };
         requestBody?: never;
@@ -1351,96 +1921,6 @@ export interface operations {
             };
         };
     };
-    markets_api_v1_admin_markets_get: {
-        parameters: {
-            query?: {
-                limit?: number;
-                offset?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        [key: string]: unknown;
-                    };
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    relations_api_v1_admin_relations_get: {
-        parameters: {
-            query?: {
-                limit?: number;
-                offset?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        [key: string]: unknown;
-                    };
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    schema_api_v1_admin_schema_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        [key: string]: unknown;
-                    };
-                };
-            };
-        };
-    };
     topics_api_v1_admin_topics_get: {
         parameters: {
             query?: {
@@ -1509,97 +1989,12 @@ export interface operations {
             };
         };
     };
-    performance_api_v1_analytics_strategy_performance_get: {
+    relations_api_v1_admin_relations_get: {
         parameters: {
             query?: {
-                strategy_key?: string | null;
-                horizon?: string | null;
-                data_date?: string | null;
                 limit?: number;
                 offset?: number;
             };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Page_StrategyPerformanceResponse_"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    rotation_api_v1_analytics_topic_rotation_get: {
-        parameters: {
-            query?: {
-                days?: number;
-                limit?: number;
-                offset?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["Page_TopicRotationResponse_"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    api_data_status_api_v1_meta_data_status_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DataStatus"];
-                };
-            };
-        };
-    };
-    configuration_api_v1_operations_live_configuration_get: {
-        parameters: {
-            query?: never;
             header?: never;
             path?: never;
             cookie?: never;
@@ -1615,6 +2010,315 @@ export interface operations {
                     "application/json": {
                         [key: string]: unknown;
                     };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    imports_api_v1_admin_imports_get: {
+        parameters: {
+            query?: {
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    import_detail_api_v1_admin_imports__run_id__get: {
+        parameters: {
+            query?: {
+                record_limit?: number;
+                record_offset?: number;
+                outcome?: string | null;
+                entity?: string | null;
+            };
+            header?: never;
+            path: {
+                run_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    latest_topic_intelligence_api_v1_topic_intelligence_latest_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TopicIntelligenceResponse"];
+                };
+            };
+            /** @description Configured provider returned invalid evidence */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description No approved runtime provider is configured */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    latest_recommendations_api_v1_recommendations_latest_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RecommendationResponse"];
+                };
+            };
+            /** @description No approved Recommendation provider is configured */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    stocks_api_v2_stocks_get: {
+        parameters: {
+            query?: {
+                market?: string | null;
+                /** @description Formal topic slug */
+                topic?: string | null;
+                updateMode?: string | null;
+                sort?: string;
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StockReadModelPage"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    stock_api_v2_stocks__symbol__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                symbol: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StockReadModel"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    topics_api_v2_topics_get: {
+        parameters: {
+            query?: {
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TopicReadModelPage"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    topic_api_v2_topics__slug__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TopicReadModel"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_topic_snapshots_api_v2_topic_snapshots_get: {
+        parameters: {
+            query?: {
+                date?: string | null;
+                latest?: boolean;
+                /** @description Topic slug */
+                topic?: string | null;
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TopicSnapshotPage"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };
@@ -1671,7 +2375,7 @@ export interface operations {
             };
         };
     };
-    latest_recommendations_api_v1_recommendations_latest_get: {
+    configuration_api_v1_operations_live_configuration_get: {
         parameters: {
             query?: never;
             header?: never;
@@ -1686,15 +2390,97 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["RecommendationResponse"];
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
                 };
             };
-            /** @description No approved Recommendation provider is configured */
+        };
+    };
+    healthz_healthz_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HealthResponse"];
+                };
+            };
+        };
+    };
+    readyz_readyz_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HealthResponse"];
+                };
+            };
+            /** @description Database unavailable */
             503: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    api_data_status_api_v1_meta_data_status_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DataStatus"];
+                };
+            };
+        };
+    };
+    home_api_v2_home_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HomeResponse"];
+                };
             };
         };
     };
@@ -1824,6 +2610,69 @@ export interface operations {
             };
         };
     };
+    topics_api_v1_topics_get: {
+        parameters: {
+            query?: {
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_TopicSummary_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    topic_api_v1_topics__slug__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TopicResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     strategies_api_v1_strategies_get: {
         parameters: {
             query?: {
@@ -1891,43 +2740,10 @@ export interface operations {
             };
         };
     };
-    latest_topic_intelligence_api_v1_topic_intelligence_latest_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["TopicIntelligenceResponse"];
-                };
-            };
-            /** @description Configured provider returned invalid evidence */
-            500: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description No approved runtime provider is configured */
-            503: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
-    topics_api_v1_topics_get: {
+    rotation_api_v1_analytics_topic_rotation_get: {
         parameters: {
             query?: {
+                days?: number;
                 limit?: number;
                 offset?: number;
             };
@@ -1943,7 +2759,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["Page_TopicSummary_"];
+                    "application/json": components["schemas"]["Page_TopicRotationResponse_"];
                 };
             };
             /** @description Validation Error */
@@ -1957,13 +2773,17 @@ export interface operations {
             };
         };
     };
-    topic_api_v1_topics__slug__get: {
+    performance_api_v1_analytics_strategy_performance_get: {
         parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                slug: string;
+            query?: {
+                strategy_key?: string | null;
+                horizon?: string | null;
+                data_date?: string | null;
+                limit?: number;
+                offset?: number;
             };
+            header?: never;
+            path?: never;
             cookie?: never;
         };
         requestBody?: never;
@@ -1974,7 +2794,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["TopicResponse"];
+                    "application/json": components["schemas"]["Page_StrategyPerformanceResponse_"];
                 };
             };
             /** @description Validation Error */
@@ -1985,53 +2805,6 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
                 };
-            };
-        };
-    };
-    healthz_healthz_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HealthResponse"];
-                };
-            };
-        };
-    };
-    readyz_readyz_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HealthResponse"];
-                };
-            };
-            /** @description Database unavailable */
-            503: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
             };
         };
     };

@@ -17,6 +17,21 @@ export type TopicSummary = {
   readableState: string;
   coveragePct: number | null;
   constituentCount: number;
+  direction: string | null;
+};
+
+export type TopicStatus = {
+  key: "族群表現" | "領漲核心" | "動能擴散";
+  state: string | null;
+  evidence: Record<string, unknown>;
+};
+
+export type TopicLifecycle = {
+  currentStage: string | null;
+  currentStageEnteredAt: string | null;
+  currentStageTradingDays: number | null;
+  history: Array<{ stage: string; enteredAt: string | null; exitedAt: string | null; tradingDays: number | null; current: boolean }>;
+  dataStatus: string;
 };
 
 export type TopicConstituent = {
@@ -29,10 +44,14 @@ export type TopicConstituent = {
   changePct: number | null;
   dataDate: string | null;
   dataFreshness: string | null;
+  technicalState: string | null;
+  relativeTopicState: string | null;
 };
 
 export type TopicDetail = TopicSummary & {
   constituents: TopicConstituent[];
+  status: TopicStatus[];
+  lifecycle: TopicLifecycle;
 };
 
 export type TopicResource<T> = {
@@ -43,15 +62,43 @@ export type TopicResource<T> = {
 
 export type TopicRotationResource = TopicResource<TopicRotationEvent[]>;
 
-type ApiTopicSummary = Omit<TopicSummary, "readableState"> & { readableState?: never };
-type ApiTopicDetail = Omit<TopicDetail, "readableState" | "constituents"> & {
-  constituents: Array<{
-    code: string;
-    name: string;
-    relationType: string;
-    weight: number | null;
-  }>;
+type ApiTopicSummary = {
+  topicId: string;
+  slug: string;
+  name: string;
+  groupName: string | null;
+  topicType: string;
+  enabled: boolean;
+  dataDate: string | null;
+  score: number | null;
+  grade: string | null;
+  direction: string | null;
+  strengthState: string | null;
+  readableState: string;
+  coveragePct: number | null;
+  constituentCount: number;
+  status: TopicStatus[];
+  lifecycle: TopicLifecycle;
+  constituents?: ApiTopicConstituent[];
 };
+
+type ApiTopicConstituent = {
+  instrumentId: string;
+  symbol: string;
+  code: string;
+  name: string | null;
+  role: TopicConstituent["role"];
+  relationWeight: number | null;
+  price: number | null;
+  changePct: number | null;
+  observedAt: string | null;
+  updateMode: string;
+  freshness: string;
+  technicalState: string | null;
+  relativeTopicState: string | null;
+};
+
+type ApiTopicDetail = ApiTopicSummary & { constituents: ApiTopicConstituent[] };
 
 type ApiTopicRotation = {
   change: number | null;
@@ -106,6 +153,7 @@ function summaryFromApi(item: ApiTopicSummary): TopicSummary {
     name: topicNameLabel(item.slug, item.name),
     groupName: groupNameLabel(item.groupName),
     readableState: readableState(item.strengthState),
+    direction: item.direction,
   };
 }
 
@@ -130,6 +178,7 @@ function rawTopicSummary(topic: RawTopic): TopicSummary | null {
     readableState: readableState(topic.strengthState),
     coveragePct: topic.breadthRatio ?? null,
     constituentCount: topic.stockCount ?? 0,
+    direction: null,
   };
 }
 
@@ -157,6 +206,7 @@ function syntheticTopics(): TopicSummary[] {
       readableState: item.state,
       coveragePct: null,
       constituentCount: item.constituents.length,
+      direction: null,
     }));
   return [...snapshotTopics, ...previewTopics];
 }
@@ -176,7 +226,11 @@ function syntheticDetail(slug: string): TopicDetail | null {
         role: roleFor(item.relationType),
         dataDate: null,
         dataFreshness: "Preview",
+        technicalState: null,
+        relativeTopicState: null,
       })),
+      status: [],
+      lifecycle: { currentStage: null, currentStageEnteredAt: null, currentStageTradingDays: null, history: [], dataStatus: "PREVIEW" },
     };
   }
   return {
@@ -194,8 +248,12 @@ function syntheticDetail(slug: string): TopicDetail | null {
         changePct: typeof price.changePct === "number" ? price.changePct : null,
         dataDate: typeof price.dataDate === "string" ? price.dataDate : null,
         dataFreshness: readableFreshness(stock?.risk?.dataFreshness ?? null),
+        technicalState: null,
+        relativeTopicState: null,
       };
     }),
+    status: [],
+    lifecycle: { currentStage: null, currentStageEnteredAt: null, currentStageTradingDays: null, history: [], dataStatus: "PREVIEW" },
   };
 }
 
@@ -223,7 +281,7 @@ export async function fetchTopics(): Promise<TopicResource<TopicSummary[]>> {
       ? { source: "synthetic-snapshot", data, error: null }
       : { source: "unavailable", data: null, error: "尚未設定 FastAPI API origin。" };
   }
-  const result = await request<{ items: ApiTopicSummary[] }>("/api/v1/topics?limit=200&offset=0");
+  const result = await request<{ items: ApiTopicSummary[] }>("/api/v2/topics?limit=200&offset=0");
   return result.source === "api"
     ? { source: "api", data: (result.data?.items ?? []).map(summaryFromApi), error: null }
     : { source: result.source, data: null, error: result.error };
@@ -237,7 +295,7 @@ export async function fetchTopic(slug: string): Promise<TopicResource<TopicDetai
       ? { source: "synthetic-snapshot", data, error: null }
       : { source: "unavailable", data: null, error: "此 slug 不在公開合成 snapshot，且尚未設定 FastAPI API origin。" };
   }
-  const result = await request<ApiTopicDetail>(`/api/v1/topics/${encodeURIComponent(slug)}`);
+  const result = await request<ApiTopicDetail>(`/api/v2/topics/${encodeURIComponent(slug)}`);
   if (result.source !== "api" || !result.data) return { source: result.source, data: null, error: result.error };
   const detail = result.data;
   return {
@@ -247,14 +305,22 @@ export async function fetchTopic(slug: string): Promise<TopicResource<TopicDetai
       ...detail,
       name: topicNameLabel(detail.slug, detail.name),
       groupName: groupNameLabel(detail.groupName),
-      readableState: readableState(detail.strengthState),
+      readableState: detail.readableState || readableState(detail.strengthState),
+      direction: detail.direction,
+      status: detail.status,
+      lifecycle: detail.lifecycle,
       constituents: detail.constituents.map((item) => ({
-        ...item,
-        role: roleFor(item.relationType),
-        price: null,
-        changePct: null,
+        code: item.code,
+        name: item.name ?? item.code,
+        relationType: "FORMAL",
+        role: item.role,
+        weight: item.relationWeight,
+        price: item.price,
+        changePct: item.changePct,
         dataDate: detail.dataDate,
-        dataFreshness: null,
+        dataFreshness: item.freshness,
+        technicalState: item.technicalState,
+        relativeTopicState: item.relativeTopicState,
       })),
     },
   };

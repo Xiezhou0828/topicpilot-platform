@@ -78,6 +78,69 @@ class StockSummary(ApiModel):
     data_freshness: str | None = Field(alias="dataFreshness")
 
 
+class HistoricalPricePoint(ApiModel):
+    trading_date: date = Field(alias="tradingDate")
+    observed_at: datetime = Field(alias="observedAt")
+    open: float | None
+    high: float | None
+    low: float | None
+    close: float | None
+    volume: float | None
+    source_code: str = Field(alias="sourceCode")
+    quality_state: str = Field(alias="qualityState")
+
+
+class HistoricalPriceHistoryResponse(ApiModel):
+    code: str
+    market: str
+    requested_from: date = Field(alias="requestedFrom")
+    requested_to: date = Field(alias="requestedTo")
+    status: str
+    availability_reason: str | None = Field(alias="availabilityReason")
+    point_count: int = Field(alias="pointCount")
+    items: list[HistoricalPricePoint]
+
+
+class LiveRunSummary(ApiModel):
+    id: str
+    type: str
+    started_at: datetime = Field(alias="startedAt")
+    completed_at: datetime | None = Field(alias="completedAt")
+    latency_ms: int | None = Field(alias="latencyMs")
+    requested_count: int = Field(alias="requestedCount")
+
+
+class LiveStatusResponse(ApiModel):
+    status: str
+    last_run: LiveRunSummary | None = Field(alias="lastRun")
+    provider_status: str = Field(alias="providerStatus")
+    freshness_state: str = Field(alias="freshnessState")
+    heartbeat_at: datetime | None = Field(alias="heartbeatAt")
+    success_count: int = Field(alias="successCount")
+    failure_count: int = Field(alias="failureCount")
+    retry_count: int = Field(alias="retryCount")
+    skipped_count: int = Field(default=0, alias="skippedCount")
+    universe_counts: dict[str, int] = Field(default_factory=dict, alias="universeCounts")
+    failure_code: str | None = Field(default=None, alias="failureCode")
+    failure_message: str | None = Field(default=None, alias="failureMessage")
+    provider_health: list[dict[str, object]] = Field(default_factory=list, alias="providerHealth")
+
+
+class LiveTrackingResponse(ApiModel):
+    instrument_code: str = Field(alias="instrumentCode")
+    market: str
+    update_mode: str = Field(alias="updateMode")
+    moving_average_state: str = Field(alias="movingAverageState")
+    moving_average_period: int = Field(alias="movingAveragePeriod")
+    latest_close: float | None = Field(alias="latestClose")
+    moving_average: float | None = Field(alias="movingAverage")
+    observation_count: int = Field(alias="observationCount")
+    observed_at: datetime | None = Field(alias="observedAt")
+    updated_at: datetime | None = Field(alias="updatedAt")
+    freshness_state: str = Field(alias="freshnessState")
+    reason: str
+
+
 class Constituent(ApiModel):
     code: str
     name: str
@@ -184,3 +247,364 @@ class SnapshotResponse(ApiModel):
     classification: str
     generated_at: datetime = Field(alias="generatedAt")
     data_date: date = Field(alias="dataDate")
+
+
+class TopicSnapshotResponse(ApiModel):
+    snapshot_date: date = Field(alias="snapshotDate")
+    topic_id: str = Field(alias="topicId")
+    topic_slug: str = Field(alias="topicSlug")
+    topic_name: str = Field(alias="topicName")
+    parent_topic: str | None = Field(alias="parentTopic")
+    market_grade: str | None = Field(alias="marketGrade")
+    topic_score: float | None = Field(alias="topicScore")
+    topic_direction: str = Field(alias="topicDirection")
+    stock_count: int = Field(alias="stockCount")
+    strong_stock_count: int = Field(alias="strongStockCount")
+    weak_stock_count: int = Field(alias="weakStockCount")
+    average_change: float | None = Field(alias="averageChange")
+    observed_stock_count: int = Field(alias="observedStockCount")
+    coverage_pct: float | None = Field(alias="coveragePct")
+    data_status: str = Field(alias="dataStatus")
+    score_status: str = Field(alias="scoreStatus")
+    calculation_version: str = Field(alias="calculationVersion")
+    updated_at: datetime = Field(alias="updatedAt")
+
+
+class TopicSnapshotPage(ApiModel):
+    items: list[TopicSnapshotResponse]
+    total: int
+    limit: int
+    offset: int
+    query: dict[str, Any]
+
+
+class StockTopicRelationRead(ApiModel):
+    topic_id: str = Field(alias="topicId")
+    topic_slug: str = Field(alias="topicSlug")
+    topic_name: str = Field(alias="topicName")
+    topic_role: str | None = Field(alias="topicRole")
+    relation_type: str = Field(alias="relationType")
+    relation_weight: float | None = Field(alias="relationWeight")
+
+
+class StockTechnicalEvidence(ApiModel):
+    above_20_ma: bool | None = Field(alias="above20MA")
+    above_60_ma: bool | None = Field(alias="above60MA")
+    ma20: float | None
+    ma60: float | None
+    breakout_state: str | None = Field(alias="breakoutState")
+    technical_state: str | None = Field(alias="technicalState")
+
+
+class StockReadModel(ApiModel):
+    instrument_id: str = Field(alias="instrumentId")
+    symbol: str
+    code: str
+    name: str | None
+    market: str
+    exchange: str | None
+    listing: str | None
+    active: bool
+    enabled: bool
+    price: float | None
+    change_pct: float | None = Field(alias="changePct")
+    volume: float | None
+    observed_at: datetime | None = Field(alias="observedAt")
+    retrieved_at: datetime | None = Field(alias="retrievedAt")
+    data_freshness: str = Field(alias="dataFreshness")
+    update_mode: str = Field(alias="updateMode")
+    market_status: str = Field(alias="marketStatus")
+    main_topic: dict[str, Any] | None = Field(alias="mainTopic")
+    topic_relations: list[StockTopicRelationRead] = Field(alias="topicRelations", default_factory=list)
+    tracking_mode: str = Field(alias="trackingMode")
+    tracking_reason: str | None = Field(alias="trackingReason")
+    ma20_state: str | None = Field(alias="ma20State")
+    ma60_state: str | None = Field(alias="ma60State")
+    history_coverage: dict[str, Any] = Field(alias="historyCoverage", default_factory=dict)
+    favorite: dict[str, Any] | None
+    opportunity: dict[str, Any] | None
+    technical_evidence: StockTechnicalEvidence | None = Field(alias="technicalEvidence")
+    institution_flows: dict[str, Any] | None = Field(alias="institutionFlows")
+    summary: str | None
+
+
+class StockReadModelPage(ApiModel):
+    items: list[StockReadModel]
+    total: int
+    limit: int
+    offset: int
+    query: dict[str, Any]
+    universe: dict[str, int]
+
+
+class TopicStatusRead(ApiModel):
+    key: str
+    state: str | None
+    evidence: dict[str, Any] = Field(default_factory=dict)
+
+
+class TopicLifecycleSegmentRead(ApiModel):
+    stage: str
+    entered_at: date | None = Field(alias="enteredAt")
+    exited_at: date | None = Field(alias="exitedAt")
+    trading_days: int | None = Field(alias="tradingDays")
+    current: bool
+
+
+class TopicLifecycleRead(ApiModel):
+    current_stage: str | None = Field(alias="currentStage")
+    current_stage_entered_at: date | None = Field(alias="currentStageEnteredAt")
+    current_stage_trading_days: int | None = Field(alias="currentStageTradingDays")
+    history: list[TopicLifecycleSegmentRead] = Field(default_factory=list)
+    data_status: str = Field(alias="dataStatus")
+
+
+class TopicConstituentRead(ApiModel):
+    instrument_id: str = Field(alias="instrumentId")
+    symbol: str
+    code: str
+    name: str | None
+    role: str | None
+    relation_weight: float | None = Field(alias="relationWeight")
+    price: float | None
+    change_pct: float | None = Field(alias="changePct")
+    observed_at: datetime | None = Field(alias="observedAt")
+    update_mode: str = Field(alias="updateMode")
+    freshness: str
+    technical_state: str | None = Field(alias="technicalState")
+    relative_topic_state: str | None = Field(alias="relativeTopicState")
+
+
+class TopicReadModel(ApiModel):
+    topic_id: str = Field(alias="topicId")
+    slug: str
+    name: str
+    group_name: str | None = Field(alias="groupName")
+    topic_type: str = Field(alias="topicType")
+    enabled: bool
+    data_date: date | None = Field(alias="dataDate")
+    score: float | None
+    grade: str | None
+    direction: str | None
+    strength_state: str | None = Field(alias="strengthState")
+    readable_state: str = Field(alias="readableState")
+    coverage_pct: float | None = Field(alias="coveragePct")
+    constituent_count: int = Field(alias="constituentCount")
+    status: list[TopicStatusRead] = Field(default_factory=list)
+    lifecycle: TopicLifecycleRead
+    constituents: list[TopicConstituentRead] = Field(default_factory=list)
+
+
+class TopicReadModelPage(ApiModel):
+    items: list[TopicReadModel]
+    total: int
+    limit: int
+    offset: int
+    query: dict[str, Any]
+
+
+class TopicIntelligenceVersions(ApiModel):
+    feature_set: str = Field(alias="featureSet")
+    feature_runtime: str = Field(alias="featureRuntime")
+    aggregation: str
+    scorer_runtime: str = Field(alias="scorerRuntime")
+
+
+class TopicIntelligencePolicy(ApiModel):
+    policy_id: str = Field(alias="policyId")
+    policy_version: str = Field(alias="policyVersion")
+
+
+class TopicIntelligenceComponent(ApiModel):
+    name: str
+    value: float | None
+
+
+class TopicIntelligenceFeatureEvidence(ApiModel):
+    name: str
+    version: str
+    status: str
+    value: Any | None
+    coverage: float | None
+    quality_flags: list[str] = Field(alias="qualityFlags")
+    metadata: dict[str, Any]
+
+
+class TopicIntelligenceQuality(ApiModel):
+    ready_feature_count: int = Field(alias="readyFeatureCount")
+    insufficient_feature_count: int = Field(alias="insufficientFeatureCount")
+    invalid_feature_count: int = Field(alias="invalidFeatureCount")
+    coverage_min: float | None = Field(alias="coverageMin")
+    coverage_mean: float | None = Field(alias="coverageMean")
+
+
+class TopicIntelligenceEvidence(ApiModel):
+    aggregate_status: str = Field(alias="aggregateStatus")
+    quality: TopicIntelligenceQuality
+    quality_flags: list[str] = Field(alias="qualityFlags")
+    features: list[TopicIntelligenceFeatureEvidence]
+
+
+class TopicIntelligenceTopic(ApiModel):
+    topic_id: str = Field(alias="topicId")
+    status: str
+    eligibility: str
+    score: float | None
+    grade: str | None
+    strength: str | None
+    confidence: float | None
+    components: list[TopicIntelligenceComponent]
+    evidence: TopicIntelligenceEvidence
+
+
+class TopicIntelligenceResponse(ApiModel):
+    contract_version: str = Field(alias="contractVersion")
+    mode: str
+    status: str
+    as_of: date = Field(alias="asOf")
+    versions: TopicIntelligenceVersions
+    policy: TopicIntelligencePolicy
+    topics: list[TopicIntelligenceTopic]
+
+
+class RecommendationComponent(ApiModel):
+    name: str
+    value: float | None
+
+
+class RecommendationTopicContext(ApiModel):
+    as_of: date | None = Field(alias="asOf")
+    scorer_runtime_version: str | None = Field(alias="scorerRuntimeVersion")
+    feature_set_version: str | None = Field(alias="featureSetVersion")
+    feature_runtime_version: str | None = Field(alias="featureRuntimeVersion")
+    aggregation_version: str | None = Field(alias="aggregationVersion")
+    policy_id: str | None = Field(alias="policyId")
+    policy_version: str | None = Field(alias="policyVersion")
+    eligibility: str | None
+    score: float | None
+    grade: str | None
+    confidence: float | None
+    components: list[RecommendationComponent] = Field(default_factory=list)
+    evidence_reference: list[str] = Field(alias="evidenceReference", default_factory=list)
+
+
+class RecommendationItemResponse(ApiModel):
+    candidate_id: str = Field(alias="candidateId")
+    topic_id: str = Field(alias="topicId")
+    label: str
+    status: str
+    reason: str
+    topic_context: RecommendationTopicContext | None = Field(alias="topicContext")
+    evidence: list[str] = Field(default_factory=list)
+
+
+class RecommendationResponse(ApiModel):
+    contract_version: str = Field(alias="contractVersion")
+    as_of: date | None = Field(alias="asOf")
+    status: str
+    items: list[RecommendationItemResponse] = Field(default_factory=list)
+
+
+class HomeMarketHealth(ApiModel):
+    market: str
+    status: str
+    total_stocks: int | None = Field(alias="totalStocks")
+    advance: int | None
+    decline: int | None
+    flat: int | None
+    unavailable: int | None
+
+
+class HomeMarketOverview(ApiModel):
+    data_date: date | None = Field(alias="dataDate")
+    updated_at: datetime | None = Field(alias="updatedAt")
+    data_status: str = Field(alias="dataStatus")
+    tracked_stock_count: int = Field(alias="trackedStockCount")
+    tracked_topic_count: int = Field(alias="trackedTopicCount")
+    latest_snapshot_time: datetime | None = Field(alias="latestSnapshotTime")
+    market_health: HomeMarketHealth | None = Field(alias="marketHealth")
+    source: str
+
+
+class HomeDailyFocus(ApiModel):
+    mode: str
+    temporary: bool
+    headline: str
+    bullets: list[str] = Field(default_factory=list)
+    data_date: date | None = Field(alias="dataDate")
+    source: str
+
+
+class HomeTopicCard(ApiModel):
+    slug: str
+    name: str
+    grade: str | None
+    strength: float | None
+    current_state: str | None = Field(alias="currentState")
+    stock_count: int = Field(alias="stockCount")
+    summary: str
+    favorite: bool
+    data_date: date | None = Field(alias="dataDate")
+
+
+class HomeMarketPulseEvent(ApiModel):
+    event_time: datetime = Field(alias="eventTime")
+    topic: str
+    event_type: str = Field(alias="eventType")
+    description: str
+    severity: str
+    topic_slug: str = Field(alias="topicSlug")
+    source: str
+
+
+class HomeRotationTopic(ApiModel):
+    topic: str
+    topic_slug: str = Field(alias="topicSlug")
+    strength_delta: float = Field(alias="strengthDelta")
+    current_grade: str = Field(alias="currentGrade")
+    summary: str
+
+
+class HomeOpportunityStock(ApiModel):
+    code: str
+    name: str
+    strategy_keys: list[str] = Field(alias="strategyKeys", default_factory=list)
+    score: float | None
+    reason: str | None
+    data_date: date | None = Field(alias="dataDate")
+
+
+class HomeOpportunityTopic(ApiModel):
+    topic: str
+    topic_slug: str = Field(alias="topicSlug")
+    grade: str | None
+    strength: float | None
+    current_state: str | None = Field(alias="currentState")
+    summary: str
+    validated_stocks: list[HomeOpportunityStock] = Field(
+        alias="validatedStocks", default_factory=list
+    )
+    temporary: bool
+
+
+class HomeDataQuality(ApiModel):
+    status: str
+    source: str
+    classification: str | None
+    temporary_sections: list[str] = Field(alias="temporarySections", default_factory=list)
+    missing_sections: list[str] = Field(alias="missingSections", default_factory=list)
+    notes: list[str] = Field(default_factory=list)
+
+
+class HomeResponse(ApiModel):
+    contract_version: str = Field(alias="contractVersion")
+    as_of: date | None = Field(alias="asOf")
+    generated_at: datetime | None = Field(alias="generatedAt")
+    market_overview: HomeMarketOverview = Field(alias="marketOverview")
+    daily_focus: HomeDailyFocus = Field(alias="dailyFocus")
+    main_topics: list[HomeTopicCard] = Field(alias="mainTopics", default_factory=list)
+    market_pulse: list[HomeMarketPulseEvent] = Field(alias="marketPulse", default_factory=list)
+    heating_topics: list[HomeRotationTopic] = Field(alias="heatingTopics", default_factory=list)
+    cooling_topics: list[HomeRotationTopic] = Field(alias="coolingTopics", default_factory=list)
+    opportunities: list[HomeOpportunityTopic] = Field(default_factory=list)
+    data_quality: HomeDataQuality = Field(alias="dataQuality")
