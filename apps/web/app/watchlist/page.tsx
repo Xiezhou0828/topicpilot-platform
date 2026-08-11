@@ -62,8 +62,8 @@ function quickEvaluation(stock: StockView, id: QuickFilterId, strongTopics: Set<
     return stock.topicNames.some((name) => strongTopics.has(name));
   }
   const risk = stock.riskNote ?? stock.watch?.shortRisk;
-  if (!stock.watch && risk === null) return null;
-  return risk === null || /暫無|無明顯|低風險/.test(risk);
+  if (risk == null) return null;
+  return /暫無|無明顯|低風險/.test(risk);
 }
 
 function StockIdentity({ stock }: { stock: StockView }) {

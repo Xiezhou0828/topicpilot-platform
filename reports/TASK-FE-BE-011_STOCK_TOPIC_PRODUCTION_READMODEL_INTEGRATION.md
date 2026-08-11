@@ -95,7 +95,11 @@ Representative DB/API/UI traces:
 2. Stock `2317`：同一 stock read model contract；未有正式 role 時 role 保持 `NULL`。
 3. Stock `6488`：同一 market/price/freshness contract；沒有 institution-flow/summary 欄位時維持 `NULL`。
 4. Topic `AI PCB`：DB topic snapshot/relations → `/api/v2/topics/AI PCB` → Topic detail；28 constituents 與 participation counts 由正式資料計算/組合。
-5. Topic list：`/api/v2/topics` 提供 list-level identity、date、direction 與 coverage evidence。
+5. Topic `ADAS`：同一 `/api/v2/topics/{slug}` contract；4 constituents、COOLING direction 與 formal freshness 由 API 提供。
+6. Topic `12 吋矽晶圓`：同一 topic detail contract；4 constituents 與 WARMING direction 由 API 提供，缺少 grade/score 時保持 `NULL`。
+7. Topic list：`/api/v2/topics` 提供 list-level identity、date、direction 與 coverage evidence。
+
+The shared Drawer now requests `/api/v2/stocks/{symbol}` on formal-stock open, so the detail surface does not rely only on the list payload.
 
 ## UI → API mapping
 
@@ -135,10 +139,13 @@ Representative DB/API/UI traces:
 
 - Frontend build：PASS。
 - Frontend lint：PASS。
+- Frontend `npx tsc --noEmit`：PASS。
 - `git diff --check`：PASS。
+- Backend pytest：PASS，251 passed / 31 skipped（skips require an explicitly configured PostgreSQL test database）。
 - Backend Python compile/import/read-model schema validation：PASS。
 - Live Docker API readiness and endpoint smoke tests：PASS。
-- Ruff：目前 production API image/本機環境沒有可用 Ruff binary，未把缺少工具誤報為通過；需 CI/開發環境補跑。
+- Ruff：changed production read-model files PASS with existing repository E501 line-length baseline excluded；full repository Ruff remains blocked by 183 pre-existing style findings。
+- API integration assertions：PASS；507 stocks、TPE 314、TWO 193、2330/2317/6488 detail、3 topic detail samples 與 OpenAPI paths 均驗證。
 - Browser visual smoke：公開 Sites version 34 `/stocks` 與 `/topics/AI%20PCB` 可開啟；Drawer viewport/body metrics PASS。
 
 公開部署資訊：Sites version `34`，deployment `appgdep_6a7b58247e6c8191ba0a6157a3ee9850`，URL `https://topicpilot-platform.game0962046460.chatgpt.site`。

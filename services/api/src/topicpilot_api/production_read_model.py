@@ -7,7 +7,7 @@ the legacy public demo tables or inferring business semantics in the client.
 
 from __future__ import annotations
 
-from datetime import date, datetime, timezone
+from datetime import date, datetime
 from decimal import Decimal
 from typing import Any
 from zoneinfo import ZoneInfo

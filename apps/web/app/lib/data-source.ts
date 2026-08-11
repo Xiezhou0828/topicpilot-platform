@@ -190,6 +190,7 @@ function mockWatchToObservation(item: WatchItem): ObservationRow {
     shortRisk: item.marginChange > 2 ? "融資偏熱" : null,
     watchDays: null,
     dataFreshness: null,
+    exceptionMessage: null,
     updatedAt: null,
     topicRole: "主要",
     topicDefinition: "主要核心",
@@ -210,6 +211,8 @@ function mockWatchToRow(item: WatchItem, i: number): WatchRow {
     invalidationLabel: item.stop != null ? String(item.stop) : null,
     stopPct: item.risk ?? null,
     gateReason: null,
+    entrySetup: null,
+    suggestedAction: null,
     foreignFlow: item.foreignFlow,
     hasFunding: item.foreignFlow > 0,
     hasCatalyst: false,
@@ -323,7 +326,7 @@ export async function fetchPublishedSnapshot(
 ): Promise<QualityPanelData | null> {
   try {
     const raw = await fetchRawPublishedSnapshot(url);
-    if (!isSnapshotUsable(raw)) return null;
+    if (!raw || !isSnapshotUsable(raw)) return null;
     return { source: "snapshot", freshness: toFreshness(raw), quality: toQualityView(raw) };
   } catch {
     return null;

@@ -180,8 +180,10 @@ export function SnapshotProvider({ children }: { children: ReactNode }) {
         }
       } finally {
         window.clearTimeout(timeout);
-        if (requestRef.current === task) requestRef.current = null;
-        if (abortRef.current === controller) abortRef.current = null;
+        if (abortRef.current === controller) {
+          requestRef.current = null;
+          abortRef.current = null;
+        }
       }
     })();
 

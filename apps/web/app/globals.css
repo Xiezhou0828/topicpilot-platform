@@ -3917,6 +3917,7 @@ tbody tr:hover td { background: rgba(86, 198, 189, 0.06); }
 .tp-stock-encyclopedia-drawer--inline{position:fixed;z-index:45;top:72px;right:0;bottom:0;width:min(var(--tp-drawer-width),42vw);height:auto;min-width:320px;max-width:calc(100vw - 24px);border:0;border-left:1px solid var(--tp-color-border);border-radius:0;box-shadow:-8px 0 24px rgba(75,58,44,.08);animation:tp-drawer-in var(--tp-motion) ease-out both}
 .tp-stock-encyclopedia-drawer--inline .tp-stock-encyclopedia-header{position:relative;top:auto;flex:0 0 auto}
 .tp-stock-encyclopedia-drawer--inline .tp-stock-encyclopedia-body{min-height:0;flex:1;overflow-y:auto}
+.tp-stock-encyclopedia-evidence-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 16px;margin:0}.tp-stock-encyclopedia-evidence-grid div{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid var(--tp-color-border-subtle);padding:6px 0}.tp-stock-encyclopedia-evidence-grid dt{color:var(--tp-color-text-muted);font-size:12px}.tp-stock-encyclopedia-evidence-grid dd{margin:0;text-align:right;font-size:13px;font-weight:600}
 @media(max-width:1000px){.tp-stock-workspace:has(.tp-stock-encyclopedia-drawer),.tp-topic-stocks-workspace:has(.tp-stock-encyclopedia-drawer){grid-template-columns:minmax(0,1fr)}}
 @media(max-width:760px){.tp-stock-encyclopedia-drawer--inline{top:72px;width:min(560px,100vw);min-width:0;max-width:100vw}}
 @media(prefers-reduced-motion:reduce){.tp-stock-encyclopedia-drawer--inline{animation:none}}
