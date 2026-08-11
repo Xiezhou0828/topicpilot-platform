@@ -127,7 +127,7 @@ The shared Drawer now requests `/api/v2/stocks/{symbol}` on formal-stock open, s
 - close/switch actions 維持於 header
 - 約 200ms ease-out；`prefers-reduced-motion` 時停用動畫
 
-本機 browser smoke test 另外受到本次 production preview 的舊 `index-n6TMV3ou.js` 404 影響，未把失敗的 chunk load 誤算成 Drawer UI PASS。公開 Sites version 34 已重新驗證：viewport `1280x720` 下 Drawer computed `position=fixed`、`top=72`、`bottom=0`、`right=0`、寬度 `537.6px`；header 位於 body scroll container 之前，body `clientHeight=469`、`scrollHeight=550`，在 Drawer 內滾動後 `scrollTop=80` 且 Drawer 仍維持 `top=72`。
+本機 browser smoke test 另外受到本次 production preview 的舊 `index-n6TMV3ou.js` 404 影響，未把失敗的 chunk load 誤算成 Drawer UI PASS。公開 Sites version 35 已重新驗證：viewport `1280x720` 下 Drawer computed `position=fixed`、`top=72`、`bottom=0`、`right=0`、寬度 `537.6px`；header 位於 body scroll container 之前，body `clientHeight=469`、`scrollHeight=962`，在 Drawer 內滾動後 `scrollTop=360` 且 Drawer 仍維持 `top=72`。Close action 返回 0 個 Drawer，重新點擊第二張 tile 後 header 切換為 `Boreal Energy`。
 
 公開 Preview 的四筆資料頁本身 document height 為 720px，沒有足夠的頁面 overflow 可執行 `scrollY >= 500`；因此 page-scroll case 以 computed fixed anchor 與獨立 body scroll 交叉驗證，沒有把不可滾動的 Preview 頁誤報成已完成 page-scroll 測試。
 
@@ -146,9 +146,9 @@ The shared Drawer now requests `/api/v2/stocks/{symbol}` on formal-stock open, s
 - Live Docker API readiness and endpoint smoke tests：PASS。
 - Ruff：changed production read-model files PASS with existing repository E501 line-length baseline excluded；full repository Ruff remains blocked by 183 pre-existing style findings。
 - API integration assertions：PASS；507 stocks、TPE 314、TWO 193、2330/2317/6488 detail、3 topic detail samples 與 OpenAPI paths 均驗證。
-- Browser visual smoke：公開 Sites version 34 `/stocks` 與 `/topics/AI%20PCB` 可開啟；Drawer viewport/body metrics PASS。
+- Browser visual smoke：公開 Sites version 35 `/stocks` 與 `/topics/AI%20PCB` 可開啟；Drawer viewport/body metrics、close、switch PASS。
 
-公開部署資訊：Sites version `34`，deployment `appgdep_6a7b58247e6c8191ba0a6157a3ee9850`，URL `https://topicpilot-platform.game0962046460.chatgpt.site`。
+公開部署資訊：Sites version `35`，deployment `appgdep_6a7b60e1843081918b5c9fec6e96fb93`，URL `https://topicpilot-platform.game0962046460.chatgpt.site`。
 
 ## Known gaps / follow-up
 
