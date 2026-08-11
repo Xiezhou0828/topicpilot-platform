@@ -4,6 +4,7 @@ import Link from "next/link";
 import { X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { fetchFormalStock, type StockApiItem } from "../../lib/stock-api";
+import { useFavoritesState } from "../FavoriteButton";
 import { FavoriteStar, Freshness, RoleChip } from "./V2Foundation";
 
 export type StockDrawerTopic = { name: string; role: string | null };
@@ -89,7 +90,7 @@ function EvidenceGrid({ rows }: { rows: Array<[string, string | number | boolean
 }
 
 export function StockEncyclopediaDrawer({ stock, onClose, presentation = "overlay" }: { stock: StockDrawerItem; onClose: () => void; presentation?: "overlay" | "inline" }) {
-  const [favorite, setFavorite] = useState(false);
+  const { codes: favoriteCodes, toggle: toggleFavorite } = useFavoritesState();
   const [formalDetailState, setFormalDetailState] = useState<{ symbol: string; data: StockApiItem | null; status: "available" | "unavailable"; error: string | null } | null>(null);
 
   useEffect(() => {
@@ -122,7 +123,7 @@ export function StockEncyclopediaDrawer({ stock, onClose, presentation = "overla
         <h2 id="stock-encyclopedia-title">{displayStock.name}</h2>
         <span>{displayStock.code}{displayStock.market ? ` · ${displayStock.market}` : ""}{displayStock.exchange ? ` · ${displayStock.exchange}` : ""}</span>
       </div>
-      <div className="tp-stock-encyclopedia-actions"><FavoriteStar active={favorite} onClick={() => setFavorite((v) => !v)} /><button type="button" className="tp-stock-close" aria-label="Close stock drawer" title="Close" onClick={onClose}><X size={18} aria-hidden="true" /></button></div>
+      <div className="tp-stock-encyclopedia-actions"><FavoriteStar active={favoriteCodes.includes(displayStock.code)} onClick={() => toggleFavorite(displayStock.code)} /><button type="button" className="tp-stock-close" aria-label="Close stock drawer" title="Close" onClick={onClose}><X size={18} aria-hidden="true" /></button></div>
     </header>
     <div className="tp-stock-encyclopedia-body">
       <div className="tp-stock-encyclopedia-freshness"><Freshness state={fresh(displayStock.dataFreshness)} asOf={displayStock.updatedAt ?? displayStock.dataDate ?? "資料日期待補"} />{displayStock.isPreview && <span className="tp-stock-preview-label">Preview</span>}{detailState === "loading" && <span className="tp-muted">正在讀取正式 detail</span>}{detailState === "unavailable" && !displayStock.isPreview && <span className="tp-muted">正式 detail 暫不可用</span>}</div>

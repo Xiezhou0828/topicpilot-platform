@@ -77,7 +77,13 @@ export function useFavoritesState() {
     };
   }, []);
 
-  return { codes: favorites, ready };
+  function toggle(code: string) {
+    const next = favorites.includes(code) ? favorites.filter((item) => item !== code) : [...favorites, code];
+    setFavorites(next);
+    writeFavorites(next);
+  }
+
+  return { codes: favorites, ready, toggle };
 }
 
 function readTopicFavorites() {
