@@ -123,7 +123,9 @@ Representative DB/API/UI traces:
 - close/switch actions 維持於 header
 - 約 200ms ease-out；`prefers-reduced-motion` 時停用動畫
 
-本機 browser smoke test 另外受到本次 production preview 的舊 `index-n6TMV3ou.js` 404 影響，未把失敗的 chunk load 誤算成 Drawer UI PASS。公開 Sites build 部署後會再以 `/stocks` 進行可見頁面驗證。
+本機 browser smoke test 另外受到本次 production preview 的舊 `index-n6TMV3ou.js` 404 影響，未把失敗的 chunk load 誤算成 Drawer UI PASS。公開 Sites version 34 已重新驗證：viewport `1280x720` 下 Drawer computed `position=fixed`、`top=72`、`bottom=0`、`right=0`、寬度 `537.6px`；header 位於 body scroll container 之前，body `clientHeight=469`、`scrollHeight=550`，在 Drawer 內滾動後 `scrollTop=80` 且 Drawer 仍維持 `top=72`。
+
+公開 Preview 的四筆資料頁本身 document height 為 720px，沒有足夠的頁面 overflow 可執行 `scrollY >= 500`；因此 page-scroll case 以 computed fixed anchor 與獨立 body scroll 交叉驗證，沒有把不可滾動的 Preview 頁誤報成已完成 page-scroll 測試。
 
 ## OpenAPI / generated types
 
@@ -137,7 +139,9 @@ Representative DB/API/UI traces:
 - Backend Python compile/import/read-model schema validation：PASS。
 - Live Docker API readiness and endpoint smoke tests：PASS。
 - Ruff：目前 production API image/本機環境沒有可用 Ruff binary，未把缺少工具誤報為通過；需 CI/開發環境補跑。
-- Browser visual smoke：本機 preview 被舊 asset chunk 404 阻斷；公開 Sites deployment 後重新驗證。
+- Browser visual smoke：公開 Sites version 34 `/stocks` 與 `/topics/AI%20PCB` 可開啟；Drawer viewport/body metrics PASS。
+
+公開部署資訊：Sites version `34`，deployment `appgdep_6a7b58247e6c8191ba0a6157a3ee9850`，URL `https://topicpilot-platform.game0962046460.chatgpt.site`。
 
 ## Known gaps / follow-up
 
