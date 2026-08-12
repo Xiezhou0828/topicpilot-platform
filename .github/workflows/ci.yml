@@ -54,6 +54,8 @@ jobs:
         run: |
           python -m alembic downgrade -1
           python -m alembic upgrade head
+      - name: Reference bootstrap PostgreSQL integration
+        run: python -m pytest services/api/tests/test_reference_bootstrap_postgres.py -q
       - name: Backend tests
         run: python -m pytest services/api/tests -m "not research and not governance"
       - name: OpenAPI contract and drift check

@@ -136,6 +136,11 @@
 - Pre-push PostgreSQL validation exposed and fixed replacement activation ordering:
   the old ACTIVE registry is now flushed to RETIRED before the new registry is
   promoted, preserving the single-ACTIVE partial unique index under PostgreSQL.
+- Exact-SHA CI exposed that the full backend suite runs after other PostgreSQL
+  tests have populated identity tables, so the reference integration test could
+  be skipped by its empty-database guard. Added a dedicated PostgreSQL service
+  step immediately after migration rollback/re-upgrade and before the full
+  backend suite; the targeted reference test must now pass rather than skip.
 - This task is limited to main integration, exact pushed-SHA CI verification,
   and release-readiness evidence. No deploy, Production database connection,
   Production mutation, G1/G2/G3, Canary, Scheduler, Lifecycle, Opportunity,
