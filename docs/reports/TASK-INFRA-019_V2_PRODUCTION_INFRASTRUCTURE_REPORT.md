@@ -2,7 +2,7 @@
 
 **Generation:** `NEXT / V2`  
 **Date:** 2026-08-12  
-**Status:** `Historical initial audit; current V2 data chain READY (operational follow-ups remain)`  
+**Status:** `Historical initial audit; current V2 data chain READY (operational follow-ups remain)`
 **Authority:** [V2 Production Data Architecture](../architecture/TOPICPILOT_V2_PRODUCTION_DATA_ARCHITECTURE.md)  
 **Related:** [TASK-DEPLOY-017](TASK-DEPLOY-017_PUBLIC_FASTAPI_ORIGIN_AND_V2_SITES_RUNTIME_INTEGRATION.md)
 

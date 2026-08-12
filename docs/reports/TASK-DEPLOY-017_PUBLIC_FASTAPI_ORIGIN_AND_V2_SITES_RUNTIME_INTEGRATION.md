@@ -2,7 +2,7 @@
 
 **Generation:** NEXT / V2  
 **Date:** 2026-08-12  
-**Status:** `Historical initial audit; current production data chain READY (see §19)`  
+**Status:** `Historical initial audit; current production data chain READY (see §19)`
 **Scope:** public FastAPI origin, CORS, Sites environment, deployment and production runtime verification only.
 
 ## 1. Executive Summary
