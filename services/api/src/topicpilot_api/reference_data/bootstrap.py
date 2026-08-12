@@ -455,6 +455,10 @@ def bootstrap_reference_bundle(
             for active in active_sets:
                 active.status = "RETIRED"
                 retired += 1
+            # PostgreSQL enforces the partial unique ACTIVE index per statement.
+            # Flush retirement before promoting this registry so a replacement
+            # version never transiently creates two ACTIVE rows in one flush.
+            session.flush()
             registry.status = "ACTIVE"
         status = registry.status
         operation = "ACTIVATED" if activate else "VALIDATED"

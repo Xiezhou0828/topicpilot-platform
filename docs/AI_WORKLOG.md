@@ -119,3 +119,24 @@
 - Added the API contract example at `docs/api/opportunity-shadow-read-v1.md`
   and architecture decision record at
   `docs/architecture/decisions/OPPORTUNITY_SHADOW_READ_API_V1.md`.
+
+## 2026-08-13 TASK-DATA-REF-003 Reference Bootstrap Main Integration & Exact-SHA CI
+
+- Reconciled the DATA-REF-001 reference bootstrap implementation at
+  `c1a34de5a16f3d35188b50d0d0aaa2f8d47258b9` against local `main` and
+  `origin/main`; both main refs were `44dcd6054ff21a2e64d9735e057dc7b66c94b984`,
+  and the DATA-REF commit was a one-commit fast-forward descendant with no
+  overlap with the dirty main worktree.
+- Preserved the existing concurrent documentation and Today Market workstreams;
+  no B/C files, `NEXT_TASK`, or Data Governance HOLD content is included.
+- TASK-DATA-REF-002 disposable PostgreSQL 16 validation was complete before this
+  integration: canonical bundle derivation, reference-only write boundary,
+  activation/idempotency/rollback, 2 markets, 507 derived instruments, and
+  `topicpilot-reference-check=READY`.
+- Pre-push PostgreSQL validation exposed and fixed replacement activation ordering:
+  the old ACTIVE registry is now flushed to RETIRED before the new registry is
+  promoted, preserving the single-ACTIVE partial unique index under PostgreSQL.
+- This task is limited to main integration, exact pushed-SHA CI verification,
+  and release-readiness evidence. No deploy, Production database connection,
+  Production mutation, G1/G2/G3, Canary, Scheduler, Lifecycle, Opportunity,
+  provider authority, or contract redesign is authorized here.
