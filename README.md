@@ -124,6 +124,11 @@ sequenceDiagram
 More detail is available in the [system overview](docs/architecture/system-overview.md)
 and [ERD](docs/architecture/erd.md).
 
+Product Vision, Mission, surfaces, and principles are governed by the
+[Product Direction and Surfaces Contract](docs/architecture/PRODUCT_SURFACES_AND_UX_CONTRACT.md).
+Document ownership and the four-layer single-source-of-truth model are indexed
+in the [Architecture Book](docs/architecture/README.md#documentation-governance-and-single-source-of-truth).
+
 ## Repository layout
 
 ```text
@@ -131,6 +136,7 @@ apps/web/                 React/TypeScript frontend and its own npm lockfile
 services/api/             FastAPI, SQLAlchemy, Alembic, and ingestion code
 packages/api-client/      Committed OpenAPI contract/generated TypeScript client
 fixtures/demo/            Synthetic public enterprise bundle
+fixtures/research/        Synthetic, versioned Topic Formula replay evidence
 fixtures/schema/          JSON Schema contract
 infra/                    Container definitions and validation helpers
 docs/                     Architecture, API, data, operations, security, and BI
@@ -155,6 +161,22 @@ ruff check . ../../infra/scripts
 Set `DATABASE_URL` to a disposable PostgreSQL database before migrations and
 tests. SQLite is not a supported substitute because the schema uses PostgreSQL
 features such as JSONB.
+
+### Replay the research-only Topic Formula experiment
+
+After installing the backend development environment, run from the repository root:
+
+```bash
+topicpilot-formula-research \
+  --manifest fixtures/research/topic_formula_experiment.v1.json \
+  --output work/topic-formula-research-report.json
+```
+
+The command validates the manifest and synthetic corpus, runs the explicitly
+configured candidates, analyzes every case, and writes a deterministic report.
+The committed candidates are research baselines only: the report does not rank
+them, use real market history, or create a production scoring policy. See the
+[candidate evidence note](docs/research/PHASE_3_7_002D_TOPIC_FORMULA_CANDIDATE_EVIDENCE.md).
 
 ### Frontend
 

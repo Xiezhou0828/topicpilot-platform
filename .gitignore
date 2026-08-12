@@ -16,3 +16,6 @@ coverage/
 playwright-report/
 test-results/
 *.log
+.venv-live/
+work/
+*.tsbuildinfo
