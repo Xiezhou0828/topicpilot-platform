@@ -415,6 +415,7 @@ public checks at that point were:
 | `GET /healthz` | 200 | `{"status":"ok"}` |
 | `GET /readyz` | 200 | `{"status":"ready"}`; pooled runtime DB reachable |
 | `GET /openapi.json` | 200 | six `/api/v2/*` paths present |
+| `GET /api/v1/admin/schema` | 200 | Render runtime exposes the migrated V2 table metadata |
 | `GET /api/v2/topics?limit=200&offset=0` | 200 | formal read model response, `total=0`, `items=0` |
 | `GET /api/v2/stocks?limit=1000&offset=0` | 200 | formal read model response, `total=0`, `items=0` |
 | `/api/v2/stocks/2330`, `/api/v2/stocks/6806` | 404 | identities are not yet in this Neon project |

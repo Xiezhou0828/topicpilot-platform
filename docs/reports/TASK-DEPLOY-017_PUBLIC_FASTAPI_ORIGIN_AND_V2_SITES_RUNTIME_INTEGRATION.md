@@ -289,6 +289,7 @@ service or tunnel was created.
 | `/healthz` | 200, `{"status":"ok"}` |
 | `/readyz` | 200, `{"status":"ready"}` |
 | `/openapi.json` | 200; `/api/v2/stocks`, `/api/v2/stocks/{symbol}`, `/api/v2/topics`, `/api/v2/topics/{slug}`, `/api/v2/topic-snapshots`, and `/api/v2/home` present |
+| `/api/v1/admin/schema` | 200; migrated V2 table metadata is exposed by the running service |
 | `/api/v2/topics?limit=200&offset=0` | 200; `total=0`, `items.length=0` |
 | `/api/v2/stocks?limit=1000&offset=0` | 200; `total=0`, `items.length=0` |
 | `/api/v2/stocks/2330`, `/api/v2/stocks/6806` | 404 because the Neon read model has no formal identities yet |
