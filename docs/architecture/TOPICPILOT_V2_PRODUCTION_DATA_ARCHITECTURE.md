@@ -283,3 +283,25 @@ The reviewed linear migration lineage is:
 Primary production activation remains outside this repository integration task.
 No Neon migration, production write, canary, snapshot, Lifecycle shadow run,
 Render deployment, or scheduler activation was performed.
+
+## 16. TASK-OPS-023A-P3A deployment and reference boundary
+
+FIX01A adapter-v2 is a repository-side change only until a committed release
+revision is deployed through the protected Render workflow. Both the API and
+live worker use `infra/docker/api.Dockerfile`, which copies `services/api/` and
+installs the `topicpilot-live` console entry point. The worker's post-close
+route passes `market_batch=True`, so the deployed path resolves one official
+TWSE/TPEx market response per single-date market and keeps the existing
+instrument/month fallback for multi-day history.
+
+P3A adds a secret-free `topicpilot-provider-lineage` command for local or
+protected-shell provenance. It reports adapter lineage and authority without
+secrets. `topicpilot-reference-check`
+reads the active `tw-reference-v1` registry plus formal active market/instrument
+identity and fails closed; it does not write, bootstrap, seed, repair, or
+migrate. Topics, hierarchy, and instrument-topic relations remain outside the
+reference registry.
+
+P3A does not deploy adapter-v2, run the reference check against Production,
+execute Canary #2, write Neon, run Snapshot/Lifecycle, or enable Scheduler.
+Those are operator actions after the documented G0–G4 handoff gates pass.

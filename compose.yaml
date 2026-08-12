@@ -68,11 +68,34 @@ services:
         - CMD
         - python
         - -c
-        - "import urllib.request; urllib.request.urlopen('http://localhost:8000/healthz', timeout=3)"
+        - "import urllib.request; urllib.request.urlopen('http://localhost:8000/readyz', timeout=3)"
       interval: 10s
       timeout: 5s
       retries: 12
       start_period: 15s
+    restart: unless-stopped
+
+  live:
+    build: *api-build
+    environment:
+      <<: *api-env
+      TOPICPILOT_TA_API_USER: ${TOPICPILOT_TA_API_USER:-}
+      TOPICPILOT_TA_API_PASSWORD: ${TOPICPILOT_TA_API_PASSWORD:-}
+      TOPICPILOT_TA_API_TIMEOUT: ${TOPICPILOT_TA_API_TIMEOUT:-30}
+      TOPICPILOT_LIVE_TIMEZONE: ${TOPICPILOT_LIVE_TIMEZONE:-Asia/Taipei}
+      TOPICPILOT_LIVE_POLL_INTERVAL_SECONDS: ${TOPICPILOT_LIVE_POLL_INTERVAL_SECONDS:-300}
+      TOPICPILOT_LIVE_PROVIDER_TIMEOUT_SECONDS: ${TOPICPILOT_LIVE_PROVIDER_TIMEOUT_SECONDS:-30}
+      TOPICPILOT_LIVE_MAX_RETRIES: ${TOPICPILOT_LIVE_MAX_RETRIES:-2}
+      TOPICPILOT_LIVE_INTERVAL: ${TOPICPILOT_LIVE_INTERVAL:-5m}
+      TOPICPILOT_HISTORY_BATCH_SIZE: ${TOPICPILOT_HISTORY_BATCH_SIZE:-20}
+      TOPICPILOT_HISTORY_REQUESTS_PER_MINUTE: ${TOPICPILOT_HISTORY_REQUESTS_PER_MINUTE:-30}
+      TOPICPILOT_HISTORY_MIN_REQUEST_INTERVAL_SECONDS: ${TOPICPILOT_HISTORY_MIN_REQUEST_INTERVAL_SECONDS:-0.5}
+      TOPICPILOT_HISTORY_MAX_RETRIES: ${TOPICPILOT_HISTORY_MAX_RETRIES:-4}
+      TOPICPILOT_HISTORY_RETRY_BACKOFF_SECONDS: ${TOPICPILOT_HISTORY_RETRY_BACKOFF_SECONDS:-2.0}
+    command: ["topicpilot-live"]
+    depends_on:
+      seed:
+        condition: service_completed_successfully
     restart: unless-stopped
 
   web:

@@ -109,6 +109,84 @@ The checked-in Render blueprint still has no approved Cron resource. Until an
 operator provisions and verifies the scheduler, production scheduling remains
 `WAITING/BLOCKED`; the CLI is the supported manual execution boundary.
 
+## Adapter-v2 deployment and reference preflight (TASK-OPS-023A-P3A)
+
+The official daily adapter lineage is verified locally with a secret-free
+command. It performs no provider request and no database access:
+
+```console
+topicpilot-provider-lineage
+```
+
+The result must report `READY`, `twse-official-daily.v2` and
+`tpex-official-daily.v2` with `marketBatch=true`, TPE→TWSE and TWO→TPEx
+authority, Yahoo daily as verification-only, and Taishin as intraday-only.
+
+Run the same command inside the deployed worker image or protected runtime;
+it is secret-free and read-only. Its optional `buildSha` is populated from
+`RENDER_GIT_COMMIT` or `GIT_SHA` when the hosting runtime supplies one; a
+missing SHA is not evidence that a different provider is active.
+
+In the protected Production runtime, run the reference check before any
+Canary. It only issues SELECTs and exits non-zero unless the versioned context
+and formal identities are complete:
+
+```console
+topicpilot-reference-check
+```
+
+The command derives expected daily markets from the provider registry and
+counts active `EQUITY` identities from `topicpilot.instruments` joined to
+active `topicpilot.markets`. It does not hard-code 507, bootstrap, seed,
+repair, mutate the active version, or run a migration. The expected protected
+runtime result is `tw-reference-v1`, active `YES`, 2 markets, 507 instruments,
+empty missing/duplicate lists, and `referenceLoadStatus=READY`.
+
+`tw-reference-v1` covers versioned currency, timezone, session/calendar,
+trading-status, and adjustment catalogues. It does not own topics or
+instrument-topic relations; those remain in the identity domain. A missing,
+duplicate, inactive, or incomplete registry/context fails closed as
+`NOT_READY` and must stop the Canary.
+
+### Adapter-v2 deployment checklist
+
+- [ ] Release revision is committed and includes FIX01A adapter-v2 files.
+- [ ] TWSE/TPEx adapter-v2 versions and `PostClose market_batch` are present.
+- [ ] Provider authority is unchanged; Yahoo/Taishin roles are unchanged.
+- [ ] No migration is required for FIX01A/P3A.
+- [ ] Backend tests, Ruff, formatting, compile, and release CI pass.
+- [ ] Runtime provider-lineage command is available after deploy.
+- [ ] Protected `topicpilot-reference-check` returns `READY`.
+- [ ] 6806 official no-data follows the existing DATA-022A contract.
+- [ ] Canary command is reviewed; Scheduler remains disabled.
+
+The deployment trace is `GitHub checkout release_ref` →
+`infra/docker/api.Dockerfile` → `COPY services/api/` → package console script
+`topicpilot-live` → Render worker command `alembic upgrade head && exec
+topicpilot-live` → `PostCloseUpdater` → official adapter-v2. Render
+`autoDeployTrigger` is off and the deploy hook is protected by the
+`production-api` environment. Local uncommitted changes are not a deployable
+release until an operator publishes a committed revision.
+
+### Canary #2 gate order
+
+1. G0 — deployed runtime reports both adapter-v2 lineages.
+2. G1 — protected reference check reports `READY`.
+3. G2 — TWSE/TPEx official endpoints are reachable for the target date.
+4. G3 — 6806 is priced or approved official no-data, never a fake bar.
+5. G4 — operator separately authorizes one-shot Production Canary; this does
+   not authorize Scheduler.
+
+Only after G0–G4 pass may the operator prepare:
+
+```console
+topicpilot-live --mode post-close --once --run-date 2026-08-12
+```
+
+Do not execute that command as part of P3A. After an authorized run, verify
+POST_CLOSE → daily reconciliation `READY` → matching 130-topic snapshot →
+Lifecycle `evaluation_mode=SHADOW`; stop before any Scheduler action.
+
 ## TASK-OPS-023 activation status
 
 The public read-only preflight currently passes `/healthz` and `/readyz` and

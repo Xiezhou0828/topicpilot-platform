@@ -49,6 +49,11 @@ jobs:
       - name: Migrate an empty PostgreSQL database
         working-directory: services/api
         run: python -m alembic upgrade head
+      - name: Migration rollback smoke test
+        working-directory: services/api
+        run: |
+          python -m alembic downgrade -1
+          python -m alembic upgrade head
       - name: Backend tests
         run: python -m pytest services/api/tests
       - name: OpenAPI contract and drift check
