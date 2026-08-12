@@ -417,19 +417,17 @@ def write_bundle(bundle: ReferenceBundle, output_dir: Path) -> Path:
     validate_bundle(bundle)
     output_dir.mkdir(parents=True, exist_ok=True)
     for filename, payload in _file_payload(bundle).items():
-        (output_dir / filename).write_text(
-            json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
-            encoding="utf-8",
-        )
+        content = json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True) + "\n"
+        # Hash and write the exact repository bytes so a bundle generated on
+        # Windows validates identically after a Linux CI checkout.
+        (output_dir / filename).write_bytes(content.encode("utf-8"))
     manifest = dict(bundle.manifest)
     manifest["bundleSha256"] = bundle.digest()
     manifest["files"] = {
         filename: _sha256_file(output_dir / filename) for filename in BUNDLE_FILE_NAMES
     }
-    (output_dir / "manifest.json").write_text(
-        json.dumps(manifest, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
-        encoding="utf-8",
-    )
+    manifest_content = json.dumps(manifest, ensure_ascii=False, indent=2, sort_keys=True) + "\n"
+    (output_dir / "manifest.json").write_bytes(manifest_content.encode("utf-8"))
     return output_dir
 
 
