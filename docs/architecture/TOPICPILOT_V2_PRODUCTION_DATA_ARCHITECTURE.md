@@ -231,7 +231,37 @@ The user subsequently provisioned Neon and Render. The public API origin is
 now `https://topicpilot-api.onrender.com`; `/healthz`, `/readyz`, OpenAPI V2
 routes, and the exact Sites-origin CORS preflight are passing. Sites now has
 `NEXT_PUBLIC_API_BASE_URL` set to that origin and production demo fallback
-disabled. The Neon V2 schema is migrated, but `/api/v2/topics` and
-`/api/v2/stocks` currently return formal totals of zero because the approved
-130-topic/507-stock import has not yet been run. This is a data-bootstrap gap,
-not permission to use the synthetic fixture.
+disabled. The initial continuation recorded an empty read model as a
+data-bootstrap gap, not permission to use the synthetic fixture.
+
+## 14. Post-bootstrap production evidence (2026-08-12)
+
+The user subsequently completed the protected Neon production bootstrap. The
+current production schema is `topicpilot`, with the following user-confirmed
+counts:
+
+```text
+instruments = 507
+topics = 130
+topic_hierarchy = 107
+instrument_topic_relations = 848
+```
+
+The public Render service now reconciles those counts: `/api/v2/topics` is
+`130/130`, `/api/v2/stocks` is `507/507`, `/api/v2/stocks/2330` and
+`/api/v2/stocks/6806` return 200, and `/api/v2/topics/ASIC` returns a formal
+topic identity with constituents. TPE/TWO membership is 314/193 and 6806's
+nullable price is retained. CORS preflight from the production Sites origin
+remains exact and credentials-free.
+
+The Sites production environment still points at
+`https://topicpilot-api.onrender.com` with demo fallback disabled. Browser
+verification shows 130 formal topics and 507 formal stocks, including 2330,
+without Preview/DEMO identity rows. Formal lifecycle/score/grade fields remain
+pending where the read model has no value; this does not hide identity rows.
+
+The earlier blocked and empty-read-model evidence remains in §12–13 as
+history. The current DB → API → UI reconciliation is **PASS**. The only
+close-out code correction was to render `資料日期待補` instead of `Preview`
+when a formal topic's data date is null; explicit local preview behavior is
+unchanged.

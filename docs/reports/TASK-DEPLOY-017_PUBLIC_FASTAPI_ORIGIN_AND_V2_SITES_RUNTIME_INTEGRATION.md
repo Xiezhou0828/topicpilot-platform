@@ -373,3 +373,60 @@ NEXT_TASK_MODIFIED = NO
 - **Open:** the public API/database wiring is live, but the private formal
   identity/read-model artifact and approved import operator are still absent;
   130/507 acceptance therefore remains intentionally open.
+
+## 19. Post-bootstrap production reconciliation (2026-08-12)
+
+The earlier external-resource blocker is now resolved by the user's confirmed
+Neon production bootstrap. This section supersedes the preceding continuation
+status without erasing its historical `0/130`, `0/507`, and missing-detail
+evidence.
+
+### DB → API → UI evidence
+
+| Layer | Evidence | Result |
+|---|---|---|
+| Neon `topicpilot.instruments` | user-confirmed production readback: 507 | PASS |
+| Neon `topicpilot.topics` | user-confirmed production readback: 130 | PASS |
+| Neon `topicpilot.topic_hierarchy` | user-confirmed production readback: 107 | PASS |
+| Neon `topicpilot.instrument_topic_relations` | user-confirmed production readback: 848 | PASS |
+| FastAPI topics list | `total=130`, `items.length=130` | PASS |
+| FastAPI stocks list | `total=507`, `items.length=507` | PASS |
+| FastAPI stock detail | `/api/v2/stocks/2330` and `/api/v2/stocks/6806` → 200 | PASS |
+| FastAPI topic detail | `/api/v2/topics/ASIC` → 200; 34 constituents | PASS |
+| Sites `/topics` | production browser shows `130 個題材`; formal identity rows retained | PASS |
+| Sites `/stocks` | production browser shows `507/507 檔`; 2330 visible; no DEMO rows | PASS |
+
+The API list has 314 TPE rows and 193 TWO rows. Stock 6806 keeps a nullable
+price, and 2330 exposes formal topic relations including ASIC. The preflight
+OPTIONS request from the exact Sites origin remains 200 with an exact
+`Access-Control-Allow-Origin`, GET allowed, and no wildcard credentials.
+
+### Production data boundary
+
+Sites continues to use `NEXT_PUBLIC_API_BASE_URL=https://topicpilot-api.onrender.com`
+with `NEXT_PUBLIC_ENABLE_DEMO_FALLBACK=false`. The public browser consumed the
+Render V2 API; no checked-in fixture, Preview catalog, or synthetic fallback was
+used. Lifecycle/score/grade fields remain pending when the formal read model
+does not supply them, which is the intended fail-closed behavior.
+
+During browser reconciliation, formal topic detail displayed `Preview` for a
+null data date. The frontend now shows `資料日期待補` for that formal state;
+explicit local preview mode retains its own Preview disclosure. This is the
+only source change in this close-out and does not alter business rules or UI
+layout.
+
+### Current fixed final output
+
+```text
+PUBLIC_FASTAPI_ORIGIN = READY
+PUBLIC_FASTAPI_HTTPS = PASS
+PUBLIC_FASTAPI_CORS = PASS
+SITES_API_BASE_CONFIGURED = YES
+TOPICS_PRODUCTION_FORMAL_DATA = READY
+ALL_130_TOPIC_IDENTITIES_PUBLICLY_VISIBLE = PASS
+STOCKS_PRODUCTION_FORMAL_DATA = READY
+ALL_507_STOCK_IDENTITIES_PUBLICLY_VISIBLE = PASS
+LEGACY_PREVIEW_FALLBACK_IN_PRODUCTION = REMOVED
+V2_PUBLIC_DATA_CHAIN = READY
+NEXT_TASK_MODIFIED = NO
+```

@@ -287,3 +287,35 @@ PRODUCTION_STOCK_PAGE = PARTIAL
 4. 是否已修正 frontend formal integration？是；配置正式 API 時不再用 snapshot 覆蓋 formal data，並支援完整分頁。
 5. 修正後是否所有 identity 可見？在 configured local formal runtime 是；目前公開 Sites 因未配置 HTTPS API 仍是 Preview，故 public verdict 仍為 FAIL。
 6. 剩餘問題是什麼？公開 API origin／Sites env 尚未完成；另外 market-data 與 optional evidence coverage 仍照實保留，不影響 identity visibility。
+
+## Post-bootstrap production reconciliation (2026-08-12)
+
+The previously recorded public-origin gap is resolved. The user confirmed the
+Neon `topicpilot` production bootstrap, including 507 instruments and 848
+instrument-topic relations. Read-only verification against the existing Render
+origin now returns:
+
+- `/api/v2/stocks?limit=1000&offset=0`: `total=507`, 507 items;
+- TPE/TWO membership: 314/193;
+- `/api/v2/stocks/2330`: 200 with formal ASIC/topic relations;
+- `/api/v2/stocks/6806`: 200 with identity retained and `price=null`;
+- no DEMO/PREVIEW identity rows.
+
+The production browser `/stocks` shows `507/507 檔`, TPE/TWO filters, 2330,
+and the formal Stock Encyclopedia Drawer. Sites uses the Render API base and
+`NEXT_PUBLIC_ENABLE_DEMO_FALLBACK=false`. The API, UI, and formal DB counts
+therefore reconcile.
+
+## Current fixed output
+
+```text
+STOCK_UNIVERSE_DB = READY
+STOCK_IDENTITY_COUNT = 507
+STOCK_LIST_API = READY
+STOCK_DETAIL_API = READY
+STOCKS_FRONTEND_FORMAL_DATA = READY
+ALL_FORMAL_STOCK_IDENTITIES_VISIBLE = PASS
+ALL_507_STOCK_IDENTITIES_VISIBLE = PASS
+LEGACY_STOCK_FALLBACK_IN_PRODUCTION = REMOVED
+PRODUCTION_STOCK_PAGE = READY
+```

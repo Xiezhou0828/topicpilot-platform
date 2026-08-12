@@ -331,6 +331,30 @@ EXACT_NEXT_USER_ACTION = Supply the approved formal 130-topic/507-stock artifact
 
 - No Render or Neon UI was operated by this task.
 - No production migration or formal bootstrap was executed.
+
+## Post-provisioning close-out (2026-08-12)
+
+The preceding handoff accurately described the pre-deploy operator steps and
+retains its historical `NOT_YET_AVAILABLE`/empty-read-model evidence. The user
+has since completed the Neon production bootstrap and Render service
+provisioning. The existing service, not a duplicate, is now the verified public
+origin `https://topicpilot-api.onrender.com`.
+
+User-confirmed production counts in schema `topicpilot` are:
+
+```text
+instruments = 507
+topics = 130
+topic_hierarchy = 107
+instrument_topic_relations = 848
+```
+
+Read-only API and browser reconciliation now passes for `/readyz`, OpenAPI,
+topics `130/130`, stocks `507/507`, details 2330/6806, and a formal topic
+detail. Sites remains configured with the Render origin and
+`NEXT_PUBLIC_ENABLE_DEMO_FALLBACK=false`; no demo fixture or Preview identity
+is used in production. The handoff is therefore operationally closed, while
+the remaining cron/backup/GitHub-environment work stays outside this task.
 - No secret was requested in chat or written to the repository.
 - No Topic Score, Grade, Lifecycle, Opportunity/Recommendation, Favorites,
   UI design, or `NEXT_TASK` was modified.

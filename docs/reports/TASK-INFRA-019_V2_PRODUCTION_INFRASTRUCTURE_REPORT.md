@@ -508,3 +508,68 @@ NEXT_TASK_MODIFIED = NO
   imported and reconciled.
 - **Worklog:** `AI_WORKLOG.md` is absent in V2 and is not created without an
   identified owner and migration plan, per repository governance.
+
+## 28. Post-bootstrap close-out (2026-08-12)
+
+The historical infrastructure audit above recorded the correct earlier
+blocked/partial state. The user has now completed the external Neon bootstrap;
+the following read-only reconciliation is the current state and supersedes the
+previous empty-read-model values.
+
+### Production authority and counts
+
+The production schema is `topicpilot`. User-confirmed Neon counts are:
+
+```text
+instruments = 507
+topics = 130
+topic_hierarchy = 107
+instrument_topic_relations = 848
+```
+
+The relation table is `topicpilot.instrument_topic_relations`, matching the
+repository ORM and API relation projection. The original importer dry-run
+remains `1594` records, all valid, with no rejected, duplicate, conflict, or
+warning records.
+
+### Public runtime reconciliation
+
+The existing Render service remains the single public FastAPI origin:
+`https://topicpilot-api.onrender.com`. Read-only checks now pass for health,
+readiness, OpenAPI, CORS, topics `130/130`, stocks `507/507`, stock details
+2330/6806, and formal topic detail `/api/v2/topics/ASIC`. The stock universe
+contains TPE 314 and TWO 193; 6806's nullable price is preserved. Sites
+production has the configured API base and demo fallback disabled; browser
+checks show formal topics/stocks and formal 2330 drawer relations.
+
+No new service, database, tunnel, migration, or bootstrap path was introduced.
+The production image remains formal-only and does not import `fixtures/demo`.
+
+### Current fixed final output
+
+```text
+PRODUCTION_ARCHITECTURE_DECISION = FROZEN
+PRODUCTION_DB_PROVIDER = NEON
+PRODUCTION_DB = READY
+PRODUCTION_FASTAPI_PROVIDER = RENDER
+PRODUCTION_FASTAPI = READY
+PRODUCTION_FASTAPI_HTTPS = PASS
+PRODUCTION_CORS = PASS
+POST_CLOSE_RENDER_CRON = BLOCKED
+TAISHIN_WINDOWS_RUNTIME = PRESERVED
+GITHUB_DEPLOYMENT_CONTROL_PLANE = BLOCKED
+SITES_API_BASE = CONFIGURED
+PRODUCTION_PREVIEW_FALLBACK = REMOVED
+TOPICS_DB_API_UI_RECONCILIATION = PASS (130/130)
+STOCKS_DB_API_UI_RECONCILIATION = PASS (507/507)
+V2_PRODUCTION_DATA_CHAIN = READY
+LIFECYCLE_PRODUCTION_ACTIVATION = NO
+OPPORTUNITY_PRODUCTION_ACTIVATION = NO
+V1_RETIRED = NO
+NEXT_TASK_MODIFIED = NO
+```
+
+Remaining infrastructure work is operational rather than a data-chain
+blocker: Render Cron ownership, private Taishin runtime ownership, protected
+GitHub deployment environments, and backup/restore evidence remain separate
+follow-up decisions.

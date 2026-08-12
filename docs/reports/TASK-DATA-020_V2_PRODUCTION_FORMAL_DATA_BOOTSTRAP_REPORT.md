@@ -1,6 +1,6 @@
 # TASK-DATA-020｜V2 Production Formal Data Bootstrap & Reconciliation
 
-**Status:** formal import not run; operator handoff ready  
+**Status:** Historical pre-bootstrap handoff; superseded by §13 post-bootstrap reconciliation
 **Scope:** Neon production read-model bootstrap and DB → FastAPI → Sites reconciliation  
 **Date:** 2026-08-12  
 **Repository:** `Xiezhou0828/topicpilot-platform` (`main`)
@@ -261,3 +261,174 @@ V2_PRODUCTION_DATA_CHAIN = PARTIAL
 NEXT_TASK_MODIFIED = NO
 EXACT_NEXT_USER_ACTION = In a protected operator shell, set MIGRATION_DATABASE_URL to the Neon direct connection without sharing it, run the documented phase3_6 importer against C:\Users\acer\Desktop\題材領航\input, then perform DB/API/Sites reconciliation.
 ```
+
+## 13. Post-bootstrap reconciliation (2026-08-12)
+
+The user subsequently confirmed that the protected Neon production bootstrap
+was completed and manually verified the production `topicpilot` schema. This
+is the resolution of the earlier credential/bootstrap gap; the import was not
+re-run by this session.
+
+### Production DB evidence
+
+| Table | User-confirmed Neon count | Expected | Result |
+|---|---:|---:|---|
+| `topicpilot.instruments` | 507 | 507 | PASS |
+| `topicpilot.topics` | 130 | 130 | PASS |
+| `topicpilot.topic_hierarchy` | 107 | 107 | PASS |
+| `topicpilot.instrument_topic_relations` | 848 | 848 | PASS |
+
+The relation table name is confirmed as `topicpilot.instrument_topic_relations`.
+The original dry-run evidence remains unchanged: `records_read=1594`,
+`valid=1594`, zero rejected/duplicate/conflict/warning records and zero
+critical blockers. The operator confirmed that these counts reconcile with
+Neon. No destructive bootstrap was performed during this continuation.
+
+### Public FastAPI evidence
+
+Read-only checks against `https://topicpilot-api.onrender.com` now return:
+
+| Request | Result |
+|---|---|
+| `/healthz` | 200 |
+| `/readyz` | 200 |
+| `/openapi.json` | 200; V2 list/detail routes present |
+| `/api/v2/topics?limit=200&offset=0` | 200; `total=130`, `items=130` |
+| `/api/v2/stocks?limit=1000&offset=0` | 200; `total=507`, `items=507` |
+| `/api/v2/stocks/2330` | 200; formal identity and topic relations present |
+| `/api/v2/stocks/6806` | 200; formal identity present and `price=null` preserved |
+| `/api/v2/topics/ASIC` | 200; formal topic identity and 34 constituents present |
+| OPTIONS from the Sites origin | 200; exact origin, GET allowed, no wildcard credentials |
+
+The public stock universe contains both `TPE` and `TWO` (314 and 193 rows),
+with no `DEMO`/`PREVIEW` identity rows. Stock 2330 exposes the formal ASIC
+relation; the topic detail exposes formal constituents. No fixture or browser
+synthetic fallback was used for these responses.
+
+### Sites browser evidence
+
+The production Sites environment remains:
+
+```text
+NEXT_PUBLIC_API_BASE_URL=https://topicpilot-api.onrender.com
+NEXT_PUBLIC_ENABLE_DEMO_FALLBACK=false
+```
+
+The real production browser now shows:
+
+- `/topics`: formal `130 個題材`, identity rows retained with `—` scores/grades and pending lifecycle data.
+- `/stocks`: formal `507/507 檔`, TPE/TWO filters, 2330 visible, no Preview/DEMO rows.
+- Stock 2330 drawer: formal detail response, ASIC relation, no Preview badge.
+- Topic `/topics/ASIC`: formal API detail, 34 constituents, no synthetic research sections.
+
+One small frontend display defect found during this reconciliation was fixed:
+formal topic detail with `dataDate=null` no longer renders the word `Preview`; it
+now renders `資料日期待補`. Explicit local preview mode keeps its existing
+Preview disclosure. This is a presentation-state correction only.
+
+### Tests and current status
+
+- Backend targeted suite: `15 passed, 1 skipped` (PostgreSQL integration skip is expected without a test DB).
+- Frontend lint: PASS.
+- Frontend TypeScript check: PASS.
+- Frontend production build: PASS.
+- Full frontend suite: `55 passed, 13 failed`; the same legacy source-contract/rendered-HTML failures remain unrelated to formal data integration. No test was deleted, skipped, or weakened.
+
+## 14. Current fixed final output
+
+```text
+PRODUCTION_IMPORT_PREFLIGHT = PASS
+FORMAL_DRY_RUN = PASS
+FORMAL_DRY_RUN_RECORDS = 1594
+PRODUCTION_MIGRATION_CREDENTIAL = AVAILABLE (operator-completed; secret not exposed here)
+PRODUCTION_FORMAL_IMPORT = PASS (user-confirmed)
+NEON_MARKETS = 2 (user-confirmed production readback)
+NEON_INSTRUMENTS = 507
+NEON_TOPICS = 130
+NEON_HIERARCHY_EDGES = 107
+NEON_INSTRUMENT_TOPIC_RELATIONS = 848
+PUBLIC_FASTAPI_READY = PASS
+PUBLIC_FASTAPI_TOPICS = 130
+PUBLIC_FASTAPI_STOCKS = 507
+PUBLIC_FASTAPI_2330 = PASS
+PUBLIC_FASTAPI_6806 = PASS
+PUBLIC_SITES_TOPICS = PASS
+PUBLIC_SITES_STOCKS = PASS
+PRODUCTION_DEMO_FIXTURE_USED = NO
+PRODUCTION_PREVIEW_FALLBACK = REMOVED
+DB_API_UI_RECONCILIATION = PASS
+V2_PRODUCTION_DATA_CHAIN = READY
+NEXT_TASK_MODIFIED = NO
+EXACT_NEXT_USER_ACTION = Keep monitoring formal API freshness; the next feature task may be proposed separately and is not started by this reconciliation.
+```
+
+## 15. Implementation / reconciliation close-out
+
+### Previous blocker
+
+The prior blocker was external-state related: Neon/Render access was not
+available to the session and the public V2 read model returned zero rows. The
+historical reports retain that state and the original `0/130`, `0/507`, and
+404 detail evidence.
+
+### Blocker resolution
+
+The user completed the protected Neon production bootstrap and manually
+verified the four formal table counts. The existing Render service and Sites
+runtime then served the formal read model. This session performed only
+read-only API/browser verification and one narrowly scoped formal-display fix;
+it did not repeat bootstrap or use a second data path.
+
+### Files changed in this close-out
+
+- `apps/web/app/components/v2/TopicDetailPage.tsx` — formal null data-date
+  label changed from `Preview` to `資料日期待補`; explicit local preview is
+  unchanged.
+- This report and the historical deployment/infrastructure/FE-BE reports were
+  appended with post-bootstrap evidence and current fixed outputs.
+
+No database schema, importer, score/grade, lifecycle, opportunity,
+recommendation, favorites, watchlist, UI layout, or `NEXT_TASK` was changed.
+
+### Documents updated
+
+- `docs/reports/TASK-DATA-020_V2_PRODUCTION_FORMAL_DATA_BOOTSTRAP_REPORT.md`
+- `docs/reports/TASK-DEPLOY-017_PUBLIC_FASTAPI_ORIGIN_AND_V2_SITES_RUNTIME_INTEGRATION.md`
+- `docs/reports/TASK-INFRA-019_V2_PRODUCTION_INFRASTRUCTURE_REPORT.md`
+- `docs/reports/TASK-INFRA-019_RENDER_MANUAL_PROVISIONING_HANDOFF.md`
+- `docs/reports/TASK-FE-BE-014_TOPIC_CATALOG_FULL_IMPORT_AND_TOPICS_FORMAL_INTEGRATION.md`
+- `docs/reports/TASK-FE-BE-015_STOCK_UNIVERSE_FULL_IMPORT_AND_STOCKS_FORMAL_INTEGRATION.md`
+- `docs/architecture/TOPICPILOT_V2_PRODUCTION_DATA_ARCHITECTURE.md`
+
+### Remaining known issues
+
+- Formal optional evidence remains nullable by design: scores/grades,
+  lifecycle, prices such as 6806, technical evidence, and institution fields
+  must remain pending rather than inferred.
+- The existing full frontend suite has 13 unrelated source-contract/
+  rendered-HTML failures (`55 passed, 13 failed`); no test was weakened.
+- Render Cron ownership, private Taishin runtime, protected GitHub deployment
+  environments, and backup/restore evidence remain separate infrastructure
+  follow-ups.
+
+### Risks / technical debt
+
+- A future deployment must preserve `NEXT_PUBLIC_ENABLE_DEMO_FALLBACK=false`
+  and the exact Render API origin.
+- Production data refreshes need a reviewed artifact/import audit; Web Service
+  startup must remain migration-only and demo-free.
+- The React production bundle still emits an existing minified hydration
+  warning (#418) during browser smoke tests; it did not block formal API data
+  or create a CORS error and is outside this data bootstrap scope.
+
+### Final status
+
+**PASS — Production formal data bootstrap and DB → FastAPI → Sites
+reconciliation are complete.** The historical blocked state is resolved; no
+new parallel production architecture was introduced.
+
+### Suggested NEXT_TASK (proposal only)
+
+Evaluate the separate operational follow-up for formal data freshness and
+protected deployment/backup ownership. This is a suggestion only; no next task
+was started or selected here.
