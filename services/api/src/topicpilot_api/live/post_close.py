@@ -210,7 +210,10 @@ class PostCloseUpdater:
             sleep=self.sleep,
         )
         registry = build_historical_provider_registry(
-            start_date=local_date, end_date=local_date, exchange_transport=transport
+            start_date=local_date,
+            end_date=local_date,
+            exchange_transport=transport,
+            market_batch=True,
         )
         policy = MappingPolicy(
             mapping_policy_version=HISTORICAL_MAPPING_POLICY_VERSION,

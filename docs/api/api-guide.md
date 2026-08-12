@@ -1,5 +1,7 @@
 # API guide
 
+> Generation: `NEXT / V2` — read-only API for the rebuildable platform; it does not query or write Google Sheets.
+
 ## Conventions
 
 - Base path: `/api/v1`
@@ -66,6 +68,18 @@ Parameters:
 Returns one stock dimension, latest/requested observation, and approved topic
 relations. Unknown codes return 404 `application/problem+json`.
 
+### `GET /api/v1/stocks/{code}/price-history`
+
+Returns an explicit date-bound history from the V2 canonical PostgreSQL PRICE
+read model. Required query parameters are `from` and `to`; `market` is
+optional when the instrument code is unique, and `limit` is bounded. The
+handler never calls an external provider. An empty result returns a successful
+contract with `status=UNAVAILABLE` and an explicit `availabilityReason`; it is
+not a zero-filled series. Numeric fields remain JSON `null` when the accepted
+canonical observation has a missing field.
+The requested date window is evaluated in the instrument market's configured
+timezone, so a trading date remains stable across UTC storage and API reads.
+
 ## Topics
 
 ### `GET /api/v1/topics`
@@ -76,6 +90,40 @@ Supports `limit`, `offset`, optional `data_date`, and enabled-only filtering.
 
 Returns topic metadata, hierarchy context, snapshot state, and constituents.
 Unknown slugs return 404.
+
+## Topic Intelligence
+
+### `GET /api/v1/topic-intelligence/latest`
+
+Returns the latest verified ephemeral Topic Engine runtime result through the
+versioned `topic-intelligence-api.v1` contract. The response preserves runtime,
+policy, feature-set, aggregation, component, eligibility, confidence, evidence,
+coverage, and quality identities. Topics, components, features, flags, and
+metadata use deterministic ordering.
+
+Score, Grade, Confidence, component, coverage, and feature values are nullable.
+`null` means unavailable or deferred evidence and must never be rendered or
+recalculated as zero by a client. Topic Intelligence describes Market Strength;
+it is not a stock recommendation, candidate ranking, or trading instruction.
+
+The default provider intentionally returns `503 application/problem+json` until
+an approved production Topic Intelligence runtime and data source are configured.
+The endpoint does not read legacy `topic_snapshots` as a substitute. Synthetic
+runtime dependency overrides are allowed only in tests and local demonstrations.
+
+## Recommendation MVP
+
+### `GET /api/v1/recommendations/latest`
+
+Returns the downstream `recommendation-api.v1` read model. Candidate facts must
+come from an explicitly approved read-only source; the API preserves the
+upstream Topic Intelligence lineage, nullable values, evidence, and stable
+reason codes without recalculating Score or Grade.
+
+Recommendation is not a trading instruction. The contract does not expose or
+derive entry timing, stop loss, target, portfolio action, or an unapproved
+ranking formula. Until an approved Topic Intelligence runtime and candidate
+source are configured, the endpoint returns `503 application/problem+json`.
 
 ## Strategies
 

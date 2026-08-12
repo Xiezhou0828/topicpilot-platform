@@ -284,3 +284,16 @@ capture DB/run/API reconciliation. Activation must require
 `downstreamReady=true`; secrets must stay in the protected runtime.
 
 This is a suggestion only. No `NEXT_TASK` authority or file was changed.
+
+## TASK-DATA-022-FIX01A Incremental Provider Diagnostic
+
+The historical audit above retains the original per-instrument implementation
+description. The follow-up provider diagnostic confirmed the official TWSE
+`MI_INDEX` and TPEx `dailyQuotes` one-date market-level contracts and updated
+the formal post-close route to use one request per market with exact-symbol
+resolution. Multi-day historical fallback remains instrument/month based.
+See [TASK-DATA-022-FIX01A Official Daily Provider 507/0 Root Cause Report](TASK-DATA-022-FIX01A_OFFICIAL_DAILY_PROVIDER_507_0_ROOT_CAUSE_REPORT.md).
+
+The follow-up performed no database write, Production Canary, snapshot,
+Lifecycle, migration, or Scheduler action. Its 507 provider-only result was
+506 priced plus one explicit official no-data observation for TPE/6806.

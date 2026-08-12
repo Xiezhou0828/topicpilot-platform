@@ -133,6 +133,7 @@ def build_historical_provider_registry(
     start_date: date | None = None,
     end_date: date | None = None,
     exchange_transport: Callable[[str, float], bytes] | None = None,
+    market_batch: bool = False,
 ) -> HistoricalProviderRegistry:
     end = end_date or (date.today() - timedelta(days=1))
     start = start_date or (end - timedelta(days=180))
@@ -142,9 +143,16 @@ def build_historical_provider_registry(
     registry.register(
         HistoricalProviderRegistration(
             "TWSE_OFFICIAL_DAILY",
-            TwseOfficialDailyProvider(start_date=start, end_date=end, transport=exchange_transport)
+            TwseOfficialDailyProvider(
+                start_date=start,
+                end_date=end,
+                transport=exchange_transport,
+                market_batch=market_batch,
+            )
             if exchange_transport is not None
-            else TwseOfficialDailyProvider(start_date=start, end_date=end),
+            else TwseOfficialDailyProvider(
+                start_date=start, end_date=end, market_batch=market_batch
+            ),
             frozenset({"TPE"}),
             30,
         )
@@ -152,9 +160,16 @@ def build_historical_provider_registry(
     registry.register(
         HistoricalProviderRegistration(
             "TPEX_OFFICIAL_DAILY",
-            TpexOfficialDailyProvider(start_date=start, end_date=end, transport=exchange_transport)
+            TpexOfficialDailyProvider(
+                start_date=start,
+                end_date=end,
+                transport=exchange_transport,
+                market_batch=market_batch,
+            )
             if exchange_transport is not None
-            else TpexOfficialDailyProvider(start_date=start, end_date=end),
+            else TpexOfficialDailyProvider(
+                start_date=start, end_date=end, market_batch=market_batch
+            ),
             frozenset({"TWO"}),
             40,
         )
@@ -171,6 +186,29 @@ def build_historical_provider_registry(
         )
     )
     return registry
+
+
+def canonical_daily_market_codes() -> tuple[str, ...]:
+    """Return markets owned by the non-verification daily providers.
+
+    The composition registry is the authority for daily market ownership.  A
+    caller must not duplicate ``TPE``/``TWO`` as a second identity or provider
+    routing list when deriving a preflight expectation.
+    """
+
+    registry = build_historical_provider_registry(
+        start_date=date.today(), end_date=date.today(), market_batch=True
+    )
+    return tuple(
+        sorted(
+            {
+                market
+                for registration in registry.all()
+                if not registration.verification_only
+                for market in registration.supported_markets
+            }
+        )
+    )
 
 
 def build_live_provider_router(config: LiveRuntimeConfig) -> ProviderRouter:
@@ -193,4 +231,5 @@ __all__ = [
     "build_historical_provider_registry",
     "build_live_provider_registry",
     "build_live_provider_router",
+    "canonical_daily_market_codes",
 ]

@@ -22,11 +22,11 @@ from .history import HistoricalBar, HistoricalFetchResult, HistoricalProviderErr
 
 TAIPEI: Final = ZoneInfo("Asia/Taipei")
 TWSE_DAILY_SOURCE_CODE: Final = "TWSE_OFFICIAL_DAILY"
-TWSE_DAILY_ADAPTER_VERSION: Final = "twse-official-daily.v1"
+TWSE_DAILY_ADAPTER_VERSION: Final = "twse-official-daily.v2"
 TPEX_DAILY_SOURCE_CODE: Final = "TPEX_OFFICIAL_DAILY"
-TPEX_DAILY_ADAPTER_VERSION: Final = "tpex-official-daily.v1"
+TPEX_DAILY_ADAPTER_VERSION: Final = "tpex-official-daily.v2"
 _IDENTIFIER_RE: Final = re.compile(r"^[A-Za-z0-9_-]{1,64}$")
-_MISSING_MARKERS: Final = {"", "-", "--", "X", "N/A", "null"}
+_MISSING_MARKERS: Final = {"", "-", "--", "---", "X", "N/A", "null"}
 
 
 Transport = Callable[[str, float], bytes]
@@ -140,7 +140,12 @@ def _result(
 
 
 class TwseOfficialDailyProvider:
-    """Fetch official TWSE daily OHLCV for a bounded date window."""
+    """Fetch official TWSE daily OHLCV for a bounded date window.
+
+    In ``market_batch`` mode, the one-date ``MI_INDEX`` endpoint is fetched
+    once and indexed by symbol for the formal post-close path.  The existing
+    instrument/month path remains available for multi-day history.
+    """
 
     source_code = TWSE_DAILY_SOURCE_CODE
     adapter_version = TWSE_DAILY_ADAPTER_VERSION
@@ -151,24 +156,122 @@ class TwseOfficialDailyProvider:
         start_date: date,
         end_date: date,
         base_url: str = "https://www.twse.com.tw/rwd/zh/afterTrading/STOCK_DAY",
+        market_base_url: str = "https://www.twse.com.tw/rwd/zh/afterTrading/MI_INDEX",
         timeout: float = 30.0,
         transport: Transport = _read_url,
         clock: Callable[[], datetime] | None = None,
+        market_batch: bool = False,
     ) -> None:
         if timeout <= 0:
             raise ValueError("timeout must be positive")
         self.start_date = start_date
         self.end_date = end_date
         self.base_url = base_url
+        self.market_base_url = market_base_url
         self.timeout = timeout
         self.transport = transport
         self.clock = clock or (lambda: datetime.now(TAIPEI))
+        self.market_batch = market_batch
+        self._market_cache: tuple[datetime, dict[str, HistoricalBar]] | None = None
+
+    def _fetch_market_day(self) -> tuple[datetime, dict[str, HistoricalBar]]:
+        if self.start_date != self.end_date:
+            raise HistoricalProviderError(
+                "MARKET_BATCH_DATE_WINDOW",
+                "market-level daily endpoint requires a single trading date",
+            )
+        if self._market_cache is not None:
+            return self._market_cache
+        target_date = self.start_date
+        query = urlencode(
+            {
+                "date": target_date.strftime("%Y%m%d"),
+                "type": "ALLBUT0999",
+                "response": "json",
+            }
+        )
+        payload = _json(self.transport, f"{self.market_base_url}?{query}", self.timeout)
+        if str(payload.get("stat", "")).upper() != "OK":
+            raise HistoricalProviderError(
+                "EXCHANGE_NO_DATA", str(payload.get("stat", "unknown"))
+            )
+        response_date = str(payload.get("date", ""))
+        if response_date != target_date.strftime("%Y%m%d"):
+            raise HistoricalProviderError(
+                "PROVIDER_DATE_MISMATCH",
+                f"TWSE response date {response_date!r} != {target_date.isoformat()}",
+            )
+        tables = payload.get("tables")
+        if not isinstance(tables, list):
+            raise HistoricalProviderError("INVALID_PAYLOAD", "TWSE tables must be an array")
+        table = next(
+            (
+                item
+                for item in tables
+                if isinstance(item, Mapping)
+                and isinstance(item.get("fields"), list)
+                and item["fields"]
+                and item["fields"][0] == "證券代號"
+                and isinstance(item.get("data"), list)
+            ),
+            None,
+        )
+        if table is None:
+            raise HistoricalProviderError(
+                "INVALID_PAYLOAD", "TWSE market close table is missing"
+            )
+        bars: dict[str, HistoricalBar] = {}
+        for row in table["data"]:
+            if not isinstance(row, list) or len(row) < 9:
+                raise HistoricalProviderError(
+                    "INVALID_PAYLOAD", "TWSE market close row is incomplete"
+                )
+            code = str(row[0]).strip()
+            if not code:
+                continue
+            if code in bars:
+                raise HistoricalProviderError("DUPLICATE_INSTRUMENT_ROW", code)
+            bar = HistoricalBar(
+                trading_date=target_date,
+                open=_decimal(row[5], "open"),
+                high=_decimal(row[6], "high"),
+                low=_decimal(row[7], "low"),
+                close=_decimal(row[8], "close"),
+                volume=_decimal(row[2], "volume"),
+            )
+            _validate_bar(bar)
+            bars[code] = bar
+        self._market_cache = (self.clock(), bars)
+        return self._market_cache
+
+    def _fetch_market_instrument(
+        self, instrument_code: str, market_code: str
+    ) -> HistoricalFetchResult:
+        retrieved_at, bars = self._fetch_market_day()
+        bar = bars.get(instrument_code)
+        return _result(
+            instrument_code=instrument_code,
+            market_code=market_code,
+            source_code=self.source_code,
+            adapter_version=self.adapter_version,
+            bars=[bar] if bar is not None else [],
+            retrieved_at=retrieved_at,
+            instrument_status=("AVAILABLE" if bar is not None else "EXCHANGE_CONFIRMED_NO_DATA"),
+            status_reason=(
+                None
+                if bar is not None
+                else "official TWSE market dataset contained no row for requested instrument/date"
+            ),
+            status_explicit=bar is None,
+        )
 
     def fetch_daily(self, instrument_code: str, market_code: str) -> HistoricalFetchResult:
         instrument_code = _validate_identifier(instrument_code, "instrument_code")
         market_code = _validate_identifier(market_code, "market_code")
         if market_code != "TPE":
             raise HistoricalProviderError("UNSUPPORTED_MARKET", market_code)
+        if self.market_batch and self.start_date == self.end_date:
+            return self._fetch_market_instrument(instrument_code, market_code)
         bars: list[HistoricalBar] = []
         for month_start in _month_starts(self.start_date, self.end_date):
             query = urlencode(
@@ -222,6 +325,8 @@ class TpexOfficialDailyProvider:
 
     TPEx reports volume in trading lots (張).  The provider converts it to
     shares before handing it to the provider-neutral V2 historical contract.
+    In ``market_batch`` mode, the one-date ``dailyQuotes`` endpoint is fetched
+    once and indexed by symbol for the formal post-close path.
     """
 
     source_code = TPEX_DAILY_SOURCE_CODE
@@ -233,24 +338,119 @@ class TpexOfficialDailyProvider:
         start_date: date,
         end_date: date,
         base_url: str = "https://www.tpex.org.tw/www/zh-tw/afterTrading/tradingStock",
+        market_base_url: str = "https://www.tpex.org.tw/www/zh-tw/afterTrading/dailyQuotes",
         timeout: float = 30.0,
         transport: Transport = _read_url,
         clock: Callable[[], datetime] | None = None,
+        market_batch: bool = False,
     ) -> None:
         if timeout <= 0:
             raise ValueError("timeout must be positive")
         self.start_date = start_date
         self.end_date = end_date
         self.base_url = base_url
+        self.market_base_url = market_base_url
         self.timeout = timeout
         self.transport = transport
         self.clock = clock or (lambda: datetime.now(TAIPEI))
+        self.market_batch = market_batch
+        self._market_cache: tuple[datetime, dict[str, HistoricalBar]] | None = None
+
+    def _fetch_market_day(self) -> tuple[datetime, dict[str, HistoricalBar]]:
+        if self.start_date != self.end_date:
+            raise HistoricalProviderError(
+                "MARKET_BATCH_DATE_WINDOW",
+                "market-level daily endpoint requires a single trading date",
+            )
+        if self._market_cache is not None:
+            return self._market_cache
+        target_date = self.start_date
+        query = urlencode(
+            {"date": target_date.strftime("%Y/%m/%d"), "response": "json"}
+        )
+        payload = _json(self.transport, f"{self.market_base_url}?{query}", self.timeout)
+        if str(payload.get("stat", "")).lower() != "ok":
+            raise HistoricalProviderError(
+                "EXCHANGE_NO_DATA", str(payload.get("stat", "unknown"))
+            )
+        response_date = str(payload.get("date", ""))
+        if response_date != target_date.strftime("%Y%m%d"):
+            raise HistoricalProviderError(
+                "PROVIDER_DATE_MISMATCH",
+                f"TPEx response date {response_date!r} != {target_date.isoformat()}",
+            )
+        tables = payload.get("tables")
+        if not isinstance(tables, list):
+            raise HistoricalProviderError("INVALID_PAYLOAD", "TPEx tables must be an array")
+        table = next(
+            (
+                item
+                for item in tables
+                if isinstance(item, Mapping)
+                and item.get("title") == "上櫃股票行情"
+                and isinstance(item.get("fields"), list)
+                and item["fields"]
+                and item["fields"][0] == "代號"
+                and isinstance(item.get("data"), list)
+            ),
+            None,
+        )
+        if table is None:
+            raise HistoricalProviderError(
+                "INVALID_PAYLOAD", "TPEx market close table is missing"
+            )
+        bars: dict[str, HistoricalBar] = {}
+        for row in table["data"]:
+            if not isinstance(row, list) or len(row) < 9:
+                raise HistoricalProviderError(
+                    "INVALID_PAYLOAD", "TPEx market close row is incomplete"
+                )
+            code = str(row[0]).strip()
+            if not code:
+                continue
+            if code in bars:
+                raise HistoricalProviderError("DUPLICATE_INSTRUMENT_ROW", code)
+            bar = HistoricalBar(
+                trading_date=target_date,
+                open=_decimal(row[4], "open"),
+                high=_decimal(row[5], "high"),
+                low=_decimal(row[6], "low"),
+                close=_decimal(row[2], "close"),
+                volume=_decimal(row[8], "volume"),
+            )
+            _validate_bar(bar)
+            bars[code] = bar
+        self._market_cache = (self.clock(), bars)
+        return self._market_cache
+
+    def _fetch_market_instrument(
+        self, instrument_code: str, market_code: str
+    ) -> HistoricalFetchResult:
+        retrieved_at, bars = self._fetch_market_day()
+        bar = bars.get(instrument_code)
+        return _result(
+            instrument_code=instrument_code,
+            market_code=market_code,
+            source_code=self.source_code,
+            adapter_version=self.adapter_version,
+            bars=[bar] if bar is not None else [],
+            retrieved_at=retrieved_at,
+            instrument_status=("AVAILABLE" if bar is not None else "EXCHANGE_CONFIRMED_NO_DATA"),
+            status_reason=(
+                None
+                if bar is not None
+                else "official TPEx market dataset contained no row for requested instrument/date"
+            ),
+            status_explicit=bar is None,
+        )
 
     def fetch_daily(self, instrument_code: str, market_code: str) -> HistoricalFetchResult:
         instrument_code = _validate_identifier(instrument_code, "instrument_code")
         market_code = _validate_identifier(market_code, "market_code")
         if market_code != "TWO":
             raise HistoricalProviderError("UNSUPPORTED_MARKET", market_code)
+        if self.market_batch and self.start_date == self.end_date:
+            return self._fetch_market_instrument(instrument_code, market_code)
         bars: list[HistoricalBar] = []
         for month_start in _month_starts(self.start_date, self.end_date):
             query = urlencode(
