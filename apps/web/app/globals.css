@@ -4012,3 +4012,31 @@ tbody tr:hover td { background: rgba(86, 198, 189, 0.06); }
   .tp-stock-workspace:has(.tp-stock-encyclopedia-drawer){grid-template-columns:1fr}
   .tp-stock-encyclopedia-drawer{padding:22px}
 }
+
+/* TASK-FE-016: Stock Explorer uses a true in-flow push panel on desktop. */
+@keyframes tp-stock-push-in{from{transform:translateX(100%)}to{transform:translateX(0)}}
+
+.tp-stock-workspace--push{grid-template-columns:minmax(0,1fr);gap:16px;min-width:0;overflow-x:clip;transition:grid-template-columns 280ms cubic-bezier(.22,.61,.36,1)}
+.tp-stock-workspace--push[data-detail-state="open"]{grid-template-columns:minmax(0,1fr) minmax(340px,38%)}
+.tp-stock-workspace--push[data-detail-state="closing"]{grid-template-columns:minmax(0,1fr) minmax(0,0fr)}
+.tp-stock-workspace--push .tp-stock-main{min-width:0}
+.tp-stock-encyclopedia-drawer--push{position:sticky!important;top:72px!important;z-index:2;display:flex;flex-direction:column;align-self:start;width:100%;min-width:0;height:calc(100vh - 72px);max-width:560px;max-height:calc(100vh - 72px);box-sizing:border-box;overflow:hidden;border:1px solid var(--tp-color-border);border-radius:var(--tp-radius-md);background:var(--tp-color-surface);box-shadow:var(--tp-shadow-subtle);transform:translateX(0);animation:tp-stock-push-in 280ms cubic-bezier(.22,.61,.36,1) both}
+.tp-stock-encyclopedia-drawer--push.is-closing{width:clamp(340px,38vw,560px);justify-self:end;transform:translateX(100%);animation:none;transition:transform 280ms cubic-bezier(.22,.61,.36,1)}
+.tp-stock-encyclopedia-drawer--push .tp-stock-encyclopedia-header{position:sticky!important;top:0!important;z-index:1;flex:0 0 auto;background:var(--tp-color-surface)}
+.tp-stock-encyclopedia-drawer--push .tp-stock-encyclopedia-body{min-height:0;display:flex;flex:1;flex-direction:column;gap:22px;overflow-y:auto;overscroll-behavior:contain}
+
+@media (max-width: 1040px){
+  .tp-stock-workspace--push[data-detail-state="open"]{grid-template-columns:minmax(0,1fr) minmax(320px,40%)}
+}
+
+@media (max-width: 860px){
+  .tp-stock-workspace--push{overflow-x:visible}
+  .tp-stock-workspace--push[data-detail-state="open"],.tp-stock-workspace--push[data-detail-state="closing"]{grid-template-columns:1fr}
+  .tp-stock-workspace--push .tp-stock-encyclopedia-drawer--push{position:fixed!important;top:72px!important;right:0!important;bottom:0!important;left:auto!important;width:min(560px,100vw);height:calc(100vh - 72px);max-width:100vw;max-height:none;border-top:0;border-right:0;border-bottom:0;border-radius:0;box-shadow:-8px 0 24px rgba(75,58,44,.12)}
+  .tp-stock-workspace--push .tp-stock-encyclopedia-drawer--push.is-closing{width:min(560px,100vw);transform:translateX(100%)}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .tp-stock-workspace--push{transition:none}
+  .tp-stock-encyclopedia-drawer--push,.tp-stock-encyclopedia-drawer--push.is-closing{animation:none;transition:none;transform:none}
+}

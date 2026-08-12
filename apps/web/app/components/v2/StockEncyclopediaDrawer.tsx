@@ -89,7 +89,7 @@ function EvidenceGrid({ rows }: { rows: Array<[string, string | number | boolean
   return <dl className="tp-stock-encyclopedia-evidence-grid">{rows.map(([name, value]) => <div key={name}><dt>{name}</dt><dd>{displayValue(value)}</dd></div>)}</dl>;
 }
 
-export function StockEncyclopediaDrawer({ stock, onClose, presentation = "overlay" }: { stock: StockDrawerItem; onClose: () => void; presentation?: "overlay" | "inline" }) {
+export function StockEncyclopediaDrawer({ stock, onClose, presentation = "overlay", isClosing = false }: { stock: StockDrawerItem; onClose: () => void; presentation?: "overlay" | "inline" | "push"; isClosing?: boolean }) {
   const { codes: favoriteCodes, toggle: toggleFavorite } = useFavoritesState();
   const [formalDetailState, setFormalDetailState] = useState<{ symbol: string; data: StockApiItem | null; status: "available" | "unavailable"; error: string | null } | null>(null);
 
@@ -116,7 +116,12 @@ export function StockEncyclopediaDrawer({ stock, onClose, presentation = "overla
   const tone = displayStock.changePct === null ? "flat" : displayStock.changePct >= 0 ? "up" : "down";
   const technical = displayStock.technicalEvidence;
   const institutionEntries = Object.entries(displayStock.institutionFlows ?? {}).filter(([, value]) => value !== null && value !== undefined);
-  const drawer = <aside className={`tp-stock-encyclopedia-drawer ${presentation === "inline" ? "tp-stock-encyclopedia-drawer--inline" : ""}`} role="dialog" aria-modal="true" aria-labelledby="stock-encyclopedia-title" onClick={(event) => event.stopPropagation()}>
+  const presentationClass = presentation === "inline"
+    ? "tp-stock-encyclopedia-drawer--inline"
+    : presentation === "push"
+      ? `tp-stock-encyclopedia-drawer--push${isClosing ? " is-closing" : ""}`
+      : "";
+  const drawer = <aside className={`tp-stock-encyclopedia-drawer ${presentationClass}`} role="dialog" aria-modal={presentation === "overlay" ? true : undefined} aria-labelledby="stock-encyclopedia-title" onClick={(event) => event.stopPropagation()}>
     <header className="tp-stock-encyclopedia-header">
       <div>
         <p className="tp-eyebrow">股票圖鑑</p>
@@ -139,5 +144,5 @@ export function StockEncyclopediaDrawer({ stock, onClose, presentation = "overla
       {displayStock.opportunity ? <Link href="/opportunities" className="tp-button tp-button--secondary tp-stock-encyclopedia-cta">進入機會頁</Link> : <span className="tp-button tp-button--secondary tp-stock-encyclopedia-cta" aria-disabled="true">機會資料尚未提供</span>}
     </div>
   </aside>;
-  return presentation === "inline" ? drawer : <div className="tp-stock-encyclopedia-layer" role="presentation" onClick={onClose}>{drawer}</div>;
+  return presentation === "inline" || presentation === "push" ? drawer : <div className="tp-stock-encyclopedia-layer" role="presentation" onClick={onClose}>{drawer}</div>;
 }

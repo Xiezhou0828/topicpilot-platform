@@ -39,6 +39,8 @@ type ExplorerRow = {
   isPreview: boolean;
 };
 
+type DetailPanelState = "closed" | "open" | "closing";
+
 const UI = {
   eyebrow: "\u80a1\u7968\u63a2\u7d22",
   title: "\u80a1\u7968",
@@ -197,11 +199,32 @@ export default function StockExplorerPage() {
   const [strategy, setStrategy] = useState("all");
   const [advancedOpen, setAdvancedOpen] = useState(false);
   const [selected, setSelected] = useState<ExplorerRow | null>(null);
+  const [detailPanelState, setDetailPanelState] = useState<DetailPanelState>("closed");
   const [lastSorted, setLastSorted] = useState(() => new Date());
   const orderRef = useRef<string[]>([]);
   const [formalOrder, setFormalOrder] = useState<string[]>([]);
   const requestIdRef = useRef(0);
   const controllerRef = useRef<AbortController | null>(null);
+  const detailCloseTimerRef = useRef<number | null>(null);
+
+  const openDetailPanel = useCallback((stock: ExplorerRow) => {
+    if (detailCloseTimerRef.current !== null) {
+      window.clearTimeout(detailCloseTimerRef.current);
+      detailCloseTimerRef.current = null;
+    }
+    setSelected(stock);
+    setDetailPanelState("open");
+  }, []);
+
+  const closeDetailPanel = useCallback(() => {
+    if (!selected || detailPanelState === "closing") return;
+    setDetailPanelState("closing");
+    detailCloseTimerRef.current = window.setTimeout(() => {
+      setSelected(null);
+      setDetailPanelState("closed");
+      detailCloseTimerRef.current = null;
+    }, 280);
+  }, [detailPanelState, selected]);
 
   const loadFormal = useCallback(async (requestedSort: SortKey, resetOrder: boolean) => {
     const requestId = requestIdRef.current + 1;
@@ -240,11 +263,15 @@ export default function StockExplorerPage() {
 
   useEffect(() => {
     const handler = (event: KeyboardEvent) => {
-      if (event.key === "Escape" && selected) setSelected(null);
+      if (event.key === "Escape" && selected) closeDetailPanel();
     };
     document.addEventListener("keydown", handler);
     return () => document.removeEventListener("keydown", handler);
-  }, [selected]);
+  }, [closeDetailPanel, selected]);
+
+  useEffect(() => () => {
+    if (detailCloseTimerRef.current !== null) window.clearTimeout(detailCloseTimerRef.current);
+  }, []);
 
   const baseRows = useMemo(() => {
     if (resource?.source === "api") return (resource.data ?? []).map(fromFormal);
@@ -325,7 +352,7 @@ export default function StockExplorerPage() {
         <DataState state={dataState} />
         {isPreview && <span className="tp-preview-badge">{UI.preview}</span>}
       </div>
-      <section className="tp-stock-workspace">
+      <section className="tp-stock-workspace tp-stock-workspace--push" data-detail-state={detailPanelState}>
         <div className="tp-stock-main">
           <Card className="tp-stock-toolbar">
             <label><span>{UI.market}</span><select value={market} onChange={(event) => setMarket(event.target.value)}><option value="all">{UI.all}</option><option value="TPE">{UI.listed} · TPE</option><option value="TWO">{UI.otc} · TWO</option></select></label>
@@ -341,9 +368,9 @@ export default function StockExplorerPage() {
             <label><span>{UI.updateMode}</span><select value={mode} onChange={(event) => setMode(event.target.value)}><option value="all">{UI.allUpdateModes}</option><option value="live">{UI.live}</option><option value="eod">{UI.eod}</option></select></label>
           </Card>}
           <div className="tp-stock-segments"><button type="button" className={mode === "all" ? "is-active" : ""} onClick={() => setMode("all")}>{UI.all}</button><button type="button" className={mode === "live" ? "is-active" : ""} onClick={() => setMode("live")}>{UI.live}</button><button type="button" className={mode === "eod" ? "is-active" : ""} onClick={() => setMode("eod")}>{UI.eod}</button><span className="tp-muted">{UI.lastSorted} {lastSorted.toLocaleTimeString("zh-TW", { hour: "2-digit", minute: "2-digit" })} · {displayRows.length}/{total} {UI.count}</span></div>
-          {resource === null ? <Card><EmptyState title={UI.loading} description="PostgreSQL-backed Stock read model" /></Card> : resource.source === "unavailable" ? <Card><EmptyState title={UI.unavailable} description={resource.error ?? UI.unavailableDescription} /></Card> : displayRows.length === 0 ? <Card><EmptyState title={UI.noRows} description={UI.unavailableDescription} /></Card> : <div className="tp-stock-grid">{displayRows.map((stock) => <button type="button" className={`tp-stock-tile ${selected?.code === stock.code ? "is-selected" : ""} ${isLive(stock) ? "" : "is-eod"}`} key={stock.code} onClick={() => setSelected(stock)} aria-label={`${stock.name} ${stock.code}`}><span className="tp-stock-tile-top"><strong>{stock.name}</strong><em>{isLive(stock) ? UI.live : UI.eod}</em></span><small>{stock.code} · {stock.market} · {stock.topics[0]?.name ?? UI.noTopic}</small><span className="tp-stock-tile-quote"><b>{formatPrice(stock.price)}</b><i className={stock.changePct === null ? "tp-muted" : stock.changePct < 0 ? "tp-stock-down" : "tp-stock-up"}>{formatChange(stock.changePct)}</i></span>{!isLive(stock) && <span className="tp-stock-eod-note">{UI.postClose}</span>}</button>)}</div>}
+          {resource === null ? <Card><EmptyState title={UI.loading} description="PostgreSQL-backed Stock read model" /></Card> : resource.source === "unavailable" ? <Card><EmptyState title={UI.unavailable} description={resource.error ?? UI.unavailableDescription} /></Card> : displayRows.length === 0 ? <Card><EmptyState title={UI.noRows} description={UI.unavailableDescription} /></Card> : <div className="tp-stock-grid">{displayRows.map((stock) => <button type="button" className={`tp-stock-tile ${selected?.code === stock.code ? "is-selected" : ""} ${isLive(stock) ? "" : "is-eod"}`} key={stock.code} onClick={() => openDetailPanel(stock)} aria-label={`${stock.name} ${stock.code}`}><span className="tp-stock-tile-top"><strong>{stock.name}</strong><em>{isLive(stock) ? UI.live : UI.eod}</em></span><small>{stock.code} · {stock.market} · {stock.topics[0]?.name ?? UI.noTopic}</small><span className="tp-stock-tile-quote"><b>{formatPrice(stock.price)}</b><i className={stock.changePct === null ? "tp-muted" : stock.changePct < 0 ? "tp-stock-down" : "tp-stock-up"}>{formatChange(stock.changePct)}</i></span>{!isLive(stock) && <span className="tp-stock-eod-note">{UI.postClose}</span>}</button>)}</div>}
         </div>
-        {selected && <StockEncyclopediaDrawer presentation="inline" stock={drawerItem(selected)} onClose={() => setSelected(null)} />}
+        {selected && <StockEncyclopediaDrawer presentation="push" isClosing={detailPanelState === "closing"} stock={drawerItem(selected)} onClose={closeDetailPanel} />}
       </section>
     </PageContainer>
   </AppShell>;
