@@ -14,6 +14,8 @@ from topicpilot_api.topic_engine import (
 )
 from topicpilot_api.topic_engine.research import FormulaResearchValidationError
 
+pytestmark = pytest.mark.research
+
 
 def _dataset() -> HistoricalValidationDataset:
     return HistoricalValidationDataset(

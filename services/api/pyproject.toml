@@ -44,6 +44,8 @@ addopts = "-ra"
 testpaths = ["tests"]
 markers = [
   "postgres: requires an explicit PostgreSQL test database",
+  "research: explicitly non-production research-only tests and fixtures",
+  "governance: repository governance-document consistency tests outside the release gate",
 ]
 
 [tool.ruff]

@@ -16,6 +16,8 @@ from topicpilot_api.topic_engine import (
     run_formula_research_corpus,
 )
 
+pytestmark = pytest.mark.research
+
 FIXTURE = (
     Path(__file__).resolve().parents[3]
     / "fixtures"

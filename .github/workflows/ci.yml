@@ -55,7 +55,7 @@ jobs:
           python -m alembic downgrade -1
           python -m alembic upgrade head
       - name: Backend tests
-        run: python -m pytest services/api/tests
+        run: python -m pytest services/api/tests -m "not research and not governance"
       - name: OpenAPI contract and drift check
         env:
           PYTHONPATH: services/api/src

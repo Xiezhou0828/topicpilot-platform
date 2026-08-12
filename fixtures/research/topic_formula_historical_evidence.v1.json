@@ -1,0 +1,101 @@
+{
+  "schemaVersion": "topic-formula-historical-evidence.v1",
+  "mode": "RESEARCH_ONLY",
+  "datasetId": "topicpilot-public-synthetic-historical-evidence",
+  "datasetVersion": "v1",
+  "outputContract": {
+    "corpusId": "topicpilot-public-synthetic-historical-participation",
+    "corpusVersion": "v1",
+    "featureSetVersion": "synthetic-point-in-time-participation.v1",
+    "runtimeVersion": "historical-evidence-bridge.v1",
+    "aggregationVersion": "synthetic-participation-aggregate.v1",
+    "breadthFeatureName": "synthetic_breadth_participation_counts",
+    "breadthFeatureVersion": "v1",
+    "leadershipFeatureName": "synthetic_leadership_participation_counts",
+    "leadershipFeatureVersion": "v1"
+  },
+  "sourceReferences": ["synthetic-fixture-only"],
+  "cases": [
+    {
+      "caseId": "explicit-core-and-leaders",
+      "caseVersion": "v1",
+      "asOf": "2026-08-05",
+      "sourceDataVersion": "synthetic-source.v1",
+      "membershipVersion": "synthetic-membership.v1",
+      "leaderSetVersion": "synthetic-leaders.v1",
+      "classificationPolicyId": "externally-preclassified-synthetic-state",
+      "classificationPolicyVersion": "v1",
+      "labels": ["point-in-time", "synthetic"],
+      "topics": [
+        {
+          "topicId": "synthetic-topic-alpha",
+          "coreMembers": [
+            {
+              "instrumentId": "SYN-A1",
+              "membershipValidFrom": "2026-01-01",
+              "membershipValidTo": null,
+              "participationState": "POSITIVE",
+              "observationDate": "2026-08-05"
+            },
+            {
+              "instrumentId": "SYN-A2",
+              "membershipValidFrom": "2026-01-01",
+              "membershipValidTo": null,
+              "participationState": "UNCHANGED",
+              "observationDate": "2026-08-05"
+            },
+            {
+              "instrumentId": "SYN-A3",
+              "membershipValidFrom": "2026-01-01",
+              "membershipValidTo": "2026-12-31",
+              "participationState": "NEGATIVE",
+              "observationDate": "2026-08-05"
+            },
+            {
+              "instrumentId": "SYN-A4",
+              "membershipValidFrom": "2026-01-01",
+              "membershipValidTo": null,
+              "participationState": "MISSING",
+              "observationDate": null
+            }
+          ],
+          "leaderInstrumentIds": ["SYN-A1", "SYN-A3"]
+        }
+      ]
+    },
+    {
+      "caseId": "missing-leader-set",
+      "caseVersion": "v1",
+      "asOf": "2026-08-06",
+      "sourceDataVersion": "synthetic-source.v1",
+      "membershipVersion": "synthetic-membership.v1",
+      "leaderSetVersion": "synthetic-leaders-missing.v1",
+      "classificationPolicyId": "externally-preclassified-synthetic-state",
+      "classificationPolicyVersion": "v1",
+      "labels": ["point-in-time", "synthetic"],
+      "topics": [
+        {
+          "topicId": "synthetic-topic-beta",
+          "coreMembers": [
+            {
+              "instrumentId": "SYN-B1",
+              "membershipValidFrom": "2026-01-01",
+              "membershipValidTo": null,
+              "participationState": "POSITIVE",
+              "observationDate": "2026-08-06"
+            },
+            {
+              "instrumentId": "SYN-B2",
+              "membershipValidFrom": "2026-01-01",
+              "membershipValidTo": null,
+              "participationState": "MISSING",
+              "observationDate": null
+            }
+          ],
+          "leaderInstrumentIds": []
+        }
+      ]
+    }
+  ],
+  "contentDigest": "edc6f09df3b55f73f3ad892a47f3f9ba55105c5c4127d1b1a956add84eb2a853"
+}

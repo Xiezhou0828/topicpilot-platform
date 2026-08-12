@@ -16,6 +16,8 @@ from topicpilot_api.topic_engine import (
     run_formula_research_corpus,
 )
 
+pytestmark = pytest.mark.research
+
 FIXTURE_DIR = Path(__file__).resolve().parents[3] / "fixtures" / "research"
 FIXTURE = FIXTURE_DIR / "topic_formula_historical_evidence.v1.json"
 EXPERIMENT = FIXTURE_DIR / "topic_formula_experiment.v1.json"

@@ -21,6 +21,8 @@ from topicpilot_api.topic_engine.features.availability import availability_featu
 from topicpilot_api.topic_engine.features.hierarchy import hierarchy_features
 from topicpilot_api.topic_engine.features.membership import membership_features
 
+pytestmark = pytest.mark.research
+
 
 class SyntheticBreadthPassthrough:
     """Test-only behavior; not a TopicPilot formula candidate."""
