@@ -41,6 +41,7 @@ class RateLimitedTransport:
         self.clock = clock
         self._requests: deque[float] = deque()
         self._last_request: float | None = None
+        self.retry_count = 0
 
     def _wait_for_budget(self) -> None:
         while True:
@@ -71,6 +72,7 @@ class RateLimitedTransport:
                 last_error = exc
                 if attempt >= self.max_retries:
                     raise
+                self.retry_count += 1
                 self.sleep(self.retry_backoff_seconds * (2**attempt))
         assert last_error is not None
         raise last_error

@@ -10,6 +10,17 @@ from hashlib import sha256
 from typing import Any, Protocol
 
 FAMILIES = ("PRICE", "VOLUME", "QUOTE", "TRADING_STATUS")
+DAILY_TRADING_STATUS_CODES = frozenset(
+    {
+        "AVAILABLE",
+        "SUSPENDED",
+        "NO_TRADE",
+        "EXCHANGE_CONFIRMED_NO_DATA",
+        "UNKNOWN",
+        # Kept for compatibility with the pre-022A reference fixtures.
+        "OPEN",
+    }
+)
 
 
 def escape_json_pointer_token(value: str) -> str:

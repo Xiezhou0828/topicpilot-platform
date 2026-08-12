@@ -31,7 +31,12 @@ from topicpilot_api.orm.models import (
     RawMarketObservation,
 )
 
-from .history import HistoricalBar, HistoricalFetchResult, HistoricalProvider
+from .history import (
+    COVERED_NO_TRADE_STATUS_CODES,
+    HistoricalBar,
+    HistoricalFetchResult,
+    HistoricalProvider,
+)
 
 
 class HistoricalIngestionError(ValueError):
@@ -67,6 +72,12 @@ class HistoricalIngestionResult:
     canonical_created: int
     canonical_reused: int
     incomplete_canonical_count: int
+    instrument_status: str = "UNKNOWN"
+    status_reason: str | None = None
+    observed_count: int = 0
+    priced_count: int = 0
+    covered_count: int = 0
+    unexplained_missing_count: int = 0
 
     @property
     def is_noop(self) -> bool:
@@ -85,6 +96,12 @@ class HistoricalIngestionResult:
             "canonicalCreated": self.canonical_created,
             "canonicalReused": self.canonical_reused,
             "incompleteCanonicalCount": self.incomplete_canonical_count,
+            "instrumentStatus": self.instrument_status,
+            "statusReason": self.status_reason,
+            "observedCount": self.observed_count,
+            "pricedCount": self.priced_count,
+            "coveredCount": self.covered_count,
+            "unexplainedMissingCount": self.unexplained_missing_count,
             "noop": self.is_noop,
         }
 
@@ -112,7 +129,7 @@ def _text(value: Decimal | None) -> str | None:
 
 
 def _bar_payload(result: HistoricalFetchResult, bar: HistoricalBar) -> dict[str, str | None]:
-    return {
+    payload: dict[str, str | None] = {
         "date": bar.trading_date.isoformat(),
         "open": _text(bar.open),
         "high": _text(bar.high),
@@ -120,6 +137,28 @@ def _bar_payload(result: HistoricalFetchResult, bar: HistoricalBar) -> dict[str,
         "close": _text(bar.close),
         "volume": _text(bar.volume),
         "source_symbol": result.source_symbol,
+    }
+    if result.status_explicit:
+        payload["instrument_status"] = result.instrument_status
+        payload["status_reason"] = result.status_reason
+    return payload
+
+
+def _status_payload(
+    result: HistoricalFetchResult, trading_date: date
+) -> dict[str, str | None]:
+    """Represent exchange-confirmed no-trade as evidence, not a fabricated bar."""
+
+    return {
+        "date": trading_date.isoformat(),
+        "open": None,
+        "high": None,
+        "low": None,
+        "close": None,
+        "volume": None,
+        "source_symbol": result.source_symbol,
+        "instrument_status": result.instrument_status if result.status_explicit else "UNKNOWN",
+        "status_reason": result.status_reason,
     }
 
 
@@ -320,16 +359,41 @@ def ingest_historical(
         "canonical_created": 0,
         "canonical_reused": 0,
         "incomplete": 0,
+        "observed": 0,
+        "priced": 0,
+        "covered": 0,
+        "unexplained": 0,
     }
-    all_have_points = True
+    all_covered = True
+    result_statuses: list[str] = []
+    result_reasons: list[str] = []
     for (code, market_code), result, bars in fetched:
         instrument, market = _load_instrument(session, code, market_code)
-        if not bars:
-            all_have_points = False
+        status_date = requested_from if requested_from == requested_to else None
+        observations: list[tuple[date, HistoricalBar | None, dict[str, str | None]]] = [
+            (bar.trading_date, bar, _bar_payload(result, bar)) for bar in bars
+        ]
+        if not observations and status_date is not None:
+            observations.append((status_date, None, _status_payload(result, status_date)))
+        result_status = result.instrument_status if result.status_explicit else (
+            "AVAILABLE" if any(bar.close is not None for bar in bars) else "UNKNOWN"
+        )
+        result_statuses.append(result_status)
+        if result.status_reason:
+            result_reasons.append(result.status_reason)
+        if not observations:
+            all_covered = False
         counts["provider"] += len(bars)
-        for bar in bars:
-            payload = _bar_payload(result, bar)
-            observed_at = _observed_at(bar.trading_date, market.timezone)
+        for trading_date, bar, payload in observations:
+            observed_at = _observed_at(trading_date, market.timezone)
+            close_present = payload.get("close") is not None
+            status_code = payload.get("instrument_status")
+            covered = close_present or status_code in COVERED_NO_TRADE_STATUS_CODES
+            counts["observed"] += 1
+            counts["priced"] += int(close_present)
+            counts["covered"] += int(covered)
+            counts["unexplained"] += int(not covered)
+            all_covered = all_covered and covered
             prior_entry = session.scalar(
                 select(ObservationTimelineEntry)
                 .where(
@@ -424,7 +488,7 @@ def ingest_historical(
                     counts["incomplete"] += 1
 
     batch.status = "COMPLETED"
-    batch.coverage_status = "COMPLETE" if all_have_points else "SPARSE"
+    batch.coverage_status = "COMPLETE" if all_covered else "SPARSE"
     # Keep Python 3.10 compatibility for the private provider runtime.
     batch.completed_at = (clock or (lambda: datetime.now(timezone.utc)))()  # noqa: UP017
     session.flush()
@@ -440,4 +504,18 @@ def ingest_historical(
         canonical_created=counts["canonical_created"],
         canonical_reused=counts["canonical_reused"],
         incomplete_canonical_count=counts["incomplete"],
+        instrument_status=(
+            result_statuses[0]
+            if len(set(result_statuses)) == 1 and result_statuses
+            else "UNKNOWN"
+        ),
+        status_reason=(
+            result_reasons[0]
+            if len(set(result_reasons)) == 1 and result_reasons
+            else None
+        ),
+        observed_count=counts["observed"],
+        priced_count=counts["priced"],
+        covered_count=counts["covered"],
+        unexplained_missing_count=counts["unexplained"],
     )

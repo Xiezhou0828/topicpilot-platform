@@ -209,7 +209,7 @@ class TopicSnapshotEngine:
         for child_id, parent_name in parent_rows:
             parents.setdefault(child_id, parent_name)
 
-        evidence = {} if market_closed else self._read_price_evidence(snapshot_date)
+        evidence = {} if market_closed else read_price_evidence(self.session, snapshot_date)
         rows: list[TopicSnapshot] = []
         status_counts: dict[str, int] = defaultdict(int)
         for topic in topics:
@@ -280,7 +280,25 @@ class TopicSnapshotEngine:
         }
 
     def _read_price_evidence(self, snapshot_date: date) -> dict[UUID, MemberPriceEvidence]:
-        sql = text(
+        return read_price_evidence(self.session, snapshot_date)
+
+    @staticmethod
+    def _quantize(value: Decimal | None, *, places: int = 4) -> Decimal | None:
+        if value is None:
+            return None
+        quantum = Decimal("1").scaleb(-places)
+        return value.quantize(quantum, rounding=ROUND_HALF_UP)
+
+
+def read_price_evidence(session: Session, snapshot_date: date) -> dict[UUID, MemberPriceEvidence]:
+    """Read canonical accepted daily-bar evidence shared by snapshot/lifecycle.
+
+    The query intentionally follows the existing snapshot authority: accepted
+    canonical PRICE observations, DAILY_BAR semantics, source ranking, and
+    supersession handling.  No alternate quote or preview source is allowed.
+    """
+
+    sql = text(
             """
             WITH candidates AS (
                 SELECT
@@ -329,26 +347,19 @@ class TopicSnapshotEngine:
             ORDER BY instrument_id, date_rank
             """
         )
-        rows = self.session.execute(sql, {"snapshot_date": snapshot_date}).mappings().all()
-        by_instrument: dict[UUID, dict[int, Any]] = defaultdict(dict)
-        for row in rows:
-            by_instrument[row["instrument_id"]][int(row["date_rank"])] = row
-        return {
-            instrument_id: MemberPriceEvidence(
-                instrument_id,
-                values.get(1, {}).get("trading_date"),
-                values.get(1, {}).get("close"),
-                values.get(2, {}).get("close"),
-            )
-            for instrument_id, values in by_instrument.items()
-        }
-
-    @staticmethod
-    def _quantize(value: Decimal | None, *, places: int = 4) -> Decimal | None:
-        if value is None:
-            return None
-        quantum = Decimal("1").scaleb(-places)
-        return value.quantize(quantum, rounding=ROUND_HALF_UP)
+    rows = session.execute(sql, {"snapshot_date": snapshot_date}).mappings().all()
+    by_instrument: dict[UUID, dict[int, Any]] = defaultdict(dict)
+    for row in rows:
+        by_instrument[row["instrument_id"]][int(row["date_rank"])] = row
+    return {
+        instrument_id: MemberPriceEvidence(
+            instrument_id,
+            values.get(1, {}).get("trading_date"),
+            values.get(1, {}).get("close"),
+            values.get(2, {}).get("close"),
+        )
+        for instrument_id, values in by_instrument.items()
+    }
 
 
 __all__ = [
@@ -357,4 +368,5 @@ __all__ = [
     "TopicAggregation",
     "TopicSnapshotEngine",
     "aggregate_topic_members",
+    "read_price_evidence",
 ]

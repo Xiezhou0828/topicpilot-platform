@@ -1,9 +1,9 @@
 # TopicPilot V2 Production Data Architecture
 
 **Status:** `PM-FROZEN BOUNDARY / V2 DATA CHAIN READY; operational follow-ups open`
-**Generation:** `NEXT / V2`  
-**Owner:** Architecture / Backend / Operations  
-**Effective date:** 2026-08-12  
+**Generation:** `NEXT / V2`
+**Owner:** Architecture / Backend / Operations
+**Effective date:** 2026-08-12
 **Source:** TASK-INFRA-019 infrastructure handoff; implementation evidence is
 recorded separately in [TASK-INFRA-019 V2 Production Infrastructure Report](../reports/TASK-INFRA-019_V2_PRODUCTION_INFRASTRUCTURE_REPORT.md).
 
@@ -265,3 +265,21 @@ history. The current DB → API → UI reconciliation is **PASS**. The only
 close-out code correction was to render `資料日期待補` instead of `Preview`
 when a formal topic's data date is null; explicit local preview behavior is
 unchanged.
+
+## 15. TASK-OPS-023A-P1B primary working-tree integration (2026-08-12)
+
+The combined repository release from the P1 worktree was integrated into the
+primary `topicpilot-platform` working tree without resetting or discarding
+existing user changes. The primary repository now contains the DATA-022/022A
+daily-market and no-trade contracts plus the BE-021/BE-021A Lifecycle engine,
+calibration, API/frontend contract, tests, reports, and migrations 0025/0026/0027.
+
+The reviewed linear migration lineage is:
+
+`0024 -> 0025_task_data_022_daily_market_contract ->
+0026_task_data_022a_no_trade_coverage ->
+0027_task_be_021_topic_lifecycle_results`.
+
+Primary production activation remains outside this repository integration task.
+No Neon migration, production write, canary, snapshot, Lifecycle shadow run,
+Render deployment, or scheduler activation was performed.

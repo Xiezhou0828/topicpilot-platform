@@ -13,17 +13,19 @@ def test_rate_limited_transport_retries_transient_transport_error() -> None:
             raise OSError("temporary network failure")
         return b"ok"
 
-    result = RateLimitedTransport(
+    limited = RateLimitedTransport(
         transport,
         requests_per_minute=100,
         max_retries=1,
         retry_backoff_seconds=2.0,
         sleep=sleeps.append,
-    )("https://example.test", 1.0)
+    )
+    result = limited("https://example.test", 1.0)
 
     assert result == b"ok"
     assert calls == ["https://example.test", "https://example.test"]
     assert sleeps == [2.0]
+    assert limited.retry_count == 1
 
 
 def test_rate_limited_transport_enforces_interval_and_rolling_budget() -> None:

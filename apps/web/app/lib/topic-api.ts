@@ -18,6 +18,7 @@ export type TopicSummary = {
   coveragePct: number | null;
   constituentCount: number;
   direction: string | null;
+  lifecycle?: TopicLifecycle;
 };
 
 export type TopicStatus = {
@@ -32,6 +33,14 @@ export type TopicLifecycle = {
   currentStageTradingDays: number | null;
   history: Array<{ stage: string; enteredAt: string | null; exitedAt: string | null; tradingDays: number | null; current: boolean }>;
   dataStatus: string;
+  evaluationDate?: string | null;
+  previousStage?: string | null;
+  candidateStage?: string | null;
+  transitionDecision?: string | null;
+  transitionReason?: string | null;
+  policyVersion?: string | null;
+  evidence?: Record<string, unknown>;
+  confidence?: Record<string, unknown>;
 };
 
 export type TopicConstituent = {
@@ -139,6 +148,11 @@ function apiBaseUrl(): string | null {
   return configured ? configured.replace(/\/+$/, "") : null;
 }
 
+function topicPreviewEnabled(): boolean {
+  return process.env.NODE_ENV === "development"
+    && process.env.NEXT_PUBLIC_ENABLE_TOPIC_PREVIEW === "true";
+}
+
 function readableState(value: string | null | undefined): string {
   return readableTopicState(value);
 }
@@ -150,8 +164,10 @@ function roleFor(value: string | null | undefined): "代表股" | "核心股" | 
 function summaryFromApi(item: ApiTopicSummary): TopicSummary {
   return {
     ...item,
-    name: topicNameLabel(item.slug, item.name),
-    groupName: groupNameLabel(item.groupName),
+    // Formal catalog identity is authoritative. Never replace an unfamiliar
+    // production name/group with a preview label.
+    name: item.name,
+    groupName: item.groupName,
     readableState: readableState(item.strengthState),
     direction: item.direction,
   };
@@ -276,10 +292,10 @@ async function request<T>(path: string): Promise<TopicResource<T>> {
 export async function fetchTopics(): Promise<TopicResource<TopicSummary[]>> {
   const base = apiBaseUrl();
   if (!base) {
-    const data = syntheticTopics();
+    const data = topicPreviewEnabled() ? syntheticTopics() : [];
     return data.length
       ? { source: "synthetic-snapshot", data, error: null }
-      : { source: "unavailable", data: null, error: "尚未設定 FastAPI API origin。" };
+      : { source: "unavailable", data: null, error: "尚未設定正式 FastAPI API origin；production 不使用 Preview 題材清單替代。" };
   }
   const result = await request<{ items: ApiTopicSummary[] }>("/api/v2/topics?limit=200&offset=0");
   return result.source === "api"
@@ -290,7 +306,7 @@ export async function fetchTopics(): Promise<TopicResource<TopicSummary[]>> {
 export async function fetchTopic(slug: string): Promise<TopicResource<TopicDetail>> {
   const base = apiBaseUrl();
   if (!base) {
-    const data = syntheticDetail(slug);
+    const data = topicPreviewEnabled() ? syntheticDetail(slug) : null;
     return data
       ? { source: "synthetic-snapshot", data, error: null }
       : { source: "unavailable", data: null, error: "此 slug 不在公開合成 snapshot，且尚未設定 FastAPI API origin。" };
@@ -303,8 +319,8 @@ export async function fetchTopic(slug: string): Promise<TopicResource<TopicDetai
     error: null,
     data: {
       ...detail,
-      name: topicNameLabel(detail.slug, detail.name),
-      groupName: groupNameLabel(detail.groupName),
+      name: detail.name,
+      groupName: detail.groupName,
       readableState: detail.readableState || readableState(detail.strengthState),
       direction: detail.direction,
       status: detail.status,
