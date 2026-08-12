@@ -21,7 +21,9 @@ router = APIRouter(prefix="/api/v2", tags=["production-read-model"])
 DbSession = Annotated[Session, Depends(get_db)]
 
 
-@router.get("/stocks", response_model=StockReadModelPage, summary="Read the formal TPE/TWO stock universe")
+@router.get(
+    "/stocks", response_model=StockReadModelPage, summary="Read the formal TPE/TWO stock universe"
+)
 def stocks(
     session: DbSession,
     market: str | None = Query(default=None),
@@ -55,7 +57,9 @@ def stock(symbol: str, session: DbSession) -> dict:
     return read_stock(session, symbol)
 
 
-@router.get("/topics", response_model=TopicReadModelPage, summary="Read the formal topic read model")
+@router.get(
+    "/topics", response_model=TopicReadModelPage, summary="Read the formal topic read model"
+)
 def topics(
     session: DbSession,
     limit: int = Query(default=200, ge=1, le=500),

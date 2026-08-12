@@ -24,7 +24,17 @@ TAIPEI = ZoneInfo("Asia/Taipei")
 VALID_MARKETS = {"TPE", "TWO"}
 VALID_UPDATE_MODES = {"INTRADAY", "POST_CLOSE", "UNKNOWN"}
 VALID_SORTS = {"symbolAsc", "changePctDesc", "priceDesc", "volumeDesc"}
-ROLE_VALUES = {"代表股", "核心股", "關聯股", "PRIMARY", "REPRESENTATIVE", "LEADER", "CORE", "SECONDARY", "RELATED"}
+ROLE_VALUES = {
+    "代表股",
+    "核心股",
+    "關聯股",
+    "PRIMARY",
+    "REPRESENTATIVE",
+    "LEADER",
+    "CORE",
+    "SECONDARY",
+    "RELATED",
+}
 
 
 STOCK_ROWS_SQL = text(
@@ -43,7 +53,10 @@ STOCK_ROWS_SQL = text(
           AND m.is_active = true
           AND m.code IN ('TPE', 'TWO')
           AND (CAST(:market_code AS text) IS NULL OR m.code = CAST(:market_code AS text))
-          AND (CAST(:update_mode AS text) IS NULL OR COALESCE(ltu.update_mode, 'UNKNOWN') = CAST(:update_mode AS text))
+          AND (
+              CAST(:update_mode AS text) IS NULL
+              OR COALESCE(ltu.update_mode, 'UNKNOWN') = CAST(:update_mode AS text)
+          )
     ),
     daily_price_by_day AS (
         SELECT co.instrument_id,
@@ -63,7 +76,8 @@ STOCK_ROWS_SQL = text(
     ),
     daily_price_ranked AS (
         SELECT *, ROW_NUMBER() OVER (
-            PARTITION BY instrument_id ORDER BY trading_date DESC, observed_at DESC, retrieved_at DESC
+            PARTITION BY instrument_id
+            ORDER BY trading_date DESC, observed_at DESC, retrieved_at DESC
         ) AS date_rank
         FROM daily_price_by_day
         WHERE same_day_rank = 1
@@ -85,7 +99,8 @@ STOCK_ROWS_SQL = text(
         SELECT co.instrument_id, cp.close AS intraday_close, co.observed_at AS intraday_observed_at,
                co.retrieved_at AS intraday_retrieved_at,
                ROW_NUMBER() OVER (
-                   PARTITION BY co.instrument_id ORDER BY co.observed_at DESC, co.retrieved_at DESC, co.id DESC
+                   PARTITION BY co.instrument_id
+                   ORDER BY co.observed_at DESC, co.retrieved_at DESC, co.id DESC
                ) AS row_rank
         FROM topicpilot.canonical_observations co
         JOIN topicpilot.canonical_price_observations cp
@@ -113,14 +128,17 @@ STOCK_ROWS_SQL = text(
     ),
     daily_volume AS (
         SELECT instrument_id, volume_quantity,
-               ROW_NUMBER() OVER (PARTITION BY instrument_id ORDER BY trading_date DESC) AS date_rank
+               ROW_NUMBER() OVER (
+                   PARTITION BY instrument_id ORDER BY trading_date DESC
+               ) AS date_rank
         FROM daily_volume_by_day
         WHERE same_day_rank = 1
     ),
     intraday_volume AS (
         SELECT co.instrument_id, cv.volume_quantity,
                ROW_NUMBER() OVER (
-                   PARTITION BY co.instrument_id ORDER BY co.observed_at DESC, co.retrieved_at DESC, co.id DESC
+                   PARTITION BY co.instrument_id
+                   ORDER BY co.observed_at DESC, co.retrieved_at DESC, co.id DESC
                ) AS row_rank
         FROM topicpilot.canonical_observations co
         JOIN topicpilot.canonical_volume_observations cv
@@ -148,11 +166,17 @@ TOPIC_RELATIONS_SQL = text(
     SELECT r.instrument_id, t.id AS topic_id, t.slug AS topic_slug, t.name AS topic_name,
            r.relation_type, r.relationship_metadata,
            CASE
-             WHEN COALESCE(r.relationship_metadata ->> 'topicRole', r.relationship_metadata ->> 'role') IN
+             WHEN COALESCE(
+                      r.relationship_metadata ->> 'topicRole', r.relationship_metadata ->> 'role'
+                  ) IN
                   ('代表股', 'PRIMARY', 'REPRESENTATIVE', 'LEADER') THEN '代表股'
-             WHEN COALESCE(r.relationship_metadata ->> 'topicRole', r.relationship_metadata ->> 'role') IN
+             WHEN COALESCE(
+                      r.relationship_metadata ->> 'topicRole', r.relationship_metadata ->> 'role'
+                  ) IN
                   ('核心股', 'CORE', 'SECONDARY') THEN '核心股'
-             WHEN COALESCE(r.relationship_metadata ->> 'topicRole', r.relationship_metadata ->> 'role') IN
+             WHEN COALESCE(
+                      r.relationship_metadata ->> 'topicRole', r.relationship_metadata ->> 'role'
+                  ) IN
                   ('關聯股', 'RELATED') THEN '關聯股'
              ELSE NULL
            END AS topic_role,
@@ -247,7 +271,9 @@ def _stock_item(row: Any, relations: list[dict[str, Any]]) -> dict[str, Any]:
     previous_close = row["previous_daily_close"]
     change_pct = None
     if daily_close is not None and previous_close is not None and previous_close > 0:
-        change_pct = (Decimal(daily_close) - Decimal(previous_close)) / Decimal(previous_close) * 100
+        change_pct = (
+            (Decimal(daily_close) - Decimal(previous_close)) / Decimal(previous_close) * 100
+        )
     tracking_period = row["moving_average_period"]
     tracking_state = row["moving_average_state"] if row["moving_average"] is not None else None
     return {
@@ -262,7 +288,11 @@ def _stock_item(row: Any, relations: list[dict[str, Any]]) -> dict[str, Any]:
         "enabled": bool(row["is_active"]),
         "price": _float(price_value),
         "changePct": _float(change_pct),
-        "volume": _float(row["intraday_volume"] if use_intraday and row["intraday_volume"] is not None else row["daily_volume"]),
+        "volume": _float(
+            row["intraday_volume"]
+            if use_intraday and row["intraday_volume"] is not None
+            else row["daily_volume"]
+        ),
         "observedAt": observed_at,
         "retrievedAt": retrieved_at,
         "dataFreshness": _freshness(update_mode, price_value is not None),
@@ -319,19 +349,29 @@ def read_stocks(
         STOCK_ROWS_SQL,
         {"market_code": normalized_market, "update_mode": normalized_mode},
     ).mappings()
-    all_items = [
-        _stock_item(row, relation_map.get(str(row["instrument_id"]), []))
-        for row in rows
-    ]
+    all_items = [_stock_item(row, relation_map.get(str(row["instrument_id"]), [])) for row in rows]
     items = all_items
     if topic:
-        items = [item for item in items if any(rel["topicSlug"] == topic for rel in item["topicRelations"])]
+        items = [
+            item
+            for item in items
+            if any(rel["topicSlug"] == topic for rel in item["topicRelations"])
+        ]
     if sort == "changePctDesc":
-        items.sort(key=lambda item: (item["changePct"] is not None, item["changePct"] or -float("inf")), reverse=True)
+        items.sort(
+            key=lambda item: (item["changePct"] is not None, item["changePct"] or -float("inf")),
+            reverse=True,
+        )
     elif sort == "priceDesc":
-        items.sort(key=lambda item: (item["price"] is not None, item["price"] or -float("inf")), reverse=True)
+        items.sort(
+            key=lambda item: (item["price"] is not None, item["price"] or -float("inf")),
+            reverse=True,
+        )
     elif sort == "volumeDesc":
-        items.sort(key=lambda item: (item["volume"] is not None, item["volume"] or -float("inf")), reverse=True)
+        items.sort(
+            key=lambda item: (item["volume"] is not None, item["volume"] or -float("inf")),
+            reverse=True,
+        )
     else:
         items.sort(key=lambda item: (item["market"], item["symbol"]))
     total = len(items)
@@ -350,7 +390,12 @@ def read_stocks(
         "total": total,
         "limit": limit,
         "offset": offset,
-        "query": {"market": normalized_market or "ALL", "topic": topic, "updateMode": normalized_mode or "ALL", "sort": sort},
+        "query": {
+            "market": normalized_market or "ALL",
+            "topic": topic,
+            "updateMode": normalized_mode or "ALL",
+            "sort": sort,
+        },
         "universe": universe,
     }
 
@@ -397,7 +442,10 @@ def _status_items(topic_row: Any, constituents: list[dict[str, Any]]) -> list[di
                 "fallingCount": falling,
                 "flatCount": flat,
                 "participationPct": participation,
-                "semantic": "TopicSnapshot direction uses average accepted daily close-to-close change.",
+                "semantic": (
+                    "TopicSnapshot direction uses average accepted daily close-to-close "
+                    "change."
+                ),
             },
         },
         {
@@ -535,8 +583,18 @@ def _topic_constituents(session: Session, slug: str, as_of_date: date) -> list[d
             "symbol": stock["symbol"],
             "code": stock["code"],
             "name": stock["name"],
-            "role": next((rel["topicRole"] for rel in stock["topicRelations"] if rel["topicSlug"] == slug), None),
-            "relationWeight": next((rel["relationWeight"] for rel in stock["topicRelations"] if rel["topicSlug"] == slug), None),
+            "role": next(
+                (rel["topicRole"] for rel in stock["topicRelations"] if rel["topicSlug"] == slug),
+                None,
+            ),
+            "relationWeight": next(
+                (
+                    rel["relationWeight"]
+                    for rel in stock["topicRelations"]
+                    if rel["topicSlug"] == slug
+                ),
+                None,
+            ),
             "price": stock["price"],
             "changePct": stock["changePct"],
             "observedAt": stock["observedAt"],
@@ -549,7 +607,9 @@ def _topic_constituents(session: Session, slug: str, as_of_date: date) -> list[d
     ]
 
 
-def read_topics(session: Session, *, slug: str | None = None, limit: int = 200, offset: int = 0) -> dict[str, Any]:
+def read_topics(
+    session: Session, *, slug: str | None = None, limit: int = 200, offset: int = 0
+) -> dict[str, Any]:
     as_of_date = _date_now()
     rows = session.execute(TOPIC_ROWS_SQL, {"as_of_date": as_of_date, "slug": slug}).mappings()
     items = [_topic_read_item(row, [], _read_lifecycle(session, row["topic_id"])) for row in rows]
@@ -565,7 +625,9 @@ def read_topics(session: Session, *, slug: str | None = None, limit: int = 200, 
 
 def read_topic(session: Session, slug: str) -> dict[str, Any]:
     as_of_date = _date_now()
-    row = session.execute(TOPIC_ROWS_SQL, {"as_of_date": as_of_date, "slug": slug}).mappings().first()
+    row = (
+        session.execute(TOPIC_ROWS_SQL, {"as_of_date": as_of_date, "slug": slug}).mappings().first()
+    )
     if row is None:
         raise NotFoundProblem(f"Topic {slug!r} was not found in the formal topic read model")
     constituents = _topic_constituents(session, slug, as_of_date)

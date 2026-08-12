@@ -9,7 +9,6 @@ from __future__ import annotations
 import ast
 from pathlib import Path
 
-
 DETECTOR_PACKAGE = "topicpilot_api.detectors"
 DETECTOR_SOURCE = (
     Path(__file__).resolve().parents[2] / "src" / "topicpilot_api" / "detectors"

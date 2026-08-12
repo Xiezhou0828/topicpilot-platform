@@ -1,5 +1,13 @@
 from pathlib import Path
-MIGRATION = Path(__file__).resolve().parents[1] / "alembic" / "versions" / "0016_phase3_4_004_instrument_topic_relationships.py"
+
+MIGRATION = (
+    Path(__file__).resolve().parents[1]
+    / "alembic"
+    / "versions"
+    / "0016_phase3_4_004_instrument_topic_relationships.py"
+)
+
+
 def test_relationship_migration_owns_instrument_topic_domain():
     source = MIGRATION.read_text(encoding="utf-8")
     assert 'revision = "0016_phase3_4_004_instrument_topic_relationships"' in source

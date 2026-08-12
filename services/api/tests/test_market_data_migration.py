@@ -1,7 +1,11 @@
 from pathlib import Path
 
-
-MIGRATION = Path(__file__).resolve().parents[1] / "alembic" / "versions" / "0017_phase3_4_005_market_data_source_and_raw_observations.py"
+MIGRATION = (
+    Path(__file__).resolve().parents[1]
+    / "alembic"
+    / "versions"
+    / "0017_phase3_4_005_market_data_source_and_raw_observations.py"
+)
 
 
 def test_market_data_migration_follows_relationship_head_and_owns_raw_foundation():

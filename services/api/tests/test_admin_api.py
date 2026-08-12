@@ -9,7 +9,16 @@ def test_admin_schema_is_metadata_derived_and_covers_frozen_domains():
     payload = response.json()
     names = {table["name"] for table in payload["tables"]}
     assert payload["source"] == "SQLAlchemy Base.metadata"
-    assert {"markets", "topics", "instrument_topic_relations", "raw_market_observations", "observation_timeline_entries", "canonical_observations", "reference_registry_sets", "legacy_import_runs"} <= names
+    assert {
+        "markets",
+        "topics",
+        "instrument_topic_relations",
+        "raw_market_observations",
+        "observation_timeline_entries",
+        "canonical_observations",
+        "reference_registry_sets",
+        "legacy_import_runs",
+    } <= names
 
 
 def test_admin_routes_are_read_only():
@@ -21,8 +30,15 @@ def test_admin_routes_are_read_only():
                 yield from walk(route.routes)
 
     app = create_app()
-    app_routes = list(walk(app.routes))
     routes = set(app.openapi()["paths"])
     assert "/api/v1/admin/dashboard" in routes
     assert "/api/v1/admin/schema" in routes
-    assert all(set(methods) <= {"get"} for path, methods in ((path, spec) for path, spec in app.openapi()["paths"].items() if path.startswith("/api/v1/admin") for methods in [spec]))
+    assert all(
+        set(methods) <= {"get"}
+        for path, methods in (
+            (path, spec)
+            for path, spec in app.openapi()["paths"].items()
+            if path.startswith("/api/v1/admin")
+            for methods in [spec]
+        )
+    )

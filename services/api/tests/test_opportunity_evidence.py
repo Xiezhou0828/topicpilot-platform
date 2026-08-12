@@ -19,7 +19,6 @@ from topicpilot_api.topic_engine import (
     build_moving_average_evidence,
     build_ohlcv_sufficiency,
     build_price_volume_evidence,
-    build_support_evidence,
     build_technical_evidence,
     replay_historical_shadow,
 )
@@ -58,7 +57,9 @@ def _topic() -> TopicOpportunityContext:
 
 
 def _stock() -> StockOpportunityContext:
-    return StockOpportunityContext("instrument-1", "2330", "Example", "TPE", "topic-1", None, None, None, None)
+    return StockOpportunityContext(
+        "instrument-1", "2330", "Example", "TPE", "topic-1", None, None, None, None
+    )
 
 
 def test_policy_is_versioned_and_numeric_parameters_are_provisional() -> None:
@@ -72,13 +73,18 @@ def test_policy_is_versioned_and_numeric_parameters_are_provisional() -> None:
 
 def test_sufficiency_counts_only_complete_ohlcv_and_keeps_missing_as_missing() -> None:
     bars = _bars(20)
-    bars[-1] = CanonicalOHLCVBar(bars[-1].trading_date, bars[-1].open, bars[-1].high, bars[-1].low, None, bars[-1].volume)
+    bars[-1] = CanonicalOHLCVBar(
+        bars[-1].trading_date, bars[-1].open, bars[-1].high, bars[-1].low, None, bars[-1].volume
+    )
 
     result = build_ohlcv_sufficiency(bars, _policy())
 
     assert result.available_count == 19
     assert result.assessment.status != PASS
-    assert any(item.code == "OHLCV_MISSING_BAR_COUNT" and item.value == 1 for item in result.assessment.evidence)
+    assert any(
+        item.code == "OHLCV_MISSING_BAR_COUNT" and item.value == 1
+        for item in result.assessment.evidence
+    )
 
 
 def test_moving_averages_use_trading_observations_and_mark_short_windows_unknown() -> None:
@@ -109,7 +115,11 @@ def test_support_selection_is_deterministic_and_not_lowest_candidate() -> None:
 
     assert technical.support.assessment.status == PASS
     assert primary is not None
-    assert primary.price == max(candidate.price for candidate in technical.support.candidates if candidate.price and candidate.price <= technical.price_volume.price)
+    assert primary.price == max(
+        candidate.price
+        for candidate in technical.support.candidates
+        if candidate.price and candidate.price <= technical.price_volume.price
+    )
     assert "highest_valid_support_below_price" in technical.support.selection_reason
 
 
@@ -123,7 +133,9 @@ def test_entry_quality_waits_when_provisional_support_distance_is_too_far() -> N
 
 
 def test_input_builder_composes_existing_shadow_input_without_chip_gate() -> None:
-    built = OpportunityShadowInputBuilder(_policy()).build(topic=_topic(), stock=_stock(), bars=_bars())
+    built = OpportunityShadowInputBuilder(_policy()).build(
+        topic=_topic(), stock=_stock(), bars=_bars()
+    )
 
     assert built.input.stock.price == pytest.approx(built.technical.price_volume.price)
     assert built.input.stock.ma20 == pytest.approx(built.technical.ma20.value)
@@ -150,7 +162,9 @@ def test_historical_replay_excludes_future_bars() -> None:
 
 
 def test_missing_chip_confirmation_is_explicitly_unavailable() -> None:
-    built = OpportunityShadowInputBuilder(_policy()).build(topic=_topic(), stock=_stock(), bars=_bars())
+    built = OpportunityShadowInputBuilder(_policy()).build(
+        topic=_topic(), stock=_stock(), bars=_bars()
+    )
 
     assert built.input.chip.assessment.status == UNKNOWN
     assert built.input.chip.assessment.evidence[0].kind == EVIDENCE_UNAVAILABLE

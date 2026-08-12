@@ -1,7 +1,8 @@
 """Phase 3.4-002 identity domain."""
-from alembic import op
 import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
+
+from alembic import op
 
 revision = "0014_phase3_4_002_identity_domain"
 down_revision = "0013_phase2_analytics_views"

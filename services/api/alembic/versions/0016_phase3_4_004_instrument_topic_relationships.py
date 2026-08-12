@@ -1,6 +1,7 @@
 """Phase 3.4-004 instrument-topic relationship domain."""
 import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
+
 from alembic import op
 
 revision = "0016_phase3_4_004_instrument_topic_relationships"
