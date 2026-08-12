@@ -17,6 +17,7 @@ export declare class TopicPilotProblem extends Error {
 
 export interface TopicPilotClient {
   getDataStatus(init?: RequestInitLike): Promise<components["schemas"]["DataStatus"]>;
+  getHome(init?: RequestInitLike): Promise<components["schemas"]["HomeResponse"]>;
   getStocks(
     page?: { limit?: number; offset?: number },
     init?: RequestInitLike,

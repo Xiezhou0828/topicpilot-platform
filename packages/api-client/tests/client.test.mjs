@@ -20,6 +20,30 @@ test("typed client returns a successful paginated response", async () => {
   assert.equal(page.items[0].code, "DEMO-A1");
 });
 
+test("typed client returns the generated HomeResponse contract", async () => {
+  const fetchImpl = async (url, init) => {
+    assert.equal(url, "https://api.example/api/v2/home");
+    assert.equal(init.headers.Accept, "application/json");
+    return new Response(
+      JSON.stringify({
+        contractVersion: "home-v1",
+        asOf: null,
+        generatedAt: null,
+        marketOverview: { dataDate: null, dataStatus: "UNAVAILABLE", latestSnapshotTime: null, marketHealth: null, source: "TEST", trackedStockCount: 0, trackedTopicCount: 0, updatedAt: null },
+        dailyFocus: { mode: "UNAVAILABLE", temporary: false, headline: "", bullets: [], dataDate: null, source: "TEST" },
+        dataQuality: { status: "UNAVAILABLE", source: "TEST", classification: null },
+        mainTopics: [{ slug: "ai-server", name: "AI Server", grade: null, currentState: null, dataDate: null, favorite: false, stockCount: 0, strength: null, summary: "" }],
+      }),
+      { status: 200, headers: { "content-type": "application/json" } },
+    );
+  };
+  const client = createTopicPilotClient({ baseUrl: "https://api.example", fetchImpl });
+
+  const home = await client.getHome();
+
+  assert.equal(home.mainTopics[0].slug, "ai-server");
+});
+
 test("typed client raises the normalized problem response", async () => {
   const fetchImpl = async () => new Response(
     JSON.stringify({

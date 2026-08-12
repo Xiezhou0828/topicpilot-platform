@@ -29,6 +29,7 @@ export function createTopicPilotClient({ baseUrl, fetchImpl = globalThis.fetch }
 
   return Object.freeze({
     getDataStatus: (init) => request("/api/v1/meta/data-status", init),
+    getHome: (init) => request("/api/v2/home", init),
     getStocks: ({ limit = 50, offset = 0 } = {}, init) =>
       request(`/api/v1/stocks?limit=${limit}&offset=${offset}`, init),
     getStock: (code, init) => request(`/api/v1/stocks/${encodeURIComponent(code)}`, init),

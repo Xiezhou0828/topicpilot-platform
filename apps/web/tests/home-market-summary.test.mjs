@@ -16,8 +16,8 @@ test("V2 Home uses the frozen TodayMarket hierarchy", async () => {
   for (const marker of ["tp-home-overview-card", "market-overview-title", "tp-home-story-card", "mainline-title", "events-title", "rotation-title", "opportunities-title"]) {
     assert.match(home, new RegExp(marker));
   }
-  assert.match(home, /const mainlines = \[/);
   assert.match(home, /const opportunities = \[/);
+  assert.match(home, /useTodayMainlines/);
   assert.doesNotMatch(home, /marketDecision/);
 });
 
@@ -95,7 +95,7 @@ test("V2 Home does not expose the legacy strategy candidate drilldown", async ()
     read("components/v2/StockExplorerPage.tsx"),
   ]);
   assert.doesNotMatch(home, /strategyRegistry|strategyCandidates|selectedStrategy|useSearchParams/);
-  assert.match(home, /mainlines\.map/);
+  assert.match(home, /mainlines\.resource\.data\.map/);
   assert.match(home, /href=\{`\/topics\/\$\{topic\.slug\}`\}/);
   assert.match(stocks, /fetchFormalStocks/);
   assert.match(stocks, /tp-stock-grid/);
@@ -105,8 +105,8 @@ test("V2 Home does not expose the legacy strategy candidate drilldown", async ()
 
 test("V2 Home keeps strategy semantics out of presentation copy", async () => {
   const home = await read("components/v2/TodayMarketPage.tsx");
-  assert.match(home, /mainlines\.map/);
-  assert.match(home, /GradeChip grade=\{topic\.grade\}/);
+  assert.match(home, /mainlines\.resource\.data\.map/);
+  assert.match(home, /GradeChip grade=\{topic\.grade \?\? "—"\}/);
   assert.match(home, /tp-home-topic-state/);
   assert.match(home, /tp-home-topic-detail/);
   assert.match(home, /只呈現研究入口，不在首頁完成推薦分析/);

@@ -145,3 +145,33 @@
   and release-readiness evidence. No deploy, Production database connection,
   Production mutation, G1/G2/G3, Canary, Scheduler, Lifecycle, Opportunity,
   provider authority, or contract redesign is authorized here.
+
+## 2026-08-13 TASK-FE-BE-TODAY-001/002 Today Market Mainlines Integration
+
+- TASK-FE-BE-TODAY-001 audited the Today Market/Home surface, existing
+  FastAPI read routes, Home/Topic/Lifecycle/Opportunity SHADOW contracts,
+  generated API declarations, frontend adapters, mocks, and local business
+  computation. The resulting contract-first plan keeps G1 failure fail-closed
+  as `UNAVAILABLE` and allows read-only frontend integration in parallel with
+  DATA-REF-001.
+- TASK-FE-BE-TODAY-002 connected Today Market `mainTopics` to the existing
+  `GET /api/v2/home` contract through the runtime `getHome()` client method
+  and generated `HomeResponse` / `HomeTopicCard` types. The new
+  `TodayMainlinesResource` preserves backend order and backend topic slugs;
+  no browser ranking, lifecycle inference, breadth calculation, or business
+  rule was added.
+- Removed hardcoded formal-path mainlines from `TodayMarketPage.tsx`. The
+  module now exposes `FORMAL`, explicit `PREVIEW`, and fail-closed
+  `UNAVAILABLE` states. API errors, empty `mainTopics`, G1/unready, synthetic,
+  temporary, and partial sources do not fall back to hardcoded cards.
+- Verification: frontend full suite 76/76 passed; focused Today suite 14/14
+  passed; API client 3/3 passed; TypeScript, targeted ESLint, frontend build,
+  OpenAPI gate/idempotence, `git diff --check`, and secret scan passed. Full
+  lint timed out at 124 seconds without diagnostics; targeted lint passed.
+- Shared-worktree reconciliation: the observed `9b97a38` commit was an
+  external DATA-REF reference bootstrap activation-order fix and did not
+  contain TODAY-002 files. `origin/main` later advanced to
+  `a5fba9319a177a5da9fb8123b265ed05e7ff9f6c`; no rebase or merge was performed.
+- No Production DB mutation, reference bootstrap action, provider authority,
+  Lifecycle/Opportunity rule, Scheduler, Canary, deploy, push, merge,
+  `NEXT_TASK`, or Data Governance HOLD change was performed for this workstream.
