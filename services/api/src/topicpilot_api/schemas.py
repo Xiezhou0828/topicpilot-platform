@@ -515,6 +515,118 @@ class RecommendationResponse(ApiModel):
     items: list[RecommendationItemResponse] = Field(default_factory=list)
 
 
+class OpportunityShadowTopic(ApiModel):
+    id: str
+    name: str
+    grade: str | None
+    lifecycle: str | None
+    strength: float | None
+
+
+class OpportunityShadowInstrument(ApiModel):
+    id: str
+    symbol: str
+    name: str
+
+
+class OpportunityShadowQualification(ApiModel):
+    qualification_class: str = Field(alias="class")
+    qualification_status: str = Field(alias="status")
+    reason_codes: list[str] = Field(alias="reasonCodes", default_factory=list)
+    exception_candidate: bool = Field(alias="exceptionCandidate")
+    policy_version: str | None = Field(alias="policyVersion")
+    parameter_version: str | None = Field(alias="parameterVersion")
+
+
+class OpportunityShadowCard(ApiModel):
+    opportunity_id: str = Field(alias="opportunityId")
+    opportunity_key: str = Field(alias="opportunityKey")
+    strategy_id: str = Field(alias="strategyId")
+    strategy_type: str = Field(alias="strategyType")
+    strategy_label_key: str = Field(alias="strategyLabelKey")
+    display_key: str = Field(alias="displayKey")
+    label_key: str = Field(alias="labelKey")
+    display_order: int = Field(alias="displayOrder")
+    rank: int
+    rank_score: float | None = Field(alias="rankScore")
+    ranking_status: str = Field(alias="rankingStatus")
+    instrument: OpportunityShadowInstrument
+    topic: OpportunityShadowTopic
+    instrument_id: str = Field(alias="instrumentId")
+    symbol: str
+    name: str
+    topic_id: str = Field(alias="topicId")
+    topic_name: str = Field(alias="topicName")
+    topic_grade: str | None = Field(alias="topicGrade")
+    topic_lifecycle: str | None = Field(alias="topicLifecycle")
+    topic_strength: float | None = Field(alias="topicStrength")
+    opportunity_state: str = Field(alias="opportunityState")
+    eligibility: str
+    status: str
+    qualification: OpportunityShadowQualification
+    qualification_class: str = Field(alias="qualificationClass")
+    qualification_status: str = Field(alias="qualificationStatus")
+    qualification_provenance: dict[str, Any] = Field(alias="qualificationProvenance")
+    confidence: str | None
+    confidence_basis: list[str] = Field(alias="confidenceBasis", default_factory=list)
+    entry_context: list[dict[str, Any]] = Field(alias="entryContext", default_factory=list)
+    support_context: list[dict[str, Any]] = Field(alias="supportContext", default_factory=list)
+    risk_context: list[dict[str, Any]] = Field(alias="riskContext", default_factory=list)
+    positive_factors: list[dict[str, Any]] = Field(alias="positiveFactors", default_factory=list)
+    waiting_factors: list[dict[str, Any]] = Field(alias="waitingFactors", default_factory=list)
+    risk_factors: list[dict[str, Any]] = Field(alias="riskFactors", default_factory=list)
+    exclusion_factors: list[dict[str, Any]] = Field(alias="exclusionFactors", default_factory=list)
+    exclusion_codes: list[str] = Field(alias="exclusionCodes", default_factory=list)
+    reason_codes: list[str] = Field(alias="reasonCodes", default_factory=list)
+    explanation: dict[str, Any] = Field(default_factory=dict)
+    evidence_coverage: dict[str, Any] = Field(alias="evidenceCoverage", default_factory=dict)
+    missing_evidence: list[str] = Field(alias="missingEvidence", default_factory=list)
+    policy_version: str = Field(alias="policyVersion")
+    parameter_version: str = Field(alias="parameterVersion")
+    ranking_profile_version: str | None = Field(alias="rankingProfileVersion")
+    as_of: date | None = Field(alias="asOf")
+    publication_status: str = Field(alias="publicationStatus")
+    data_status: str = Field(alias="dataStatus")
+    source_data_status: str | None = Field(alias="sourceDataStatus", default=None)
+    detail: dict[str, Any] | None = None
+
+
+class OpportunityShadowStrategySection(ApiModel):
+    strategy_id: str = Field(alias="strategyId")
+    strategy_type: str = Field(alias="strategyType")
+    strategy_label_key: str = Field(alias="strategyLabelKey")
+    fit: str
+    candidate_count: int = Field(alias="candidateCount")
+    backend_candidate_count: int = Field(alias="backendCandidateCount")
+    presented_count: int = Field(alias="presentedCount")
+    presentation_cap: int | None = Field(alias="presentationCap")
+    full_ranking_retained: bool = Field(alias="fullRankingRetained")
+    backend_ranking: list[dict[str, Any]] = Field(alias="backendRanking", default_factory=list)
+    opportunities: list[OpportunityShadowCard] = Field(default_factory=list)
+
+
+class OpportunityShadowResponse(ApiModel):
+    """Typed, shadow-only Opportunity read contract."""
+
+    contract_version: str = Field(alias="contractVersion")
+    status: str
+    publication_status: str = Field(alias="publicationStatus")
+    data_status: str = Field(alias="dataStatus")
+    as_of: date | None = Field(alias="asOf")
+    query: dict[str, Any] = Field(default_factory=dict)
+    topic: OpportunityShadowTopic | None = None
+    topic_id: str | None = Field(alias="topicId", default=None)
+    topic_name: str | None = Field(alias="topicName", default=None)
+    topic_grade: str | None = Field(alias="topicGrade", default=None)
+    topic_lifecycle: str | None = Field(alias="topicLifecycle", default=None)
+    topic_strength: float | None = Field(alias="topicStrength", default=None)
+    stock: OpportunityShadowInstrument | None = None
+    topics: list[dict[str, Any]] = Field(default_factory=list)
+    strategies: dict[str, OpportunityShadowStrategySection] = Field(default_factory=dict)
+    opportunities: list[OpportunityShadowCard] = Field(default_factory=list)
+    opportunity: OpportunityShadowCard | None = None
+
+
 class HomeMarketHealth(ApiModel):
     market: str
     status: str
