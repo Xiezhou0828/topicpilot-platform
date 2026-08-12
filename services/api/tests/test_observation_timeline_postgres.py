@@ -6,12 +6,13 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 import pytest
-from alembic import command
 from alembic.config import Config
 from alembic.script import ScriptDirectory
 from sqlalchemy import text
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
+
+from alembic import command
 
 # SQL statements are intentionally kept close to the assertion they exercise.
 # ruff: noqa: E501
