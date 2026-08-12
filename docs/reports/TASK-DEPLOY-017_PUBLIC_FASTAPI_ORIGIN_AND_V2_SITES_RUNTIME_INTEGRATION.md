@@ -258,7 +258,7 @@ deployment credentials through the existing protected workflow. Then resume
 TASK-DEPLOY-017 at public API health checks; do not change the frontend data
 boundary or use a tunnel.
 
-## Fixed Final Output
+## Initial Audit Fixed Output (superseded by the continuation below)
 
 ```text
 PUBLIC_FASTAPI_ORIGIN = BLOCKED
@@ -274,6 +274,72 @@ V2_PUBLIC_DATA_CHAIN = NOT_READY
 NEXT_TASK_MODIFIED = NO
 ```
 
+## 18. Continuation after user-provisioned Render/Neon resources
+
+The user later confirmed the existing Render service and Neon project and
+provided the public origin `https://topicpilot-api.onrender.com`. The source
+revision containing the V2 backend and formal-only startup was pushed to
+`main`; the service subsequently exposed the V2 OpenAPI routes. No duplicate
+service or tunnel was created.
+
+### Public API evidence
+
+| Request | Result |
+|---|---|
+| `/healthz` | 200, `{"status":"ok"}` |
+| `/readyz` | 200, `{"status":"ready"}` |
+| `/openapi.json` | 200; `/api/v2/stocks`, `/api/v2/stocks/{symbol}`, `/api/v2/topics`, `/api/v2/topics/{slug}`, `/api/v2/topic-snapshots`, and `/api/v2/home` present |
+| `/api/v2/topics?limit=200&offset=0` | 200; `total=0`, `items.length=0` |
+| `/api/v2/stocks?limit=1000&offset=0` | 200; `total=0`, `items.length=0` |
+| `/api/v2/stocks/2330`, `/api/v2/stocks/6806` | 404 because the Neon read model has no formal identities yet |
+| `/api/v2/topics/ai-server` | 404 because the Neon read model has no formal topic identity yet |
+
+An OPTIONS request from the exact Sites origin returned 200 with
+`Access-Control-Allow-Origin: https://topicpilot-platform.game0962046460.chatgpt.site`,
+`Access-Control-Allow-Methods: GET`, and no wildcard or credentials. The
+production browser loaded `/topics` and `/stocks` from the configured origin
+without a CORS console error. The pages intentionally rendered formal empty
+states (`0 個題材`, `0/0 檔`) rather than Preview rows.
+
+### Sites runtime evidence
+
+The Sites production environment is now:
+
+```text
+NEXT_PUBLIC_API_BASE_URL=https://topicpilot-api.onrender.com
+NEXT_PUBLIC_ENABLE_DEMO_FALLBACK=false
+```
+
+The existing public frontend version was redeployed after the environment
+revision. Home and Favorites smoke tests load without a route crash. Existing
+presentation-only content on those routes was not redesigned.
+
+### Formal data boundary
+
+The V2 schema is migrated and the API is connected to Neon, but the production
+read model is empty. No approved formal 130-topic/507-stock artifact is present
+in this repository, and `fixtures/demo` was not imported. Therefore no detail
+identity can yet be claimed for 2330, 6806, or any of the 130 topics. The next
+data action is an explicitly approved operator import from the private formal
+source, followed by count, lineage, and detail reconciliation; it must not be
+implemented as Web Service startup or replaced by the demo importer.
+
+## Current Fixed Final Output
+
+```text
+PUBLIC_FASTAPI_ORIGIN = READY
+PUBLIC_FASTAPI_HTTPS = PASS
+PUBLIC_FASTAPI_CORS = PASS
+SITES_API_BASE_CONFIGURED = YES
+TOPICS_PRODUCTION_FORMAL_DATA = NOT_READY
+ALL_130_TOPIC_IDENTITIES_PUBLICLY_VISIBLE = FAIL
+STOCKS_PRODUCTION_FORMAL_DATA = NOT_READY
+ALL_507_STOCK_IDENTITIES_PUBLICLY_VISIBLE = FAIL
+LEGACY_PREVIEW_FALLBACK_IN_PRODUCTION = REMOVED
+V2_PUBLIC_DATA_CHAIN = PARTIAL
+NEXT_TASK_MODIFIED = NO
+```
+
 ## Modified / Created / Validation
 
 - **Created:** this report only.
@@ -283,5 +349,6 @@ NEXT_TASK_MODIFIED = NO
 - **Validation:** public Sites environment read, public browser checks,
   candidate Render route checks, GitHub environment/workflow checks, targeted
   frontend tests/lint/typecheck/build, targeted backend tests, and diff check.
-- **Open blocker:** public API/database/deployment ownership and secrets are
-  unavailable.
+- **Open:** the public API/database wiring is live, but the private formal
+  identity/read-model artifact and approved import operator are still absent;
+  130/507 acceptance therefore remains intentionally open.

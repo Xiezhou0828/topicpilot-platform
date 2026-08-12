@@ -375,7 +375,7 @@ protected GitHub environments through the existing release process. Start with
 public `/readyz` and formal count/detail/CORS checks; only after those pass set
 the Sites API base and redeploy the same validated frontend artifact.
 
-## Fixed Final Output
+## Initial Audit Fixed Output (superseded by the continuation below)
 
 ```text
 PRODUCTION_ARCHITECTURE_DECISION = FROZEN
@@ -399,6 +399,76 @@ V1_RETIRED = NO
 NEXT_TASK_MODIFIED = NO
 ```
 
+## 27. Continuation after user-provisioned Render/Neon resources
+
+The user subsequently confirmed that the Neon project and Render service were
+created and supplied the public API origin:
+`https://topicpilot-api.onrender.com`. This continuation used the existing
+service and did not repeat Render/Neon login or create a duplicate service.
+
+Repository revision `b8abba2` (followed by `822195f` for the image startup
+guard) was pushed to `main`. Render then exposed the V2 OpenAPI routes. The
+public checks at that point were:
+
+| Check | Result | Evidence |
+|---|---|---|
+| `GET /healthz` | 200 | `{"status":"ok"}` |
+| `GET /readyz` | 200 | `{"status":"ready"}`; pooled runtime DB reachable |
+| `GET /openapi.json` | 200 | six `/api/v2/*` paths present |
+| `GET /api/v2/topics?limit=200&offset=0` | 200 | formal read model response, `total=0`, `items=0` |
+| `GET /api/v2/stocks?limit=1000&offset=0` | 200 | formal read model response, `total=0`, `items=0` |
+| `/api/v2/stocks/2330`, `/api/v2/stocks/6806` | 404 | identities are not yet in this Neon project |
+| `/api/v2/topics/ai-server` | 404 | formal topic identity is not yet in this Neon project |
+| CORS preflight | 200 | exact Sites origin returned; `GET` only; no wildcard/credentials |
+
+The initial 500 responses were caused by the manually created service not
+running the additive Alembic startup command. The checked-in Docker image now
+runs `alembic upgrade head` before Uvicorn as a safety net when a manual Render
+Start Command override is absent. It remains formal-only: no `topicpilot-import`,
+demo fixture, reset, or recreate path is present.
+
+The public V2 schema is therefore ready, but the formal dataset is not. The
+repository contains no approved 130-topic/507-stock production artifact; the
+checked-in `fixtures/demo` bundle is synthetic and was not imported. No
+production migration/import was executed from this session and no secret was
+printed or committed.
+
+Sites production environment revision 2 now contains:
+
+```text
+NEXT_PUBLIC_API_BASE_URL=https://topicpilot-api.onrender.com
+NEXT_PUBLIC_ENABLE_DEMO_FALLBACK=false
+```
+
+The existing public Sites version was redeployed. Browser smoke checks showed
+`/topics` with `0 個題材` and `/stocks` with `0/0 檔`, with no Preview rows and
+no CORS console error. Home and Favorites still load without a crash; their
+pre-existing presentation-only content was not changed in this task.
+
+## Current Fixed Final Output
+
+```text
+PRODUCTION_ARCHITECTURE_DECISION = FROZEN
+PRODUCTION_DB_PROVIDER = NEON
+PRODUCTION_DB = PARTIAL
+PRODUCTION_FASTAPI_PROVIDER = RENDER
+PRODUCTION_FASTAPI = PARTIAL
+PRODUCTION_FASTAPI_HTTPS = PASS
+PRODUCTION_CORS = PASS
+POST_CLOSE_RENDER_CRON = BLOCKED
+TAISHIN_WINDOWS_RUNTIME = PRESERVED
+GITHUB_DEPLOYMENT_CONTROL_PLANE = BLOCKED
+SITES_API_BASE = CONFIGURED
+PRODUCTION_PREVIEW_FALLBACK = REMOVED
+TOPICS_DB_API_UI_RECONCILIATION = PARTIAL (0/130; formal artifact absent)
+STOCKS_DB_API_UI_RECONCILIATION = PARTIAL (0/507; formal artifact absent)
+V2_PRODUCTION_DATA_CHAIN = PARTIAL
+LIFECYCLE_PRODUCTION_ACTIVATION = NO
+OPPORTUNITY_PRODUCTION_ACTIVATION = NO
+V1_RETIRED = NO
+NEXT_TASK_MODIFIED = NO
+```
+
 ## Modified / Created / Open
 
 - **Created:** `docs/architecture/TOPICPILOT_V2_PRODUCTION_DATA_ARCHITECTURE.md`;
@@ -409,6 +479,10 @@ NEXT_TASK_MODIFIED = NO
   register, and `.github/workflows/deploy.yml` acceptance gate.
 - **Not modified:** UI, business rules, schemas, migrations, production data,
   Lifecycle, Opportunity/Recommendation, Favorites, or `NEXT_TASK`.
-- **Open:** external Neon/Render/GitHub/Sites access and owner decisions above.
+- **Open:** formal 130/507 production artifact and approved import execution;
+  GitHub protected deployment environments; Render Cron/worker ownership;
+  and production backup/restore evidence. The public API and Sites wiring are
+  now present but intentionally remain partial until the formal dataset is
+  imported and reconciled.
 - **Worklog:** `AI_WORKLOG.md` is absent in V2 and is not created without an
   identified owner and migration plan, per repository governance.

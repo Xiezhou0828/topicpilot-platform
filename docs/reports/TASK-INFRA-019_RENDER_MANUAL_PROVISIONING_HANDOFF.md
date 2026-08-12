@@ -5,10 +5,10 @@
 **External UI operation:** not performed by this task  
 **Production claim:** no Render service has been deployed by this task
 
-This handoff converts the remaining manual Render work into a safe, repeatable
-UI procedure. It does not repeat the blocked external production audit, does
-not attempt Render/Neon login, and does not claim that a public API origin
-exists.
+This handoff converted the remaining manual Render work into a safe, repeatable
+UI procedure. The user has since completed that UI step. The original handoff
+output below is retained as historical evidence; the post-provisioning status
+and current next action are recorded in the continuation section at the end.
 
 ## Repository audit
 
@@ -247,7 +247,7 @@ set Sites `NEXT_PUBLIC_API_BASE_URL` to the exact verified Render HTTPS origin,
 save a new version, redeploy, and then verify `/topics` and `/stocks` in the
 real production browser.
 
-## G. Fixed final output
+## G. Initial fixed final output (historical; superseded below)
 
 ```text
 RENDER_REPOSITORY_CONNECTED = USER_CONFIRMED
@@ -262,6 +262,53 @@ FASTAPI_ENTRYPOINT_VERIFIED = YES
 READY_ENDPOINT_VERIFIED_IN_CODE = YES
 SAFE_TO_PRESS_DEPLOY = YES
 EXACT_NEXT_USER_ACTION = In Render, create topicpilot-api with the audited settings, add pooled DATABASE_URL and direct MIGRATION_DATABASE_URL as secrets, add the exact Sites origin to TOPICPILOT_CORS_ORIGINS, then press Deploy Web Service.
+```
+
+## H. Post-provisioning continuation
+
+The user confirmed that `topicpilot-api` was created and deployed at
+`https://topicpilot-api.onrender.com`, with Neon pooled runtime and direct
+migration URLs plus the exact Sites CORS origin. The service initially served
+the old image; after the V2 backend revision was pushed to `main`, the public
+OpenAPI exposed the V2 routes. A formal-only Docker startup guard now runs the
+additive Alembic upgrade before Uvicorn even when the manually created service
+does not copy the Blueprint command.
+
+Current public results:
+
+```text
+/healthz = 200
+/readyz = 200
+/openapi.json = 200 (V2 routes present)
+/api/v2/topics = 200, total=0
+/api/v2/stocks = 200, total=0
+OPTIONS /api/v2/topics = 200, exact Sites origin allowed
+```
+
+The Neon schema is therefore reachable and migrated, but the formal
+130-topic/507-stock artifact has not been imported. No demo fixture was used.
+Sites production now has `NEXT_PUBLIC_API_BASE_URL` set to the Render origin
+and `NEXT_PUBLIC_ENABLE_DEMO_FALLBACK=false`, and the public frontend was
+redeployed. The pages correctly show empty formal states rather than Preview
+rows. The remaining action is an approved operator import from the private
+formal source, followed by count/detail reconciliation; this handoff does not
+execute that production write.
+
+## Current fixed final output
+
+```text
+RENDER_REPOSITORY_CONNECTED = USER_CONFIRMED
+NEON_PROJECT_CREATED = USER_CONFIRMED
+RENDER_SERVICE_CREATED = USER_CONFIRMED
+RENDER_PUBLIC_ORIGIN = https://topicpilot-api.onrender.com
+RENDER_SETTINGS_AUDITED = YES
+PRODUCTION_STARTUP_DEMO_FREE = YES
+DATABASE_URL_RUNTIME_MODE = POOLED
+MIGRATION_CONNECTION_MODE = DIRECT
+FASTAPI_ENTRYPOINT_VERIFIED = YES
+READY_ENDPOINT_VERIFIED_IN_CODE = YES
+SAFE_TO_PRESS_DEPLOY = YES (already deployed)
+EXACT_NEXT_USER_ACTION = Supply the approved formal 130-topic/507-stock artifact to the protected import operator, run the non-demo import, then recheck the public V2 counts and detail identities.
 ```
 
 ## Scope and non-changes
