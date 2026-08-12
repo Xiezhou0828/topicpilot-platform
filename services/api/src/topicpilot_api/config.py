@@ -17,8 +17,16 @@ class Settings(BaseSettings):
     )
 
     database_url: str = Field(
-        default="postgresql+psycopg://topicpilot:topicpilot@localhost:5432/topicpilot",
+        default="postgresql+psycopg://topicpilot:topicpilot_local_only@localhost:5432/topicpilot",
         validation_alias="DATABASE_URL",
+    )
+    # Neon pooled connections are appropriate for the long-lived API process,
+    # while Alembic should use a direct endpoint for migration DDL. The
+    # migration setting is optional for local/legacy setups and falls back to
+    # DATABASE_URL when it is not supplied.
+    migration_database_url: str | None = Field(
+        default=None,
+        validation_alias="MIGRATION_DATABASE_URL",
     )
     cors_origins: Annotated[tuple[str, ...], NoDecode] = (
         "http://localhost:3000",

@@ -38,6 +38,9 @@ def clean_database(postgres_engine: Engine) -> Engine:
             text(
                 """
                 TRUNCATE TABLE
+                    news_topic_relations,
+                    news_stock_relations,
+                    news_articles,
                     data_quality_events,
                     strategy_performance,
                     strategy_candidates,
@@ -59,6 +62,11 @@ def clean_database(postgres_engine: Engine) -> Engine:
 
 
 @pytest.fixture
-def db_session(clean_database: Engine) -> Generator[Session, None, None]:
-    with Session(clean_database, expire_on_commit=False) as session:
-        yield session
+def db_session(postgres_engine: Engine) -> Generator[Session, None, None]:
+    with postgres_engine.connect() as connection:
+        transaction = connection.begin()
+        try:
+            with Session(connection, expire_on_commit=False) as session:
+                yield session
+        finally:
+            transaction.rollback()

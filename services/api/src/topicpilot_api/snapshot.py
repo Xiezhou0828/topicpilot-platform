@@ -33,7 +33,7 @@ def assemble_snapshot(session: Session, run: IngestionRun) -> dict[str, Any]:
         session.execute(
             text(
                 """
-            SELECT * FROM market_snapshots
+            SELECT * FROM public.market_snapshots
             WHERE ingestion_run_id = :run_id AND data_date = :data_date
             ORDER BY market LIMIT 1
             """
@@ -51,8 +51,8 @@ def assemble_snapshot(session: Session, run: IngestionRun) -> dict[str, Any]:
                     s.id, s.code, s.name, s.market, s.industry,
                     ss.price, ss.change_pct, ss.volume, ss.ma5, ss.ma20, ss.rs20,
                     ss.technical_state, ss.chip_score, ss.data_freshness, ss.metadata_json
-                FROM stocks s
-                LEFT JOIN stock_snapshots ss
+                FROM public.stocks s
+                LEFT JOIN public.stock_snapshots ss
                   ON ss.stock_id = s.id
                  AND ss.ingestion_run_id = :run_id
                  AND ss.data_date = :data_date
@@ -72,8 +72,8 @@ def assemble_snapshot(session: Session, run: IngestionRun) -> dict[str, Any]:
                     ts.score, ts.grade, ts.strength_state, ts.advance_count,
                     ts.decline_count, ts.unchanged_count, ts.unavailable_count,
                     ts.coverage_pct
-                FROM topics t
-                LEFT JOIN topic_snapshots ts
+                FROM public.topics t
+                LEFT JOIN public.topic_snapshots ts
                   ON ts.topic_id = t.id
                  AND ts.ingestion_run_id = :run_id
                  AND ts.data_date = :data_date
@@ -92,9 +92,9 @@ def assemble_snapshot(session: Session, run: IngestionRun) -> dict[str, Any]:
                     s.id AS stock_id, s.code AS stock_code, s.name AS stock_name,
                     t.id AS topic_id, t.slug AS topic_slug, t.name AS topic_name,
                     t.group_name, r.relation_type, r.weight, r.evidence_summary
-                FROM stock_topic_relations r
-                JOIN stocks s ON s.id = r.stock_id
-                JOIN topics t ON t.id = r.topic_id
+                FROM public.stock_topic_relations r
+                JOIN public.stocks s ON s.id = r.stock_id
+                JOIN public.topics t ON t.id = r.topic_id
                 ORDER BY s.code, r.relation_type, t.slug
                 """
             )
@@ -106,9 +106,9 @@ def assemble_snapshot(session: Session, run: IngestionRun) -> dict[str, Any]:
                 """
                 SELECT p.slug AS parent_slug, p.name AS parent_name,
                        c.slug AS child_slug, c.name AS child_name, h.weight
-                FROM topic_hierarchy h
-                JOIN topics p ON p.id = h.parent_topic_id
-                JOIN topics c ON c.id = h.child_topic_id
+                FROM public.topic_hierarchy h
+                JOIN public.topics p ON p.id = h.parent_topic_id
+                JOIN public.topics c ON c.id = h.child_topic_id
                 WHERE h.enabled = true
                 ORDER BY p.slug, c.slug
                 """
@@ -120,8 +120,8 @@ def assemble_snapshot(session: Session, run: IngestionRun) -> dict[str, Any]:
             text(
                 """
                 SELECT t.slug, t.name, ts.data_date, ts.score, ts.grade, ts.strength_state
-                FROM topic_snapshots ts
-                JOIN topics t ON t.id = ts.topic_id
+                FROM public.topic_snapshots ts
+                JOIN public.topics t ON t.id = ts.topic_id
                 WHERE ts.ingestion_run_id = :run_id
                 ORDER BY t.slug, ts.data_date
                 """
@@ -133,7 +133,7 @@ def assemble_snapshot(session: Session, run: IngestionRun) -> dict[str, Any]:
         session.execute(
             text(
                 """
-                SELECT * FROM strategy_runs
+                SELECT * FROM public.strategy_runs
                 WHERE ingestion_run_id = :run_id AND data_date = :data_date
                 ORDER BY strategy_key
                 """
@@ -148,9 +148,9 @@ def assemble_snapshot(session: Session, run: IngestionRun) -> dict[str, Any]:
                 SELECT sr.strategy_key, sr.model_version, sr.data_date, sc.rank,
                        s.code, s.name, sc.score, sc.reason, sc.price, sc.selected,
                        sc.trigger_price, sc.support_price, sc.invalidation_price
-                FROM strategy_candidates sc
-                JOIN strategy_runs sr ON sr.id = sc.strategy_run_id
-                JOIN stocks s ON s.id = sc.stock_id
+                FROM public.strategy_candidates sc
+                JOIN public.strategy_runs sr ON sr.id = sc.strategy_run_id
+                JOIN public.stocks s ON s.id = sc.stock_id
                 WHERE sr.ingestion_run_id = :run_id AND sr.data_date = :data_date
                 ORDER BY sr.strategy_key, sc.rank, s.code
                 """
@@ -165,8 +165,8 @@ def assemble_snapshot(session: Session, run: IngestionRun) -> dict[str, Any]:
                 SELECT sr.strategy_key, sr.name, sr.model_version, sr.data_date,
                        sr.selected_count, sp.horizon, sp.status, sp.sample_count,
                        sp.win_rate_pct, sp.average_return_pct, sp.reason
-                FROM strategy_performance sp
-                JOIN strategy_runs sr ON sr.id = sp.strategy_run_id
+                FROM public.strategy_performance sp
+                JOIN public.strategy_runs sr ON sr.id = sp.strategy_run_id
                 WHERE sr.ingestion_run_id = :run_id AND sr.data_date = :data_date
                 ORDER BY sr.strategy_key, sp.horizon
                 """

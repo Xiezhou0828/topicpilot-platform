@@ -109,6 +109,83 @@ class StockTopicRelation(Base):
     metadata_json: Mapped[dict[str, Any]] = jsonb_column(dict)
 
 
+class NewsArticle(Base):
+    __tablename__ = "news_articles"
+    __table_args__ = (
+        UniqueConstraint("article_key", name="uq_news_article_key"),
+        CheckConstraint(
+            "classification IN ('PUBLIC_SYNTHETIC', 'PRIVATE_FORMAL')",
+            name="ck_news_article_classification",
+        ),
+        Index("ix_news_articles_published_at", "published_at"),
+        Index("ix_news_articles_source_name_published_at", "source_name", "published_at"),
+    )
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    article_key: Mapped[str] = mapped_column(String(200), nullable=False)
+    source_name: Mapped[str] = mapped_column(String(160), nullable=False)
+    source_url: Mapped[str | None] = mapped_column(Text)
+    title: Mapped[str] = mapped_column(String(500), nullable=False)
+    published_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    retrieved_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, server_default=func.now()
+    )
+    language: Mapped[str | None] = mapped_column(String(16))
+    content_hash: Mapped[str | None] = mapped_column(String(64))
+    classification: Mapped[str] = mapped_column(String(64), nullable=False)
+    metadata_json: Mapped[dict[str, Any]] = jsonb_column(dict)
+
+
+class NewsStockRelation(Base):
+    __tablename__ = "news_stock_relations"
+    __table_args__ = (
+        UniqueConstraint(
+            "news_article_id",
+            "stock_id",
+            "relation_type",
+            name="uq_news_stock_relation",
+        ),
+        Index("ix_news_stock_relations_stock_article", "stock_id", "news_article_id"),
+    )
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    news_article_id: Mapped[int] = mapped_column(
+        ForeignKey("news_articles.id", ondelete="CASCADE"), nullable=False
+    )
+    stock_id: Mapped[int] = mapped_column(
+        ForeignKey("stocks.id", ondelete="RESTRICT"), nullable=False
+    )
+    relation_type: Mapped[str] = mapped_column(String(32), nullable=False)
+    relevance_score: Mapped[Decimal | None] = mapped_column(Numeric(12, 4))
+    evidence_summary: Mapped[str | None] = mapped_column(Text)
+    metadata_json: Mapped[dict[str, Any]] = jsonb_column(dict)
+
+
+class NewsTopicRelation(Base):
+    __tablename__ = "news_topic_relations"
+    __table_args__ = (
+        UniqueConstraint(
+            "news_article_id",
+            "topic_id",
+            "relation_type",
+            name="uq_news_topic_relation",
+        ),
+        Index("ix_news_topic_relations_topic_article", "topic_id", "news_article_id"),
+    )
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    news_article_id: Mapped[int] = mapped_column(
+        ForeignKey("news_articles.id", ondelete="CASCADE"), nullable=False
+    )
+    topic_id: Mapped[int] = mapped_column(
+        ForeignKey("topics.id", ondelete="RESTRICT"), nullable=False
+    )
+    relation_type: Mapped[str] = mapped_column(String(32), nullable=False)
+    relevance_score: Mapped[Decimal | None] = mapped_column(Numeric(12, 4))
+    evidence_summary: Mapped[str | None] = mapped_column(Text)
+    metadata_json: Mapped[dict[str, Any]] = jsonb_column(dict)
+
+
 class IngestionRun(Base):
     __tablename__ = "ingestion_runs"
 
@@ -312,3 +389,11 @@ class DataQualityEvent(Base):
     entity_type: Mapped[str | None] = mapped_column(String(64))
     entity_key: Mapped[str | None] = mapped_column(String(160))
     metadata_json: Mapped[dict[str, Any]] = jsonb_column(dict)
+
+
+# Declarative models are compatibility/public-owned. Set the schema on the
+# already-declared tables as well as on the metadata default so generated ORM
+# SQL cannot resolve through PostgreSQL search_path into topicpilot.
+for _table in Base.metadata.tables.values():
+    if _table.schema is None:
+        _table.schema = "public"

@@ -68,7 +68,7 @@ jobs:
           node-version: "22.13.0"
           cache: npm
           cache-dependency-path: apps/web/package-lock.json
-      - name: Install and build
+      - name: Require API base is configured
         env:
           NEXT_PUBLIC_API_BASE_URL: ${{ vars.PUBLIC_API_BASE_URL }}
         run: |
@@ -76,8 +76,97 @@ jobs:
             echo "PUBLIC_API_BASE_URL is not configured in production-web." >&2
             exit 1
           fi
+      - name: Verify API, targeted tests, and frontend build
+        env:
+          PUBLIC_API_BASE_URL: ${{ vars.PUBLIC_API_BASE_URL }}
+          NEXT_PUBLIC_API_BASE_URL: ${{ vars.PUBLIC_API_BASE_URL }}
+          PUBLIC_SITE_ORIGIN: https://topicpilot-platform.game0962046460.chatgpt.site
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from urllib.error import HTTPError, URLError
+          from urllib.parse import quote
+          from urllib.request import Request, urlopen
+
+          base = os.environ["PUBLIC_API_BASE_URL"].rstrip("/")
+          site_origin = os.environ["PUBLIC_SITE_ORIGIN"]
+
+          def request(path: str, *, method: str = "GET", headers: dict[str, str] | None = None):
+              req = Request(base + path, method=method, headers=headers or {})
+              try:
+                  with urlopen(req, timeout=30) as response:
+                      response_headers = {
+                          key.lower(): value for key, value in response.headers.items()
+                      }
+                      return response.status, response_headers, response.read()
+              except HTTPError as exc:
+                  body = exc.read().decode("utf-8", errors="replace")
+                  raise SystemExit(f"{method} {path} returned HTTP {exc.code}: {body[:300]}")
+              except URLError as exc:
+                  raise SystemExit(f"{method} {path} could not be reached: {exc.reason}")
+
+          def json_get(path: str):
+              status, headers, body = request(path)
+              if status != 200:
+                  raise SystemExit(f"GET {path} returned HTTP {status}")
+              try:
+                  return json.loads(body)
+              except json.JSONDecodeError as exc:
+                  raise SystemExit(f"GET {path} did not return JSON") from exc
+
+          ready = json_get("/readyz")
+          if ready.get("status") != "ready":
+              raise SystemExit(f"/readyz is not ready: {ready!r}")
+          json_get("/openapi.json")
+
+          topics = json_get("/api/v2/topics?limit=200&offset=0")
+          if topics.get("total") != 130 or len(topics.get("items", [])) != 130:
+              raise SystemExit(
+                  f"formal topic contract mismatch: total={topics.get('total')} "
+                  f"items={len(topics.get('items', []))}"
+              )
+          topic_items = topics["items"]
+          slug = topic_items[0].get("slug") if topic_items else None
+          if not slug:
+              raise SystemExit("formal topic response has no detail slug")
+          json_get("/api/v2/topics/" + quote(slug, safe=""))
+
+          stocks = json_get("/api/v2/stocks?limit=1000&offset=0")
+          if stocks.get("total") != 507 or len(stocks.get("items", [])) != 507:
+              raise SystemExit(
+                  f"formal stock contract mismatch: total={stocks.get('total')} "
+                  f"items={len(stocks.get('items', []))}"
+              )
+          details = {str(item.get("symbol")): item for item in stocks["items"]}
+          for symbol in ("2330", "6806"):
+              if symbol not in details:
+                  raise SystemExit(f"formal stock universe is missing {symbol}")
+              detail = json_get("/api/v2/stocks/" + symbol)
+              if str(detail.get("symbol")) != symbol:
+                  raise SystemExit(f"stock detail identity mismatch for {symbol}")
+
+          status, headers, _ = request(
+              "/api/v2/topics",
+              method="OPTIONS",
+              headers={
+                  "Origin": site_origin,
+                  "Access-Control-Request-Method": "GET",
+              },
+          )
+          if status != 200 or headers.get("access-control-allow-origin") != site_origin:
+              raise SystemExit(
+                  "production CORS preflight failed: "
+                  f"status={status} allow-origin={headers.get('access-control-allow-origin')!r}"
+              )
+          print("Formal API and production CORS checks passed.")
+          PY
           npm ci --prefix apps/web
-          npm test --prefix apps/web
+          node --test apps/web/tests/topic-catalog-formal-integration.test.mjs \
+            apps/web/tests/stock-screener.test.mjs \
+            apps/web/tests/enterprise-contract.test.mjs
+          npm run lint --prefix apps/web -- --no-cache
+          (cd apps/web && npx tsc --noEmit)
           npm run build --prefix apps/web
       - name: Upload validated Sites build
         uses: actions/upload-artifact@v4

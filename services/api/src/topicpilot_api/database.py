@@ -3,20 +3,23 @@ from __future__ import annotations
 from collections.abc import Generator
 from functools import lru_cache
 
-from sqlalchemy import Engine, create_engine
+from sqlalchemy import Engine, MetaData, create_engine
 from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
 
 from topicpilot_api.config import get_settings
 
 
 class Base(DeclarativeBase):
-    pass
+    # Compatibility/demo ORM owns the legacy public schema explicitly. V2 ORM
+    # models use their separate Base with schema="topicpilot".
+    metadata = MetaData(schema="public")
 
 
 @lru_cache
 def get_engine() -> Engine:
+    url = get_settings().database_url
     return create_engine(
-        get_settings().database_url,
+        url,
         pool_pre_ping=True,
         pool_recycle=1800,
     )

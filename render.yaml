@@ -3,20 +3,18 @@ services:
     name: topicpilot-api
     runtime: docker
     plan: free
-    region: singapore
+    region: oregon
     dockerfilePath: ./infra/docker/api.Dockerfile
     dockerContext: .
-    dockerCommand: /bin/sh -c 'alembic upgrade head && topicpilot-import "$TOPICPILOT_BUNDLE_PATH" --schema /fixtures/schema/enterprise_bundle.v1.schema.json && exec uvicorn topicpilot_api.main:app --host 0.0.0.0 --port "$PORT" --proxy-headers'
-    healthCheckPath: /healthz
+    dockerCommand: /bin/sh -c 'alembic upgrade head && exec uvicorn topicpilot_api.main:app --host 0.0.0.0 --port "$PORT" --proxy-headers'
+    healthCheckPath: /readyz
     autoDeployTrigger: off
     maxShutdownDelaySeconds: 30
     envVars:
       - key: DATABASE_URL
         sync: false
-      - key: TOPICPILOT_DEMO_MODE
-        value: "true"
-      - key: TOPICPILOT_BUNDLE_PATH
-        value: /fixtures/demo
+      - key: MIGRATION_DATABASE_URL
+        sync: false
       - key: TOPICPILOT_FRESHNESS_DAYS
         value: "3"
       - key: TOPICPILOT_LOG_LEVEL
@@ -25,3 +23,34 @@ services:
         sync: false
       - key: UVICORN_APP
         value: topicpilot_api.main:app
+
+  - type: worker
+    name: topicpilot-live
+    runtime: docker
+    plan: starter
+    region: oregon
+    dockerfilePath: ./infra/docker/api.Dockerfile
+    dockerContext: .
+    dockerCommand: /bin/sh -c 'alembic upgrade head && exec topicpilot-live'
+    autoDeployTrigger: off
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: MIGRATION_DATABASE_URL
+        sync: false
+      - key: TOPICPILOT_TA_API_USER
+        sync: false
+      - key: TOPICPILOT_TA_API_PASSWORD
+        sync: false
+      - key: TOPICPILOT_TA_API_TIMEOUT
+        value: "30"
+      - key: TOPICPILOT_LIVE_TIMEZONE
+        value: Asia/Taipei
+      - key: TOPICPILOT_LIVE_POLL_INTERVAL_SECONDS
+        value: "300"
+      - key: TOPICPILOT_LIVE_PROVIDER_TIMEOUT_SECONDS
+        value: "30"
+      - key: TOPICPILOT_LIVE_MAX_RETRIES
+        value: "2"
+      - key: TOPICPILOT_LIVE_INTERVAL
+        value: 5m
