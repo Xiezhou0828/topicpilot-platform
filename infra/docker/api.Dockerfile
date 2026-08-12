@@ -28,4 +28,7 @@ USER topicpilot
 
 EXPOSE 8000
 
-CMD ["/bin/sh", "-c", "exec uvicorn ${UVICORN_APP} --host 0.0.0.0 --port ${PORT:-8000} --proxy-headers"]
+# Keep the image safe when a manually-created Render service does not copy the
+# Blueprint start command.  Alembic upgrades are additive/idempotent; no
+# importer, fixture seed, reset, or recreate path is part of production start.
+CMD ["/bin/sh", "-c", "alembic upgrade head && exec uvicorn ${UVICORN_APP} --host 0.0.0.0 --port ${PORT:-8000} --proxy-headers"]
