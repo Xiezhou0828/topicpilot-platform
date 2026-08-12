@@ -77,6 +77,63 @@ inbound traffic and take roughly one minute to spin back up. The frontend must:
 2. Retry only network/5xx failures with bounded backoff.
 3. Stop after the documented UI timeout and show the formal unavailable/error
    state; do not switch to a synthetic identity bundle in production.
+
+## Formal daily close operation
+
+The repository-side one-shot command is:
+
+```console
+topicpilot-live --mode post-close --once
+```
+
+For an authorized recovery or backfill, supply exactly one ISO trading date:
+
+```console
+topicpilot-live --mode post-close --once --run-date YYYY-MM-DD
+```
+
+The job uses official TWSE daily data for TPE and official TPEx daily data for
+TWO, writes through the existing canonical observation pipeline, then records
+separate priced/covered coverage and `downstreamReady` in the `POST_CLOSE`
+collector-run metadata. Exit zero is not sufficient acceptance evidence:
+operators must confirm the run is `SUCCESS`,
+`dailyMarketReconciliation.status=READY`, `coveredCount=expectedCount`,
+`unexplainedMissingCount=0`, and `downstreamReady=true`. An approved
+`SUSPENDED`, `NO_TRADE`, or `EXCHANGE_CONFIRMED_NO_DATA` row may make the run
+covered while its close remains null; it must never be zero-filled or
+forward-filled. `PARTIAL`, `FAILED`, and `MARKET_CLOSED` must not trigger
+Lifecycle processing. Re-running the same date is safe and reuses canonical
+idempotency keys.
+
+The checked-in Render blueprint still has no approved Cron resource. Until an
+operator provisions and verifies the scheduler, production scheduling remains
+`WAITING/BLOCKED`; the CLI is the supported manual execution boundary.
+
+## TASK-OPS-023 activation status
+
+The public read-only preflight currently passes `/healthz` and `/readyz` and
+confirms the formal identity totals (2 markets, 507 instruments, 130 topics,
+848 relations). It does not prove daily readiness: live status is `NO_RUN` and
+`/api/v2/topic-snapshots?latest=true` is empty. The production Alembic revision
+and combined 0027 migration status cannot be verified without protected Neon access.
+
+Do not run the canary, write a snapshot, or activate a scheduler until an
+operator has confirmed the migration lineage and supplied the protected
+runtime. The required acceptance remains `READY`, 100% covered, zero
+unexplained/date/duplicate errors, and `downstreamReady=true`. The complete
+blocked handoff is in
+`docs/reports/TASK-OPS-023_V2_DAILY_CLOSE_PRODUCTION_ACTIVATION_REPORT.md`.
+
+The parallel TASK-BE-021 Lifecycle implementation is shadow-only and remains
+data-gated. Its engine tests pass, but no production shadow result may be
+claimed until a READY daily market run and topic snapshot exist.
+
+Release note: repository reconciliation resolved the historical `0025` collision
+by preserving DATA-022/022A as 0025/0026 and renumbering the additive Lifecycle
+results migration to `0027_task_be_021_topic_lifecycle_results`.
+The combined line is repository-ready, but production migration/canary/scheduler
+activation remains operator-gated; migration 0026 alone is not a combined
+Lifecycle release.
 4. Never treat a 4xx contract error as a cold start.
 5. Keep live, stale, unavailable, and synthetic states visibly distinct.
 

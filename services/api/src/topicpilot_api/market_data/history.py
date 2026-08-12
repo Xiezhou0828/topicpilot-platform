@@ -28,6 +28,23 @@ _IDENTIFIER_RE: Final = re.compile(r"^[A-Za-z0-9_-]{1,64}$")
 _MARKET_SUFFIX: Final = {"TPE": ".TW", "TWO": ".TWO"}
 _MISSING: Final = object()
 
+# These are the only daily instrument states that the formal coverage gate
+# understands.  ``OPEN`` remains accepted by the older reference fixtures and
+# is intentionally not used as the new daily status vocabulary.
+DAILY_TRADING_STATUS_CODES: Final = frozenset(
+    {
+        "AVAILABLE",
+        "SUSPENDED",
+        "NO_TRADE",
+        "EXCHANGE_CONFIRMED_NO_DATA",
+        "UNKNOWN",
+        "OPEN",
+    }
+)
+COVERED_NO_TRADE_STATUS_CODES: Final = frozenset(
+    {"SUSPENDED", "NO_TRADE", "EXCHANGE_CONFIRMED_NO_DATA"}
+)
+
 
 class HistoricalProviderError(ValueError):
     """A bounded, machine-readable historical-provider failure."""
@@ -70,6 +87,9 @@ class HistoricalFetchResult:
     retrieved_at: datetime
     bars: tuple[HistoricalBar, ...]
     raw_point_count: int
+    instrument_status: str = "AVAILABLE"
+    status_reason: str | None = None
+    status_explicit: bool = False
 
     @property
     def available_close_count(self) -> int:
@@ -86,6 +106,17 @@ class HistoricalFetchResult:
     @property
     def date_to(self) -> date | None:
         return self.bars[-1].trading_date if self.bars else None
+
+    @property
+    def has_priced_observation(self) -> bool:
+        return any(bar.close is not None for bar in self.bars)
+
+    @property
+    def covered_no_trade(self) -> bool:
+        return (
+            not self.has_priced_observation
+            and self.instrument_status in COVERED_NO_TRADE_STATUS_CODES
+        )
 
 
 @dataclass(frozen=True)
@@ -229,6 +260,7 @@ def _parse_result(
         bars.append(bar)
 
     bars.sort(key=lambda bar: bar.trading_date)
+    inferred_status = "AVAILABLE" if all(bar.close is not None for bar in bars) else "UNKNOWN"
     return HistoricalFetchResult(
         instrument_code=instrument_code,
         market_code=market_code,
@@ -238,6 +270,8 @@ def _parse_result(
         retrieved_at=retrieved_at,
         bars=tuple(bars),
         raw_point_count=len(timestamps),
+        instrument_status=inferred_status,
+        status_explicit=False,
     )
 
 
@@ -368,6 +402,8 @@ def probe_history_availability(
 
 
 __all__ = [
+    "COVERED_NO_TRADE_STATUS_CODES",
+    "DAILY_TRADING_STATUS_CODES",
     "HistoricalBar",
     "HistoricalFetchResult",
     "HistoricalProvider",

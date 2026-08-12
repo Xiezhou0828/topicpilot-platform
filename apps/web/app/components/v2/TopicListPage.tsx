@@ -59,6 +59,27 @@ function displayLifecycleStage(stage: TopicLifecycleStage): DisplayLifecycleStag
   return stage;
 }
 
+function formalLifecycleStage(stage: string | null | undefined): DisplayLifecycleStage | null {
+  const labels: Record<string, DisplayLifecycleStage> = {
+    SPROUTING: "萌芽",
+    FERMENTING: "發酵",
+    MAIN_RISE: "主升",
+    MATURE: "成熟",
+    DECLINING: "衰退",
+  };
+  return stage ? labels[stage] ?? null : null;
+}
+
+function lifecycleForTopic(topic: OverviewTopic, preview: boolean): TopicOverviewLifecycle | null {
+  if (!preview) {
+    if (!topic.lifecycle || topic.lifecycle.dataStatus !== "SHADOW_AVAILABLE") return null;
+    const stage = formalLifecycleStage(topic.lifecycle.currentStage);
+    return stage ? { stage, day: topic.lifecycle.currentStageTradingDays ?? 1 } : null;
+  }
+  if (topic.lifecycle && topic.lifecycle.dataStatus !== "PREVIEW") return null;
+  return getTopicOverviewLifecycle(topic.slug);
+}
+
 function PreviewBadge() {
   return <span className="tp-preview-badge">{PREVIEW_LABEL}</span>;
 }
@@ -78,21 +99,23 @@ function LifecycleChip({ item }: { item: LifecycleTopic }) {
   </Link>;
 }
 
-function TopicLifecycle({ topics }: { topics: OverviewTopic[] }) {
+function TopicLifecycle({ topics, preview }: { topics: OverviewTopic[]; preview: boolean }) {
   const [showHelp, setShowHelp] = useState(false);
   const [expandedStage, setExpandedStage] = useState<DisplayLifecycleStage | null>(null);
   const stageMap = useMemo(() => {
     const map = new Map<DisplayLifecycleStage, LifecycleTopic[]>(LIFECYCLE_STAGES.map(({ stage }) => [stage, []]));
     topics.forEach((topic) => {
-      const lifecycle = getTopicOverviewLifecycle(topic.slug);
-      const stage = displayLifecycleStage(lifecycle.stage);
-      if (stage) map.set(stage, [...(map.get(stage) ?? []), { topic, lifecycle }]);
+      const lifecycle = lifecycleForTopic(topic, preview);
+      if (lifecycle) {
+        const stage = displayLifecycleStage(lifecycle.stage);
+        if (stage) map.set(stage, [...(map.get(stage) ?? []), { topic, lifecycle }]);
+      }
     });
     return map;
-  }, [topics]);
+  }, [preview, topics]);
 
   return <section className="tp-topic-lifecycle-section" aria-labelledby="topic-lifecycle-title">
-    <div className="tp-topic-lifecycle-heading"><div className="tp-topic-lifecycle-heading-main"><h2 id="topic-lifecycle-title">題材生命週期</h2><span className="tp-topic-lifecycle-help-wrap"><button type="button" className="tp-topic-lifecycle-help-trigger" aria-label="題材生命週期說明" aria-expanded={showHelp} aria-haspopup="dialog" onClick={() => setShowHelp((value) => !value)}><CircleHelp size={18} aria-hidden="true" /></button>{showHelp && <div className="tp-topic-lifecycle-help" role="dialog" aria-label="題材生命週期說明"><strong>題材生命週期說明</strong>{LIFECYCLE_HELP.map((item) => <p key={item.stage}><b>{item.stage}</b><span>{item.description}</span></p>)}<p><b>Day N</b><span>代表題材目前連續停留於此生命階段的天數。</span></p><p className="tp-topic-lifecycle-help-note">這只是市場狀態描述，不是買賣建議。</p></div>}</span></div><PreviewBadge /></div>
+    <div className="tp-topic-lifecycle-heading"><div className="tp-topic-lifecycle-heading-main"><h2 id="topic-lifecycle-title">題材生命週期</h2><span className="tp-topic-lifecycle-help-wrap"><button type="button" className="tp-topic-lifecycle-help-trigger" aria-label="題材生命週期說明" aria-expanded={showHelp} aria-haspopup="dialog" onClick={() => setShowHelp((value) => !value)}><CircleHelp size={18} aria-hidden="true" /></button>{showHelp && <div className="tp-topic-lifecycle-help" role="dialog" aria-label="題材生命週期說明"><strong>題材生命週期說明</strong>{LIFECYCLE_HELP.map((item) => <p key={item.stage}><b>{item.stage}</b><span>{item.description}</span></p>)}<p><b>Day N</b><span>代表題材目前連續停留於此生命階段的天數。</span></p><p className="tp-topic-lifecycle-help-note">這只是市場狀態描述，不是買賣建議。</p></div>}</span></div>{allowPreview ? <PreviewBadge /> : <DataState state="UNAVAILABLE" />}</div>
     <div className="tp-topic-lifecycle-track">{LIFECYCLE_STAGES.map(({ stage, hint, icon: StageIcon }) => { const items = stageMap.get(stage) ?? []; const isExpanded = expandedStage === stage; const visibleItems = isExpanded ? items : items.slice(0, MAX_VISIBLE_LIFECYCLE_TOPICS); const remaining = items.length - visibleItems.length; return <section className={`tp-topic-lifecycle-stage ${isExpanded ? "is-expanded" : ""}`} key={stage} aria-labelledby={`topic-stage-${stage}`}>
       <header className="tp-topic-lifecycle-stage-header"><h3 id={`topic-stage-${stage}`}><StageIcon size={17} strokeWidth={1.8} aria-hidden="true" /><span>{stage}</span></h3><small>{hint}</small></header>
       <div className="tp-topic-lifecycle-items">{visibleItems.length ? visibleItems.map((item) => <LifecycleChip item={item} key={item.topic.slug} />) : <span className="tp-topic-lifecycle-empty">—</span>}</div>
@@ -146,6 +169,7 @@ export default function TopicListPage() {
 
   return <AppShell currentPath="/topics"><PageContainer title="題材" hideHeader className="tp-topic-overview-page">
     {!resource && <Card className="tp-topic-data-card"><div className="tp-topic-loading-row"><Skeleton /><Skeleton /><Skeleton /></div><Skeleton className="tp-topic-loading-table" /></Card>}
+    {resource?.source === "unavailable" && <Card className="tp-topic-data-card"><DataState state="UNAVAILABLE" /><EmptyState title="正式題材清單目前無法取得" description={resource.error ?? "請確認 FastAPI API origin 與服務狀態。"} /></Card>}
     {resource?.data && <>
       <section className="tp-topic-kanban-section" aria-labelledby="topic-kanban-title">
         <div className="tp-topic-section-heading tp-topic-map-heading"><div><h2 id="topic-kanban-title">今日題材地圖</h2></div><div className="tp-topic-map-tools"><div className="tp-topic-filter-group" role="group" aria-label="今日方向篩選">{(["全部", "轉強", "轉弱"] as DirectionFilter[]).map((item) => <button type="button" key={item} className={directionFilter === item ? "is-active" : ""} onClick={() => setDirectionFilter(item)}>{item}</button>)}</div>{previewMode ? <PreviewBadge /> : <DataState state="AVAILABLE" />}</div></div>
@@ -155,7 +179,7 @@ export default function TopicListPage() {
         </section>)}</div>
       </section>
 
-      <TopicLifecycle topics={overviewTopics} />
+      <TopicLifecycle topics={overviewTopics} preview={previewMode} />
 
       <section className="tp-topic-groups-section" aria-labelledby="topic-groups-title">
         <div className="tp-topic-section-heading"><div><h2 id="topic-groups-title">依大族群瀏覽</h2></div></div>
@@ -166,7 +190,7 @@ export default function TopicListPage() {
       </section>
 
       <section className="tp-topic-overview-list-section" aria-labelledby="topic-list-title">
-        <div className="tp-topic-section-heading"><div><h2 id="topic-list-title">全部題材</h2></div></div>
+        <div className="tp-topic-section-heading"><div><h2 id="topic-list-title">全部題材</h2><p>完整正式題材目錄；尚無分數、等級或生命週期的題材仍會保留顯示。</p></div><span>{overviewTopics.length} 個題材</span></div>
         <Card className="tp-topic-overview-list-card"><div className="tp-topic-overview-list-controls"><label className="tp-search-input"><Search size={17} aria-hidden="true" /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="搜尋題材名稱或代號" /></label><div className="tp-topic-grade-filters" role="group" aria-label="等級篩選">{(["全部", "S", "A", "B", "D"] as GradeFilter[]).map((item) => <button type="button" key={item} className={gradeFilter === item ? "is-active" : ""} onClick={() => setGradeFilter(item)}>{item === "全部" ? "全部" : item}</button>)}</div></div>
           <div className="tp-topic-overview-list-head" aria-hidden="true"><span>題材名稱</span><span>大族群</span><span>等級</span><span>今日分數</span><span>今日方向</span><span>股票數</span><span>收藏</span></div>
           <div className="tp-topic-overview-list-items">{filteredTopics.map((topic) => <div className="tp-topic-overview-list-row" key={topic.slug}><Link href={`/topics/${topic.slug}`} className="tp-topic-overview-list-link"><span className="tp-topic-overview-name"><b>{topic.name}</b><small>{topic.slug}</small></span><span>{topic.meta.groupName ?? "其他題材"}</span><span className={`tp-chip tp-grade-chip ${gradeClass(topic.meta.laneGrade)}`}>{topic.meta.laneGrade ?? "—"}</span><strong className="tp-topic-overview-score">{scoreLabel(topic.score)}</strong><span className={`tp-topic-overview-direction tp-topic-direction--${topic.meta.direction}`}><span>{topic.meta.directionSymbol}</span>{topic.meta.directionLabel}</span><span className="tp-topic-overview-count">{topic.constituentCount} 檔</span><ChevronRight size={16} aria-hidden="true" /></Link><button type="button" className={`tp-topic-row-star ${favorites.has(topic.slug) ? "is-active" : ""}`} aria-label={favorites.has(topic.slug) ? `取消收藏 ${topic.name}` : `收藏 ${topic.name}`} aria-pressed={favorites.has(topic.slug)} onClick={() => toggleTopicFavorite(topic.slug)}><Star size={18} fill={favorites.has(topic.slug) ? "currentColor" : "none"} aria-hidden="true" /></button></div>)}</div>

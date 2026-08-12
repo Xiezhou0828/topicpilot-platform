@@ -12,10 +12,13 @@ from decimal import Decimal
 from typing import Any
 from zoneinfo import ZoneInfo
 
-from sqlalchemy import text
+from sqlalchemy import select, text
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
+from topicpilot_api.orm import TopicLifecycleResult
 from topicpilot_api.problems import NotFoundProblem
+from topicpilot_api.topic_lifecycle_engine import LIFECYCLE_POLICY_VERSION
 
 TAIPEI = ZoneInfo("Asia/Taipei")
 VALID_MARKETS = {"TPE", "TWO"}
@@ -410,7 +413,11 @@ def _status_items(topic_row: Any, constituents: list[dict[str, Any]]) -> list[di
     ]
 
 
-def _topic_read_item(topic_row: Any, constituents: list[dict[str, Any]]) -> dict[str, Any]:
+def _topic_read_item(
+    topic_row: Any,
+    constituents: list[dict[str, Any]],
+    lifecycle: dict[str, Any] | None = None,
+) -> dict[str, Any]:
     direction = topic_row["topic_direction"]
     stock_count = topic_row["stock_count"]
     return {
@@ -429,14 +436,94 @@ def _topic_read_item(topic_row: Any, constituents: list[dict[str, Any]]) -> dict
         "coveragePct": _float(topic_row["coverage_pct"]),
         "constituentCount": int(stock_count if stock_count is not None else len(constituents)),
         "status": _status_items(topic_row, constituents),
-        "lifecycle": {
-            "currentStage": None,
-            "currentStageEnteredAt": None,
-            "currentStageTradingDays": None,
-            "history": [],
-            "dataStatus": "NOT_AVAILABLE",
-        },
+        "lifecycle": lifecycle or _lifecycle_unavailable(),
         "constituents": constituents,
+    }
+
+
+def _lifecycle_unavailable() -> dict[str, Any]:
+    return {
+        "currentStage": None,
+        "currentStageEnteredAt": None,
+        "currentStageTradingDays": None,
+        "history": [],
+        "dataStatus": "NOT_AVAILABLE",
+        "evaluationDate": None,
+        "previousStage": None,
+        "candidateStage": None,
+        "transitionDecision": None,
+        "transitionReason": None,
+        "policyVersion": None,
+        "evidence": {},
+        "confidence": {},
+    }
+
+
+def _read_lifecycle(session: Session, topic_id: Any) -> dict[str, Any]:
+    try:
+        rows = list(
+            session.scalars(
+                select(TopicLifecycleResult)
+                .where(
+                    TopicLifecycleResult.topic_id == topic_id,
+                    TopicLifecycleResult.evaluation_mode == "SHADOW",
+                    TopicLifecycleResult.policy_version == LIFECYCLE_POLICY_VERSION,
+                )
+                .order_by(TopicLifecycleResult.evaluation_date)
+            )
+        )
+    except SQLAlchemyError:
+        # During additive migration rollout, keep the formal catalog readable
+        # while lifecycle remains explicitly unavailable.
+        return _lifecycle_unavailable()
+    if not rows:
+        return _lifecycle_unavailable()
+    current = rows[-1]
+    segments: list[dict[str, Any]] = []
+    for row in rows:
+        if row.final_stage is None:
+            continue
+        if not segments or segments[-1]["stage"] != row.final_stage:
+            if segments:
+                segments[-1]["exitedAt"] = row.evaluation_date
+                segments[-1]["current"] = False
+            segments.append(
+                {
+                    "stage": row.final_stage,
+                    "enteredAt": row.stage_entered_at,
+                    "exitedAt": None,
+                    "tradingDays": row.stage_trading_days,
+                    "current": True,
+                }
+            )
+        else:
+            segments[-1]["tradingDays"] = row.stage_trading_days
+    data_status = (
+        "SHADOW_AVAILABLE"
+        if current.final_stage is not None and current.data_status == "SHADOW"
+        else current.data_status
+    )
+    latest_evidence = {
+        "leadership": current.leadership_evidence or {},
+        "diffusion": current.diffusion_evidence or {},
+        "groupStrength": current.group_strength_evidence or {},
+        "divergenceDecay": current.divergence_decay_evidence or {},
+        "persistence": current.persistence_evidence or {},
+    }
+    return {
+        "currentStage": current.final_stage,
+        "currentStageEnteredAt": current.stage_entered_at,
+        "currentStageTradingDays": current.stage_trading_days,
+        "history": segments,
+        "dataStatus": data_status,
+        "evaluationDate": current.evaluation_date,
+        "previousStage": current.previous_stage,
+        "candidateStage": current.candidate_stage,
+        "transitionDecision": current.transition_decision,
+        "transitionReason": current.transition_reason,
+        "policyVersion": current.policy_version,
+        "evidence": latest_evidence,
+        "confidence": current.sample_confidence or {},
     }
 
 
@@ -465,7 +552,7 @@ def _topic_constituents(session: Session, slug: str, as_of_date: date) -> list[d
 def read_topics(session: Session, *, slug: str | None = None, limit: int = 200, offset: int = 0) -> dict[str, Any]:
     as_of_date = _date_now()
     rows = session.execute(TOPIC_ROWS_SQL, {"as_of_date": as_of_date, "slug": slug}).mappings()
-    items = [_topic_read_item(row, []) for row in rows]
+    items = [_topic_read_item(row, [], _read_lifecycle(session, row["topic_id"])) for row in rows]
     total = len(items)
     return {
         "items": items[offset : offset + limit],
@@ -482,7 +569,7 @@ def read_topic(session: Session, slug: str) -> dict[str, Any]:
     if row is None:
         raise NotFoundProblem(f"Topic {slug!r} was not found in the formal topic read model")
     constituents = _topic_constituents(session, slug, as_of_date)
-    return _topic_read_item(row, constituents)
+    return _topic_read_item(row, constituents, _read_lifecycle(session, row["topic_id"]))
 
 
 __all__ = ["read_stock", "read_stocks", "read_topic", "read_topics"]

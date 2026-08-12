@@ -1523,6 +1523,22 @@ export interface components {
             history?: components["schemas"]["TopicLifecycleSegmentRead"][];
             /** Datastatus */
             dataStatus: string;
+            /** Evaluationdate */
+            evaluationDate?: string | null;
+            /** Previousstage */
+            previousStage?: string | null;
+            /** Candidatestage */
+            candidateStage?: string | null;
+            /** Transitiondecision */
+            transitionDecision?: string | null;
+            /** Transitionreason */
+            transitionReason?: string | null;
+            /** Policyversion */
+            policyVersion?: string | null;
+            /** Evidence */
+            evidence?: Record<string, unknown>;
+            /** Confidence */
+            confidence?: Record<string, unknown>;
         };
         /** TopicLifecycleSegmentRead */
         TopicLifecycleSegmentRead: {

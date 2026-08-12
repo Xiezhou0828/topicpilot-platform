@@ -6,6 +6,7 @@ from decimal import Decimal
 from typing import Any
 
 from .contracts import (
+    DAILY_TRADING_STATUS_CODES,
     NormalizationCandidate,
     NormalizationFailure,
     NormalizationResult,
@@ -71,6 +72,24 @@ class HistoricalDailyBarNormalizer:
         if failures:
             return NormalizationResult((), tuple(failures))
 
+        status = payload.get("instrument_status")
+        status_reason = payload.get("status_reason")
+        status_explicit = status is not None
+        if status is None:
+            status = "AVAILABLE" if values["close"] is not None else "UNKNOWN"
+        if status == "AVAILABLE" and values["close"] is None:
+            status = "UNKNOWN"
+            status_reason = status_reason or "close is missing without approved no-trade evidence"
+        if status not in DAILY_TRADING_STATUS_CODES:
+            failures.append(
+                NormalizationFailure(
+                    "REJECTED",
+                    "UNKNOWN_TRADING_STATUS",
+                    evidence={"value": status},
+                )
+            )
+        if failures:
+            return NormalizationResult((), tuple(failures))
         price_paths = tuple(json_pointer(key) for key in ("open", "high", "low", "close"))
         price_quality = "ACCEPTED" if all(value is not None for value in numbers) else "INCOMPLETE"
         warnings = () if price_quality == "ACCEPTED" else ("MISSING_OHLC_FIELD",)
@@ -100,6 +119,36 @@ class HistoricalDailyBarNormalizer:
                 },
             )
         ]
+        if status_explicit:
+            candidates.append(
+                NormalizationCandidate(
+                    "TRADING_STATUS",
+                    {
+                        "status_code": status,
+                        "status_reason": status_reason,
+                        "session_code": reference.session_code,
+                        "calendar_code": reference.calendar_code,
+                        "status_catalogue_version": reference.status_catalogue_version,
+                        "status_context": {
+                            "source_semantics": "DAILY_BAR",
+                            "coverageMeaning": (
+                                "PRICED"
+                                if values["close"] is not None
+                                else "APPROVED_NO_TRADE"
+                                if status in {"SUSPENDED", "NO_TRADE", "EXCHANGE_CONFIRMED_NO_DATA"}
+                                else "UNEXPLAINED_MISSING"
+                            ),
+                        },
+                    },
+                    (json_pointer("instrument_status"),),
+                    "ACCEPTED" if status in DAILY_TRADING_STATUS_CODES else "REJECTED",
+                    (),
+                    {
+                        "source_paths": [json_pointer("instrument_status")],
+                        "statusReason": status_reason,
+                    },
+                )
+            )
         if volume is not None:
             candidates.append(
                 NormalizationCandidate(

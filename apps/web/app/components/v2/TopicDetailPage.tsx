@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { ChevronRight, Star } from "lucide-react";
 import { useEffect, useState } from "react";
-import { fetchTopic, scoreLabel, sourceLabel, type TopicConstituent, type TopicDetail as TopicData, type TopicResource } from "../../lib/topic-api";
+import { fetchTopic, scoreLabel, sourceLabel, type TopicConstituent, type TopicDetail as TopicData, type TopicLifecycle, type TopicResource } from "../../lib/topic-api";
 import { getTopicPreview, PREVIEW_LABEL, type TopicPreview } from "../../lib/topic-preview";
 import { AppShell, Card, DataState, EmptyState, GradeChip, PageContainer, RoleChip, Table } from "./V2Foundation";
 import { StockEncyclopediaDrawer, type StockDrawerItem } from "./StockEncyclopediaDrawer";
@@ -31,6 +31,25 @@ function displayLifecycleStage(stage: string): (typeof LIFECYCLE_STAGES)[number]
 function LifecyclePreview({ preview }: { preview: TopicPreview }) {
   const current = displayLifecycleStage(preview.lifecycle.current);
   return <Card className="tp-topic-detail-card tp-topic-detail-lifecycle-card"><TopicSectionHeading title="題材生命週期" description="以單一路徑閱讀題材目前位置；正式歷史與交易日欄位尚未接入。" /><div className="tp-topic-detail-lifecycle-current"><span>目前階段</span><strong>{current}</strong><b>{preview.lifecycle.entered}</b><span>交易日數尚未提供</span></div><ol className="tp-topic-detail-lifecycle-track">{LIFECYCLE_STAGES.map((stage) => { const segment = preview.lifecycle.segments.find((item) => displayLifecycleStage(item.stage) === stage); const active = current === stage; return <li className={active ? "is-active" : ""} key={stage}><span className="tp-topic-detail-lifecycle-dot" aria-hidden="true" /><strong>{stage}</strong><small>{segment?.entered ?? "—"}</small><em>{segment ? "交易日數尚未提供" : "—"}</em></li>; })}</ol></Card>;
+}
+
+function formalLifecycleStage(stage: string | null): (typeof LIFECYCLE_STAGES)[number] | null {
+  const labels: Record<string, (typeof LIFECYCLE_STAGES)[number]> = {
+    SPROUTING: "萌芽",
+    FERMENTING: "發酵",
+    MAIN_RISE: "主升",
+    MATURE: "成熟",
+    DECLINING: "衰退",
+  };
+  return stage ? labels[stage] ?? null : null;
+}
+
+function FormalLifecycle({ lifecycle }: { lifecycle: TopicLifecycle }) {
+  const current = formalLifecycleStage(lifecycle.currentStage);
+  if (!current || lifecycle.dataStatus !== "SHADOW_AVAILABLE") {
+    return <Card className="tp-topic-detail-card tp-topic-detail-lifecycle-card"><TopicSectionHeading title="題材生命週期" description="正式生命週期由 backend authority 提供；尚未有足夠 observations 時不自行推導。" badge={false} /><EmptyState title="資料待累積" description={lifecycle.dataStatus === "NOT_AVAILABLE" ? "正式 lifecycle snapshot 尚未建立。" : "候選階段正在等待確認或 coverage。"} /></Card>;
+  }
+  return <Card className="tp-topic-detail-card tp-topic-detail-lifecycle-card"><TopicSectionHeading title="題材生命週期" description="正式階段、Day N 與歷史由 backend lifecycle read model 提供。" badge={false} /><div className="tp-topic-detail-lifecycle-current"><span>目前階段</span><strong>{current}</strong><b>{lifecycle.currentStageEnteredAt ?? "—"}</b><span>Day {lifecycle.currentStageTradingDays ?? "—"}</span></div><ol className="tp-topic-detail-lifecycle-track">{LIFECYCLE_STAGES.map((stage) => { const segment = lifecycle.history.find((item) => formalLifecycleStage(item.stage) === stage); const active = current === stage; return <li className={active ? "is-active" : ""} key={stage}><span className="tp-topic-detail-lifecycle-dot" aria-hidden="true" /><strong>{stage}</strong><small>{segment?.enteredAt ?? "—"}</small><em>{segment?.tradingDays ? `Day ${segment.tradingDays}` : "—"}</em></li>; })}</ol></Card>;
 }
 
 function TopicStatusSection({ topic, preview, formal }: { topic: TopicData; preview: TopicPreview | null; formal: boolean }) {
@@ -92,6 +111,7 @@ export default function TopicDetailPage({ slug }: { slug: string }) {
   const topic = resource?.data;
   const preview = topic && resource?.source === "synthetic-snapshot" ? getTopicPreview(slug, topic.name, topic.score, topic.grade) : null;
   const stocks = resource?.data?.constituents ?? [];
+  const lifecycleAvailable = topic && topic.lifecycle.dataStatus === "SHADOW_AVAILABLE";
 
   return <AppShell currentPath="/topics"><PageContainer className="tp-topic-page" title={topic?.name ?? slug} hideHeader><div className="tp-topic-detail-page">
     {!resource && <Card className="tp-topic-data-card"><DataState state="STALE" /><EmptyState title="正在載入題材資料" description="正在讀取 Topic read model。" /></Card>}
@@ -104,7 +124,7 @@ export default function TopicDetailPage({ slug }: { slug: string }) {
         {preview ? <div className="tp-topic-summary-preview"><PreviewBadge /><p>{preview.summary}</p></div> : <div className="tp-topic-summary-preview"><DataState state="UNAVAILABLE" /><p>題材 identity 已由正式 Catalog 提供；摘要與生命週期資料待正式 Read Model 累積。</p></div>}
       </header>
 
-      <div className="tp-topic-content">{preview ? <LifecyclePreview preview={preview} /> : <Card className="tp-topic-detail-card tp-topic-detail-lifecycle-card"><TopicSectionHeading title="題材生命週期" description="正式生命週期資料尚未提供。" badge={false} /><EmptyState title="資料待累積" description="此題材仍存在於正式 Catalog，不因生命週期缺值而隱藏。" /></Card>}<TopicStatusSection topic={topic} preview={preview} formal={resource.source === "api" && topic.status.length === 3} />
+      <div className="tp-topic-content">{preview ? <LifecyclePreview preview={preview} /> : <FormalLifecycle lifecycle={topic.lifecycle} />}<TopicStatusSection topic={topic} preview={preview} formal={resource.source === "api" && topic.status.length === 3} />
         <section aria-labelledby="stocks-title"><TopicSectionHeading title="題材內股票" description="保留後端成分股順序；點擊任一列直接切換共用 Stock Encyclopedia Drawer。" badge={false} /><div className="tp-topic-stocks-workspace"><Card className="tp-topic-role-card tp-topic-stock-table-card"><div className="tp-topic-role-heading"><div><p className="tp-overline">題材成分股</p><h3 id="stocks-title">研究股票清單</h3></div><RoleChip>{stocks.length} 檔</RoleChip></div>{stocks.length ? <Table><thead><tr><th>股票／股號</th><th>題材角色</th><th>今日漲跌</th><th>題材表現</th><th>技術狀態</th><th>更新狀態</th><th>Action</th></tr></thead><tbody>{stocks.map((stock) => { const tone = changeTone(stock.changePct); const open = () => setSelectedStock(stock); return <tr key={stock.code} className="tp-topic-stock-table-row" role="button" tabIndex={0} onClick={open} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); open(); } }} aria-label={`查看${stock.name}股票圖鑑`}><td><span className="tp-topic-stock-identity"><b>{stock.name}</b><small>{stock.code}</small></span></td><td><RoleChip>{stock.role ?? "—"}</RoleChip></td><td>{stock.changePct === null ? <span className="tp-muted">—</span> : <span className={`tp-topic-change tp-topic-change--${tone}`}>{stock.changePct >= 0 ? "+" : ""}{stock.changePct.toFixed(2)}%</span>}</td><td>{stock.relativeTopicState ? <span>{stock.relativeTopicState}</span> : <span className="tp-topic-field-pending">尚未提供</span>}</td><td>{stock.technicalState ? <span>{stock.technicalState}</span> : <span className="tp-topic-field-pending">尚未提供</span>}</td><td>{stock.dataFreshness ?? "資料待更新"}</td><td><span className="tp-topic-row-action">查看 <ChevronRight size={16} aria-hidden="true" /></span></td></tr>; })}</tbody></Table> : <EmptyState title="目前沒有成分股資料" description="Topic read model 尚未回傳 constituent rows。" />}</Card>{selectedStock && <StockEncyclopediaDrawer presentation="inline" stock={stockDrawerItem(topic, selectedStock, resource)} onClose={() => setSelectedStock(null)} />}</div></section>
         {preview ? <><TimelinePreview preview={preview} /><NewsPreview preview={preview} /><RelatedPreview preview={preview} /><HeatmapPreview preview={preview} /></> : <Card className="tp-topic-preview-card"><TopicSectionHeading title="題材歷程與相關脈絡" description="等待正式事件、新聞與關聯題材 Read Model。" badge={false} /><EmptyState title="資料待累積" description="Production 不以 Preview 內容覆蓋正式題材 identity。" /></Card>}
       </div>

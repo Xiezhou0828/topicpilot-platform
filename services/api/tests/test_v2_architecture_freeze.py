@@ -27,6 +27,7 @@ IMPLEMENTED_V2_TABLES = {
     "live_collector_runs",
     "live_collector_attempts",
     "topic_snapshots",
+    "topic_lifecycle_results",
 }
 
 

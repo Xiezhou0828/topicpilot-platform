@@ -315,7 +315,9 @@ class StockReadModel(ApiModel):
     update_mode: str = Field(alias="updateMode")
     market_status: str = Field(alias="marketStatus")
     main_topic: dict[str, Any] | None = Field(alias="mainTopic")
-    topic_relations: list[StockTopicRelationRead] = Field(alias="topicRelations", default_factory=list)
+    topic_relations: list[StockTopicRelationRead] = Field(
+        alias="topicRelations", default_factory=list
+    )
     tracking_mode: str = Field(alias="trackingMode")
     tracking_reason: str | None = Field(alias="trackingReason")
     ma20_state: str | None = Field(alias="ma20State")
@@ -357,6 +359,14 @@ class TopicLifecycleRead(ApiModel):
     current_stage_trading_days: int | None = Field(alias="currentStageTradingDays")
     history: list[TopicLifecycleSegmentRead] = Field(default_factory=list)
     data_status: str = Field(alias="dataStatus")
+    evaluation_date: date | None = Field(default=None, alias="evaluationDate")
+    previous_stage: str | None = Field(default=None, alias="previousStage")
+    candidate_stage: str | None = Field(default=None, alias="candidateStage")
+    transition_decision: str | None = Field(default=None, alias="transitionDecision")
+    transition_reason: str | None = Field(default=None, alias="transitionReason")
+    policy_version: str | None = Field(default=None, alias="policyVersion")
+    evidence: dict[str, Any] = Field(default_factory=dict)
+    confidence: dict[str, Any] = Field(default_factory=dict)
 
 
 class TopicConstituentRead(ApiModel):

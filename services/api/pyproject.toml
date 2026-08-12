@@ -32,6 +32,7 @@ topicpilot-formula-research = "topicpilot_api.research_cli:main"
 topicpilot-live = "topicpilot_api.live.cli:main"
 topicpilot-history-probe = "topicpilot_api.live.history_probe:main"
 topicpilot-bootstrap = "topicpilot_api.live.bootstrap:main"
+topicpilot-lifecycle = "topicpilot_api.topic_lifecycle_cli:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/topicpilot_api"]

@@ -13,12 +13,14 @@ from urllib.request import Request, urlopen
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from topicpilot_api.daily_market import DailyMarketReconciliation, reconcile_daily_market
 from topicpilot_api.market_data.ingestion import HistoricalSourceRegistration, ingest_historical
 from topicpilot_api.market_data.rate_limit import RateLimitedTransport
 from topicpilot_api.market_data.registry import build_historical_provider_registry
 from topicpilot_api.normalizer import HISTORICAL_MAPPING_POLICY_VERSION, MappingPolicy
 from topicpilot_api.normalizer.contracts import stable_hash
 from topicpilot_api.orm import Instrument, LiveCollectorAttempt, LiveCollectorRun, Market
+from topicpilot_api.topic_lifecycle_engine import TopicLifecycleEngine
 from topicpilot_api.topic_snapshot_engine import TopicSnapshotEngine
 
 from .config import LiveRuntimeConfig
@@ -162,7 +164,14 @@ class PostCloseUpdater:
         if session_status.reason in {"WEEKEND", "CONFIGURED_CLOSED_DATE"}:
             skipped_count = len(instruments)
             status = "MARKET_CLOSED"
-            snapshot_result = self._run_snapshot(local_date, market_closed=True)
+            reconciliation = reconcile_daily_market(
+                self.session, local_date, market_closed=True
+            )
+            snapshot_result = {
+                "snapshotDate": local_date.isoformat(),
+                "topicCount": 0,
+                "status": "NOT_RUN_MARKET_CLOSED",
+            }
             self._finish(
                 run_id,
                 status=status,
@@ -173,6 +182,7 @@ class PostCloseUpdater:
                 point_count=0,
                 failure_codes=("MARKET_CLOSED",),
                 snapshot_result=snapshot_result,
+                reconciliation=reconciliation,
                 now=now,
             )
             return PostCloseRunResult(
@@ -213,6 +223,7 @@ class PostCloseUpdater:
             for instrument, market in batch:
                 registration = registry.for_market(market.code)[0]
                 item_started = self._now()
+                retries_before = transport.retry_count
                 attempt_status = "SUCCESS"
                 error_code = None
                 error_message = None
@@ -233,13 +244,24 @@ class PostCloseUpdater:
                     )
                     self.session.commit()
                     point_count += result.provider_point_count
-                    if result.provider_point_count:
+                    if result.covered_count:
                         success_count += 1
+                        attempt_status = "SUCCESS"
+                        error_code = (
+                            "APPROVED_NO_TRADE"
+                            if result.instrument_status
+                            in {"SUSPENDED", "NO_TRADE", "EXCHANGE_CONFIRMED_NO_DATA"}
+                            and result.priced_count == 0
+                            else None
+                        )
+                        error_message = result.status_reason
                     else:
                         skipped_count += 1
                         attempt_status = "SKIPPED"
-                        error_code = "NO_TRADING_DAY_DATA"
-                        error_message = "official provider returned no bar for requested date"
+                        error_code = "UNEXPLAINED_MISSING_DATA"
+                        error_message = result.status_reason or (
+                            "official provider returned no priced or approved no-trade evidence"
+                        )
                 except Exception as exc:
                     self.session.rollback()
                     failure_count += 1
@@ -248,21 +270,27 @@ class PostCloseUpdater:
                     error_message = str(exc)
                     failure_codes.append(error_code)
                 completed = self._now()
+                item_retry_count = transport.retry_count - retries_before
+                retry_count += item_retry_count
                 self.session.add(
                     LiveCollectorAttempt(
                         run_id=run_id,
                         instrument_id=instrument.id,
                         instrument_code=instrument.instrument_code,
                         market_code=market.code,
-                        attempt_number=1,
+                        attempt_number=item_retry_count + 1,
                         status=attempt_status,
                         started_at=item_started,
                         retrieved_at=completed if attempt_status == "SUCCESS" else None,
                         updated_at=completed,
                         observed_at=None,
                         latency_ms=max(0, int((completed - item_started).total_seconds() * 1000)),
-                        retry_count=0,
-                        provider_status="AVAILABLE" if attempt_status != "FAILED" else "ERROR",
+                        retry_count=item_retry_count,
+                        provider_status=(
+                            result.instrument_status
+                            if attempt_status != "FAILED"
+                            else "ERROR"
+                        ),
                         freshness_state="FRESH" if attempt_status == "SUCCESS" else "UNKNOWN",
                         error_code=error_code,
                         error_message=error_message,
@@ -270,16 +298,25 @@ class PostCloseUpdater:
                 )
                 self.session.commit()
 
-        if failure_count:
+        reconciliation = reconcile_daily_market(self.session, local_date)
+        if failure_count or skipped_count:
             status = "PARTIAL" if success_count else "FAILED"
-        elif skipped_count:
-            status = "PARTIAL" if success_count else "MARKET_CLOSED"
         else:
             status = "SUCCESS"
+        if status == "SUCCESS" and not reconciliation.downstream_ready:
+            status = "PARTIAL"
         tracking_count = LiveRepository(self.session, self.config).refresh_tracking_universe(
             now=self._now()
         )
-        snapshot_result = self._run_snapshot(local_date)
+        snapshot_result = (
+            self._run_snapshot(local_date)
+            if reconciliation.downstream_ready
+            else {
+                "snapshotDate": local_date.isoformat(),
+                "topicCount": 0,
+                "status": "BLOCKED_DAILY_MARKET_NOT_READY",
+            }
+        )
         self._finish(
             run_id,
             status=status,
@@ -289,8 +326,10 @@ class PostCloseUpdater:
             retry_count=retry_count,
             point_count=point_count,
             failure_codes=tuple(sorted(set(failure_codes)))
+            or reconciliation.reason_codes
             or (("NO_TRADING_DAY_DATA",) if skipped_count else ()),
             snapshot_result=snapshot_result,
+            reconciliation=reconciliation,
             now=self._now(),
         )
         return PostCloseRunResult(
@@ -304,6 +343,7 @@ class PostCloseUpdater:
             point_count,
             tracking_count,
             tuple(sorted(set(failure_codes)))
+            or reconciliation.reason_codes
             or (("NO_TRADING_DAY_DATA",) if skipped_count else ()),
             snapshot_result.get("topicCount", 0),
             snapshot_result.get("status", "FAILED"),
@@ -312,10 +352,27 @@ class PostCloseUpdater:
 
     def _run_snapshot(self, snapshot_date: date, *, market_closed: bool = False) -> dict[str, Any]:
         try:
-            return TopicSnapshotEngine(self.session).run_once(
+            result = TopicSnapshotEngine(self.session).run_once(
                 snapshot_date=snapshot_date,
                 market_closed=market_closed,
             )
+            if result.get("status") == "SUCCESS" and not market_closed:
+                try:
+                    result["lifecycle"] = TopicLifecycleEngine(self.session).run_once(
+                        evaluation_date=snapshot_date
+                    )
+                except Exception as exc:
+                    # Lifecycle remains additive shadow work. A missing
+                    # migration or transient failure must not discard the
+                    # canonical topic snapshot already committed above.
+                    self.session.rollback()
+                    result["lifecycle"] = {
+                        "status": "SHADOW_EVALUATION_FAILED",
+                        "error": type(exc).__name__,
+                    }
+            elif market_closed:
+                result["lifecycle"] = {"status": "MARKET_CLOSED"}
+            return result
         except Exception as exc:
             self.session.rollback()
             return {
@@ -337,6 +394,7 @@ class PostCloseUpdater:
         point_count: int,
         failure_codes: tuple[str, ...],
         snapshot_result: dict[str, Any] | None = None,
+        reconciliation: DailyMarketReconciliation | None = None,
         now: datetime,
     ) -> None:
         run = self.session.get(LiveCollectorRun, run_id)
@@ -369,6 +427,12 @@ class PostCloseUpdater:
                 "skippedCount": skipped_count,
                 "providerPointCount": point_count,
                 "failureCodes": list(failure_codes),
+                "dailyMarketReconciliation": (
+                    reconciliation.to_dict() if reconciliation else {"status": "NOT_RUN"}
+                ),
+                "downstreamReady": bool(
+                    reconciliation and reconciliation.downstream_ready
+                ),
                 "topicSnapshot": snapshot_result or {"status": "NOT_RUN"},
             }
         )

@@ -310,7 +310,9 @@ class _VendorTaishinIntradayClient:
             except LiveProviderError:
                 raise
             except Exception as exc:  # pragma: no cover - private runtime
-                raise LiveProviderError("TAISHIN_REQUEST_FAILED", "intraday request failed") from exc
+                raise LiveProviderError(
+                    "TAISHIN_REQUEST_FAILED", "intraday request failed"
+                ) from exc
             finally:
                 self._completed = None
                 self._request_state = None
@@ -427,6 +429,10 @@ class TaishinTechnicalAnalysisProvider:
             retrieved_at=retrieved_at,
             bars=tuple(bars),
             raw_point_count=len(raw_rows),
+            instrument_status=(
+                "AVAILABLE" if all(bar.close is not None for bar in bars) else "UNKNOWN"
+            ),
+            status_explicit=False,
         )
 
 

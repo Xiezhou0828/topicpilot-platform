@@ -4,6 +4,7 @@ from . import (
     canonical_observations,
     identity,
     import_audit,  # noqa: F401
+    lifecycle,
     live,
     market_data,
     models,  # noqa: F401
@@ -15,6 +16,7 @@ from .base import Base
 from .canonical_observations import *  # noqa: F403
 from .identity import *  # noqa: F403
 from .import_audit import LegacyImportArtifact, LegacyImportRecord, LegacyImportRun
+from .lifecycle import TopicLifecycleResult
 from .live import LiveCollectorAttempt, LiveCollectorRun, LiveTrackingUniverse
 from .market_data import *  # noqa: F403
 from .models import (
@@ -43,11 +45,13 @@ __all__ = [
     "ReferenceSession",
     "ReferenceTimezone",
     "ReferenceTradingStatus",
+    "TopicLifecycleResult",
 ]
 for _module in (
     canonical_observations,
     identity,
     live,
+    lifecycle,
     market_data,
     observation_timeline,
     snapshots,

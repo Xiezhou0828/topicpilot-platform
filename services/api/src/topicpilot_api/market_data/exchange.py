@@ -8,7 +8,6 @@ replacement for the licensed/private intraday runtime.
 
 from __future__ import annotations
 
-import calendar
 import json
 import re
 from collections.abc import Callable, Mapping
@@ -49,7 +48,7 @@ def _decimal(value: object, label: str) -> Decimal | None:
         result = Decimal(text.replace("+", "", 1))
     except (InvalidOperation, ValueError) as exc:
         raise HistoricalProviderError("INVALID_NUMBER", f"{label} is invalid") from exc
-    if not result.is_finite() or result < 0 and label != "change":
+    if not result.is_finite() or (result < 0 and label != "change"):
         raise HistoricalProviderError("INVALID_NUMBER", f"{label} is invalid")
     return result
 
@@ -115,9 +114,16 @@ def _result(
     adapter_version: str,
     bars: list[HistoricalBar],
     retrieved_at: datetime,
+    instrument_status: str | None = None,
+    status_reason: str | None = None,
+    status_explicit: bool = False,
 ) -> HistoricalFetchResult:
     by_date = {bar.trading_date: bar for bar in bars}
     ordered = tuple(by_date[day] for day in sorted(by_date))
+    if instrument_status is None:
+        instrument_status = (
+            "AVAILABLE" if all(bar.close is not None for bar in ordered) else "UNKNOWN"
+        )
     return HistoricalFetchResult(
         instrument_code=instrument_code,
         market_code=market_code,
@@ -127,6 +133,9 @@ def _result(
         retrieved_at=retrieved_at,
         bars=ordered,
         raw_point_count=len(ordered),
+        instrument_status=instrument_status,
+        status_reason=status_reason,
+        status_explicit=status_explicit,
     )
 
 
@@ -162,10 +171,18 @@ class TwseOfficialDailyProvider:
             raise HistoricalProviderError("UNSUPPORTED_MARKET", market_code)
         bars: list[HistoricalBar] = []
         for month_start in _month_starts(self.start_date, self.end_date):
-            query = urlencode({"date": month_start.strftime("%Y%m01"), "stockNo": instrument_code, "response": "json"})
+            query = urlencode(
+                {
+                    "date": month_start.strftime("%Y%m01"),
+                    "stockNo": instrument_code,
+                    "response": "json",
+                }
+            )
             payload = _json(self.transport, f"{self.base_url}?{query}", self.timeout)
             if str(payload.get("stat", "")).upper() != "OK":
-                raise HistoricalProviderError("EXCHANGE_NO_DATA", str(payload.get("stat", "unknown")))
+                raise HistoricalProviderError(
+                    "EXCHANGE_NO_DATA", str(payload.get("stat", "unknown"))
+                )
             rows = payload.get("data", [])
             if not isinstance(rows, list):
                 raise HistoricalProviderError("INVALID_PAYLOAD", "TWSE data must be an array")
@@ -192,6 +209,11 @@ class TwseOfficialDailyProvider:
             adapter_version=self.adapter_version,
             bars=bars,
             retrieved_at=self.clock(),
+            instrument_status=("AVAILABLE" if bars else "EXCHANGE_CONFIRMED_NO_DATA"),
+            status_reason=(
+                None if bars else "official TWSE response contained no row for requested date"
+            ),
+            status_explicit=not bool(bars),
         )
 
 
@@ -231,10 +253,18 @@ class TpexOfficialDailyProvider:
             raise HistoricalProviderError("UNSUPPORTED_MARKET", market_code)
         bars: list[HistoricalBar] = []
         for month_start in _month_starts(self.start_date, self.end_date):
-            query = urlencode({"date": month_start.strftime("%Y/%m/%d"), "code": instrument_code, "response": "json"})
+            query = urlencode(
+                {
+                    "date": month_start.strftime("%Y/%m/%d"),
+                    "code": instrument_code,
+                    "response": "json",
+                }
+            )
             payload = _json(self.transport, f"{self.base_url}?{query}", self.timeout)
             if str(payload.get("stat", "")).lower() != "ok":
-                raise HistoricalProviderError("EXCHANGE_NO_DATA", str(payload.get("stat", "unknown")))
+                raise HistoricalProviderError(
+                    "EXCHANGE_NO_DATA", str(payload.get("stat", "unknown"))
+                )
             tables = payload.get("tables")
             if not isinstance(tables, list) or not tables or not isinstance(tables[0], Mapping):
                 raise HistoricalProviderError("INVALID_PAYLOAD", "TPEx tables are missing")
@@ -265,6 +295,11 @@ class TpexOfficialDailyProvider:
             adapter_version=self.adapter_version,
             bars=bars,
             retrieved_at=self.clock(),
+            instrument_status=("AVAILABLE" if bars else "EXCHANGE_CONFIRMED_NO_DATA"),
+            status_reason=(
+                None if bars else "official TPEx response contained no row for requested date"
+            ),
+            status_explicit=not bool(bars),
         )
 
 
