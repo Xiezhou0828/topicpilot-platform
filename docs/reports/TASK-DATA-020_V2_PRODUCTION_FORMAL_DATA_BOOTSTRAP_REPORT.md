@@ -305,6 +305,12 @@ with no `DEMO`/`PREVIEW` identity rows. Stock 2330 exposes the formal ASIC
 relation; the topic detail exposes formal constituents. No fixture or browser
 synthetic fallback was used for these responses.
 
+The public admin readback also fetched all 507 instruments, all 130 topics,
+and all 848 relations across the paginated endpoints. The 848 relation rows
+had zero orphan instrument references, zero orphan topic references, and zero
+duplicate relation IDs. This is the read-only FK/relationship evidence used
+for this reconciliation; no admin write endpoint was called.
+
 ### Sites browser evidence
 
 The production Sites environment remains:

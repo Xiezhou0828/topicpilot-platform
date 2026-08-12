@@ -542,6 +542,11 @@ contains TPE 314 and TWO 193; 6806's nullable price is preserved. Sites
 production has the configured API base and demo fallback disabled; browser
 checks show formal topics/stocks and formal 2330 drawer relations.
 
+The paginated public admin readback fetched all 507 instruments, 130 topics,
+and 848 relation rows with zero orphan instrument references, zero orphan topic
+references, and zero duplicate relation IDs. This supplies read-only
+FK/relation evidence without a production write.
+
 No new service, database, tunnel, migration, or bootstrap path was introduced.
 The production image remains formal-only and does not import `fixtures/demo`.
 

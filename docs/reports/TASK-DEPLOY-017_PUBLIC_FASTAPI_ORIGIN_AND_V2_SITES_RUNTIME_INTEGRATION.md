@@ -401,6 +401,11 @@ price, and 2330 exposes formal topic relations including ASIC. The preflight
 OPTIONS request from the exact Sites origin remains 200 with an exact
 `Access-Control-Allow-Origin`, GET allowed, and no wildcard credentials.
 
+The paginated public admin readback fetched all 507 instruments, 130 topics,
+and 848 relation rows with zero orphan instrument references, zero orphan topic
+references, and zero duplicate relation IDs. This confirms the relation path
+without issuing any production write.
+
 ### Production data boundary
 
 Sites continues to use `NEXT_PUBLIC_API_BASE_URL=https://topicpilot-api.onrender.com`
