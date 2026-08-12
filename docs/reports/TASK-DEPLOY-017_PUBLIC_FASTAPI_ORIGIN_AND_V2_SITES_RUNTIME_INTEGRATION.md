@@ -324,6 +324,26 @@ data action is an explicitly approved operator import from the private formal
 source, followed by count, lineage, and detail reconciliation; it must not be
 implemented as Web Service startup or replaced by the demo importer.
 
+The repository's approved private input directory is available locally at
+`C:\Users\acer\Desktop\題材領航\input`. A no-write dry-run completed during
+this continuation with `records_read=1594`, `valid=1594`, zero rejected,
+duplicate, conflict, or warning records, and counts of 507 instruments, 130
+topics, 107 hierarchy edges, and 848 relations. It did not contact Neon.
+After the operator has reviewed the dry-run, the protected import command is:
+
+```text
+$env:PYTHONPATH='services/api/src'
+python infra/scripts/phase3_6_001b_legacy_import.py `
+  --input 'C:\Users\acer\Desktop\題材領航\input' `
+  --database-url "$env:MIGRATION_DATABASE_URL" `
+  --apply
+```
+
+This session intentionally did not execute that production write because the
+Neon secret is not available here. The command must be run once from the
+approved revision, then `/api/v2/topics`, `/api/v2/stocks`, the 2330/6806
+details, and the public browser must be rechecked.
+
 ## Current Fixed Final Output
 
 ```text

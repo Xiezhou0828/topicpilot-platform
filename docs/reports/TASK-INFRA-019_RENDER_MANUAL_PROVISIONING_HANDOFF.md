@@ -294,6 +294,22 @@ rows. The remaining action is an approved operator import from the private
 formal source, followed by count/detail reconciliation; this handoff does not
 execute that production write.
 
+The local dry-run for the approved input directory
+`C:\Users\acer\Desktop\題材領航\input` passed with 1,594 valid records and
+the expected 507 instruments, 130 topics, 107 hierarchy edges, and 848
+relations. The production operator command is:
+
+```text
+$env:PYTHONPATH='services/api/src'
+python infra/scripts/phase3_6_001b_legacy_import.py `
+  --input 'C:\Users\acer\Desktop\題材領航\input' `
+  --database-url "$env:MIGRATION_DATABASE_URL" `
+  --apply
+```
+
+Run it only from the protected operator environment after reviewing the
+dry-run output; this session did not execute the Neon write.
+
 ## Current fixed final output
 
 ```text

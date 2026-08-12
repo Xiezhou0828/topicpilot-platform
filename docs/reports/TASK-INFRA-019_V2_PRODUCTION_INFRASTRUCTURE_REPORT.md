@@ -433,6 +433,27 @@ checked-in `fixtures/demo` bundle is synthetic and was not imported. No
 production migration/import was executed from this session and no secret was
 printed or committed.
 
+The approved private input directory is available locally at
+`C:\Users\acer\Desktop\題材領航\input` for operator use. A no-write dry-run
+against that directory passed with `records_read=1594`, `valid=1594`, zero
+rejections/conflicts/warnings, and the expected entity counts: 2 markets, 507
+instruments, 130 topics, 107 hierarchy edges, and 848 instrument-topic
+relations. The dry-run did not contact Neon. The protected first formal import
+must be run from the same revision with the direct migration connection, for
+example:
+
+```text
+$env:PYTHONPATH='services/api/src'
+python infra/scripts/phase3_6_001b_legacy_import.py `
+  --input 'C:\Users\acer\Desktop\題材領航\input' `
+  --database-url "$env:MIGRATION_DATABASE_URL" `
+  --apply
+```
+
+The command is intentionally not run here because the Neon secret is not
+available to this session. It is transactional and idempotent; an operator
+must review its JSON result before enabling any 130/507 public acceptance gate.
+
 Sites production environment revision 2 now contains:
 
 ```text
