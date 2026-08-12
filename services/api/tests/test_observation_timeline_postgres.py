@@ -6,12 +6,12 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 import pytest
+from alembic import command
 from alembic.config import Config
+from alembic.script import ScriptDirectory
 from sqlalchemy import text
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
-
-from alembic import command
 
 # SQL statements are intentionally kept close to the assertion they exercise.
 # ruff: noqa: E501
@@ -123,6 +123,8 @@ def test_upgrade_downgrade_reupgrade(postgres_engine):
     cfg.set_main_option(
         "sqlalchemy.url", os.environ.get("TEST_DATABASE_URL") or os.environ.get("DATABASE_URL", "")
     )
+    scripts = ScriptDirectory.from_config(cfg)
+    current_head = scripts.get_current_head()
     command.downgrade(cfg, "0017_phase3_4_005_market_data_source_and_raw_observations")
     with postgres_engine.connect() as cx:
         assert (
@@ -139,7 +141,7 @@ def test_upgrade_downgrade_reupgrade(postgres_engine):
     with postgres_engine.connect() as cx:
         assert (
             cx.execute(text("SELECT version_num FROM alembic_version")).scalar_one()
-            == "0022_task_live_002_runtime"
+            == current_head
         )
         triggers = {
             r[0]
