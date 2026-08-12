@@ -15,7 +15,7 @@ def test_canonical_revision_is_linear_after_0018():
     config = Config(str(ROOT / "alembic.ini"))
     script = ScriptDirectory.from_config(config)
     assert [head.revision for head in script.get_revisions("heads")] == [
-        "0027_task_be_021_topic_lifecycle_results"
+        "0028_task_data_ref_001_reference_bootstrap"
     ]
 
 

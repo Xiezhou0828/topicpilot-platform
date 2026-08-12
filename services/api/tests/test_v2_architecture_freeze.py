@@ -23,6 +23,7 @@ IMPLEMENTED_V2_TABLES = {
     "reference_sessions",
     "reference_trading_statuses",
     "reference_adjustments",
+    "reference_calendar_dates",
     "live_tracking_universe",
     "live_collector_runs",
     "live_collector_attempts",

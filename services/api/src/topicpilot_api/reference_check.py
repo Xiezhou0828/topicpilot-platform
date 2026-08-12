@@ -28,6 +28,8 @@ class ReferenceRegistrySummary:
     sessions: tuple[tuple[str, str], ...]
     trading_status_count: int
     adjustment_count: int
+    # SQL inspection supplies the persisted count from reference_calendar_dates.
+    calendar_date_count: int = 0
 
 
 def evaluate_reference_preflight(
@@ -91,6 +93,7 @@ def evaluate_reference_preflight(
         and bool(registry.sessions)
         and registry.trading_status_count > 0
         and registry.adjustment_count > 0
+        and registry.calendar_date_count > 0
     )
     duplicate_values = sorted(set(duplicate_identities))
     ready = bool(expected_markets) and (
@@ -122,6 +125,7 @@ def evaluate_reference_preflight(
         "registrySetCount": registry.set_count,
         "tradingStatusCatalogueCount": registry.trading_status_count,
         "adjustmentCatalogueCount": registry.adjustment_count,
+        "calendarDateCount": registry.calendar_date_count,
         "referenceLoadStatus": "READY" if ready else "NOT_READY",
     }
     # Keep the fixed operator handoff field names alongside the API-style
@@ -136,6 +140,7 @@ def evaluate_reference_preflight(
             "MISSING_INSTRUMENTS": result["missingInstruments"],
             "DUPLICATE_IDENTITIES": result["duplicateIdentities"],
             "REFERENCE_LOAD_STATUS": result["referenceLoadStatus"],
+            "REFERENCE_CALENDAR_DATE_COUNT": result["calendarDateCount"],
         }
     )
     return result
@@ -157,6 +162,7 @@ def inspect_reference_preflight(
         Instrument,
         Market,
         ReferenceAdjustment,
+        ReferenceCalendarDate,
         ReferenceCurrency,
         ReferenceRegistrySet,
         ReferenceSession,
@@ -174,7 +180,7 @@ def inspect_reference_preflight(
     )
     registry_id = sets[0].id if len(sets) == 1 else None
     currencies = timezones = sessions = ()
-    statuses = adjustments = 0
+    statuses = adjustments = calendar_dates = 0
     if registry_id is not None:
         currencies = tuple(
             sorted(
@@ -216,6 +222,14 @@ def inspect_reference_preflight(
                 select(func.count())
                 .select_from(ReferenceAdjustment)
                 .where(ReferenceAdjustment.registry_set_id == registry_id)
+            )
+            or 0
+        )
+        calendar_dates = int(
+            session.scalar(
+                select(func.count())
+                .select_from(ReferenceCalendarDate)
+                .where(ReferenceCalendarDate.registry_set_id == registry_id)
             )
             or 0
         )
@@ -291,6 +305,7 @@ def inspect_reference_preflight(
             sessions=sessions,
             trading_status_count=statuses,
             adjustment_count=adjustments,
+            calendar_date_count=calendar_dates,
         ),
         required_session_code=required_session_code,
         required_calendar_code=required_calendar_code,

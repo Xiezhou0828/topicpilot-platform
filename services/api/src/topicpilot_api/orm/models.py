@@ -607,9 +607,11 @@ class ReferenceRegistrySet(Base, IdentityMixin, CreatedAtMixin):
     )
     reference_data_version: Mapped[str] = mapped_column(String(64), nullable=False)
     status: Mapped[str] = mapped_column(
-        String(16), nullable=False, default="ACTIVE", server_default="ACTIVE"
+        String(16), nullable=False, default="DRAFT", server_default="DRAFT"
     )
     description: Mapped[str | None] = mapped_column(Text)
+    bundle_sha256: Mapped[str | None] = mapped_column(String(64))
+    source_manifest_sha256: Mapped[str | None] = mapped_column(String(64))
 
 
 class ReferenceCurrency(Base, IdentityMixin):
@@ -669,3 +671,25 @@ class ReferenceAdjustment(Base, IdentityMixin):
         ForeignKey("topicpilot.reference_registry_sets.id", ondelete="RESTRICT"), nullable=False
     )
     code: Mapped[str] = mapped_column(String(32), nullable=False)
+
+
+class ReferenceCalendarDate(Base, IdentityMixin):
+    __tablename__ = "reference_calendar_dates"
+    __table_args__ = (
+        UniqueConstraint(
+            "registry_set_id",
+            "calendar_code",
+            "calendar_date",
+            name="uq_reference_calendar_dates_registry_date",
+        ),
+        CheckConstraint(
+            "date_kind IN ('HOLIDAY', 'SUSPENDED')",
+            name="ck_reference_calendar_dates_kind",
+        ),
+    )
+    registry_set_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("topicpilot.reference_registry_sets.id", ondelete="RESTRICT"), nullable=False
+    )
+    calendar_code: Mapped[str] = mapped_column(String(64), nullable=False)
+    calendar_date: Mapped[date] = mapped_column(Date, nullable=False)
+    date_kind: Mapped[str] = mapped_column(String(16), nullable=False)

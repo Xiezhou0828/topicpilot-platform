@@ -18,6 +18,7 @@ def _registry() -> ReferenceRegistrySummary:
         sessions=(("REGULAR", "TW_MARKET"),),
         trading_status_count=4,
         adjustment_count=2,
+        calendar_date_count=24,
     )
 
 

@@ -1,0 +1,18 @@
+[
+  {
+    "calendar_code": "TW_MARKET",
+    "code": "TPE",
+    "exchange_code": "TWSE",
+    "name": "TWSE Listed",
+    "session_code": "REGULAR",
+    "timezone": "Asia/Taipei"
+  },
+  {
+    "calendar_code": "TW_MARKET",
+    "code": "TWO",
+    "exchange_code": "TPEx",
+    "name": "TPEx OTC",
+    "session_code": "REGULAR",
+    "timezone": "Asia/Taipei"
+  }
+]

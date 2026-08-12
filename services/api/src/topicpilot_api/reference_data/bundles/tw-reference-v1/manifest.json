@@ -1,0 +1,74 @@
+{
+  "bundleSchemaVersion": "reference-bundle.v1",
+  "bundleSha256": "5db36231decaeb12010ca7624c0d2bdc18da3b86dcec5611aa5ff7c132af15e6",
+  "derivedSummary": {
+    "adjustmentCount": 3,
+    "calendarDateCount": 24,
+    "calendarHolidayCount": 23,
+    "calendarSuspendedCount": 1,
+    "currencyCount": 1,
+    "instrumentCount": 507,
+    "instrumentCountByMarket": {
+      "TPE": 314,
+      "TWO": 193
+    },
+    "marketCount": 2,
+    "sessionCount": 1,
+    "timezoneCount": 1,
+    "tradingStatusCount": 7
+  },
+  "files": {
+    "adjustments.json": "7a390b537ab5d9d560e68404b44deeb19598323ede91f41c84e67b5ed677c108",
+    "calendar_dates.json": "be0010024fe2e7afa57dbc88009fde67a4c5f16ec7de9d59c12d6979155af3c0",
+    "currencies.json": "55f064edf092842da57496c938bf5cd7e82b37ca43dd37a16df5bc40aa332e74",
+    "evidence.json": "3dccb5c1c513bbf33072818984c3aa66f89c5a40a27dea9b1461ba0c2f95d695",
+    "instruments.json": "58846ad4c6f3aeb700b8dcbf5056db60280e3346fd359c89af71040e2842adfd",
+    "markets.json": "2b61a0ec281aee47b5976487079449eafe6a33cd8ccf743f550b9e33d57fba43",
+    "sessions.json": "0293cc4970128d8613a8b1f53621794db8adc0ecb1cf5cf92e3073817f2025cc",
+    "timezones.json": "790143b9fbd112df4433265ad9237f776c9ee47c5fe33da0bb7d66270b3f2cdd",
+    "trading_statuses.json": "e2f8cb86774e7fb05139683ed45923875716ea18939cd16ee8da217f733fe481"
+  },
+  "generatedOrCurated": "GENERATED_WITH_CURATED_GOVERNANCE_INPUTS",
+  "governance": {
+    "activation": "operator must explicitly pass --activate",
+    "adjustmentAuthority": "curated repository governance input; no implicit defaults",
+    "calendarAuthority": "TWSE 2026 market holiday schedule plus exceptional closure notice",
+    "currencyAuthority": "existing live runtime/reference context contract",
+    "marketAuthority": "provider registry plus existing identity bootstrap defaults",
+    "statusAuthority": "DAILY_TRADING_STATUS_CODES plus explicit evidence validation"
+  },
+  "referenceDataVersion": "tw-reference-v1",
+  "sourceArtifacts": [
+    {
+      "acceptedRowCount": 507,
+      "delimiter": "\\t",
+      "encoding": "utf-8-sig",
+      "fileName": "股票總覽.tsv",
+      "inputRowCount": 539,
+      "role": "INSTRUMENT_SOURCE",
+      "sha256": "25d0b40cc2d5ff58112456c4a307e28309e83c8fcaa266750c7169221031b28f",
+      "skippedRowCount": 32
+    },
+    {
+      "calendarCode": "TW_MARKET",
+      "fileName": "twse_market_calendar.json",
+      "holidayCount": 23,
+      "role": "CALENDAR_AUTHORITY",
+      "sha256": "9905d6f27506381990a4b5364016e6cdaa69db8678a3d50eb61752e8a941d8d1",
+      "sourceDescription": "TWSE 2026 market holiday schedule plus exceptional closure notice",
+      "sourceVersion": "2026-twse-calendar-20260714",
+      "suspendedCount": 1,
+      "timezone": "Asia/Taipei"
+    },
+    {
+      "fileName": "quote_suspension_evidence.json",
+      "role": "STATUS_EVIDENCE",
+      "sha256": "ff09d5ae48f75a0a825ee6f10fb617689f31ce39eb542c2403fff613cc01d4e1"
+    },
+    {
+      "fileName": "adjustment_catalogue.json",
+      "role": "ADJUSTMENT_GOVERNANCE_INPUT",
+      "sha256": "45f5325da43348040b0714eb6c14195c66565d3fe99e62aea7c4533676bf30ed"
+    }
+  ]
+}
