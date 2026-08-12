@@ -1,6 +1,6 @@
 # TopicPilot V2 Production Data Architecture
 
-**Status:** `PM-FROZEN BOUNDARY / IMPLEMENTATION AUDIT BLOCKED`  
+**Status:** `PM-FROZEN BOUNDARY / V2 DATA CHAIN READY; operational follow-ups open`  
 **Generation:** `NEXT / V2`  
 **Owner:** Architecture / Backend / Operations  
 **Effective date:** 2026-08-12  

@@ -3,7 +3,8 @@
 **Date:** 2026-08-12  
 **Scope:** repository-side audit and exact first Render Web Service settings  
 **External UI operation:** not performed by this task  
-**Production claim:** no Render service has been deployed by this task
+**Historical production claim:** no Render service had been deployed by the
+original handoff task
 
 This handoff converted the remaining manual Render work into a safe, repeatable
 UI procedure. The user has since completed that UI step. The original handoff
