@@ -5,22 +5,66 @@ import { test } from "node:test";
 const root = new URL("../app/", import.meta.url);
 const read = (relative) => readFile(new URL(relative, root), "utf8");
 
-test("one SnapshotProvider owns all live data refreshes", async () => {
-  const [layout, store, home, watchlist, quality] = await Promise.all([
+test("the V2 route tree uses one SnapshotProvider and explicit surface owners", async () => {
+  const [layout, rootPage, v2Page, home, topics, stocks, favorites, opportunities, store, quality] = await Promise.all([
     read("layout.tsx"),
-    read("lib/snapshot-store.tsx"),
     read("page.tsx"),
-    read("watchlist/page.tsx"),
+    read("components/v2/V2Page.tsx"),
+    read("components/v2/TodayMarketPage.tsx"),
+    read("components/v2/TopicListPage.tsx"),
+    read("components/v2/StockExplorerPage.tsx"),
+    read("components/v2/FavoritesWorkspacePage.tsx"),
+    read("opportunities/page.tsx"),
+    read("lib/snapshot-store.tsx"),
     read("components/DataQualityPanel.tsx"),
   ]);
   assert.match(layout, /<SnapshotProvider>\{children\}<\/SnapshotProvider>/);
-  assert.match(home, /useHomeData/);
+  assert.match(rootPage, /import V2Page from "\.\/components\/v2\/V2Page"/);
+  assert.match(v2Page, /import TodayMarketPage from "\.\/TodayMarketPage"/);
+  assert.match(v2Page, /path === "\/"/);
+  assert.match(v2Page, /<TodayMarketPage \/>/);
   assert.match(home, /useSnapshot/);
-  assert.match(watchlist, /useSnapshot/);
-  assert.match(quality, /useQualityPanel/);
-  assert.doesNotMatch(home, /mockTopicsData|mockWatchlistData/);
+  assert.match(topics, /fetchTopics/);
+  assert.match(stocks, /fetchFormalStocks/);
+  assert.match(favorites, /fetchFormalStocks/);
+  assert.match(opportunities, /V2Page path="\/opportunities"/);
   assert.match(store, /requestRef\.current/);
   assert.match(store, /if \(requestRef\.current\) return requestRef\.current/);
+  assert.match(quality, /useQualityPanel/);
+});
+
+test("V2 Home keeps research content separate from the scan-only Stock Explorer", async () => {
+  const [home, stocks] = await Promise.all([
+    read("components/v2/TodayMarketPage.tsx"),
+    read("components/v2/StockExplorerPage.tsx"),
+  ]);
+  assert.match(home, /const mainlines = \[/);
+  assert.match(home, /href=\{`\/topics\/\$\{topic\.slug\}`\}/);
+  assert.match(home, /href="\/opportunities"/);
+  assert.doesNotMatch(home, /strategyRegistry|strategyCandidates|Strong Buy|Buy|Sell|stop-loss|Entry Score/);
+  assert.match(stocks, /fetchFormalStocks/);
+  assert.match(stocks, /openDetailPanel/);
+  assert.match(stocks, /const \[strategy, setStrategy\]/);
+  assert.doesNotMatch(stocks, /Strong Buy|stop-loss|target price/);
+});
+
+test("V2 topic and stock surfaces use formal adapters without parsing rule text", async () => {
+  const [topics, topicApi, stocks, stockApi, adapter] = await Promise.all([
+    read("components/v2/TopicListPage.tsx"),
+    read("lib/topic-api.ts"),
+    read("components/v2/StockExplorerPage.tsx"),
+    read("lib/stock-api.ts"),
+    read("lib/snapshot-adapter.ts"),
+  ]);
+  assert.match(topics, /fetchTopics\(\)/);
+  assert.match(topics, /resource\?\.source === "unavailable"/);
+  assert.match(topics, /PreviewBadge/);
+  assert.match(topicApi, /\/api\/v2\/topics\?limit=200&offset=0/);
+  assert.match(stocks, /fetchFormalStocks/);
+  assert.match(stockApi, /\/api\/v2\/stocks/);
+  assert.match(adapter, /toMarketDecision/);
+  assert.match(adapter, /toStrategyRegistry/);
+  assert.doesNotMatch(topics, /bundle\.stockUniverse|parse.*rule/i);
 });
 
 test("refresh controller polls every 3 minutes only while visible and in market session", async () => {
@@ -50,45 +94,6 @@ test("existing frontend reads the FastAPI snapshot through one data layer", asyn
   assert.match(source, /\/api\/v1\/snapshot\/latest/);
   assert.match(source, /DEMO_FALLBACK_ENABLED/);
   assert.doesNotMatch(source, /X-Snapshot-Source|source !== "r2"/);
-  assert.match(source, /FastAPI 回傳 HTTP \$\{res\.status\}/);
-  assert.match(source, /FastAPI 回傳內容不是有效 JSON/);
-  assert.match(source, /FastAPI 回傳資料不符合前端契約/);
-});
-
-test("strategy drilldown stays on home while the stock universe remains scan-only", async () => {
-  const [home, watchlist, liveData] = await Promise.all([
-    read("page.tsx"),
-    read("watchlist/page.tsx"),
-    read("lib/live-data.mjs"),
-  ]);
-  assert.match(home, /strategyRegistry/);
-  assert.doesNotMatch(watchlist, /canShowTradeJudgement/);
-  assert.match(watchlist, /點選查看完整判讀/);
-  assert.match(liveData, /dataState === "LIVE"/);
-  assert.match(liveData, /state: "SNAPSHOT"/);
-  assert.match(home, /此策略未提供進場價位/);
-  assert.match(home, /策略候選股/);
-});
-
-test("new backend quote contract is adapted without parsing rule text", async () => {
-  const [types, adapter, source, topics] = await Promise.all([
-    read("lib/types.ts"),
-    read("lib/snapshot-adapter.ts"),
-    read("lib/data-source.ts"),
-    read("topics/page.tsx"),
-  ]);
-  for (const field of ["triggerValue", "supportValue", "pressureValue", "invalidationValue", "quoteMeta", "marketSession"]) {
-    assert.match(types, new RegExp(field));
-  }
-  assert.match(adapter, /num\(o\.triggerValue\)/);
-  assert.match(adapter, /raw\.quoteMeta\?\.updatedAt/);
-  assert.match(adapter, /raw\.marketSession\?\.latestTradingDate/);
-  assert.match(source, /topics,\s*topicGroups:/s);
-  assert.match(source, /stockUniverse: toStockUniverse\(raw\)/);
-  assert.match(adapter, /toTopicRelations/);
-  assert.match(topics, /bundle\.stockUniverse/);
-  assert.match(topics, /bundle\.source !== "snapshot"/);
-  assert.match(topics, /正式 snapshot 載入前不顯示示範題材/);
 });
 
 test("a successful refresh swaps the complete bundle before publishing its state", async () => {

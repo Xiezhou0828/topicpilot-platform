@@ -13,17 +13,17 @@ async function render(path = "/") {
   );
 }
 
-test("renders all primary workspace routes", async () => {
+test("renders the approved V2 and retained workspace routes", async () => {
   const routes = [
-    ["/", "今日市場焦點"],
-    ["/market", "今日市場焦點", 307],
-    ["/topics", "題材總覽"],
-    ["/watchlist", "股票一覽"],
-    ["/guide", "使用指南"],
-    ["/studio", "AI投資工作室"],
-    ["/stocks/DEMO-A1", "Aster Systems"],
+    ["/", "tp-home-overview-card"],
+    ["/market", null, 307],
+    ["/topics", "tp-topic-overview-page"],
+    ["/watchlist", "stockUniverseShell"],
+    ["/guide", "guideShell"],
+    ["/studio", "studioPage"],
+    ["/stocks/DEMO-A1", "stockDetailGrid"],
   ];
-  for (const [path, expected, expectedStatus = 200] of routes) {
+  for (const [path, marker, expectedStatus = 200] of routes) {
     const response = await render(path);
     assert.equal(response.status, expectedStatus);
     if (path === "/market") {
@@ -32,29 +32,29 @@ test("renders all primary workspace routes", async () => {
     }
     const html = await response.text();
     assert.match(html, /lang="zh-Hant"/);
-    assert.match(html, /題材領航/);
-    assert.match(html, new RegExp(expected));
+    assert.match(html, /TopicPilot/);
+    assert.match(html, new RegExp(marker));
   }
 });
 
-test("home source contains focused market workflow and safety language", async () => {
-  const home = await readFile(new URL("../app/page.tsx", import.meta.url), "utf8");
+test("V2 Home source contains the frozen market workflow and safety boundary", async () => {
+  const home = await readFile(new URL("../app/components/v2/TodayMarketPage.tsx", import.meta.url), "utf8");
   const liveData = await readFile(new URL("../app/lib/live-data.mjs", import.meta.url), "utf8");
-  for (const text of [
-    "今日市場判斷",
-    "市場健康度",
-    "題材輪動",
-    "策略候選股",
-    "現價",
-    "觸發",
-    "支撐",
-    "失效",
-    "此策略未提供進場價位",
-    "樣本累積中",
-  ]) assert.match(home, new RegExp(text));
-  assert.match(home, /strategyId === selectedStrategy\.strategyId/);
-  assert.match(liveData, /已碰觸發價/);
-  assert.doesNotMatch(home, /即時強度|待接資料源/);
+  for (const marker of [
+    "market-overview-title",
+    "tp-home-story-card",
+    "mainline-title",
+    "events-title",
+    "rotation-title",
+    "opportunities-title",
+    "isSyntheticPreview",
+    "canUseBackendData",
+    "只呈現研究入口，不在首頁完成推薦分析",
+  ]) assert.match(home, new RegExp(marker));
+  assert.match(home, /mainlines\.map/);
+  assert.match(home, /href=\{`\/topics\/\$\{topic\.slug\}`\}/);
+  assert.match(liveData, /canShowTradeJudgement/);
+  assert.doesNotMatch(home, /Buy|Sell|Strong Buy|stop-loss|Entry Score/);
 });
 
 test("trading theme keeps quote cards dark and exposes trigger emphasis", async () => {
@@ -66,12 +66,12 @@ test("trading theme keeps quote cards dark and exposes trigger emphasis", async 
   assert.doesNotMatch(css, /#fcfcfc|#fffafa|#fff4f3/);
 });
 
-test("glossary explains meaning, action and invalidation", async () => {
+test("glossary keeps meaning, action and invalidation columns", async () => {
   const glossary = await readFile(new URL("../app/components/TradingGlossary.tsx", import.meta.url), "utf8");
-  for (const term of ["進場條件分數", "觀察資格", "回檔轉強", "等突破", "雙週期領先", "資金先行", "消息共振", "族群分歧", "細分主導"]) {
-    assert.match(glossary, new RegExp(term));
-  }
+  assert.match(glossary, /glossaryPanel/);
+  assert.match(glossary, /className="glossaryGrid"/);
   assert.match(glossary, /<b>意思<\/b>/);
   assert.match(glossary, /<b>動作<\/b>/);
   assert.match(glossary, /<b>失效<\/b>/);
+  assert.match(glossary, /TERMS\.map/);
 });

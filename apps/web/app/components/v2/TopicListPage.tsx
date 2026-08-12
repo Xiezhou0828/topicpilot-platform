@@ -59,13 +59,13 @@ function displayLifecycleStage(stage: TopicLifecycleStage): DisplayLifecycleStag
   return stage;
 }
 
-function formalLifecycleStage(stage: string | null | undefined): DisplayLifecycleStage | null {
-  const labels: Record<string, DisplayLifecycleStage> = {
+function formalLifecycleStage(stage: string | null | undefined): TopicLifecycleStage | null {
+  const labels: Record<string, TopicLifecycleStage> = {
     SPROUTING: "萌芽",
     FERMENTING: "發酵",
     MAIN_RISE: "主升",
-    MATURE: "成熟",
-    DECLINING: "衰退",
+    MATURE: "高檔整理",
+    DECLINING: "退潮",
   };
   return stage ? labels[stage] ?? null : null;
 }
@@ -100,6 +100,7 @@ function LifecycleChip({ item }: { item: LifecycleTopic }) {
 }
 
 function TopicLifecycle({ topics, preview }: { topics: OverviewTopic[]; preview: boolean }) {
+  const allowPreview = preview;
   const [showHelp, setShowHelp] = useState(false);
   const [expandedStage, setExpandedStage] = useState<DisplayLifecycleStage | null>(null);
   const stageMap = useMemo(() => {

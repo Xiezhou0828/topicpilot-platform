@@ -16,6 +16,7 @@ Only the `今日市場重點` Card was adjusted. No other Home section, Header, 
 
 - Before: [TASK-FE-002D before first screen](TASK-FE-002D_HOME_BEFORE_FIRST_SCREEN.png)
 - After: [TASK-FE-002D updated first screen](TASK-FE-002D_HOME_AFTER_FIRST_SCREEN.png)
+- Public after deployment: [TASK-FE-002D public first screen](TASK-FE-002D_HOME_PUBLIC_AFTER.png)
 - Full desktop capture: [TASK-FE-002D desktop full screenshot](TASK-FE-002D_HOME_DESKTOP_FULL.png)
 
 The before/after comparison shows the three scan-friendly inline bullets, bold topic names, removal of the repeated observation sentence, and the shorter Card.
@@ -29,3 +30,4 @@ The before/after comparison shows the three scan-friendly inline bullets, bold t
 - `今日觀察` — absent.
 - `今日一句話` — present.
 - Unchanged section counts — 市場概況 1, 今日主線 3 cards, 盤中重要事件 1, rotation 2 cards, 今日機會 1.
+- Public URL audit — 3 items, bold topics present, `今日觀察` absent, rendered height `137.6px`.

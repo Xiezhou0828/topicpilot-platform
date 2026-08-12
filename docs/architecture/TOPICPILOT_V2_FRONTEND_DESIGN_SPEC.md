@@ -311,15 +311,33 @@ User-scoped persistence; saved topic list payload; saved stock list payload; fac
 
 ### FROZEN / CURRENT DECISION
 
-Keep a dedicated Opportunity page. Recommendation logic is substantial, not every stock is evaluated, and Home should show only a teaser. Use language such as `今日機會`、`值得留意`、`研究候選`; do not frame the page as direct buy instructions.
+Keep a dedicated Opportunity surface, connected to the existing flow `市場 → 題材 → 題材內股票 → Stock Encyclopedia → Opportunity / 查看機會`. It is not an isolated AI recommendation page. Opportunity logic is substantial, not every stock is evaluated, and Home should show only a teaser.
+
+The surface is **status-first and evidence-first**. Current PM-confirmed customer-facing states are `升溫候選`、`轉強觀察`、`精選機會`、`等待回測`、`失效`. Cards/lists should show, when the backend contract supports them:
+
+- topic identity/context;
+- stock name, symbol, and market identity;
+- formal Opportunity state;
+- primary structured evidence;
+- primary risk or priority limiter;
+- freshness/as-of context;
+- `查看機會` CTA.
+
+Each candidate must help answer `為什麼入選？`、`有哪些確認？`、`有哪些風險？`、`為什麼不是更高優先？`. Use language such as `今日機會`、`值得留意`、`研究候選`; do not frame the page as a direct buy instruction.
+
+Do not use customer-facing `87.4 分`, `★★★★★`, `AI 信心 94%`, `強烈買入`, or equivalent fake-precision/imperative patterns as the primary presentation. An internal backend ranking score may determine order without being displayed.
+
+The browser must consume formal backend semantics. It must not derive Opportunity state, Hard/Risk Gate outcome, leader/relative-strength meaning, support classification, technical pattern, Entry Quality, ranking, or transition state. A future LLM may verbalize structured backend evidence only; it must not make the decision.
+
+Preserve the existing **Modern Financial Workspace** design language: light/warm-neutral palette, calm restrained borders and shadows, dense editorial scanability, and limited semantic color. Opportunity state color must not compete with Taiwan red/green price direction.
 
 ### PROVISIONAL / TO REVIEW
 
-Candidate groups may include `主線精選`、`龍頭先行`、`題材擴散`、`落後補漲`、`盤中急升溫`、`例外升溫`、`等待確認／觀察中`. Exact labels, ordering, and priority remain PM-reviewable.
+Historical/provisional candidate groups may include `主線精選`、`龍頭先行`、`題材擴散`、`落後補漲`、`盤中急升溫`、`例外升溫`、`等待確認／觀察中`. They are optional grouping/taxonomy history, not replacements for the five current Opportunity states. Exact group labels, ordering, and priority remain PM-reviewable.
 
-Each candidate explains why it is surfaced. Evidence may include topic state, technical state, invalidation/risk, and timing/entry information only where backend data actually exists. A candidate should distinguish “not evaluated” from “not recommended”.
+Evidence may include topic context, eligibility, technical state, invalidation/risk, entry quality, chip confirmation, and catalyst context only where backend data actually exists. A candidate must distinguish `not evaluated`, `insufficient data`, and `evaluated but not qualified`.
 
-**API/data dependency to verify:** candidate reason taxonomy, evidence payloads, state/history, invalidation, and any entry-timing fields must be verified. No browser-side Recommendation logic.
+**API/data dependency to verify:** formal Opportunity payload, candidate reason taxonomy, structured evidence groups, state/history and transition reasons, risk/invalidation, entry-quality/support fields, internal ranking behavior, chip confirmation, and freshness must be verified. No browser-side Opportunity/Recommendation logic. See [Opportunity Engine Product & Architecture Specification](../product/TOPICPILOT_OPPORTUNITY_ENGINE_SPEC.md).
 
 ## 11. AI研究室
 
@@ -432,7 +450,8 @@ Only the following are intentionally unresolved:
 
 - exact notification event taxonomy, content, and thresholds;
 - exact live ranking/reordering stability behavior;
-- exact Opportunity grouping labels, order, and priority;
+- exact Opportunity grouping labels, order, and priority (the five Opportunity states themselves are not open);
+- exact Opportunity card density, evidence truncation, risk hierarchy, and responsive behavior;
 - wording choice: `資料完整度` vs `資料可信度`;
 - exact typography/font stack and token sizes;
 - exact spacing/radius/border/shadow tokens, unless accepted as implementation defaults;
@@ -441,7 +460,7 @@ Only the following are intentionally unresolved:
 - mobile design phase;
 - AI Research Studio orchestration and latency UX.
 
-Already decided and not open here: full-database 股票 page, 盤中／盤後／待更新 distinction, desktop-first strategy, Home fixed hierarchy, no Home news feed, dedicated 機會 page, #8A7462 direction, Taiwan red/green price convention, and AI Studio Phase 2 deferral.
+Already decided and not open here: full-database 股票 page, 盤中／盤後／待更新 distinction, desktop-first strategy, Home fixed hierarchy, no Home news feed, dedicated connected 機會 surface, status/evidence-first Opportunity presentation, five Opportunity states, no browser-side Opportunity semantic derivation, #8A7462 direction, Taiwan red/green price convention, and AI Studio Phase 2 deferral.
 
 ## 20. Recommended frontend implementation sequence
 
@@ -809,6 +828,28 @@ The Opportunity page must not implement:
 
 The following require verification against existing read models/contracts before implementation: opportunity section/status membership; opportunity age and trading-day timeline; deterministic inclusion reasons; topic member count and complete member list; technical validation statuses and score availability; candidate ranking; risk/invalidation evidence; update/as-of time; topic roles; and the Topic Detail route.
 
+### 24.11 TASK-BE-020 presentation boundary: evidence-first, status-first
+
+The current PM direction takes priority over earlier candidate-card wording:
+
+- the user-facing unit is an Opportunity state plus structured evidence, not a
+  black-box recommendation score;
+- cards/lists should show topic identity, stock identity, current Opportunity
+  state, primary evidence, primary risk/limiter, freshness/as-of context, and a
+  `查看機會` CTA;
+- internal ranking may exist in backend shadow/research artifacts, but the
+  frontend must not expose `87.4`, star ratings, `AI confidence 94%`, `強烈買入`,
+  `賣出`, or equivalent false precision;
+- the browser consumes formal backend semantic fields and must not derive
+  Opportunity state, Hard/Risk Gate, technical classification, support,
+  leader/relative strength, ranking, or transition state;
+- the existing flow remains `市場 → 題材 → 題材內股票 → Stock Encyclopedia →
+  Opportunity / 查看機會`; this is not an isolated AI recommendation page;
+- visual treatment continues the Modern Financial Workspace system: warm
+  neutral surfaces, restrained borders/shadows, dense editorial scanability,
+  and Taiwan red/green only for actual price direction. No UI implementation is
+  authorized by this documentation update.
+
 The following remain provisional unless an existing canonical contract already freezes them: exact section ordering rules within each segment; exact card density; exact status-chip copy beyond the preferred statuses above; exact technical checklist taxonomy; exact timeline event taxonomy; and exact drawer width/spacing tokens.
 
 The browser must not calculate technical scores, infer validation status, rank candidates from raw fields, or invent risk conclusions. These are read-model/business-rule responsibilities.
@@ -823,3 +864,259 @@ The browser must not calculate technical scores, infer validation status, rank c
 - **API/data dependencies:** opportunity membership/age/timeline, inclusion reasons, complete members, validation state/score, ranking, risk evidence, freshness, roles, and Topic Detail routing.
 - **Visual/style guidance added:** confirmed Modern Financial Workspace, light mode first, warm off-white/white surfaces, `#8A7462`, warm-gray borders, low shadow, 10–12px radius, restrained market colors, and no neon/glassmorphism/AI gradients.
 - **Change boundary confirmed:** no backend, API, schema, scoring, or frontend code changes were made or authorized by this document update.
+
+## 26. Frontend Handoff / Current Implementation & Design State — 2026-08-11
+
+**Handoff purpose:** preserve the current frontend implementation and design state for a new conversation without reopening completed visual decisions or silently changing the authority boundaries in this specification.
+**Decision boundary:** this is an additive handoff amendment. It does not delete or rewrite Sections 22–23, does not authorize implementation, and does not change backend, API, schema, scoring, lifecycle derivation, or production activation. Formal API/read-model values remain authoritative wherever they exist; Preview data remains additive and labelled under Section 23.10.
+
+### 26.1 Amendment and supersession map
+
+- Section 22 remains authoritative and frozen. The notes below record that the first visual implementation is complete; they do not reopen the Home hierarchy or exclusions.
+- Sections 23.11–23.13 remain authoritative for Topic Overview. This handoff records the accepted first-cover implementation state and adds the approved visual clarification that all five lifecycle stages use one coherent deeper-brown family rather than five unrelated colors.
+- For current Topic Detail design discussion only, Section 23.13's five customer-facing stage labels `萌芽 / 發酵 / 主升 / 成熟 / 衰退` supersede the older presentation labels `高檔整理 / 退潮` in Section 23.4. Section 23.4 remains authoritative for historical segments, dates, trading-day duration, current-stage marking, valid re-entry, and the rule that the browser must not derive lifecycle state.
+- The Topic Detail reading order in Section 26.4 is the current design direction and supersedes the ordering in Section 23.3 where they conflict. It does **not** freeze the unresolved contents of the status block or stock research columns.
+- The debug-like `資料完整度 / 評分狀態` items listed in Section 23.3 must not occupy primary visual space in the next Topic Detail design. This supersession is limited to presentation priority; evidence quality, confidence, data availability, and formal status semantics remain available where required and remain separate from Topic Score.
+- Section 23.2's frozen roles `代表股 / 核心股 / 關聯股`, unified role-ordered list principle, warm-neutral role semantics, and backend authority remain unchanged. The proposed research columns in Section 26.4 extend that list and remain `PROVISIONAL / TO REVIEW` until PM freeze and backend-contract verification.
+
+### 26.2 Completed and frozen: 今日市場 first visual
+
+**Status:** `IMPLEMENTED FIRST VISUAL / FROZEN FOR CURRENT PHASE`.
+
+- 今日市場 has completed its approved first visual and currently requires no further layout iteration.
+- Preserve the Section 22 hierarchy, compact first-screen rhythm, Home exclusions, and current implementation/data boundary.
+- Continue using the shared **Modern Financial Workspace** language: warm off-white page background, white/light surfaces, subtle warm-gray borders, little or no shadow, restrained spacing and typography, and `#8A7462` as the primary warm-neutral brand accent.
+- Keep decorative color use minimal. Taiwan-market red means actual price up and green means actual price down; neither color is used for topic roles, lifecycle categories, or generic decoration.
+- This handoff does not authorize reopening Home, adding a heatmap/news feed/stock ranking, or moving Topic Detail research content into Home.
+
+### 26.3 Completed and accepted: Topic Overview first cover
+
+**Status:** `IMPLEMENTED FIRST COVER / USER-ACCEPTED / FROZEN FOR CURRENT VISUAL PASS`.
+
+- `今日題材地圖` is the primary first-cover market scan and uses four lanes in the fixed order `S / A / B / D`.
+- The four lanes have a fixed framework height. Each lane scrolls internally when it contains more topics; topic concentration must not make the whole page excessively long. Scrollbar chrome may remain visually hidden as specified in Section 23.13.
+- Topic cards are compact. Each card stays on one concise line and contains only the topic identity plus today's score and direction; the card routes to Topic Detail. Do not pull lifecycle explanation, constituents, news, or research commentary into the card.
+- Topic direction remains semantically separate from Taiwan red-up/green-down price colors.
+- `題材生命週期` uses the five stages `萌芽 / 發酵 / 主升 / 成熟 / 衰退`, includes an icon for each stage, and keeps a fixed framework height so uneven stage populations do not lengthen the page uncontrollably.
+- The five stages use variations within one coherent, somewhat deeper brown family. They must not be rendered as five unrelated categorical colors. The page remains recognizably within the existing brown TopicPilot theme.
+- The overall surface continues to follow the Modern Financial Workspace rules and the data-authority boundary in Sections 23.9–23.10.
+
+### 26.4 In refinement: 股票 / Stock Encyclopedia
+
+**Status:** `VISUAL REFINEMENT IN PROGRESS`; this is the current implementation target, not a frozen declaration that the refinement is complete.
+
+- Product position: the page is a high-density **Stock Encyclopedia / 市場圖鑑**, not a dashboard made of oversized KPI cards.
+- Use fixed-size compact `TILE` components. A name with five or more Chinese characters, such as `大銀微系統`, must fit through typography/layout handling inside the tile; it must not force every tile in the grid to become wider.
+- Keep `市場 / 排序 / 重新排序 / 進階篩選` on one toolbar row. `重新排序` sits on the right and must not use a heavy black background. `進階篩選` is hidden by default and expands horizontally when invoked rather than dropping into a detached full-width row.
+- Selecting a tile opens the existing right-side **Stock Encyclopedia Drawer** and compresses/pushes the grid rather than creating a separate Stock Detail implementation. The Drawer must have a close control that returns the page to a true no-selection, full-width grid state. Selecting another stock replaces the Drawer content directly.
+- Preserve the existing Drawer design unless a bounded refinement below requires otherwise. Use one favorite star at the top. Change the research CTA to `查看機會`. Remove the unclear `★★★★★ / 收藏` element and do not create a second favorite treatment.
+- Topic membership inside the Drawer identifies the stock's role in each topic using the frozen vocabulary `代表股 / 核心股 / 關聯股`.
+- The page and Drawer retain the shared warm off-white/white, warm-gray border, `#8A7462`, restrained-color visual system. This refinement does not authorize a backend contract change or a cross-page component redesign.
+
+### 26.5 Next design stage: Topic Detail as a research workspace
+
+**Status:** `DESIGN DIRECTION / NOT PM-FROZEN`. Do not open an implementation work order yet. First settle the information architecture, especially the status indicators and stock-table research semantics.
+
+Topic Detail is not a stack of generic dashboard cards. It is the research workspace for one topic and should answer five questions in order:
+
+1. **現在值得看嗎？** — current grade, score, state, lifecycle position, persistence, and direction.
+2. **為什麼現在強？** — whether the move is broad or concentrated and which market/industry catalysts and evidence support it.
+3. **誰在帶？** — representative, core, and related stocks; who is leading, synchronizing, strengthening, or falling behind.
+4. **走到哪個生命週期？** — current stage, how it arrived there, how long it has persisted, and any historical/re-entry path.
+5. **現在有沒有值得進一步研究的股票機會？** — which stocks deserve the next research step, without turning Topic Grade into a recommendation.
+
+The proposed reading order is:
+
+1. topic identity, grade, score, human-readable state, and favorite action;
+2. compact topic-status block;
+3. lifecycle;
+4. 題材內股票 — the core research area;
+5. 為什麼現在強 / core catalysts and market evidence;
+6. topic history and meaningful state transitions;
+7. limited relevant news/context;
+8. related topics.
+
+The full-market heatmap currently shown or contemplated at the bottom of Topic Detail should be evaluated for removal. The user has already entered a single-topic research context; returning them to an Overview-level market map weakens the reading flow. Related topics are the preferred bounded path for horizontal exploration. This removal remains a design decision to confirm, not an implementation authorization.
+
+The compact topic-status block should prioritize investor research information, with candidate concepts such as:
+
+- participation;
+- leadership structure/health;
+- strong-stock proportion;
+- trend persistence or continued diffusion.
+
+Exact definitions, labels, number of indicators, thresholds, and payloads are **not PM-frozen**. `資料完整度 Preview` and `評分狀態` must not consume the primary visual positions as if they were investment conclusions. Confidence, eligibility, freshness, and missing-data disclosures remain visible where required by their own semantic boundaries.
+
+`題材內股票` should evolve from a basic constituent table into a view of the topic's internal structure. The proposed research fields are:
+
+| Field | Research purpose | Status |
+|---|---|---|
+| 股票 | identify the instrument | existing/frozen concept |
+| 題材角色 | explain `代表股 / 核心股 / 關聯股` | frozen vocabulary; backend authority |
+| 今日漲跌 | show actual daily price movement | requires supported price/freshness data |
+| 相對強度 / 結構狀態 | express `領漲 / 同步 / 轉強 / 落後` or an approved equivalent | provisional; requires semantic and read-model definition |
+| 技術狀態 | show only backend-supported technical evidence | provisional; browser must not infer or score |
+
+Clicking any stock reuses the shared Stock Encyclopedia Drawer. There is no Topic-specific duplicate stock-detail component. The stock table may help prioritize research, but must not invent a recommendation, technical score, relative-strength state, or missing backend field in the browser.
+
+Lifecycle retains `萌芽 → 發酵 → 主升 → 成熟 → 衰退`, historical segments, and valid re-entry. Exact derivation and history remain backend/business-rule dependencies. The browser presents authoritative state; it does not calculate lifecycle transitions.
+
+### 26.6 Surface responsibility boundary
+
+- **Topic Overview:** answers「市場有哪些題材值得看？」
+- **Topic Detail:** answers「這個題材為什麼值得看、裡面發生什麼、該看哪幾檔？」
+- **Stock page / Stock Drawer:** answers「這檔股票有沒有值得繼續研究的機會？」
+
+These responsibilities preserve the product flow `Market → Topic → Stock → Opportunity / Collection → Deep Research` and do not convert Topic Score or Grade into a recommendation.
+
+### 26.7 New Conversation Handoff
+
+Only two active work lines need to be carried into the next conversation:
+
+1. **Backend data:** data preparation, historical collection, and read-model/API integration are still in progress. Frontend work must continue to respect formal fields, null/missing semantics, labelled Preview fallbacks, and the prohibition on browser-side business inference.
+2. **Frontend:** the active product surfaces are Topic and Stock. 今日市場 is frozen for the current phase; Topic Overview's first cover is accepted; Stock Encyclopedia is in visual refinement; Topic Detail is the next design discussion.
+
+**Recommended next discussion:** Topic Detail information architecture, specifically (a) the exact four topic-status indicators and their research meaning, and (b) the Topic stock-list fields, definitions, and user-facing meaning of internal-structure states such as `領漲 / 同步 / 轉強 / 落後`. These items are **not PM-frozen**. Discuss and freeze them before issuing an implementation work order.
+
+### 26.8 Handoff validation and unchanged authority
+
+- Existing Sections 22–25 are preserved in place; this handoff is appended incrementally.
+- No frontend code, backend code, API, schema, migration, scoring rule, data source, production data, or deployment configuration is changed or authorized here.
+- Frozen Home, shared visual system, topic roles, favorites architecture, Stock Drawer reuse, Preview-data boundary, and browser non-inference rules remain in force.
+- Open items are explicitly marked provisional or not PM-frozen; this section must not be interpreted as approving their formulas, payloads, or implementation.
+
+### 26.9 TASK-FE-BE-015 Stock Explorer implementation boundary
+
+The Stock Explorer page is now the formal stock-universe browser for the V2 customer web. Its source priority is:
+
+1. `GET /api/v2/stocks` from the configured FastAPI origin.
+2. A labelled Preview snapshot only when no formal API origin is configured.
+3. An unavailable state when a formal API origin is configured but cannot be read.
+
+The Preview path must never replace a reachable formal response or silently reduce a formal universe to a hand-picked sample. The formal response is paged and the page must retain every returned identity even when price, tracking, topic relation, technical evidence, institutional flow, favorite, or opportunity fields are `NULL` or unavailable.
+
+The first layer remains compact and card-like: stock name, stock code, current or last valid price, and price change/percentage with price movement visually prioritized. EOD-only and data-pending instruments use muted styling and display `盤後更新`; a reason such as `低於 60MA` belongs in the encyclopedia drawer or a hover explanation, not in the card's primary copy.
+
+Filters are grouped under `市場`, `題材`, `技術`, `籌碼／法人`, `個人策略`, and `更新模式`. Topic options come from formal `topicRelations.topicSlug/topicName` data; the browser does not invent a topic vocabulary or derive technical, institutional, or recommendation conclusions from missing fields.
+
+Intraday refresh replaces quote/freshness values without moving existing cards. Card order changes only when the user changes the sort field or presses `重新排序`; the page shows the last manual-sort timestamp. This prevents a live quote update from moving the user's current reading position.
+
+Selecting a card opens the shared right-side Stock Encyclopedia Drawer while the Explorer remains visible. The drawer may request `GET /api/v2/stocks/{symbol}` for the latest formal detail and must preserve explicit nullable states. Existing Home, Topic Overview, Topic Detail, and backend business rules are outside this page implementation boundary.
+
+## 26.10 TASK-BE-024A Opportunity surface presentation contract
+
+This is a documentation-only frontend handoff for the shadow Opportunity read
+contract. It does not implement UI and does not authorize API/schema or
+runtime changes.
+
+### Evidence-first, status-first
+
+When a formal Opportunity surface is separately authorized, it should present
+backend-provided `OpportunityReadModel` semantics rather than a black-box
+recommendation. The primary visual hierarchy is:
+
+1. Topic identity and stock identity;
+2. Opportunity state (`SELECTED`, `WAITING_RETEST`,
+   `WAITING_CONFIRMATION`, `DEFERRED`, or `EXCLUDED`);
+3. a concise structured evidence summary;
+4. the principal risk/waiting context and data freshness/availability;
+5. a `查看機會` / inspect-opportunity CTA that opens the research context.
+
+Opportunity cards/lists may show the topic, instrument symbol/name, state,
+major evidence, major risk, and as-of status. A drawer or detail view may
+expose the full evidence groups: positive, waiting, risk, exclusion, entry,
+invalidation, data quality, and confidence basis.
+
+Do not display `87.4`, stars, `AI confidence 94%`, `Strong Buy`, Buy/Sell
+imperatives, target/stop-loss language, or a single opaque score as the main
+meaning. An internal rank score can remain backend metadata for a future
+ordered list, but the browser must never recalculate it or infer state.
+
+### Authority and visual continuity
+
+The browser consumes formal backend state, evidence, risk, leader/role, and
+technical classification. It must not derive any of these from raw OHLCV,
+news heat, topic grade, or missing fields. The Opportunity flow remains
+`Market → Topic → Stock Encyclopedia → Opportunity / 查看機會`, not an
+isolated AI recommendation page.
+
+Visual language continues the Modern Financial Workspace: warm-neutral
+off-white/white surfaces, restrained warm-gray borders, low shadow, dense
+editorial information hierarchy, and the existing `#8A7462` accent. State and
+evidence chips should be calm and legible; market red/green remains reserved
+for actual price movement rather than generic opportunity decoration.
+
+### Fixture and implementation boundary
+
+The backend shadow package provides deterministic examples for Trend selected,
+Trend waiting-retest, Catch-up selected, Catch-up waiting-confirmation,
+excluded, and deferred. These are contract fixtures for future UI tests, not
+live customer data. No UI implementation, browser-side semantic inference,
+frontend scoring, API activation, or scheduler change is part of TASK-BE-024A.
+
+## 26.11 TASK-BE-024B Opportunity qualification presentation rules
+
+This is a documentation-only continuation of the Opportunity surface contract;
+no UI is implemented in this task. The backend qualification policy is the
+formal semantic authority. The browser consumes its state and structured
+evidence and must not derive gates, qualification, ranking, risk, or technical
+classification from raw fields.
+
+### Status-first, evidence-first card/list contract
+
+Any future Opportunity card or list item should show:
+
+- topic identity and stock identity;
+- the backend Opportunity state (`SELECTED`, `WAITING_RETEST`,
+  `WAITING_CONFIRMATION`, `DEFERRED`, or `EXCLUDED`);
+- the principal structured evidence/confirmation;
+- the main risk or waiting context and as-of/data-quality status; and
+- a `查看機會` / inspect-opportunity CTA back into the topic → stock research
+  flow.
+
+The internal qualification class (`FORMAL_OPPORTUNITY` or
+`EXCEPTION_CANDIDATE`) and policy/parameter versions may be available in an
+inspectable evidence panel, but are not a buy/sell label. Trend/Catch-up
+presentation limits are backend-owned (Top 3 / Top 2); the browser does not
+slice or re-rank candidates.
+
+### Forbidden presentation shortcuts
+
+Do not make `87.4`, stars, `AI confidence 94%`, `Strong Buy`, Buy/Sell
+imperatives, target/stop-loss language, or news/chip heat the primary meaning.
+News remains catalyst/context and chip remains confirmation. A decimal score,
+if retained as backend metadata, is not a user-facing decision substitute.
+
+### Visual continuity
+
+Continue the Modern Financial Workspace / warm-neutral / dense editorial style:
+off-white and white surfaces, restrained warm-gray borders, low shadow, and the
+existing warm accent. Use calm state/evidence chips; reserve market red/green
+for actual price movement rather than generic opportunity decoration. Keep the
+navigation connected as Market → Topic → Stock Encyclopedia → Opportunity,
+not as an isolated AI recommendation page.
+
+## TASK-BE-024C Opportunity Shadow Read Adapter V1
+
+The 024C surface is a shadow read contract, not a production Recommendation
+API. The browser consumes `publicationStatus=SHADOW` and backend-provided
+Opportunity projections. It may group sections, localize display keys, and
+sort by backend `displayOrder`; it must not calculate eligibility, risk gates,
+Opportunity state, technical classification, scores, rank, or exception
+qualification.
+
+The adapter preserves topic and stock identity, state, qualification and
+exception provenance, structured positive/waiting/risk evidence, entry and
+invalidation context, as-of/data status, and policy/parameter/ranking-profile
+versions. It exposes explicit `LOADING`, `READY`, `EMPTY`, `DEFERRED`,
+`UNAVAILABLE`, and `ERROR` states. Fixture/synthetic data is visibly a shadow
+source and is not customer or calibration data.
+
+Future Opportunity cards/lists show topic, instrument identity, Opportunity
+state, principal evidence, principal risk/waiting context, as-of status, and
+an inspect-opportunity CTA. The backend owns Trend Top 3 and Catch-up Top 2
+presentation caps while retaining the full strategy-local ranking for
+detail/research. Do not expose opaque scores, stars, AI confidence,
+Strong Buy/Buy/Sell, target price, or stop-loss language. Keep the existing
+Market -> Topic -> Stock Encyclopedia -> Opportunity flow and the Modern
+Financial Workspace / warm-neutral / dense editorial visual system.

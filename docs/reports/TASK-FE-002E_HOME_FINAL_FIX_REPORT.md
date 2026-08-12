@@ -15,6 +15,7 @@ Only the Home first-screen presentation was adjusted. Market values, Today Focus
 
 - Before: [TASK-FE-002E before first screen](TASK-FE-002E_HOME_BEFORE_FIRST_SCREEN.png)
 - After: [TASK-FE-002E after first screen](TASK-FE-002E_HOME_AFTER_FIRST_SCREEN.png)
+- Public after deployment: [TASK-FE-002E public first screen](TASK-FE-002E_HOME_PUBLIC_AFTER.png)
 - Full capture: [TASK-FE-002E desktop full screenshot](TASK-FE-002E_HOME_DESKTOP_FULL.png)
 
 ## Verification
@@ -26,3 +27,4 @@ Only the Home first-screen presentation was adjusted. Market values, Today Focus
 - Mainline cards — 3.
 - At the measured desktop viewport `1280 × 720`, all three mainline card bottoms are `709px`, inside the first screen.
 - Market overview, Today Focus, and mainline sections remain present.
+- Public URL audit — helper text 0, card indices 0, mainline cards 3, and all card bottoms at 709px within the 1280×720 first screen.

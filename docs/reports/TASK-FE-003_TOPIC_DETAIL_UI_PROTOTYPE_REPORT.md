@@ -49,6 +49,7 @@ The implementation is static Phase 1 UI only. It does not call formal Topic, Sto
 
 - [Desktop first screen](TASK-FE-003_TOPIC_DETAIL_DESKTOP_FIRST_SCREEN.png)
 - [Desktop full capture](TASK-FE-003_TOPIC_DETAIL_DESKTOP_FULL.png)
+- [Public Preview first screen](TASK-FE-003_TOPIC_DETAIL_PUBLIC_FIRST_SCREEN.png)
 
 ## Spec sync
 
