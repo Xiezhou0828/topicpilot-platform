@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { useSnapshot } from "../../lib/snapshot-store";
 import type { MarketIndexView } from "../../lib/types";
+import { useTodayMainlines } from "../../lib/today-mainlines";
 import {
   Card,
   GradeChip,
@@ -60,12 +61,6 @@ function liveMetric(index: MarketIndexView | null, fallback: MarketMetric): Mark
   };
 }
 
-const mainlines = [
-  { slug: "ai-server", name: "AI伺服器", grade: "S", state: "全面走強", detail: "量能與主流股同步，仍是今日市場核心方向。" },
-  { slug: "bbu", name: "BBU", grade: "S", state: "高檔整理", detail: "高位震盪加劇，留意族群內部開始分歧。" },
-  { slug: "robotics", name: "機器人", grade: "A", state: "快速升溫", detail: "盤中關注度上升，資金開始擴散至相關零組件。" },
-] as const;
-
 const events = [
   { time: "09:08", topic: "BBU", event: "首次升至 S", tone: "up" as const },
   { time: "09:42", topic: "機器人", event: "開始升溫", tone: "up" as const },
@@ -116,8 +111,20 @@ function SectionHeading({ id, eyebrow, title, description, link, trailing }: { i
   );
 }
 
+function MainlinesState({ loading, state, reason, dataDate }: { loading: boolean; state: "FORMAL" | "PREVIEW" | "UNAVAILABLE"; reason: string | null; dataDate: string | null }) {
+  const label = loading ? "讀取中" : state === "PREVIEW" ? "Preview" : "資料暫不可用";
+  return (
+    <div className={`tp-home-mainlines-state tp-home-mainlines-state--${loading ? "loading" : state.toLowerCase()}`} role="status">
+      <span className="tp-data-state">{label}</span>
+      <p>{loading ? "正在讀取後端主線資料。" : reason}</p>
+      {dataDate && <small>資料日：{dataDate}</small>}
+    </div>
+  );
+}
+
 export default function TodayMarketPage() {
   const { bundle, status } = useSnapshot();
+  const mainlines = useTodayMainlines();
   const isSyntheticPreview = bundle.qualityPanelData.freshness.sourceLabel === "公開合成資料";
   const canUseBackendData = bundle.source === "snapshot" && status.dataState !== "UNAVAILABLE" && !isSyntheticPreview;
   const liveWeighted = canUseBackendData ? findIndex(bundle.homeData.marketIndices, "加權指數") : null;
@@ -171,19 +178,38 @@ export default function TodayMarketPage() {
 
         <section className="tp-home-section" aria-labelledby="mainline-title">
           <SectionHeading id="mainline-title" title="今日主線" description="先看最值得深入研究的三個題材，再進入題材頁查看完整脈絡。" link={{ label: "查看全部題材", href: "/topics" }} />
-          <div className="tp-home-mainline-grid">
-            {mainlines.map((topic) => (
-              <article className="tp-home-mainline-card" key={topic.name}>
-                <div className="tp-home-card-topline">
-                  <h3>{topic.name}</h3>
-                  <GradeChip grade={topic.grade} />
-                </div>
-                <p className="tp-home-topic-state">{topic.state}</p>
-                <p className="tp-home-topic-detail">{topic.detail}</p>
-                <Link href={`/topics/${topic.slug}`} className="tp-home-card-action">進入題材頁 <ChevronRight size={16} aria-hidden="true" /></Link>
-              </article>
-            ))}
-          </div>
+          {mainlines.loading || mainlines.resource.state === "UNAVAILABLE" ? (
+            <MainlinesState
+              loading={mainlines.loading}
+              state={mainlines.resource.state}
+              reason={mainlines.resource.reason}
+              dataDate={mainlines.resource.dataDate}
+            />
+          ) : (
+            <>
+              {mainlines.resource.state === "PREVIEW" && (
+                <MainlinesState
+                  loading={false}
+                  state={mainlines.resource.state}
+                  reason={mainlines.resource.reason}
+                  dataDate={mainlines.resource.dataDate}
+                />
+              )}
+              <div className="tp-home-mainline-grid">
+                {mainlines.resource.data.map((topic) => (
+                  <article className="tp-home-mainline-card" key={topic.slug}>
+                    <div className="tp-home-card-topline">
+                      <h3>{topic.name}</h3>
+                      <GradeChip grade={topic.grade ?? "—"} />
+                    </div>
+                    <p className="tp-home-topic-state">{topic.currentState ?? "狀態待後端提供"}</p>
+                    <p className="tp-home-topic-detail">{topic.summary || "摘要待後端提供"}</p>
+                    <Link href={`/topics/${topic.slug}`} className="tp-home-card-action">進入題材頁 <ChevronRight size={16} aria-hidden="true" /></Link>
+                  </article>
+                ))}
+              </div>
+            </>
+          )}
         </section>
 
         <section className="tp-home-section" aria-labelledby="events-title">

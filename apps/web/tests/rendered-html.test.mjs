@@ -51,7 +51,9 @@ test("V2 Home source contains the frozen market workflow and safety boundary", a
     "canUseBackendData",
     "只呈現研究入口，不在首頁完成推薦分析",
   ]) assert.match(home, new RegExp(marker));
-  assert.match(home, /mainlines\.map/);
+  assert.match(home, /useTodayMainlines/);
+  assert.match(home, /mainlines\.resource\.data\.map/);
+  assert.match(home, /mainlines\.resource\.state === "UNAVAILABLE"/);
   assert.match(home, /href=\{`\/topics\/\$\{topic\.slug\}`\}/);
   assert.match(liveData, /canShowTradeJudgement/);
   assert.doesNotMatch(home, /Buy|Sell|Strong Buy|stop-loss|Entry Score/);
