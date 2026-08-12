@@ -17,7 +17,7 @@ provisioned. Current implementation status is explicit in the linked report.
 | Component | Intended owner | Responsibility | Current repository evidence |
 |---|---|---|---|
 | Neon PostgreSQL | Database/Operations | Formal V2 data authority and read-model persistence | `DATABASE_URL` is required but no production value is available. |
-| Render FastAPI Web Service | Backend/Operations | Public read-only HTTPS API over formal PostgreSQL | `render.yaml` defines `topicpilot-api` in the user-confirmed Oregon region; startup runs migrations and Uvicorn without importing a bundled demo fixture. External service/database activation remains unverified. |
+| Render FastAPI Web Service | Backend/Operations | Public read-only HTTPS API over formal PostgreSQL | `render.yaml` defines `topicpilot-api` in the user-confirmed Oregon region; startup runs migrations and Uvicorn without importing a bundled demo fixture. The current public origin is `https://topicpilot-api.onrender.com`; schema/readiness are live, while the formal read model is currently empty. |
 | Render post-close job | Operations | Official daily collection and read-model update | Target topology; no Render Cron resource is present in the checked-in blueprint. |
 | Windows Taishin runtime | Data Engineering | Private intraday provider runtime and persistence into Neon | Capability and host-side evidence exist; deployment prerequisite remains open. |
 | GitHub Actions | Release Engineering | Validation, deployment control, acceptance gates, and artifact handoff | `.github/workflows/deploy.yml` now contains the formal API/CORS gate. |
@@ -209,10 +209,10 @@ frontend redesign. Lifecycle and Opportunity remain downstream API/data
 contracts; unavailable formal read models remain unavailable. V1 Google Sheets,
 legacy snapshots, and V1 runtime remain separate until an explicit cutover task.
 
-## 12. Current status
+## 12. Initial audit status (historical)
 
-The topology is accepted as the intended V2 production boundary, but the
-implementation audit is blocked by missing external resources:
+The topology was accepted as the intended V2 production boundary, but the
+initial implementation audit was blocked by missing external resources:
 
 - no verified public Render FastAPI origin;
 - no accessible production Neon `DATABASE_URL` or current database readback;
@@ -224,3 +224,14 @@ implementation audit is blocked by missing external resources:
 
 See [TASK-INFRA-019 V2 Production Infrastructure Report](../reports/TASK-INFRA-019_V2_PRODUCTION_INFRASTRUCTURE_REPORT.md)
 for evidence, fixed outputs, and the external handoff.
+
+## 13. Provisioned continuation status
+
+The user subsequently provisioned Neon and Render. The public API origin is
+now `https://topicpilot-api.onrender.com`; `/healthz`, `/readyz`, OpenAPI V2
+routes, and the exact Sites-origin CORS preflight are passing. Sites now has
+`NEXT_PUBLIC_API_BASE_URL` set to that origin and production demo fallback
+disabled. The Neon V2 schema is migrated, but `/api/v2/topics` and
+`/api/v2/stocks` currently return formal totals of zero because the approved
+130-topic/507-stock import has not yet been run. This is a data-bootstrap gap,
+not permission to use the synthetic fixture.
