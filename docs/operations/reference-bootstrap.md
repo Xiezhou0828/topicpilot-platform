@@ -58,7 +58,11 @@ bundle hash, and operator authorization have been independently reviewed.
 Neither command prints `DATABASE_URL` or any secret.
 
 1. Validate the committed bundle offline.
-2. Run the no-mutation precheck:
+2. Run the SELECT-only market-context precheck documented in
+   `docs/operations/market-calendar-remediation.md`. If an expected market has
+   `calendar_code=NULL`, stop the bootstrap flow and complete the separately
+   reviewed calendar-remediation dry-run/apply/postcheck sequence first.
+3. Run the no-mutation bootstrap precheck:
 
    ```console
    topicpilot-reference-bootstrap \
@@ -67,9 +71,11 @@ Neither command prints `DATABASE_URL` or any secret.
    ```
 
    The result must show `dryRun=true`, `transactional=true`, the expected
-   reference-only write set, and `nonReferenceWriteSet=[]`.
+   reference-only write set, and `nonReferenceWriteSet=[]`. Dry-run validates
+   existing market code, name, exchange code, timezone, and calendar code with
+   the same shared validator used by activation; a mismatch is a STOP condition.
 
-3. After one-shot authorization, run the atomic bootstrap and activation:
+4. After one-shot authorization, run the atomic bootstrap and activation:
 
    ```console
    topicpilot-reference-bootstrap \
@@ -77,7 +83,7 @@ Neither command prints `DATABASE_URL` or any secret.
      --activate
    ```
 
-4. Run the existing SELECT-only postcheck:
+5. Run the existing SELECT-only postcheck:
 
    ```console
    topicpilot-reference-check --reference-version tw-reference-v1

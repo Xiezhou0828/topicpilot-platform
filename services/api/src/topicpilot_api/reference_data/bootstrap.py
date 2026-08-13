@@ -105,6 +105,16 @@ def _check_same(expected: Any, actual: Any, label: str) -> None:
         raise ReferenceBootstrapConflict(f"bundle/database conflict in {label}")
 
 
+def validate_market_context(market: Market, row: dict[str, Any]) -> None:
+    """Apply the same fail-closed bundle comparison in plan and activation paths."""
+
+    _check_same(row["code"], market.code, f"market {row['code']} code")
+    _check_same(row["name"], market.name, f"market {row['code']} name")
+    _check_same(row.get("exchange_code"), market.exchange_code, f"market {row['code']} exchange")
+    _check_same(row["timezone"], market.timezone, f"market {row['code']} timezone")
+    _check_same(row.get("calendar_code"), market.calendar_code, f"market {row['code']} calendar")
+
+
 def _ensure_market(session: Session, row: dict[str, Any]) -> tuple[Market, bool]:
     market = session.scalar(select(Market).where(Market.code == row["code"]))
     if market is None:
@@ -119,10 +129,7 @@ def _ensure_market(session: Session, row: dict[str, Any]) -> tuple[Market, bool]
         session.add(market)
         session.flush()
         return market, True
-    _check_same(row["name"], market.name, f"market {row['code']} name")
-    _check_same(row.get("exchange_code"), market.exchange_code, f"market {row['code']} exchange")
-    _check_same(row["timezone"], market.timezone, f"market {row['code']} timezone")
-    _check_same(row.get("calendar_code"), market.calendar_code, f"market {row['code']} calendar")
+    validate_market_context(market, row)
     if not market.is_active:
         market.is_active = True
     return market, False
@@ -269,6 +276,10 @@ def _plan(session: Session, bundle: ReferenceBundle) -> ReferenceBootstrapResult
     registry = _existing_registry(session, bundle)
     if registry and registry.bundle_sha256 == bundle.digest():
         _validate_registry_rows(session, registry.id, bundle)
+    for row in bundle.markets:
+        market = session.scalar(select(Market).where(Market.code == row["code"]))
+        if market is not None:
+            validate_market_context(market, row)
     existing_market_codes = set(
         session.scalars(
             select(Market.code).where(Market.code.in_([row["code"] for row in bundle.markets]))
@@ -482,4 +493,5 @@ __all__ = [
     "ReferenceBootstrapConflict",
     "ReferenceBootstrapResult",
     "bootstrap_reference_bundle",
+    "validate_market_context",
 ]

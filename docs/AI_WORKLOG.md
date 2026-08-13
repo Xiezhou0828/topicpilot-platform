@@ -675,3 +675,30 @@
   not run. Final status is
   `MARKET_REMEDIATION_COMPLETE_REFERENCE_BOOTSTRAP_BLOCKED`; STOP pending a
   separately scoped review/remediation task.
+
+## 2026-08-13 TASK-DATA-REF-005G Market Calendar Remediation and Dry-Run Parity
+
+- Audited the Production calendar conflict against schema, migration, bundle,
+  importer, bootstrap, and runtime consumers. `markets.calendar_code` is nullable
+  and has no FK/default; the legacy importer omitted it while the canonical
+  bundle requires `TW_MARKET`. Root cause is classified as legacy-importer
+  context omission / historical data drift; no schema migration is required.
+- Added the dedicated bundle-derived `topicpilot-market-calendar-remediation`
+  dry-run/apply command. Its only write set is `markets.calendar_code`; it fails
+  closed on any non-calendar context, market topology, registry, instrument, or
+  conflicting non-null calendar drift. Apply is atomic, postcondition-verified,
+  rollback-safe, and idempotent.
+- Corrected reference bootstrap dry-run/activation parity with one shared market
+  validator covering code, name, exchange code, timezone, and calendar code.
+  The disposable 005F fixture now blocks during bootstrap dry-run before any
+  mutation; after calendar remediation, dry-run and activation reach READY at
+  bundle-derived 2/507 (TPE 314, TWO 193).
+- Fresh PostgreSQL targeted and regression tests passed (`9/9`, `27/27`), along
+  with Ruff, migration downgrade/upgrade, OpenAPI drift, generated-contract
+  idempotence, API client `3/3`, AST compile, and pip check. The CI-equivalent
+  backend run reached 340 passed / 20 skipped / 59 deselected with only the
+  known unrelated Windows schema-qualified `regclass` assertion failure.
+- Production was not connected or mutated; no remediation/bootstrap retry,
+  deploy, push, merge, G1/G2/G3, Canary, or Scheduler action occurred.
+  `NEXT_TASK` and Data Governance HOLD remain untouched. Final status is
+  `READY_FOR_MARKET_CALENDAR_REMEDIATION_INTEGRATION_REVIEW`.
