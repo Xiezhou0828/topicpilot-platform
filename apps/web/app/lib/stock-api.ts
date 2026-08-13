@@ -27,6 +27,7 @@ export type StockApiItem = Omit<FormalStockRead, "topicRelations" | "historyCove
 export type StockApiResource = {
   source: StockApiSource;
   data: StockApiItem[] | null;
+  total: number;
   error: string | null;
   universe: Record<string, number>;
 };
@@ -61,7 +62,7 @@ function normalizeStock(item: FormalStockRead): StockApiItem {
 }
 
 function unavailable(error: string): StockApiResource {
-  return { source: "unavailable", data: null, error, universe: {} };
+  return { source: "unavailable", data: null, total: 0, error, universe: {} };
 }
 
 async function fetchStockPage(
@@ -87,6 +88,7 @@ export async function fetchFormalStocks(
     return {
       source: "synthetic-snapshot",
       data: null,
+      total: 0,
       error: "Formal FastAPI origin is not configured; the page is running in explicit Preview mode.",
       universe: {},
     };
@@ -99,6 +101,8 @@ export async function fetchFormalStocks(
     offset: String(initialOffset),
     sort: query.sort ?? "symbolAsc",
   };
+  const normalizedSearch = query.search?.trim();
+  if (normalizedSearch) params.search = normalizedSearch;
   if (query.market) params.market = query.market;
   if (query.topic) params.topic = query.topic;
   if (query.updateMode) params.updateMode = query.updateMode;
@@ -119,6 +123,7 @@ export async function fetchFormalStocks(
     return {
       source: "api",
       data: items,
+      total: first.total,
       error: null,
       universe: first.universe ?? {},
     };

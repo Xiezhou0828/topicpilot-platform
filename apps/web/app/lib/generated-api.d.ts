@@ -3067,6 +3067,8 @@ export interface operations {
                 /** @description Formal topic slug */
                 topic?: string | null;
                 updateMode?: string | null;
+                /** @description Case-insensitive deterministic substring search over stock code or name */
+                search?: string | null;
                 sort?: string;
                 limit?: number;
                 offset?: number;

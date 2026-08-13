@@ -189,6 +189,8 @@ export default function StockExplorerPage() {
   const [market, setMarket] = useState("all");
   const [sort, setSort] = useState<SortKey>("change");
   const [mode, setMode] = useState("all");
+  const [searchInput, setSearchInput] = useState("");
+  const [search, setSearch] = useState("");
   const [topic, setTopic] = useState("");
   const [technical, setTechnical] = useState<FilterValue>("all");
   const [chip, setChip] = useState("all");
@@ -221,13 +223,19 @@ export default function StockExplorerPage() {
   }, [detailPanelState, selected]);
 
   const formalQuery = useMemo<StockListQuery>(() => ({
+    search: search || undefined,
     market: market === "all" ? undefined : market,
     topic: topic || undefined,
     updateMode: mode === "live" ? "INTRADAY" : mode === "eod" ? "POST_CLOSE" : undefined,
     sort: apiSort(sort),
     limit: 1000,
     offset: 0,
-  }), [market, mode, sort, topic]);
+  }), [market, mode, search, sort, topic]);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setSearch(searchInput.trim()), 250);
+    return () => window.clearTimeout(timer);
+  }, [searchInput]);
 
   const loadFormal = useCallback(async (query: StockListQuery) => {
     const requestId = requestIdRef.current + 1;
@@ -307,7 +315,7 @@ export default function StockExplorerPage() {
       : resource.source === "unavailable"
         ? "UNAVAILABLE"
         : "STALE";
-  const total = resource?.source === "api" ? resource.universe.total ?? baseRows.length : baseRows.length;
+  const total = resource?.source === "api" ? resource.total : baseRows.length;
   const isPreview = resource?.source !== "api";
 
   return <AppShell currentPath="/stocks">
@@ -320,6 +328,7 @@ export default function StockExplorerPage() {
       <section className="tp-stock-workspace tp-stock-workspace--push" data-detail-state={detailPanelState}>
         <div className="tp-stock-main">
           <Card className="tp-stock-toolbar">
+            <label className="tp-stock-search"><span>搜尋</span><input type="search" value={searchInput} onChange={(event) => setSearchInput(event.target.value)} placeholder="股號、股名" aria-label="搜尋" /></label>
             <label><span>{UI.market}</span><select value={market} onChange={(event) => setMarket(event.target.value)}><option value="all">{UI.all}</option><option value="TPE">{UI.listed} · TPE</option><option value="TWO">{UI.otc} · TWO</option></select></label>
             <label><span>{UI.sort}</span><select value={sort} onChange={(event) => { setSort(event.target.value as SortKey); setLastSorted(new Date()); }}><option value="change">{UI.change}</option><option value="price">{UI.price}</option><option value="volume">{UI.volume}</option></select></label>
             <button type="button" className={`tp-stock-advanced-toggle ${advancedOpen ? "is-open" : ""}`} aria-expanded={advancedOpen} onClick={() => setAdvancedOpen((value) => !value)}>{UI.advanced}⌄</button>

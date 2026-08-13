@@ -57,6 +57,11 @@ STOCK_ROWS_SQL = text(
               CAST(:update_mode AS text) IS NULL
               OR COALESCE(ltu.update_mode, 'UNKNOWN') = CAST(:update_mode AS text)
           )
+          AND (
+              CAST(:search AS text) IS NULL
+              OR POSITION(LOWER(CAST(:search AS text)) IN LOWER(i.instrument_code)) > 0
+              OR POSITION(LOWER(CAST(:search AS text)) IN LOWER(COALESCE(i.name, ''))) > 0
+          )
     ),
     daily_price_by_day AS (
         SELECT co.instrument_id,
@@ -237,6 +242,11 @@ def _date_now() -> date:
     return datetime.now(TAIPEI).date()
 
 
+def normalize_stock_search(value: str | None) -> str | None:
+    normalized = value.strip() if value else ""
+    return normalized or None
+
+
 def _freshness(update_mode: str, has_price: bool) -> str:
     if not has_price or update_mode == "UNKNOWN":
         return "資料待更新"
@@ -331,12 +341,14 @@ def read_stocks(
     market: str | None = None,
     topic: str | None = None,
     update_mode: str | None = None,
+    search: str | None = None,
     sort: str = "symbolAsc",
     limit: int = 1000,
     offset: int = 0,
 ) -> dict[str, Any]:
     normalized_market = market.upper() if market and market.upper() != "ALL" else None
     normalized_mode = update_mode.upper() if update_mode else None
+    normalized_search = normalize_stock_search(search)
     if normalized_market and normalized_market not in VALID_MARKETS:
         raise ValueError("market must be ALL, TPE, or TWO")
     if normalized_mode and normalized_mode not in VALID_UPDATE_MODES:
@@ -347,7 +359,11 @@ def read_stocks(
     relation_map = _read_relations(session, as_of_date)
     rows = session.execute(
         STOCK_ROWS_SQL,
-        {"market_code": normalized_market, "update_mode": normalized_mode},
+        {
+            "market_code": normalized_market,
+            "update_mode": normalized_mode,
+            "search": normalized_search,
+        },
     ).mappings()
     all_items = [_stock_item(row, relation_map.get(str(row["instrument_id"]), [])) for row in rows]
     items = all_items
@@ -394,6 +410,7 @@ def read_stocks(
             "market": normalized_market or "ALL",
             "topic": topic,
             "updateMode": normalized_mode or "ALL",
+            "search": normalized_search,
             "sort": sort,
         },
         "universe": universe,

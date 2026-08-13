@@ -18,6 +18,27 @@ test("topic filter uses the backend topic identifier", () => {
   assert.match(page, /value=\{slug\}/);
 });
 
+test("formal search is sent as a trimmed backend query", () => {
+  assert.match(page, /search: search \|\| undefined/);
+  assert.match(client, /const normalizedSearch = query\.search\?\.trim\(\)/);
+  assert.match(client, /if \(normalizedSearch\) params\.search = normalizedSearch/);
+  assert.match(generated, /search\?: string \| null;/);
+});
+
+test("formal search is composed with the existing filters and resets pagination", () => {
+  assert.match(page, /\[market, mode, search, sort, topic\]/);
+  assert.match(page, /limit: 1000,\n    offset: 0/);
+  assert.match(page, /type="search"/);
+  assert.equal(page.includes("displayRows = useMemo(() => baseRows.filter"), false);
+});
+
+test("search input is debounced and filtered totals are displayed", () => {
+  assert.match(page, /setSearch\(searchInput\.trim\(\)\)/);
+  assert.match(page, /setTimeout\(\(\) => setSearch\(searchInput\.trim\(\)\), 250\)/);
+  assert.match(page, /resource\?\.source === "api" \? resource\.total : baseRows\.length/);
+  assert.match(client, /total: first\.total/);
+});
+
 test("update mode maps UI labels to formal enum values", () => {
   assert.match(page, /updateMode: mode === "live" \? "INTRADAY" : mode === "eod" \? "POST_CLOSE" : undefined/);
   assert.match(client, /if \(query\.updateMode\) params\.updateMode = query\.updateMode/);
@@ -43,7 +64,7 @@ test("formal query includes the existing limit and offset pagination", () => {
 });
 
 test("filter changes reload from the first offset", () => {
-  assert.match(page, /\}\), \[market, mode, sort, topic\]\);/);
+  assert.match(page, /\}\), \[market, mode, search, sort, topic\]\);/);
   assert.match(page, /void loadFormal\(formalQuery\)/);
   assert.equal(page.includes("setOffset"), false);
 });

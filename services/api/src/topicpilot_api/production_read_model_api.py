@@ -29,6 +29,10 @@ def stocks(
     market: str | None = Query(default=None),
     topic: str | None = Query(default=None, description="Formal topic slug"),
     update_mode: str | None = Query(default=None, alias="updateMode"),
+    search: str | None = Query(
+        default=None,
+        description="Case-insensitive deterministic substring search over stock code or name",
+    ),
     sort: str = Query(default="symbolAsc"),
     limit: int = Query(default=1000, ge=1, le=1000),
     offset: int = Query(default=0, ge=0),
@@ -39,6 +43,7 @@ def stocks(
             market=market,
             topic=topic,
             update_mode=update_mode,
+            search=search,
             sort=sort,
             limit=limit,
             offset=offset,

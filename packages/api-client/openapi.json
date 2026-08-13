@@ -6796,6 +6796,24 @@
             }
           },
           {
+            "description": "Case-insensitive deterministic substring search over stock code or name",
+            "in": "query",
+            "name": "search",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Case-insensitive deterministic substring search over stock code or name",
+              "title": "Search"
+            }
+          },
+          {
             "in": "query",
             "name": "sort",
             "required": false,
