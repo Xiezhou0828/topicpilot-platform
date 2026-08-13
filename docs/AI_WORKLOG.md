@@ -421,3 +421,31 @@
   Canary, deployment, push, and main merge were not touched. Final status is
   `READY_FOR_REMEDIATION_PRECONDITION_INTEGRATION_REVIEW`; STOP and wait for
   separately authorized TASK-DATA-REF-005E.
+
+## 2026-08-13 TASK-FE-BE-TODAY-004B Shared Home Resource Envelope Integration
+
+- Started from `origin/main` at `8a818935fe63eb3c3db9592c5068363c7ec941e9` in
+  isolated branch `codex/task-fe-be-today-004b-20260813`.
+- Added the frontend-only `TodayHomeResource` envelope in
+  `apps/web/app/lib/today-home.ts`, using the generated `HomeResponse` and
+  generated Home child types. It separates transport state from publication
+  state and propagates data date, as-of, source, data quality, temporary and
+  missing sections, classification/status, and reason.
+- Reused exactly one existing `getHome()` request for main topics, heating,
+  cooling, Daily Focus, Market Pulse, Opportunity, and Market Overview. The
+  existing `today-mainlines.ts` API remains as a compatibility projection, so
+  TODAY-002/003 backend order, slugs, null/empty behavior, and fail-closed
+  semantics are preserved.
+- Daily Focus, Market Pulse, Opportunity, and Market Overview are mapped into
+  the shared resource only. Their existing UI was not replaced. No browser
+  ranking, lifecycle, breadth, event, severity, deduplication, opportunity,
+  provider, or reconciliation rules were added.
+- Added focused envelope and regression tests. Frontend build and full suite
+  passed (`83/83`); API client tests passed (`3/3`); TypeScript, targeted/full
+  lint, OpenAPI gate/idempotence, diff check, and changed-file secret scan
+  passed. Full lint retains one unrelated existing warning in
+  `TopicDetailPage.tsx`.
+- No backend/OpenAPI/data-ref/provider/migration/Production DB/Scheduler/
+  Canary/G1/G2/G3 change was made or run. `NEXT_TASK` and Data Governance HOLD
+  were not modified. This entry is append-only; `PUSH=NO`, `MERGE_MAIN=NO`,
+  `DEPLOY=NO`, `PRODUCTION_MUTATION=NO`.
