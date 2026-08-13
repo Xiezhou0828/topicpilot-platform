@@ -523,3 +523,45 @@
   Scheduler execution, deploy, push, merge, or `NEXT_TASK` modification was
   performed. This entry is append-only; final status is
   `READY_FOR_STOCK_002_INTEGRATION_REVIEW`.
+
+## 2026-08-13 TASK-FE-BE-STOCK-002B Query Integration Reconciliation & Exact-SHA Main Integration
+
+- Re-fetched `origin/main` before integration. The initial current main was
+  `8a818935fe63eb3c3db9592c5068363c7ec941e9`; during validation DATA-REF-005D
+  advanced main to `564c9d8e739e7485c4f76b8e058034e5742b8974`. The concurrent
+  commit touched DATA-REF remediation and documentation only; no Stock Explorer
+  or API query semantics changed.
+- Reconciled Stock-002 commit `c8d43955583f1a460aa45a31fd2304a302cf7c5c`
+  onto the latest main in the isolated 002B worktree. The AI_WORKLOG conflict
+  was resolved append-preserving: DATA-REF-005D and Stock-002 entries were both
+  retained. Reconciliation commit is `40e72017b5dd30fed5d1a2f1a728a901a0cb9609`.
+- Preserved Stock-002 formal query parameters, backend-owned filtering/order,
+  offset reset, refresh query/order semantics, null handling,
+  Formal/Preview/Unavailable boundaries, disabled technical/chip/strategy
+  controls, generated OpenAPI types, no main-topic inference, and Drawer UX.
+- Reconciliation validation passed: focused Stock tests 21/21, frontend full
+  suite/build 99/99, API client 3/3, TypeScript, targeted/full lint, Ruff,
+  OpenAPI gate/idempotence, diff check, and secret scan. Full lint retained the
+  pre-existing `TopicDetailPage.tsx` warning with no errors.
+- No DATA-REF, Today, provider authority, Lifecycle, Opportunity, Scheduler,
+  backend contract, or OpenAPI implementation files were changed by 002B.
+  Production DB, deploy, G1/G2/G3, Canary, Scheduler execution, and
+  `NEXT_TASK` were untouched. This entry is append-only; main integration and
+  exact-SHA CI remain the next controlled steps.
+
+## 2026-08-13 TASK-FE-BE-STOCK-002B Fresh-Main Reconciliation Follow-up
+
+- A final `git fetch origin --prune` found `origin/main` at
+  `ab3e1c3471d5226c576536842bcf783d98512ced`, after concurrent Today commits
+  `8afad1a` and `ab3e1c3`. No concurrent Stock Explorer or unknown semantic
+  changes were found.
+- Rebased the isolated Stock-002 implementation onto that exact main tip as
+  `211c726`. The only conflict was `docs/AI_WORKLOG.md`; DATA-REF, Today, and
+  Stock entries were retained append-preservingly.
+- Re-ran the affected gates: Stock focused `21/21`, frontend build/full suite
+  `104/104`, API client `3/3`, TypeScript, targeted/full lint, OpenAPI drift and
+  idempotence, Ruff, diff check, and secret-pattern scan all passed. Full lint
+  retains one pre-existing `TopicDetailPage.tsx` warning and no errors.
+- Main push and exact-SHA GitHub Actions validation remain the next controlled
+  steps. `PRODUCTION_MUTATION=NO`, `DEPLOY=NO`, `G1/G2/G3=NOT_RUN`,
+  `CANARY=NOT_RUN`, and `NEXT_TASK` remains unchanged.
