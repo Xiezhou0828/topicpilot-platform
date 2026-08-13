@@ -831,3 +831,27 @@
   `TASK-DATA-REF-005I_RUNTIME_AUTHORITY_PROVENANCE_AND_REBIND_DECISION.md`.
   The rebind is ready for explicit approval only; authority was not silently
   changed and no Production command was run.
+
+## 2026-08-13 TASK-DATA-REF-005I Production Execution Closure
+
+- Closed the authorized 005I Production sequence using the operator evidence
+  already captured; no Production command was rerun. Application/runtime
+  authority was `c75956336df03a1fd661a054b33b0c4845d4f159`, runtime remained
+  unchanged during execution, and the Production execution freeze remained
+  active.
+- Calendar remediation completed `APPLIED / CANONICAL`: only TPE/TWO
+  `NULL -> TW_MARKET` changes were applied; market primary keys, codes,
+  identity fields, and all 507 instrument rows were preserved. Postcheck
+  passed and the second dry-run returned `NOOP / CANONICAL`.
+- The canonical bundle hash matched. Bootstrap dry-run returned
+  `PLAN / VALIDATED` with 37 reference rows and no non-reference writes;
+  authorized activation returned `ACTIVATED / ACTIVE` transactionally with
+  no non-reference writes.
+- Reference postcheck returned READY: active registry, complete contexts, 24
+  calendar dates, 7 trading statuses, 3 adjustments, 2 markets, 507 total
+  instruments (TPE 314/TWO 193), and no missing markets, instruments,
+  contexts, or duplicate identities. G1 passed.
+- No G2, G3, Canary #2, Scheduler, DATA-REF-006, deploy, or documentation
+  push was performed. Formal closure report:
+  `TASK-DATA-REF-005I_PRODUCTION_CALENDAR_REMEDIATION_REFERENCE_BOOTSTRAP_AND_G1.md`.
+  Final status is `READY_FOR_G2_AUTHORIZATION`; blocker is `NONE`.
