@@ -591,3 +591,46 @@
 - Both the application SHA and final verification SHA passed the required CI
   jobs. `PRODUCTION_MUTATION=NO`, `DEPLOY=NO`, `NEXT_TASK` unchanged, and
   `STOCK_003_STARTED=NO`.
+
+## 2026-08-13 TASK-DATA-REF-005E Semantic Remediation Release and Production Dry-Run
+
+- Integrated the DATA-REF-005D semantic precondition correction from
+  provenance commit `47c0c2d09bc0c5796a97fa1f81b4b6c1df28a7ad` onto the then-current
+  `origin/main` without conflict. The initial integration release was
+  `564c9d8e739e7485c4f76b8e058034e5742b8974`; exact-SHA CI run
+  `31668931779` passed Frontend, Secret scan, Backend/PostgreSQL/migrations,
+  OpenAPI/generated contract, and Docker Compose smoke.
+- Concurrent Today and Stock frontend/documentation commits subsequently
+  advanced main while the Render hook was building. Runtime evidence exposed
+  the race as `82419a27...` rather than `564c9d8...`. Read-only audit proved
+  that the intervening commits retained 005D and did not change any DATA-REF,
+  reference bundle, remediation, or bootstrap path. No remediation apply or
+  reference bootstrap was attempted under the mismatched runtime.
+- Re-established release authority at stable main SHA
+  `e9041887f0949fb38dbaa8c6519ba5cbd0fd0c77`. It contains 005D with zero
+  DATA-REF drift; exact-SHA CI run `31672214158` passed, and protected deploy
+  workflow run `31673036818` validated the revision and successfully triggered
+  only the Render API deploy hook. Sites packaging was skipped.
+- Operator evidence from the authenticated Production Render Shell confirmed
+  both `RENDER_GIT_COMMIT` and `topicpilot-provider-lineage.buildSha` equal
+  `e9041887f0949fb38dbaa8c6519ba5cbd0fd0c77`. Provider lineage remained
+  `READY`: TWSE/TPEx adapter-v2, market-batch canonical daily authority,
+  Yahoo verification-only, and Taishin intraday-only. G0 passed.
+- Production reference checks immediately before and after remediation
+  dry-run were unchanged: 2 markets, 0 valid reference instruments, no
+  duplicate identities or missing markets, missing instruments present,
+  registry inactive, and `REFERENCE_LOAD_STATUS=NOT_READY`. This is the
+  approved pre-bootstrap baseline, not a G1 pass.
+- The Production remediation `--dry-run` returned `PLAN` / `VALIDATED`, 507
+  existing instruments, `CANONICAL_BUNDLE_COMPATIBLE`, transactional and
+  idempotent semantics, preserved market primary keys/codes, and exact planned
+  changes TPE `Taiwan Stock Exchange`/`TPE` to `TWSE Listed`/`TWSE` and TWO
+  `Taipei Exchange`/`TWO` to `TPEx OTC`/`TPEx`. Its only planned write set is
+  `markets.name` and `markets.exchange_code`; instrument and non-market write
+  sets are empty.
+- No Production remediation apply, reference bootstrap, activation, G1
+  post-bootstrap recheck, G2/G3, Canary, Scheduler, manual SQL, seed, or data
+  mutation was executed. `NEXT_TASK` and Data Governance HOLD were not
+  modified. Final status is
+  `READY_FOR_ONE_SHOT_PRODUCTION_MARKET_IDENTITY_REMEDIATION_AUTHORIZATION`;
+  STOP and wait for separately authorized TASK-DATA-REF-005F.
