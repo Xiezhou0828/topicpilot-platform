@@ -634,3 +634,44 @@
   modified. Final status is
   `READY_FOR_ONE_SHOT_PRODUCTION_MARKET_IDENTITY_REMEDIATION_AUTHORIZATION`;
   STOP and wait for separately authorized TASK-DATA-REF-005F.
+
+## 2026-08-13 TASK-DATA-REF-005F Production Remediation Apply and Blocked Bootstrap
+
+- The explicitly accepted Production authority was updated to docs-only
+  descendant SHA `6d611cb7d5db589c375e27cb3e2abfef91e512e2`. Both
+  `RENDER_GIT_COMMIT` and provider-lineage `buildSha` matched it, exact-SHA CI
+  run `31673484828` had passed, provider lineage was `READY`, and G0 passed.
+- Fresh pre-mutation evidence matched 005E: 2 markets, 507 total instrument
+  rows but 0 valid reference instruments, inactive/missing registry state,
+  no duplicate identities or missing markets, and bundle SHA-256
+  `5db36231decaeb12010ca7624c0d2bdc18da3b86dcec5611aa5ff7c132af15e6`.
+  The remediation dry-run remained `PLAN` / `VALIDATED` with
+  `CANONICAL_BUNDLE_COMPATIBLE` and the exact two-field market write set.
+- Executed the one authorized Production market remediation apply. It returned
+  `APPLIED` / `CANONICAL` transactionally. TPE became `TWSE Listed` / `TWSE`
+  and TWO became `TPEx OTC` / `TPEx`; both primary keys and internal market
+  codes were preserved. The 507 instrument rows and fingerprint
+  `daddec45ba36b3571e5d07171a7a7bd8` were unchanged, and no non-market identity
+  table was written. A follow-up remediation dry-run returned canonical
+  `NOOP`.
+- Reference bootstrap dry-run returned `PLAN` / `VALIDATED`, the reviewed
+  bundle hash, 37 planned reference rows, no new market/instrument rows, and
+  an empty non-reference write set. The subsequently authorized one-shot
+  activation failed closed with `bundle/database conflict in market TPE
+  calendar`.
+- Immediate SELECT-only diagnostics proved both canonical Production market
+  rows have `timezone=Asia/Taipei` but `calendar_code=NULL`, while the bundle
+  requires `TW_MARKET`. The activation transaction rolled back completely:
+  all seven reference registry/context/calendar tables remained at zero,
+  no registry became ACTIVE, instruments remained 507, and reference-check
+  remained 2/0, inactive, and `NOT_READY`.
+- The dry-run planner did not expose this conflict because it plans from
+  existing market codes/instrument keys and does not run the apply-time market
+  context equality checks. This execution task does not change that code or
+  authorize calendar repair, retry, manual SQL, or reversal of the successful
+  market remediation.
+- Product code, migrations, configuration, `NEXT_TASK`, and Data Governance
+  HOLD were not changed. G1 was not reached; G2/G3, Canary, and Scheduler were
+  not run. Final status is
+  `MARKET_REMEDIATION_COMPLETE_REFERENCE_BOOTSTRAP_BLOCKED`; STOP pending a
+  separately scoped review/remediation task.
