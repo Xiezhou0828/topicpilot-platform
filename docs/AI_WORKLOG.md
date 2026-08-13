@@ -811,3 +811,23 @@
   reference bootstrap/activation, G1/G2/G3, Canary, Scheduler, SQL mutation,
   `NEXT_TASK`, or Data Governance HOLD change occurred. Final status is
   `READY_FOR_TASK_DATA_REF_005I`; STOP pending a separately authorized 005I.
+
+## 2026-08-13 TASK-DATA-REF-005I Gate 1 Runtime Authority Provenance Audit
+
+- Operator Gate 1 stopped immediately because runtime
+  `c75956336df03a1fd661a054b33b0c4845d4f159` did not equal the prior 005I
+  authority `32f15f3c57240151bc5d35761e88c764448fa1cc`. No Production mutation,
+  calendar apply, bootstrap, activation, or G1 occurred.
+- Read-only Git audit passed: merge-base and ancestor relationship are exact;
+  intervening commits are only the 005H docs stop record and rebind record;
+  changed files are only `docs/AI_WORKLOG.md` and the 005H formal report.
+  DATA-REF, reference runtime, provider, bundle, bootstrap, remediation, test,
+  and migration paths have zero diff.
+- c759 exact-SHA CI run `31694695626` passed Backend/migration/OpenAPI,
+  Frontend, Secret scan, and Docker Compose smoke. Therefore c759 is
+  documentation-only and behaviorally equivalent for the 005I reference and
+  calendar paths.
+- Prepared the dedicated report
+  `TASK-DATA-REF-005I_RUNTIME_AUTHORITY_PROVENANCE_AND_REBIND_DECISION.md`.
+  The rebind is ready for explicit approval only; authority was not silently
+  changed and no Production command was run.
