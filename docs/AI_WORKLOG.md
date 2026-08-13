@@ -855,3 +855,28 @@
   push was performed. Formal closure report:
   `TASK-DATA-REF-005I_PRODUCTION_CALENDAR_REMEDIATION_REFERENCE_BOOTSTRAP_AND_G1.md`.
   Final status is `READY_FOR_G2_AUTHORIZATION`; blocker is `NONE`.
+
+## 2026-08-14 TASK-DATA-REF-006 G2 Authority Re-entry Audit
+
+- Performed a repository-only, read-only authority audit after the 005I G1
+  closure. No Production command, database connection, provider request,
+  mutation, deploy, Scheduler change, G2, G3, or Canary action occurred.
+- The deployment runbook and P3A handoff define G2 only as official
+  TWSE/TPEx reachability and target-date availability; neither names an exact
+  G2 preflight entrypoint or a complete read-only/shadow-safe contract.
+- `topicpilot-provider-lineage` is provenance-only and performs no provider
+  request. `topicpilot-reference-check` is the existing SELECT-only G1 check.
+  `topicpilot-history-probe` is a Taishin historical capability probe, not the
+  official TPE/TWO daily G2 path.
+- The only checked-in CLI that invokes official daily providers is
+  `topicpilot-live --mode post-close --once --run-date YYYY-MM-DD`. Its code
+  creates run/attempt records, persists raw/timeline/canonical observations,
+  refreshes tracking, and may run Topic Snapshot/Lifecycle. Its `--dry-run`
+  returns before provider creation and only prints a scheduler decision.
+- Because no unique non-mutating G2 authority exists, execution stopped with
+  `FINAL_STATUS = BLOCKED_G2_AUTHORITY_AMBIGUOUS`. Runtime/G1 re-entry evidence
+  remains operator-required. No flags were guessed and no mutating path was
+  promoted to G2 preflight.
+- Formal report:
+  `TASK-DATA-REF-006_POST_G1_G2_AUTHORITY_REENTRY_AND_PROVIDER_DATA_PREFLIGHT.md`.
+  `NEXT_TASK`, Data Governance HOLD, PUSH, and DEPLOY remain unchanged.
