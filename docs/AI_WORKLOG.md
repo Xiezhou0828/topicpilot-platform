@@ -880,3 +880,40 @@
 - Formal report:
   `TASK-DATA-REF-006_POST_G1_G2_AUTHORITY_REENTRY_AND_PROVIDER_DATA_PREFLIGHT.md`.
   `NEXT_TASK`, Data Governance HOLD, PUSH, and DEPLOY remain unchanged.
+
+## 2026-08-14 TASK-DATA-REF-006A G2 Official Provider Read-Only Preflight
+
+- Implemented a dedicated `topicpilot-provider-preflight --run-date
+  YYYY-MM-DD --reference-version tw-reference-v1` operator path on isolated
+  branch `codex/task-data-ref-006a-20260814`. The application/runtime
+  authority remains `c75956336df03a1fd661a054b33b0c4845d4f159`; any local
+  documentation/implementation commit SHA is distinct and is not a Production
+  runtime authority.
+- The path validates the explicit target date against the active reference
+  session/calendar context, derives active EQUITY identity coverage from the
+  database at runtime, and calls only the official one-date market-batch
+  providers: TPE/TWSE `TWSE_OFFICIAL_DAILY` with
+  `twse-official-daily.v2`, and TWO/TPEx `TPEX_OFFICIAL_DAILY` with
+  `tpex-official-daily.v2`. Yahoo and Taishin cannot satisfy G2.
+- The result is deterministic machine-readable JSON with per-market
+  reachability, parse, target-date, data-availability, and full-coverage
+  evidence. The command has an empty Production/non-reference write set and
+  does not call live persistence, observations, tracking, snapshots,
+  Lifecycle, Opportunity, or Scheduler paths. Failures are sanitized and do
+  not expose DATABASE_URL or secrets.
+- Added the canonical runbook and deployment/index links, plus unit and
+  PostgreSQL boundary tests. Focused validation passed `24 passed / 1 skipped`
+  without a configured database; the same PostgreSQL boundary test passed `1/1`
+  against an isolated disposable database after loading the completed bundle.
+  The CI-equivalent backend passed `322/322` with 49 PostgreSQL/environment
+  skips and 59 research/governance deselections. Full Ruff, targeted format,
+  Python compile, pip check, OpenAPI drift, migration upgrade/downgrade/upgrade,
+  reference bootstrap PostgreSQL `1/1`, provider preflight PostgreSQL `1/1`,
+  diff, and changed-file secret-value scans passed. The disposable database
+  stack was removed after testing.
+- No Production DB connection, provider request, G2/G3, Canary, Scheduler,
+  deploy, push, `NEXT_TASK`, or Data Governance HOLD change occurred.
+- Formal report:
+  `TASK-DATA-REF-006A_G2_OFFICIAL_PROVIDER_READ_ONLY_PREFLIGHT_CONTRACT_AND_ENTRYPOINT.md`.
+  Final status is `READY_FOR_G2_PREFLIGHT_INTEGRATION_REVIEW`; blocker is
+  `NONE`.

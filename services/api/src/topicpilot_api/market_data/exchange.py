@@ -265,6 +265,11 @@ class TwseOfficialDailyProvider:
             status_explicit=bar is None,
         )
 
+    def fetch_market_day(self) -> tuple[datetime, dict[str, HistoricalBar]]:
+        """Fetch one validated market-level payload without persistence."""
+
+        return self._fetch_market_day()
+
     def fetch_daily(self, instrument_code: str, market_code: str) -> HistoricalFetchResult:
         instrument_code = _validate_identifier(instrument_code, "instrument_code")
         market_code = _validate_identifier(market_code, "market_code")
@@ -443,6 +448,11 @@ class TpexOfficialDailyProvider:
             ),
             status_explicit=bar is None,
         )
+
+    def fetch_market_day(self) -> tuple[datetime, dict[str, HistoricalBar]]:
+        """Fetch one validated market-level payload without persistence."""
+
+        return self._fetch_market_day()
 
     def fetch_daily(self, instrument_code: str, market_code: str) -> HistoricalFetchResult:
         instrument_code = _validate_identifier(instrument_code, "instrument_code")

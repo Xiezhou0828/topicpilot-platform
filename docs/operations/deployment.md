@@ -148,6 +148,29 @@ instrument-topic relations; those remain in the identity domain. A missing,
 duplicate, inactive, or incomplete registry/context fails closed as
 `NOT_READY` and must stop the Canary.
 
+## G2 official provider read-only preflight (TASK-DATA-REF-006A)
+
+The canonical G2 authority is [the official provider preflight runbook](provider-preflight.md).
+After the runtime SHA, provider lineage, and G1 reference state are verified
+in the same protected runtime, run:
+
+```console
+topicpilot-provider-preflight \
+  --run-date YYYY-MM-DD \
+  --reference-version tw-reference-v1
+```
+
+The target date is required and is validated against the active
+`tw-reference-v1` `TW_MARKET` session/calendar context. The command performs
+SELECT-only context reads and one market-level request through each canonical
+official adapter with `marketBatch=true`. It never calls `topicpilot-live`,
+`PostCloseUpdater`, historical ingestion, tracking, Snapshot, Lifecycle,
+Opportunity, or Scheduler code. Its result must contain
+`status=PASS`, `readOnly=true`, `productionWriteSet=[]`,
+`nonReferenceWriteSet=[]`, `fallbackAllowed=false`, and passing per-market
+TPE/TWO official evidence. A failure is a STOP condition; it does not
+authorize the post-close command or Canary.
+
 ### Adapter-v2 deployment checklist
 
 - [ ] Release revision is committed and includes FIX01A adapter-v2 files.
@@ -157,6 +180,7 @@ duplicate, inactive, or incomplete registry/context fails closed as
 - [ ] Backend tests, Ruff, formatting, compile, and release CI pass.
 - [ ] Runtime provider-lineage command is available after deploy.
 - [ ] Protected `topicpilot-reference-check` returns `READY`.
+- [ ] Protected `topicpilot-provider-preflight --run-date YYYY-MM-DD` returns `PASS`.
 - [ ] 6806 official no-data follows the existing DATA-022A contract.
 - [ ] Canary command is reviewed; Scheduler remains disabled.
 

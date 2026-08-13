@@ -27,6 +27,7 @@
 - [Work Orders](WORK_ORDERS.md) — scope/status index; individual work orders are not architecture authority.
 - [Operations runbook](operations/runbook.md)
 - [Deployment](operations/deployment.md)
+- [G2 official provider preflight](operations/provider-preflight.md)
 
 ## Historical evidence
 
