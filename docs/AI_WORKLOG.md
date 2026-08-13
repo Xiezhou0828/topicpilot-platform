@@ -676,6 +676,7 @@
   `MARKET_REMEDIATION_COMPLETE_REFERENCE_BOOTSTRAP_BLOCKED`; STOP pending a
   separately scoped review/remediation task.
 
+<<<<<<< HEAD
 ## 2026-08-13 TASK-DATA-REF-005G Market Calendar Remediation and Dry-Run Parity
 
 - Audited the Production calendar conflict against schema, migration, bundle,
@@ -1150,3 +1151,39 @@
   NEXT_TASK, or Data Governance HOLD change occurred. Formal report:
   `TASK-DATA-REF-006G_REFERENCE_REGISTRY_VERSION_TRANSITION_AND_LIFECYCLE_BUNDLE_ACTIVATION_CONTRACT.md`.
   Final status is `READY_FOR_REFERENCE_REGISTRY_TRANSITION_INTEGRATION_REVIEW`.
+## 2026-08-13 TASK-FE-BE-STOCK-003 Formal Stock Search Contract & FastAPI Integration
+
+- Started from fresh isolated worktree
+  `codex/task-fe-be-stock-003-20260813` at current `origin/main`
+  `71ba1ac27f2f72378df3df9266271de4f05f27d1`. The latest concurrent main
+  change was DATA-REF-005F documentation only; no Stock/Today application
+  change was included. The requested `docs/TOPICPILOT_CURRENT_HANDOFF.md`,
+  `docs/DOCUMENTATION_AUTHORITY_INDEX.md`, and `docs/PROJECT_CONTEXT.md`
+  paths were absent; available root/architecture/deployment authority files
+  were used and the discrepancy is recorded in the formal report.
+- Audited the existing `/api/v2/stocks` contract and confirmed no search,
+  query, or keyword parameter existed. Implemented the smallest Case-B
+  contract addition: optional `search` over formal stock code/name only,
+  case-insensitive deterministic substring semantics with trim normalization.
+  Search is database-side and backend-owned; no browser business filtering,
+  ranking, topic inference, technical scoring, or semantic search was added.
+- Wired FastAPI, production read-model SQL, OpenAPI, generated package/web
+  types, the Stock Explorer search input, 250ms debounce, adapter trim,
+  existing market/topic/updateMode/sort composition, offset reset, refresh
+  preservation, stale-request protection, valid-empty/error distinction, and
+  explicit Formal/Preview/Unavailable boundaries.
+- Preserved disabled technical/chip/strategy controls, backend order, null
+  semantics, main-topic authority boundary, and the shared sticky/full-height
+  push Drawer. Application implementation commit is
+  `3c8d10024f8172168f822cacf6b924b393bcfe1a`.
+- Validation passed: focused Stock `24/24`, focused backend search `3/3`,
+  frontend full suite/build `107/107`, API client `3/3`, backend release
+  `313 passed, 42 skipped, 59 deselected`, TypeScript, lint, OpenAPI drift and
+  generated idempotence, Ruff, diff check, and secret scan. Full lint retains
+  one pre-existing `TopicDetailPage.tsx` warning. PostgreSQL integration tests
+  were skipped locally because no test database URL was configured.
+- No DATA-REF/provider/reference/Production files or semantics changed.
+  Production DB, deploy, G1/G2/G3, Canary, Scheduler, `NEXT_TASK`, and Data
+  Governance HOLD were untouched. This entry is append-only;
+  `PUSH=NO`, `MERGE_MAIN=NO`, `DEPLOY=NO`, final status is
+  `READY_FOR_STOCK_003_INTEGRATION_REVIEW`.
