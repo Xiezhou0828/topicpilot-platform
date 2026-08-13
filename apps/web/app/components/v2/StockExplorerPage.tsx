@@ -6,10 +6,10 @@ import { StockEncyclopediaDrawer, type StockDrawerItem } from "./StockEncycloped
 import {
   fetchFormalStocks,
   getFormalApiBaseUrl,
+  type StockListQuery,
   type StockApiItem,
   type StockApiResource,
 } from "../../lib/stock-api";
-import { useFavoritesState } from "../FavoriteButton";
 import { useSnapshot } from "../../lib/snapshot-store";
 import type { StockView } from "../../lib/types";
 
@@ -84,6 +84,7 @@ const UI = {
   opportunities: "\u6709\u6a5f\u6703",
   allUpdateModes: "\u5168\u90e8\u66f4\u65b0\u6a21\u5f0f",
   count: "\u6a94",
+  unavailableFilter: "正式 API 尚未提供",
 } as const;
 
 function formatPrice(value: number | null): string {
@@ -169,10 +170,6 @@ function isLive(row: ExplorerRow): boolean {
   return row.updateMode.toUpperCase() === "INTRADAY";
 }
 
-function hasValue(record: Record<string, unknown> | null): boolean {
-  return Object.values(record ?? {}).some((value) => value !== null && value !== undefined && value !== "");
-}
-
 function compareRows(a: ExplorerRow, b: ExplorerRow, sort: SortKey): number {
   const left = sort === "change" ? a.changePct : sort === "price" ? a.price : a.volume;
   const right = sort === "change" ? b.changePct : sort === "price" ? b.price : b.volume;
@@ -188,7 +185,6 @@ function apiSort(sort: SortKey): string {
 
 export default function StockExplorerPage() {
   const { bundle } = useSnapshot();
-  const { codes: favoriteCodes } = useFavoritesState();
   const [resource, setResource] = useState<StockApiResource | null>(null);
   const [market, setMarket] = useState("all");
   const [sort, setSort] = useState<SortKey>("change");
@@ -201,8 +197,6 @@ export default function StockExplorerPage() {
   const [selected, setSelected] = useState<ExplorerRow | null>(null);
   const [detailPanelState, setDetailPanelState] = useState<DetailPanelState>("closed");
   const [lastSorted, setLastSorted] = useState(() => new Date());
-  const orderRef = useRef<string[]>([]);
-  const [formalOrder, setFormalOrder] = useState<string[]>([]);
   const requestIdRef = useRef(0);
   const controllerRef = useRef<AbortController | null>(null);
   const detailCloseTimerRef = useRef<number | null>(null);
@@ -226,40 +220,36 @@ export default function StockExplorerPage() {
     }, 280);
   }, [detailPanelState, selected]);
 
-  const loadFormal = useCallback(async (requestedSort: SortKey, resetOrder: boolean) => {
+  const formalQuery = useMemo<StockListQuery>(() => ({
+    market: market === "all" ? undefined : market,
+    topic: topic || undefined,
+    updateMode: mode === "live" ? "INTRADAY" : mode === "eod" ? "POST_CLOSE" : undefined,
+    sort: apiSort(sort),
+    limit: 1000,
+    offset: 0,
+  }), [market, mode, sort, topic]);
+
+  const loadFormal = useCallback(async (query: StockListQuery) => {
     const requestId = requestIdRef.current + 1;
     requestIdRef.current = requestId;
     controllerRef.current?.abort();
     const controller = new AbortController();
     controllerRef.current = controller;
-    const next = await fetchFormalStocks({ sort: apiSort(requestedSort) }, { signal: controller.signal });
+    const next = await fetchFormalStocks(query, { signal: controller.signal });
     if (requestId !== requestIdRef.current) return;
-    if (next.source === "api" && next.data) {
-      const incomingCodes = next.data.map((item) => item.code);
-      let nextOrder: string[];
-      if (resetOrder || orderRef.current.length === 0) {
-        nextOrder = incomingCodes;
-      } else {
-        const incoming = new Set(incomingCodes);
-        nextOrder = orderRef.current.filter((code) => incoming.has(code));
-        nextOrder.push(...incomingCodes.filter((code) => !nextOrder.includes(code)));
-      }
-      orderRef.current = nextOrder;
-      setFormalOrder(nextOrder);
-    }
     setResource(next);
   }, []);
 
   useEffect(() => {
-    void loadFormal(sort, true);
+    void loadFormal(formalQuery);
     return () => controllerRef.current?.abort();
-  }, [loadFormal, sort]);
+  }, [formalQuery, loadFormal]);
 
   useEffect(() => {
     if (!getFormalApiBaseUrl()) return;
-    const timer = window.setInterval(() => void loadFormal(sort, false), 60_000);
+    const timer = window.setInterval(() => void loadFormal(formalQuery), 60_000);
     return () => window.clearInterval(timer);
-  }, [loadFormal, sort]);
+  }, [formalQuery, loadFormal]);
 
   useEffect(() => {
     const handler = (event: KeyboardEvent) => {
@@ -285,35 +275,10 @@ export default function StockExplorerPage() {
     return [...values.entries()].sort((a, b) => a[1].localeCompare(b[1], "zh-Hant"));
   }, [baseRows]);
 
-  const filteredRows = useMemo(() => baseRows.filter((row) => {
-    const technicalMatch = technical === "all"
-      || (technical === "above20" && row.technicalEvidence?.above20MA === true)
-      || (technical === "above60" && row.technicalEvidence?.above60MA === true)
-      || (technical === "available" && row.technicalEvidence !== null);
-    const chipMatch = chip === "all" || (chip === "available" && hasValue(row.institutionFlows));
-    const strategyMatch = strategy === "all"
-      || (strategy === "favorite" && (favoriteCodes.includes(row.code) || row.favorite !== null))
-      || (strategy === "opportunity" && row.opportunity !== null);
-    const modeMatch = mode === "all" || (mode === "live" ? isLive(row) : !isLive(row));
-    return (market === "all" || row.market === market)
-      && modeMatch
-      && (!topic || row.topics.some((item) => item.slug === topic))
-      && technicalMatch
-      && chipMatch
-      && strategyMatch;
-  }), [baseRows, chip, favoriteCodes, market, mode, strategy, technical, topic]);
-
   const displayRows = useMemo(() => {
-    if (resource?.source !== "api") return [...filteredRows].sort((a, b) => compareRows(a, b, sort));
-    const byCode = new Map(filteredRows.map((row) => [row.code, row]));
-    const ordered = formalOrder.flatMap((code) => {
-      const row = byCode.get(code);
-      return row ? [row] : [];
-    });
-    const known = new Set(ordered.map((row) => row.code));
-    ordered.push(...filteredRows.filter((row) => !known.has(row.code)));
-    return ordered;
-  }, [filteredRows, formalOrder, resource?.source, sort]);
+    if (resource?.source === "api") return baseRows;
+    return [...baseRows].sort((a, b) => compareRows(a, b, sort));
+  }, [baseRows, resource?.source, sort]);
 
   const drawerItem = (stock: ExplorerRow): StockDrawerItem => ({
     code: stock.code,
@@ -358,13 +323,13 @@ export default function StockExplorerPage() {
             <label><span>{UI.market}</span><select value={market} onChange={(event) => setMarket(event.target.value)}><option value="all">{UI.all}</option><option value="TPE">{UI.listed} · TPE</option><option value="TWO">{UI.otc} · TWO</option></select></label>
             <label><span>{UI.sort}</span><select value={sort} onChange={(event) => { setSort(event.target.value as SortKey); setLastSorted(new Date()); }}><option value="change">{UI.change}</option><option value="price">{UI.price}</option><option value="volume">{UI.volume}</option></select></label>
             <button type="button" className={`tp-stock-advanced-toggle ${advancedOpen ? "is-open" : ""}`} aria-expanded={advancedOpen} onClick={() => setAdvancedOpen((value) => !value)}>{UI.advanced}⌄</button>
-            <button type="button" className="tp-stock-resort" onClick={() => { setLastSorted(new Date()); void loadFormal(sort, true); }}>{UI.resort}</button>
+            <button type="button" className="tp-stock-resort" onClick={() => { setLastSorted(new Date()); void loadFormal(formalQuery); }}>{UI.resort}</button>
           </Card>
           {advancedOpen && <Card className="tp-stock-advanced">
             <label><span>{UI.topic}</span><select value={topic} onChange={(event) => setTopic(event.target.value)}><option value="">{UI.allTopics}</option>{topics.map(([slug, name]) => <option key={slug} value={slug}>{name}</option>)}</select></label>
-            <label><span>{UI.technical}</span><select value={technical} onChange={(event) => setTechnical(event.target.value as FilterValue)}><option value="all">{UI.allTechnical}</option><option value="above20">{UI.above20}</option><option value="above60">{UI.above60}</option><option value="available">{UI.technicalAvailable}</option></select></label>
-            <label><span>{UI.chip}</span><select value={chip} onChange={(event) => setChip(event.target.value)}><option value="all">{UI.allChip}</option><option value="available">{UI.chipAvailable}</option></select></label>
-            <label><span>{UI.strategy}</span><select value={strategy} onChange={(event) => setStrategy(event.target.value)}><option value="all">{UI.allStrategy}</option><option value="favorite">{UI.favorites}</option><option value="opportunity">{UI.opportunities}</option></select></label>
+            <label><span>{UI.technical}</span><select value={technical} disabled onChange={(event) => setTechnical(event.target.value as FilterValue)} aria-label={`${UI.technical} · ${UI.unavailableFilter}`}><option value="all">{UI.allTechnical}</option><option value="above20">{UI.above20}</option><option value="above60">{UI.above60}</option><option value="available">{UI.technicalAvailable}</option></select></label>
+            <label><span>{UI.chip}</span><select value={chip} disabled onChange={(event) => setChip(event.target.value)} aria-label={`${UI.chip} · ${UI.unavailableFilter}`}><option value="all">{UI.allChip}</option><option value="available">{UI.chipAvailable}</option></select></label>
+            <label><span>{UI.strategy}</span><select value={strategy} disabled onChange={(event) => setStrategy(event.target.value)} aria-label={`${UI.strategy} · ${UI.unavailableFilter}`}><option value="all">{UI.allStrategy}</option><option value="favorite">{UI.favorites}</option><option value="opportunity">{UI.opportunities}</option></select></label>
             <label><span>{UI.updateMode}</span><select value={mode} onChange={(event) => setMode(event.target.value)}><option value="all">{UI.allUpdateModes}</option><option value="live">{UI.live}</option><option value="eod">{UI.eod}</option></select></label>
           </Card>}
           <div className="tp-stock-segments"><button type="button" className={mode === "all" ? "is-active" : ""} onClick={() => setMode("all")}>{UI.all}</button><button type="button" className={mode === "live" ? "is-active" : ""} onClick={() => setMode("live")}>{UI.live}</button><button type="button" className={mode === "eod" ? "is-active" : ""} onClick={() => setMode("eod")}>{UI.eod}</button><span className="tp-muted">{UI.lastSorted} {lastSorted.toLocaleTimeString("zh-TW", { hour: "2-digit", minute: "2-digit" })} · {displayRows.length}/{total} {UI.count}</span></div>

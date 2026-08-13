@@ -493,3 +493,33 @@
   deployment, G1/G2/G3, Canary, Scheduler, reference bootstrap, provider
   authority, DATA-REF logic, migration, `NEXT_TASK`, or Data Governance HOLD
   change was made by this task.
+## 2026-08-13 TASK-FE-BE-STOCK-002 Formal Stock Explorer Query Wiring
+
+- Authority was refreshed with `git fetch origin --prune`; implementation started
+  from `origin/main` at `8a818935fe63eb3c3db9592c5068363c7ec941e9` in the isolated
+  `codex/task-fe-be-stock-002-20260813` worktree. Post-Stock-001 commits were
+  classified as Today Market and documentation only; no Stock/API contract
+  change was found.
+- Wired the existing formal Stock Explorer query state to backend-owned
+  `market`, formal topic slug, `updateMode`, `sort`, `limit`, and `offset`
+  parameters through the generated OpenAPI-backed `stock-api.ts` adapter.
+  Filter/sort changes reset to offset zero; refresh preserves the same query and
+  formal backend order.
+- Removed V2 formal browser business filtering and formal browser reordering.
+  Technical, chip, and strategy controls remain visible but disabled because
+  the current formal contract does not provide those filters. No browser
+  technical scoring, provider reconciliation, ranking, or canonical main-topic
+  inference was added.
+- Preserved explicit Formal/Preview/Unavailable boundaries, null market values,
+  topic relation display, and the existing shared Stock Drawer UX. Search,
+  history, lineage, technical-detail expansion, favorites backend, and
+  Opportunity integration remain roadmap items.
+- Verification: focused Stock tests 21/21 passed; frontend full suite/build
+  99/99 passed; API client 3/3 passed; TypeScript, targeted/full lint,
+  OpenAPI gate/idempotence, diff check, and secret scan passed. Full lint kept
+  one pre-existing warning in `TopicDetailPage.tsx` and no errors.
+- No backend/OpenAPI semantic change, DATA-REF/Today/provider/lifecycle/
+  opportunity/scheduler change, Production DB mutation, G1/G2/G3, Canary,
+  Scheduler execution, deploy, push, merge, or `NEXT_TASK` modification was
+  performed. This entry is append-only; final status is
+  `READY_FOR_STOCK_002_INTEGRATION_REVIEW`.
