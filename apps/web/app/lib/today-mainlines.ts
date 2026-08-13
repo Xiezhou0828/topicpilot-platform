@@ -10,8 +10,20 @@ import { getFormalApiBaseUrl } from "./stock-api";
 
 type HomeResponse = components["schemas"]["HomeResponse"];
 type HomeTopicCard = components["schemas"]["HomeTopicCard"];
+type HomeRotationTopic = components["schemas"]["HomeRotationTopic"];
 
 export type TodayMainlinesState = "FORMAL" | "PREVIEW" | "UNAVAILABLE";
+
+export type TodayRotationResource = {
+  state: TodayMainlinesState;
+  data: HomeRotationTopic[];
+  dataDate: string | null;
+  asOf: string | null;
+  source: string | null;
+  classification: string | null;
+  qualityStatus: string | null;
+  reason: string | null;
+};
 
 export type TodayMainlinesResource = {
   state: TodayMainlinesState;
@@ -22,6 +34,8 @@ export type TodayMainlinesResource = {
   classification: string | null;
   qualityStatus: string | null;
   reason: string | null;
+  heating: TodayRotationResource;
+  cooling: TodayRotationResource;
 };
 
 export type TodayMainlinesLoadState = {
@@ -32,6 +46,16 @@ export type TodayMainlinesLoadState = {
 export const TODAY_MAINLINES_PREVIEW_ENABLED = process.env.NEXT_PUBLIC_ENABLE_TODAY_MAINLINES_PREVIEW === "true";
 
 function emptyResource(reason: string): TodayMainlinesResource {
+  const emptyRotation: TodayRotationResource = {
+    state: "UNAVAILABLE",
+    data: [],
+    dataDate: null,
+    asOf: null,
+    source: null,
+    classification: null,
+    qualityStatus: null,
+    reason,
+  };
   return {
     state: "UNAVAILABLE",
     data: [],
@@ -41,6 +65,8 @@ function emptyResource(reason: string): TodayMainlinesResource {
     classification: null,
     qualityStatus: null,
     reason,
+    heating: emptyRotation,
+    cooling: emptyRotation,
   };
 }
 
@@ -60,8 +86,8 @@ function metadataFromHome(home: HomeResponse) {
 function hasNonFormalSource(home: HomeResponse): boolean {
   const quality = home.dataQuality;
   const sectionMarkers = [
-    ...(quality.temporarySections ?? []).filter((section) => /main.?topics|mainlines/i.test(section)),
-    ...(quality.missingSections ?? []).filter((section) => /main.?topics|mainlines/i.test(section)),
+    ...(quality.temporarySections ?? []).filter((section) => /main.?topics|mainlines|heating.?topics|cooling.?topics|rotation/i.test(section)),
+    ...(quality.missingSections ?? []).filter((section) => /main.?topics|mainlines|heating.?topics|cooling.?topics|rotation/i.test(section)),
   ];
   const sourceMarkers = [
     quality.classification,
@@ -73,17 +99,113 @@ function hasNonFormalSource(home: HomeResponse): boolean {
   return /SYNTHETIC|FIXTURE|DEMO|SHADOW|PARTIAL|UNAVAILABLE|NOT[_ -]?AVAILABLE|TEMPORARY|G1|DOWNSTREAM/i.test(sourceMarkers);
 }
 
+function hasUnknownPublicationMetadata(home: HomeResponse): boolean {
+  const quality = home.dataQuality;
+  return [
+    quality.status,
+    quality.source,
+    quality.classification,
+    home.marketOverview.dataStatus,
+  ].some((value) => typeof value !== "string" || value.trim().length === 0);
+}
+
+function isHomeRotationTopic(value: HomeRotationTopic): boolean {
+  return Boolean(
+    value
+      && typeof value.topic === "string"
+      && typeof value.topicSlug === "string"
+      && value.topicSlug.length > 0
+      && typeof value.strengthDelta === "number"
+      && Number.isFinite(value.strengthDelta)
+      && typeof value.currentGrade === "string"
+      && typeof value.summary === "string",
+  );
+}
+
+function mapHomeToTodayRotation(
+  home: HomeResponse,
+  data: HomeRotationTopic[],
+  metadata: ReturnType<typeof metadataFromHome>,
+  previewEnabled: boolean,
+  direction: "heating" | "cooling",
+): TodayRotationResource {
+  const section = direction === "heating" ? "heatingTopics" : "coolingTopics";
+
+  if (data.length === 0) {
+    return {
+      state: "UNAVAILABLE",
+      data: [],
+      ...metadata,
+      reason: `Home.${section} is empty; Today rotation is unavailable.`,
+    };
+  }
+
+  if (!data.every(isHomeRotationTopic)) {
+    return {
+      state: "UNAVAILABLE",
+      data: [],
+      ...metadata,
+      reason: `Home.${section} has incomplete fields; Today rotation is unavailable.`,
+    };
+  }
+
+  if (hasUnknownPublicationMetadata(home)) {
+    return {
+      state: "UNAVAILABLE",
+      data: [],
+      ...metadata,
+      reason: "Home publication metadata is incomplete; Today rotation is unavailable.",
+    };
+  }
+
+  if (!hasNonFormalSource(home)) {
+    return { state: "FORMAL", data, ...metadata, reason: null };
+  }
+
+  if (previewEnabled) {
+    return {
+      state: "PREVIEW",
+      data,
+      ...metadata,
+      reason: "Home rotation is not a formal source; Preview is explicitly enabled.",
+    };
+  }
+
+  return {
+    state: "UNAVAILABLE",
+    data: [],
+    ...metadata,
+    reason: "Formal Today rotation data is not ready; non-formal data is hidden.",
+  };
+}
+
 export function mapHomeToTodayMainlines(
   home: HomeResponse,
   previewEnabled = TODAY_MAINLINES_PREVIEW_ENABLED,
 ): TodayMainlinesResource {
   const data = Array.isArray(home.mainTopics) ? home.mainTopics : [];
   const metadata = metadataFromHome(home);
+  const heating = mapHomeToTodayRotation(
+    home,
+    Array.isArray(home.heatingTopics) ? home.heatingTopics : [],
+    metadata,
+    previewEnabled,
+    "heating",
+  );
+  const cooling = mapHomeToTodayRotation(
+    home,
+    Array.isArray(home.coolingTopics) ? home.coolingTopics : [],
+    metadata,
+    previewEnabled,
+    "cooling",
+  );
 
   if (data.length === 0) {
     return {
       ...emptyResource("後端 Home.mainTopics 目前沒有可發布的題材主線。"),
       ...metadata,
+      heating,
+      cooling,
     };
   }
 
@@ -93,6 +215,8 @@ export function mapHomeToTodayMainlines(
       data,
       ...metadata,
       reason: null,
+      heating,
+      cooling,
     };
   }
 
@@ -100,6 +224,8 @@ export function mapHomeToTodayMainlines(
     return {
       state: "PREVIEW",
       data,
+      heating,
+      cooling,
       ...metadata,
       reason: "目前 Home 來源仍是合成、暫時或未完成資料；本區以明確 Preview 狀態展示。",
     };
@@ -110,6 +236,8 @@ export function mapHomeToTodayMainlines(
     data: [],
     ...metadata,
     reason: "Today 主線後端資料尚未達正式發布條件。",
+    heating,
+    cooling,
   };
 }
 

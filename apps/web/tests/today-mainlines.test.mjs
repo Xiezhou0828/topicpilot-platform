@@ -48,3 +48,33 @@ test("Today mainline cards navigate with the backend topic slug and preserve nul
   assert.match(page, /topic\.currentState \?\?/);
   assert.match(page, /href=\{`\/topics\/\$\{topic\.slug\}`\}/);
 });
+
+test("Today heating and cooling reuse the Home response and preserve backend order", async () => {
+  const [adapter, page] = await Promise.all([
+    read("lib/today-mainlines.ts"),
+    read("components/v2/TodayMarketPage.tsx"),
+  ]);
+  assert.match(adapter, /home\.heatingTopics/);
+  assert.match(adapter, /home\.coolingTopics/);
+  assert.equal((adapter.match(/client\.getHome\(/g) ?? []).length, 1);
+  assert.doesNotMatch(adapter, /heatingTopics[\s\S]{0,400}\.sort\(/);
+  assert.doesNotMatch(adapter, /coolingTopics[\s\S]{0,400}\.sort\(/);
+  assert.match(page, /mainlines\.resource\.heating/);
+  assert.match(page, /mainlines\.resource\.cooling/);
+  assert.match(page, /topic\.topicSlug/);
+  assert.match(page, /href=\{`\/topics\/\$\{topic\.topicSlug\}`\}/);
+  assert.doesNotMatch(page, /const warmingTopics\s*=/);
+  assert.doesNotMatch(page, /const coolingTopics\s*=/);
+});
+
+test("Today heating and cooling fail closed and only expose Preview explicitly", async () => {
+  const adapter = await read("lib/today-mainlines.ts");
+  assert.match(adapter, /function mapHomeToTodayRotation/);
+  assert.match(adapter, /state: "FORMAL"/);
+  assert.match(adapter, /state: "PREVIEW"/);
+  assert.match(adapter, /state: "UNAVAILABLE"/);
+  assert.match(adapter, /data\.length === 0/);
+  assert.match(adapter, /data\.every\(isHomeRotationTopic\)/);
+  assert.match(adapter, /Formal Today rotation data is not ready/);
+  assert.doesNotMatch(adapter, /fallback|rank|ranking|direction inference|strength calculation/i);
+});

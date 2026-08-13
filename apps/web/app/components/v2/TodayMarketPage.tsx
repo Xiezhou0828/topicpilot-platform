@@ -9,12 +9,11 @@ import {
 } from "lucide-react";
 import { useSnapshot } from "../../lib/snapshot-store";
 import type { MarketIndexView } from "../../lib/types";
-import { useTodayMainlines } from "../../lib/today-mainlines";
+import { useTodayMainlines, type TodayRotationResource } from "../../lib/today-mainlines";
 import {
   Card,
   GradeChip,
   PageContainer,
-  RoleChip,
 } from "./V2Foundation";
 
 type MarketMetric = {
@@ -68,18 +67,6 @@ const events = [
   { time: "10:48", topic: "重電", event: "退出主線", tone: "down" as const },
 ];
 
-const warmingTopics = [
-  { name: "機器人", state: "快速升溫", grade: "A" },
-  { name: "PCB", state: "量能回流", grade: "A" },
-  { name: "光通訊", state: "開始轉強", grade: "B" },
-];
-
-const coolingTopics = [
-  { name: "BBU", state: "高檔分歧", grade: "S" },
-  { name: "重電", state: "快速退潮", grade: "B" },
-  { name: "ABF", state: "主線轉弱", grade: "B" },
-];
-
 const opportunities = [
   { name: "AI伺服器", count: "3 檔符合條件", note: "主線維持強勢" },
   { name: "機器人", count: "2 檔符合條件", note: "盤中首次升溫" },
@@ -111,14 +98,66 @@ function SectionHeading({ id, eyebrow, title, description, link, trailing }: { i
   );
 }
 
-function MainlinesState({ loading, state, reason, dataDate }: { loading: boolean; state: "FORMAL" | "PREVIEW" | "UNAVAILABLE"; reason: string | null; dataDate: string | null }) {
+function MainlinesState({ loading, state, reason, dataDate, section = "主線" }: { loading: boolean; state: "FORMAL" | "PREVIEW" | "UNAVAILABLE"; reason: string | null; dataDate: string | null; section?: string }) {
   const label = loading ? "讀取中" : state === "PREVIEW" ? "Preview" : "資料暫不可用";
   return (
     <div className={`tp-home-mainlines-state tp-home-mainlines-state--${loading ? "loading" : state.toLowerCase()}`} role="status">
       <span className="tp-data-state">{label}</span>
-      <p>{loading ? "正在讀取後端主線資料。" : reason}</p>
+      <p>{loading ? `正在讀取後端${section}資料。` : reason}</p>
       {dataDate && <small>資料日：{dataDate}</small>}
     </div>
+  );
+}
+
+function RotationCard({
+  loading,
+  resource,
+  direction,
+}: {
+  loading: boolean;
+  resource: TodayRotationResource;
+  direction: "heating" | "cooling";
+}) {
+  const isHeating = direction === "heating";
+  const section = isHeating ? "升溫" : "退潮";
+  return (
+    <Card className={`tp-home-rotation-card tp-home-rotation-card--${isHeating ? "warming" : "cooling"}`}>
+      <div className="tp-home-rotation-heading">
+        {isHeating ? <TrendingUp size={18} aria-hidden="true" /> : <ArrowDownRight size={18} aria-hidden="true" />}
+        <h3>{isHeating ? "快速升溫" : "快速退潮"}</h3>
+        <span>{resource.data.length} 個題材</span>
+      </div>
+      {loading || resource.state === "UNAVAILABLE" ? (
+        <MainlinesState
+          loading={loading}
+          state={resource.state}
+          reason={resource.reason}
+          dataDate={resource.dataDate}
+          section={section}
+        />
+      ) : (
+        <>
+          {resource.state === "PREVIEW" && (
+            <MainlinesState
+              loading={false}
+              state={resource.state}
+              reason={resource.reason}
+              dataDate={resource.dataDate}
+              section={section}
+            />
+          )}
+          <div className="tp-home-topic-list">
+            {resource.data.map((topic) => (
+              <Link href={`/topics/${topic.topicSlug}`} key={topic.topicSlug}>
+                <span><b>{topic.topic}</b><small>{topic.summary}</small></span>
+                <GradeChip grade={topic.currentGrade} />
+                <ChevronRight size={16} aria-hidden="true" />
+              </Link>
+            ))}
+          </div>
+        </>
+      )}
+    </Card>
   );
 }
 
@@ -230,18 +269,8 @@ export default function TodayMarketPage() {
         <section className="tp-home-section" aria-labelledby="rotation-title">
           <SectionHeading id="rotation-title" title="快速升溫／快速退潮" description="用精簡清單看資金正在往哪裡移動。" />
           <div className="tp-home-rotation-grid">
-            <Card className="tp-home-rotation-card tp-home-rotation-card--warming">
-              <div className="tp-home-rotation-heading"><TrendingUp size={18} aria-hidden="true" /><h3>快速升溫</h3><span>3 個題材</span></div>
-              <div className="tp-home-topic-list">
-                {warmingTopics.map((topic) => <Link href="/topics" key={topic.name}><span><b>{topic.name}</b><small>{topic.state}</small></span><RoleChip>{topic.grade}</RoleChip><ChevronRight size={16} aria-hidden="true" /></Link>)}
-              </div>
-            </Card>
-            <Card className="tp-home-rotation-card tp-home-rotation-card--cooling">
-              <div className="tp-home-rotation-heading"><ArrowDownRight size={18} aria-hidden="true" /><h3>快速退潮</h3><span>3 個題材</span></div>
-              <div className="tp-home-topic-list">
-                {coolingTopics.map((topic) => <Link href="/topics" key={topic.name}><span><b>{topic.name}</b><small>{topic.state}</small></span><RoleChip>{topic.grade}</RoleChip><ChevronRight size={16} aria-hidden="true" /></Link>)}
-              </div>
-            </Card>
+            <RotationCard loading={mainlines.loading} resource={mainlines.resource.heating} direction="heating" />
+            <RotationCard loading={mainlines.loading} resource={mainlines.resource.cooling} direction="cooling" />
           </div>
         </section>
 

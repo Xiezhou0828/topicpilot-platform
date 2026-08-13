@@ -336,3 +336,35 @@
 - `AI_WORKLOG_UPDATED=YES`, formal report and runbook are present. Final status
   is `READY_FOR_ONE_SHOT_PRODUCTION_MARKET_IDENTITY_REMEDIATION_AUTHORIZATION`;
   STOP and wait for separate TASK-DATA-REF-005C authorization.
+## 2026-08-13 TASK-FE-BE-TODAY-003 Today Heating/Cooling Topics Integration
+
+- Started from `origin/main` at
+  `9c1b1f9cc7c1e4510b61060ffa8a8a7928ee45bc` in the isolated
+  `codex/task-fe-be-today-003-20260813` worktree. The current repository has no
+  `docs/handoffs/TOPICPILOT_CURRENT_HANDOFF.md`; authority was cross-checked
+  against `PROJECT_CONTEXT.md`, the V2 frontend design contract, the existing
+  Home schemas/read model, generated API types, runtime client, and Today tests.
+- Confirmed the existing formal read path is
+  `GET /api/v2/home` → `getHome()` → `HomeResponse.heatingTopics` /
+  `HomeResponse.coolingTopics`. No FastAPI route, OpenAPI schema, migration,
+  provider, or backend rule change was needed.
+- Reused the TODAY-002 Home request with zero additional Home requests. The
+  Today resource now maps heating/cooling cards from the generated
+  `HomeRotationTopic` contract, preserves backend order, nullable/invalid
+  boundaries, backend `topicSlug`, `currentGrade`, and `summary`, and performs
+  no browser sorting, ranking, direction inference, score, lifecycle, or
+  breadth calculation.
+- Removed the formal-path hardcoded warming/cooling arrays from
+  `TodayMarketPage.tsx`. Rotation sections now support `FORMAL`, explicit
+  `PREVIEW`, and fail-closed `UNAVAILABLE`; empty sections, incomplete fields,
+  unknown publication metadata, G1/partial/temporary sources, and API errors
+  never fall back to mock topic cards.
+- Verification: focused Today/Home tests 16/16 passed; frontend full suite and
+  build 78/78 passed; API client 3/3 passed; TypeScript, targeted/full lint,
+  Ruff, OpenAPI gate/idempotence, diff check, and changed-file secret scan
+  passed. Full lint retained one pre-existing warning in
+  `TopicDetailPage.tsx` and no errors.
+- `DATA-REF` files, provider authority, Lifecycle/Opportunity rules,
+  Scheduler, production DB, G1/G2/G3, Canary, deploy, push, main merge,
+  `NEXT_TASK`, and Data Governance HOLD were not touched. This worklog entry is
+  append-only; implementation remains isolated for integration review.
