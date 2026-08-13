@@ -368,3 +368,19 @@
   Scheduler, production DB, G1/G2/G3, Canary, deploy, push, main merge,
   `NEXT_TASK`, and Data Governance HOLD were not touched. This worklog entry is
   append-only; implementation remains isolated for integration review.
+
+## 2026-08-13 TASK-FE-BE-TODAY-003B Final Reconciliation
+
+- DATA-REF-005C stabilized on `origin/main` at
+  `446e318a9b158958ff3c6972994f68b2f5ca898b`; its remediation files and
+  append-only worklog were preserved as the reconciliation base.
+- TODAY-003 was cherry-picked from provenance commit
+  `93a2579a6f5f43e9d1da8f6f56bee3d9c4b770e6` onto that exact base. The only
+  content outside the DATA-REF base is the Today heating/cooling frontend
+  adapter, UI, and focused tests; no backend/provider/data-rule files were
+  added.
+- The AI_WORKLOG overlap was resolved by retaining both DATA-REF-005B and
+  TODAY-003 entries, then appending this reconciliation record. No production
+  database mutation, reference bootstrap, provider authority change,
+  Lifecycle/Opportunity rule change, Scheduler, Canary, deploy, or force push
+  was performed.
