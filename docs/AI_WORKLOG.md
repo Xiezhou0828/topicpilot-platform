@@ -565,3 +565,18 @@
 - Main push and exact-SHA GitHub Actions validation remain the next controlled
   steps. `PRODUCTION_MUTATION=NO`, `DEPLOY=NO`, `G1/G2/G3=NOT_RUN`,
   `CANARY=NOT_RUN`, and `NEXT_TASK` remains unchanged.
+
+## 2026-08-13 TASK-FE-BE-STOCK-002B Final Main Integration Verification
+
+- Final freshness check passed at `origin/main=82419a27d0ed0322a3070670f77fb0a74554b679`;
+  the isolated branch was `ahead 2 / behind 0`, rebased cleanly, and was pushed
+  non-force to `main` at exact SHA
+  `69138c2575caf93214cc4fc7b1f6fde98d1ad98f`.
+- Post-push synchronization is `0/0`. Exact-SHA GitHub Actions run
+  `31671576938` for that SHA passed Secret scan, Frontend lint/test/build,
+  Backend/PostgreSQL/migration/reference/OpenAPI/generated-contract gates, and
+  Docker Compose smoke.
+- This append-only verification record does not modify application semantics,
+  Production DB, deployment, G1/G2/G3, Canary, Scheduler, or `NEXT_TASK`.
+  `PRODUCTION_MUTATION=NO`, `DEPLOY=NO`, `STOCK_003_STARTED=NO`, final status is
+  `READY_FOR_STOCK_003`.

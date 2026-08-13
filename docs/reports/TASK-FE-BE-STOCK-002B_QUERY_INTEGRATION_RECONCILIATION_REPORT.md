@@ -116,4 +116,30 @@ G3 = NOT_RUN
 CANARY = NOT_RUN
 ```
 
-Main integration, non-force push, post-push SHA synchronization, and official exact-SHA GitHub Actions validation are controlled follow-up gates for this report. STOCK-003 was not started.
+## Final main integration verification
+
+```text
+APPLICATION_INTEGRATION_SHA = 69138c2575caf93214cc4fc7b1f6fde98d1ad98f
+VERIFICATION_DOC_COMMIT = cea6544 (this report/worklog update)
+CURRENT_ORIGIN_MAIN_SHA_AT_APPLICATION_PUSH = 69138c2575caf93214cc4fc7b1f6fde98d1ad98f
+LOCAL_REMOTE_SYNC = 0/0
+MAIN_INTEGRATION = PASS
+PUSH = NON-FORCE PASS
+EXACT_SHA_CI_RUN = 31671576938
+EXACT_SHA_CI_HEAD_SHA = 69138c2575caf93214cc4fc7b1f6fde98d1ad98f
+EXACT_SHA_CI = PASS
+SECRET_SCAN = PASS
+BACKEND_POSTGRES_MIGRATION_REFERENCE_OPENAPI = PASS
+GENERATED_API_CONTRACT = PASS
+FRONTEND_LINT_TEST_BUILD = PASS
+DOCKER_COMPOSE_SMOKE = PASS
+PRODUCTION_MUTATION = NO
+DEPLOY = NO
+NEXT_TASK_MODIFIED = NO
+STOCK_003_STARTED = NO
+FINAL_STATUS = READY_FOR_STOCK_003
+```
+
+Official CI annotations contained only pre-existing warnings: GitHub Actions
+Node.js 20 deprecation notices and the existing unused
+`TopicDetailPage.tsx:lifecycleAvailable` lint warning. No job failed.
