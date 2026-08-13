@@ -41,6 +41,31 @@ def _seed_legacy_markets(engine) -> dict[str, str]:
         return rows
 
 
+def _seed_bundle_instruments(engine, bundle, market_ids, *, is_active: bool) -> None:
+    payload = [
+        {
+            "id": uuid4(),
+            "market_id": market_ids[row["market_code"]],
+            "instrument_code": row["instrument_code"],
+            "name": row["name"],
+            "instrument_type": row["instrument_type"],
+            "currency": row["currency"],
+            "is_active": is_active,
+        }
+        for row in bundle.instruments
+    ]
+    with engine.begin() as connection:
+        connection.execute(
+            text(
+                "INSERT INTO topicpilot.instruments "
+                "(id, market_id, instrument_code, name, instrument_type, currency, is_active) "
+                "VALUES (:id, :market_id, :instrument_code, :name, :instrument_type, "
+                ":currency, :is_active)"
+            ),
+            payload,
+        )
+
+
 def _cleanup(engine) -> None:
     with engine.begin() as connection:
         for table in (
@@ -101,6 +126,132 @@ def _market_rows(engine):
                 "WHERE code IN ('TPE', 'TWO') ORDER BY code"
             )
         ).all()
+
+
+def _instrument_rows(engine):
+    with engine.connect() as connection:
+        return connection.execute(
+            text(
+                "SELECT id, market_id, instrument_code, name, instrument_type, currency, "
+                "valid_from, valid_to, is_active FROM topicpilot.instruments ORDER BY id"
+            )
+        ).all()
+
+
+def test_production_like_507_instruments_are_immutable_and_bootstrap_compatible(postgres_engine):
+    bundle = load_bundle(BUNDLE_PATH)
+    _require_empty_isolated_database(postgres_engine)
+    _cleanup(postgres_engine)
+    try:
+        market_ids = _seed_legacy_markets(postgres_engine)
+        _seed_bundle_instruments(postgres_engine, bundle, market_ids, is_active=False)
+        instruments_before = _instrument_rows(postgres_engine)
+        markets_before = _market_rows(postgres_engine)
+
+        with Session(postgres_engine, expire_on_commit=False) as session:
+            baseline = inspect_reference_preflight(
+                session,
+                requested_version="tw-reference-v1",
+                expected_market_codes=("TPE", "TWO"),
+                required_session_code="REGULAR",
+                required_calendar_code="TW_MARKET",
+            )
+        assert baseline["marketCount"] == 2
+        assert baseline["instrumentCount"] == 0
+        assert baseline["referenceLoadStatus"] == "NOT_READY"
+
+        with Session(postgres_engine, expire_on_commit=False) as session:
+            planned = remediate_market_identity(session, bundle, apply=False, dry_run=True)
+        assert planned.operation == "PLAN"
+        assert planned.instrument_count == 507
+        assert planned.instrument_compatibility == "CANONICAL_BUNDLE_COMPATIBLE"
+        assert _market_rows(postgres_engine) == markets_before
+        assert _instrument_rows(postgres_engine) == instruments_before
+
+        with Session(postgres_engine, expire_on_commit=False) as session:
+            applied = remediate_market_identity(session, bundle, apply=True, dry_run=False)
+        assert applied.operation == "APPLIED"
+        assert applied.instrument_count == 507
+        assert _instrument_rows(postgres_engine) == instruments_before
+
+        with Session(postgres_engine, expire_on_commit=False) as session:
+            noop = remediate_market_identity(session, bundle, apply=True, dry_run=False)
+        assert noop.operation == "NOOP"
+        assert _instrument_rows(postgres_engine) == instruments_before
+
+        with Session(postgres_engine, expire_on_commit=False) as session:
+            bootstrapped = bootstrap_reference_bundle(session, bundle, activate=True)
+        assert bootstrapped.operation == "ACTIVATED"
+        with Session(postgres_engine, expire_on_commit=False) as session:
+            ready = inspect_reference_preflight(
+                session,
+                requested_version="tw-reference-v1",
+                expected_market_codes=("TPE", "TWO"),
+                required_session_code="REGULAR",
+                required_calendar_code="TW_MARKET",
+            )
+        assert ready["referenceLoadStatus"] == "READY"
+        assert ready["instrumentCount"] == 507
+        with postgres_engine.connect() as connection:
+            counts = dict(
+                connection.execute(
+                    text(
+                        "SELECT markets.code, count(*) FROM topicpilot.instruments "
+                        "JOIN topicpilot.markets ON markets.id = instruments.market_id "
+                        "GROUP BY markets.code"
+                    )
+                ).all()
+            )
+        assert counts == {"TPE": 314, "TWO": 193}
+    finally:
+        _cleanup(postgres_engine)
+
+
+@pytest.mark.parametrize(
+    ("corrupt_sql", "error"),
+    (
+        (
+            "UPDATE topicpilot.instruments SET currency = 'USD' "
+            "WHERE id = (SELECT id FROM topicpilot.instruments ORDER BY id LIMIT 1)",
+            "bundle/database conflict",
+        ),
+        (
+            "UPDATE topicpilot.instruments SET market_id = "
+            "(SELECT id FROM topicpilot.markets WHERE code = 'TWO') "
+            "WHERE id = (SELECT instruments.id FROM topicpilot.instruments "
+            "JOIN topicpilot.markets ON markets.id = instruments.market_id "
+            "WHERE markets.code = 'TPE' ORDER BY instruments.id LIMIT 1)",
+            "instrument identity set mismatch",
+        ),
+        (
+            "DELETE FROM topicpilot.instruments WHERE id = "
+            "(SELECT id FROM topicpilot.instruments ORDER BY id LIMIT 1)",
+            "instrument identity set mismatch",
+        ),
+    ),
+)
+def test_incompatible_existing_instruments_block_before_market_mutation(
+    postgres_engine, corrupt_sql, error
+):
+    bundle = load_bundle(BUNDLE_PATH)
+    _require_empty_isolated_database(postgres_engine)
+    _cleanup(postgres_engine)
+    try:
+        market_ids = _seed_legacy_markets(postgres_engine)
+        _seed_bundle_instruments(postgres_engine, bundle, market_ids, is_active=False)
+        with postgres_engine.begin() as connection:
+            connection.execute(text(corrupt_sql))
+        markets_before = _market_rows(postgres_engine)
+        instruments_before = _instrument_rows(postgres_engine)
+        with (
+            pytest.raises(MarketIdentityRemediationConflict, match=error),
+            Session(postgres_engine, expire_on_commit=False) as session,
+        ):
+            remediate_market_identity(session, bundle, apply=True, dry_run=False)
+        assert _market_rows(postgres_engine) == markets_before
+        assert _instrument_rows(postgres_engine) == instruments_before
+    finally:
+        _cleanup(postgres_engine)
 
 
 def test_legacy_state_dry_run_apply_idempotency_and_reference_bootstrap(postgres_engine):
@@ -242,7 +393,9 @@ def test_instrument_state_blocks_legacy_remediation_without_changing_market_rows
             )
         before = _market_rows(postgres_engine)
         with (
-            pytest.raises(MarketIdentityRemediationConflict, match="instrument state"),
+            pytest.raises(
+                MarketIdentityRemediationConflict, match="instrument identity set mismatch"
+            ),
             Session(postgres_engine, expire_on_commit=False) as session,
         ):
             remediate_market_identity(session, bundle, apply=True, dry_run=False)

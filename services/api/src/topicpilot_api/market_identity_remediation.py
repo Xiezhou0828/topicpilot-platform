@@ -39,6 +39,7 @@ class MarketIdentityRemediationResult:
     idempotent: bool
     market_count: int
     instrument_count: int
+    instrument_compatibility: str
     reference_registry_count: int
     changes: tuple[dict[str, str], ...]
 
@@ -51,6 +52,8 @@ class MarketIdentityRemediationResult:
             "idempotent": self.idempotent,
             "marketCount": self.market_count,
             "instrumentCount": self.instrument_count,
+            "existingInstrumentCount": self.instrument_count,
+            "instrumentCompatibility": self.instrument_compatibility,
             "referenceRegistryCount": self.reference_registry_count,
             "changes": list(self.changes),
             "writeSet": sorted(MARKET_IDENTITY_REMEDIATION_WRITE_SET),
@@ -93,6 +96,78 @@ def _load_markets(session: Session) -> list[Market]:
     return list(session.scalars(select(Market).order_by(Market.code)))
 
 
+def _instrument_snapshot(session: Session) -> tuple[tuple[Any, ...], ...]:
+    return tuple(
+        tuple(row)
+        for row in session.execute(
+            select(
+                Instrument.id,
+                Instrument.market_id,
+                Instrument.instrument_code,
+                Instrument.name,
+                Instrument.instrument_type,
+                Instrument.currency,
+                Instrument.valid_from,
+                Instrument.valid_to,
+                Instrument.is_active,
+            ).order_by(Instrument.id)
+        ).all()
+    )
+
+
+def _validate_instrument_compatibility(session: Session, bundle: ReferenceBundle) -> str:
+    rows = list(
+        session.execute(
+            select(
+                Market.code,
+                Instrument.instrument_code,
+                Instrument.name,
+                Instrument.instrument_type,
+                Instrument.currency,
+            )
+            .select_from(Instrument)
+            .outerjoin(Market, Market.id == Instrument.market_id)
+        ).all()
+    )
+    if not rows:
+        return "EMPTY"
+
+    actual_keys = [(row.code, row.instrument_code) for row in rows]
+    if any(market_code is None for market_code, _ in actual_keys):
+        raise MarketIdentityRemediationConflict("orphan instrument market reference")
+    if len(actual_keys) != len(set(actual_keys)):
+        raise MarketIdentityRemediationConflict("duplicate instrument identity")
+
+    expected = {
+        (row["market_code"], row["instrument_code"]): row for row in bundle.instruments
+    }
+    actual = {(row.code, row.instrument_code): row for row in rows}
+    if set(actual) != set(expected):
+        missing = sorted(set(expected) - set(actual))
+        extra = sorted(set(actual) - set(expected))
+        raise MarketIdentityRemediationConflict(
+            f"instrument identity set mismatch; missing={missing[:5]} extra={extra[:5]}"
+        )
+
+    for key, expected_row in expected.items():
+        actual_row = actual[key]
+        actual_metadata = (
+            actual_row.name,
+            actual_row.instrument_type,
+            actual_row.currency,
+        )
+        expected_metadata = (
+            expected_row["name"],
+            expected_row["instrument_type"],
+            expected_row["currency"],
+        )
+        if actual_metadata != expected_metadata:
+            raise MarketIdentityRemediationConflict(
+                f"bundle/database conflict in instrument {key[0]}:{key[1]} metadata"
+            )
+    return "CANONICAL_BUNDLE_COMPATIBLE"
+
+
 def _changes(markets: list[Market]) -> tuple[dict[str, str], ...]:
     return tuple(
         {
@@ -123,11 +198,7 @@ def _assert_exact_shape(
         raise MarketIdentityRemediationConflict("unexpected inactive TPE/TWO market")
 
 
-def _assert_legacy_precondition(*, instrument_count: int, reference_registry_count: int) -> None:
-    if instrument_count != 0:
-        raise MarketIdentityRemediationConflict(
-            f"unexpected instrument state: expected=0 actual={instrument_count}"
-        )
+def _assert_legacy_precondition(*, reference_registry_count: int) -> None:
     if reference_registry_count != 0:
         raise MarketIdentityRemediationConflict(
             "unexpected reference registry state: expected=0 rows"
@@ -153,19 +224,27 @@ def _classify_state(markets: list[Market]) -> str:
     )
 
 
-def _inspect(session: Session, bundle: ReferenceBundle) -> tuple[str, list[Market], int, int]:
+def _inspect(
+    session: Session, bundle: ReferenceBundle
+) -> tuple[str, list[Market], tuple[tuple[Any, ...], ...], str, int]:
     _assert_supported_bundle(bundle)
     markets = _load_markets(session)
-    instrument_count = _count(session, Instrument)
-    reference_registry_count = _count(session, ReferenceRegistrySet)
     _assert_exact_shape(markets)
+    instrument_snapshot = _instrument_snapshot(session)
+    instrument_compatibility = _validate_instrument_compatibility(session, bundle)
+    reference_registry_count = _count(session, ReferenceRegistrySet)
     state = _classify_state(markets)
     if state == "LEGACY":
         _assert_legacy_precondition(
-            instrument_count=instrument_count,
             reference_registry_count=reference_registry_count,
         )
-    return state, markets, instrument_count, reference_registry_count
+    return (
+        state,
+        markets,
+        instrument_snapshot,
+        instrument_compatibility,
+        reference_registry_count,
+    )
 
 
 def remediate_market_identity(
@@ -183,7 +262,9 @@ def remediate_market_identity(
         raise RuntimeError("market identity remediation requires a fresh SQLAlchemy session")
 
     if dry_run:
-        state, markets, instrument_count, registry_count = _inspect(session, bundle)
+        state, markets, instrument_snapshot, compatibility, registry_count = _inspect(
+            session, bundle
+        )
         return MarketIdentityRemediationResult(
             operation="NOOP" if state == "CANONICAL" else "PLAN",
             status="CANONICAL" if state == "CANONICAL" else "VALIDATED",
@@ -191,13 +272,16 @@ def remediate_market_identity(
             transactional=True,
             idempotent=True,
             market_count=len(markets),
-            instrument_count=instrument_count,
+            instrument_count=len(instrument_snapshot),
+            instrument_compatibility=compatibility,
             reference_registry_count=registry_count,
             changes=() if state == "CANONICAL" else _changes(markets),
         )
 
     with session.begin():
-        state, markets, instrument_count, registry_count = _inspect(session, bundle)
+        state, markets, instrument_snapshot, compatibility, registry_count = _inspect(
+            session, bundle
+        )
         if state == "CANONICAL":
             return MarketIdentityRemediationResult(
                 operation="NOOP",
@@ -206,7 +290,8 @@ def remediate_market_identity(
                 transactional=True,
                 idempotent=True,
                 market_count=len(markets),
-                instrument_count=instrument_count,
+                instrument_count=len(instrument_snapshot),
+                instrument_compatibility=compatibility,
                 reference_registry_count=registry_count,
                 changes=(),
             )
@@ -223,9 +308,9 @@ def remediate_market_identity(
             raise MarketIdentityRemediationConflict(
                 "market identity remediation postcondition failed"
             )
-        if _count(session, Instrument) != instrument_count:
+        if _instrument_snapshot(session) != instrument_snapshot:
             raise MarketIdentityRemediationConflict(
-                "market identity remediation changed instrument count"
+                "market identity remediation changed instrument rows"
             )
         if _count(session, ReferenceRegistrySet) != registry_count:
             raise MarketIdentityRemediationConflict(
@@ -238,7 +323,8 @@ def remediate_market_identity(
             transactional=True,
             idempotent=True,
             market_count=len(verified),
-            instrument_count=instrument_count,
+            instrument_count=len(instrument_snapshot),
+            instrument_compatibility=compatibility,
             reference_registry_count=registry_count,
             changes=changes,
         )

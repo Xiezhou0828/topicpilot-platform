@@ -384,3 +384,40 @@
   database mutation, reference bootstrap, provider authority change,
   Lifecycle/Opportunity rule change, Scheduler, Canary, deploy, or force push
   was performed.
+
+## 2026-08-13 TASK-DATA-REF-005D Existing-Instrument Safety Contract Fix
+
+- Started from `origin/main` at
+  `8a818935fe63eb3c3db9592c5068363c7ec941e9` in the isolated
+  `codex/task-data-ref-005d-20260813` worktree. Production was not connected or
+  mutated, and the blocked remediation command was not retried.
+- Confirmed the DATA-REF-005C blocker was a different-state-metric defect:
+  reference check counts active canonical EQUITY identities with required
+  reference context, while remediation had required the raw total count of
+  `topicpilot.instruments` to be zero.
+- Replaced the row-count-only precondition with fail-closed bundle semantic
+  validation. Existing instruments must be empty or exactly match the
+  validated bundle by market/code identity and canonical name, type, and
+  currency. Missing, extra, duplicate, orphan, reassigned, and metadata-drift
+  states block before mutation. The expected count is bundle-derived; 507 is
+  not hardcoded.
+- Preserved the exact write set `markets.name` and `markets.exchange_code`.
+  Market primary keys/codes and the complete instrument row snapshot are
+  verified unchanged; apply remains single-transaction, rollback-safe, and a
+  second successful apply is `NOOP`.
+- Fresh disposable PostgreSQL 16 validation reproduced 2 legacy markets, 507
+  inactive bundle-compatible instruments, reference-check 0 / `NOT_READY`, a
+  remediation dry-run plan, successful disposable apply with zero instrument
+  changes, and subsequent formal bootstrap `READY` at 2/507 (`TPE=314`,
+  `TWO=193`). Dedicated remediation/reference tests passed 11/11; contract
+  tests passed 7/7.
+- Ruff, migration downgrade/upgrade, OpenAPI and generated-contract gates, API
+  client tests, AST compilation, pip check, and diff check passed. The
+  CI-equivalent backend run reached 337 passed / 14 skipped / 59 deselected
+  with one unrelated pre-existing Windows/PostgreSQL schema-qualified
+  `regclass` assertion failure. No API contract or dependency file changed.
+- Runbook and formal report were updated. `NEXT_TASK`, Data Governance HOLD,
+  provider authority, Lifecycle/Opportunity, Scheduler, Production G1/G2/G3,
+  Canary, deployment, push, and main merge were not touched. Final status is
+  `READY_FOR_REMEDIATION_PRECONDITION_INTEGRATION_REVIEW`; STOP and wait for
+  separately authorized TASK-DATA-REF-005E.
