@@ -77,3 +77,23 @@ Because origin/main advanced during the first integration attempt, the final exa
 - `G1/G2/G3/CANARY`: `NOT_RUN`
 
 Final status is `READY_FOR_TODAY_004C` only after the latest-main push and exact-SHA CI are verified. Post-push evidence will be appended without rewriting the original 004B report.
+
+## Post-push verification
+
+- `MAIN_INTEGRATION`: `PASS`; local `main` fast-forwarded from
+  `564c9d8e739e7485c4f76b8e058034e5742b8974` to
+  `ab3e1c3471d5226c576536842bcf783d98512ced`.
+- `PUSH`: `PASS`; executed non-force `git push origin main`.
+- `PUSHED_SHA`: `ab3e1c3471d5226c576536842bcf783d98512ced`.
+- `LOCAL_MAIN_SHA`: `ab3e1c3471d5226c576536842bcf783d98512ced`.
+- `ORIGIN_MAIN_SHA`: `ab3e1c3471d5226c576536842bcf783d98512ced`.
+- `SYNC`: `0/0`.
+- `EXACT_SHA_CI_RUN`: `31669302668`.
+- `EXACT_SHA_CI`: `PASS`; the run head SHA was exactly
+  `ab3e1c3471d5226c576536842bcf783d98512ced`, and Secret scan, Frontend,
+  Backend/OpenAPI, and Docker Compose smoke all succeeded.
+- `PRODUCTION_MUTATION=NO`, `DEPLOY=NO`, `G1/G2/G3=NOT_RUN`,
+  `CANARY=NOT_RUN`, `SCHEDULER_CHANGED=NO`, `REFERENCE_BOOTSTRAP=NOT_RUN`,
+  `NEXT_TASK_MODIFIED=NO`, `DATA_GOVERNANCE_HOLD_TOUCHED=NO`.
+
+Final status: `READY_FOR_TODAY_004C`.
