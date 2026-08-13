@@ -175,3 +175,31 @@
 - No Production DB mutation, reference bootstrap action, provider authority,
   Lifecycle/Opportunity rule, Scheduler, Canary, deploy, push, merge,
   `NEXT_TASK`, or Data Governance HOLD change was performed for this workstream.
+
+## 2026-08-13 TASK-FE-BE-TODAY-002B Today Mainlines Integration Reconciliation
+
+- Reconciled the isolated TODAY-002 implementation commit
+  `d89013b4333a5e6768d516228acc352ef6e6a4d5` onto the latest
+  `origin/main` at `a5fba9319a177a5da9fb8123b265ed05e7ff9f6c` in a clean
+  worktree. The cherry-pick completed without conflict and produced the
+  reconciled implementation commit `d7b621d`.
+- The reconciliation changed no DATA-REF files, migration, reference bundle,
+  provider authority, OpenAPI semantics, backend contract, Lifecycle,
+  Opportunity, Scheduler, or production boundary. The existing DATA-REF
+  worklog entries were preserved; this entry is append-only.
+- TODAY-002 semantics remain unchanged: `GET /api/v2/home` → `getHome()` →
+  generated HomeResponse types → TodayMainlinesResource → Today Market UI;
+  backend order and slugs are preserved, hardcoded formal mainlines remain
+  removed, browser ranking remains absent, and G1/unready/API-error/empty
+  states remain fail-closed.
+- Pre-push validation boundary: frontend focused/full tests, API client tests,
+  TypeScript, targeted lint, frontend build, OpenAPI gate/idempotence,
+  `git diff --check`, secret scan, Ruff, backend smoke, PostgreSQL reference
+  integration, migration upgrade/rollback, and generated contract checks are
+  run against the reconciled SHA before main integration. Full lint is recorded
+  as pass only if the repository command completes; otherwise it remains
+  `TIMEOUT_NO_DIAGNOSTICS` and targeted lint is reported separately.
+- No production database mutation, production reference bootstrap, G1/G2/G3,
+  Canary, Scheduler, Render deploy, or release activation is performed by this
+  reconciliation. Main push, if all required gates pass, is the only external
+  repository mutation authorized by TASK-FE-BE-TODAY-002B.
