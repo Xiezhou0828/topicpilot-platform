@@ -203,3 +203,8 @@
   Canary, Scheduler, Render deploy, or release activation is performed by this
   reconciliation. Main push, if all required gates pass, is the only external
   repository mutation authorized by TASK-FE-BE-TODAY-002B.
+- The isolated Docker web-image build initially exposed that the repository-root
+  build context did not include the generated API client imported by the Today
+  adapter. Added the minimal web-Dockerfile source copy; the API/web image build
+  and full isolated PostgreSQL/API/Web compose smoke test then passed. This is a
+  packaging fix only; no API or data semantics changed.
