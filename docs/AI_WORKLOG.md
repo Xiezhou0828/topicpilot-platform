@@ -208,3 +208,131 @@
   adapter. Added the minimal web-Dockerfile source copy; the API/web image build
   and full isolated PostgreSQL/API/Web compose smoke test then passed. This is a
   packaging fix only; no API or data semantics changed.
+## 2026-08-13 TASK-DATA-REF-004 Exact-SHA Production Deploy, Runtime Re-Verification & Reference Bootstrap Dry-Run
+
+- The exact release revision was independently reconciled locally as
+  `a5fba9319a177a5da9fb8123b265ed05e7ff9f6c`; prior operator evidence
+  reported runtime SHA verified, G0=PASS, official TWSE/TPEx adapters,
+  canonical daily `marketBatch=true`, and verification-only Yahoo/Taishin
+  roles.
+- Production SELECT-only precheck and post-dry-run baseline remained 2
+  markets, 0 instruments, no active reference registry, and
+  `REFERENCE_LOAD_STATUS=NOT_READY`. The reference bootstrap dry-run was a
+  validated transactional PLAN with no non-reference write set and no state
+  change. No Production activation was performed.
+- The first screenshot transcription had a bundle-hash discrepancy; the
+  following append-only correction supersedes that transcription.
+
+## 2026-08-13 TASK-DATA-REF-004 Evidence Correction and Final Readiness
+
+- The earlier Production dry-run bundle hash was transcribed incorrectly from
+  a screenshot. The operator has now supplied a machine-readable extraction
+  from the same Render Production runtime. Its `bundleSha256` is
+  `5db36231decaeb12010ca7624c0d2bdc18da3b86dcec5611aa5ff7c132af15e6`, which
+  exactly matches the committed manifest at release SHA
+  `a5fba9319a177a5da9fb8123b265ed05e7ff9f6c`.
+- The previous `...aa5f17c...` value is superseded and is retained only in
+  the preceding audit entry as the original transcription error.
+  `BUNDLE_HASH_MATCH=PASS` and `PRODUCTION_BUNDLE_DRIFT=NO`.
+- All other operator evidence remains unchanged: runtime full SHA verified,
+  G0=PASS, precheck baseline is 2 markets / 0 instruments / NOT_READY,
+  dry-run is VALIDATED / PLAN with transactional=true, no non-reference
+  write set, and no before/after Production state change.
+- The formal TASK-DATA-REF-004 report is updated to
+  `READY_FOR_ONE_SHOT_PRODUCTION_REFERENCE_BOOTSTRAP_AUTHORIZATION`.
+  This is readiness only; no bootstrap, activation, G1-after-bootstrap,
+  G2/G3, Canary #2, Scheduler change, `NEXT_TASK` change, or Data Governance
+  HOLD change occurred. Await separate explicit TASK-DATA-REF-005
+  authorization.
+
+## 2026-08-13 TASK-DATA-REF-005A Production Market Identity Conflict Read-Only Audit
+
+- TASK-DATA-REF-005 one-shot activation was attempted once in the protected
+  Production runtime with the approved exact release and canonical bundle.
+  The command returned `{"status":"BLOCKED","error":"bundle/database
+  conflict in market TPE name"}`. No retry, repair, manual SQL, seed,
+  migration, bundle regeneration, or code change was performed.
+- The Production SELECT-only evidence immediately after the blocked command
+  remains the DATA-REF-004 baseline: 2 markets, 0 instruments, empty
+  duplicate identities, missing instruments present, no active reference
+  registry, and `REFERENCE_LOAD_STATUS=NOT_READY`. The operator reports
+  `BOOTSTRAP_MUTATION_OCCURRED=NO`, `ROLLBACK_REQUIRED=NO`, and
+  `PARTIAL_STATE_LEFT=NO`.
+- The read-only Production market diagnostic reports TPE as
+  `Taiwan Stock Exchange` with `exchange_code=TPE`, and TWO as
+  `Taipei Exchange` with `exchange_code=TWO`. The exact-SHA canonical bundle
+  and current exact-SHA reference/live identity defaults are TPE
+  `TWSE Listed` / `TWSE` and TWO `TPEx OTC` / `TPEx`. Both markets therefore
+  have a name and exchange-code identity drift relative to the approved
+  bundle.
+- Repository evidence shows the conflict path performs exact equality checks
+  without normalization in `reference_data/bootstrap.py`; the conflicting
+  existing market is rejected before its identity fields are changed. A
+  provisional registry row may be flushed inside the same SQL transaction
+  before market reconciliation, but the exception rolls that transaction
+  back; the Production before/after SELECT-only evidence confirms no
+  persisted mutation or partial state.
+- The canonical naming authority remains the approved `tw-reference-v1`
+  bundle at release SHA `a5fba9319a177a5da9fb8123b265ed05e7ff9f6c`, with its
+  manifest authority statement tying market identity to the provider registry
+  and current identity-bootstrap defaults. Production rows are conflict
+  evidence, not an authority override. Root-cause classification is
+  `PRODUCTION_LEGACY_NAME_DRIFT` with unresolved provenance of the original
+  Production seed path; this requires a separate market-identity remediation
+  review before any bootstrap retry.
+- TASK-DATA-REF-005A is `READY_FOR_MARKET_IDENTITY_REMEDIATION_REVIEW`.
+  G1 is not reached (effective gate FAIL); G2/G3, Canary #2, daily
+  reconciliation, Topic Snapshot, Lifecycle, Opportunity, and Scheduler
+  remain not run. `NEXT_TASK` and the Data Governance HOLD are untouched.
+
+## 2026-08-13 TASK-DATA-REF-005B Production Market Identity Remediation Design and Disposable PostgreSQL Validation
+
+- TASK-DATA-REF-005B is limited to remediation design, implementation, and
+  disposable/isolated PostgreSQL validation. Production mutation, Production
+  SELECT, bootstrap retry, market repair, migration, seed, deploy, G2/G3,
+  Canary, Scheduler, `NEXT_TASK`, and the Data Governance HOLD were not
+  touched.
+- The fixed authority remains release SHA
+  `a5fba9319a177a5da9fb8123b265ed05e7ff9f6c`, bundle `tw-reference-v1`,
+  bundle SHA
+  `5db36231decaeb12010ca7624c0d2bdc18da3b86dcec5611aa5ff7c132af15e6`,
+  `BUNDLE_HASH_MATCH=PASS`, and `PRODUCTION_BUNDLE_DRIFT=NO`. The prior
+  Production evidence remains G0 PASS and the blocked DATA-REF-005 baseline:
+  2 markets, 0 instruments, no active reference registry, and
+  `REFERENCE_LOAD_STATUS=NOT_READY`.
+- The semantic audit confirms that `market.code` is stable TopicPilot
+  identity and must not change or be re-keyed; `market.name` and
+  `market.exchange_code` are governed canonical metadata that may be updated
+  in place. The approved canonical values are TPE `TWSE Listed` / `TWSE` and
+  TWO `TPEx OTC` / `TPEx`; the observed Production values remain legacy drift
+  evidence (`Taiwan Stock Exchange` / `TPE`, `Taipei Exchange` / `TWO`) with
+  exact historical seed provenance not proven.
+- Implemented a dedicated fail-closed
+  `topicpilot-market-identity-remediation` entrypoint. Its exact write set is
+  `markets.name` and `markets.exchange_code`; primary keys and market codes
+  are preserved; `NON_MARKET_IDENTITY_WRITE_SET=NONE`. It supports explicit
+  dry-run/apply modes, exact legacy preconditions, canonical NOOP reruns,
+  single-transaction apply, postcondition checks, and rollback on failure.
+- Added unit/contract and PostgreSQL integration coverage for dry-run no
+  mutation, in-place apply, PK/code preservation, idempotent rerun, mixed and
+  unexpected market state, unexpected instrument/reference state, injected
+  rollback, and post-remediation reference bootstrap readiness.
+- Fresh disposable PostgreSQL 16 validation passed: `7 passed`.
+  Post-remediation isolated reference activation reached 2 markets, 507
+  instruments (`TPE=314`, `TWO=193`), no missing/duplicate identities, and
+  `REFERENCE_LOAD_STATUS=READY`. Migration downgrade `0028 -> 0027` and
+  re-upgrade to head also passed.
+- OpenAPI drift, generated contract idempotence, API client tests, task-scoped
+  Ruff, AST compilation, pip check, diff check, and targeted secret-pattern
+  scan passed. The root-level backend run reached `336 passed / 8 skipped`
+  with two unrelated pre-existing/environmental failures in canonical trigger
+  qualification and an observation migration test URL boundary; neither is
+  in the remediation path.
+- A validation-hygiene issue was recorded: an early local Alembic invocation
+  used `TEST_DATABASE_URL`, which this repository ignores for migrations, and
+  advanced the existing local non-Production database from `0024` to `0028`.
+  No Production database or credential was accessed; all subsequent validation
+  used the explicit disposable PostgreSQL port `55433`.
+- `AI_WORKLOG_UPDATED=YES`, formal report and runbook are present. Final status
+  is `READY_FOR_ONE_SHOT_PRODUCTION_MARKET_IDENTITY_REMEDIATION_AUTHORIZATION`;
+  STOP and wait for separate TASK-DATA-REF-005C authorization.
