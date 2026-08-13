@@ -764,3 +764,30 @@
   none; no deploy, reference bootstrap, provider change, Lifecycle/Opportunity
   rule change, Scheduler, Canary, or `NEXT_TASK`/Data Governance HOLD change
   was made.
+
+## 2026-08-13 TASK-DATA-REF-005H Integration, Exact-SHA CI, and Runtime Drift Stop
+
+- Verified authoritative 005G commit
+  `a009953c2c9270b6c9ffbaef11ab4fe435cd0242`, reconciled it in a fresh
+  worktree onto the then-current `origin/main`, and non-force pushed application
+  release SHA `00b40762a9484d951d4cfe776b40557c64fb08fb` with 0/0 synchronization.
+- Local scoped PostgreSQL/reference tests `27/27`, frontend `104/104`, API client
+  `3/3`, Ruff, migration rollback/upgrade, OpenAPI/generated contract, AST, pip,
+  diff, and secret gates passed. Exact-SHA CI run `31678008530` passed all jobs,
+  including Linux backend and Docker Compose smoke.
+- Protected release workflow run `31678267907` validated the exact release and
+  triggered only the Render API deploy hook; Sites packaging was skipped.
+- Production operator evidence reported runtime and provider-lineage SHA
+  `32f15f3c57240151bc5d35761e88c764448fa1cc`, not the authorized application
+  release SHA. Audit proved it is an exact-CI-passing descendant with only Today
+  frontend/test and append-only worklog changes, and no DATA-REF path drift, but
+  005H did not authorize replacing release authority with that descendant.
+- Production calendar remediation dry-run returned `PLAN` / `VALIDATED`, 507
+  compatible instruments, NULL-to-`TW_MARKET` changes for TPE/TWO, and only
+  `markets.calendar_code` in its write set. Bootstrap dry-run correctly blocked
+  on the TPE calendar conflict, proving parity behavior; pre/post reference
+  checks remained 2/0, inactive, and `NOT_READY`, proving zero mutation.
+- No calendar apply, reference bootstrap/activation, G1/G2/G3, Canary, or
+  Scheduler action occurred. `NEXT_TASK` and Data Governance HOLD are untouched.
+  Final status is `BLOCKED_RUNTIME_SHA_DRIFT`; STOP pending explicit release-SHA
+  authority or a new exact-SHA deploy.
