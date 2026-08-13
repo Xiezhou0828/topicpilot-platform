@@ -731,3 +731,24 @@
   change, Lifecycle/Opportunity rule change, Production DB mutation, G1/G2/G3,
   Canary, Scheduler, deploy, push, main merge, or `NEXT_TASK` modification was
   performed. This worklog entry is append-only.
+
+## 2026-08-13 TASK-FE-BE-TODAY-004C-R Daily Focus Reconciliation and Exact-SHA Main Integration
+
+- Reconciled the isolated implementation commit `b4c6dfb71d720fece3f5114b3607ddfa07d7e045`
+  onto the latest `origin/main` base `00b40762a9484d951d4cfe776b40557c64fb08fb`.
+  Concurrent DATA-REF-005E/005F/005G and Stock-002B documentation/worklog
+  history was preserved; the only replay conflict was this append-only worklog.
+- The reconciled candidate is `8a851edab54fa626e03114a678916d0327563579`.
+  `TodayHomeResource` remains the single shared Home request, Daily Focus reads
+  backend-owned `dailyFocus`, and no frontend mock fallback, business-rule
+  recomputation, backend route/schema, OpenAPI, generated-client, Production DB,
+  provider, Lifecycle, Opportunity, Scheduler, Canary, or reference-bootstrap
+  change was introduced by this task.
+- Latest-candidate validation passed: focused Today regression `12/12`, frontend
+  `110/110`, API client `3/3`, TypeScript, targeted/full lint (one pre-existing
+  TopicDetailPage warning), demo snapshot, Ruff, OpenAPI drift, backend
+  `313 passed / 48 skipped / 59 deselected`, disposable migration rollback/
+  upgrade, reference bootstrap PostgreSQL `1 passed`, and Compose API/Web smoke.
+- This reconciliation record is append-only. Main fast-forward, push, and
+  exact-SHA CI remain pending the final freshness check. Production actions are
+  none; `NEXT_TASK` and Data Governance HOLD remain untouched.
