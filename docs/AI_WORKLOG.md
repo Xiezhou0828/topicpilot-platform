@@ -580,3 +580,14 @@
   Production DB, deployment, G1/G2/G3, Canary, Scheduler, or `NEXT_TASK`.
   `PRODUCTION_MUTATION=NO`, `DEPLOY=NO`, `STOCK_003_STARTED=NO`, final status is
   `READY_FOR_STOCK_003`.
+
+## 2026-08-13 TASK-FE-BE-STOCK-002B Verification Record Correction
+
+- Corrected the final report metadata without changing application semantics:
+  application integration SHA is `69138c2575caf93214cc4fc7b1f6fde98d1ad98f`,
+  the final documentation verification SHA is
+  `8e0ffc713ccead047a97ea7b5c24c649cfa79230`, and its exact-SHA CI run is
+  `31671892857`.
+- Both the application SHA and final verification SHA passed the required CI
+  jobs. `PRODUCTION_MUTATION=NO`, `DEPLOY=NO`, `NEXT_TASK` unchanged, and
+  `STOCK_003_STARTED=NO`.
