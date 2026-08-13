@@ -449,3 +449,31 @@
   Canary/G1/G2/G3 change was made or run. `NEXT_TASK` and Data Governance HOLD
   were not modified. This entry is append-only; `PUSH=NO`, `MERGE_MAIN=NO`,
   `DEPLOY=NO`, `PRODUCTION_MUTATION=NO`.
+
+## 2026-08-13 TASK-FE-BE-TODAY-004B-R Shared Home Resource Reconciliation & Main Integration
+
+- The initial 004B reconciliation was intentionally not pushed when a fresh
+  remote check found `origin/main` had advanced from `8a818935…` to
+  DATA-REF-005E `564c9d8e739e7485c4f76b8e058034e5742b8974`. The stale local
+  fast-forward was retained only as audit evidence and was never pushed.
+- Re-audited the current main tip. DATA-REF-005E is the only concurrent
+  post-004B-base commit; it changes only its remediation service/tests/runbook/
+  report and this worklog. No concurrent Today/Home, Stock Explorer, or unknown
+  source changes were found.
+- Recreated isolated branch `codex/task-fe-be-today-004b-r2-20260813` from
+  fresh `origin/main@564c9d8…` and scoped-cherry-picked authoritative
+  `ac4cf444574e4ffd6bb1dfbda78eac883ba499d4` as `8afad1a…`. The expected
+  `docs/AI_WORKLOG.md` conflict was resolved append-preserving: DATA-REF-005D
+  and TODAY-004B entries were both retained. `f87014e…` remained superseded.
+- The shared Home resource, one Home request, generated HomeResponse, transport/
+  publication separation, TODAY-002/003 regressions, and UI freeze boundary are
+  preserved. No browser business rule, backend/OpenAPI semantics, DATA-REF
+  logic, migration, Production DB, Scheduler, G1/G2/G3, or Canary change was
+  made. `NEXT_TASK` and Data Governance HOLD remain unchanged.
+- Local affected/release gates passed on the clean reconciliation scope:
+  focused Today/Home `21/21`, frontend `83/83`, API client `3/3`, TypeScript,
+  targeted/full lint (one pre-existing `TopicDetailPage.tsx` warning), build,
+  OpenAPI gate/idempotence, diff check, and changed-file secret scan.
+- Main fast-forward, non-force push, exact pushed SHA, and GitHub Actions result
+  will be appended after the latest-main integration. `PRODUCTION_MUTATION=NO`,
+  `DEPLOY=NO`, `G1/G2/G3=NOT_RUN`, `CANARY=NOT_RUN`, `PUSH` not yet executed.
