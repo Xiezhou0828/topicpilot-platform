@@ -144,3 +144,100 @@ DATA_GOVERNANCE_HOLD_TOUCHED = NO
 FINAL_STATUS = BLOCKED_RUNTIME_SHA_DRIFT
 BLOCKER = runtime 32f15f3c... does not equal authorized release 00b40762...
 ```
+
+## TASK-DATA-REF-005H-A authority rebind clarification
+
+The preceding `BLOCKED_RUNTIME_SHA_DRIFT` status accurately records the 005H
+stop at the time: that task did not authorize changing its release authority.
+TASK-DATA-REF-005H-A now explicitly authorizes a provenance-gated rebind from
+the original application release SHA to the observed verified descendant. It
+does not rewrite or invalidate the prior evidence.
+
+Git provenance was re-audited using merge-base, ancestor, log, name-status, and
+stat evidence over:
+
+```text
+00b40762a9484d951d4cfe776b40557c64fb08fb
+..
+32f15f3c57240151bc5d35761e88c764448fa1cc
+```
+
+The merge-base is exactly `00b40762a9484d951d4cfe776b40557c64fb08fb`,
+and the ancestor check passed. The intervening commits are:
+
+```text
+8a851edab54fa626e03114a678916d0327563579 feat(web): wire Today daily focus story
+47b416fcd71845d91c2ea5577f8f7d2a2b1dab45 chore(docs): reconcile Today daily focus integration
+32f15f3c57240151bc5d35761e88c764448fa1cc chore(docs): record Today exact-sha verification
+```
+
+Their complete file set is limited to:
+
+```text
+apps/web/app/components/v2/TodayMarketPage.tsx
+apps/web/app/lib/today-mainlines.ts
+apps/web/tests/today-daily-focus.test.mjs
+docs/AI_WORKLOG.md
+```
+
+No reference-data bundle/loader, reference check/CLI, reference bootstrap,
+market identity remediation, market calendar remediation, provider-lineage or
+provider-authority path, DATA-REF test/contract, or migration changed. Exact-SHA
+CI run `31680613603` for `32f15f3c57240151bc5d35761e88c764448fa1cc`
+passed Backend/PostgreSQL/Migration/OpenAPI, Frontend, Secret scan, and Docker
+Compose smoke.
+
+The same runtime SHA was independently reported by both
+`RENDER_GIT_COMMIT` and provider-lineage `buildSha`. Runtime dry-run evidence
+matched the 005H contract exactly: calendar remediation planned only TPE/TWO
+NULL-to-bundle-derived-`TW_MARKET` updates to `markets.calendar_code`, with no
+instrument or non-calendar writes; bootstrap dry-run detected the calendar
+conflict; pre/post reference state was unchanged. No Production mutation
+occurred.
+
+Based on the explicit 005H-A authority and all passed preconditions, runtime
+authority is rebound as follows:
+
+```text
+TASK_DATA_REF_005H_A = COMPLETE
+ORIGINAL_005H_RELEASE_SHA = 00b40762a9484d951d4cfe776b40557c64fb08fb
+CURRENT_RUNTIME_SHA = 32f15f3c57240151bc5d35761e88c764448fa1cc
+CURRENT_PROVIDER_LINEAGE_SHA = 32f15f3c57240151bc5d35761e88c764448fa1cc
+
+DESCENDANT_RELATIONSHIP = PASS
+INTERVENING_COMMITS = 3
+INTERVENING_FILES = 4 (Today frontend/test and append-only worklog only)
+DATA_REF_PATH_CHANGED = NO
+REFERENCE_RUNTIME_PATH_CHANGED = NO
+PROVIDER_AUTHORITY_CHANGED = NO
+
+EXACT_SHA_CI_RUN = 31680613603
+EXACT_SHA_CI = PASS
+RUNTIME_SHA_VERIFIED_FOR_REBOUND_AUTHORITY = YES
+
+CALENDAR_DRY_RUN = PLAN / VALIDATED
+PLANNED_WRITE_SET = markets.calendar_code
+PLANNED_INSTRUMENT_WRITES = NONE
+PLANNED_NON_CALENDAR_CONTEXT_WRITE_SET = NONE
+BOOTSTRAP_DRY_RUN = BLOCKED / expected calendar conflict
+BOOTSTRAP_CALENDAR_CONFLICT_DETECTED = YES
+PRE_POST_REFERENCE_STATE_CHANGED = NO
+
+RUNTIME_AUTHORITY_REBOUND = YES
+NEW_RUNTIME_AUTHORITY_SHA = 32f15f3c57240151bc5d35761e88c764448fa1cc
+PRODUCTION_DB_CONNECTED = YES (prior operator dry-runs/checks only)
+PRODUCTION_MUTATION = NO
+DEPLOY = NO
+G1/G2/G3 = NOT_RUN
+CANARY_2 = NOT_RUN
+SCHEDULER_CHANGED = NO
+NEXT_TASK_MODIFIED = NO
+DATA_GOVERNANCE_HOLD_TOUCHED = NO
+
+FINAL_STATUS = READY_FOR_TASK_DATA_REF_005I
+BLOCKER = NONE
+```
+
+This rebind authorizes only the runtime authority record. It does not execute or
+authorize calendar remediation apply, reference bootstrap/activation, G1,
+G2/G3, Canary, Scheduler, manual SQL, deploy, or any other Production mutation.

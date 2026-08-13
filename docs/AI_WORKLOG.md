@@ -791,3 +791,23 @@
   Scheduler action occurred. `NEXT_TASK` and Data Governance HOLD are untouched.
   Final status is `BLOCKED_RUNTIME_SHA_DRIFT`; STOP pending explicit release-SHA
   authority or a new exact-SHA deploy.
+
+## 2026-08-13 TASK-DATA-REF-005H-A Runtime Authority Rebind
+
+- Applied the user's explicit authority to evaluate rebinding the 005H runtime
+  from original release `00b40762a9484d951d4cfe776b40557c64fb08fb` to
+  observed SHA `32f15f3c57240151bc5d35761e88c764448fa1cc` without
+  rewriting the earlier runtime-drift stop record.
+- Git merge-base and ancestor checks passed. The three intervening commits
+  changed only Today frontend/test files and append-only `docs/AI_WORKLOG.md`;
+  DATA-REF, reference runtime, remediation, provider authority, tests/contracts,
+  and migrations had zero diff.
+- Exact-SHA CI run `31680613603` for the observed runtime passed all jobs.
+  `RENDER_GIT_COMMIT` and provider-lineage `buildSha` both matched it, and the
+  prior Production dry-runs proved the calendar-only PLAN, bootstrap parity
+  conflict, and unchanged pre/post reference state.
+- Runtime authority is therefore rebound to
+  `32f15f3c57240151bc5d35761e88c764448fa1cc`. No deploy, calendar apply,
+  reference bootstrap/activation, G1/G2/G3, Canary, Scheduler, SQL mutation,
+  `NEXT_TASK`, or Data Governance HOLD change occurred. Final status is
+  `READY_FOR_TASK_DATA_REF_005I`; STOP pending a separately authorized 005I.
