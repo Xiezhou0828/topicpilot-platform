@@ -98,8 +98,8 @@ function SectionHeading({ id, eyebrow, title, description, link, trailing }: { i
   );
 }
 
-function MainlinesState({ loading, state, reason, dataDate, section = "主線" }: { loading: boolean; state: "FORMAL" | "PREVIEW" | "UNAVAILABLE"; reason: string | null; dataDate: string | null; section?: string }) {
-  const label = loading ? "讀取中" : state === "PREVIEW" ? "Preview" : "資料暫不可用";
+function MainlinesState({ loading, state, reason, dataDate, section = "主線" }: { loading: boolean; state: "FORMAL" | "TEMPORARY" | "PREVIEW" | "UNAVAILABLE"; reason: string | null; dataDate: string | null; section?: string }) {
+  const label = loading ? "讀取中" : state === "PREVIEW" ? "Preview" : state === "TEMPORARY" ? "TEMPORARY" : "資料暫不可用";
   return (
     <div className={`tp-home-mainlines-state tp-home-mainlines-state--${loading ? "loading" : state.toLowerCase()}`} role="status">
       <span className="tp-data-state">{label}</span>
@@ -206,12 +206,36 @@ export default function TodayMarketPage() {
         <section className="tp-home-section" aria-labelledby="market-story-title">
           <Card className="tp-home-story-card">
             <SectionHeading id="market-story-title" title="今日市場重點" />
-            <ul className="tp-home-story-list">
-              <li><strong>AI伺服器</strong>仍為市場主線。</li>
-              <li><strong>BBU</strong>開始高檔分歧。</li>
-              <li><strong>機器人</strong>盤中快速升溫。</li>
-            </ul>
-            <div className="tp-home-one-line"><span>今日一句話</span><strong>今天研究重心：觀察 AI 是否開始擴散。</strong></div>
+            {mainlines.loading || mainlines.resource.dailyFocus.state === "UNAVAILABLE" ? (
+              <MainlinesState
+                loading={mainlines.loading}
+                state={mainlines.resource.dailyFocus.state}
+                reason={mainlines.resource.dailyFocus.reason}
+                dataDate={mainlines.resource.dailyFocus.dataDate}
+                section="市場焦點"
+              />
+            ) : (
+              <>
+                {mainlines.resource.dailyFocus.state !== "FORMAL" && (
+                  <MainlinesState
+                    loading={false}
+                    state={mainlines.resource.dailyFocus.state}
+                    reason={mainlines.resource.dailyFocus.reason}
+                    dataDate={mainlines.resource.dailyFocus.dataDate}
+                    section="市場焦點"
+                  />
+                )}
+                {mainlines.resource.dailyFocus.data && (
+                  <>
+                    <ul className="tp-home-story-list">
+                      {mainlines.resource.dailyFocus.data.bullets?.map((bullet) => <li key={bullet}>{bullet}</li>)}
+                    </ul>
+                    <div className="tp-home-one-line"><span>今日一句話</span><strong>{mainlines.resource.dailyFocus.data.headline}</strong></div>
+                    <small>模式：{mainlines.resource.dailyFocus.mode} · 來源：{mainlines.resource.dailyFocus.source}{mainlines.resource.dailyFocus.dataDate && ` · 資料日：${mainlines.resource.dailyFocus.dataDate}`}</small>
+                  </>
+                )}
+              </>
+            )}
           </Card>
         </section>
 

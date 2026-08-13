@@ -6,7 +6,9 @@ import {
   TODAY_MAINLINES_PREVIEW_ENABLED,
   useTodayHomeResource,
   type HomeResponse,
+  type HomeDailyFocus,
   type HomeRotationTopic,
+  type TodayHomePublicationState,
   type TodayHomeResource,
 } from "./today-home";
 
@@ -25,6 +27,17 @@ export type TodayRotationResource = {
   reason: string | null;
 };
 
+export type TodayDailyFocusResource = {
+  state: TodayHomePublicationState;
+  data: HomeDailyFocus | null;
+  dataDate: string | null;
+  asOf: string | null;
+  source: string | null;
+  mode: string | null;
+  temporary: boolean | null;
+  reason: string | null;
+};
+
 export type TodayMainlinesResource = {
   state: TodayMainlinesState;
   data: TodayHomeResource["sections"]["mainTopics"];
@@ -34,6 +47,7 @@ export type TodayMainlinesResource = {
   classification: string | null;
   qualityStatus: string | null;
   reason: string | null;
+  dailyFocus: TodayDailyFocusResource;
   heating: TodayRotationResource;
   cooling: TodayRotationResource;
 };
@@ -74,6 +88,69 @@ function isHomeRotationTopic(value: HomeRotationTopic): boolean {
       && typeof value.currentGrade === "string"
       && typeof value.summary === "string",
   );
+}
+
+function isHomeDailyFocus(value: HomeDailyFocus | null): value is HomeDailyFocus {
+  return Boolean(
+    value
+      && typeof value.mode === "string"
+      && value.mode.trim().length > 0
+      && typeof value.source === "string"
+      && value.source.trim().length > 0
+      && typeof value.headline === "string"
+      && value.headline.trim().length > 0
+      && Array.isArray(value.bullets)
+      && value.bullets.length > 0
+      && value.bullets.every((bullet) => typeof bullet === "string" && bullet.trim().length > 0)
+      && (value.dataDate === null || (typeof value.dataDate === "string" && value.dataDate.trim().length > 0))
+      && typeof value.temporary === "boolean",
+  );
+}
+
+function mapDailyFocus(
+  resource: TodayHomeResource,
+  previewEnabled: boolean,
+): TodayDailyFocusResource {
+  const data = resource.sections.dailyFocus;
+  const shared = metadata(resource);
+  const dailyMetadata = {
+    dataDate: data?.dataDate ?? null,
+    asOf: shared.asOf,
+    source: data?.source ?? shared.source,
+    mode: data?.mode ?? null,
+    temporary: typeof data?.temporary === "boolean" ? data.temporary : null,
+  };
+
+  if (!isHomeDailyFocus(data)) {
+    return {
+      state: "UNAVAILABLE",
+      data: null,
+      ...dailyMetadata,
+      reason: "Home.dailyFocus is incomplete; Today Market Story is unavailable.",
+    };
+  }
+
+  let state: TodayHomePublicationState = resource.publicationState;
+  if (state === "PREVIEW" && !previewEnabled) state = "UNAVAILABLE";
+  if (state === "FORMAL" && data.temporary) state = "TEMPORARY";
+
+  if (state === "UNAVAILABLE") {
+    return {
+      state,
+      data: null,
+      ...dailyMetadata,
+      reason: resource.metadata.reason ?? "Formal Today Market Story is not ready; non-formal data is hidden.",
+    };
+  }
+
+  return {
+    state,
+    data,
+    ...dailyMetadata,
+    reason: state === "FORMAL"
+      ? null
+      : resource.metadata.reason ?? "Home.dailyFocus is temporary and is not formal production insight.",
+  };
 }
 
 function mapRotation(
@@ -126,6 +203,7 @@ export function toTodayMainlinesResource(
   previewEnabled = TODAY_MAINLINES_PREVIEW_ENABLED,
 ): TodayMainlinesResource {
   const shared = metadata(resource);
+  const dailyFocus = mapDailyFocus(resource, previewEnabled);
   const heating = mapRotation(resource, resource.sections.heatingTopics, "heating", previewEnabled);
   const cooling = mapRotation(resource, resource.sections.coolingTopics, "cooling", previewEnabled);
   const state = stateFromHomeResource(resource, previewEnabled);
@@ -137,6 +215,7 @@ export function toTodayMainlinesResource(
       data: [],
       ...shared,
       reason: resource.metadata.reason ?? "Home.mainTopics is empty; Today mainlines are unavailable.",
+      dailyFocus,
       heating,
       cooling,
     };
@@ -148,6 +227,7 @@ export function toTodayMainlinesResource(
       data: [],
       ...shared,
       reason: resource.metadata.reason ?? "Formal Today mainlines are not ready; non-formal data is hidden.",
+      dailyFocus,
       heating,
       cooling,
     };
@@ -158,6 +238,7 @@ export function toTodayMainlinesResource(
     data,
     ...shared,
     reason: state === "PREVIEW" ? resource.metadata.reason : null,
+    dailyFocus,
     heating,
     cooling,
   };

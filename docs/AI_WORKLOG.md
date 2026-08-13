@@ -702,3 +702,32 @@
   deploy, push, merge, G1/G2/G3, Canary, or Scheduler action occurred.
   `NEXT_TASK` and Data Governance HOLD remain untouched. Final status is
   `READY_FOR_MARKET_CALENDAR_REMEDIATION_INTEGRATION_REVIEW`.
+## 2026-08-13 — TASK-FE-BE-TODAY-004C Daily Focus / Market Story FastAPI Wiring
+
+- Started from `origin/main` at
+  `8e0ffc713ccead047a97ea7b5c24c649cfa79230`, which includes the authoritative
+  TASK-FE-BE-TODAY-004B-R shared Home resource and reconciliation. Daily Focus
+  is wired from `HomeResponse.dailyFocus` through the existing
+  `TodayHomeResource`; no second Home request or runtime client helper was
+  added (`HOME_REQUEST_REUSED=YES`, `EXTRA_HOME_REQUESTS_ADDED=0`).
+- Removed the formal-path hardcoded Market Story bullets and one-line headline
+  from `TodayMarketPage.tsx`. The UI now renders backend-owned `headline` and
+  `bullets` in backend order, preserving `mode`, `source`, `dataDate`, shared
+  `asOf`, and `temporary` metadata. No browser narrative generation,
+  summarization, ranking, sentiment, or business-rule calculation was added.
+- Daily Focus uses the shared publication boundary: valid formal data remains
+  `FORMAL`; backend `temporary=true` cannot render as formal and is shown as
+  persistent `TEMPORARY`; explicit Preview remains `PREVIEW`; null, empty,
+  incomplete, gated, or transport-error data is `UNAVAILABLE`. Hardcoded story
+  data is never used as an error/loading fallback.
+- Added focused coverage for resource reuse, backend headline/bullet authority
+  and order, metadata preservation, FORMAL/TEMPORARY/PREVIEW/UNAVAILABLE
+  mapping, null/empty/incomplete/error fail-closed behavior, and TODAY-002 /
+  TODAY-003 regression. Focused tests passed `27/27`; frontend full tests and
+  build passed `110/110`; API client `3/3`; TypeScript, targeted/full lint,
+  OpenAPI gate/idempotence, Ruff, backend tests, diff check, and secret sanity
+  scan passed. Full lint retains the pre-existing TopicDetailPage warning only.
+- No backend/OpenAPI contract change, provider authority change, DATA-REF
+  change, Lifecycle/Opportunity rule change, Production DB mutation, G1/G2/G3,
+  Canary, Scheduler, deploy, push, main merge, or `NEXT_TASK` modification was
+  performed. This worklog entry is append-only.
