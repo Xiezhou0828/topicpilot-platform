@@ -25,6 +25,7 @@ IMPLEMENTED_V2_TABLES = {
     "reference_adjustments",
     "reference_calendar_dates",
     "reference_instrument_lifecycles",
+    "reference_registry_transitions",
     "live_tracking_universe",
     "live_collector_runs",
     "live_collector_attempts",
