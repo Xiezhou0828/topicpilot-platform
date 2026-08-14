@@ -141,3 +141,18 @@ return the task to review. This runbook does not include a production rollback
 mutation; database rollback is the transaction failure behavior above, while
 an already-active prior registry remains the operator's protected rollback
 target.
+
+## Date-effective lifecycle integration
+
+The canonical bundle also contains `instrument_lifecycles.json`, generated
+from the approved status-evidence input. Bootstrap writes these rows to
+`reference_instrument_lifecycles` in the same atomic reference-only
+transaction. Lifecycle evidence never deletes a physical instrument identity.
+
+The G2 preflight uses the shared date-effective eligibility contract after
+loading the active registry. It applies instrument/market validity windows and
+the latest applicable lifecycle event for the explicit run date. For the
+regression boundary, a delisting effective on 2026-06-23 is eligible on
+2026-06-22 and not eligible on or after 2026-06-23. The formal G1 identity
+count remains data-derived at 507; on 2026-08-13 the date-effective G2
+expected universe is derived as TPE 313 and TWO 193.

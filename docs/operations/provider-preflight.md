@@ -82,11 +82,17 @@ read-transaction state; there is no application mutation.
    the expected official source code and adapter version.
 6. Call each official market-level endpoint once through the adapter's
    validated market-batch capability. No instrument/month fallback is used.
-7. Require a parsed payload, target-date match, non-empty market data, and
-   complete coverage of the active EQUITY identity codes derived from the
-   database. The identity count is derived at runtime; 507 is not a
-   business-rule constant.
-8. Return one deterministic JSON result. Exit code 0 means PASS; exit code 1
+7. Build the date-effective expected universe through the shared
+   build_date_effective_instrument_universe contract. It applies instrument
+   and market validity windows plus reference-versioned lifecycle evidence to
+   the explicit run date. The formal reference identity count remains 507;
+   the G2 expected universe is date-effective and is therefore allowed to be
+   smaller without deleting a historical physical identity.
+8. Require a parsed payload, target-date match, non-empty market data, and
+   complete coverage of that date-effective expected universe. The identity
+   count is derived at runtime; 507, 314, 313, and 193 are not loader business
+   rules.
+9. Return one deterministic JSON result. Exit code 0 means PASS; exit code 1
    means FAIL.
 
 ## Result contract
@@ -100,6 +106,7 @@ The command emits one JSON object with this shape:
       "targetDate": "YYYY-MM-DD",
       "targetDateIsSession": true,
       "targetDateReason": null,
+      "eligibilityError": null,
       "readOnly": true,
       "productionWriteSet": [],
       "nonReferenceWriteSet": [],
@@ -130,6 +137,9 @@ The command emits one JSON object with this shape:
           "expectedInstrumentCount": "...",
           "coveredInstrumentCount": "...",
           "missingInstrumentCount": 0,
+          "missingIdentityCodes": [],
+          "extraIdentityCodes": [],
+          "extraInstrumentCount": 0,
           "coverageComplete": true,
           "status": "PASS",
           "errorCode": null
@@ -155,7 +165,8 @@ G2 PASS requires all of the following:
 - both official requests are reachable and payloads parse;
 - both payloads match the requested target date;
 - both payloads contain data;
-- all active EQUITY identities derived for each market are present;
+- all date-effective eligible EQUITY identities derived for each market are
+  present, with no extra provider identities;
 - fallbackAllowed=false;
 - productionWriteSet=[] and nonReferenceWriteSet=[].
 
@@ -177,6 +188,8 @@ G2 FAIL is returned for any of:
 - provider response date mismatch;
 - empty market payload;
 - partial identity coverage;
+- extra provider identities or a missing/extra identity-set mismatch;
+- malformed or unknown instrument lifecycle evidence;
 - any fallback or verification provider being used.
 
 On FAIL, preserve the JSON evidence and stop. Do not run

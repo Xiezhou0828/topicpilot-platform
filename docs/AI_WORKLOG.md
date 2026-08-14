@@ -951,3 +951,166 @@
   isolated Compose PostgreSQL/API/Web smoke, diff check, secret-value scan,
   and CLI help/mutation-flag rejection all passed. Existing frontend lint has
   only the prior TopicDetailPage unused-variable warning.
+
+## 2026-08-14 TASK-DATA-REF-006B Release Push, Exact-SHA CI, and Deploy Handoff
+
+- Freshness check confirmed `origin/main` was still
+  `c75956336df03a1fd661a054b33b0c4845d4f159`; the integrated release was
+  pushed non-force to main at
+  `3366ee61ba71a4f98ad886b53284e3faedbf44e0`. This is the application release
+  SHA and must remain distinct from any later local documentation-only SHA.
+- Exact-SHA CI run `31755965560` for `3366ee61...` passed Backend/migration/
+  OpenAPI, Frontend, Secret scan, and Docker Compose smoke.
+- Protected deploy workflow `31756161527` used exactly that release ref with
+  `deploy_api=true` and `package_web=false`. Release validation and the Render
+  API deploy hook passed; Sites packaging was intentionally skipped.
+- No Production database connection, G2 provider request, reference bootstrap,
+  activation, remediation, G3, Canary, or Scheduler action occurred. Runtime
+  SHA and provider lineage still require operator evidence from the same
+  authenticated Render runtime. `NEXT_TASK` and Data Governance HOLD remain
+  untouched.
+- This closure evidence is local-only after the release handoff and is not
+  pushed. Final status is `OPERATOR_RUNTIME_EVIDENCE_REQUIRED`; blocker is
+  runtime verification of `3366ee61ba71a4f98ad886b53284e3faedbf44e0`.
+
+## 2026-08-14 TASK-DATA-REF-006B Runtime Authority Verification
+
+- Operator evidence from the same authenticated Render runtime confirmed
+  `RENDER_GIT_COMMIT` and `topicpilot-provider-lineage.buildSha` both equal
+  `3366ee61ba71a4f98ad886b53284e3faedbf44e0`. Lineage status is `READY`.
+- Provider authority remains canonical and market-batched: TPE uses
+  `TWSE_OFFICIAL_DAILY` / `twse-official-daily.v2`; TWO uses
+  `TPEX_OFFICIAL_DAILY` / `tpex-official-daily.v2`. Yahoo is verification-only
+  and Taishin is intraday-only. Runtime SHA verification passed and G0 passed.
+- No G2 preflight, provider request, Production database connection or
+  mutation, G3, Canary, Scheduler, or further deploy was performed. The
+  application release SHA remains distinct from local documentation SHA
+  `7f37bdea1c5575669ff85392933e9e0e231b0eb9`; documentation remains unpushed.
+- TASK-DATA-REF-006B final status is now
+  `READY_FOR_G2_PRODUCTION_PREFLIGHT_AUTHORIZATION`; blocker is `NONE`.
+  Stop and wait for explicit G2 preflight authorization.
+
+## 2026-08-14 TASK-DATA-REF-006C G2 Official Provider Read-Only Preflight
+
+- Verified the 006C repository authority: the exact operator entrypoint is
+  `topicpilot-provider-preflight --run-date YYYY-MM-DD
+  --reference-version tw-reference-v1`. The CLI requires an explicit ISO
+  target date and the runbook explicitly forbids deriving it from the browser,
+  local system date, or a hardcoded trading date.
+- The supplied same-runtime evidence confirms application SHA and provider
+  lineage `3366ee61ba71a4f98ad886b53284e3faedbf44e0`; G0 is PASS. The prior
+  006B Production baseline remains the last verified G1 evidence: active and
+  READY reference, 2 markets, and 507 instruments. No new 006C G1 check was
+  represented as completed.
+- 006C stopped fail-closed before any provider request because no explicit,
+  authorized `G2_RUN_DATE` was supplied. Consequently TPE/TWO preflight,
+  Production DB access, G2, G3, Canary, and Scheduler were not run or changed.
+  The planned database boundary remains SELECT-only with empty production and
+  non-reference write sets.
+- Created formal report
+  `TASK-DATA-REF-006C_PRODUCTION_G2_OFFICIAL_PROVIDER_READ_ONLY_PREFLIGHT_EXECUTION.md`.
+  Documentation is local-only, with no push or deploy. Final status is
+  `BLOCKED_G2_RUN_DATE_AUTHORITY_AMBIGUOUS`; blocker is an explicitly
+  authorized G2 run date.
+
+## 2026-08-14 TASK-DATA-REF-006C-A Explicit G2 Run-Date Authorization
+
+- The operator explicitly authorized `G2_RUN_DATE=2026-08-13` and prohibited
+  date substitution. Repository-level validation against the committed
+  `tw-reference-v1` calendar passed: the date is Thursday and has no persisted
+  `TW_MARKET` `HOLIDAY` or `SUSPENDED` row. `DATE_SUBSTITUTED=NO`.
+- The exact Production sequence is preserved: same-runtime SHA/lineage check,
+  `topicpilot-reference-check --reference-version tw-reference-v1`, then
+  `topicpilot-provider-preflight --run-date 2026-08-13
+  --reference-version tw-reference-v1`. The latter remains SELECT-only with
+  empty Production and non-reference write sets and official TPE/TWO
+  market-batch providers only.
+- Production Phase 2/3 evidence and the G2 provider result have not yet been
+  supplied by the authenticated Render runtime. No Production database
+  connection, provider request, mutation, deploy, push, G3, Canary, or
+  Scheduler action occurred. Created continuation report
+  `TASK-DATA-REF-006C-A_EXPLICIT_G2_RUN_DATE_AUTHORIZATION_AND_PREFLIGHT_RESUME.md`;
+  documentation is local-only.
+
+## 2026-08-14 TASK-DATA-REF-006C-A Production G2 Preflight Result
+
+- Operator evidence confirmed the authorized runtime remained
+  `3366ee61ba71a4f98ad886b53284e3faedbf44e0`; provider-lineage `buildSha`
+  matched and status was `READY`. Fresh G1 reference-check passed with active
+  READY `tw-reference-v1`, 2 markets, 507 instruments, no missing markets or
+  instruments, no duplicates, and complete reference context.
+- The authorized date `2026-08-13` was a valid session date and was not
+  substituted. The dedicated read-only G2 preflight reached both official
+  market-batch providers with target-date matches and no fallback. TWO passed
+  193/193 coverage; TPE failed closed at 313/314 coverage with
+  `errorCode=PARTIAL_PROVIDER_COVERAGE` and `missingInstrumentCount=1`.
+  The CLI did not emit the missing identity code, so none is inferred.
+- The preflight reported `readOnly=true`, `productionWriteSet=[]`, and
+  `nonReferenceWriteSet=[]`. No remediation, retry, live collector,
+  persistence, G3, Canary, or Scheduler action occurred. Final status is
+  `BLOCKED_G2_PROVIDER_COVERAGE_FAILURE`; the formal continuation report was
+  updated append-only and remains local-only/unpushed.
+
+## 2026-08-14 TASK-DATA-REF-006D G2 Missing Identity and Instrument Lifecycle Audit
+
+- Audited the 006C TPE `313/314` failure against the committed bundle, status
+  evidence, ORM/migrations, reference bootstrap, reference-check, provider
+  preflight, official provider diagnostics, and no-trade contract. The single
+  reconciled missing identity is `TPE:6806`: it remains in the canonical 314
+  identity bundle and retained formal universe, while committed evidence marks
+  it `DELISTED` effective `2026-06-23`; prior official row-level evidence
+  records its TWSE no-row result.
+- The root cause is not provider mapping or an identity deletion requirement.
+  The model has partial lifecycle-shaped fields (`is_active`, `valid_from`,
+  `valid_to`, and effective security identities), but bundle/bootstrap data do
+  not populate instrument lifecycle dates/status. G2 expected identities are
+  derived from active EQUITY instruments joined to active markets and do not
+  apply `run-date` validity or lifecycle status. This is classified as
+  `INSTRUMENT_LIFECYCLE_DATA_MISSING` plus
+  `G2_DATE_EFFECTIVE_UNIVERSE_LOGIC_GAP`.
+- The G2 CLI also emits only aggregate missing counts, not missing/extra codes;
+  the 006C raw JSON therefore did not itself contain `6806`. No identity code
+  was invented; the reconciliation uses repository bundle/status evidence and
+  the prior exact official no-row diagnostic. The observability gap is recorded
+  for 006E.
+- No Production retry, provider request, mutation, deletion, remediation,
+  bootstrap, activation, deploy, push, G3, Canary, or Scheduler action
+  occurred. Formal report:
+  `TASK-DATA-REF-006D_G2_MISSING_IDENTITY_AND_INSTRUMENT_LIFECYCLE_ROOT_CAUSE_AUDIT.md`.
+  Final status is `AUDIT_COMPLETE_READY_FOR_006E`; next recommended task is
+  `TASK-DATA-REF-006E Instrument Lifecycle / Date-Effective Universe Contract`.
+
+## 2026-08-14 TASK-DATA-REF-006E Date-Effective Instrument Universe and G2 Lifecycle Eligibility Contract
+
+- Implemented the shared provider-independent date-effective eligibility path
+  in `services/api/src/topicpilot_api/instrument_universe.py`. It validates
+  instrument/market validity ranges, lifecycle effective ranges and known
+  lifecycle statuses, fails closed on malformed metadata, preserves physical
+  identities, and derives sorted market universes for the explicit run date.
+- Added migration
+  `0029_task_data_ref_006e_instrument_lifecycle` and ORM model
+  `ReferenceInstrumentLifecycle`. The reference-only bootstrap now validates,
+  plans, writes, and idempotently rechecks lifecycle evidence in the same
+  atomic reference transaction. Non-reference write set remains empty.
+- Extended the canonical `tw-reference-v1` bundle with generated
+  `instrument_lifecycles.json` derived from the approved status evidence.
+  Bundle SHA is now
+  `daf19e9eb051255c631d0fff6d8fecf1273aecf52f9e958a62c778dfb6906295`;
+  6806 is represented as generic DELISTED evidence effective 2026-06-23,
+  not as a hardcoded implementation rule.
+- Updated G2 SELECT-only context loading to use the shared date-effective
+  universe and to emit deterministic sorted `missingIdentityCodes` and
+  `extraIdentityCodes`. Extra identities fail closed. Official providers and
+  market-batch/fallback rules remain unchanged; reference-check remains the
+  separate formal 507-identity G1 contract.
+- Added lifecycle unit, bundle, bootstrap contract, PostgreSQL bootstrap,
+  date-effective PostgreSQL context, missing/extra identity, migration, and
+  architecture-boundary coverage. Disposable PostgreSQL migration upgrade,
+  downgrade, re-upgrade, bootstrap, and 2026-08-13 context validation passed;
+  targeted unit/contract tests passed.
+- No Production DB connection, Production mutation, G2 retry, provider
+  request, deploy, push, G3, Canary, Scheduler, NEXT_TASK, or Data Governance
+  HOLD action occurred. Formal report:
+  `TASK-DATA-REF-006E_DATE_EFFECTIVE_INSTRUMENT_UNIVERSE_AND_G2_LIFECYCLE_ELIGIBILITY_CONTRACT.md`.
+  Final status is `READY_FOR_G2_DATE_EFFECTIVE_INTEGRATION_REVIEW`; next
+  recommended task is 006F.
