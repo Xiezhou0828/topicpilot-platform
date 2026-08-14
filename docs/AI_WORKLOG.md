@@ -1329,3 +1329,23 @@
   merge/push, Canary, Scheduler, or `NEXT_TASK` change was made. Formal report:
   `TASK-FE-BE-TODAY-004D_MARKET_EVENTS_FORMAL_WIRING.md`. Final status is
   `READY_FOR_TODAY_004D_INTEGRATION_REVIEW`.
+
+## 2026-08-14 TASK-FE-BE-TODAY-004D-R Canonical Reconciliation Closure
+
+- Refreshed canonical authority after the 009/009A consolidation at
+  `origin/main=12b0c7c97031f223fe61c6ffe9de016852214fc5`. The source branch
+  was clean at `codex/task-fe-be-today-004d-20260814` /
+  `4bb3a954760117a6e4aa424868101da5f1f20c2a`; only source commit
+  `59cb1b1f50911d464eaa756a844ac2efe0ba18c0` was reconciled. The later 004E
+  commit was explicitly excluded.
+- Application/evidence reconciliation commit is
+  `a816967926c6105361991d09fe183c4f5d962d2a`. PR #5 was merged non-force to
+  canonical `main` at `f866291b943888b030adef15eac22e75d693bb81`.
+- Exact-SHA CI run `31791804595` passed Backend/migration/OpenAPI, Frontend
+  install/test/build, Secret scan, and Docker Compose smoke for the canonical
+  merge SHA.
+- `TASK-DATA-REF-009A` remains the preserved G0/G1/G2/G3/Canary baseline
+  (Canary 506/506, failure 0). No protected gate rerun, deploy, Production
+  mutation, Scheduler change, `NEXT_TASK` change, DATA-REF file change, or
+  Stock file change occurred. Final status is `READY_FOR_TODAY_005`; blocker
+  is `NONE`. This entry is append-only and the task stops here.

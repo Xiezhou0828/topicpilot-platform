@@ -160,17 +160,31 @@ SCHEDULER_CHANGED = NO
 NEXT_TASK_MODIFIED = NO
 ```
 
-The canonical integration commit, PR, final main SHA, and exact-SHA CI run are
-appended below after non-force integration completes.
+The application reconciliation was integrated through PR #5. The closure
+values below refer to the implementation commit and its canonical main merge;
+the follow-up documentation-only closure commit does not change application
+runtime behavior.
 
 ## Closure fields
 
 ```text
-CANONICAL_INTEGRATION_COMMIT = PENDING
-PR = PENDING
-CANONICAL_MAIN_AFTER_MERGE = PENDING
-EXACT_SHA_CI_RUN = PENDING
-EXACT_SHA_CI = PENDING
-FINAL_STATUS = PENDING
-BLOCKER = PENDING
+CANONICAL_INTEGRATION_COMMIT = a816967926c6105361991d09fe183c4f5d962d2a
+PR = https://github.com/Xiezhou0828/topicpilot-platform/pull/5 (MERGED)
+CANONICAL_MAIN_AFTER_MERGE = f866291b943888b030adef15eac22e75d693bb81
+EXACT_SHA_CI_RUN = 31791804595
+EXACT_SHA_CI = PASS (Backend/OpenAPI, Frontend, Secret scan, Compose smoke)
+FINAL_STATUS = READY_FOR_TODAY_005
+BLOCKER = NONE
 ```
+
+## Post-merge closure
+
+- PR #5 was merged non-force into `main`; the merge commit is
+  `f866291b943888b030adef15eac22e75d693bb81`.
+- Exact-SHA CI run `31791804595` passed all four jobs for that canonical merge
+  SHA. The run covered Backend/migration/OpenAPI, Frontend install/test/build,
+  Secret scan, and Docker Compose smoke.
+- No deployment workflow was manually triggered. No Production mutation,
+  Scheduler change, `NEXT_TASK` change, or DATA-REF gate rerun occurred.
+- The final state is `FINAL_STATUS = READY_FOR_TODAY_005` with
+  `BLOCKER = NONE`; this task stops here.
