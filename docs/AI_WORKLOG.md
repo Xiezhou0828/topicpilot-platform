@@ -1114,3 +1114,39 @@
   `TASK-DATA-REF-006E_DATE_EFFECTIVE_INSTRUMENT_UNIVERSE_AND_G2_LIFECYCLE_ELIGIBILITY_CONTRACT.md`.
   Final status is `READY_FOR_G2_DATE_EFFECTIVE_INTEGRATION_REVIEW`; next
   recommended task is 006F.
+
+## 2026-08-14 TASK-DATA-REF-006G Reference Registry Version Transition and Lifecycle Bundle Activation Contract
+
+- Audited the TASK-DATA-REF-006F blocker against the committed registry,
+  bootstrap, reference-check, provider-preflight, migration, ORM, bundle, and
+  runbook paths. Confirmed that `reference_data_version` is unique and the
+  ordinary bootstrap correctly rejects same-version/different-hash overwrite;
+  the missing capability was an explicit immutable rollover/provenance path.
+- Implemented migration
+  `0030_task_data_ref_006g_registry_transition` and ORM
+  `ReferenceRegistryTransition`. The transition service derives
+  `<source>-rollover-<bundle_sha256[:16]>`, preserves complete old registry
+  provenance, binds lifecycle rows to the target registry, retires the prior
+  ACTIVE set, activates exactly one validated target, and records the full
+  from/to hashes in one atomic transaction.
+- Added the secret-safe operator entrypoint
+  `topicpilot-reference-transition --from-reference-version
+  --expected-from-bundle-sha256 --bundle-dir --dry-run|--activate`. Dry-run is
+  read-only; activation is reference-only; same-version overwrite, target hash
+  collision, stale source precondition, incomplete lifecycle/catalogue state,
+  and any failed post-write validation stop and roll back.
+- Disposable PostgreSQL evidence passed: migration upgrade/downgrade/
+  re-upgrade, dry-run no mutation, 3 transition tests, old registry RETIRED and
+  provenance preserved, one ACTIVE target, idempotent NOOP, rollback on injected
+  market conflict, untouched non-reference tables, 507 physical instruments,
+  one 6806 lifecycle row, and date-effective 2026-08-13 TPE 313/TWO 193.
+- Full backend CI-equivalent validation passed `360 passed / 24 skipped /
+  59 deselected`; Ruff, Python 3.12 compile, pip check, CLI help, diff check,
+  and changed-file secret scan passed. Research/governance tests remained under
+  the existing exclusion boundary.
+- Implementation commit is
+  `be976963c1c6fc3b040390c3d7e6687322c365d0`; no push, merge, deploy,
+  Production DB connection, reference activation, G2, G3, Canary, Scheduler,
+  NEXT_TASK, or Data Governance HOLD change occurred. Formal report:
+  `TASK-DATA-REF-006G_REFERENCE_REGISTRY_VERSION_TRANSITION_AND_LIFECYCLE_BUNDLE_ACTIVATION_CONTRACT.md`.
+  Final status is `READY_FOR_REFERENCE_REGISTRY_TRANSITION_INTEGRATION_REVIEW`.

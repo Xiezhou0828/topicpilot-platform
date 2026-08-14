@@ -156,3 +156,13 @@ regression boundary, a delisting effective on 2026-06-23 is eligible on
 2026-06-22 and not eligible on or after 2026-06-23. The formal G1 identity
 count remains data-derived at 507; on 2026-08-13 the date-effective G2
 expected universe is derived as TPE 313 and TWO 193.
+
+## Bundle hash rollover
+
+The ordinary bootstrap is immutable for an existing reference version: a
+different non-null bundle hash is a STOP condition. When a reviewed bundle
+must supersede an ACTIVE registry, use the dedicated
+[reference registry transition runbook](reference-registry-transition.md).
+It derives a new registry version, preserves the retired registry and its
+provenance, and atomically activates the lifecycle-bearing target. Do not edit
+the old row or overwrite its bundle hash.
