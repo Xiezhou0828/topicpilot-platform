@@ -7,11 +7,12 @@ decides whether a trading date is safe for downstream consumers.
 
 from __future__ import annotations
 
+from collections.abc import Collection
 from dataclasses import dataclass
 from datetime import date
 from typing import Any
 
-from sqlalchemy import text
+from sqlalchemy import bindparam, text
 from sqlalchemy.orm import Session
 
 
@@ -150,13 +151,24 @@ def assess_daily_coverage(
 
 
 def reconcile_daily_market(
-    session: Session, trade_date: date, *, market_closed: bool = False
+    session: Session,
+    trade_date: date,
+    *,
+    market_closed: bool = False,
+    expected_instrument_ids: Collection[Any] | None = None,
 ) -> DailyMarketReconciliation:
-    """Reconcile the canonical daily projection against the active V2 universe."""
+    """Reconcile the canonical daily projection against a date-effective universe."""
 
-    rows = session.execute(
-        text(
-            """
+    expected_filter = ""
+    duplicate_filter = ""
+    params: dict[str, Any] = {"trade_date": trade_date}
+    if expected_instrument_ids is not None:
+        expected_filter = "\n              AND i.id IN :expected_instrument_ids"
+        duplicate_filter = "\n                      AND instrument_id IN :expected_instrument_ids"
+        params["expected_instrument_ids"] = tuple(expected_instrument_ids)
+
+    rows_query = text(
+        f"""
             SELECT
                 m.code AS market_code,
                 count(*) FILTER (WHERE i.is_active) AS expected_count,
@@ -174,12 +186,14 @@ def reconcile_daily_market(
               AND i.is_active
               AND i.instrument_type = 'EQUITY'
               AND m.code IN ('TPE', 'TWO')
+              {expected_filter}
             GROUP BY m.code
             ORDER BY m.code
             """
-        ),
-        {"trade_date": trade_date},
-    ).mappings()
+    )
+    if expected_instrument_ids is not None:
+        rows_query = rows_query.bindparams(bindparam("expected_instrument_ids", expanding=True))
+    rows = session.execute(rows_query, params).mappings()
     expected_by_market: dict[str, int] = {}
     observed_by_market: dict[str, int] = {}
     priced_by_market: dict[str, int] = {}
@@ -190,23 +204,23 @@ def reconcile_daily_market(
         observed_by_market[market] = int(row["observed_count"] or 0)
         priced_by_market[market] = int(row["priced_count"] or 0)
         covered_by_market[market] = int(row["covered_count"] or 0)
-    duplicate_count = int(
-        session.scalar(
-            text(
-                """
+    duplicate_query = text(
+        f"""
                 SELECT count(*) FROM (
                     SELECT stable_key
                     FROM topicpilot.vw_daily_market_observations
                     WHERE trade_date = :trade_date
+                      {duplicate_filter}
                       AND candidate_count > 1
                     GROUP BY stable_key
                 ) duplicates
                 """
-            ),
-            {"trade_date": trade_date},
-        )
-        or 0
     )
+    if expected_instrument_ids is not None:
+        duplicate_query = duplicate_query.bindparams(
+            bindparam("expected_instrument_ids", expanding=True)
+        )
+    duplicate_count = int(session.scalar(duplicate_query, params) or 0)
     return assess_daily_coverage(
         trade_date=trade_date,
         expected_by_market=expected_by_market,

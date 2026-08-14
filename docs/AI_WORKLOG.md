@@ -1252,3 +1252,30 @@
   `TASK-DATA-REF-008_G3_MARKET_SEMANTICS_VALIDATION_CONTRACT_AND_EXECUTABLE_GATE.md`.
   Current status is `READY_FOR_EXACT_SHA_CI_AND_PRODUCTION_G3_REVIEW` pending
   the release and operator evidence gates.
+
+## 2026-08-14 TASK-DATA-REF-009 Post-close Canary persistence contract
+
+- Audited the existing `topicpilot-live --mode post-close --once --run-date`
+  path. Before this task, it selected all 507 physical active EQUITY rows,
+  reconciled against the same physical universe, and the CLI refreshed generic
+  tracking state before the post-close precondition. That could admit the
+  physically retained but date-ineligible TPE:6806 on 2026-08-13.
+- Added a fail-closed precondition using the existing SELECT-only
+  `load_g2_preflight_context()` lifecycle authority. Post-close now requires
+  both canonical market contexts, validates the exact date-effective database
+  identity set, and propagates the eligible IDs to daily reconciliation,
+  tracking refresh, topic snapshots, and shadow topic lifecycle evaluation.
+  For 2026-08-13 the expected universe is TPE=313 and TWO=193; physical 6806
+  remains retained but is excluded.
+- Deferred generic tracking refresh for POST_CLOSE until after the reference
+  precondition, preserving zero writes when the precondition fails. The
+  bounded canary remains per-instrument transactional with rollback of the
+  failed unit, retry-safe historical/canonical idempotence, and downstream
+  publication blocked on partial reconciliation.
+- Added focused contract and disposable-PostgreSQL coverage for exact
+  date-effective universe validation, missing/duplicate/delisted fail-closed
+  behavior, 6806 exclusion, and reconciliation expected count 506. No
+  Production command or mutation was executed.
+- Formal report created:
+  `docs/reports/TASK-DATA-REF-009_POST_CLOSE_CANARY_PERSISTENCE_AND_END_TO_END_DATA_PUBLICATION_VALIDATION.md`.
+  Current status is `READY_FOR_EXACT_SHA_CI_AND_PRODUCTION_CANARY_REVIEW`.

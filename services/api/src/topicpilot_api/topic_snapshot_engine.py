@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from collections import defaultdict
+from collections.abc import Collection
 from dataclasses import dataclass
 from datetime import date
 from decimal import ROUND_HALF_UP, Decimal
@@ -158,6 +159,7 @@ class TopicSnapshotEngine:
         *,
         snapshot_date: date,
         market_closed: bool = False,
+        eligible_instrument_ids: Collection[UUID] | None = None,
     ) -> dict[str, Any]:
         topics = list(
             self.session.scalars(
@@ -174,7 +176,12 @@ class TopicSnapshotEngine:
                 "calculationVersion": self.calculation_version,
             }
 
-        tracking_ids = set(self.session.scalars(select(LiveTrackingUniverse.instrument_id)).all())
+        tracking_query = select(LiveTrackingUniverse.instrument_id)
+        if eligible_instrument_ids is not None:
+            tracking_query = tracking_query.where(
+                LiveTrackingUniverse.instrument_id.in_(tuple(eligible_instrument_ids))
+            )
+        tracking_ids = set(self.session.scalars(tracking_query).all())
         relation_rows = list(
             self.session.execute(
                 select(
