@@ -37,14 +37,15 @@ test("V2 Home displays canonical market metrics without browser recomputation", 
 
 test("V2 Home keeps bounded rotation and Opportunity teaser surfaces", async () => {
   const home = await read("components/v2/TodayMarketPage.tsx");
-  assert.match(home, /const warmingTopics = \[/);
-  assert.match(home, /const coolingTopics = \[/);
   assert.match(home, /const opportunities = \[/);
-  assert.match(home, /warmingTopics\.map/);
-  assert.match(home, /coolingTopics\.map/);
-  assert.match(home, /href="\/topics"/);
+  assert.match(home, /mainlines\.resource\.heating/);
+  assert.match(home, /mainlines\.resource\.cooling/);
+  assert.match(home, /RotationCard/);
+  assert.match(home, /href=\{`\/topics\/\$\{topic\.topicSlug\}`\}/);
   assert.match(home, /href="\/opportunities"/);
   assert.match(home, /只呈現研究入口/);
+  assert.doesNotMatch(home, /const warmingTopics\s*=/);
+  assert.doesNotMatch(home, /const coolingTopics\s*=/);
   assert.doesNotMatch(home, /topWarming|topCooling|topicChange.*sort/);
 });
 

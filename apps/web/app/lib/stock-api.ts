@@ -1,9 +1,13 @@
-import type { components } from "./generated-api";
+import type { components, operations } from "./generated-api";
 
 export type StockApiSource = "api" | "synthetic-snapshot" | "unavailable";
 
 type FormalStockRead = components["schemas"]["StockReadModel"];
 type FormalStockPage = components["schemas"]["StockReadModelPage"];
+
+export type StockListQuery = NonNullable<
+  operations["stocks_api_v2_stocks_get"]["parameters"]["query"]
+>;
 
 export type StockApiRelation = components["schemas"]["StockTopicRelationRead"];
 
@@ -23,6 +27,7 @@ export type StockApiItem = Omit<FormalStockRead, "topicRelations" | "historyCove
 export type StockApiResource = {
   source: StockApiSource;
   data: StockApiItem[] | null;
+  total: number;
   error: string | null;
   universe: Record<string, number>;
 };
@@ -57,7 +62,7 @@ function normalizeStock(item: FormalStockRead): StockApiItem {
 }
 
 function unavailable(error: string): StockApiResource {
-  return { source: "unavailable", data: null, error, universe: {} };
+  return { source: "unavailable", data: null, total: 0, error, universe: {} };
 }
 
 async function fetchStockPage(
@@ -75,12 +80,7 @@ async function fetchStockPage(
 }
 
 export async function fetchFormalStocks(
-  query: {
-    market?: string;
-    topic?: string;
-    updateMode?: string;
-    sort?: string;
-  } = {},
+  query: StockListQuery = {},
   options: { signal?: AbortSignal } = {},
 ): Promise<StockApiResource> {
   const base = getFormalApiBaseUrl();
@@ -88,24 +88,29 @@ export async function fetchFormalStocks(
     return {
       source: "synthetic-snapshot",
       data: null,
+      total: 0,
       error: "Formal FastAPI origin is not configured; the page is running in explicit Preview mode.",
       universe: {},
     };
   }
 
+  const pageLimit = query.limit ?? 1000;
+  const initialOffset = query.offset ?? 0;
   const params: Record<string, string> = {
-    limit: "1000",
-    offset: "0",
+    limit: String(pageLimit),
+    offset: String(initialOffset),
     sort: query.sort ?? "symbolAsc",
   };
-  if (query.market && query.market !== "all") params.market = query.market;
+  const normalizedSearch = query.search?.trim();
+  if (normalizedSearch) params.search = normalizedSearch;
+  if (query.market) params.market = query.market;
   if (query.topic) params.topic = query.topic;
-  if (query.updateMode && query.updateMode !== "all") params.updateMode = query.updateMode;
+  if (query.updateMode) params.updateMode = query.updateMode;
 
   try {
     const first = await fetchStockPage(base, params, options.signal);
     const items = first.items.map(normalizeStock);
-    let offset = items.length;
+    let offset = initialOffset + items.length;
     while (offset < first.total) {
       const next = await fetchStockPage(base, { ...params, offset: String(offset) }, options.signal);
       if (!next.items.length) break;
@@ -118,6 +123,7 @@ export async function fetchFormalStocks(
     return {
       source: "api",
       data: items,
+      total: first.total,
       error: null,
       universe: first.universe ?? {},
     };

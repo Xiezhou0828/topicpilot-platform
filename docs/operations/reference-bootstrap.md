@@ -58,7 +58,11 @@ bundle hash, and operator authorization have been independently reviewed.
 Neither command prints `DATABASE_URL` or any secret.
 
 1. Validate the committed bundle offline.
-2. Run the no-mutation precheck:
+2. Run the SELECT-only market-context precheck documented in
+   `docs/operations/market-calendar-remediation.md`. If an expected market has
+   `calendar_code=NULL`, stop the bootstrap flow and complete the separately
+   reviewed calendar-remediation dry-run/apply/postcheck sequence first.
+3. Run the no-mutation bootstrap precheck:
 
    ```console
    topicpilot-reference-bootstrap \
@@ -67,9 +71,11 @@ Neither command prints `DATABASE_URL` or any secret.
    ```
 
    The result must show `dryRun=true`, `transactional=true`, the expected
-   reference-only write set, and `nonReferenceWriteSet=[]`.
+   reference-only write set, and `nonReferenceWriteSet=[]`. Dry-run validates
+   existing market code, name, exchange code, timezone, and calendar code with
+   the same shared validator used by activation; a mismatch is a STOP condition.
 
-3. After one-shot authorization, run the atomic bootstrap and activation:
+4. After one-shot authorization, run the atomic bootstrap and activation:
 
    ```console
    topicpilot-reference-bootstrap \
@@ -77,7 +83,7 @@ Neither command prints `DATABASE_URL` or any secret.
      --activate
    ```
 
-4. Run the existing SELECT-only postcheck:
+5. Run the existing SELECT-only postcheck:
 
    ```console
    topicpilot-reference-check --reference-version tw-reference-v1
@@ -135,3 +141,28 @@ return the task to review. This runbook does not include a production rollback
 mutation; database rollback is the transaction failure behavior above, while
 an already-active prior registry remains the operator's protected rollback
 target.
+
+## Date-effective lifecycle integration
+
+The canonical bundle also contains `instrument_lifecycles.json`, generated
+from the approved status-evidence input. Bootstrap writes these rows to
+`reference_instrument_lifecycles` in the same atomic reference-only
+transaction. Lifecycle evidence never deletes a physical instrument identity.
+
+The G2 preflight uses the shared date-effective eligibility contract after
+loading the active registry. It applies instrument/market validity windows and
+the latest applicable lifecycle event for the explicit run date. For the
+regression boundary, a delisting effective on 2026-06-23 is eligible on
+2026-06-22 and not eligible on or after 2026-06-23. The formal G1 identity
+count remains data-derived at 507; on 2026-08-13 the date-effective G2
+expected universe is derived as TPE 313 and TWO 193.
+
+## Bundle hash rollover
+
+The ordinary bootstrap is immutable for an existing reference version: a
+different non-null bundle hash is a STOP condition. When a reviewed bundle
+must supersede an ACTIVE registry, use the dedicated
+[reference registry transition runbook](reference-registry-transition.md).
+It derives a new registry version, preserves the retired registry and its
+provenance, and atomically activates the lifecycle-bearing target. Do not edit
+the old row or overwrite its bundle hash.

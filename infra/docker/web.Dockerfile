@@ -11,6 +11,10 @@ ARG NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
 ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
 COPY --from=dependencies /app/node_modules ./node_modules
 COPY apps/web/ ./
+# Today mainlines imports the repository-approved generated API client directly.
+# Keep that source available at the repository-relative path used by the app when
+# the web image is built from the repository root context.
+COPY packages/api-client/src /packages/api-client/src
 RUN npm run build
 
 FROM node:22-alpine AS runtime

@@ -3987,7 +3987,7 @@ tbody tr:hover td { background: rgba(86, 198, 189, 0.06); }
 .tp-stock-encyclopedia-cta{width:100%;justify-content:center;margin-top:auto}
 
 /* TASK-FE-BE-015: keep the explorer controls visually unified. */
-.tp-stock-toolbar>label{height:36px;border:1px solid var(--tp-color-border-strong);border-radius:8px;background:var(--tp-color-surface);padding:0 10px}
+.tp-stock-toolbar>label{height:36px;border:1px solid var(--tp-color-border-strong);border-radius:8px;background:var(--tp-color-surface);padding:0 10px}.tp-stock-toolbar>.tp-stock-search{min-width:220px}.tp-stock-toolbar>.tp-stock-search input{width:150px;border:0;outline:0;background:transparent;color:var(--tp-color-text-primary);font-size:13px}
 .tp-stock-toolbar>label>span{color:var(--tp-color-text-secondary);font-size:12px}
 .tp-stock-toolbar>label select{height:34px;border:0;border-radius:0;background:transparent;padding:0 18px 0 4px;color:var(--tp-color-text-primary);font-size:13px}
 .tp-stock-toolbar .tp-stock-advanced-toggle,.tp-stock-toolbar .tp-stock-resort{height:36px;display:inline-flex;align-items:center;border:1px solid var(--tp-color-border-strong);border-radius:8px;background:var(--tp-color-surface);color:var(--tp-color-text-secondary);padding:0 11px;font-size:13px}
