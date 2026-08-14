@@ -1216,3 +1216,20 @@
   Formal report:
   TASK-DATA-REF-006I_ONE_SHOT_PRODUCTION_REFERENCE_REGISTRY_TRANSITION_ACTIVATION_AND_G1_REVALIDATION.md.
   Final status is READY_FOR_G2_PRODUCTION_PREFLIGHT_AUTHORIZATION.
+
+## 2026-08-14 TASK-DATA-REF-007A G2 Expected-EQUITY Coverage Scope Fix
+
+- Corrected the narrow G2 evaluator contract after the 007 read-only preflight
+  exposed a false failure: official market-level payloads covered every
+  date-effective expected `EQUITY` identity but also contained broader,
+  out-of-scope provider securities.
+- `coverageComplete` now requires a non-empty expected universe with no missing
+  expected identities. `extraIdentityCodes` and `extraInstrumentCount` remain
+  in the sanitized evidence as diagnostics and no longer fail G2. Provider
+  authority/version, date matching, parsing, non-empty payload, reference
+  readiness, and read-only write-set checks are unchanged.
+- Added regression coverage proving both the corrected pass case and the
+  fail-closed missing-expected-identity case. No Production request,
+  mutation, deploy, push, Canary, or Scheduler action occurred. Formal report:
+  `TASK-DATA-REF-007A_G2_EXPECTED_EQUITY_COVERAGE_SCOPE_FIX.md`.
+  Final status is `READY_FOR_EXACT_SHA_CI_AND_PRODUCTION_REPREFLIGHT`.
