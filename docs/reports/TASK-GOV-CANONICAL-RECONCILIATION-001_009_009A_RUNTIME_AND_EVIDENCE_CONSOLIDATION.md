@@ -143,3 +143,22 @@ recorded in the append-only closure section below after execution completes.
 FINAL_STATUS = PENDING_AFFECTED_VALIDATION_AND_CANONICAL_PUSH
 BLOCKER = NONE
 ```
+
+## Affected validation and push checkpoint
+
+The canonical working tree passed the affected local validation boundary:
+
+```text
+FOCUSED_UNIT_AND_CONTRACT_TESTS = 44 passed
+POSTGRES_TESTS = 5 skipped (no TEST_DATABASE_URL/DATABASE_URL in local shell)
+RUFF = PASS
+PYTHON_COMPILEALL = PASS
+GIT_DIFF_CHECK = PASS
+NON_FORCE_PUSH = YES
+PUSHED_IMPLEMENTATION_COMMIT = 0457de8e199e57d0a01cc3634169079b1fb44456
+PULL_REQUEST = https://github.com/Xiezhou0828/topicpilot-platform/pull/4
+EXACT_SHA_CI = PENDING_GITHUB_RUN
+```
+
+This checkpoint is documentation-only after the implementation commit; it does
+not change application runtime behavior or the preserved Production baseline.

@@ -191,3 +191,14 @@
   canonical consolidation rather than new Production behavior.
 - Formal reconciliation report:
   `docs/reports/TASK-GOV-CANONICAL-RECONCILIATION-001_009_009A_RUNTIME_AND_EVIDENCE_CONSOLIDATION.md`.
+
+## 2026-08-14 TASK-GOV-CANONICAL-RECONCILIATION-001 validation/push checkpoint
+
+- Affected local validation passed: 44 focused unit/contract tests, Ruff,
+  Python compile, and `git diff --check`. Five PostgreSQL integration tests
+  were skipped because the local shell has no test database URL.
+- Canonical reconciliation commit `0457de8e199e57d0a01cc3634169079b1fb44456`
+  was pushed non-force to
+  `codex/task-ops-023a-p3c-runtime-sha-audit-20260813`; PR #4 was opened for
+  the repository's pull-request CI boundary. Exact-SHA CI is pending the
+  GitHub Actions run; no runtime or baseline change was made in this checkpoint.
