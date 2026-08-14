@@ -614,6 +614,37 @@ class ReferenceRegistrySet(Base, IdentityMixin, CreatedAtMixin):
     source_manifest_sha256: Mapped[str | None] = mapped_column(String(64))
 
 
+class ReferenceRegistryTransition(Base, IdentityMixin, CreatedAtMixin):
+    __tablename__ = "reference_registry_transitions"
+    __table_args__ = (
+        UniqueConstraint(
+            "from_registry_set_id",
+            "to_registry_set_id",
+            name="uq_reference_registry_transitions_edge",
+        ),
+        UniqueConstraint(
+            "to_registry_set_id", name="uq_reference_registry_transitions_target"
+        ),
+        CheckConstraint(
+            "from_registry_set_id <> to_registry_set_id",
+            name="ck_reference_registry_transitions_distinct_sets",
+        ),
+    )
+    from_registry_set_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("topicpilot.reference_registry_sets.id", ondelete="RESTRICT"),
+        nullable=False,
+    )
+    to_registry_set_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("topicpilot.reference_registry_sets.id", ondelete="RESTRICT"),
+        nullable=False,
+    )
+    from_reference_data_version: Mapped[str] = mapped_column(String(64), nullable=False)
+    to_reference_data_version: Mapped[str] = mapped_column(String(64), nullable=False)
+    from_bundle_sha256: Mapped[str | None] = mapped_column(String(64))
+    to_bundle_sha256: Mapped[str] = mapped_column(String(64), nullable=False)
+    transition_kind: Mapped[str] = mapped_column(String(32), nullable=False)
+
+
 class ReferenceCurrency(Base, IdentityMixin):
     __tablename__ = "reference_currencies"
     __table_args__ = (

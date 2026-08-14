@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+from contextlib import nullcontext
 from dataclasses import dataclass
 from datetime import date
 from typing import Any
@@ -382,6 +383,7 @@ def bootstrap_reference_bundle(
     *,
     activate: bool,
     dry_run: bool = False,
+    _allow_existing_transaction: bool = False,
 ) -> ReferenceBootstrapResult:
     """Apply a bundle in one transaction, or produce a no-write plan.
 
@@ -393,13 +395,14 @@ def bootstrap_reference_bundle(
     validate_bundle(bundle)
     if dry_run:
         return _plan(session, bundle)
-    if session.in_transaction():
+    if session.in_transaction() and not _allow_existing_transaction:
         raise RuntimeError("reference bootstrap requires a fresh SQLAlchemy session")
 
     version = bundle.manifest["referenceDataVersion"]
     bundle_hash = bundle.digest()
     source_hash = _source_manifest_hash(bundle)
-    with session.begin():
+    owns_transaction = not session.in_transaction()
+    with (session.begin() if owns_transaction else nullcontext()):
         registry = _existing_registry(session, bundle)
         if registry and registry.bundle_sha256 not in (None, bundle_hash):
             raise ReferenceBootstrapConflict(
