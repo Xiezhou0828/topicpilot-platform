@@ -70,15 +70,19 @@ test("Today Home maps sections without browser ranking, lifecycle, breadth, or o
   assert.doesNotMatch(home, /rank|ranking|breadth|lifecycle|dedup|severity calculation|opportunity qualification/i);
 });
 
-test("Today Market keeps existing UI teasers while the shared envelope is integrated underneath", async () => {
+test("Today Market consumes backend-owned events through the shared envelope", async () => {
   const [page, mainlines] = await Promise.all([
     read("components/v2/TodayMarketPage.tsx"),
     read("lib/today-mainlines.ts"),
   ]);
   assert.match(mainlines, /useTodayHomeResource/);
   assert.match(mainlines, /toTodayMainlinesResource/);
+  assert.match(mainlines, /marketEvents: TodayMarketEventsResource/);
+  assert.match(mainlines, /mapMarketEvents/);
   assert.match(page, /useTodayMainlines/);
-  assert.match(page, /const events = \[/);
+  assert.match(page, /resource\.marketEvents/);
+  assert.match(page, /event\.description/);
+  assert.doesNotMatch(page, /const events = \[/);
   assert.match(page, /const opportunities = \[/);
   assert.doesNotMatch(page, /createTopicPilotClient|getTodayHome|getTodayMarket/);
 });
