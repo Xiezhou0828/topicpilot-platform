@@ -91,7 +91,8 @@ read-transaction state; there is no application mutation.
 8. Require a parsed payload, target-date match, non-empty market data, and
    complete coverage of that date-effective expected universe. The identity
    count is derived at runtime; 507, 314, 313, and 193 are not loader business
-   rules.
+   rules. Provider rows outside the date-effective formal EQUITY universe are
+   retained as diagnostic `extraIdentityCodes`; they do not fail coverage.
 9. Return one deterministic JSON result. Exit code 0 means PASS; exit code 1
    means FAIL.
 
@@ -147,8 +148,11 @@ The command emits one JSON object with this shape:
       ]
     }
 
-The TWO entry uses TPEX_OFFICIAL_DAILY and tpex-official-daily.v2. Error
-messages are not emitted into the contract; errorCode is sanitized and no
+The TWO entry uses TPEX_OFFICIAL_DAILY and tpex-official-daily.v2.
+`extraIdentityCodes` and `extraInstrumentCount` are diagnostic-only counts of
+provider rows outside the expected date-effective formal EQUITY universe; they
+do not make a complete expected-universe result fail. Error messages are not
+emitted into the contract; errorCode is sanitized and no
 DATABASE_URL, credentials, headers, cookies, tokens, or secret query
 parameters are printed.
 
@@ -166,7 +170,8 @@ G2 PASS requires all of the following:
 - both payloads match the requested target date;
 - both payloads contain data;
 - all date-effective eligible EQUITY identities derived for each market are
-  present, with no extra provider identities;
+  present; out-of-scope provider identities may be reported diagnostically and
+  are not a coverage failure;
 - fallbackAllowed=false;
 - productionWriteSet=[] and nonReferenceWriteSet=[].
 
@@ -188,7 +193,7 @@ G2 FAIL is returned for any of:
 - provider response date mismatch;
 - empty market payload;
 - partial identity coverage;
-- extra provider identities or a missing/extra identity-set mismatch;
+- missing expected identities or an expected-identity coverage mismatch;
 - malformed or unknown instrument lifecycle evidence;
 - any fallback or verification provider being used.
 
