@@ -80,6 +80,7 @@ class G2PreflightContext:
     target_date_reason: str | None
     markets: tuple[G2MarketContext, ...]
     eligibility_error: str | None = None
+    universe_rows: tuple[InstrumentUniverseRow, ...] = ()
 
     @property
     def context_ready(self) -> bool:
@@ -399,6 +400,7 @@ def load_g2_preflight_context(
         target_date_reason=target_reason,
         markets=markets,
         eligibility_error=eligibility_error,
+        universe_rows=tuple(universe_rows),
     )
 
 

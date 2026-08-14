@@ -1233,3 +1233,22 @@
   mutation, deploy, push, Canary, or Scheduler action occurred. Formal report:
   `TASK-DATA-REF-007A_G2_EXPECTED_EQUITY_COVERAGE_SCOPE_FIX.md`.
   Final status is `READY_FOR_EXACT_SHA_CI_AND_PRODUCTION_REPREFLIGHT`.
+## 2026-08-14 TASK-DATA-REF-008 G3 Market Semantics Validation Contract
+
+- Added the read-only `topicpilot-market-semantics-check` entrypoint and a
+  separate G3 evaluator. It derives date-effective expected EQUITY identities
+  from the existing reference lifecycle rows, validates official provider/date
+  and market identity semantics, and remains fail-closed for missing,
+  duplicate, malformed-lifecycle, or fallback cases.
+- Preserved the 6806 boundary: the physical identity remains retained, but it
+  is excluded from the expected universe after its approved `DELISTED`
+  effective date. Provider extras remain diagnostic-only and cannot fail a
+  complete expected universe.
+- The command is SELECT-only and declares `productionWriteSet=[]`; no
+  reference, daily-observation, snapshot, lifecycle, Opportunity, Canary, or
+  Scheduler mutation occurred. Focused tests passed; CI-equivalent backend
+  relevant tests passed with PostgreSQL fixtures skipped without a test DB URL.
+- Formal report:
+  `TASK-DATA-REF-008_G3_MARKET_SEMANTICS_VALIDATION_CONTRACT_AND_EXECUTABLE_GATE.md`.
+  Current status is `READY_FOR_EXACT_SHA_CI_AND_PRODUCTION_G3_REVIEW` pending
+  the release and operator evidence gates.
