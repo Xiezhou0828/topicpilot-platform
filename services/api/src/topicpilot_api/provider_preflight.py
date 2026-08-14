@@ -11,6 +11,12 @@ from typing import Any
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from topicpilot_api.instrument_universe import (
+    InstrumentLifecycle,
+    InstrumentUniverseRow,
+    LifecycleValidationError,
+    build_date_effective_instrument_universe,
+)
 from topicpilot_api.market_data.lineage import (
     EXPECTED_TPEX_ADAPTER_VERSION,
     EXPECTED_TWSE_ADAPTER_VERSION,
@@ -20,6 +26,7 @@ from topicpilot_api.orm.models import (
     Instrument,
     Market,
     ReferenceCalendarDate,
+    ReferenceInstrumentLifecycle,
     ReferenceRegistrySet,
 )
 from topicpilot_api.reference_check import inspect_reference_preflight
@@ -72,12 +79,14 @@ class G2PreflightContext:
     target_date_is_session: bool
     target_date_reason: str | None
     markets: tuple[G2MarketContext, ...]
+    eligibility_error: str | None = None
 
     @property
     def context_ready(self) -> bool:
         return (
             self.reference_result.get("referenceLoadStatus") == "READY"
             and self.target_date_is_session
+            and self.eligibility_error is None
             and all(market.context_ready for market in self.markets)
         )
 
@@ -130,6 +139,8 @@ def _market_evidence(
     covered_instrument_count: int,
     error_code: str | None,
     provider_version: str | None = None,
+    missing_identity_codes: tuple[str, ...] = (),
+    extra_identity_codes: tuple[str, ...] = (),
 ) -> dict[str, Any]:
     status = (
         "PASS"
@@ -157,6 +168,9 @@ def _market_evidence(
         "expectedInstrumentCount": expected_count,
         "coveredInstrumentCount": covered_instrument_count,
         "missingInstrumentCount": max(0, expected_count - covered_instrument_count),
+        "missingIdentityCodes": list(sorted(missing_identity_codes)),
+        "extraIdentityCodes": list(sorted(extra_identity_codes)),
+        "extraInstrumentCount": len(extra_identity_codes),
         "coverageComplete": coverage_complete,
         "status": status,
         "errorCode": error_code,
@@ -188,6 +202,7 @@ def evaluate_provider_preflight(
                     covered_instrument_count=0,
                     error_code=result.error_code,
                     provider_version=result.provider_version,
+                    missing_identity_codes=tuple(market.instrument_codes),
                 )
             )
             continue
@@ -195,8 +210,10 @@ def evaluate_provider_preflight(
         codes = set(result.record_codes)
         expected_codes = set(market.instrument_codes)
         covered_count = len(expected_codes & codes)
+        missing_codes = tuple(sorted(expected_codes - codes))
+        extra_codes = tuple(sorted(codes - expected_codes))
         target_date_matched = result.target_date == context.target_date
-        coverage_complete = bool(expected_codes) and covered_count == len(expected_codes)
+        coverage_complete = bool(expected_codes) and not missing_codes and not extra_codes
         authority_ok = result.provider_authority == market.provider_authority
         version_ok = result.provider_version == market.provider_version
         error_code = None
@@ -206,8 +223,12 @@ def evaluate_provider_preflight(
             error_code = "PROVIDER_DATE_MISMATCH"
         elif result.record_count == 0:
             error_code = "EMPTY_MARKET_PAYLOAD"
-        elif not coverage_complete:
+        elif missing_codes and extra_codes:
+            error_code = "IDENTITY_COVERAGE_MISMATCH"
+        elif missing_codes:
             error_code = "PARTIAL_PROVIDER_COVERAGE"
+        elif extra_codes:
+            error_code = "EXTRA_PROVIDER_IDENTITIES"
         evidence.append(
             _market_evidence(
                 market,
@@ -220,6 +241,8 @@ def evaluate_provider_preflight(
                 covered_instrument_count=covered_count,
                 error_code=error_code,
                 provider_version=result.provider_version,
+                missing_identity_codes=missing_codes,
+                extra_identity_codes=extra_codes,
             )
         )
 
@@ -232,6 +255,7 @@ def evaluate_provider_preflight(
         "targetDate": context.target_date.isoformat(),
         "targetDateIsSession": context.target_date_is_session,
         "targetDateReason": context.target_date_reason,
+        "eligibilityError": context.eligibility_error,
         "readOnly": True,
         "productionWriteSet": list(PRODUCTION_WRITE_SET),
         "nonReferenceWriteSet": [],
@@ -279,20 +303,73 @@ def load_g2_preflight_context(
         for row in session.scalars(select(Market).where(Market.code.in_(CANONICAL_MARKETS))).all()
     }
     instrument_rows = session.execute(
-        select(Instrument.instrument_code, Market.code)
+        select(
+            Instrument.id,
+            Instrument.instrument_code,
+            Market.code,
+            Instrument.instrument_type,
+            Instrument.is_active.label("instrument_is_active"),
+            Instrument.valid_from.label("instrument_valid_from"),
+            Instrument.valid_to.label("instrument_valid_to"),
+            Market.is_active.label("market_is_active"),
+            Market.valid_from.label("market_valid_from"),
+            Market.valid_to.label("market_valid_to"),
+        )
         .join(Market, Market.id == Instrument.market_id)
         .where(
-            Instrument.is_active.is_(True),
-            Instrument.instrument_type == "EQUITY",
-            Market.is_active.is_(True),
             Market.code.in_(CANONICAL_MARKETS),
         )
     ).all()
-    instruments_by_market: dict[str, list[str]] = defaultdict(list)
-    for instrument_code, market_code in instrument_rows:
-        instruments_by_market[str(market_code)].append(str(instrument_code))
+    lifecycle_by_instrument: dict[Any, list[InstrumentLifecycle]] = defaultdict(list)
+    if registry_id is not None:
+        lifecycle_rows = session.execute(
+            select(
+                ReferenceInstrumentLifecycle.instrument_id,
+                ReferenceInstrumentLifecycle.status_code,
+                ReferenceInstrumentLifecycle.effective_from,
+                ReferenceInstrumentLifecycle.effective_to,
+                ReferenceInstrumentLifecycle.evidence_id,
+            ).where(ReferenceInstrumentLifecycle.registry_set_id == registry_id)
+        ).all()
+        for row in lifecycle_rows:
+            lifecycle_by_instrument[row.instrument_id].append(
+                InstrumentLifecycle(
+                    status_code=row.status_code,
+                    effective_from=row.effective_from,
+                    effective_to=row.effective_to,
+                    evidence_id=row.evidence_id,
+                )
+            )
 
-    if reference_result.get("referenceLoadStatus") != "READY":
+    universe_rows = [
+        InstrumentUniverseRow(
+            market_code=str(row.code),
+            instrument_code=str(row.instrument_code),
+            instrument_type=row.instrument_type,
+            is_active=row.instrument_is_active,
+            valid_from=row.instrument_valid_from,
+            valid_to=row.instrument_valid_to,
+            market_is_active=row.market_is_active,
+            market_valid_from=row.market_valid_from,
+            market_valid_to=row.market_valid_to,
+            lifecycle_events=tuple(lifecycle_by_instrument.get(row.id, ())),
+        )
+        for row in instrument_rows
+    ]
+    eligibility_error = None
+    try:
+        instruments_by_market = build_date_effective_instrument_universe(
+            universe_rows,
+            target_date,
+            expected_markets=CANONICAL_MARKETS,
+        )
+    except LifecycleValidationError as exc:
+        eligibility_error = str(exc)
+        instruments_by_market = {market_code: () for market_code in CANONICAL_MARKETS}
+
+    if eligibility_error is not None:
+        target_reason = "LIFECYCLE_CONTEXT_INVALID"
+    elif reference_result.get("referenceLoadStatus") != "READY":
         target_reason = "REFERENCE_CONTEXT_NOT_READY"
     elif target_date.weekday() >= 5:
         target_reason = "TARGET_DATE_WEEKEND"
@@ -319,6 +396,7 @@ def load_g2_preflight_context(
         target_date_is_session=target_reason is None,
         target_date_reason=target_reason,
         markets=markets,
+        eligibility_error=eligibility_error,
     )
 
 
@@ -360,7 +438,9 @@ def run_provider_preflight(
     if not context.context_ready:
         market_results = {
             market.market_code: G2MarketFailure(
-                "TARGET_DATE_NOT_SESSION"
+                "LIFECYCLE_CONTEXT_INVALID"
+                if context.eligibility_error is not None
+                else "TARGET_DATE_NOT_SESSION"
                 if not context.target_date_is_session
                 else "REFERENCE_OR_MARKET_CONTEXT_NOT_READY"
             )
@@ -429,6 +509,7 @@ def build_database_failure_result(
         "targetDate": target_date.isoformat(),
         "targetDateIsSession": False,
         "targetDateReason": "REFERENCE_CONTEXT_READ_FAILED",
+        "eligibilityError": None,
         "readOnly": True,
         "productionWriteSet": [],
         "nonReferenceWriteSet": [],
@@ -452,6 +533,9 @@ def build_database_failure_result(
                 "expectedInstrumentCount": 0,
                 "coveredInstrumentCount": 0,
                 "missingInstrumentCount": 0,
+                "missingIdentityCodes": [],
+                "extraIdentityCodes": [],
+                "extraInstrumentCount": 0,
                 "coverageComplete": False,
                 "status": "FAIL",
                 "errorCode": error_code,

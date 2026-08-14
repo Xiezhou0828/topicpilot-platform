@@ -93,6 +93,7 @@ def test_provider_preflight_is_select_only_and_leaves_all_write_tables_unchanged
         "instruments",
         "reference_registry_sets",
         "reference_calendar_dates",
+        "reference_instrument_lifecycles",
         "raw_market_observations",
         "observation_timeline_batches",
         "observation_timeline_entries",

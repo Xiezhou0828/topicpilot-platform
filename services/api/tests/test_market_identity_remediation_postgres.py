@@ -70,6 +70,7 @@ def _cleanup(engine) -> None:
     with engine.begin() as connection:
         for table in (
             "reference_calendar_dates",
+            "reference_instrument_lifecycles",
             "reference_adjustments",
             "reference_trading_statuses",
             "reference_sessions",

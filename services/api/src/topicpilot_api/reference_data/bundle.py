@@ -29,6 +29,7 @@ BUNDLE_FILE_NAMES = (
     "trading_statuses.json",
     "adjustments.json",
     "calendar_dates.json",
+    "instrument_lifecycles.json",
     "evidence.json",
 )
 _SYMBOL_RE = re.compile(r"^[A-Za-z0-9_-]{1,64}$")
@@ -68,6 +69,7 @@ class ReferenceBundle:
     trading_statuses: tuple[dict[str, Any], ...]
     adjustments: tuple[dict[str, Any], ...]
     calendar_dates: tuple[dict[str, Any], ...]
+    instrument_lifecycles: tuple[dict[str, Any], ...]
     evidence: dict[str, Any]
 
     def data_payload(self) -> dict[str, Any]:
@@ -80,6 +82,7 @@ class ReferenceBundle:
             "tradingStatuses": list(self.trading_statuses),
             "adjustments": list(self.adjustments),
             "calendarDates": list(self.calendar_dates),
+            "instrumentLifecycles": list(self.instrument_lifecycles),
             "evidence": self.evidence,
         }
 
@@ -100,6 +103,7 @@ class ReferenceBundle:
             "tradingStatusCount": len(self.trading_statuses),
             "adjustmentCount": len(self.adjustments),
             "calendarDateCount": len(self.calendar_dates),
+            "lifecycleEventCount": len(self.instrument_lifecycles),
             "calendarHolidayCount": sum(
                 row["date_kind"] == "HOLIDAY" for row in self.calendar_dates
             ),
@@ -245,6 +249,44 @@ def _parse_evidence(path: Path) -> dict[str, Any]:
     return normalized
 
 
+def _lifecycle_rows_from_evidence(
+    evidence: dict[str, Any],
+) -> tuple[dict[str, Any], ...]:
+    rows: list[dict[str, Any]] = []
+    for instrument_code, item in sorted(evidence.get("suspensions", {}).items()):
+        if not isinstance(item, dict):
+            raise BundleValidationError(
+                f"status evidence entry is not an object: {instrument_code}"
+            )
+        effective_from = item.get("effectiveFrom")
+        evidence_id = item.get("evidenceId")
+        source_url = item.get("source")
+        status_code = item.get("status")
+        if not all(isinstance(value, str) and value.strip() for value in (
+            effective_from,
+            evidence_id,
+            source_url,
+            status_code,
+            item.get("market"),
+        )):
+            raise BundleValidationError(
+                f"incomplete lifecycle evidence: {item.get('market')}:{instrument_code}"
+            )
+        row = {
+            "market_code": item["market"],
+            "instrument_code": str(instrument_code),
+            "status_code": status_code,
+            "effective_from": effective_from,
+            "effective_to": item.get("effectiveTo"),
+            "evidence_id": evidence_id,
+            "source_url": source_url,
+        }
+        if item.get("reason") is not None:
+            row["reason"] = item["reason"]
+        rows.append(row)
+    return tuple(rows)
+
+
 def _parse_adjustments(path: Path) -> tuple[dict[str, Any], ...]:
     payload = _read_json(path)
     if isinstance(payload, dict):
@@ -272,6 +314,7 @@ def build_bundle_from_sources(
     instruments, stock_meta = _parse_stock_export(stock_source)
     calendar_dates, calendar_meta = _parse_calendar(calendar_source)
     evidence = _parse_evidence(evidence_source)
+    instrument_lifecycles = _lifecycle_rows_from_evidence(evidence)
     adjustments = _parse_adjustments(adjustment_source)
     markets = tuple(_MARKET_DEFINITIONS.values())
     currencies = ({"code": "TWD", "scale": 2},)
@@ -314,6 +357,7 @@ def build_bundle_from_sources(
         trading_statuses=statuses,
         adjustments=adjustments,
         calendar_dates=calendar_dates,
+        instrument_lifecycles=instrument_lifecycles,
         evidence=evidence,
     )
     validate_bundle(bundle)
@@ -362,6 +406,38 @@ def validate_bundle(bundle: ReferenceBundle) -> None:
         if row.get("currency") not in currency_codes:
             raise BundleValidationError(f"instrument currency is not catalogued: {key}")
 
+    lifecycle_keys: set[tuple[str, str, str, str, str]] = set()
+    for row in bundle.instrument_lifecycles:
+        key = (
+            row.get("market_code", ""),
+            str(row.get("instrument_code", "")),
+            row.get("status_code", ""),
+            row.get("effective_from", ""),
+            row.get("evidence_id", ""),
+        )
+        if key in lifecycle_keys:
+            raise BundleValidationError(f"duplicate lifecycle event: {key}")
+        lifecycle_keys.add(key)
+        if key[:2] not in identity_keys:
+            raise BundleValidationError(f"lifecycle identity is not in bundle: {key[:2]}")
+        if key[2] not in {"ACTIVE", "LISTED", "DELISTED", "SUSPENDED", "TERMINATED"}:
+            raise BundleValidationError(f"unsupported lifecycle status: {key[2]}")
+        if key[2] not in status_codes and key[2] != "DELISTED":
+            raise BundleValidationError(f"lifecycle status is not catalogued: {key[2]}")
+        if not row.get("source_url") or not row.get("evidence_id"):
+            raise BundleValidationError(f"incomplete lifecycle event: {key[:2]}")
+        try:
+            effective_from = date.fromisoformat(key[3])
+            effective_to = (
+                date.fromisoformat(row["effective_to"])
+                if row.get("effective_to") is not None
+                else None
+            )
+        except (TypeError, ValueError) as exc:
+            raise BundleValidationError(f"invalid lifecycle date: {key[:2]}") from exc
+        if effective_to is not None and effective_to < effective_from:
+            raise BundleValidationError(f"invalid lifecycle range: {key[:2]}")
+
     calendar_keys: set[tuple[str, str]] = set()
     for row in bundle.calendar_dates:
         key = (row.get("calendar_code", ""), row.get("calendar_date", ""))
@@ -391,6 +467,19 @@ def validate_bundle(bundle: ReferenceBundle) -> None:
             raise BundleValidationError(
                 f"status evidence status is not catalogued: {item['status']}"
             )
+    expected_lifecycle_keys = {
+        (
+            item.get("market"),
+            str(code),
+            item.get("status"),
+            item.get("effectiveFrom"),
+            item.get("evidenceId"),
+        )
+        for code, item in suspension_map.items()
+        if isinstance(item, dict)
+    }
+    if lifecycle_keys != expected_lifecycle_keys:
+        raise BundleValidationError("lifecycle events do not match status evidence")
     if bundle.manifest.get("derivedSummary"):
         expected = bundle.manifest["derivedSummary"]
         if expected != bundle.summary():
@@ -407,6 +496,7 @@ def _file_payload(bundle: ReferenceBundle) -> dict[str, Any]:
         "trading_statuses.json": list(bundle.trading_statuses),
         "adjustments.json": list(bundle.adjustments),
         "calendar_dates.json": list(bundle.calendar_dates),
+        "instrument_lifecycles.json": list(bundle.instrument_lifecycles),
         "evidence.json": bundle.evidence,
     }
 
@@ -457,6 +547,7 @@ def load_bundle(bundle_dir: Path) -> ReferenceBundle:
         trading_statuses=tuple(payloads["trading_statuses.json"]),
         adjustments=tuple(payloads["adjustments.json"]),
         calendar_dates=tuple(payloads["calendar_dates.json"]),
+        instrument_lifecycles=tuple(payloads["instrument_lifecycles.json"]),
         evidence=payloads["evidence.json"],
     )
     validate_bundle(bundle)

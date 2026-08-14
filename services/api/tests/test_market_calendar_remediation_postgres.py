@@ -46,6 +46,7 @@ def _cleanup(engine) -> None:
     with engine.begin() as connection:
         for table in (
             "reference_calendar_dates",
+            "reference_instrument_lifecycles",
             "reference_adjustments",
             "reference_trading_statuses",
             "reference_sessions",
@@ -128,6 +129,7 @@ def _reference_counts(engine) -> dict[str, int]:
         "reference_trading_statuses",
         "reference_adjustments",
         "reference_calendar_dates",
+        "reference_instrument_lifecycles",
     )
     with engine.connect() as connection:
         return {
@@ -163,6 +165,7 @@ def test_005f_fixture_calendar_remediation_and_bootstrap_end_to_end(postgres_eng
             "reference_trading_statuses": 0,
             "reference_adjustments": 0,
             "reference_calendar_dates": 0,
+            "reference_instrument_lifecycles": 0,
         }
 
         with Session(postgres_engine, expire_on_commit=False) as session:

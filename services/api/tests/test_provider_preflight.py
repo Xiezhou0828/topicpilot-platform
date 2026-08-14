@@ -122,6 +122,29 @@ def test_partial_provider_coverage_fails_even_when_payload_is_parsed():
     assert market["coverageComplete"] is False
     assert market["errorCode"] == "PARTIAL_PROVIDER_COVERAGE"
     assert market["missingInstrumentCount"] == 1
+    assert market["missingIdentityCodes"] == ["6510"]
+    assert market["extraIdentityCodes"] == []
+
+
+def test_extra_provider_identity_fails_and_is_explicitly_reported():
+    results = _pass_results()
+    results["TPE"] = G2MarketFetch(
+        "TPE",
+        "TWSE_OFFICIAL_DAILY",
+        "twse-official-daily.v2",
+        date(2026, 8, 7),
+        frozenset({"2330", "2317", "6806"}),
+        3,
+    )
+
+    result = evaluate_provider_preflight(_context(), results)
+
+    market = result["markets"][0]
+    assert result["status"] == "FAIL"
+    assert market["coverageComplete"] is False
+    assert market["missingIdentityCodes"] == []
+    assert market["extraIdentityCodes"] == ["6806"]
+    assert market["errorCode"] == "EXTRA_PROVIDER_IDENTITIES"
 
 
 def test_empty_market_payload_fails_even_when_provider_is_reachable():

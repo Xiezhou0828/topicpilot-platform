@@ -1,6 +1,6 @@
 {
   "bundleSchemaVersion": "reference-bundle.v1",
-  "bundleSha256": "5db36231decaeb12010ca7624c0d2bdc18da3b86dcec5611aa5ff7c132af15e6",
+  "bundleSha256": "daf19e9eb051255c631d0fff6d8fecf1273aecf52f9e958a62c778dfb6906295",
   "derivedSummary": {
     "adjustmentCount": 3,
     "calendarDateCount": 24,
@@ -12,6 +12,7 @@
       "TPE": 314,
       "TWO": 193
     },
+    "lifecycleEventCount": 1,
     "marketCount": 2,
     "sessionCount": 1,
     "timezoneCount": 1,
@@ -22,6 +23,7 @@
     "calendar_dates.json": "08f972307f5fef79e2154d3b96419c0206d0f5a60ae735f680492962143c7439",
     "currencies.json": "eb4b8c3d49b294f72d177fcb98f60d899325c856edce5e8272921290b17bce36",
     "evidence.json": "707e8e2a807cd90559d47734cf7b26f955e87d72fdd4d289cd25eb5028fdd5d2",
+    "instrument_lifecycles.json": "1a9acb274cc9ca21ee0747470cec47ea8fd82c77ee278f8306bd8bb044da4dd5",
     "instruments.json": "dd5d538d85b6d04b7a69e90c365852ffe9412adfd8bff7885631a32f2b8bc58f",
     "markets.json": "816e0fd8bcd1c9d9597a4ef99a00fe2eed4c2756be1d9033a50a310c11c401bf",
     "sessions.json": "f8b2366c25dc79b16b610710ce510073d631827802aee78782b3cc7c6bbfcd28",

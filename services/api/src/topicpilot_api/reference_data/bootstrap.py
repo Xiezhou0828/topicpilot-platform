@@ -17,6 +17,7 @@ from topicpilot_api.orm.models import (
     ReferenceAdjustment,
     ReferenceCalendarDate,
     ReferenceCurrency,
+    ReferenceInstrumentLifecycle,
     ReferenceRegistrySet,
     ReferenceSession,
     ReferenceTimezone,
@@ -36,6 +37,7 @@ REFERENCE_WRITE_SET = frozenset(
         "reference_trading_statuses",
         "reference_adjustments",
         "reference_calendar_dates",
+        "reference_instrument_lifecycles",
     }
 )
 NON_REFERENCE_WRITE_SET = frozenset()
@@ -270,6 +272,43 @@ def _validate_registry_rows(session: Session, registry_id, bundle: ReferenceBund
         },
         "calendar dates",
     )
+    lifecycle_rows = {
+        tuple(row)
+        for row in session.execute(
+            select(
+                Market.code,
+                Instrument.instrument_code,
+                ReferenceInstrumentLifecycle.status_code,
+                ReferenceInstrumentLifecycle.effective_from,
+                ReferenceInstrumentLifecycle.effective_to,
+                ReferenceInstrumentLifecycle.evidence_id,
+                ReferenceInstrumentLifecycle.source_url,
+                ReferenceInstrumentLifecycle.reason,
+            )
+            .join(Instrument, Instrument.id == ReferenceInstrumentLifecycle.instrument_id)
+            .join(Market, Market.id == Instrument.market_id)
+            .where(ReferenceInstrumentLifecycle.registry_set_id == registry_id)
+        ).all()
+    }
+    _check_same(
+        lifecycle_rows,
+        {
+            (
+                row["market_code"],
+                row["instrument_code"],
+                row["status_code"],
+                date.fromisoformat(row["effective_from"]),
+                date.fromisoformat(row["effective_to"])
+                if row.get("effective_to") is not None
+                else None,
+                row["evidence_id"],
+                row["source_url"],
+                row.get("reason"),
+            )
+            for row in bundle.instrument_lifecycles
+        },
+        "instrument lifecycle evidence",
+    )
 
 
 def _plan(session: Session, bundle: ReferenceBundle) -> ReferenceBootstrapResult:
@@ -305,6 +344,7 @@ def _plan(session: Session, bundle: ReferenceBundle) -> ReferenceBootstrapResult
             ReferenceTradingStatus,
             ReferenceAdjustment,
             ReferenceCalendarDate,
+            ReferenceInstrumentLifecycle,
         ):
             existing_reference_rows += session.scalar(
                 select(func.count())
@@ -328,6 +368,7 @@ def _plan(session: Session, bundle: ReferenceBundle) -> ReferenceBootstrapResult
                 "trading_statuses",
                 "adjustments",
                 "calendar_dates",
+                "instrument_lifecycles",
             )
         ) - existing_reference_rows),
         noop_reference_rows=existing_reference_rows,
@@ -391,8 +432,10 @@ def bootstrap_reference_bundle(
             markets[row["code"]] = market
             created_markets += int(created)
         created_instruments = 0
+        instruments = {}
         for row in bundle.instruments:
-            _, created = _ensure_instrument(session, markets[row["market_code"]], row)
+            instrument, created = _ensure_instrument(session, markets[row["market_code"]], row)
+            instruments[(row["market_code"], row["instrument_code"])] = instrument
             created_instruments += int(created)
         _validate_existing_identity_set(session, bundle)
 
@@ -448,6 +491,28 @@ def bootstrap_reference_bundle(
                     "calendar_date": date.fromisoformat(row["calendar_date"]),
                 },
                 {"date_kind": row["date_kind"]},
+            )
+            created_reference_rows += int(created)
+            noop_reference_rows += int(not created)
+        for row in bundle.instrument_lifecycles:
+            instrument = instruments[(row["market_code"], row["instrument_code"])]
+            _, created = _ensure_reference_row(
+                session,
+                ReferenceInstrumentLifecycle,
+                {
+                    "registry_set_id": registry.id,
+                    "instrument_id": instrument.id,
+                    "status_code": row["status_code"],
+                    "effective_from": date.fromisoformat(row["effective_from"]),
+                    "evidence_id": row["evidence_id"],
+                },
+                {
+                    "effective_to": date.fromisoformat(row["effective_to"])
+                    if row.get("effective_to") is not None
+                    else None,
+                    "source_url": row["source_url"],
+                    "reason": row.get("reason"),
+                },
             )
             created_reference_rows += int(created)
             noop_reference_rows += int(not created)
