@@ -1219,3 +1219,29 @@
   Production were untouched. This entry is append-only; `PUSH_MAIN=NO`,
   `MERGE_MAIN=NO`, `DEPLOY=NO`, final status is
   `READY_FOR_STOCK_004_INTEGRATION_REVIEW`.
+
+## 2026-08-14 TASK-FE-BE-STOCK-004R Stock-003 + Stock-004 Main Reconciliation
+
+- Fresh `origin/main` authority is
+  `eb50d2d1e242290e2b9c6c95389bd7cd257caf26`; main drift from the Stock base
+  is 15 commits. Provenance classified `DATA_REF=12`, `TODAY=3`,
+  `HIST=0`, `STOCK=0`, `GOVERNANCE=0`, `UNKNOWN=0`; all Stock-003/004 lineage
+  commits are present and continuous.
+- Rebasing the Stock continuation onto current main produced one
+  `docs/AI_WORKLOG.md` conflict. Resolved it append-preserving by retaining all
+  main DATA-REF/Today entries and appending the Stock history; no application
+  conflict or conflict marker remains. Reconciled local head before this
+  report is `37bbc8d64afde66a3328470e0ac55a97d293d5f8`.
+- Impact analysis is `REFERENCE=NO`, `PROVIDER=NO`, `MARKET_SEMANTICS=NO`,
+  `POST_CLOSE_PERSISTENCE=NO`, `SCHEDULER=NO`, with API contract, frontend,
+  and Stock feature impact limited to the already validated Stock-003/004
+  scope. G1/G2/G3/Canary are preserved as
+  `PRESERVED PASS / TASK-DATA-REF-009A`; no Production gates were rerun.
+- Affected validation passed: focused Stock `26/26`, backend focused `3/3`,
+  frontend build/full suite `115/115`, API client `3/3`, TypeScript, lint,
+  OpenAPI gate, generated idempotence, Ruff, diff check, and secret scan.
+  Full lint retains one pre-existing `TopicDetailPage.tsx` warning.
+- Non-force main push is authorized after this pre-push pass. This entry is
+  append-only; `PRODUCTION_MUTATION=NO`, `MANUAL_DEPLOY=NO`,
+  `NEXT_TASK_MODIFIED=NO`, `STOCK_005_STARTED=NO`. Final push SHA and
+  exact-SHA CI result will be appended after push.
