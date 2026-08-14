@@ -319,4 +319,3 @@ The next safe step is to define and review a dedicated read-only or explicitly
 shadow-safe G2 provider/data preflight contract and entrypoint. This report
 does not implement that new capability, run the mutating post-close path, or
 start G2/G3/Canary/Scheduler.
-

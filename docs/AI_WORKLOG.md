@@ -917,3 +917,37 @@
   `TASK-DATA-REF-006A_G2_OFFICIAL_PROVIDER_READ_ONLY_PREFLIGHT_CONTRACT_AND_ENTRYPOINT.md`.
   Final status is `READY_FOR_G2_PREFLIGHT_INTEGRATION_REVIEW`; blocker is
   `NONE`.
+
+## 2026-08-14 TASK-DATA-REF-006B G2 Preflight Integration and Release Handoff
+
+- Fetched `origin/main` and verified current main authority remains
+  `c75956336df03a1fd661a054b33b0c4845d4f159`. It is an ancestor of the 006A
+  base `1c9938733d3befc2e3d6e7fffd5763197986d19f`; there are zero concurrent
+  main commits after that base. The three local append-only documentation
+  commits were replayed in order, then 006A was replayed cleanly in the
+  dedicated 006B reconciliation worktree. No application-path conflict or
+  historical-report rewrite occurred.
+- G2 authority remains the dedicated read-only
+  `topicpilot-provider-preflight --run-date YYYY-MM-DD
+  --reference-version tw-reference-v1` path. Official TPE/TWO authority,
+  adapter versions, market-batch semantics, explicit target-date validation,
+  runtime-derived identity coverage, empty write sets, and no-live-persistence
+  boundary were preserved. Existing live, live dry-run, lineage,
+  reference-check, registry, migration, and OpenAPI behavior remains unchanged.
+- Created formal report
+  `TASK-DATA-REF-006B_G2_PREFLIGHT_INTEGRATION_EXACT_SHA_CI_AND_PRODUCTION_RELEASE_HANDOFF.md`.
+  Release SHA, exact-SHA CI, protected deploy workflow, and post-deploy runtime
+  evidence are recorded only after their respective gates; no Production G2
+  command is run by this task.
+- At this point Production DB connection/mutation, G2, G3, Canary, Scheduler,
+  deploy, and push remain pending their explicitly ordered release gates.
+  `NEXT_TASK` and Data Governance HOLD remain untouched.
+
+- Integrated validation completed before release: focused provider suite
+  `24 passed / 1 skipped`, PostgreSQL read-only boundary `1/1`, reference
+  bootstrap PostgreSQL `1/1`, backend `322 passed / 49 skipped / 59 deselected`,
+  Ruff, Python compile, pip check, migrations, OpenAPI drift, generated API
+  contract/idempotence, API client `3/3`, frontend `110/110` plus build,
+  isolated Compose PostgreSQL/API/Web smoke, diff check, secret-value scan,
+  and CLI help/mutation-flag rejection all passed. Existing frontend lint has
+  only the prior TopicDetailPage unused-variable warning.
