@@ -5,19 +5,28 @@
 
 **[Open the public synthetic-data demo](https://topicpilot-platform.game0962046460.chatgpt.site/)**
 
-TopicPilot Platform is a public, synthetic-data portfolio implementation of an
-enterprise read platform for market-theme research. It demonstrates how a
-spreadsheet-driven workflow can be migrated safely to PostgreSQL, FastAPI, and
-React without a big-bang cutover.
+TopicPilot Platform is a public, synthetic-data portfolio implementation of a
+Taiwan-market Theme Intelligence read platform. It demonstrates how a
+spreadsheet-era workflow can be evolved toward PostgreSQL, FastAPI, and React
+with explicit contracts, evidence, and controlled coexistence.
 
 > **Demo data only:** every fixture in this repository is synthetic. The UI and
 > API are educational software demonstrations, not financial advice, trading
 > signals, or a source of live market data.
 
-The hosted portfolio currently uses the clearly labelled synthetic fallback
-mode. The complete FastAPI-to-PostgreSQL path is exercised by Docker Compose
-and GitHub Actions; attaching a hosted API later only requires setting
-`NEXT_PUBLIC_API_BASE_URL`.
+The hosted portfolio is intentionally a clearly labelled synthetic-data demo;
+it is not a live-market fallback or a promise of hosted Production data. The
+FastAPI-to-PostgreSQL path is exercised locally through Docker Compose and CI,
+while non-public runtime data and credentials remain outside this repository.
+
+## Current operational note
+
+This README is public-facing and intentionally avoids internal task history.
+For the current 2026-08-14 project state and handoff, use
+[PROJECT_CONTEXT.md](PROJECT_CONTEXT.md), the [execution roadmap](docs/ROADMAP.md),
+and the [high-level product roadmap](docs/product/TOPICPILOT_PRODUCT_ROADMAP.md).
+Those documents are the current navigation/status authorities; task reports and
+old handoffs are evidence of what happened, not parallel current versions.
 
 ## What this project demonstrates
 
@@ -83,12 +92,12 @@ and `packages/api-client`.
 
 ```mermaid
 flowchart LR
-    subgraph private["Existing private TopicPilot"]
-      S["Google Sheets and analysis engines"] --> V["Validated snapshot export"]
-      V --> P["Existing production publication"]
+    subgraph private["Legacy bridge / partial retirement"]
+      S["Sheets and legacy analysis engines"] --> V["Validated bridge/export"]
+      V --> P["Existing legacy publication"]
     end
 
-    subgraph public["This public portfolio repository"]
+    subgraph public["This canonical V2 repository"]
       F["Synthetic enterprise_bundle.v1"] --> I["Transactional importer"]
       V -. "private/manual only" .-> I
       I --> DB[("PostgreSQL read model")]
@@ -98,9 +107,10 @@ flowchart LR
     end
 ```
 
-The original Sheet workflow remains the formal source of truth. PostgreSQL is a
-rebuildable read model until a separate governance decision is made after at
-least ten consecutive trading days of parity.
+The public repository demonstrates the V2 PostgreSQL/FastAPI read path and keeps
+the legacy bridge explicitly labelled. Production data authority, cutover, and
+retirement decisions are governed operationally; they are not inferred from a
+public fixture or from this portfolio README.
 
 ### Ingestion data flow
 
@@ -222,12 +232,17 @@ Render free services can sleep while idle. The public UI must treat an initial
 API timeout as a cold start, show a neutral “service waking up” state, and retry
 with a bounded backoff. See the [deployment guide](docs/operations/deployment.md).
 
-The verified public synthetic-data deployment is linked at the top of this
-README. It falls back to the committed synthetic bundle while a hosted FastAPI
-service is absent or waking.
+  The verified public synthetic-data deployment is linked at the top of this
+README. Its synthetic dataset is deliberate and clearly labelled; it does not
+stand in for private Production data or silently fabricate missing formal
+values.
 
 ## Documentation map
 
+- [Current project context and handoff](PROJECT_CONTEXT.md)
+- [Execution roadmap and phase priorities](docs/ROADMAP.md)
+- [High-level product roadmap](docs/product/TOPICPILOT_PRODUCT_ROADMAP.md)
+- [Collaboration, worktree, and validation rules](AGENTS.md)
 - [Architecture and trust boundaries](docs/architecture/system-overview.md)
 - [OpenAPI-generated client decision](docs/architecture/ADR-002-openapi-generated-client.md)
 - [Operations runbook](docs/operations/runbook.md)
