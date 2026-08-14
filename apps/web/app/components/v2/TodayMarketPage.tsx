@@ -9,7 +9,11 @@ import {
 } from "lucide-react";
 import { useSnapshot } from "../../lib/snapshot-store";
 import type { MarketIndexView } from "../../lib/types";
-import { useTodayMainlines, type TodayRotationResource } from "../../lib/today-mainlines";
+import {
+  useTodayMainlines,
+  type TodayMarketEventsResource,
+  type TodayRotationResource,
+} from "../../lib/today-mainlines";
 import {
   Card,
   GradeChip,
@@ -44,6 +48,17 @@ function formatAsOf(value: string | null): string | null {
   return new Intl.DateTimeFormat("zh-TW", { timeZone: "Asia/Taipei", hour: "2-digit", minute: "2-digit", hour12: false }).format(parsed);
 }
 
+function formatEventTime(value: string): string {
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) return value;
+  return new Intl.DateTimeFormat("zh-TW", {
+    timeZone: "Asia/Taipei",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).format(parsed);
+}
+
 function findIndex(indices: MarketIndexView[], name: string): MarketIndexView | null {
   const index = indices.find((item) => item.name === name);
   return index && !index.pending && index.value !== "待接資料源" ? index : null;
@@ -59,13 +74,6 @@ function liveMetric(index: MarketIndexView | null, fallback: MarketMetric): Mark
     note: index.asOf ? `後端快照 · ${formatAsOf(index.asOf) ?? index.asOf}` : "後端快照",
   };
 }
-
-const events = [
-  { time: "09:08", topic: "BBU", event: "首次升至 S", tone: "up" as const },
-  { time: "09:42", topic: "機器人", event: "開始升溫", tone: "up" as const },
-  { time: "10:15", topic: "AI伺服器", event: "開始分歧", tone: "neutral" as const },
-  { time: "10:48", topic: "重電", event: "退出主線", tone: "down" as const },
-];
 
 const opportunities = [
   { name: "AI伺服器", count: "3 檔符合條件", note: "主線維持強勢" },
@@ -106,6 +114,54 @@ function MainlinesState({ loading, state, reason, dataDate, section = "主線" }
       <p>{loading ? `正在讀取後端${section}資料。` : reason}</p>
       {dataDate && <small>資料日：{dataDate}</small>}
     </div>
+  );
+}
+
+function MarketEventsCard({
+  loading,
+  resource,
+}: {
+  loading: boolean;
+  resource: TodayMarketEventsResource;
+}) {
+  return (
+    <Card className="tp-home-events-card">
+      <SectionHeading id="events-title" title="盤中重要事件" description="只記錄 backend contract 提供的市場事件。" />
+      {loading || resource.state === "UNAVAILABLE" ? (
+        <MainlinesState
+          loading={loading}
+          state={resource.state}
+          reason={resource.reason}
+          dataDate={resource.dataDate}
+          section="盤中重要事件"
+        />
+      ) : (
+        <>
+          {resource.state !== "FORMAL" && (
+            <MainlinesState
+              loading={false}
+              state={resource.state}
+              reason={resource.reason}
+              dataDate={resource.dataDate}
+              section="盤中重要事件"
+            />
+          )}
+          <ol className="tp-home-events">
+            {resource.data.map((event) => (
+              <li key={`${event.eventTime}-${event.topicSlug}-${event.eventType}`}>
+                <time>{formatEventTime(event.eventTime)}</time>
+                <span className="tp-home-event-marker" aria-hidden="true" />
+                <div>
+                  <Link href={`/topics/${event.topicSlug}`}><strong>{event.topic}</strong></Link>
+                  <span>{event.description}</span>
+                  <small>{event.eventType} · {event.severity} · {event.source}</small>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </>
+      )}
+    </Card>
   );
 }
 
@@ -276,18 +332,7 @@ export default function TodayMarketPage() {
         </section>
 
         <section className="tp-home-section" aria-labelledby="events-title">
-          <Card className="tp-home-events-card">
-            <SectionHeading id="events-title" title="盤中重要事件" description="只記錄真正值得注意的題材狀態轉換。" />
-            <ol className="tp-home-events">
-              {events.map((item) => (
-                <li key={`${item.time}-${item.topic}`}>
-                  <time>{item.time}</time>
-                  <span className={`tp-home-event-marker tp-home-event-marker--${item.tone}`} aria-hidden="true" />
-                  <div><strong>{item.topic}</strong><span>{item.event}</span></div>
-                </li>
-              ))}
-            </ol>
-          </Card>
+          <MarketEventsCard loading={mainlines.loading} resource={mainlines.resource.marketEvents} />
         </section>
 
         <section className="tp-home-section" aria-labelledby="rotation-title">

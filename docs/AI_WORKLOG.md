@@ -1306,3 +1306,26 @@
   (Canary 506/506, failure 0). No gate rerun, deploy, Production mutation,
   Scheduler change, or `NEXT_TASK` change occurred. Final status is
   `009_009A_CANONICAL_CONSOLIDATION_COMPLETE`; blocker is `NONE`.
+
+## 2026-08-14 TASK-FE-BE-TODAY-004D Market Events / Market Story Formal Wiring
+
+- Started from isolated `origin/main` SHA
+  `eb50d2d1e242290e2b9c6c95389bd7cd257caf26`. Contract audit confirmed
+  `HomeResponse.marketPulse` as the Market Events authority and the existing
+  `HomeResponse.dailyFocus` as the Market Story authority. Both are currently
+  `PARTIAL` / `TEMPORARY`; no backend/OpenAPI contract expansion was justified.
+- Added the `TodayMarketEventsResource` projection on the existing shared
+  `TodayHomeResource` / single `getHome()` path. Removed the hardcoded Market
+  Events array from `TodayMarketPage.tsx`; event order, identity, type,
+  description, severity, source, topic slug, and publication metadata remain
+  backend-owned. Empty, incomplete, gated, preview-disabled, and transport
+  error states fail closed. Daily Focus remains the 004C backend-owned wiring.
+- Validation passed: focused Today/Market Events `20/20`, frontend full
+  test/build `113/113`, generated API contract drift check and client tests
+  `3/3`, TypeScript, targeted/full lint, demo snapshot, diff check, and
+  changed-file secret sanity scan. Full lint retains only the pre-existing
+  unrelated `TopicDetailPage.tsx:114` warning.
+- No backend, OpenAPI, generated-client, DATA-REF, Production, deploy, main
+  merge/push, Canary, Scheduler, or `NEXT_TASK` change was made. Formal report:
+  `TASK-FE-BE-TODAY-004D_MARKET_EVENTS_FORMAL_WIRING.md`. Final status is
+  `READY_FOR_TODAY_004D_INTEGRATION_REVIEW`.

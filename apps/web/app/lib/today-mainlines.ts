@@ -7,6 +7,7 @@ import {
   useTodayHomeResource,
   type HomeResponse,
   type HomeDailyFocus,
+  type HomeMarketPulseEvent,
   type HomeRotationTopic,
   type TodayHomePublicationState,
   type TodayHomeResource,
@@ -38,6 +39,15 @@ export type TodayDailyFocusResource = {
   reason: string | null;
 };
 
+export type TodayMarketEventsResource = {
+  state: TodayHomePublicationState;
+  data: HomeMarketPulseEvent[];
+  dataDate: string | null;
+  asOf: string | null;
+  source: string | null;
+  reason: string | null;
+};
+
 export type TodayMainlinesResource = {
   state: TodayMainlinesState;
   data: TodayHomeResource["sections"]["mainTopics"];
@@ -48,6 +58,7 @@ export type TodayMainlinesResource = {
   qualityStatus: string | null;
   reason: string | null;
   dailyFocus: TodayDailyFocusResource;
+  marketEvents: TodayMarketEventsResource;
   heating: TodayRotationResource;
   cooling: TodayRotationResource;
 };
@@ -153,6 +164,72 @@ function mapDailyFocus(
   };
 }
 
+function isHomeMarketPulseEvent(value: HomeMarketPulseEvent): boolean {
+  return Boolean(
+    value
+      && typeof value.eventTime === "string"
+      && value.eventTime.trim().length > 0
+      && typeof value.topic === "string"
+      && value.topic.trim().length > 0
+      && typeof value.eventType === "string"
+      && value.eventType.trim().length > 0
+      && typeof value.description === "string"
+      && value.description.trim().length > 0
+      && typeof value.severity === "string"
+      && value.severity.trim().length > 0
+      && typeof value.topicSlug === "string"
+      && value.topicSlug.trim().length > 0
+      && typeof value.source === "string"
+      && value.source.trim().length > 0,
+  );
+}
+
+function mapMarketEvents(
+  resource: TodayHomeResource,
+  previewEnabled: boolean,
+): TodayMarketEventsResource {
+  const shared = metadata(resource);
+  const data = resource.sections.marketPulse;
+  let state: TodayHomePublicationState = resource.publicationState;
+
+  if (data.length === 0) {
+    return {
+      state: "UNAVAILABLE",
+      data: [],
+      ...shared,
+      reason: "Home.marketPulse is empty; Today Market Events are unavailable.",
+    };
+  }
+
+  if (!data.every(isHomeMarketPulseEvent)) {
+    return {
+      state: "UNAVAILABLE",
+      data: [],
+      ...shared,
+      reason: "Home.marketPulse has incomplete fields; Today Market Events are unavailable.",
+    };
+  }
+
+  if (state === "PREVIEW" && !previewEnabled) state = "UNAVAILABLE";
+  if (state === "UNAVAILABLE") {
+    return {
+      state,
+      data: [],
+      ...shared,
+      reason: resource.metadata.reason ?? "Formal Today Market Events are not ready; non-formal data is hidden.",
+    };
+  }
+
+  return {
+    state,
+    data,
+    ...shared,
+    reason: state === "FORMAL"
+      ? null
+      : resource.metadata.reason ?? "Home.marketPulse is temporary and is not formal production insight.",
+  };
+}
+
 function mapRotation(
   resource: TodayHomeResource,
   data: HomeRotationTopic[],
@@ -204,6 +281,7 @@ export function toTodayMainlinesResource(
 ): TodayMainlinesResource {
   const shared = metadata(resource);
   const dailyFocus = mapDailyFocus(resource, previewEnabled);
+  const marketEvents = mapMarketEvents(resource, previewEnabled);
   const heating = mapRotation(resource, resource.sections.heatingTopics, "heating", previewEnabled);
   const cooling = mapRotation(resource, resource.sections.coolingTopics, "cooling", previewEnabled);
   const state = stateFromHomeResource(resource, previewEnabled);
@@ -216,6 +294,7 @@ export function toTodayMainlinesResource(
       ...shared,
       reason: resource.metadata.reason ?? "Home.mainTopics is empty; Today mainlines are unavailable.",
       dailyFocus,
+      marketEvents,
       heating,
       cooling,
     };
@@ -228,6 +307,7 @@ export function toTodayMainlinesResource(
       ...shared,
       reason: resource.metadata.reason ?? "Formal Today mainlines are not ready; non-formal data is hidden.",
       dailyFocus,
+      marketEvents,
       heating,
       cooling,
     };
@@ -239,6 +319,7 @@ export function toTodayMainlinesResource(
     ...shared,
     reason: state === "PREVIEW" ? resource.metadata.reason : null,
     dailyFocus,
+    marketEvents,
     heating,
     cooling,
   };
