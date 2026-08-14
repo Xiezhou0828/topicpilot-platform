@@ -25,12 +25,18 @@ jobs:
   validate:
     name: Validate release revision
     runs-on: ubuntu-latest
+    outputs:
+      release_sha: ${{ steps.revision.outputs.release_sha }}
     steps:
       - uses: actions/checkout@v4
         with:
           ref: ${{ inputs.release_ref }}
       - name: Require a committed revision
-        run: git rev-parse --verify HEAD
+        id: revision
+        run: |
+          sha="$(git rev-parse --verify HEAD)"
+          test -n "$sha"
+          echo "release_sha=$sha" >> "$GITHUB_OUTPUT"
       - name: Validate Compose and Render configuration
         run: |
           docker compose config --quiet
@@ -46,12 +52,19 @@ jobs:
       - name: Trigger protected deploy hook
         env:
           RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+          RELEASE_SHA: ${{ needs.validate.outputs.release_sha }}
         run: |
           if [ -z "$RENDER_DEPLOY_HOOK_URL" ]; then
             echo "RENDER_DEPLOY_HOOK_URL is not configured in production-api." >&2
             exit 1
           fi
-          curl --fail --silent --show-error --request POST "$RENDER_DEPLOY_HOOK_URL"
+          if [ -z "$RELEASE_SHA" ]; then
+            echo "The exact release SHA was not resolved." >&2
+            exit 1
+          fi
+          curl --fail --silent --show-error --get \
+            --data-urlencode "ref=$RELEASE_SHA" \
+            "$RENDER_DEPLOY_HOOK_URL"
 
   package-web:
     name: Package Sites frontend

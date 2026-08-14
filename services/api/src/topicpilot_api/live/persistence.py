@@ -2,13 +2,14 @@
 
 from __future__ import annotations
 
+from collections.abc import Collection
 from datetime import UTC, datetime, timezone
 from decimal import Decimal
 from typing import Any
 from uuid import UUID
 from zoneinfo import ZoneInfo
 
-from sqlalchemy import func, select, text
+from sqlalchemy import bindparam, func, select, text
 from sqlalchemy.orm import Session
 
 from topicpilot_api.normalizer import (
@@ -67,14 +68,22 @@ class LiveRepository:
         self.session = session
         self.config = config
 
-    def refresh_tracking_universe(self, *, now: datetime | None = None) -> int:
-        """Classify every active instrument from accepted canonical PRICE data."""
+    def refresh_tracking_universe(
+        self,
+        *,
+        now: datetime | None = None,
+        eligible_instrument_ids: Collection[Any] | None = None,
+    ) -> int:
+        """Classify the supplied date-effective universe from accepted prices."""
 
         period = self.config.moving_average_period
-        rows = (
-            self.session.execute(
-                text(
-                    """
+        eligible_filter = ""
+        params: dict[str, Any] = {"period": period}
+        if eligible_instrument_ids is not None:
+            eligible_filter = "\n                AND i.id IN :eligible_instrument_ids"
+            params["eligible_instrument_ids"] = tuple(eligible_instrument_ids)
+        query = text(
+            f"""
                 WITH candidate_prices AS (
                     SELECT
                         co.id,
@@ -135,16 +144,15 @@ class LiveRepository:
                 LEFT JOIN current_prices windowed
                   ON windowed.instrument_id = i.id AND windowed.row_number <= :period
                 WHERE i.is_active = true AND m.is_active = true
+                {eligible_filter}
                 GROUP BY i.id, i.instrument_code, m.code,
                          latest.close, latest.observed_at, latest.source_id
                 ORDER BY m.code, i.instrument_code
                 """
-                ),
-                {"period": period},
-            )
-            .mappings()
-            .all()
         )
+        if eligible_instrument_ids is not None:
+            query = query.bindparams(bindparam("eligible_instrument_ids", expanding=True))
+        rows = self.session.execute(query, params).mappings().all()
         current = {row["instrument_id"]: row for row in rows}
         existing = {
             item.instrument_id: item
