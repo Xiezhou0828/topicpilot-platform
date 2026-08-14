@@ -16,7 +16,7 @@ from topicpilot_api.live.config import LiveRuntimeConfig
 from topicpilot_api.live.logging import log_event
 from topicpilot_api.live.orchestrator import PersistentQuoteWorker
 from topicpilot_api.live.persistence import LiveRepository
-from topicpilot_api.live.post_close import PostCloseUpdater
+from topicpilot_api.live.post_close import PostClosePreconditionError, PostCloseUpdater
 from topicpilot_api.live.scheduler import LiveScheduler
 from topicpilot_api.live.session import MarketSessionClock
 from topicpilot_api.market_data.registry import build_live_provider_router
@@ -73,7 +73,12 @@ def main(argv: list[str] | None = None) -> int:
     engine = create_engine(get_settings().database_url, pool_pre_ping=True)
     with Session(engine, expire_on_commit=False) as session:
         repository = LiveRepository(session, config)
-        repository.refresh_tracking_universe()
+        # POST_CLOSE derives its date-effective universe before its first
+        # write. Refreshing the generic active universe here would mutate
+        # tracking state before that precondition and could reintroduce a
+        # date-ineligible identity such as TPE:6806.
+        if decision != "POST_CLOSE":
+            repository.refresh_tracking_universe()
         collector = LiveCollector(repository, provider_router, config)
         post_close = PostCloseUpdater(session, config)
         worker = PersistentQuoteWorker(provider_router, config=config)
@@ -105,6 +110,13 @@ def main(argv: list[str] | None = None) -> int:
             if hasattr(signal, "SIGINT"):
                 signal.signal(signal.SIGINT, lambda *_: stop.set())
             scheduler.run_forever(stop)
+        except PostClosePreconditionError as exc:
+            log_event(
+                logging.getLogger("topicpilot.live.cli"),
+                "post_close_precondition_failed",
+                errorCode=exc.code,
+            )
+            return 1
         finally:
             worker.stop()
     return 0

@@ -693,3 +693,38 @@ class ReferenceCalendarDate(Base, IdentityMixin):
     calendar_code: Mapped[str] = mapped_column(String(64), nullable=False)
     calendar_date: Mapped[date] = mapped_column(Date, nullable=False)
     date_kind: Mapped[str] = mapped_column(String(16), nullable=False)
+
+
+class ReferenceInstrumentLifecycle(Base, IdentityMixin):
+    __tablename__ = "reference_instrument_lifecycles"
+    __table_args__ = (
+        UniqueConstraint(
+            "registry_set_id",
+            "instrument_id",
+            "status_code",
+            "effective_from",
+            "evidence_id",
+            name="uq_reference_instrument_lifecycles_event",
+        ),
+        CheckConstraint(
+            "effective_to IS NULL OR effective_to >= effective_from",
+            name="ck_reference_instrument_lifecycles_valid_range",
+        ),
+        Index(
+            "ix_reference_instrument_lifecycles_instrument_effective",
+            "instrument_id",
+            "effective_from",
+        ),
+    )
+    registry_set_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("topicpilot.reference_registry_sets.id", ondelete="RESTRICT"), nullable=False
+    )
+    instrument_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("topicpilot.instruments.id", ondelete="RESTRICT"), nullable=False
+    )
+    status_code: Mapped[str] = mapped_column(String(32), nullable=False)
+    effective_from: Mapped[date] = mapped_column(Date, nullable=False)
+    effective_to: Mapped[date | None] = mapped_column(Date)
+    evidence_id: Mapped[str] = mapped_column(String(128), nullable=False)
+    source_url: Mapped[str] = mapped_column(Text, nullable=False)
+    reason: Mapped[str | None] = mapped_column(Text)

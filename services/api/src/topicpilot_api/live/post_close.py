@@ -3,14 +3,14 @@
 from __future__ import annotations
 
 import time
-from collections.abc import Callable
+from collections.abc import Callable, Collection, Mapping
 from dataclasses import dataclass
 from datetime import UTC, date, datetime
 from datetime import time as clock_time
 from typing import Any
 from urllib.request import Request, urlopen
 
-from sqlalchemy import select
+from sqlalchemy import and_, or_, select
 from sqlalchemy.orm import Session
 
 from topicpilot_api.daily_market import DailyMarketReconciliation, reconcile_daily_market
@@ -20,6 +20,7 @@ from topicpilot_api.market_data.registry import build_historical_provider_regist
 from topicpilot_api.normalizer import HISTORICAL_MAPPING_POLICY_VERSION, MappingPolicy
 from topicpilot_api.normalizer.contracts import stable_hash
 from topicpilot_api.orm import Instrument, LiveCollectorAttempt, LiveCollectorRun, Market
+from topicpilot_api.provider_preflight import load_g2_preflight_context
 from topicpilot_api.topic_lifecycle_engine import TopicLifecycleEngine
 from topicpilot_api.topic_snapshot_engine import TopicSnapshotEngine
 
@@ -69,6 +70,44 @@ class PostCloseRunResult:
         }
 
 
+class PostClosePreconditionError(RuntimeError):
+    """Raised before any post-close write when reference eligibility is unsafe."""
+
+    def __init__(self, code: str):
+        self.code = code
+        super().__init__(code)
+
+
+def expected_post_close_universe(
+    session: Session,
+    *,
+    run_date: date,
+    reference_version: str,
+) -> Mapping[str, tuple[str, ...]]:
+    """Load the existing fail-closed date-effective reference universe."""
+
+    try:
+        context = load_g2_preflight_context(
+            session,
+            target_date=run_date,
+            reference_version=reference_version,
+        )
+    except Exception as exc:
+        raise PostClosePreconditionError("REFERENCE_PRECONDITION_FAILED") from exc
+
+    if context.reference_result.get("referenceLoadStatus") != "READY":
+        raise PostClosePreconditionError("REFERENCE_CONTEXT_NOT_READY")
+    if context.eligibility_error is not None:
+        raise PostClosePreconditionError("LIFECYCLE_CONTEXT_INVALID")
+    if tuple(sorted(market.market_code for market in context.markets)) != ("TPE", "TWO"):
+        raise PostClosePreconditionError("CANONICAL_MARKET_CONTEXT_INCOMPLETE")
+    if not all(market.context_ready for market in context.markets):
+        raise PostClosePreconditionError("MARKET_CONTEXT_NOT_READY")
+    return {
+        market.market_code: tuple(market.instrument_codes) for market in context.markets
+    }
+
+
 class PostCloseUpdater:
     """Run official TWSE/TPEx daily updates without fabricating closed data."""
 
@@ -97,7 +136,16 @@ class PostCloseUpdater:
             raise ValueError("post-close clock must be timezone-aware")
         return value.astimezone(UTC)
 
-    def _instruments(self) -> list[tuple[Instrument, Market]]:
+    def _instruments(
+        self, expected_by_market: Mapping[str, Collection[str]]
+    ) -> list[tuple[Instrument, Market]]:
+        predicates = [
+            and_(Market.code == market_code, Instrument.instrument_code.in_(tuple(codes)))
+            for market_code, codes in expected_by_market.items()
+            if codes
+        ]
+        if not predicates:
+            raise PostClosePreconditionError("EMPTY_DATE_EFFECTIVE_UNIVERSE")
         return list(
             self.session.execute(
                 select(Instrument, Market)
@@ -107,10 +155,25 @@ class PostCloseUpdater:
                     Market.is_active.is_(True),
                     Market.code.in_(("TPE", "TWO")),
                     Instrument.instrument_type == "EQUITY",
+                    or_(*predicates),
                 )
                 .order_by(Market.code, Instrument.instrument_code)
             ).all()
         )
+
+    @staticmethod
+    def _validate_instruments(
+        instruments: Collection[tuple[Instrument, Market]],
+        expected_by_market: Mapping[str, Collection[str]],
+    ) -> None:
+        expected = {
+            (market_code, instrument_code)
+            for market_code, codes in expected_by_market.items()
+            for instrument_code in codes
+        }
+        actual = {(market.code, instrument.instrument_code) for instrument, market in instruments}
+        if len(instruments) != len(actual) or actual != expected:
+            raise PostClosePreconditionError("DATE_EFFECTIVE_UNIVERSE_MISMATCH")
 
     def _create_run(self, requested_count: int, started_at: datetime) -> LiveCollectorRun:
         run = LiveCollectorRun(
@@ -152,7 +215,14 @@ class PostCloseUpdater:
             local_date = now.astimezone(self.session_clock.timezone).date()
         else:
             local_date = run_date
-        instruments = self._instruments()
+        expected_by_market = expected_post_close_universe(
+            self.session,
+            run_date=local_date,
+            reference_version=self.config.reference_data_version,
+        )
+        instruments = self._instruments(expected_by_market)
+        self._validate_instruments(instruments, expected_by_market)
+        eligible_instrument_ids = tuple(instrument.id for instrument, _market in instruments)
         run = self._create_run(len(instruments), now)
         run_id = run.id
         failure_codes: list[str] = []
@@ -165,7 +235,10 @@ class PostCloseUpdater:
             skipped_count = len(instruments)
             status = "MARKET_CLOSED"
             reconciliation = reconcile_daily_market(
-                self.session, local_date, market_closed=True
+                self.session,
+                local_date,
+                market_closed=True,
+                expected_instrument_ids=eligible_instrument_ids,
             )
             snapshot_result = {
                 "snapshotDate": local_date.isoformat(),
@@ -301,7 +374,11 @@ class PostCloseUpdater:
                 )
                 self.session.commit()
 
-        reconciliation = reconcile_daily_market(self.session, local_date)
+        reconciliation = reconcile_daily_market(
+            self.session,
+            local_date,
+            expected_instrument_ids=eligible_instrument_ids,
+        )
         if failure_count or skipped_count:
             status = "PARTIAL" if success_count else "FAILED"
         else:
@@ -309,10 +386,13 @@ class PostCloseUpdater:
         if status == "SUCCESS" and not reconciliation.downstream_ready:
             status = "PARTIAL"
         tracking_count = LiveRepository(self.session, self.config).refresh_tracking_universe(
-            now=self._now()
+            now=self._now(), eligible_instrument_ids=eligible_instrument_ids
         )
         snapshot_result = (
-            self._run_snapshot(local_date)
+            self._run_snapshot(
+                local_date,
+                eligible_instrument_ids=eligible_instrument_ids,
+            )
             if reconciliation.downstream_ready
             else {
                 "snapshotDate": local_date.isoformat(),
@@ -353,16 +433,24 @@ class PostCloseUpdater:
             local_date.isoformat(),
         )
 
-    def _run_snapshot(self, snapshot_date: date, *, market_closed: bool = False) -> dict[str, Any]:
+    def _run_snapshot(
+        self,
+        snapshot_date: date,
+        *,
+        market_closed: bool = False,
+        eligible_instrument_ids: Collection[Any] | None = None,
+    ) -> dict[str, Any]:
         try:
             result = TopicSnapshotEngine(self.session).run_once(
                 snapshot_date=snapshot_date,
                 market_closed=market_closed,
+                eligible_instrument_ids=eligible_instrument_ids,
             )
             if result.get("status") == "SUCCESS" and not market_closed:
                 try:
                     result["lifecycle"] = TopicLifecycleEngine(self.session).run_once(
-                        evaluation_date=snapshot_date
+                        evaluation_date=snapshot_date,
+                        eligible_instrument_ids=eligible_instrument_ids,
                     )
                 except Exception as exc:
                     # Lifecycle remains additive shadow work. A missing
@@ -446,4 +534,9 @@ class PostCloseUpdater:
         self.session.commit()
 
 
-__all__ = ["PostCloseRunResult", "PostCloseUpdater"]
+__all__ = [
+    "PostClosePreconditionError",
+    "PostCloseRunResult",
+    "PostCloseUpdater",
+    "expected_post_close_universe",
+]

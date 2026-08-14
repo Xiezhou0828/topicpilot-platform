@@ -170,3 +170,24 @@
 - No Production DB mutation, reference bootstrap action, provider authority,
   Lifecycle/Opportunity rule, Scheduler, Canary, deploy, push, merge,
   `NEXT_TASK`, or Data Governance HOLD change was performed for this workstream.
+
+## 2026-08-14 TASK-GOV-CANONICAL-RECONCILIATION-001 009/009A consolidation
+
+- Fetched `origin` before reconciliation and verified the current
+  `origin/main=8402f141979e9924c9cfa8a1fc1b8e5b36f176ab`. The canonical task
+  branch was independently at `0ffbdb991c603e2d23f41f317a22fbfe0c550d7b`;
+  the source 009 worktree was at application SHA
+  `edfeb0e59c53ccf957d2b100a4f4ec619f67b519` with only append-only evidence
+  edits dirty.
+- Reconciled only the date-effective lifecycle/G2 dependency, read-only G3
+  market-semantics implementation, and 009 post-close eligible-universe,
+  persistence, reconciliation, snapshot, and lifecycle propagation. Added
+  the affected tests and formal TASK-DATA-REF-008/009/009A reports. No Today,
+  Stock, Scheduler, deploy, Production mutation, or `NEXT_TASK` change was
+  included.
+- Preserved `TASK-DATA-REF-009A` as the named G0/G1/G2/G3/Canary baseline:
+  runtime `edfeb0e…`, Canary `506/506`, failure `0`,
+  `DOWNSTREAM_READY=true`. G1/G2/G3/Canary were not re-run because this is
+  canonical consolidation rather than new Production behavior.
+- Formal reconciliation report:
+  `docs/reports/TASK-GOV-CANONICAL-RECONCILIATION-001_009_009A_RUNTIME_AND_EVIDENCE_CONSOLIDATION.md`.

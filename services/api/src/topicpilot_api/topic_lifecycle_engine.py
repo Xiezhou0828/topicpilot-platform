@@ -9,6 +9,7 @@ V2 snapshots, effective topic relations, and accepted canonical daily bars.
 from __future__ import annotations
 
 from collections import defaultdict
+from collections.abc import Collection
 from dataclasses import asdict, dataclass
 from datetime import date
 from decimal import ROUND_HALF_UP, Decimal
@@ -441,7 +442,12 @@ class TopicLifecycleEngine:
         self.policy = policy or LifecyclePolicy()
         self.calculation_version = calculation_version
 
-    def run_once(self, *, evaluation_date: date) -> dict[str, Any]:
+    def run_once(
+        self,
+        *,
+        evaluation_date: date,
+        eligible_instrument_ids: Collection[UUID] | None = None,
+    ) -> dict[str, Any]:
         snapshots = _date_rows(self.session, evaluation_date)
         if not snapshots:
             return {
@@ -451,9 +457,12 @@ class TopicLifecycleEngine:
                 "policyVersion": self.policy.version,
             }
         evidence = read_price_evidence(self.session, evaluation_date)
-        tracking_ids = set(
-            self.session.scalars(select(LiveTrackingUniverse.instrument_id)).all()
-        )
+        tracking_query = select(LiveTrackingUniverse.instrument_id)
+        if eligible_instrument_ids is not None:
+            tracking_query = tracking_query.where(
+                LiveTrackingUniverse.instrument_id.in_(tuple(eligible_instrument_ids))
+            )
+        tracking_ids = set(self.session.scalars(tracking_query).all())
         relation_rows = list(
             self.session.execute(
                 select(

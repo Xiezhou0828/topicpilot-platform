@@ -30,9 +30,21 @@ def test_committed_tw_reference_bundle_is_derived_and_contains_known_evidence():
         "calendarDateCount": 24,
         "calendarHolidayCount": 23,
         "calendarSuspendedCount": 1,
+        "lifecycleEventCount": 1,
     }
     assert bundle.evidence["suspensions"]["6806"]["status"] == "DELISTED"
     assert bundle.evidence["suspensions"]["6806"]["evidenceId"] == "TWSE-DELISTED-6806-20260623"
+    assert bundle.instrument_lifecycles == (
+        {
+            "effective_from": "2026-06-23",
+            "evidence_id": "TWSE-DELISTED-6806-20260623",
+            "instrument_code": "6806",
+            "market_code": "TPE",
+            "reason": bundle.evidence["suspensions"]["6806"]["reason"],
+            "source_url": "https://www.twse.com.tw/company/suspendListingCsvAndHtml?lang=zh&startYear=&type=html",
+            "status_code": "DELISTED",
+        },
+    )
 
 
 def test_bundle_generation_derives_instruments_without_a_count_business_rule(tmp_path: Path):

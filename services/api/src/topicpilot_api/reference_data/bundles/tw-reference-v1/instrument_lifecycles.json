@@ -1,0 +1,11 @@
+[
+  {
+    "effective_from": "2026-06-23",
+    "evidence_id": "TWSE-DELISTED-6806-20260623",
+    "instrument_code": "6806",
+    "market_code": "TPE",
+    "reason": "臺灣證券交易所終止上市公司名單記載森崴能源（6806）於 2026-06-23 終止上市，7/30 無當日上市行情。",
+    "source_url": "https://www.twse.com.tw/company/suspendListingCsvAndHtml?lang=zh&startYear=&type=html",
+    "status_code": "DELISTED"
+  }
+]

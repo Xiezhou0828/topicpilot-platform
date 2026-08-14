@@ -31,6 +31,7 @@ def _cleanup(engine, versions: tuple[str, ...]) -> None:
     with engine.begin() as connection:
         for table in (
             "reference_calendar_dates",
+            "reference_instrument_lifecycles",
             "reference_adjustments",
             "reference_trading_statuses",
             "reference_sessions",
@@ -90,6 +91,7 @@ def test_empty_database_bootstrap_dry_run_rerun_activation_and_reference_check(p
         assert _table_count(postgres_engine, "markets") == 2
         assert _table_count(postgres_engine, "instruments") == 507
         assert _table_count(postgres_engine, "reference_calendar_dates") == 24
+        assert _table_count(postgres_engine, "reference_instrument_lifecycles") == 1
 
         before_dry_run = {
             table: _table_count(postgres_engine, table)

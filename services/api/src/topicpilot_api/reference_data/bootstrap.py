@@ -17,6 +17,7 @@ from topicpilot_api.orm.models import (
     ReferenceAdjustment,
     ReferenceCalendarDate,
     ReferenceCurrency,
+    ReferenceInstrumentLifecycle,
     ReferenceRegistrySet,
     ReferenceSession,
     ReferenceTimezone,
@@ -36,6 +37,7 @@ REFERENCE_WRITE_SET = frozenset(
         "reference_trading_statuses",
         "reference_adjustments",
         "reference_calendar_dates",
+        "reference_instrument_lifecycles",
     }
 )
 NON_REFERENCE_WRITE_SET = frozenset()
@@ -105,6 +107,16 @@ def _check_same(expected: Any, actual: Any, label: str) -> None:
         raise ReferenceBootstrapConflict(f"bundle/database conflict in {label}")
 
 
+def validate_market_context(market: Market, row: dict[str, Any]) -> None:
+    """Apply the same fail-closed bundle comparison in plan and activation paths."""
+
+    _check_same(row["code"], market.code, f"market {row['code']} code")
+    _check_same(row["name"], market.name, f"market {row['code']} name")
+    _check_same(row.get("exchange_code"), market.exchange_code, f"market {row['code']} exchange")
+    _check_same(row["timezone"], market.timezone, f"market {row['code']} timezone")
+    _check_same(row.get("calendar_code"), market.calendar_code, f"market {row['code']} calendar")
+
+
 def _ensure_market(session: Session, row: dict[str, Any]) -> tuple[Market, bool]:
     market = session.scalar(select(Market).where(Market.code == row["code"]))
     if market is None:
@@ -119,10 +131,7 @@ def _ensure_market(session: Session, row: dict[str, Any]) -> tuple[Market, bool]
         session.add(market)
         session.flush()
         return market, True
-    _check_same(row["name"], market.name, f"market {row['code']} name")
-    _check_same(row.get("exchange_code"), market.exchange_code, f"market {row['code']} exchange")
-    _check_same(row["timezone"], market.timezone, f"market {row['code']} timezone")
-    _check_same(row.get("calendar_code"), market.calendar_code, f"market {row['code']} calendar")
+    validate_market_context(market, row)
     if not market.is_active:
         market.is_active = True
     return market, False
@@ -263,12 +272,53 @@ def _validate_registry_rows(session: Session, registry_id, bundle: ReferenceBund
         },
         "calendar dates",
     )
+    lifecycle_rows = {
+        tuple(row)
+        for row in session.execute(
+            select(
+                Market.code,
+                Instrument.instrument_code,
+                ReferenceInstrumentLifecycle.status_code,
+                ReferenceInstrumentLifecycle.effective_from,
+                ReferenceInstrumentLifecycle.effective_to,
+                ReferenceInstrumentLifecycle.evidence_id,
+                ReferenceInstrumentLifecycle.source_url,
+                ReferenceInstrumentLifecycle.reason,
+            )
+            .join(Instrument, Instrument.id == ReferenceInstrumentLifecycle.instrument_id)
+            .join(Market, Market.id == Instrument.market_id)
+            .where(ReferenceInstrumentLifecycle.registry_set_id == registry_id)
+        ).all()
+    }
+    _check_same(
+        lifecycle_rows,
+        {
+            (
+                row["market_code"],
+                row["instrument_code"],
+                row["status_code"],
+                date.fromisoformat(row["effective_from"]),
+                date.fromisoformat(row["effective_to"])
+                if row.get("effective_to") is not None
+                else None,
+                row["evidence_id"],
+                row["source_url"],
+                row.get("reason"),
+            )
+            for row in bundle.instrument_lifecycles
+        },
+        "instrument lifecycle evidence",
+    )
 
 
 def _plan(session: Session, bundle: ReferenceBundle) -> ReferenceBootstrapResult:
     registry = _existing_registry(session, bundle)
     if registry and registry.bundle_sha256 == bundle.digest():
         _validate_registry_rows(session, registry.id, bundle)
+    for row in bundle.markets:
+        market = session.scalar(select(Market).where(Market.code == row["code"]))
+        if market is not None:
+            validate_market_context(market, row)
     existing_market_codes = set(
         session.scalars(
             select(Market.code).where(Market.code.in_([row["code"] for row in bundle.markets]))
@@ -294,6 +344,7 @@ def _plan(session: Session, bundle: ReferenceBundle) -> ReferenceBootstrapResult
             ReferenceTradingStatus,
             ReferenceAdjustment,
             ReferenceCalendarDate,
+            ReferenceInstrumentLifecycle,
         ):
             existing_reference_rows += session.scalar(
                 select(func.count())
@@ -317,6 +368,7 @@ def _plan(session: Session, bundle: ReferenceBundle) -> ReferenceBootstrapResult
                 "trading_statuses",
                 "adjustments",
                 "calendar_dates",
+                "instrument_lifecycles",
             )
         ) - existing_reference_rows),
         noop_reference_rows=existing_reference_rows,
@@ -380,8 +432,10 @@ def bootstrap_reference_bundle(
             markets[row["code"]] = market
             created_markets += int(created)
         created_instruments = 0
+        instruments = {}
         for row in bundle.instruments:
-            _, created = _ensure_instrument(session, markets[row["market_code"]], row)
+            instrument, created = _ensure_instrument(session, markets[row["market_code"]], row)
+            instruments[(row["market_code"], row["instrument_code"])] = instrument
             created_instruments += int(created)
         _validate_existing_identity_set(session, bundle)
 
@@ -440,6 +494,28 @@ def bootstrap_reference_bundle(
             )
             created_reference_rows += int(created)
             noop_reference_rows += int(not created)
+        for row in bundle.instrument_lifecycles:
+            instrument = instruments[(row["market_code"], row["instrument_code"])]
+            _, created = _ensure_reference_row(
+                session,
+                ReferenceInstrumentLifecycle,
+                {
+                    "registry_set_id": registry.id,
+                    "instrument_id": instrument.id,
+                    "status_code": row["status_code"],
+                    "effective_from": date.fromisoformat(row["effective_from"]),
+                    "evidence_id": row["evidence_id"],
+                },
+                {
+                    "effective_to": date.fromisoformat(row["effective_to"])
+                    if row.get("effective_to") is not None
+                    else None,
+                    "source_url": row["source_url"],
+                    "reason": row.get("reason"),
+                },
+            )
+            created_reference_rows += int(created)
+            noop_reference_rows += int(not created)
         _validate_registry_rows(session, registry.id, bundle)
 
         retired = 0
@@ -482,4 +558,5 @@ __all__ = [
     "ReferenceBootstrapConflict",
     "ReferenceBootstrapResult",
     "bootstrap_reference_bundle",
+    "validate_market_context",
 ]
