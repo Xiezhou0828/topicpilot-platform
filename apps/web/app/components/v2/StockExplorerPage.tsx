@@ -10,6 +10,7 @@ import {
   type StockApiItem,
   type StockApiResource,
 } from "../../lib/stock-api";
+import { fetchTopics, type TopicResource, type TopicSummary } from "../../lib/topic-api";
 import { useSnapshot } from "../../lib/snapshot-store";
 import type { StockView } from "../../lib/types";
 
@@ -73,6 +74,8 @@ const UI = {
   noTopic: "\u5c1a\u7121\u984c\u6750",
   noRows: "\u6c92\u6709\u7b26\u5408\u76ee\u524d\u7be9\u9078\u7684\u80a1\u7968",
   allTopics: "\u5168\u90e8\u984c\u6750",
+  topicLoading: "\u6b63\u5728\u8f09\u5165\u6b63\u5f0f\u984c\u6750",
+  topicUnavailable: "\u984c\u6750\u6b63\u5f0f\u8cc7\u6599\u7121\u6cd5\u8f09\u5165",
   allTechnical: "\u5168\u90e8\u6280\u8853\u72c0\u614b",
   above20: "\u9ad8\u65bc 20MA",
   above60: "\u9ad8\u65bc 60MA",
@@ -186,6 +189,7 @@ function apiSort(sort: SortKey): string {
 export default function StockExplorerPage() {
   const { bundle } = useSnapshot();
   const [resource, setResource] = useState<StockApiResource | null>(null);
+  const [topicResource, setTopicResource] = useState<TopicResource<TopicSummary[]> | null>(null);
   const [market, setMarket] = useState("all");
   const [sort, setSort] = useState<SortKey>("change");
   const [mode, setMode] = useState("all");
@@ -254,6 +258,16 @@ export default function StockExplorerPage() {
   }, [formalQuery, loadFormal]);
 
   useEffect(() => {
+    let active = true;
+    void fetchTopics().then((next) => {
+      if (active) setTopicResource(next);
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  useEffect(() => {
     if (!getFormalApiBaseUrl()) return;
     const timer = window.setInterval(() => void loadFormal(formalQuery), 60_000);
     return () => window.clearInterval(timer);
@@ -276,12 +290,6 @@ export default function StockExplorerPage() {
     if (resource?.source === "unavailable") return [];
     return bundle.source === "snapshot" ? bundle.stockUniverse.map(fromPreview) : [];
   }, [bundle.source, bundle.stockUniverse, resource]);
-
-  const topics = useMemo(() => {
-    const values = new Map<string, string>();
-    baseRows.forEach((row) => row.topics.forEach((item) => values.set(item.slug, item.name)));
-    return [...values.entries()].sort((a, b) => a[1].localeCompare(b[1], "zh-Hant"));
-  }, [baseRows]);
 
   const displayRows = useMemo(() => {
     if (resource?.source === "api") return baseRows;
@@ -317,6 +325,15 @@ export default function StockExplorerPage() {
         : "STALE";
   const total = resource?.source === "api" ? resource.total : baseRows.length;
   const isPreview = resource?.source !== "api";
+  const topicOptionsUnavailable = topicResource?.source === "unavailable";
+  const topicOptionsLoading = topicResource === null;
+  const topicOptionsDisabled = topicOptionsLoading || topicOptionsUnavailable;
+  const topicOptions = topicResource?.data ?? [];
+  const topicPlaceholder = topicOptionsLoading
+    ? UI.topicLoading
+    : topicOptionsUnavailable
+      ? UI.topicUnavailable
+      : UI.allTopics;
 
   return <AppShell currentPath="/stocks">
     <PageContainer eyebrow={UI.eyebrow} title={UI.title} description={UI.description}>
@@ -335,7 +352,7 @@ export default function StockExplorerPage() {
             <button type="button" className="tp-stock-resort" onClick={() => { setLastSorted(new Date()); void loadFormal(formalQuery); }}>{UI.resort}</button>
           </Card>
           {advancedOpen && <Card className="tp-stock-advanced">
-            <label><span>{UI.topic}</span><select value={topic} onChange={(event) => setTopic(event.target.value)}><option value="">{UI.allTopics}</option>{topics.map(([slug, name]) => <option key={slug} value={slug}>{name}</option>)}</select></label>
+            <label><span>{UI.topic}</span><select value={topic} disabled={topicOptionsDisabled} onChange={(event) => setTopic(event.target.value)} aria-label={`${UI.topic} · ${topicOptionsDisabled ? UI.unavailableFilter : UI.allTopics}`}><option value="">{topicPlaceholder}</option>{topicOptions.map((item) => <option key={item.slug} value={item.slug}>{item.name}</option>)}</select></label>
             <label><span>{UI.technical}</span><select value={technical} disabled onChange={(event) => setTechnical(event.target.value as FilterValue)} aria-label={`${UI.technical} · ${UI.unavailableFilter}`}><option value="all">{UI.allTechnical}</option><option value="above20">{UI.above20}</option><option value="above60">{UI.above60}</option><option value="available">{UI.technicalAvailable}</option></select></label>
             <label><span>{UI.chip}</span><select value={chip} disabled onChange={(event) => setChip(event.target.value)} aria-label={`${UI.chip} · ${UI.unavailableFilter}`}><option value="all">{UI.allChip}</option><option value="available">{UI.chipAvailable}</option></select></label>
             <label><span>{UI.strategy}</span><select value={strategy} disabled onChange={(event) => setStrategy(event.target.value)} aria-label={`${UI.strategy} · ${UI.unavailableFilter}`}><option value="all">{UI.allStrategy}</option><option value="favorite">{UI.favorites}</option><option value="opportunity">{UI.opportunities}</option></select></label>

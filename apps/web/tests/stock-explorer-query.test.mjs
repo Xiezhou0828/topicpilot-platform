@@ -4,6 +4,7 @@ import test from "node:test";
 
 const page = await readFile(new URL("../app/components/v2/StockExplorerPage.tsx", import.meta.url), "utf8");
 const client = await readFile(new URL("../app/lib/stock-api.ts", import.meta.url), "utf8");
+const topicApi = await readFile(new URL("../app/lib/topic-api.ts", import.meta.url), "utf8");
 const generated = await readFile(new URL("../app/lib/generated-api.d.ts", import.meta.url), "utf8");
 const styles = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
 
@@ -15,7 +16,21 @@ test("market filter is sent to the formal backend query", () => {
 test("topic filter uses the backend topic identifier", () => {
   assert.match(page, /topic: topic \|\| undefined/);
   assert.match(client, /if \(query\.topic\) params\.topic = query\.topic/);
-  assert.match(page, /value=\{slug\}/);
+  assert.match(page, /value=\{item\.slug\}/);
+});
+
+test("topic options come from the formal topic catalog, not stock relation rows", () => {
+  assert.match(page, /fetchTopics/);
+  assert.match(page, /const topicOptions = topicResource\?\.data \?\? \[\]/);
+  assert.match(topicApi, /\/api\/v2\/topics\?limit=200&offset=0/);
+  assert.equal(page.includes("baseRows.forEach((row) => row.topics"), false);
+});
+
+test("unavailable topic options stay disabled and are never hardcoded", () => {
+  assert.match(page, /topicResource\?\.source === "unavailable"/);
+  assert.match(page, /disabled=\{topicOptionsDisabled\}/);
+  assert.match(page, /topicOptionsLoading \|\| topicOptionsUnavailable/);
+  assert.equal(page.includes("<option value=\"tech\">"), false);
 });
 
 test("formal search is sent as a trimmed backend query", () => {
