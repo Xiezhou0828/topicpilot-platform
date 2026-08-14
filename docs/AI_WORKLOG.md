@@ -1150,3 +1150,86 @@
   NEXT_TASK, or Data Governance HOLD change occurred. Formal report:
   `TASK-DATA-REF-006G_REFERENCE_REGISTRY_VERSION_TRANSITION_AND_LIFECYCLE_BUNDLE_ACTIVATION_CONTRACT.md`.
   Final status is `READY_FOR_REFERENCE_REGISTRY_TRANSITION_INTEGRATION_REVIEW`.
+
+## 2026-08-14 TASK-DATA-REF-006H-P Production Runtime Freeze and Reference Transition Dry-Run
+
+- Integrated the 006G immutable registry transition implementation and
+  documentation onto origin/main at application SHA
+  eb50d2d1e242290e2b9c6c95389bd7cd257caf26. Non-force push completed;
+  exact-SHA CI run 31765247955 passed all four jobs, and protected API deploy
+  run 31765407955 passed.
+- Operator runtime provenance matched the application SHA exactly:
+  RENDER_GIT_COMMIT and topicpilot-provider-lineage.buildSha both equal
+  eb50d2d1e242290e2b9c6c95389bd7cd257caf26, provider status is READY, and
+  canonical authorities remain TWSE official daily for TPE and TPEx official
+  daily for TWO with market-batch enabled. G0 is PASS.
+- Production alembic current returned
+  0030_task_data_ref_006g_registry_transition (head). The source
+  tw-reference-v1 registry remains ACTIVE/READY with 2 markets, 507
+  instruments, 24 calendar dates, no missing or duplicate identities, one
+  registry set, and one required context.
+- The exact topicpilot-reference-transition dry-run validated the reviewed
+  source hash 5db36231decaeb12010ca7624c0d2bdc18da3b86dcec5611aa5ff7c132af15e6,
+  derived target version tw-reference-v1-rollover-daf19e9eb051255c, target hash
+  daf19e9eb051255c631d0fff6d8fecf1273aecf52f9e958a62c778dfb6906295,
+  operation=PLAN, status=VALIDATED, dryRun=true, transactional and
+  idempotent semantics, immutable same-version overwrite rejection, preserved
+  old registry, single-active invariant, and nonReferenceWriteSet=[].
+  The plan reported 38 reference rows and no market/instrument creation;
+  retiredRegistrySets=1 is plan metadata, not a committed retirement.
+- The post-dry-run reference check was unchanged, proving
+  TRANSITION_DRY_RUN_MUTATION=NO, REFERENCE_STATE_CHANGED=NO, and
+  PRODUCTION_MUTATION=NO. No activate mode, manual SQL, bootstrap retry, G2,
+  G3, Canary, Scheduler, credential request, or Data Governance HOLD/NEXT_TASK
+  change occurred. Formal report:
+  TASK-DATA-REF-006H_PRODUCTION_RUNTIME_FREEZE_AND_REFERENCE_TRANSITION_DRY_RUN_EVIDENCE.md.
+  Final status is READY_FOR_REFERENCE_REGISTRY_TRANSITION_ACTIVATION_AUTHORIZATION.
+
+## 2026-08-14 TASK-DATA-REF-006I One-Shot Production Reference Registry Transition Activation and G1 Revalidation
+
+- Revalidated the frozen application runtime before the authorized one-shot
+  transition: RENDER_GIT_COMMIT and provider lineage buildSha both matched
+  eb50d2d1e242290e2b9c6c95389bd7cd257caf26, provider status was READY, and G0
+  passed. The source tw-reference-v1 registry was ACTIVE/READY with 2 markets,
+  507 instruments, no missing or duplicate identities, and complete context.
+- Repeated the exact transition dry-run with source hash
+  5db36231decaeb12010ca7624c0d2bdc18da3b86dcec5611aa5ff7c132af15e6 and
+  target hash daf19e9eb051255c631d0fff6d8fecf1273aecf52f9e958a62c778dfb6906295.
+  It returned PLAN/VALIDATED, transactional=true, singleActiveRegistry=true,
+  sameVersionHashOverwrite=false, and nonReferenceWriteSet=[].
+- Executed the explicitly authorized one-shot transition exactly once. The
+  result was TRANSITION_ACTIVATED/ACTIVE with 38 reference rows, no created
+  markets or instruments, one source registry retired, old provenance
+  preserved, one transition provenance record, and no non-reference write.
+  This is the only Production mutation in 006I.
+- Target G1 revalidation returned ACTIVE/READY, 2 markets, 507 physical/formal
+  identities, 24 calendar dates, complete contexts, no missing or duplicate
+  identities, 7 trading statuses, and 3 adjustments.
+- Read-only registry inspection returned exactly one ACTIVE target registry,
+  source RETIRED with its old hash preserved, transition provenance count 1,
+  physical instrument count 507, and one target lifecycle row for TPE:6806.
+  The row is DELISTED effective 2026-06-23. The repository date-effective
+  contract therefore yields 2026-08-13 TPE=313 and TWO=193, with TPE:6806 not
+  eligible; the physical 6806 identity row remains present.
+- No market-data/provider persistence, ordinary bootstrap retry, G2, G3,
+  Canary, Scheduler, NEXT_TASK, or Data Governance HOLD action occurred.
+  Formal report:
+  TASK-DATA-REF-006I_ONE_SHOT_PRODUCTION_REFERENCE_REGISTRY_TRANSITION_ACTIVATION_AND_G1_REVALIDATION.md.
+  Final status is READY_FOR_G2_PRODUCTION_PREFLIGHT_AUTHORIZATION.
+
+## 2026-08-14 TASK-DATA-REF-007A G2 Expected-EQUITY Coverage Scope Fix
+
+- Corrected the narrow G2 evaluator contract after the 007 read-only preflight
+  exposed a false failure: official market-level payloads covered every
+  date-effective expected `EQUITY` identity but also contained broader,
+  out-of-scope provider securities.
+- `coverageComplete` now requires a non-empty expected universe with no missing
+  expected identities. `extraIdentityCodes` and `extraInstrumentCount` remain
+  in the sanitized evidence as diagnostics and no longer fail G2. Provider
+  authority/version, date matching, parsing, non-empty payload, reference
+  readiness, and read-only write-set checks are unchanged.
+- Added regression coverage proving both the corrected pass case and the
+  fail-closed missing-expected-identity case. No Production request,
+  mutation, deploy, push, Canary, or Scheduler action occurred. Formal report:
+  `TASK-DATA-REF-007A_G2_EXPECTED_EQUITY_COVERAGE_SCOPE_FIX.md`.
+  Final status is `READY_FOR_EXACT_SHA_CI_AND_PRODUCTION_REPREFLIGHT`.

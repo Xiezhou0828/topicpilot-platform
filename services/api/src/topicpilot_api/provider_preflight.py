@@ -213,7 +213,13 @@ def evaluate_provider_preflight(
         missing_codes = tuple(sorted(expected_codes - codes))
         extra_codes = tuple(sorted(codes - expected_codes))
         target_date_matched = result.target_date == context.target_date
-        coverage_complete = bool(expected_codes) and not missing_codes and not extra_codes
+        # The official market-level endpoint may include securities outside
+        # the date-effective formal EQUITY universe (for example ETFs,
+        # warrants, or other exchange-listed products).  G2 coverage is an
+        # expected-universe contract: every expected identity must be present.
+        # Preserve out-of-scope provider codes in the evidence, but do not let
+        # them turn complete expected-EQUITY coverage into a failure.
+        coverage_complete = bool(expected_codes) and not missing_codes
         authority_ok = result.provider_authority == market.provider_authority
         version_ok = result.provider_version == market.provider_version
         error_code = None
@@ -223,12 +229,8 @@ def evaluate_provider_preflight(
             error_code = "PROVIDER_DATE_MISMATCH"
         elif result.record_count == 0:
             error_code = "EMPTY_MARKET_PAYLOAD"
-        elif missing_codes and extra_codes:
-            error_code = "IDENTITY_COVERAGE_MISMATCH"
         elif missing_codes:
             error_code = "PARTIAL_PROVIDER_COVERAGE"
-        elif extra_codes:
-            error_code = "EXTRA_PROVIDER_IDENTITIES"
         evidence.append(
             _market_evidence(
                 market,
