@@ -1245,3 +1245,18 @@
   append-only; `PRODUCTION_MUTATION=NO`, `MANUAL_DEPLOY=NO`,
   `NEXT_TASK_MODIFIED=NO`, `STOCK_005_STARTED=NO`. Final push SHA and
   exact-SHA CI result will be appended after push.
+
+## 2026-08-14 TASK-FE-BE-STOCK-004R Main Push and Exact-SHA CI Completion
+
+- Reconciliation was pushed non-force to `main` at
+  `8276902eb63019c1236b7698ec25f6d28c0be363`; the push was a fast-forward from
+  `eb50d2d1e242290e2b9c6c95389bd7cd257caf26` and did not reset or force-write
+  main.
+- Exact-SHA CI run `31777914732` for that SHA passed. Secret scan, frontend
+  install/test/build, backend migration/tests/OpenAPI/generated contract, and
+  Docker Compose smoke all passed. No deploy workflow was observed or manually
+  triggered.
+- G1/G2/G3/Canary remain `PRESERVED PASS / TASK-DATA-REF-009A`; no Production
+  mutation or DATA-REF gate rerun occurred. The canonical Stock integration is
+  complete at `READY_FOR_STOCK_005`; this task stops without starting
+  STOCK-005. This worklog entry is append-only.

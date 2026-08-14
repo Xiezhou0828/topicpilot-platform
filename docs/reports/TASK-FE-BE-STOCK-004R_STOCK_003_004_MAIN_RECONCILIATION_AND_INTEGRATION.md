@@ -1,7 +1,7 @@
 # TASK-FE-BE-STOCK-004R｜Stock-003 + Stock-004 Main Reconciliation & Integration
 
 Date: 2026-08-14
-Status: `PRE_PUSH_RECONCILIATION_PASS`
+Status: `READY_FOR_STOCK_005`
 
 ## Authority and provenance
 
@@ -128,23 +128,24 @@ dependencies. Normal repository CI is required for the pushed main SHA.
 ## Push and finalization
 
 ```text
-INTEGRATED_MAIN_SHA = PENDING_NON_FORCE_PUSH_RESULT
-PUSHED_MAIN_SHA = PENDING
-NON_FORCE_PUSH_MAIN = AUTHORIZED_AFTER_PRE_PUSH_PASS
-EXACT_SHA_CI_RUN = PENDING
-EXACT_SHA_CI = PENDING
+INTEGRATED_MAIN_SHA = 8276902eb63019c1236b7698ec25f6d28c0be363
+PUSHED_MAIN_SHA = 8276902eb63019c1236b7698ec25f6d28c0be363
+NON_FORCE_PUSH_MAIN = PASS
+EXACT_SHA_CI_RUN = 31777914732
+EXACT_SHA_CI = PASS
 
 PRODUCTION_MUTATION = NO
 MANUAL_DEPLOY = NO
-AUTO_DEPLOY_TRIGGERED = PENDING
+AUTO_DEPLOY_TRIGGERED = NO OBSERVED; only the normal CI workflow ran
 AI_WORKLOG_UPDATED = YES
 AI_WORKLOG_APPEND_ONLY = YES
 NEXT_TASK_MODIFIED = NO
 STOCK_005_STARTED = NO
-FINAL_STATUS = PRE_PUSH_RECONCILIATION_PASS
+FINAL_STATUS = READY_FOR_STOCK_005
 BLOCKER = NONE
 ```
 
-This report is intentionally finalized with the pushed SHA and CI result after
-the authorized non-force push. No force push, reset of main, manual deploy, or
-Stock-005 work is in scope.
+The functional Stock integration is finalized at the pushed SHA and its
+exact-SHA CI result. Any later documentation-only follow-up remains non-force
+and does not change the Stock implementation or Production baseline. No force
+push, reset of main, manual deploy, or Stock-005 work is in scope.
