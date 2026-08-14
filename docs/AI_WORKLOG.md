@@ -676,7 +676,6 @@
   `MARKET_REMEDIATION_COMPLETE_REFERENCE_BOOTSTRAP_BLOCKED`; STOP pending a
   separately scoped review/remediation task.
 
-<<<<<<< HEAD
 ## 2026-08-13 TASK-DATA-REF-005G Market Calendar Remediation and Dry-Run Parity
 
 - Audited the Production calendar conflict against schema, migration, bundle,
