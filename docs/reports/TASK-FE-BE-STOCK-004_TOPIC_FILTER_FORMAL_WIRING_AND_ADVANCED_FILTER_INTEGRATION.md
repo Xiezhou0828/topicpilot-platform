@@ -1,6 +1,6 @@
 # TASK-FE-BE-STOCK-004｜Topic Filter Formal Wiring & Advanced Filter Integration
 
-Date: 2026-08-14  
+Date: 2026-08-14
 Task status: `READY_FOR_STOCK_004_INTEGRATION_REVIEW`
 
 ## Authority and continuation boundary
@@ -143,7 +143,7 @@ NEXT_TASK_MODIFIED = NO
 STOCK_005_STARTED = NO
 
 NEW_IMPLEMENTATION_COMMIT = b1d436b7a5e022d34f63d33be3b69882e3d9a081
-DOCUMENTATION_COMMIT = pending until report/worklog commit
+DOCUMENTATION_COMMIT = 8974bf4df0545b031191538fd8489d13babd57bd
 PUSH_MAIN = NO
 MERGE_MAIN = NO
 DEPLOY = NO
