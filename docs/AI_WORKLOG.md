@@ -1187,3 +1187,36 @@
   Governance HOLD were untouched. This entry is append-only;
   `PUSH=NO`, `MERGE_MAIN=NO`, `DEPLOY=NO`, final status is
   `READY_FOR_STOCK_003_INTEGRATION_REVIEW`.
+
+## 2026-08-14 TASK-FE-BE-STOCK-004 Topic Filter Formal Wiring & Advanced Filter Integration
+
+- Created isolated continuation branch/worktree
+  `codex/task-fe-be-stock-004-20260814` from the verified Stock-003
+  implementation state. `STOCK_003_BASE_SHA` is
+  `3c8d10024f8172168f822cacf6b924b393bcfe1a`; continuation base includes the
+  Stock-003 documentation commit `2069ccc43bccaf079009fd30eef0049f72430c4d`.
+  Fresh `origin/main` was `eb50d2d1e242290e2b9c6c95389bd7cd257caf26`, with 15
+  commits of main drift intentionally not reconciled into this task.
+- Audited the existing formal contracts. `/api/v2/stocks` already accepts
+  `topic` as the canonical topic `slug`; `/api/v2/topics?limit=200&offset=0`
+  is the formal topic-options source. This is Case A: no backend, OpenAPI, or
+  generated-contract change was needed.
+- Replaced Stock Explorer's result-set-derived topic options with the existing
+  `fetchTopics()` formal/explicit-Preview resource. The advanced single-select
+  preserves slug values, all/clear behavior, search/market/updateMode/sort
+  composition, offset reset, backend order, and unavailable/disabled behavior.
+  No hardcoded options or browser topic membership/filtering was added.
+- Preserved Stock-003 search behavior, explicit Formal/Preview/Unavailable
+  boundaries, disabled technical/chip/strategy controls, and the sticky,
+  full-height push Drawer. Application commit is
+  `b1d436b7a5e022d34f63d33be3b69882e3d9a081`.
+- Validation passed: focused Stock `26/26`, frontend build/full suite
+  `109/109`, API client `3/3`, TypeScript, lint, generated client
+  idempotence, diff check, and secret scan. Full lint retains one pre-existing
+  `TopicDetailPage.tsx` warning. Backend tests and OpenAPI gate were not
+  required because no backend/OpenAPI contract changed.
+- No DATA-REF/provider/reference/Production/Today/Topic Detail files or
+  semantics changed. G0/G1/G2/G3, Canary, Scheduler, `NEXT_TASK`, and
+  Production were untouched. This entry is append-only; `PUSH_MAIN=NO`,
+  `MERGE_MAIN=NO`, `DEPLOY=NO`, final status is
+  `READY_FOR_STOCK_004_INTEGRATION_REVIEW`.
