@@ -1150,3 +1150,37 @@
   NEXT_TASK, or Data Governance HOLD change occurred. Formal report:
   `TASK-DATA-REF-006G_REFERENCE_REGISTRY_VERSION_TRANSITION_AND_LIFECYCLE_BUNDLE_ACTIVATION_CONTRACT.md`.
   Final status is `READY_FOR_REFERENCE_REGISTRY_TRANSITION_INTEGRATION_REVIEW`.
+
+## 2026-08-14 TASK-DATA-REF-006H-P Production Runtime Freeze and Reference Transition Dry-Run
+
+- Integrated the 006G immutable registry transition implementation and
+  documentation onto origin/main at application SHA
+  eb50d2d1e242290e2b9c6c95389bd7cd257caf26. Non-force push completed;
+  exact-SHA CI run 31765247955 passed all four jobs, and protected API deploy
+  run 31765407955 passed.
+- Operator runtime provenance matched the application SHA exactly:
+  RENDER_GIT_COMMIT and topicpilot-provider-lineage.buildSha both equal
+  eb50d2d1e242290e2b9c6c95389bd7cd257caf26, provider status is READY, and
+  canonical authorities remain TWSE official daily for TPE and TPEx official
+  daily for TWO with market-batch enabled. G0 is PASS.
+- Production alembic current returned
+  0030_task_data_ref_006g_registry_transition (head). The source
+  tw-reference-v1 registry remains ACTIVE/READY with 2 markets, 507
+  instruments, 24 calendar dates, no missing or duplicate identities, one
+  registry set, and one required context.
+- The exact topicpilot-reference-transition dry-run validated the reviewed
+  source hash 5db36231decaeb12010ca7624c0d2bdc18da3b86dcec5611aa5ff7c132af15e6,
+  derived target version tw-reference-v1-rollover-daf19e9eb051255c, target hash
+  daf19e9eb051255c631d0fff6d8fecf1273aecf52f9e958a62c778dfb6906295,
+  operation=PLAN, status=VALIDATED, dryRun=true, transactional and
+  idempotent semantics, immutable same-version overwrite rejection, preserved
+  old registry, single-active invariant, and nonReferenceWriteSet=[].
+  The plan reported 38 reference rows and no market/instrument creation;
+  retiredRegistrySets=1 is plan metadata, not a committed retirement.
+- The post-dry-run reference check was unchanged, proving
+  TRANSITION_DRY_RUN_MUTATION=NO, REFERENCE_STATE_CHANGED=NO, and
+  PRODUCTION_MUTATION=NO. No activate mode, manual SQL, bootstrap retry, G2,
+  G3, Canary, Scheduler, credential request, or Data Governance HOLD/NEXT_TASK
+  change occurred. Formal report:
+  TASK-DATA-REF-006H_PRODUCTION_RUNTIME_FREEZE_AND_REFERENCE_TRANSITION_DRY_RUN_EVIDENCE.md.
+  Final status is READY_FOR_REFERENCE_REGISTRY_TRANSITION_ACTIVATION_AUTHORIZATION.
