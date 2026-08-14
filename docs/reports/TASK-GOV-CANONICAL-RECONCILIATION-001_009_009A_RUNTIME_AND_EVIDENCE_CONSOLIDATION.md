@@ -162,3 +162,40 @@ EXACT_SHA_CI = PENDING_GITHUB_RUN
 
 This checkpoint is documentation-only after the implementation commit; it does
 not change application runtime behavior or the preserved Production baseline.
+
+## Canonical closure
+
+The canonical branch was refreshed against the fetched latest `origin/main` by
+an ordinary merge commit. Conflict resolution retained the current 009/009A
+runtime/evidence and the latest base-branch Today/mainline and migration
+contract files. No force update was used.
+
+```text
+RECONCILED_MAIN_SHA = ee3d5d1557addd71a79e6d8d39a7d5ed9c2dc9ec
+ORIGIN_MAIN_USED = 8402f141979e9924c9cfa8a1fc1b8e5b36f176ab (freshly fetched)
+NON_FORCE_PUSH = YES
+PULL_REQUEST = https://github.com/Xiezhou0828/topicpilot-platform/pull/4
+EXACT_SHA_CI_RUN = 31787341655
+EXACT_SHA_CI_URL = https://github.com/Xiezhou0828/topicpilot-platform/actions/runs/31787341655
+EXACT_SHA_CI = PASS
+BACKEND_MIGRATION_OPENAPI = PASS
+FRONTEND_INSTALL_TEST_BUILD = PASS
+SECRET_SCAN = PASS
+DOCKER_COMPOSE_SMOKE = PASS
+DEPLOY = NO
+PRODUCTION_MUTATION = NO
+SCHEDULER_CHANGED = NO
+NEXT_TASK_CHANGED = NO
+PRESERVED_GATE_BASELINE = TASK-DATA-REF-009A
+G0 = PRESERVED PASS
+G1 = PRESERVED PASS
+G2 = PRESERVED PASS
+G3 = PRESERVED PASS
+CANARY = PRESERVED PASS (506/506, failure=0)
+FINAL_STATUS = 009_009A_CANONICAL_CONSOLIDATION_COMPLETE
+BLOCKER = NONE
+```
+
+The exact-SHA CI result covers the reconciled application commit. The final
+append-only documentation closure does not change application runtime code or
+protected inputs.
