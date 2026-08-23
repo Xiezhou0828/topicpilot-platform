@@ -1,0 +1,18 @@
+{
+  "task_id": "TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-BOOTSTRAP-EXECUTION-20260819",
+  "source_final_canonical_head": "c40aa42e7cac665386009f29c94a8dafce896427",
+  "rollback_proof": "PASS",
+  "inside_transaction_counts": {
+    "formal_instruments": 603,
+    "new_instruments": 96,
+    "new_security_identities": 96,
+    "new_lifecycles": 96
+  },
+  "after_rollback_counts": {
+    "formal_instruments": 507,
+    "new_registry_rows": 0,
+    "new_security_identities": 0
+  },
+  "transaction_boundary": "single transaction with explicit table locks; reference registry created VALIDATED then promoted ACTIVE only after old ACTIVE retirement",
+  "mutation_target": "canonical non-production local Docker Compose PostgreSQL"
+}

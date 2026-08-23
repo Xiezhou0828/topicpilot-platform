@@ -13,20 +13,25 @@ export type HomeTopicCard = components["schemas"]["HomeTopicCard"];
 export type HomeRotationTopic = components["schemas"]["HomeRotationTopic"];
 export type HomeDailyFocus = components["schemas"]["HomeDailyFocus"];
 export type HomeMarketPulseEvent = components["schemas"]["HomeMarketPulseEvent"];
+export type HomeOpportunityStock = components["schemas"]["HomeOpportunityStock"];
 export type HomeOpportunityTopic = components["schemas"]["HomeOpportunityTopic"];
 export type HomeMarketOverview = components["schemas"]["HomeMarketOverview"];
 export type HomeDataQuality = components["schemas"]["HomeDataQuality"];
 
 export type TodayHomeTransportState = "LOADING" | "READY" | "ERROR";
 export type TodayHomePublicationState = "FORMAL" | "TEMPORARY" | "PREVIEW" | "UNAVAILABLE";
+export type TodayHomeSectionState = TodayHomePublicationState | "LOADING" | "ERROR";
 
 export type TodayHomeMetadata = {
   dataDate: string | null;
+  generatedAt: string | null;
+  latestSnapshotTime: string | null;
   asOf: string | null;
   source: string | null;
   dataQuality: HomeDataQuality | null;
   temporarySections: string[];
   missingSections: string[];
+  qualityNotes: string[];
   classification: string | null;
   status: string | null;
   reason: string | null;
@@ -72,11 +77,14 @@ function emptySections(): TodayHomeSections {
 function emptyMetadata(reason: string | null = null): TodayHomeMetadata {
   return {
     dataDate: null,
+    generatedAt: null,
+    latestSnapshotTime: null,
     asOf: null,
     source: null,
     dataQuality: null,
     temporarySections: [],
     missingSections: [],
+    qualityNotes: [],
     classification: null,
     status: null,
     reason,
@@ -111,11 +119,14 @@ function metadataFromHome(home: HomeResponse): TodayHomeMetadata {
       ?? home.marketOverview.dataDate
       ?? home.asOf
       ?? null,
-    asOf: home.asOf ?? home.generatedAt ?? home.marketOverview.updatedAt ?? null,
+    generatedAt: home.generatedAt ?? null,
+    latestSnapshotTime: home.marketOverview.latestSnapshotTime ?? null,
+    asOf: home.asOf ?? home.marketOverview.updatedAt ?? home.generatedAt ?? null,
     source: quality.source || home.marketOverview.source || null,
     dataQuality: quality,
     temporarySections: [...(quality.temporarySections ?? [])],
     missingSections: [...(quality.missingSections ?? [])],
+    qualityNotes: [...(quality.notes ?? [])],
     classification: quality.classification ?? null,
     status: quality.status || home.marketOverview.dataStatus || null,
     reason: null,

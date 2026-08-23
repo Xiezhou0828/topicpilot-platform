@@ -1,0 +1,103 @@
+{
+  "SOURCE_ARTIFACTS_SUFFICIENT": true,
+  "TASK_ID": "TASK-WS3-AB-SETUP-FALSE-FRIEND-CANDIDATE-EXTRACTION-AND-HUMAN-REVIEW-HANDOFF-20260821",
+  "artifacts": [
+    {
+      "artifact_key": "a_state_context",
+      "path": "reports/TASK-WS3-SUCCESSFUL-SWING-OUTCOME-MINING-AND-LEADING-EVIDENCE-DISCOVERY-20260821/ws3-successful-swing-a-state-relationship.csv",
+      "size_bytes": 2187,
+      "status": "FOUND"
+    },
+    {
+      "artifact_key": "distinct_swing_episode_panel",
+      "path": "reports/TASK-WS3-SUCCESSFUL-SWING-OUTCOME-MINING-AND-LEADING-EVIDENCE-DISCOVERY-20260821/ws3-successful-swing-distinct-episode-panel.csv",
+      "size_bytes": 28467681,
+      "status": "FOUND"
+    },
+    {
+      "artifact_key": "feature_manifest",
+      "path": "reports/TASK-WS3-SUCCESSFUL-SWING-OUTCOME-MINING-AND-LEADING-EVIDENCE-DISCOVERY-20260821/ws3-successful-swing-feature-manifest.json",
+      "size_bytes": 3102,
+      "status": "FOUND"
+    },
+    {
+      "artifact_key": "intraday_evidence",
+      "path": "none; explicitly out of scope",
+      "size_bytes": null,
+      "status": "NOT_REQUIRED"
+    },
+    {
+      "artifact_key": "matched_control_panel",
+      "path": "reports/TASK-WS3-SUCCESSFUL-SWING-OUTCOME-MINING-AND-LEADING-EVIDENCE-DISCOVERY-20260821/ws3-successful-swing-matched-control-panel.csv",
+      "size_bytes": 33548879,
+      "status": "FOUND"
+    },
+    {
+      "artifact_key": "owner_review_pack",
+      "path": "reports/TASK-WS3-SUCCESSFUL-SWING-HUMAN-ASSISTED-OWNER-REVIEW-PACK-EXTRACTION-20260821/WS3-SUCCESSFUL-SWING-OWNER-HUMAN-REVIEW-PACK.md",
+      "size_bytes": 11515,
+      "status": "FOUND"
+    },
+    {
+      "artifact_key": "pre_event_feature_panel",
+      "path": "reports/TASK-WS3-SUCCESSFUL-SWING-OUTCOME-MINING-AND-LEADING-EVIDENCE-DISCOVERY-20260821/ws3-successful-swing-pre-event-feature-panel.csv",
+      "size_bytes": 527286834,
+      "status": "FOUND"
+    },
+    {
+      "artifact_key": "promising_signal_panel",
+      "path": "reports/TASK-WS3-SUCCESSFUL-SWING-HUMAN-ASSISTED-OWNER-REVIEW-PACK-EXTRACTION-20260821/ws3-owner-review-top20-promising-signals.csv",
+      "size_bytes": 27271,
+      "status": "FOUND"
+    },
+    {
+      "artifact_key": "protocol_freeze",
+      "path": "reports/TASK-WS3-SUCCESSFUL-SWING-OUTCOME-MINING-AND-LEADING-EVIDENCE-DISCOVERY-20260821/ws3-successful-swing-outcome-protocol-freeze.json",
+      "size_bytes": 3706,
+      "status": "FOUND"
+    },
+    {
+      "artifact_key": "raw_anchor_panel",
+      "path": "reports/TASK-WS3-SUCCESSFUL-SWING-OUTCOME-MINING-AND-LEADING-EVIDENCE-DISCOVERY-20260821/ws3-successful-swing-raw-anchor-panel.csv",
+      "size_bytes": 231402178,
+      "status": "FOUND"
+    },
+    {
+      "artifact_key": "reference_case_cards",
+      "path": "reports/TASK-WS3-SUCCESSFUL-SWING-HUMAN-ASSISTED-OWNER-REVIEW-PACK-EXTRACTION-20260821/ws3-owner-review-reference-case-cards.json",
+      "size_bytes": 258599,
+      "status": "FOUND"
+    },
+    {
+      "artifact_key": "review_formal_closure",
+      "path": "docs/reports/TASK-WS3-SUCCESSFUL-SWING-HUMAN-ASSISTED-OWNER-REVIEW-PACK-EXTRACTION-20260821/formal-closure-report.md",
+      "size_bytes": 2859,
+      "status": "FOUND"
+    },
+    {
+      "artifact_key": "robust_signal_panel",
+      "path": "reports/TASK-WS3-SUCCESSFUL-SWING-HUMAN-ASSISTED-OWNER-REVIEW-PACK-EXTRACTION-20260821/ws3-owner-review-robust-signals.csv",
+      "size_bytes": 12544,
+      "status": "FOUND"
+    },
+    {
+      "artifact_key": "source_formal_closure",
+      "path": "docs/reports/TASK-WS3-SUCCESSFUL-SWING-OUTCOME-MINING-AND-LEADING-EVIDENCE-DISCOVERY-20260821/formal-closure-report.md",
+      "size_bytes": 1278,
+      "status": "FOUND"
+    },
+    {
+      "artifact_key": "source_run_summary",
+      "path": "reports/TASK-WS3-SUCCESSFUL-SWING-OUTCOME-MINING-AND-LEADING-EVIDENCE-DISCOVERY-20260821/ws3-successful-swing-run-summary.json",
+      "size_bytes": 17732,
+      "status": "FOUND"
+    },
+    {
+      "artifact_key": "success_control_pair_extraction",
+      "path": "reports/TASK-WS3-SUCCESSFUL-SWING-HUMAN-ASSISTED-OWNER-REVIEW-PACK-EXTRACTION-20260821/ws3-owner-review-success-control-pairs.csv",
+      "size_bytes": 144594,
+      "status": "FOUND"
+    }
+  ],
+  "source_task": "TASK-WS3-SUCCESSFUL-SWING-OUTCOME-MINING-AND-LEADING-EVIDENCE-DISCOVERY-20260821"
+}

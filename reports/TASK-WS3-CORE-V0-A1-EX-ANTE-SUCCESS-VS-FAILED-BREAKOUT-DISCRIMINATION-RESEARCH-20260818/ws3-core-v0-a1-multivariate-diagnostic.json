@@ -1,0 +1,101 @@
+{
+  "executed": true,
+  "model": "fixed_logistic_diagnostic",
+  "features": [
+    "reference_gap_pct",
+    "return_5d",
+    "close_ma60_distance",
+    "volume_ratio_5",
+    "volume_ratio_20",
+    "atr14_pct",
+    "close_location_value",
+    "same_day_universe_breadth_above_ma60"
+  ],
+  "train_segment": "DEVELOPMENT_AVAILABLE",
+  "validation_segment": "VALIDATION",
+  "fit_policy": {
+    "learning_rate": 0.05,
+    "iterations": 400,
+    "l2": 1.0,
+    "feature_selection": "manifest_predeclared_fixed_set",
+    "hyperparameter_tuning": false,
+    "validation_touched_during_fit": false
+  },
+  "train": {
+    "N": 442,
+    "success_N": 289,
+    "failed_N": 153,
+    "roc_auc": 0.6655584956012394,
+    "pr_auc": 0.7912233917904046,
+    "brier": 0.20935067117649803
+  },
+  "validation": {
+    "N": 121,
+    "success_N": 75,
+    "failed_N": 46,
+    "roc_auc": 0.7217391304347827,
+    "pr_auc": 0.8017344169984844,
+    "brier": 0.24141662415638368
+  },
+  "imputation_from_train_only": {
+    "reference_gap_pct": 0.01763011135750961,
+    "return_5d": 0.058485783220841095,
+    "close_ma60_distance": 0.11873455090277615,
+    "volume_ratio_5": 1.3038060897644859,
+    "volume_ratio_20": 1.3029621112881098,
+    "atr14_pct": 0.040595598324605964,
+    "close_location_value": 0.6923076923076923,
+    "same_day_universe_breadth_above_ma60": 0.8027613412228797
+  },
+  "scaling_from_train_only": {
+    "reference_gap_pct": [
+      0.016793645620460436,
+      0.008164518918268917
+    ],
+    "return_5d": [
+      0.07133802390946246,
+      0.06178045459048197
+    ],
+    "close_ma60_distance": [
+      0.1805554523686291,
+      0.18755460353977552
+    ],
+    "volume_ratio_5": [
+      1.427059981283705,
+      0.6210090292605509
+    ],
+    "volume_ratio_20": [
+      1.5924911192204212,
+      1.1241091685290907
+    ],
+    "atr14_pct": [
+      0.041468362069461584,
+      0.017365750992356203
+    ],
+    "close_location_value": [
+      0.6542959027239623,
+      0.2927631552890816
+    ],
+    "same_day_universe_breadth_above_ma60": [
+      0.7988911059648284,
+      0.04553126402906458
+    ]
+  },
+  "coefficients": {
+    "reference_gap_pct": 0.08423420335568536,
+    "return_5d": 0.0027534534909757673,
+    "close_ma60_distance": -0.10737298378568648,
+    "volume_ratio_5": -0.09458299287108286,
+    "volume_ratio_20": -0.06101468724042894,
+    "atr14_pct": -0.37618996120572556,
+    "close_location_value": 0.33924762216341064,
+    "same_day_universe_breadth_above_ma60": -0.25787108425479505
+  },
+  "diagnostic_only": true,
+  "production_ready": false,
+  "task_id": "TASK-WS3-CORE-V0-A1-EX-ANTE-SUCCESS-VS-FAILED-BREAKOUT-DISCRIMINATION-RESEARCH-20260818",
+  "source_canonical_head": "3ab70b612cbb30335b43a5650d145488f9e8b2c1",
+  "source_baseline_head": "9ca9ba4f15359aa5ea96ba4c3d6bed9439d0346e",
+  "frozen_spec_hash": "6e4cc504f969098e263cfa8e7c43240e9575a3f72f0641ba39da22794ea9870d",
+  "dataset_authority": "canonical Postgres historical read model via read_historical_bars; REC-A1 event dataset preserved"
+}

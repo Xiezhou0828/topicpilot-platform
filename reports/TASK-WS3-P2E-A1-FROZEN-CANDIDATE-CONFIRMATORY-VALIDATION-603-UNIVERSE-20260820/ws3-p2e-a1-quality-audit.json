@@ -1,0 +1,114 @@
+{
+  "all_forward_outcomes_evaluation_only": true,
+  "audit_status": "PASS",
+  "checks": {
+    "A1_CANDIDATE_DEFINITIONS_MUTATED": false,
+    "A1_FORMATION_CHANGED": false,
+    "A2_FORMATION_CHANGED": false,
+    "A2_RESEARCH_EXECUTED": false,
+    "API_UI_SCHEDULER_DEPLOY_EXECUTED": false,
+    "DATABASE_WRITE_EXECUTED": false,
+    "DUPLICATE_CANDIDATE_ASSIGNMENT_KEY_COUNT": 0,
+    "DUPLICATE_EVENT_KEY_COUNT": 0,
+    "FUTURE_SESSION_LEAKAGE_COUNT": 0,
+    "INCOMPLETE_SOURCE_LINEAGE_COUNT": 0,
+    "INVALID_OHLCV_COUNT": 0,
+    "LIFECYCLE_LEAKAGE_COUNT": 0,
+    "LOOK_AHEAD_LEAKAGE_DETECTED": false,
+    "MA60_POLICY_CHANGED": false,
+    "NEW_COMBINATION_SEARCH_PERFORMED": false,
+    "NEW_FEATURE_SEARCH_PERFORMED": false,
+    "NEXT_TASK_CHANGED": false,
+    "NO_DATA_SYNTHETIC_FILL_COUNT": 0,
+    "OUTCOME_DERIVED_FEATURE_DETECTED": false,
+    "PIT_LIMITED_INSTRUMENT_COUNT": 16,
+    "PIT_RECONSTRUCTABLE_INSTRUMENT_COUNT": 603,
+    "PIT_VIOLATION_COUNT": 0,
+    "PRODUCTION_MUTATION": false,
+    "QUARANTINE_LEAKAGE_COUNT": 0,
+    "THRESHOLD_RETUNING_PERFORMED": false,
+    "UNKNOWN_ADJUSTMENT_COERCION_COUNT": 0,
+    "WS1_CHANGED": false,
+    "WS2_CHANGED": false,
+    "WS4_CHANGED": false
+  },
+  "observed_a1": {
+    "candidate_assignment_count": 76555,
+    "candidate_count": 7,
+    "formal_confirmatory_event_count": 3072,
+    "raw_a1_event_count": 14557,
+    "raw_cohort_counts": {
+      "cohort_counts": {
+        "CONTINUED_A1": 0,
+        "FAILED_BREAKOUT_A1": 423,
+        "STRUCTURE_LOSS": 0,
+        "SUCCESSFUL_A1": 13908,
+        "UNCLASSIFIED": 35
+      },
+      "cohort_rates": {
+        "CONTINUED_A1": "0",
+        "FAILED_BREAKOUT_A1": "0.02905818506560417668475647455",
+        "STRUCTURE_LOSS": "0",
+        "SUCCESSFUL_A1": "0.9554166380435529298619220993",
+        "UNCLASSIFIED": "0.002404341553891598543655973071"
+      },
+      "count": 14557,
+      "failed_rate_resolved": "0.02951643290768264601214151141",
+      "resolved_count": 14331,
+      "successful_rate_resolved": "0.9704835670923173539878584886"
+    }
+  },
+  "observed_surface": {
+    "accepted_ohlcv_row_count": 288881,
+    "formal_instrument_count": 603,
+    "global_session_date_count": 486,
+    "source_window": [
+      "2024-08-13",
+      "2026-08-13"
+    ],
+    "strict_full_603_reconciled": true
+  },
+  "schema_version": "ws3-p2e-a1-quality-audit.v1",
+  "source": {
+    "authority_version": "sdf-603-ohlcv-2y.v1",
+    "formal_instrument_count": 603,
+    "foundation_handoff_sha256": "fe924a63fa71f98526921a7acbd71d389e7f76d0971c75de256c494706a068e7",
+    "p1e_a1_event_count": 14557,
+    "p1e_normalized_aggregate_sha256": "363af6741a6edbbb2b4a092aa1b3938e0492f5fb6169885dd05df12a7691224d",
+    "p1e_quality_audit_sha256": "684f9b3753ceaa5d57c210cc0219e202b022e931955191ae2da25b5044ad15ad",
+    "p1e_quality_snapshot": {
+      "future_session_dependency_in_formation": false,
+      "lifecycle_leakage_count": 0,
+      "lookahead_leakage_detected": false,
+      "no_data_synthetic_fill_count": 0,
+      "pit_limited_instrument_count": 16,
+      "pit_reconstructable_instrument_count": 603,
+      "quarantine_leakage_count": 0,
+      "unknown_not_coerced_to_false": true
+    },
+    "p1e_reproducible": "YES",
+    "raw_panel_row_count": 14557,
+    "source_accepted_ohlcv_row_count": 288881,
+    "source_canonical_head": "2b97372b3842e8008d2815bf1282b183c94dd320",
+    "source_contract_expected": {
+      "accepted_rows": 288881,
+      "formal_instruments": 603,
+      "normalized_aggregate_sha256": "e803733e796d8f4d8cf00575cd4045f28c9364572fc61b31ef490e8a65ff47a4",
+      "p1e_aggregate_sha256": "363af6741a6edbbb2b4a092aa1b3938e0492f5fb6169885dd05df12a7691224d",
+      "window": [
+        "2024-08-13",
+        "2026-08-13"
+      ]
+    },
+    "source_formal_instrument_count": 603,
+    "source_manifest_sha256": "2c64f06f67d2d74b2a116be22f2c22fce5df131566f3ff93a99a9a810aa48443",
+    "source_normalized_aggregate_sha256": "e803733e796d8f4d8cf00575cd4045f28c9364572fc61b31ef490e8a65ff47a4",
+    "source_window": [
+      "2024-08-13",
+      "2026-08-13"
+    ]
+  },
+  "source_canonical_head": "2b97372b3842e8008d2815bf1282b183c94dd320",
+  "task_id": "TASK-WS3-P2E-A1-FROZEN-CANDIDATE-CONFIRMATORY-VALIDATION-603-UNIVERSE-20260820",
+  "unknown_adjustment_is_preserved_not_adjusted_truth": true
+}

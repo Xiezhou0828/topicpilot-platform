@@ -1,0 +1,184 @@
+{
+  "frozen_spec_hash": "6e4cc504f969098e263cfa8e7c43240e9575a3f72f0641ba39da22794ea9870d",
+  "production_filter_created": false,
+  "source_canonical_head": "035587e4f263447e778f9384971885e03a53ecc2",
+  "task_id": "TASK-WS3-CORE-V0-A1-QUALITY-FILTER-THRESHOLD-AND-SENSITIVITY-RESEARCH-20260818",
+  "top_single_feature_candidates": [
+    {
+      "candidate_id": "true_range_pct__LOWER_LE_Q70",
+      "candidate_type": "SINGLE_FEATURE",
+      "date_concentration": "LOW",
+      "defensible_threshold_region": "true_range_pct__LOWER_LE_Q70",
+      "failed_breakout_reduction": 0.050730593607305974,
+      "feature_or_combination": "true_range_pct",
+      "forward_return_diagnostics": {
+        "T+1": {
+          "N": 435,
+          "mean": 0.0077525281697734425,
+          "median": 0.001694915254237288,
+          "win_rate": 0.5241379310344828
+        },
+        "T+10": {
+          "N": 367,
+          "mean": 0.04928950951866369,
+          "median": 0.014492753623188406,
+          "win_rate": 0.6021798365122616
+        },
+        "T+3": {
+          "N": 425,
+          "mean": 0.01551082934298088,
+          "median": 0.00398406374501992,
+          "win_rate": 0.5576470588235294
+        },
+        "T+5": {
+          "N": 410,
+          "mean": 0.02232264852419146,
+          "median": 0.00705872594558726,
+          "win_rate": 0.5707317073170731
+        }
+      },
+      "full_sample_success_rate_delta": 0.05073059360730592,
+      "instrument_concentration": "MEDIUM",
+      "july_behavior": "YES",
+      "major_caveat": "Research candidate only; no production filter authority and no exact optimal cutoff claimed.",
+      "market_interpretation": "Prior top robust VOLATILITY evidence, stable direction, and the strongest prior stock-level effect among the selected families.",
+      "research_classification": "STRONG_RESEARCH_CANDIDATE",
+      "retention_rate": 0.7357142857142858,
+      "threshold_plateau": "YES",
+      "threshold_value_not_a_production_cut": 0.06408819993349192,
+      "validation_success_rate_delta": 0.0811962170912498
+    },
+    {
+      "candidate_id": "recent_20_high_proximity__UPPER_GE_Q30",
+      "candidate_type": "SINGLE_FEATURE",
+      "date_concentration": "LOW",
+      "defensible_threshold_region": "recent_20_high_proximity__UPPER_GE_Q30",
+      "failed_breakout_reduction": 0.05111111111111111,
+      "feature_or_combination": "recent_20_high_proximity",
+      "forward_return_diagnostics": {
+        "T+1": {
+          "N": 430,
+          "mean": 0.009913430790356993,
+          "median": 0.0017376312658892866,
+          "win_rate": 0.5279069767441861
+        },
+        "T+10": {
+          "N": 362,
+          "mean": 0.054664284903288965,
+          "median": 0.018424439477071057,
+          "win_rate": 0.6270718232044199
+        },
+        "T+3": {
+          "N": 420,
+          "mean": 0.01835955606368501,
+          "median": 0.005363189952040706,
+          "win_rate": 0.5714285714285714
+        },
+        "T+5": {
+          "N": 407,
+          "mean": 0.02895989112443591,
+          "median": 0.008032128514056224,
+          "win_rate": 0.5847665847665847
+        }
+      },
+      "full_sample_success_rate_delta": 0.05111111111111111,
+      "instrument_concentration": "MEDIUM",
+      "july_behavior": "YES",
+      "major_caveat": "Research candidate only; no production filter authority and no exact optimal cutoff claimed.",
+      "market_interpretation": "Prior robust BREAKOUT_PROXIMITY evidence, directionally consistent in Development/Validation/Holdout, and prior date-centered stock-level signal.",
+      "research_classification": "STRONG_RESEARCH_CANDIDATE",
+      "retention_rate": 0.7185714285714285,
+      "threshold_plateau": "YES",
+      "threshold_value_not_a_production_cut": -0.02684279376635195,
+      "validation_success_rate_delta": 0.07247298156389059
+    },
+    {
+      "candidate_id": "return_5d__LOWER_LE_Q60",
+      "candidate_type": "SINGLE_FEATURE",
+      "date_concentration": "LOW",
+      "defensible_threshold_region": "return_5d__LOWER_LE_Q60",
+      "failed_breakout_reduction": 0.05103663985701523,
+      "feature_or_combination": "return_5d",
+      "forward_return_diagnostics": {
+        "T+1": {
+          "N": 370,
+          "mean": 0.005347736730367911,
+          "median": 0.001039024126949857,
+          "win_rate": 0.5027027027027027
+        },
+        "T+10": {
+          "N": 318,
+          "mean": 0.06241285334527426,
+          "median": 0.019687785821693768,
+          "win_rate": 0.6477987421383647
+        },
+        "T+3": {
+          "N": 360,
+          "mean": 0.016956119237363298,
+          "median": 0.004179463911768812,
+          "win_rate": 0.575
+        },
+        "T+5": {
+          "N": 352,
+          "mean": 0.028247490880906802,
+          "median": 0.008021404710966698,
+          "win_rate": 0.5965909090909091
+        }
+      },
+      "full_sample_success_rate_delta": 0.05103663985701523,
+      "instrument_concentration": "MEDIUM",
+      "july_behavior": "YES",
+      "major_caveat": "Research candidate only; no production filter authority and no exact optimal cutoff claimed.",
+      "market_interpretation": "Prior robust MOMENTUM evidence, stable lower-in-success direction, and no prior date-regime flag.",
+      "research_classification": "STRONG_RESEARCH_CANDIDATE",
+      "retention_rate": 0.6185714285714285,
+      "threshold_plateau": "YES",
+      "threshold_value_not_a_production_cut": 0.07389330024813896,
+      "validation_success_rate_delta": 0.13920143383451156
+    }
+  ],
+  "top_two_feature_combination_candidates": [
+    {
+      "candidate_id": "recent_20_high_proximity__AND__true_range_pct",
+      "candidate_type": "TWO_FEATURE_COMBINATION",
+      "date_concentration": "LOW",
+      "defensible_threshold_region": "recent_20_high_proximity__UPPER_GE_Q30 AND true_range_pct__LOWER_LE_Q70",
+      "failed_breakout_reduction": 0.08687194525904207,
+      "feature_or_combination": "recent_20_high_proximity AND true_range_pct",
+      "forward_return_diagnostics": {
+        "T+1": {
+          "N": 340,
+          "mean": 0.008774656819116152,
+          "median": 0.0015305177364082615,
+          "win_rate": 0.5294117647058824
+        },
+        "T+10": {
+          "N": 285,
+          "mean": 0.04625299236327662,
+          "median": 0.013245033112582781,
+          "win_rate": 0.6210526315789474
+        },
+        "T+3": {
+          "N": 332,
+          "mean": 0.01706955102953291,
+          "median": 0.004179463911768812,
+          "win_rate": 0.572289156626506
+        },
+        "T+5": {
+          "N": 320,
+          "mean": 0.021592760367210827,
+          "median": 0.007458881121474531,
+          "win_rate": 0.58125
+        }
+      },
+      "full_sample_success_rate_delta": 0.08687194525904207,
+      "instrument_concentration": "MEDIUM",
+      "july_behavior": "YES",
+      "major_caveat": "Bounded two-feature diagnostic only; complexity must be confirmed out of sample.",
+      "research_classification": "PROMISING_RESEARCH_CANDIDATE",
+      "retention_rate": 0.5757142857142857,
+      "threshold_plateau": "INHERITED_FROM_SINGLE_REGIONS",
+      "validation_success_rate_delta": 0.11434250444607175
+    }
+  ]
+}

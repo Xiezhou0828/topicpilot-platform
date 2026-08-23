@@ -1,0 +1,91 @@
+{
+  "schema_version": "ws3-core-v0-frozen-spec.v1",
+  "task_id": "TASK-WS3-CORE-V0-REAL-HISTORICAL-WALK-FORWARD-BASELINE-20260818",
+  "source_task": "TASK-WS3-CORE-V0-REAL-HISTORICAL-COVERAGE-RERUN-AND-MAINLINE-RESUME-20260818",
+  "source_commit": "7d49ce7e8c4ed855479a763102048aba2938e1b0",
+  "protocol": {
+    "id": "core-v0-walk-forward.v1",
+    "development": "2026-02-02..2026-06-30",
+    "validation": "2026-07-01..2026-07-31",
+    "holdout": "2026-08-01..2026-08-13",
+    "research_window": "2026-05-12..2026-08-13",
+    "minimum_prior_canonical_trading_sessions": 60,
+    "outcome_horizons": [
+      1,
+      3,
+      5,
+      10
+    ],
+    "tuning_or_optimization": false
+  },
+  "common_eligibility": {
+    "method": "METHOD_A",
+    "rule": "Close(T) >= MA60(T)",
+    "ma60_indicator": "stock.sma.close.v1",
+    "ma60_algorithm": "SMA_CLOSE_V1",
+    "ma60_period": 60,
+    "ma60_window": "last 60 accepted daily closes inclusive of T",
+    "continuity_policy": "EVENT_AWARE_RESEARCH",
+    "continuity_unknown": "preserved as UNKNOWN; research-consumable when real evidence is otherwise valid"
+  },
+  "candidate_definitions": {
+    "topic_context_required_for_this_ohlcv_baseline": false,
+    "topic_context_reason": "The frozen A1/A2 definition assigns PIT topic context only when required by the candidate universe; this baseline evaluates the all-real-instrument OHLCV Core V0 universe.",
+    "A1": {
+      "id": "CORE_V0_A1_PRE_BREAKOUT",
+      "version": "core-v0-a1-pre-breakout.v1",
+      "reference_policy": "PRIOR_20_ACCEPTED_SESSION_HIGH",
+      "reference_window_sessions": 20,
+      "evaluation_session_in_reference": false,
+      "reference_maturity_sessions": 5,
+      "formation": "L1_PASS AND mature reference AND 0 < (reference-close)/reference <= 0.03",
+      "max_reference_distance_pct": "0.03",
+      "additional_hard_gates": []
+    },
+    "A2": {
+      "id": "CORE_V0_A2_CONFIRMED_BREAKOUT",
+      "version": "core-v0-a2-confirmed-breakout.v1",
+      "reference_policy": "PRIOR_20_ACCEPTED_SESSION_HIGH",
+      "reference_window_sessions": 20,
+      "evaluation_session_in_reference": false,
+      "reference_maturity_sessions": 5,
+      "formation": "L1_PASS AND mature reference AND Close(T) > reference",
+      "confirmation": "single-session-close",
+      "extra_breakout_margin_pct": "0.0",
+      "additional_hard_gates": []
+    }
+  },
+  "event_rules": {
+    "known_verified_event_action": "EXCLUDE",
+    "partial_authority": "track-only; never fabricate no-event",
+    "forward_event_integrity": "known event after T may exclude evaluation outcome only; never rewrites formation"
+  },
+  "ranking_and_scores": {
+    "formal_core_v0_continuous_score": false,
+    "formal_core_v0_daily_ranking": false,
+    "formal_main_opportunity_tier": false,
+    "shadow_opportunity_parameters": "not consumed; provisional shadow policy is not Core V0 authority"
+  },
+  "entry_exit_cost_benchmark": {
+    "entry_semantics": "not defined by frozen Core V0 A1/A2 candidate formation",
+    "exit_semantics": "not defined for this baseline",
+    "cost_assumption": null,
+    "benchmark_authority": null,
+    "mfe_mae_contract": null
+  },
+  "anti_leakage": {
+    "candidate_inputs_cutoff": "<= T",
+    "forward_outcomes_cutoff": "> T and evaluation-only",
+    "future_high_low_volume_topic_state_market_state_in_candidate": false
+  },
+  "source_paths_normalized_sha256": {
+    "docs/architecture/CORE_V0_CANDIDATE_DEFINITION_AUTHORITY_CONTRACT.md": "e59699431d08683f7ce73c19e06dac4c1c25ebe092f0627ddd58d52f5855fd43",
+    "docs/architecture/CORE_V0_A1_A2_BREAKOUT_FORMATION_POLICY_V0.md": "b63d23e9494d6b0247c88ed01c3dd7050e7c10e83944eac538eadd84669a5850",
+    "services/api/src/topicpilot_api/research/core_v0_candidate_panel.py": "b5f7e94416b37ccf84cd2656ac69d2ef8ce83ab9e58cdfa250bee36d5c44fe61",
+    "services/api/src/topicpilot_api/research/ws3_research_policy.py": "f56703ffeb6bc0523f5739801683a62fe16121ecee8c9e3ac334da7ad9c3cfc4",
+    "services/api/src/topicpilot_api/historical_read_model.py": "0c3c43f46494df32bd220dea38bafa279d9a29ab00324cc545ac95a1282a8cc8",
+    "reports/TASK-WS3-CORE-V0-REAL-HISTORICAL-COVERAGE-RERUN-AND-MAINLINE-RESUME-20260818/ws3-real-historical-coverage-summary.json": "63b6c392ef3f98631077a9db561ec7b41617e1aa2579bc10fadf2324326633df",
+    "reports/TASK-REC-A1-CORPORATE-ACTION-RESEARCH-DATASET-IMPLEMENTATION/REC-A1-CA-EVENTS-V0.json": "78f684d5b014f43f3b34393be1bc644805e67f05e18b21e7ab98d075a1cd60b2"
+  },
+  "core_v0_frozen_spec_hash": "6e4cc504f969098e263cfa8e7c43240e9575a3f72f0641ba39da22794ea9870d"
+}

@@ -9,6 +9,7 @@ from . import (
     market_data,
     models,  # noqa: F401
     observation_timeline,
+    score_projections,
     snapshots,
     topics,
 )
@@ -31,6 +32,7 @@ from .models import (
     ReferenceTradingStatus,
 )
 from .observation_timeline import *  # noqa: F403
+from .score_projections import *  # noqa: F403
 from .snapshots import *  # noqa: F403
 from .topics import *  # noqa: F403
 
@@ -60,6 +62,7 @@ for _module in (
     lifecycle,
     market_data,
     observation_timeline,
+    score_projections,
     snapshots,
     topics,
 ):

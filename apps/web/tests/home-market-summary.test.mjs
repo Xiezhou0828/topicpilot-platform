@@ -16,34 +16,38 @@ test("V2 Home uses the frozen TodayMarket hierarchy", async () => {
   for (const marker of ["tp-home-overview-card", "market-overview-title", "tp-home-story-card", "mainline-title", "events-title", "rotation-title", "opportunities-title"]) {
     assert.match(home, new RegExp(marker));
   }
-  assert.match(home, /const opportunities = \[/);
   assert.match(home, /useTodayMainlines/);
   assert.doesNotMatch(home, /marketDecision/);
 });
 
-test("V2 Home displays canonical market metrics without browser recomputation", async () => {
-  const home = await read("components/v2/TodayMarketPage.tsx");
-  assert.match(home, /const mockMarketMetrics: MarketMetric\[\] = \[/);
-  assert.match(home, /const liveWeighted/);
-  assert.match(home, /const liveOtc/);
-  assert.match(home, /const liveBreadth/);
-  assert.match(home, /liveMetric\(liveWeighted/);
-  assert.match(home, /liveMetric\(liveOtc/);
-  assert.match(home, /liveBreadth\?\.advance/);
-  assert.match(home, /marketMetrics\.slice\(0, 3\)/);
-  assert.match(home, /marketMetrics\.slice\(3\)/);
+test("V2 Home renders backend-owned Market Overview values without browser aggregation", async () => {
+  const [home, adapter] = await Promise.all([
+    read("components/v2/TodayMarketPage.tsx"),
+    read("lib/today-mainlines.ts"),
+  ]);
+  assert.match(home, /resource\.marketOverview/);
+  assert.match(home, /overview\.trackedStockCount/);
+  assert.match(home, /overview\.trackedTopicCount/);
+  assert.match(home, /health\.advance/);
+  assert.match(home, /health\.decline/);
+  assert.match(home, /health\.flat/);
+  assert.match(adapter, /marketOverview: TodayMarketOverviewResource/);
+  assert.match(adapter, /mapMarketOverview\(resource, previewEnabled\)/);
+  assert.doesNotMatch(home, /mockMarketMetrics|marketIndices|marketRadar|liveBreadth|useSnapshot/);
   assert.doesNotMatch(home, /evidence\.count\s*\/\s*evidence\.denominator/);
 });
 
 test("V2 Home keeps bounded rotation and Opportunity teaser surfaces", async () => {
   const home = await read("components/v2/TodayMarketPage.tsx");
-  assert.match(home, /const opportunities = \[/);
   assert.match(home, /mainlines\.resource\.heating/);
   assert.match(home, /mainlines\.resource\.cooling/);
   assert.match(home, /RotationCard/);
   assert.match(home, /href=\{`\/topics\/\$\{topic\.topicSlug\}`\}/);
-  assert.match(home, /href="\/opportunities"/);
-  assert.match(home, /只呈現研究入口/);
+  assert.match(home, /OpportunityTeaserCard/);
+  assert.match(home, /mainlines\.resource\.opportunities/);
+  assert.match(home, /只顯示具備明確發布狀態的機會資料/);
+  assert.doesNotMatch(home, /const opportunities = \[/);
+  assert.doesNotMatch(home, /href="\/opportunities"/);
   assert.doesNotMatch(home, /const warmingTopics\s*=/);
   assert.doesNotMatch(home, /const coolingTopics\s*=/);
   assert.doesNotMatch(home, /topWarming|topCooling|topicChange.*sort/);
@@ -55,17 +59,18 @@ test("market route redirects to the frozen Home market anchor", async () => {
   assert.match(redirect, /redirect\("\/#market-overview"\)/);
 });
 
-test("V2 Home exposes explicit freshness and Preview/unavailable semantics", async () => {
+test("V2 Home exposes explicit Home publication and unavailable semantics", async () => {
   const [home, foundation] = await Promise.all([
     read("components/v2/TodayMarketPage.tsx"),
     read("components/v2/V2Foundation.tsx"),
   ]);
-  assert.match(home, /isSyntheticPreview/);
-  assert.match(home, /canUseBackendData/);
-  assert.match(home, /freshnessLabel/);
-  assert.match(home, /status\.dataState === "LIVE"/);
-  assert.match(home, /status\.dataState === "SNAPSHOT"/);
-  assert.match(home, /sourceLabel/);
+  assert.match(home, /useTodayMainlines/);
+  assert.match(home, /resource\.marketOverview/);
+  assert.match(home, /resource\.state === "UNAVAILABLE"/);
+  assert.match(home, /resource\.state !== "FORMAL"/);
+  assert.match(home, /resource\.dataDate/);
+  assert.match(home, /resource\.source/);
+  assert.doesNotMatch(home, /isSyntheticPreview|canUseBackendData|freshnessLabel|useSnapshot/);
   assert.match(foundation, /state === "UNAVAILABLE"/);
   assert.match(foundation, /state === "UNAVAILABLE"/);
   assert.match(foundation, /tp-state-\$\{/);
@@ -110,7 +115,7 @@ test("V2 Home keeps strategy semantics out of presentation copy", async () => {
   assert.match(home, /GradeChip grade=\{topic\.grade \?\? "—"\}/);
   assert.match(home, /tp-home-topic-state/);
   assert.match(home, /tp-home-topic-detail/);
-  assert.match(home, /只呈現研究入口，不在首頁完成推薦分析/);
+  assert.match(home, /只顯示具備明確發布狀態的機會資料/);
   assert.doesNotMatch(home, /candidate\.sort|strategyId|rankScore|targetPrice/);
 });
 

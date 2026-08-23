@@ -15,7 +15,7 @@ def test_canonical_revision_is_linear_after_0018():
     config = Config(str(ROOT / "alembic.ini"))
     script = ScriptDirectory.from_config(config)
     assert [head.revision for head in script.get_revisions("heads")] == [
-        "0030_task_data_ref_006g_registry_transition"
+        "0033_task_ws4_reference_registry_transition_merge"
     ]
 
 

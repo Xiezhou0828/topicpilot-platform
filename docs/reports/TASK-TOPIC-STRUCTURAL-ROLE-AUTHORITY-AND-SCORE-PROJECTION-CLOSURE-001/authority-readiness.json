@@ -1,0 +1,247 @@
+{
+  "task_id": "TASK-TOPIC-STRUCTURAL-ROLE-AUTHORITY-AND-SCORE-PROJECTION-CLOSURE-001",
+  "predecessor_task": "TASK-TOPIC-GOVERNED-LEADER-SET-AND-CORE-SEMANTIC-AUDIT-001",
+  "cold_start_canonical_sha": "02bc62f2b307ee165b256c9748bfabe7a417a46b",
+  "canonical_pre_sha": "0608f176dabe40353cbdcae153eb9fcd3b58563a",
+  "source_branch": "codex/task-topic-structural-role-authority-score-projection-20260816",
+  "scope": "contract_dependency_authority_audit_and_documentation_closure_only",
+  "structural_role_policy": {
+    "roles": [
+      "REPRESENTATIVE",
+      "CORE",
+      "RELATED"
+    ],
+    "frequency": "LOW_FREQUENCY",
+    "owner_governed": true,
+    "automatic_hard_selector_authorized": false,
+    "representative_meaning": "high_topic_representativeness; not_daily_leader",
+    "core_meaning": "important_business_or_market_positioning_and_high_topic_market_linkage",
+    "related_meaning": "supported_business_or_market_linkage_not_main_positioning_or_core_identity",
+    "semantic_decisions": "D1_D8_OWNER_APPROVED_AND_CLOSED"
+  },
+  "classification_mode": "SEMI_MANUAL_GOVERNED",
+  "authority_model": {
+    "logical_authority": "one_approved_versioned_structural_role_record_per_topic_instrument_effective_interval",
+    "best_existing_carrier": "InstrumentTopicRelation",
+    "carrier_path": "services/api/src/topicpilot_api/orm/models.py",
+    "carrier_fields": [
+      "topic_id",
+      "instrument_id",
+      "relation_type",
+      "relation_version",
+      "valid_from",
+      "valid_to",
+      "relationship_metadata"
+    ],
+    "formal_artifact_found": false,
+    "implementation_status": "NOT_READY",
+    "disposition": "READY_AFTER_APPROVED_ROLE_READ_MODEL",
+    "missing_authority_fields": [
+      "constrained_structural_role_namespace",
+      "explicit_approval_state_and_reviewer_reference",
+      "source_artifact_id_and_hash",
+      "correction_sequence_and_supersession_identity",
+      "approved_as_of_read_projection"
+    ],
+    "duplicate_manual_role_authority": false
+  },
+  "effective_date_semantics": {
+    "effective_dated": true,
+    "read_mode": "AS_OF_APPROVED_INTERVAL",
+    "historical_behavior": "preserve_effective_role_at_requested_date",
+    "current_mapping_substitution": "PROHIBITED",
+    "ambiguous_or_missing": "FAIL_CLOSED"
+  },
+  "version_semantics": {
+    "versioned": true,
+    "authority_version_required": true,
+    "consumer_projection_versions_must_be_bound": true,
+    "daily_reassignment": false
+  },
+  "approval_semantics": {
+    "workflow": [
+      "evidence_collection",
+      "ai_assisted_proposal",
+      "human_owner_review",
+      "approved_structural_role"
+    ],
+    "formal_consumable_state": "APPROVED",
+    "proposal_or_draft_consumable": false,
+    "frontend_label_is_authority": false
+  },
+  "correction_semantics": {
+    "append_only_successor": true,
+    "superseded_role_remains_current": false,
+    "required_binding": [
+      "structural_authority_id",
+      "authority_version",
+      "effective_date",
+      "source_artifact_hash",
+      "correction_sequence"
+    ],
+    "downstream_action": "RE_DERIVE_OR_EXPLICITLY_SUPERSEDE",
+    "materialization_proven": false
+  },
+  "structural_dynamic_separation": {
+    "separated": true,
+    "dynamic_namespace": [
+      "LEADER",
+      "LEADERSHIP",
+      "FOLLOWER",
+      "CONFIRMING",
+      "LAGGARD",
+      "CATCH-UP",
+      "WEAKENING",
+      "ROTATION"
+    ],
+    "universal_mappings_forbidden": [
+      "REPRESENTATIVE_EQUALS_LEADER",
+      "CORE_EQUALS_LEADER",
+      "LEADER_SUBSET_OF_CORE"
+    ],
+    "dynamic_leadership_formula_created": false
+  },
+  "core_projection": {
+    "projection": "APPROVED_EFFECTIVE_STRUCTURAL_ROLE_EQUALS_CORE_TO_CORE_MEMBER_IDS",
+    "representative_included_by_default": false,
+    "related_included_by_default": false,
+    "authority_identity": "STRUCTURAL_ROLE_AUTHORITY_ID_VERSION_AS_OF",
+    "disposition": "READY_AFTER_APPROVED_STRUCTURAL_ROLE_READ_MODEL"
+  },
+  "governed_leader_set_disposition": {
+    "choice_code": "B",
+    "choice": "COMPATIBILITY_ADAPTER_OVER_STRUCTURAL_ROLE_AUTHORITY",
+    "exact_projection": "OWNER_DECISION_REQUIRED_FOR_EXACT_SCORE_PROJECTION",
+    "projection_ready": false,
+    "role_only_projection": false,
+    "existing_score_invariant": "GOVERNED_LEADER_SET_SUBSET_OF_CORE",
+    "missing_projection_authority": [
+      "exact_member_subset_rule",
+      "importance_projection_semantics",
+      "approved_consumer_profile_or_projection_artifact"
+    ],
+    "independent_manual_role_authority_required": false,
+    "forbidden_substitutes": [
+      "relation_order",
+      "score_order",
+      "daily_movement",
+      "top_n",
+      "volume",
+      "market_cap",
+      "frontend_label"
+    ]
+  },
+  "score_readiness": {
+    "SCORE_OWNER_SEMANTIC_GAP_CLOSED": "YES",
+    "SCORE_STRUCTURAL_ROLE_AUTHORITY_READY": "NO",
+    "SCORE_GOVERNED_INPUT_PROJECTION_READY": "NO",
+    "SCORE_READY_FOR_IMPLEMENTATION": "NO",
+    "disposition": "READY_AFTER_STRUCTURAL_ROLE_AUTHORITY_AND_EXACT_SCORE_PROJECTION",
+    "exact_blockers": [
+      "STRUCTURAL_ROLE_AUTHORITY_READ_MODEL_GAP",
+      "OWNER_DECISION_REQUIRED_FOR_EXACT_SCORE_PROJECTION",
+      "MISSING_COMMITTED_PM_POLICY_APPROVAL_ARTIFACT",
+      "FORMAL_BACKEND_PUBLICATION_READ_CONTRACT_NOT_IMPLEMENTED"
+    ],
+    "on_read_vs_materialized": {
+      "on_read": "ADMISSIBLE_MINIMUM_NOT_IMPLEMENTED",
+      "materialized": "NOT_REQUIRED_BY_CURRENT_EVIDENCE_FUTURE_TRIGGER_ONLY"
+    }
+  },
+  "grade_readiness": {
+    "GRADE_OWNER_SEMANTIC_GAP_CLOSED": "YES",
+    "GRADE_READY_FOR_IMPLEMENTATION": "NO",
+    "disposition": "READY_AFTER_SCORE_PUBLICATION",
+    "exact_blocker": "SCORE_PUBLICATION_READINESS"
+  },
+  "ranking_readiness": {
+    "disposition": "BLOCKED_BY_RANKING_DEFINITION_AUTHORITY",
+    "score_dependency_assumed": false,
+    "historical_boundary": "NOT_AUTHORIZED_BEFORE_FORMAL_PIT_BOUNDARY"
+  },
+  "breadth_readiness": {
+    "disposition": "BLOCKED_BY_BREADTH_DEFINITION_AUTHORITY",
+    "population_semantic": "CORE_TOPIC_MEMBERS",
+    "score_dependency_assumed": false
+  },
+  "leadership_readiness": {
+    "disposition": "BLOCKED_BY_DYNAMIC_LEADERSHIP_DEFINITION_AUTHORITY",
+    "structural_role_authority_is_dynamic_formula": false,
+    "formula_created": false
+  },
+  "concentration_readiness": {
+    "disposition": "BLOCKED_BY_CONCENTRATION_DEFINITION_AUTHORITY",
+    "score_dependency_assumed": false
+  },
+  "lifecycle_readiness": {
+    "disposition": "BLOCKED_BY_LIFECYCLE_TRANSITION_AUTHORITY_AND_FORMAL_UPSTREAM_LINEAGE",
+    "state": "SHADOW_ONLY_UNPUBLISHED",
+    "score_dependency_required": false,
+    "role_creation_authorized": false,
+    "transition_policy_authority": "MISSING_APPROVED_THRESHOLDS_PERSISTENCE_HYSTERESIS_MINIMUM_DURATION"
+  },
+  "topic_map_score_readiness": {
+    "disposition": "READY_AFTER_BACKEND_PUBLICATION",
+    "current_state": "UNAVAILABLE",
+    "browser_derivation": "PROHIBITED_BROWSER_DERIVATION"
+  },
+  "topic_map_grade_readiness": {
+    "disposition": "READY_AFTER_BACKEND_PUBLICATION",
+    "current_state": "UNAVAILABLE",
+    "browser_derivation": "PROHIBITED_BROWSER_DERIVATION"
+  },
+  "historical_authority": {
+    "formal_pit_earliest_date": "2026-08-07",
+    "bounded_formal_dates": [
+      "2026-08-07",
+      "2026-08-10",
+      "2026-08-11",
+      "2026-08-12",
+      "2026-08-13"
+    ],
+    "pre_boundary": "NOT_AUTHORIZED",
+    "current_mapping_as_historical_pit": "PROHIBITED",
+    "walk_forward_leakage_protection": "CURRENT_MAPPING_AND_LATER_AUTHORITY_MUST_NOT_BE_PROJECTED_BACKWARD"
+  },
+  "frontend_publication_boundary": {
+    "topic_overview_and_market_map_are_consumers": true,
+    "formal_role_labels": "UNAVAILABLE_UNTIL_BACKEND_ROLE_AUTHORITY_PUBLICATION",
+    "score_grade_ranking_breadth_leadership_concentration_lifecycle": "UNAVAILABLE_UNTIL_SEPARATE_BACKEND_AUTHORITY",
+    "browser_derivation": "PROHIBITED_BROWSER_DERIVATION",
+    "preview": "EXPLICIT_PREVIEW_ONLY_NEVER_FORMAL_FALLBACK"
+  },
+  "remaining_owner_decisions": [
+    {
+      "decision_id": "WS1-P2B-D001",
+      "question": "Approve the exact Score consumer projection from structural roles, including member subset and importance semantics.",
+      "blocks": [
+        "SCORE_GOVERNED_INPUT_PROJECTION",
+        "SCORE_PUBLICATION",
+        "GRADE_PUBLICATION"
+      ],
+      "does_not_block": [
+        "BREADTH_SEMANTIC_BOUNDARY",
+        "RANKING_DEFINITION",
+        "CONCENTRATION_DEFINITION",
+        "LIFECYCLE_PRODUCT_MEANING"
+      ]
+    }
+  ],
+  "validation_scope": {
+    "application_behavior_changed": false,
+    "database_mutation": false,
+    "production_mutation": false,
+    "migration_or_schema_changed": false,
+    "api_or_frontend_changed": false,
+    "tests_changed": false,
+    "g1": "PRESERVED_NOT_RERUN",
+    "g2": "PRESERVED_NOT_RERUN",
+    "g3": "PRESERVED_NOT_RERUN",
+    "post_close_canary": "PRESERVED_NOT_RERUN",
+    "postgresql": "NOT_RUN",
+    "production": "NOT_RUN",
+    "deploy": "NOT_RUN",
+    "push_remote": "NO",
+    "next_task_changed": false
+  }
+}

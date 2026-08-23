@@ -1,0 +1,3 @@
+cohort,event_count,instrument_count,active_date_count,T5_forward_median,T10_forward_median,T5_mfe_median,T5_mae_median,reference_loss_rate,reclaim_rate_after_loss,failed_path_rate,disposition_role
+RAW_A2_CURRENT_EXPANDED_603_SURFACE,5277,599,410,0.0,0.0016722408026756952,0.05882352941176472,-0.038863976083707175,0.7353222413463377,0.7776332899869961,0.16351118760757316,expanded_base
+RAW_A2_PRIOR_CANONICAL_A2_SURFACE,490,,,0.011245195892847004,-0.0014662756598241566,0.09873370357241329,-0.05200974693731564,,,,frozen_lineage_baseline

@@ -1,0 +1,22 @@
+{
+  "a1_a2_state_signal": "DISCOVERY_ONLY",
+  "all_patterns_hypothesis_candidates_only": true,
+  "intraday_evidence_pilot_justified": "YES_WITH_BOUNDED_LIMITATIONS",
+  "intraday_sample_target_if_justified": {
+    "matched_controls": 100,
+    "successful_events": 100
+  },
+  "relative_strength_signal": "UNAVAILABLE_NO_CANONICAL_BENCHMARK",
+  "schema_version": "ws3-successful-swing-next-research-readiness.v1",
+  "strategy_or_production_claim": false,
+  "successful_swing_confirmatory_feature_research": "YES_WITH_BOUNDED_LIMITATIONS",
+  "task_id": "TASK-WS3-SUCCESSFUL-SWING-OUTCOME-MINING-AND-LEADING-EVIDENCE-DISCOVERY-20260821",
+  "technical_v0_momentum_signal": "DISCOVERY_ONLY",
+  "top_discovery_feature_families": [
+    "TREND_STRUCTURE",
+    "VOLUME_PARTICIPATION",
+    "VOLATILITY_COMPRESSION"
+  ],
+  "volatility_compression_signal": "DISCOVERY_ONLY",
+  "volume_participation_signal": "DISCOVERY_ONLY"
+}

@@ -106,6 +106,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/admin/migration": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Migration
+         * @description Expose the current migration marker through a read-only SELECT probe.
+         */
+        get: operations["migration_api_v1_admin_migration_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/admin/relations": {
         parameters: {
             query?: never;
@@ -565,6 +585,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v2/stocks/{symbol}/price-history": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read bounded canonical daily price history */
+        get: operations["stock_price_history_api_v2_stocks__symbol__price_history_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/stocks/{symbol}/technical": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read Stock Technical V0 evidence and bounded publication status */
+        get: operations["stock_technical_api_v2_stocks__symbol__technical_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v2/topic-snapshots": {
         parameters: {
             query?: never;
@@ -742,17 +796,60 @@ export interface components {
         };
         /** HealthResponse */
         HealthResponse: {
+            /**
+             * Gitsha
+             * @default UNKNOWN
+             */
+            gitSha: string;
             /** Status */
             status: string;
         };
+        /** HistoricalLifecycle */
+        HistoricalLifecycle: {
+            /**
+             * Effectivefrom
+             * Format: date
+             */
+            effectiveFrom: string;
+            /** Effectiveto */
+            effectiveTo?: string | null;
+            /** Evidenceid */
+            evidenceId: string;
+            /** Statuscode */
+            statusCode: string;
+        };
         /** HistoricalPriceHistoryResponse */
         HistoricalPriceHistoryResponse: {
+            /** Asof */
+            asOf?: string | null;
             /** Availabilityreason */
             availabilityReason: string | null;
             /** Code */
             code: string;
+            /**
+             * Coveragestate
+             * @default UNKNOWN
+             */
+            coverageState: string;
+            /**
+             * Freshnessstate
+             * @default UNKNOWN
+             */
+            freshnessState: string;
+            /**
+             * Hasmore
+             * @default false
+             */
+            hasMore: boolean;
             /** Items */
             items: components["schemas"]["HistoricalPricePoint"][];
+            /** Latestobservedat */
+            latestObservedAt?: string | null;
+            /** Latestretrievedat */
+            latestRetrievedAt?: string | null;
+            /** Latesttradingdate */
+            latestTradingDate?: string | null;
+            lifecycle?: components["schemas"]["HistoricalLifecycle"] | null;
             /** Market */
             market: string;
             /** Pointcount */
@@ -767,17 +864,32 @@ export interface components {
              * Format: date
              */
             requestedTo: string;
+            /** Returnedfrom */
+            returnedFrom?: string | null;
+            /** Returnedto */
+            returnedTo?: string | null;
             /** Status */
             status: string;
         };
         /** HistoricalPricePoint */
         HistoricalPricePoint: {
+            /** Adapterversion */
+            adapterVersion?: string | null;
+            /**
+             * Adjustmentstate
+             * @default UNKNOWN
+             */
+            adjustmentState: string;
             /** Close */
             close: number | null;
             /** High */
             high: number | null;
             /** Low */
             low: number | null;
+            /** Mappingpolicyversion */
+            mappingPolicyVersion?: string | null;
+            /** Normalizationcontractversion */
+            normalizationContractVersion?: string | null;
             /**
              * Observedat
              * Format: date-time
@@ -787,6 +899,11 @@ export interface components {
             open: number | null;
             /** Qualitystate */
             qualityState: string;
+            /** Referencedataversion */
+            referenceDataVersion?: string | null;
+            /** Retrievedat */
+            retrievedAt?: string | null;
+            source?: components["schemas"]["HistoricalPriceSource"] | null;
             /** Sourcecode */
             sourceCode: string;
             /**
@@ -796,6 +913,27 @@ export interface components {
             tradingDate: string;
             /** Volume */
             volume: number | null;
+            /** Volumeaggregation */
+            volumeAggregation?: string | null;
+            /** Volumescale */
+            volumeScale?: number | null;
+            /** Volumeunitcode */
+            volumeUnitCode?: string | null;
+        };
+        /** HistoricalPriceSource */
+        HistoricalPriceSource: {
+            /** Adapterversion */
+            adapterVersion: string;
+            /** Mappingpolicyversion */
+            mappingPolicyVersion: string;
+            /** Normalizationcontractversion */
+            normalizationContractVersion: string;
+            /** Observationsemantics */
+            observationSemantics: string;
+            /** Referencedataversion */
+            referenceDataVersion: string;
+            /** Sourcecode */
+            sourceCode: string;
         };
         /** HomeDailyFocus */
         HomeDailyFocus: {
@@ -848,8 +986,11 @@ export interface components {
         HomeMarketOverview: {
             /** Datadate */
             dataDate: string | null;
-            /** Datastatus */
-            dataStatus: string;
+            /**
+             * Datastatus
+             * @enum {string}
+             */
+            dataStatus: "PARTIAL" | "UNAVAILABLE";
             /** Latestsnapshottime */
             latestSnapshotTime: string | null;
             marketHealth: components["schemas"]["HomeMarketHealth"] | null;
@@ -1051,6 +1192,17 @@ export interface components {
             updateMode: string;
             /** Updatedat */
             updatedAt: string | null;
+        };
+        /** MigrationRevisionResponse */
+        MigrationRevisionResponse: {
+            /** Alembicrevision */
+            alembicRevision: string | null;
+            /**
+             * Readonly
+             * @default true
+             * @constant
+             */
+            readOnly: true;
         };
         /** OpportunityShadowCard */
         OpportunityShadowCard: {
@@ -1440,6 +1592,71 @@ export interface components {
         } & {
             [key: string]: unknown;
         };
+        /** StockEodRead */
+        StockEodRead: {
+            /**
+             * Adjustmentstate
+             * @enum {string}
+             */
+            adjustmentState: "ADJUSTED" | "UNADJUSTED" | "UNKNOWN";
+            /** Change */
+            change: number | null;
+            /** Changepct */
+            changePct: number | null;
+            /** Close */
+            close: number | null;
+            /**
+             * Datastatus
+             * @enum {string}
+             */
+            dataStatus: "AVAILABLE" | "PARTIAL" | "UNAVAILABLE" | "NO_TRADE" | "SUSPENDED" | "ADJUSTMENT_UNKNOWN" | "SOURCE_CONFLICT";
+            /** High */
+            high: number | null;
+            /** Low */
+            low: number | null;
+            /** Observedat */
+            observedAt: string | null;
+            /** Open */
+            open: number | null;
+            /** Previousclose */
+            previousClose: number | null;
+            priceSource: components["schemas"]["StockEodSource"] | null;
+            /** Retrievedat */
+            retrievedAt: string | null;
+            /**
+             * Tradingdate
+             * Format: date
+             */
+            tradingDate: string;
+            /** Turnover */
+            turnover: number | null;
+            /** Volume */
+            volume: number | null;
+            volumeSource: components["schemas"]["StockEodSource"] | null;
+        };
+        /** StockEodSource */
+        StockEodSource: {
+            /** Adapterversion */
+            adapterVersion: string;
+            /** Adjustmentstate */
+            adjustmentState?: string | null;
+            /** Mappingpolicyversion */
+            mappingPolicyVersion: string;
+            /** Normalizationcontractversion */
+            normalizationContractVersion: string;
+            /** Observationsemantics */
+            observationSemantics: string;
+            /** Observedat */
+            observedAt: string | null;
+            /** Qualitystate */
+            qualityState: string;
+            /** Referencedataversion */
+            referenceDataVersion: string;
+            /** Retrievedat */
+            retrievedAt: string | null;
+            /** Sourcecode */
+            sourceCode: string;
+        };
         /** StockReadModel */
         StockReadModel: {
             /** Active */
@@ -1452,6 +1669,7 @@ export interface components {
             dataFreshness: string;
             /** Enabled */
             enabled: boolean;
+            eod: components["schemas"]["StockEodRead"] | null;
             /** Exchange */
             exchange: string | null;
             /** Favorite */
@@ -1607,6 +1825,151 @@ export interface components {
             /** Technicalstate */
             technicalState: string | null;
         };
+        /** StockTechnicalInputProvenance */
+        StockTechnicalInputProvenance: {
+            /** Adapterversions */
+            adapterVersions: string[];
+            /**
+             * Adjustmentstate
+             * @enum {string}
+             */
+            adjustmentState: "ADJUSTED" | "UNADJUSTED" | "UNKNOWN" | "CONFLICT";
+            /**
+             * Authority
+             * @constant
+             */
+            authority: "V2_CANONICAL_OBSERVATION_CHAIN";
+            /** Latestobservedat */
+            latestObservedAt: string | null;
+            /** Latestretrievedat */
+            latestRetrievedAt: string | null;
+            /** Latesttradingdate */
+            latestTradingDate: string | null;
+            /**
+             * Lineagestate
+             * @enum {string}
+             */
+            lineageState: "VERSIONED" | "MIXED" | "INCOMPLETE";
+            /** Mappingpolicyversions */
+            mappingPolicyVersions: string[];
+            /** Normalizationcontractversions */
+            normalizationContractVersions: string[];
+            /** Observationcount */
+            observationCount: number;
+            /** Observationsemantics */
+            observationSemantics: string[];
+            /** Qualitystates */
+            qualityStates: string[];
+            /** Referencedataversions */
+            referenceDataVersions: string[];
+            /** Returnedfrom */
+            returnedFrom: string | null;
+            /** Returnedto */
+            returnedTo: string | null;
+            /**
+             * Seriessemantics
+             * @constant
+             */
+            seriesSemantics: "RAW_OBSERVED_DAILY_BAR";
+            /** Sourcecodes */
+            sourceCodes: string[];
+        };
+        /** StockTechnicalPublicationRead */
+        StockTechnicalPublicationRead: {
+            /** Adjustmentpolicyid */
+            adjustmentPolicyId: string | null;
+            /** Algorithmid */
+            algorithmId: string | null;
+            /** Algorithmversion */
+            algorithmVersion: string | null;
+            /** Asof */
+            asOf?: string | null;
+            /** Availabilityreasons */
+            availabilityReasons: string[];
+            /**
+             * Browsercalculationallowed
+             * @constant
+             */
+            browserCalculationAllowed: "NO";
+            /**
+             * Calculationowner
+             * @constant
+             */
+            calculationOwner: "BACKEND_ONLY";
+            /** Code */
+            code: string;
+            /** Continuitypolicy */
+            continuityPolicy: string;
+            /** Deferredindicatorfamilies */
+            deferredIndicatorFamilies: string[];
+            /**
+             * Eventauthoritystatus
+             * @enum {string}
+             */
+            eventAuthorityStatus: "KNOWN_EVENT" | "NO_KNOWN_EVENT_EVIDENCE" | "LOOKUP_UNAVAILABLE" | "NOT_APPLICABLE" | "ERROR";
+            /**
+             * Inputstate
+             * @enum {string}
+             */
+            inputState: "RAW_OBSERVED" | "UNAVAILABLE";
+            /** Limitationreasons */
+            limitationReasons: string[];
+            /** Market */
+            market: string;
+            /** Parametersetid */
+            parameterSetId: string | null;
+            /**
+             * Pricebasis
+             * @constant
+             */
+            priceBasis: "RAW_OBSERVED";
+            provenance: components["schemas"]["StockTechnicalInputProvenance"] | null;
+            /**
+             * Publicationstate
+             * @enum {string}
+             */
+            publicationState: "FORMAL" | "FORMAL_WITH_LIMITATION" | "DEFERRED" | "UNAVAILABLE" | "NOT_PUBLISHED";
+            /**
+             * Publicationstatus
+             * @enum {string}
+             */
+            publicationStatus: "AVAILABLE" | "AVAILABLE_WITH_LIMITATION" | "BLOCKED" | "UNAVAILABLE" | "ERROR";
+            /** Publishedindicators */
+            publishedIndicators: string[];
+            /** Reasoncodes */
+            reasonCodes: string[];
+            /**
+             * Requestedfrom
+             * Format: date
+             */
+            requestedFrom: string;
+            /**
+             * Requestedto
+             * Format: date
+             */
+            requestedTo: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "FORMAL" | "DEFERRED" | "UNAVAILABLE";
+            /** Technicalcontractversion */
+            technicalContractVersion: string;
+            /**
+             * Technicaleligibility
+             * @enum {string}
+             */
+            technicalEligibility: "ELIGIBLE" | "INELIGIBLE" | "UNAVAILABLE" | "ERROR";
+            /** Technicalevidence */
+            technicalEvidence: components["schemas"]["TechnicalEvidence"][];
+            /** Technicalpolicyversion */
+            technicalPolicyVersion: string;
+            /**
+             * Technicalresultstatus
+             * @enum {string}
+             */
+            technicalResultStatus: "VALID" | "INELIGIBLE" | "UNAVAILABLE" | "ERROR";
+        };
         /** StockTopicRelationRead */
         StockTopicRelationRead: {
             /** Relationtype */
@@ -1674,20 +2037,119 @@ export interface components {
             /** Strategykey */
             strategyKey: string;
         };
+        /** TechnicalEvidence */
+        TechnicalEvidence: {
+            /** Actualobservationcount */
+            actualObservationCount: number;
+            actualObservationWindow?: components["schemas"]["TechnicalObservationWindow"] | null;
+            /** Algorithmid */
+            algorithmId: string;
+            /** Algorithmversion */
+            algorithmVersion: string;
+            /** Asof */
+            asOf?: string | null;
+            /** Availabilityreason */
+            availabilityReason?: string | null;
+            /** Continuityevidence */
+            continuityEvidence: {
+                [key: string]: unknown;
+            };
+            /**
+             * Continuitystate
+             * @enum {string}
+             */
+            continuityState: "CONTINUITY_PASS_BOUNDED" | "CONTINUITY_FAIL" | "CONTINUITY_UNKNOWN";
+            /**
+             * Eventauthoritystatus
+             * @enum {string}
+             */
+            eventAuthorityStatus: "KNOWN_EVENT" | "NO_KNOWN_EVENT_EVIDENCE" | "LOOKUP_UNAVAILABLE" | "NOT_APPLICABLE" | "ERROR";
+            /** Eventlookupevidence */
+            eventLookupEvidence: {
+                [key: string]: unknown;
+            };
+            /** Eventlookupstate */
+            eventLookupState: string;
+            /** Indicatorfamily */
+            indicatorFamily: string;
+            /** Indicatorid */
+            indicatorId: string;
+            /** Indicatorversion */
+            indicatorVersion: string;
+            /** Instrumentidentity */
+            instrumentIdentity: string;
+            /** Knowneventhandling */
+            knownEventHandling: {
+                [key: string]: unknown;
+            }[];
+            /** Limitationreasons */
+            limitationReasons?: string[];
+            /** Market */
+            market: string;
+            /** Parameterset */
+            parameterSet: {
+                [key: string]: unknown;
+            };
+            /**
+             * Pricebasis
+             * @enum {string}
+             */
+            priceBasis: "RAW_OBSERVED" | "NOT_PRICE_BASED";
+            /**
+             * Publicationstate
+             * @enum {string}
+             */
+            publicationState: "FORMAL" | "FORMAL_WITH_LIMITATION" | "UNAVAILABLE" | "DEFERRED" | "UNKNOWN";
+            /** Requiredobservationcount */
+            requiredObservationCount: number;
+            requiredObservationWindow?: components["schemas"]["TechnicalObservationWindow"] | null;
+            /**
+             * Sessiondate
+             * Format: date
+             */
+            sessionDate: string;
+            /** Sourceauthority */
+            sourceAuthority: string;
+            /** Sourcelineage */
+            sourceLineage: {
+                [key: string]: unknown;
+            };
+            /** Symbol */
+            symbol: string;
+            /** Value */
+            value: string | null;
+        };
+        /** TechnicalObservationWindow */
+        TechnicalObservationWindow: {
+            /** Endsession */
+            endSession?: string | null;
+            /** Observationcount */
+            observationCount: number;
+            /** Startsession */
+            startSession?: string | null;
+        };
         /** TopicConstituentRead */
         TopicConstituentRead: {
             /** Changepct */
             changePct: number | null;
             /** Code */
             code: string;
+            /** Facthash */
+            factHash?: string | null;
+            /** Factstate */
+            factState?: string | null;
             /** Freshness */
             freshness: string;
             /** Instrumentid */
             instrumentId: string;
             /** Name */
             name: string | null;
+            /** Observationdate */
+            observationDate?: string | null;
             /** Observedat */
             observedAt: string | null;
+            /** Observedclassification */
+            observedClassification?: string | null;
             /** Price */
             price: number | null;
             /** Relationweight */
@@ -1822,8 +2284,11 @@ export interface components {
             currentStageEnteredAt: string | null;
             /** Currentstagetradingdays */
             currentStageTradingDays: number | null;
-            /** Datastatus */
-            dataStatus: string;
+            /**
+             * Datastatus
+             * @enum {string}
+             */
+            dataStatus: "AVAILABLE" | "FORMAL_AVAILABLE" | "SHADOW_AVAILABLE" | "INSUFFICIENT_DATA" | "PENDING" | "PREVIEW" | "NOT_AVAILABLE" | "WAITING_FOR_FORMAL_LINEAGE" | "FAIL_CLOSED";
             /** Evaluationdate */
             evaluationDate?: string | null;
             /** Evidence */
@@ -1832,6 +2297,10 @@ export interface components {
             };
             /** History */
             history?: components["schemas"]["TopicLifecycleSegmentRead"][];
+            /** Lineage */
+            lineage?: {
+                [key: string]: unknown;
+            };
             /** Policyversion */
             policyVersion?: string | null;
             /** Previousstage */
@@ -1873,8 +2342,20 @@ export interface components {
             /** Groupname */
             groupName: string | null;
             lifecycle: components["schemas"]["TopicLifecycleRead"];
+            /** Lineage */
+            lineage?: {
+                [key: string]: unknown;
+            };
             /** Name */
             name: string;
+            /** Publication */
+            publication?: {
+                [key: string]: unknown;
+            };
+            /** Quality */
+            quality?: {
+                [key: string]: unknown;
+            };
             /** Readablestate */
             readableState: string;
             /** Score */
@@ -1991,31 +2472,101 @@ export interface components {
         };
         /** TopicSnapshotResponse */
         TopicSnapshotResponse: {
+            /** Asofat */
+            asOfAt?: string | null;
             /** Averagechange */
             averageChange: number | null;
             /** Calculationversion */
             calculationVersion: string;
+            /** Calendarcode */
+            calendarCode?: string | null;
+            /** Correctionsequence */
+            correctionSequence?: number | null;
             /** Coveragepct */
             coveragePct: number | null;
             /** Datastatus */
             dataStatus: string;
+            /** Eligiblecount */
+            eligibleCount?: number | null;
+            /** Excludedcount */
+            excludedCount?: number | null;
+            /** Expectedcount */
+            expectedCount?: number | null;
+            /** Finalitystate */
+            finalityState?: string | null;
+            /** Finalizedat */
+            finalizedAt?: string | null;
+            /** Flatcount */
+            flatCount?: number | null;
+            /** Freshnessstate */
+            freshnessState?: string | null;
+            /** Generatedat */
+            generatedAt?: string | null;
+            /** Generatedstate */
+            generatedState?: string | null;
+            /** Lineagehash */
+            lineageHash?: string | null;
+            /** Mappingeffectivefrom */
+            mappingEffectiveFrom?: string | null;
+            /** Mappingpolicyversion */
+            mappingPolicyVersion?: string | null;
             /** Marketgrade */
             marketGrade: string | null;
+            /** Membershipmode */
+            membershipMode?: string | null;
+            /** Membershipsnapshothash */
+            membershipSnapshotHash?: string | null;
+            /** Membershipsnapshotid */
+            membershipSnapshotId?: string | null;
+            /** Negativecount */
+            negativeCount?: number | null;
+            /** Notradecount */
+            noTradeCount?: number | null;
             /** Observedstockcount */
             observedStockCount: number;
             /** Parenttopic */
             parentTopic: string | null;
+            /** Positivecount */
+            positiveCount?: number | null;
+            /** Publicationmode */
+            publicationMode?: string | null;
+            /** Publicationstate */
+            publicationState?: string | null;
+            /** Publishedat */
+            publishedAt?: string | null;
+            /** Qualityflags */
+            qualityFlags?: {
+                [key: string]: unknown;
+            } | null;
+            /** Referenceregistryversion */
+            referenceRegistryVersion?: string | null;
+            /** Relationversion */
+            relationVersion?: string | null;
             /** Scorestatus */
             scoreStatus: string;
+            /** Sessioncode */
+            sessionCode?: string | null;
             /**
              * Snapshotdate
              * Format: date
              */
             snapshotDate: string;
+            /** Snapshotidentity */
+            snapshotIdentity?: string | null;
+            /** Sourceartifacthash */
+            sourceArtifactHash?: string | null;
+            /** Sourceartifactid */
+            sourceArtifactId?: string | null;
+            /** Sourcerunid */
+            sourceRunId?: string | null;
             /** Stockcount */
             stockCount: number;
             /** Strongstockcount */
-            strongStockCount: number;
+            strongStockCount: number | null;
+            /** Supersedessnapshotid */
+            supersedesSnapshotId?: string | null;
+            /** Supersessionreason */
+            supersessionReason?: string | null;
             /** Topicdirection */
             topicDirection: string;
             /** Topicid */
@@ -2026,13 +2577,19 @@ export interface components {
             topicScore: number | null;
             /** Topicslug */
             topicSlug: string;
+            /** Tradingdaystate */
+            tradingDayState?: string | null;
+            /** Unavailablereason */
+            unavailableReason?: string | null;
+            /** Unknowncount */
+            unknownCount?: number | null;
             /**
              * Updatedat
              * Format: date-time
              */
             updatedAt: string;
             /** Weakstockcount */
-            weakStockCount: number;
+            weakStockCount: number | null;
         };
         /** TopicStatusRead */
         TopicStatusRead: {
@@ -2284,6 +2841,26 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    migration_api_v1_admin_migration_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MigrationRevisionResponse"];
                 };
             };
         };
@@ -3117,6 +3694,78 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["StockReadModel"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    stock_price_history_api_v2_stocks__symbol__price_history_get: {
+        parameters: {
+            query: {
+                from: string;
+                to: string;
+                market?: string | null;
+                limit?: number;
+            };
+            header?: never;
+            path: {
+                symbol: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HistoricalPriceHistoryResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    stock_technical_api_v2_stocks__symbol__technical_get: {
+        parameters: {
+            query: {
+                from: string;
+                to: string;
+                market?: string | null;
+                limit?: number;
+            };
+            header?: never;
+            path: {
+                symbol: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StockTechnicalPublicationRead"];
                 };
             };
             /** @description Validation Error */

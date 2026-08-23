@@ -1,0 +1,23 @@
+{
+  "task_id": "TASK-WS3-CORE-V0-A1-A2-VALIDATION-STABILITY-AND-FAILURE-MODE-REVIEW-20260818",
+  "frozen_spec_hash": "6e4cc504f969098e263cfa8e7c43240e9575a3f72f0641ba39da22794ea9870d",
+  "source_baseline_head": "9ca9ba4f15359aa5ea96ba4c3d6bed9439d0346e",
+  "validation_failure_explained": "YES",
+  "A1_validation_stability": "INCONCLUSIVE",
+  "A2_validation_stability": "INCONCLUSIVE",
+  "A1_nontransition_taxonomy_ready": "YES_BOUNDED",
+  "A1_nontransition_false_breakout_hypothesis": "YES_BOUNDED",
+  "A1_to_A2_forward_separation_reproduced": "YES",
+  "future_ex_ante_discrimination_research": "YES_RESEARCH_CANDIDATE",
+  "ready_for_ws3_next_mainline_step": "YES_WITH_BOUNDED_LIMITATIONS",
+  "remaining_blockers": "NO_EX_ANTE_RULE_AUTHORIZED; VALIDATION_WEAKNESS_REMAINS_TIME_WINDOW_SENSITIVE",
+  "not_authorized": [
+    "threshold optimization",
+    "false-breakout filter",
+    "A1/A2 redesign",
+    "new strategy",
+    "WS1/WS2/WS4",
+    "production",
+    "NEXT_TASK change"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "task_id": "TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-CANONICAL-AUTHORITY-PROMOTION-AND-CONSUMER-HANDOFF-20260820",
+  "source_bootstrap_reproducibility": {
+    "normalized_surface_md5": "0cbdb8fe950c7cbe494dcc5cb50c6e33",
+    "second_normalized_surface_md5": "0cbdb8fe950c7cbe494dcc5cb50c6e33",
+    "md5_equal": true,
+    "normalized_surface_sha256": "e803733e796d8f4d8cf00575cd4045f28c9364572fc61b31ef490e8a65ff47a4",
+    "source_reproducible": "PASS"
+  },
+  "authority_contract_hash": "fe1a51015d48d64b28007d36e291bed59085e7beacf5599ee5d5a35569747fcf",
+  "authority_contract_hash_second_resolution": "fe1a51015d48d64b28007d36e291bed59085e7beacf5599ee5d5a35569747fcf",
+  "authority_hash_equal": true,
+  "source_artifacts_have_hashes": true,
+  "reproducible": "PASS"
+}

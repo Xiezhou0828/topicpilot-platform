@@ -1,0 +1,221 @@
+{
+  "schemaVersion": "topic-formula-replay-corpus.v1",
+  "mode": "RESEARCH_ONLY",
+  "corpusId": "topicpilot-public-synthetic-replay",
+  "corpusVersion": "v1",
+  "contentDigest": "9d7693b87bb7f096d9105d50814cc7807334446773214aa7c0dc37dda25c3640",
+  "cases": [
+    {
+      "caseId": "complete-neutral",
+      "caseVersion": "v1",
+      "labels": ["complete", "synthetic"],
+      "aggregation": {
+        "asOf": "2026-08-01",
+        "featureSetVersion": "synthetic-research-evidence.v1",
+        "runtimeVersion": "synthetic-feature-runtime.v1",
+        "aggregationVersion": "synthetic-aggregate.v1",
+        "topics": [
+          {
+            "topicId": "synthetic-topic-alpha",
+            "status": "READY_UNSCORED",
+            "quality": {
+              "readyFeatureCount": 2,
+              "insufficientFeatureCount": 0,
+              "invalidFeatureCount": 0,
+              "coverageMin": 1.0,
+              "coverageMean": 1.0
+            },
+            "qualityFlags": [],
+            "features": [
+              {
+                "featureName": "synthetic_breadth_input",
+                "featureVersion": "v1",
+                "status": "READY",
+                "value": 60.0,
+                "coverage": 1.0,
+                "qualityFlags": [],
+                "metadata": {"fixtureOnly": true}
+              },
+              {
+                "featureName": "synthetic_leadership_input",
+                "featureVersion": "v1",
+                "status": "READY",
+                "value": 40.0,
+                "coverage": 1.0,
+                "qualityFlags": [],
+                "metadata": {"fixtureOnly": true}
+              }
+            ]
+          },
+          {
+            "topicId": "synthetic-topic-beta",
+            "status": "READY_UNSCORED",
+            "quality": {
+              "readyFeatureCount": 2,
+              "insufficientFeatureCount": 0,
+              "invalidFeatureCount": 0,
+              "coverageMin": 1.0,
+              "coverageMean": 1.0
+            },
+            "qualityFlags": [],
+            "features": [
+              {
+                "featureName": "synthetic_breadth_input",
+                "featureVersion": "v1",
+                "status": "READY",
+                "value": 40.0,
+                "coverage": 1.0,
+                "qualityFlags": [],
+                "metadata": {"fixtureOnly": true}
+              },
+              {
+                "featureName": "synthetic_leadership_input",
+                "featureVersion": "v1",
+                "status": "READY",
+                "value": 60.0,
+                "coverage": 1.0,
+                "qualityFlags": [],
+                "metadata": {"fixtureOnly": true}
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "caseId": "invalid-evidence",
+      "caseVersion": "v1",
+      "labels": ["invalid", "synthetic"],
+      "aggregation": {
+        "asOf": "2026-08-04",
+        "featureSetVersion": "synthetic-research-evidence.v1",
+        "runtimeVersion": "synthetic-feature-runtime.v1",
+        "aggregationVersion": "synthetic-aggregate.v1",
+        "topics": [
+          {
+            "topicId": "synthetic-topic-alpha",
+            "status": "INVALID_INPUT",
+            "quality": {
+              "readyFeatureCount": 1,
+              "insufficientFeatureCount": 0,
+              "invalidFeatureCount": 1,
+              "coverageMin": 1.0,
+              "coverageMean": 1.0
+            },
+            "qualityFlags": ["SYNTHETIC_INVALID_VALUE"],
+            "features": [
+              {
+                "featureName": "synthetic_breadth_input",
+                "featureVersion": "v1",
+                "status": "INVALID_INPUT",
+                "value": null,
+                "coverage": null,
+                "qualityFlags": ["SYNTHETIC_INVALID_VALUE"],
+                "metadata": {"fixtureOnly": true}
+              },
+              {
+                "featureName": "synthetic_leadership_input",
+                "featureVersion": "v1",
+                "status": "READY",
+                "value": 50.0,
+                "coverage": 1.0,
+                "qualityFlags": [],
+                "metadata": {"fixtureOnly": true}
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "caseId": "missing-evidence",
+      "caseVersion": "v1",
+      "labels": ["missing", "synthetic"],
+      "aggregation": {
+        "asOf": "2026-08-03",
+        "featureSetVersion": "synthetic-research-evidence.v1",
+        "runtimeVersion": "synthetic-feature-runtime.v1",
+        "aggregationVersion": "synthetic-aggregate.v1",
+        "topics": [
+          {
+            "topicId": "synthetic-topic-alpha",
+            "status": "DATA_INSUFFICIENT",
+            "quality": {
+              "readyFeatureCount": 1,
+              "insufficientFeatureCount": 1,
+              "invalidFeatureCount": 0,
+              "coverageMin": 0.5,
+              "coverageMean": 0.75
+            },
+            "qualityFlags": ["SYNTHETIC_MISSING_VALUE"],
+            "features": [
+              {
+                "featureName": "synthetic_breadth_input",
+                "featureVersion": "v1",
+                "status": "DATA_INSUFFICIENT",
+                "value": null,
+                "coverage": 0.5,
+                "qualityFlags": ["SYNTHETIC_MISSING_VALUE"],
+                "metadata": {"fixtureOnly": true}
+              },
+              {
+                "featureName": "synthetic_leadership_input",
+                "featureVersion": "v1",
+                "status": "READY",
+                "value": 25.0,
+                "coverage": 1.0,
+                "qualityFlags": [],
+                "metadata": {"fixtureOnly": true}
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "caseId": "valid-zero",
+      "caseVersion": "v1",
+      "labels": ["synthetic", "zero"],
+      "aggregation": {
+        "asOf": "2026-08-02",
+        "featureSetVersion": "synthetic-research-evidence.v1",
+        "runtimeVersion": "synthetic-feature-runtime.v1",
+        "aggregationVersion": "synthetic-aggregate.v1",
+        "topics": [
+          {
+            "topicId": "synthetic-topic-alpha",
+            "status": "READY_UNSCORED",
+            "quality": {
+              "readyFeatureCount": 2,
+              "insufficientFeatureCount": 0,
+              "invalidFeatureCount": 0,
+              "coverageMin": 1.0,
+              "coverageMean": 1.0
+            },
+            "qualityFlags": [],
+            "features": [
+              {
+                "featureName": "synthetic_breadth_input",
+                "featureVersion": "v1",
+                "status": "READY",
+                "value": 0.0,
+                "coverage": 1.0,
+                "qualityFlags": [],
+                "metadata": {"fixtureOnly": true}
+              },
+              {
+                "featureName": "synthetic_leadership_input",
+                "featureVersion": "v1",
+                "status": "READY",
+                "value": 0.0,
+                "coverage": 1.0,
+                "qualityFlags": [],
+                "metadata": {"fixtureOnly": true}
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

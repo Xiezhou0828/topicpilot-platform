@@ -1,0 +1,27 @@
+{
+  "task_id": "TASK-WS2-TECHNICAL-V0-REAL-PUBLICATION-COVERAGE-VALIDATION-AND-MAINLINE-RESUME-20260818",
+  "scope": "four bounded real-reader cases; external positive controls listed separately",
+  "reason_distribution": {
+    "INSUFFICIENT_HISTORY": 1,
+    "BELOW_MA60_TECHNICAL_INELIGIBLE": 0,
+    "KNOWN_EVENT": 1,
+    "EVENT_LOOKUP_FAILURE": 1,
+    "DATA_GAP": 0,
+    "IDENTITY_FAILURE": 0,
+    "PUBLICATION_IMPLEMENTATION_ERROR": 0,
+    "OTHER": 0
+  },
+  "case_mapping": {
+    "TPE:1314 ordinary_no_match": "AVAILABLE_MA60",
+    "TPE:2330 known_event": "KNOWN_EVENT",
+    "TPE:1314 lookup_failure": "EVENT_LOOKUP_FAILURE",
+    "TPE:1314 insufficient_history": "INSUFFICIENT_HISTORY"
+  },
+  "policy_note": "Successful no-match is not a failure reason and is not PROVEN_NO_EVENT or COVERED_NO_EVENT.",
+  "classification": {
+    "expected_policy_outcomes": 3,
+    "data_limitations": 2,
+    "implementation_defects_discovered": 1,
+    "implementation_defects_remaining_after_task_worktree_fix": 0
+  }
+}

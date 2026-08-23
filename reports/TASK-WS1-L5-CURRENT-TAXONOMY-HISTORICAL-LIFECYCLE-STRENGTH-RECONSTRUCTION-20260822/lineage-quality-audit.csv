@@ -1,0 +1,17 @@
+dimension,state,row_count,pct_of_dataset,evidence_note
+quality_status,FAIL_CLOSED,4750,29.230769,Research-only lineage flag; not economic-return truth.
+quality_status,PARTIAL,11500,70.769231,Research-only lineage flag; not economic-return truth.
+lineage_status,FAIL_CLOSED,4750,29.230769,Research-only lineage flag; not economic-return truth.
+lineage_status,PARTIAL,101,0.621538,Research-only lineage flag; not economic-return truth.
+lineage_status,UNKNOWN,11399,70.147692,Research-only lineage flag; not economic-return truth.
+universe_lineage_status,AVAILABLE_FROZEN_CURRENT,16250,100.0,Research-only lineage flag; not economic-return truth.
+price_lineage_status,AVAILABLE_BOUNDED,11399,70.147692,Research-only lineage flag; not economic-return truth.
+price_lineage_status,PARTIAL,101,0.621538,Research-only lineage flag; not economic-return truth.
+price_lineage_status,UNAVAILABLE,4750,29.230769,Research-only lineage flag; not economic-return truth.
+adjustment_lineage_status,UNAVAILABLE,4750,29.230769,Research-only lineage flag; not economic-return truth.
+adjustment_lineage_status,UNKNOWN,11500,70.769231,Research-only lineage flag; not economic-return truth.
+security_identity_lineage_status,PARTIAL,16250,100.0,Research-only lineage flag; not economic-return truth.
+member_fact_lineage_status,UNKNOWN,16250,100.0,Research-only lineage flag; not economic-return truth.
+member_fact_reconciliation_status,UNRESOLVED_COUNT_MISMATCH,16250,100.0,Research-only lineage flag; not economic-return truth.
+strength_raw_evidence_status,COMPLETE,11500,70.769231,Raw evidence vector completeness is separate from quality metadata.
+strength_raw_evidence_status,INCOMPLETE,4750,29.230769,Raw evidence vector completeness is separate from quality metadata.

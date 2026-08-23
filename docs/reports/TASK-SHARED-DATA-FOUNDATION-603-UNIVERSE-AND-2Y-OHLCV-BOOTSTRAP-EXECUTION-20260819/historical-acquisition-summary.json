@@ -1,0 +1,29 @@
+{
+  "task_id": "TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-BOOTSTRAP-EXECUTION-20260819",
+  "run_id": "TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-BOOTSTRAP-EXECUTION-20260819-RUN-001",
+  "requested_window": [
+    "2024-08-13",
+    "2026-08-13"
+  ],
+  "total_work_items": 15075,
+  "status_counts": {
+    "complete": 14748,
+    "error": 144,
+    "no_data": 142,
+    "skipped_lifecycle": 41
+  },
+  "provider_request_lineage_requests": {
+    "complete": 14751,
+    "error": 164,
+    "no_data": 142,
+    "skipped_lifecycle": 0
+  },
+  "estimated_planning_requests": 11526,
+  "actual_checkpoint_lineage_requests": 15057,
+  "accepted_full_ohlcv_rows": 288881,
+  "canonical_family_observations": 715838,
+  "raw_market_observations": 359492,
+  "timeline_entries": 357919,
+  "database_size": "1621 MB",
+  "retry_summary": "bounded retries captured in lineage; bootstrap RUN_COMPLETE reported retry_count=13 on final full invocation; quarantine revalidation reported retry_count=17"
+}

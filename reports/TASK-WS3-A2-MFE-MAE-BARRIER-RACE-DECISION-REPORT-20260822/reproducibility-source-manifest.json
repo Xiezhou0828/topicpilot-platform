@@ -1,0 +1,181 @@
+{
+  "aggregate_payload_sha256": "8e15ef2637ddc2beddeef935350c86dbf9323ade21e1f56e44cb916dc11b1a6b",
+  "governance_flags": {
+    "A_SETUP_ACCEPTED": "NO",
+    "A_STRATEGY_ACCEPTED": "NO",
+    "DEPLOY": "NO",
+    "NEXT_TASK_CHANGED": "NO",
+    "PRODUCTION_MUTATION": "NO",
+    "PUSH": "NO",
+    "REMOTE_MERGE": "NO",
+    "WS3_ONLY": "YES"
+  },
+  "method": {
+    "barrier_order_method": "first_cumulative_horizon_crossing; same horizon = SAME_SESSION_ORDER_UNKNOWN",
+    "cohort_rebuild": 0,
+    "filter_status": "ablation_only",
+    "input_mode": "existing_committed_path_aware_csv_only",
+    "owner_labels": "blank_template; no labels inferred",
+    "quantile_method": "linear_interpolation",
+    "raw_panel_scans": 0
+  },
+  "output_files": [
+    {
+      "path": "reports/TASK-WS3-A2-MFE-MAE-BARRIER-RACE-DECISION-REPORT-20260822/formal-closure-report.md",
+      "sha256": "072ae0a2e8b977d71836d3b9033ef1bf249d4ac76cd5370e515903b71bb55f75"
+    },
+    {
+      "path": "reports/TASK-WS3-A2-MFE-MAE-BARRIER-RACE-DECISION-REPORT-20260822/run-summary.json",
+      "sha256": "6c2314fbada94a5761204ff4ce56ce8b0e2b380da2a82b0a7e63af171ee9d8cc"
+    },
+    {
+      "path": "reports/TASK-WS3-A2-MFE-MAE-BARRIER-RACE-DECISION-REPORT-20260822/mfe-mae-distribution.csv",
+      "sha256": "39b9d021be98cd941ef92657bcfccf0eeb5e91f45348ce927eec1367f282148a"
+    },
+    {
+      "path": "reports/TASK-WS3-A2-MFE-MAE-BARRIER-RACE-DECISION-REPORT-20260822/endpoint-vs-path-disagreement.csv",
+      "sha256": "e21aa4efe53d5deba4e1e0dfe2ae9d8832d1822cff4b84f3ead2fa1afbd12a4b"
+    },
+    {
+      "path": "reports/TASK-WS3-A2-MFE-MAE-BARRIER-RACE-DECISION-REPORT-20260822/positive-endpoint-adverse-path.csv",
+      "sha256": "6ca08f9862cd6152b737433131855a2859a6d7386af73ceae840230b35243bbf"
+    },
+    {
+      "path": "reports/TASK-WS3-A2-MFE-MAE-BARRIER-RACE-DECISION-REPORT-20260822/barrier-race-summary.csv",
+      "sha256": "4f29768216b37883a9e4976440eff6079452344747298b5d6bcbd1486ef1c970"
+    },
+    {
+      "path": "reports/TASK-WS3-A2-MFE-MAE-BARRIER-RACE-DECISION-REPORT-20260822/time-to-opportunity.csv",
+      "sha256": "91fa997125e9d32075d7b338acf290cef38fd351e61eb8413d40b7d3a2c20c3d"
+    },
+    {
+      "path": "reports/TASK-WS3-A2-MFE-MAE-BARRIER-RACE-DECISION-REPORT-20260822/old-t10-proxy-reconciliation.csv",
+      "sha256": "327f4688284cfe0d1d088131fe6ed60ac5fd3398b38d47f342d2f3cbaacfc2ab"
+    },
+    {
+      "path": "reports/TASK-WS3-A2-MFE-MAE-BARRIER-RACE-DECISION-REPORT-20260822/path-aware-filter-ablation.csv",
+      "sha256": "b6cd9f92fe340808ad1801b244fb27d8744fa7cfba6dab507eb0722723289a46"
+    },
+    {
+      "path": "reports/TASK-WS3-A2-MFE-MAE-BARRIER-RACE-DECISION-REPORT-20260822/extension-path-descriptive-analysis.csv",
+      "sha256": "da6a7f90a212f88e8accc9a27aae22a2a1f8b55fdd0ff7ec262f49c9cb034f9e"
+    },
+    {
+      "path": "reports/TASK-WS3-A2-MFE-MAE-BARRIER-RACE-DECISION-REPORT-20260822/owner-30-case-label-input-template.csv",
+      "sha256": "42a0dc187ce35b26cf236e69ff21a060e2904fb28abde6734d887d8d2d52f14a"
+    },
+    {
+      "path": "reports/TASK-WS3-A2-MFE-MAE-BARRIER-RACE-DECISION-REPORT-20260822/A2-MFE-MAE-BARRIER-RACE-OWNER-DECISION-MEMO.md",
+      "sha256": "4f4df9d20a5efe5a31326e19c96a537034c90bf00ab8e9a972efca3e87098fe2"
+    }
+  ],
+  "previous_task_id": "TASK-WS3-A2-OUTCOME-RECONSTRUCTION-FAILURE-ATTRIBUTION-20260821",
+  "schema_version": "ws3-a2-mfe-mae-barrier-race-reproducibility-manifest.v1",
+  "source_files": [
+    {
+      "exists": true,
+      "path": "reports/TASK-WS3-A2-OUTCOME-RECONSTRUCTION-FAILURE-ATTRIBUTION-20260821/a2-path-aware-outcomes.csv",
+      "sha256": "3fa287b26a8db07e540a1f45bb663af52df4f88bed7156c69b357d31c9005538"
+    },
+    {
+      "exists": true,
+      "path": "reports/TASK-WS3-A2-OUTCOME-RECONSTRUCTION-FAILURE-ATTRIBUTION-20260821/a2-source-reconstruction-reconciliation.csv",
+      "sha256": "805c13522e99d329cd0a3457526004a09810771078b0840b7990a80e1e6d1111"
+    },
+    {
+      "exists": true,
+      "path": "reports/TASK-WS3-A2-OUTCOME-RECONSTRUCTION-FAILURE-ATTRIBUTION-20260821/failure-attribution.csv",
+      "sha256": "82c5da555e5475819a8e31d267011a45ccb29940c73f8db3bc57da6892543932"
+    },
+    {
+      "exists": true,
+      "path": "reports/TASK-WS3-A2-OUTCOME-RECONSTRUCTION-FAILURE-ATTRIBUTION-20260821/owner-label-reconciliation-30-case.csv",
+      "sha256": "8255953aa18a86a7666f9c6d70aeae7399397ebfd5063cdc68b574988b918d19"
+    },
+    {
+      "exists": true,
+      "path": "reports/TASK-WS3-A2-OUTCOME-RECONSTRUCTION-FAILURE-ATTRIBUTION-20260821/filter-ablation.csv",
+      "sha256": "1ca548f70a866612fbd2032c28c7581a5e01869e6c42565da735903c518a54aa"
+    },
+    {
+      "exists": true,
+      "path": "reports/TASK-WS3-A2-OUTCOME-RECONSTRUCTION-FAILURE-ATTRIBUTION-20260821/extension-feature-comparison.csv",
+      "sha256": "39fc46e5f3760b796602979a809068252141014d12736b151bfc8a6bfb7ad647"
+    },
+    {
+      "exists": true,
+      "path": "reports/TASK-WS3-A2-OUTCOME-RECONSTRUCTION-FAILURE-ATTRIBUTION-20260821/corporate-action-data-quality-audit.csv",
+      "sha256": "76caf3549db11bf22b5a1f26cc20f0504dea8490c32712a836011512d76822c2"
+    },
+    {
+      "exists": true,
+      "path": "reports/TASK-WS3-A2-OUTCOME-RECONSTRUCTION-FAILURE-ATTRIBUTION-20260821/regime-attribution-audit.csv",
+      "sha256": "116a24ccacafba50650a9efe4380c851716c1b1750e23de8b90b561136941455"
+    },
+    {
+      "exists": true,
+      "path": "reports/TASK-WS3-A2-OUTCOME-RECONSTRUCTION-FAILURE-ATTRIBUTION-20260821/run-summary.json",
+      "sha256": "1306499b6aff926437de92234f1ccab6ea982ae59dd39bc69c60d45c2365340d"
+    },
+    {
+      "exists": true,
+      "path": "reports/TASK-WS3-A2-OUTCOME-RECONSTRUCTION-FAILURE-ATTRIBUTION-20260821/path-aware-outcome-manifest.json",
+      "sha256": "cef8da5ee7006ee23b2a919528bdfeb6b47e8f88ed6f37edbd41ddb860b35392"
+    },
+    {
+      "exists": true,
+      "path": "reports/TASK-WS3-A2-OUTCOME-RECONSTRUCTION-FAILURE-ATTRIBUTION-20260821/owner-decision-memo.md",
+      "sha256": "69a0b081c7c4a1fcd33bdd2477e1c119b4b6816339f69279bd909ca7ea7c9246"
+    },
+    {
+      "exists": true,
+      "path": "reports/TASK-WS3-A2-OUTCOME-RECONSTRUCTION-FAILURE-ATTRIBUTION-20260821/formal-closure-report.md",
+      "sha256": "6846363ddb9dff1b5184aebedd3843d709bcea996fa95bf81fdeb459c4344fd7"
+    },
+    {
+      "exists": true,
+      "governance_input": true,
+      "path": "reports/TASK-WS3-A2-HISTORICAL-LABEL-AUDIT-AND-OWNER-REVIEW-HANDOFF-20260821/WS3-A2-HISTORICAL-LABEL-OWNER-REVIEW-PACK.md",
+      "sha256": "a8479ccd991bd5f0b233bede2daf8b415719fa5b19f06bd393cb69c698a0787d"
+    },
+    {
+      "exists": true,
+      "governance_input": true,
+      "path": "reports/TASK-WS3-A2-HISTORICAL-LABEL-AUDIT-AND-OWNER-REVIEW-HANDOFF-20260821/ws3-a2-historical-label-audit-master.csv",
+      "sha256": "2deac1a8e4b35c019f0380d05d9f4315024f91e6912735eef55181db753df76d"
+    },
+    {
+      "exists": true,
+      "governance_input": true,
+      "path": "reports/TASK-WS3-A2-HISTORICAL-LABEL-AUDIT-AND-OWNER-REVIEW-HANDOFF-20260821/formal-closure-report.md",
+      "sha256": "7dc13b9808440d6636ba644e9469dff55c9f9cd912b964fb8cd224997ba10cf7"
+    },
+    {
+      "exists": true,
+      "governance_input": true,
+      "path": "docs/reports/TASK-WS3-A-STRUCTURAL-ELIGIBILITY-RECONSTRUCTION-AND-FALSE-POSITIVE-SEPARATION-20260821/formal-closure-report.md",
+      "sha256": "353130cf70ad75857793ce842acc014a1a5d2b88bac5bcebbd4ccc34f42c2eee"
+    },
+    {
+      "exists": true,
+      "governance_input": true,
+      "path": "reports/TASK-WS3-A-STRUCTURAL-ELIGIBILITY-RECONSTRUCTION-AND-FALSE-POSITIVE-SEPARATION-20260821/ws3-a-structural-eligibility-run-summary.json",
+      "sha256": "4d46abb0224155a0d87349f4fd83a310630167a0bd55126e65e8c216d725a656"
+    },
+    {
+      "exists": true,
+      "path": "tools/ws3_a2_outcome_reconstruction.py",
+      "read_only_semantics_reference": true,
+      "sha256": "70f943fbb9fe4236a8a3f8c91220c27686e12d84abbe25bd302fa668feabf758"
+    }
+  ],
+  "source_semantics": {
+    "adjustment_state": "UNKNOWN_RAW_ONLY",
+    "anchor": "signal_day_a2_close",
+    "corporate_action_fail_closed": true,
+    "endpoint": "future_close_divided_by_anchor_minus_one",
+    "mae": "future_low_divided_by_anchor_minus_one",
+    "mfe": "future_high_divided_by_anchor_minus_one"
+  },
+  "task_id": "TASK-WS3-A2-MFE-MAE-BARRIER-RACE-DECISION-REPORT-20260822"
+}

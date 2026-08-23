@@ -1,0 +1,19 @@
+{
+  "normalized_aggregate_sha256": "3caca0fb2cd0e05f14603da3fcf2d3febc4e92fb77088b74481256cdf4b38012",
+  "peer_normalized_aggregate_sha256": "3caca0fb2cd0e05f14603da3fcf2d3febc4e92fb77088b74481256cdf4b38012",
+  "replay_id": "RUN-002-FINAL",
+  "reproducible": "YES",
+  "semantic_fields_included": [
+    "indicator values",
+    "eligibility",
+    "availability",
+    "lineage",
+    "coverage",
+    "PIT state"
+  ],
+  "semantic_noise_excluded": [
+    "runtime durations",
+    "replay id"
+  ],
+  "task_id": "TASK-WS2-E1-603-UNIVERSE-TECHNICAL-V0-EXPANDED-QUALIFICATION-RESUME-AFTER-SOURCE-CONTRACT-UNBLOCK-20260820"
+}

@@ -1,0 +1,168 @@
+{
+  "authority_version": "sdf-603-ohlcv-2y.v1",
+  "workflow": "Shared Data Foundation｜603 Universe & ~2-Year OHLCV",
+  "status": "ACTIVE_CANONICAL_HANDOFF",
+  "source": {
+    "bootstrap_task_id": "TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-BOOTSTRAP-EXECUTION-20260819",
+    "bootstrap_source_final_canonical_head": "c40aa42e7cac665386009f29c94a8dafce896427",
+    "source_files": [
+      {
+        "path": "docs/reports/TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-BOOTSTRAP-EXECUTION-20260819/formal-task-closure-report.json",
+        "sha256": "1772f0164eaaa956efb60102defd71fb594781ec179047e392f8d5f5bf45ad22"
+      },
+      {
+        "path": "docs/reports/TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-BOOTSTRAP-EXECUTION-20260819/historical-bootstrap-run-manifest.json",
+        "sha256": "b122af7e91e4e0cf237f35d66c7d9fc2dcdab10ad56a95f034b990bc6d390660"
+      },
+      {
+        "path": "docs/reports/TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-BOOTSTRAP-EXECUTION-20260819/historical-acquisition-summary.json",
+        "sha256": "45470f5b3a7b31d42ffe92dede457c5846a1c61250b09be4864e50885e7675f0"
+      },
+      {
+        "path": "docs/reports/TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-BOOTSTRAP-EXECUTION-20260819/historical-checkpoint-work-item-ledger.json",
+        "sha256": "f78e2b0cdd5978c48b533404194327f2507f1790b7c39afb8d526ebb752e4b7d"
+      },
+      {
+        "path": "docs/reports/TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-BOOTSTRAP-EXECUTION-20260819/historical-coverage-by-instrument.tsv",
+        "sha256": "6a7bae643cc039e2dfebdb145c9c6f483eaae2d16c0a5cb7f899db3916cd773a"
+      },
+      {
+        "path": "docs/reports/TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-BOOTSTRAP-EXECUTION-20260819/historical-coverage-by-market.json",
+        "sha256": "e0dd9890b9cbbc9b9350047c0fb86ce65335453b0b9a6688b0f13d8e3aceb29b"
+      },
+      {
+        "path": "docs/reports/TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-BOOTSTRAP-EXECUTION-20260819/ohlcv-quality-audit.json",
+        "sha256": "52c574f4295e0788436e20a92f1593d2b05b2253918537d859d77f0ea5563609"
+      },
+      {
+        "path": "docs/reports/TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-BOOTSTRAP-EXECUTION-20260819/provider-lineage-audit.json",
+        "sha256": "3ba17debda440d75cb4fa5d1b4cb6a1f6281eaa77058e61c7b1a84ae51492341"
+      },
+      {
+        "path": "docs/reports/TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-BOOTSTRAP-EXECUTION-20260819/pit-reconstructability-audit.json",
+        "sha256": "49b97e3c62ee5e82821383bcb4de9b81826fa48417fcdec474e03910dbf0a3c3"
+      },
+      {
+        "path": "docs/reports/TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-BOOTSTRAP-EXECUTION-20260819/gap-lifecycle-classification-audit.json",
+        "sha256": "3a7329725fe92ff6bc5c88895c1a7d83f0562007d967eac17e1cc54fde90add9"
+      },
+      {
+        "path": "docs/reports/TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-BOOTSTRAP-EXECUTION-20260819/two-run-reproducibility-report.json",
+        "sha256": "651a49e6069bbadfeb55f3b676c77293eef4cd7132849df66b25d59b7cd7f893"
+      },
+      {
+        "path": "docs/reports/TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-BOOTSTRAP-EXECUTION-20260819/provider-error-no-data-quarantine-ledger.tsv",
+        "sha256": "80dae8dfc22b89313ed55fe808e71187814d06fa67b88821c411d1e9094d2f07"
+      },
+      {
+        "path": "docs/reports/TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-BOOTSTRAP-EXECUTION-20260819/formal-security-listing-authority-manifest.json",
+        "sha256": "bf9c91421048c09db1af21f6135cdbae13c391d90b4fca40fec9920704389bb1"
+      },
+      {
+        "path": "docs/reports/TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-BOOTSTRAP-EXECUTION-20260819/reference-authority-evidence-provenance-manifest.json",
+        "sha256": "bc0c338c36f262fb5f6f133a74843ea0e25e0326a6ddcc2a00bb2dd099246dc9"
+      },
+      {
+        "path": "docs/reports/TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-BOOTSTRAP-EXECUTION-20260819/603-universe-post-write-reconciliation.json",
+        "sha256": "d832c58baa806178891c5bc3baaca0529fd2dd58d7e4dba63e31ab3d09449195"
+      },
+      {
+        "path": "docs/reports/TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-BOOTSTRAP-EXECUTION-20260819/universe-idempotency-report.json",
+        "sha256": "3a942239085aff86336cfb67857dcb62307ece2f25f8cbec8a2904ffad53a512"
+      },
+      {
+        "path": "docs/reports/TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-BOOTSTRAP-EXECUTION-20260819/universe-rollback-manifest.json",
+        "sha256": "5dacc08161c39c0446c721f88e06223d0141a8effddd333f1f33090b6c064e4b"
+      }
+    ]
+  },
+  "universe": {
+    "formal_count": 603,
+    "markets": {
+      "TPE": 370,
+      "TWO": 233
+    },
+    "identity_key": "market:instrument_code",
+    "official_market_allowlist": [
+      "TPE",
+      "TWO"
+    ],
+    "active_reference_registry": "sdf-reference-603-v1",
+    "active_registry_id": "59cc1b17-5858-40d3-9366-a3c1e19eafdf",
+    "topic_membership_decoupled": true,
+    "structural_role_decoupled": true,
+    "score_projection_decoupled": true,
+    "new_instrument_topic_count": 0,
+    "new_instrument_structural_role_count": 0,
+    "new_instrument_projection_count": 0
+  },
+  "historical": {
+    "authority": "V2_CANONICAL_OBSERVATION_CHAIN",
+    "read_model": "topicpilot_api.historical_read_model.read_historical_bars",
+    "projection": "topicpilot.vw_daily_market_observations",
+    "families": [
+      "PRICE",
+      "VOLUME"
+    ],
+    "requested_window": {
+      "start": "2024-08-13",
+      "end": "2026-08-13"
+    },
+    "accepted_full_ohlcv_rows": 288881,
+    "TPE_accepted_rows": 177427,
+    "TWO_accepted_rows": 111454,
+    "normalized_surface_sha256": "e803733e796d8f4d8cf00575cd4045f28c9364572fc61b31ef490e8a65ff47a4",
+    "normalized_surface_md5": "0cbdb8fe950c7cbe494dcc5cb50c6e33",
+    "adjustment_state": "UNKNOWN",
+    "synthetic_fill": "NO",
+    "provider_refetch": "NO"
+  },
+  "legacy_provenance": {
+    "table": "topicpilot.market_data_ohlcv",
+    "role": "RETAINED_LEGACY_EVIDENCE_AND_STAGING_ONLY",
+    "rows": 63826,
+    "instruments": 507,
+    "start": "2026-02-02",
+    "end": "2026-08-13",
+    "publication_authority": "NO",
+    "superseded_by": "V2_CANONICAL_OBSERVATION_CHAIN"
+  },
+  "limitations": {
+    "strict_full_window_instruments": 587,
+    "listing_truncated_instruments": 3,
+    "provider_or_unresolved_gap_instruments": 13,
+    "pit_reconstructable_instruments": 603,
+    "pit_limited_instruments": 16,
+    "pit_unusable_instruments": 0,
+    "ma60_calculable_instruments": 602,
+    "quarantine_work_items": 144,
+    "no_data_work_items": 142,
+    "lifecycle_skips": 41
+  },
+  "activation": {
+    "mechanism": "existing active identity registry + active reference_registry_sets + canonical observation read model",
+    "database_mutation_this_task": "NO",
+    "no_new_runtime_table": true,
+    "no_second_history_path": true,
+    "owner_dirty_files_required": false
+  },
+  "task_id": "TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-CANONICAL-AUTHORITY-PROMOTION-AND-CONSUMER-HANDOFF-20260820",
+  "source_canonical_head": "6ffe80f086cb98c7fa76f4846b29dc7ddfc946b0",
+  "authority_content_sha256": "fe1a51015d48d64b28007d36e291bed59085e7beacf5599ee5d5a35569747fcf",
+  "supersedes": {
+    "authority_version": "legacy-507-ohlcv.v1",
+    "universe_count": 507,
+    "accepted_ohlcv_rows": 63826,
+    "historical_start": "2026-02-02",
+    "historical_end": "2026-08-13",
+    "table": "topicpilot.market_data_ohlcv",
+    "status": "RETAINED_PROVENANCE_NOT_ACTIVE"
+  },
+  "current_authority": {
+    "status": "ACTIVE",
+    "resolves_to_universe_count": 603,
+    "resolves_to_accepted_ohlcv_rows": 288881,
+    "read_model": "topicpilot_api.historical_read_model.read_historical_bars",
+    "projection": "topicpilot.vw_daily_market_observations"
+  }
+}

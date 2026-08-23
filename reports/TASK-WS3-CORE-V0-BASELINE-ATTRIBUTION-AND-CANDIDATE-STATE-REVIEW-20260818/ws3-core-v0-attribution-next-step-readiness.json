@@ -1,0 +1,22 @@
+{
+  "task_id": "TASK-WS3-CORE-V0-BASELINE-ATTRIBUTION-AND-CANDIDATE-STATE-REVIEW-20260818",
+  "source_baseline_head": "9ca9ba4f15359aa5ea96ba4c3d6bed9439d0346e",
+  "core_v0_frozen_spec_hash": "6e4cc504f969098e263cfa8e7c43240e9575a3f72f0641ba39da22794ea9870d",
+  "attribution_execution": "COMPLETE",
+  "attribution_reproducible": "YES",
+  "A1_baseline_classification": "PROMISING_BUT_INSUFFICIENT",
+  "A2_baseline_classification": "PROMISING_BUT_INSUFFICIENT",
+  "A1_vs_A2_forward_edge": "INCONCLUSIVE",
+  "core_v0_performance_attribution": "BROAD_BASED_ACROSS_A1_A2",
+  "ready_for_ws3_baseline_review": true,
+  "ready_for_ws3_next_mainline_step": "READY_FOR_BOUNDED_CONFIRMATION_VALIDATION",
+  "remaining_blockers": "NO_FORMAL_EPISODE_SCORE_OR_SELECTION_CONTRACT; ATTRIBUTION_IS_RESEARCH_ONLY",
+  "not_authorized": [
+    "tuning",
+    "strategy modification",
+    "new states",
+    "WS1/WS2/WS4 changes",
+    "production",
+    "deploy"
+  ]
+}

@@ -1,0 +1,147 @@
+{
+  "authority_relation_count": 852,
+  "authority_relation_hash": "ceb92222a7036631527401dba8ab1b1ca5c26613d8fd439b0beac7ad90080107",
+  "clean_dependency_check": "PASS; standard library + SQLAlchemy/psycopg read-only database access",
+  "output_artifacts": {
+    "OWNER-DECISION-MEMO.md": {
+      "bytes": 1257,
+      "sha256": "2bf42f0714032140736888ec1524aaee305f46b9b4fd4146bc784b2d35548a07"
+    },
+    "both-lifecycle-special-analysis.csv": {
+      "bytes": 4796,
+      "sha256": "6d0cc597a8ecd8ebdc68b6fbc99930ae853720bb38ad8c73c07b742c19176192"
+    },
+    "formal-closure-report.md": {
+      "bytes": 3915,
+      "sha256": "4e07f6234b347414962ec9f182c803d248d69b651dcddba93ecca4f5992fe802"
+    },
+    "lifecycle-conditional-expectancy.csv": {
+      "bytes": 12840,
+      "sha256": "16c5bc2280102f2e23d3bdbb29bbe7ff7383a81e5ef188f9ed31c335d7e2d134"
+    },
+    "lifecycle-path-risk-analysis.csv": {
+      "bytes": 9753,
+      "sha256": "9d3f485d089149aaf480afd088e23fe8de772741a364e192c9d1534aeaf61c8c"
+    },
+    "missing-failclosed-selection-bias.csv": {
+      "bytes": 10543,
+      "sha256": "aa18b1ba55a4b5cbb6a4edfbf6ad51add08428509e70c9f4d33b1b34172e1f80"
+    },
+    "robustness-concentration-audit.csv": {
+      "bytes": 15076,
+      "sha256": "b3ed16c94c1ff72d335284185819769521c9f75aa5229a277075f157704d973e"
+    },
+    "signal-lifecycle-join-coverage.csv": {
+      "bytes": 476,
+      "sha256": "8f24c641c55f51d94822af96f02caecb5503fdc229ca424a465d2625c132cfc4"
+    },
+    "strength-conditional-analysis.csv": {
+      "bytes": 45573,
+      "sha256": "f7b01fdb479785d216ddb0fcaba2959541e258b7fe644ee70ec01af032e1a671"
+    },
+    "within-lifecycle-strength-analysis.csv": {
+      "bytes": 136144,
+      "sha256": "d1f49e59b74318455451164fb4b711e8bde4ce08ccaa5066c8b0f0eee1222559"
+    }
+  },
+  "protocol": {
+    "candidate_definitions": {
+      "barriers": "+5% before -5% and +10% before -5%; same-session order unknown",
+      "lifecycle": "WS1 L5 accepted raw reconstruction stages",
+      "strength": "raw vector only; no score/label/threshold"
+    },
+    "dataset_rows": 16250,
+    "dataset_sha256": "17faa9be1189d6fab1bdfe518a1faf9e90d9be1ec994008ed59beef8bf6ecb95",
+    "dataset_version": "WS1-L5-CURRENT_TAXONOMY_HISTORICAL_RECONSTRUCTION",
+    "evaluation_mode": "RETROSPECTIVE_DESCRIPTIVE_WALK_FORWARD_SLICES; NO_PARAMETER_FITTING; NO_OOS_CLAIM",
+    "failure_criteria": [
+      "source path/hash/count mismatch",
+      "relation selection count != 852",
+      "unavailable OHLCV path",
+      "ambiguous/no relation is retained and not imputed"
+    ],
+    "lifecycle_window": {
+      "end": "2026-08-13",
+      "pit_truth": "NO",
+      "source_class": "CURRENT_TAXONOMY_HISTORICAL_RECONSTRUCTION",
+      "start": "2026-02-03"
+    },
+    "parameter_version": "ws3-technical-signal-lifecycle-strength-study.v1",
+    "signal_cohorts": {
+      "A2": "EXISTING_5277_EVENT_PANEL",
+      "BOTH": "EXISTING_SAME_SESSION_INTERSECTION; TWO_SOURCE_OBSERVATIONS_PER_PAIR",
+      "LEGACY5": "EXISTING_2471_DISTINCT_EPISODES_LEGACY-5"
+    },
+    "time_splits": [
+      {
+        "end": "2026-04-30",
+        "name": "EARLY",
+        "start": "2026-02-03"
+      },
+      {
+        "end": "2026-06-30",
+        "name": "MIDDLE",
+        "start": "2026-05-01"
+      },
+      {
+        "end": "2026-08-13",
+        "name": "LATE",
+        "start": "2026-07-01"
+      }
+    ]
+  },
+  "replay_contract": "A second run with identical source hashes, database relation hash, database surface and arguments must reproduce every CSV/JSON byte-for-byte except runtime metadata not emitted by this runner",
+  "schema_version": "ws3-technical-signal-lifecycle-strength-reproducibility.v1",
+  "source_artifacts": {
+    "a2_outcomes": {
+      "bytes": 24666854,
+      "path": "C:\\Users\\acer\\Desktop\\題材領航\\topicpilot-platform\\reports\\TASK-WS3-A2-OUTCOME-RECONSTRUCTION-FAILURE-ATTRIBUTION-20260821\\a2-path-aware-outcomes.csv",
+      "sha256": "3fa287b26a8db07e540a1f45bb663af52df4f88bed7156c69b357d31c9005538"
+    },
+    "a2_panel": {
+      "bytes": 81888767,
+      "path": "C:\\Users\\acer\\Desktop\\題材領航\\topicpilot-platform\\reports\\TASK-WS3-P2E-A2-EXPANDED-CONFIRMATORY-VALIDATION-AND-ADVANTAGE-REVALIDATION-20260820\\ws3-p2e-a2-expanded-event-panel.csv",
+      "sha256": "97b131479b90ce64a821f72a6c6cceb58d102aeb49c64eac60ba19dfca71bc52"
+    },
+    "joint_run": {
+      "bytes": 6815,
+      "path": "C:\\Users\\acer\\Desktop\\題材領航\\topicpilot-platform\\reports\\TASK-WS3-A2-LEGACY5-JOINT-SIGNAL-ROBUSTNESS-AND-BENCHMARK-VALIDATION-20260822\\run-summary.json",
+      "sha256": "5050933238a8c8e30e0504c652437514436647ca1f52c29a8ae944e30d49eb14"
+    },
+    "joint_semantics": {
+      "bytes": 3823,
+      "path": "C:\\Users\\acer\\Desktop\\題材領航\\topicpilot-platform\\reports\\TASK-WS3-A2-LEGACY5-JOINT-SIGNAL-ROBUSTNESS-AND-BENCHMARK-VALIDATION-20260822\\source-semantics-reconciliation-manifest.json",
+      "sha256": "9fa5e54da5ab293abbd9bcc0e7a37f11344a62c6e71ecf80ca219d99651c93bd"
+    },
+    "l5_dataset": {
+      "bytes": 15476966,
+      "path": "C:\\Users\\acer\\Desktop\\題材領航\\topicpilot-platform\\reports\\TASK-WS1-L5-CURRENT-TAXONOMY-HISTORICAL-LIFECYCLE-STRENGTH-RECONSTRUCTION-20260822\\historical-lifecycle-strength-dataset.csv",
+      "sha256": "77de538cfa4aaf4e495bc5799f849b7d448c5b60a9fb1cca534e2f3515a209d6"
+    },
+    "l5_manifest": {
+      "bytes": 3244,
+      "path": "C:\\Users\\acer\\Desktop\\題材領航\\topicpilot-platform\\reports\\TASK-WS1-L5-CURRENT-TAXONOMY-HISTORICAL-LIFECYCLE-STRENGTH-RECONSTRUCTION-20260822\\reconstruction-manifest.json",
+      "sha256": "d4757cf178f174de013f622da13b911f3e305adf1782e5c6ff2d96b997321a14"
+    },
+    "l5_manifest_declared_dataset_sha256": "17faa9be1189d6fab1bdfe518a1faf9e90d9be1ec994008ed59beef8bf6ecb95",
+    "legacy_episodes": {
+      "bytes": 2493112,
+      "path": "C:\\Users\\acer\\Desktop\\題材領航\\topicpilot-platform\\reports\\TASK-WS3-LEGACY-5-STRATEGY-BENCHMARK-20260822\\legacy5-distinct-episodes.csv",
+      "sha256": "404fccde5f4b4ba723131374c93474ca195891f6384da509e1a81f895c168d3a"
+    },
+    "legacy_manifest": {
+      "bytes": 1653,
+      "path": "C:\\Users\\acer\\Desktop\\題材領航\\topicpilot-platform\\reports\\TASK-WS3-LEGACY-5-STRATEGY-BENCHMARK-20260822\\legacy5-event-cohort-manifest.json",
+      "sha256": "c449f46ace1da21e3332e6ec293b735ec22176be1305282443c91bed657886c0"
+    },
+    "legacy_outcomes": {
+      "bytes": 23423107,
+      "path": "C:\\Users\\acer\\Desktop\\題材領航\\topicpilot-platform\\reports\\TASK-WS3-LEGACY-5-STRATEGY-BENCHMARK-20260822\\event-outcomes.csv",
+      "sha256": "acd578b20bfe1bc4fad8c09242b3c4963769a76734bf689fce8c98e83119762e"
+    },
+    "ohlcv_surface_expected_sha256": "e803733e796d8f4d8cf00575cd4045f28c9364572fc61b31ef490e8a65ff47a4"
+  },
+  "source_to_canonical_provenance": "source artifacts are canonical owner research artifacts; output is promoted commit-preserving after isolated validation",
+  "task_id": "TASK-WS3-TECHNICAL-SIGNAL-TOPIC-LIFECYCLE-STRENGTH-CONDITIONAL-EXPECTANCY-STUDY-20260822",
+  "test_count_delta_status": "NOT_APPLICABLE_RESEARCH_ONLY"
+}

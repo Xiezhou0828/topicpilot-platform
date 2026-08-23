@@ -1,0 +1,17 @@
+{
+  "task_id": "TASK-WS3-CORE-V0-REAL-HISTORICAL-WALK-FORWARD-BASELINE-20260818",
+  "core_v0_frozen_spec_hash": "6e4cc504f969098e263cfa8e7c43240e9575a3f72f0641ba39da22794ea9870d",
+  "baseline_execution": "COMPLETE",
+  "baseline_classification": "BASELINE_SUPPORTED",
+  "ready_for_core_v0_baseline_review": true,
+  "ready_for_ws3_next_mainline_step": "READY_FOR_BOUNDED_CONFIRMATION_VALIDATION",
+  "walk_forward_reproducible": "YES",
+  "remaining_blockers": "BOUNDED_CENSORING_AND_NO_FORMAL_SCORE_OR_DAILY_SELECTION_CONTRACT",
+  "not_authorized": [
+    "parameter optimization",
+    "strategy redesign",
+    "production publication",
+    "WS1/WS2/WS4 changes",
+    "deploy"
+  ]
+}

@@ -19,6 +19,7 @@ from .orm import (
     Topic,
     TopicHierarchy,
 )
+from .schemas import MigrationRevisionResponse
 
 router = APIRouter(prefix="/api/v1/admin", tags=["admin"])
 DbSession = Annotated[Session, Depends(get_db)]
@@ -29,12 +30,27 @@ def _page(items: list[Any], total: int, limit: int, offset: int) -> dict[str, An
 
 def _id(value: Any) -> str: return str(value)
 
+
+def _read_alembic_revision(session: Session) -> str | None:
+    """Read the public Alembic marker without performing any database write."""
+
+    return session.execute(
+        text("SELECT version_num FROM public.alembic_version ORDER BY version_num LIMIT 1")
+    ).scalar_one_or_none()
+
 @router.get("/dashboard")
 def dashboard(session: DbSession) -> dict[str, Any]:
     counts = {key: session.scalar(select(func.count()).select_from(model)) or 0 for key, model in {"markets": Market, "instruments": Instrument, "topics": Topic, "topic_hierarchy_relations": TopicHierarchy, "instrument_topic_relations": InstrumentTopicRelation, "legacy_import_runs": LegacyImportRun}.items()}
     latest = session.scalar(select(LegacyImportRun).order_by(LegacyImportRun.created_at.desc()).limit(1))
-    revision = session.execute(text("SELECT version_num FROM topicpilot.alembic_version LIMIT 1")).scalar_one_or_none()
+    revision = _read_alembic_revision(session)
     return {"counts": counts, "latest_import": None if latest is None else {"id": _id(latest.id), "status": latest.status, "created_at": latest.created_at}, "alembic_revision": revision, "api_ready": True}
+
+
+@router.get("/migration", response_model=MigrationRevisionResponse)
+def migration(session: DbSession) -> dict[str, Any]:
+    """Expose the current migration marker through a read-only SELECT probe."""
+
+    return {"alembicRevision": _read_alembic_revision(session), "readOnly": True}
 
 def _schema_tables() -> list[dict[str, Any]]:
     tables = []

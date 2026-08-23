@@ -1,0 +1,14 @@
+{
+  "expanded_normalized_surface_sha256": "3caca0fb2cd0e05f14603da3fcf2d3febc4e92fb77088b74481256cdf4b38012",
+  "implementation_defect_count": 0,
+  "mismatch_classification_counts": {
+    "DATA_SUPERSESSION_DIFFERENCE": 664
+  },
+  "overlap_definition": "prior canonical 507 latest session 2026-08-13 x 14 indicators",
+  "prior_normalized_surface_sha256": "c0c804dacf173f50f2980fc530b4e1c40888c33f3323e562f29883e1c38b6d9c",
+  "status": "PASS_WITH_DATA_SUPERSESSION_CLASSIFICATION",
+  "task_id": "TASK-WS2-E1-603-UNIVERSE-TECHNICAL-V0-EXPANDED-QUALIFICATION-RESUME-AFTER-SOURCE-CONTRACT-UNBLOCK-20260820",
+  "technical_value_match_count": 6420,
+  "technical_value_mismatch_count": 664,
+  "unknown_mismatch_count": 0
+}

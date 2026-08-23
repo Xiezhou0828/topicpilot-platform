@@ -1,0 +1,37 @@
+{
+  "delta": {
+    "blocked_count": 57,
+    "eligible_count": 38,
+    "ineligible_count": 57,
+    "unavailable_count": 1
+  },
+  "expanded": {
+    "blocked_coverage_pct": 79.436153,
+    "eligible_coverage_pct": 20.39801,
+    "formal_evidence_available": 0,
+    "formal_evidence_available_with_limitation": 123,
+    "formal_evidence_blocked": 479,
+    "formal_evidence_error": 0,
+    "instruments": 603,
+    "rows": 288881,
+    "technical_eligible": 123,
+    "technical_error": 0,
+    "technical_ineligible": 184,
+    "technical_unavailable": 296
+  },
+  "prior": {
+    "blocked_coverage_pct": 83.234714,
+    "eligible_coverage_pct": 16.765286,
+    "formal_evidence_available": 0,
+    "formal_evidence_available_with_limitation": 85,
+    "formal_evidence_blocked": 422,
+    "formal_evidence_error": 0,
+    "instruments": 507,
+    "rows": 63826,
+    "technical_eligible": 85,
+    "technical_error": 0,
+    "technical_ineligible": 127,
+    "technical_unavailable": 295
+  },
+  "task_id": "TASK-WS2-E1-603-UNIVERSE-TECHNICAL-V0-EXPANDED-QUALIFICATION-RESUME-AFTER-SOURCE-CONTRACT-UNBLOCK-20260820"
+}

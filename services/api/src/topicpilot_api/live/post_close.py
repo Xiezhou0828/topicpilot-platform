@@ -21,6 +21,7 @@ from topicpilot_api.normalizer import HISTORICAL_MAPPING_POLICY_VERSION, Mapping
 from topicpilot_api.normalizer.contracts import stable_hash
 from topicpilot_api.orm import Instrument, LiveCollectorAttempt, LiveCollectorRun, Market
 from topicpilot_api.provider_preflight import load_g2_preflight_context
+from topicpilot_api.topic_daily_state import materialize_bounded_formal_dates
 from topicpilot_api.topic_lifecycle_engine import TopicLifecycleEngine
 from topicpilot_api.topic_snapshot_engine import TopicSnapshotEngine
 
@@ -448,17 +449,32 @@ class PostCloseUpdater:
             )
             if result.get("status") == "SUCCESS" and not market_closed:
                 try:
+                    formal_state = materialize_bounded_formal_dates(
+                        self.session,
+                        dates=(snapshot_date,),
+                    )
+                    result["formalTopicDailyState"] = {
+                        "status": "SUCCESS",
+                        "rowsBefore": formal_state["rowsBefore"],
+                        "rowsAfter": formal_state["rowsAfter"],
+                        "writes": formal_state["writes"],
+                        "preBoundaryBackfill": formal_state["preBoundaryBackfill"],
+                    }
                     result["lifecycle"] = TopicLifecycleEngine(self.session).run_once(
                         evaluation_date=snapshot_date,
-                        eligible_instrument_ids=eligible_instrument_ids,
                     )
                 except Exception as exc:
-                    # Lifecycle remains additive shadow work. A missing
-                    # migration or transient failure must not discard the
-                    # canonical topic snapshot already committed above.
+                    # Formal PIT materialization and lifecycle remain additive
+                    # shadow work. A missing authority/migration or transient
+                    # failure must not discard the canonical research snapshot
+                    # already committed above.
                     self.session.rollback()
+                    result["formalTopicDailyState"] = {
+                        "status": "FORMAL_STATE_UNAVAILABLE",
+                        "error": type(exc).__name__,
+                    }
                     result["lifecycle"] = {
-                        "status": "SHADOW_EVALUATION_FAILED",
+                        "status": "WAITING_FOR_FORMAL_SNAPSHOT",
                         "error": type(exc).__name__,
                     }
             elif market_closed:

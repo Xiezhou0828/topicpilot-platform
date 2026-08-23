@@ -1,0 +1,148 @@
+{
+  "a2_time_to_opportunity_disposition": "NOT_AVAILABLE_FROM_EXISTING_EVENT_PATH_ARTIFACT; no inference performed",
+  "artifact_hashes": {
+    "a2-legacy5-complementarity-path-metrics.csv": "fa6c2af3ee9f5e0e793ca44cd7390650e1384cb8587bb669c5819c2d9f01b89f",
+    "a2-legacy5-overlap-summary.csv": "c7b6ab8c766d02f00d2d4e24d652f61a6dbcbfffa85137de7504caf0a33fa088",
+    "eligibility-anchor-panel.csv": "3bace0135b967d3aadc34a161b134a4951f3230a2566030303731e254e76d2d8",
+    "eligibility-distinct-episodes.csv": "6dff77ea092488b06f601712e4cd00788adfd0b65e3bab5f94632c992ddece3c",
+    "eligibility-path-metrics.csv": "671bdb83d39a6d5c788d93a1819bc97ec70ac6a9dfd1e78821c0f28a23863380",
+    "legacy5-ma20-ma60-variant-comparison.csv": "d76bd156aaf21f7e98ff7b3f3b278ff9ee173df38d528f4cc73988e168017bf7",
+    "signal-lead-lag-summary.csv": "d8b1a8df06e7dea98f4d3e7a534980eb4ac2bcdf850de1d6d8bdb35fcdacb3c5",
+    "source-semantics-reconciliation-manifest.json": "4f3499766a0fb6cd3e89e9f84fd33113ff166ccd7aea22a496bac66b76a45c88"
+  },
+  "corporate_action_governance": {
+    "adjustment_state": "UNKNOWN_RAW_ONLY",
+    "fail_closed": true,
+    "same_session_order": "SAME_SESSION_ORDER_UNKNOWN",
+    "synthetic_adjustment": false
+  },
+  "counts": {
+    "legacy_source": {
+      "a2_events": 5277,
+      "a2_path_rows": 52770,
+      "raw_anchors": 2471
+    },
+    "overlap_primary_v0": {
+      "A2_ONLY": {
+        "a2_event_count": 4485,
+        "event_count": 4485,
+        "instrument_count": 599,
+        "legacy_event_count": 0,
+        "pair_count": 0
+      },
+      "BOTH_SAME_SESSION": {
+        "a2_event_count": 560,
+        "event_count": 560,
+        "instrument_count": 330,
+        "legacy_event_count": 560,
+        "pair_count": 560
+      },
+      "BOTH_WITHIN_BOUNDED_WINDOW": {
+        "a2_event_count": 232,
+        "event_count": 232,
+        "instrument_count": 185,
+        "legacy_event_count": 232,
+        "pair_count": 232
+      },
+      "LEGACY5_ONLY": {
+        "a2_event_count": 0,
+        "event_count": 1679,
+        "instrument_count": 504,
+        "legacy_event_count": 1679,
+        "pair_count": 0
+      }
+    },
+    "surface": {
+      "date_max": "2026-08-13",
+      "date_min": "2024-08-13",
+      "instruments": 603,
+      "normalized_surface_sha256": "e803733e796d8f4d8cf00575cd4045f28c9364572fc61b31ef490e8a65ff47a4",
+      "rows": 288881
+    },
+    "variants": {
+      "V0_LEGACY5": {
+        "active_dates": 415,
+        "episodes": 2471,
+        "instruments": 544,
+        "ma20_pass_count": 2471,
+        "raw_anchors": 2471
+      },
+      "V1_LEGACY5_MA20": {
+        "active_dates": 415,
+        "episodes": 2471,
+        "instruments": 544,
+        "ma20_pass_count": 2471,
+        "raw_anchors": 2471
+      },
+      "V2_LEGACY5_MA60": {
+        "active_dates": 373,
+        "episodes": 2096,
+        "instruments": 529,
+        "ma20_pass_count": 2096,
+        "raw_anchors": 2096
+      },
+      "V3_LEGACY5_MA20_MA60": {
+        "active_dates": 373,
+        "episodes": 2096,
+        "instruments": 529,
+        "ma20_pass_count": 2096,
+        "raw_anchors": 2096
+      }
+    }
+  },
+  "fixed_variants": {
+    "V0_LEGACY5": "Legacy-5 original: 20-day Close high + KD(9) cross + MA5>MA10 + mean last-5 volume >500 lots + K<80",
+    "V1_LEGACY5_MA20": "V0 plus Close>MA20",
+    "V2_LEGACY5_MA60": "V0 plus Close>MA60",
+    "V3_LEGACY5_MA20_MA60": "V0 plus Close>MA20 and Close>MA60"
+  },
+  "governance": {
+    "A2_SEMANTICS_CHANGED": "NO",
+    "A_SETUP_ACCEPTED": "NO",
+    "A_STRATEGY_ACCEPTED": "NO",
+    "CORE_V0_SEMANTICS_CHANGED": "NO",
+    "DATABASE_WRITES": false,
+    "DATA_DOWNLOAD": "NO",
+    "DEPLOY": "NO",
+    "LARGE_OHLCV_PIPELINE_RERUN": "NO",
+    "LEGACY_STRATEGY_ACCEPTED": "NO",
+    "NEXT_TASK_CHANGED": "NO",
+    "PRICE20_RESEARCHED": "NO",
+    "PRODUCTION_MUTATION": "NO",
+    "PUSH": "NO",
+    "THRESHOLD_SEARCH": "NO",
+    "WS1_WS2_WS4_MUTATION": "NO",
+    "WS3_ONLY": "YES",
+    "strategy_acceptance": "NO"
+  },
+  "overlap_policy": {
+    "bounded_window": "fixed +/-1 accepted trading session by instrument; no optimization",
+    "future_outcome_not_used_for_matching": true,
+    "if_calendar_date_missing": "fail closed from overlap rather than infer a session",
+    "matching": "deterministic one-to-one greedy matching sorted by absolute session distance then stable event/anchor ids",
+    "same_session": "same instrument and same signal_date"
+  },
+  "reproducibility": {
+    "normalized_aggregate_sha256": "f869ad0dad6f1be97455d68f299acdb2eebe650169454cb41f2e9d5ed23b1aef",
+    "prior_replay_aggregate_sha256": "f869ad0dad6f1be97455d68f299acdb2eebe650169454cb41f2e9d5ed23b1aef",
+    "reconstruction_runs": 5,
+    "reproducible": "YES"
+  },
+  "runtime_seconds": 49.324,
+  "schema_version": "ws3-legacy5-eligibility-a2-run-summary.v1",
+  "source": {
+    "artifact_alias": "SDF-603-2Y-OHLCV-ACCEPTED-DAILY-V1",
+    "authority_version": "sdf-603-ohlcv-2y.v1",
+    "instruments": 603,
+    "normalized_surface_sha256": "e803733e796d8f4d8cf00575cd4045f28c9364572fc61b31ef490e8a65ff47a4",
+    "query_mode": "read_only_lightweight_ohlcv_join",
+    "reference_registry": "sdf-reference-603-v1",
+    "rows": 288881,
+    "window": [
+      "2024-08-13",
+      "2026-08-13"
+    ]
+  },
+  "task_id": "TASK-WS3-LEGACY5-ELIGIBILITY-A2-COMPLEMENTARITY-STUDY-20260822",
+  "task_status": "COMPLETE_PASS_WITH_BOUNDED_LIMITATIONS"
+}

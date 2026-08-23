@@ -1,0 +1,14 @@
+{
+  "normalized_aggregate_sha256": "b582dc94deb78598cf0ba6067e231598abc690333dbe3dd372738bbe8e81569f",
+  "reproducible": true,
+  "run_count": 2,
+  "run_hashes": [
+    "b582dc94deb78598cf0ba6067e231598abc690333dbe3dd372738bbe8e81569f",
+    "b582dc94deb78598cf0ba6067e231598abc690333dbe3dd372738bbe8e81569f"
+  ],
+  "task_id": "TASK-INSTRUMENT-UNIVERSE-96-STOCK-EXPANSION-REFERENCE-PACK-AND-RUNTIME-HANDOFF-20260819",
+  "volatile_fields_excluded": [
+    "generated_at",
+    "git_worktree_status"
+  ]
+}

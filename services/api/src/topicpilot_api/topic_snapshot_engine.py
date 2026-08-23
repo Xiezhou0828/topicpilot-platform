@@ -260,11 +260,23 @@ class TopicSnapshotEngine:
                     "weakStockDefinition": "STRONG_NEGATIVE",
                     "directionDefinition": "average accepted daily close-to-close change",
                 },
+                # The historical engine remains a research/compatibility
+                # writer.  It cannot create a formal publication row because
+                # it does not resolve PIT membership or immutable corrections.
+                "publication_mode": "RESEARCH_ONLY",
+                "membership_mode": "CURRENT_MAPPING_RECONSTRUCTED_RESEARCH_ONLY",
+                "trading_day_state": "NON_TRADING" if market_closed else "UNKNOWN",
+                "generated_state": "GENERATED",
+                "finality_state": "PROVISIONAL",
+                "publication_state": "UNPUBLISHED",
+                "snapshot_identity": f"research:{topic.id}:{snapshot_date.isoformat()}",
+                "correction_sequence": 0,
             }
             existing = self.session.scalar(
                 select(TopicSnapshot).where(
                     TopicSnapshot.topic_id == topic.id,
                     TopicSnapshot.snapshot_date == snapshot_date,
+                    TopicSnapshot.publication_mode != "FORMAL",
                 )
             )
             if existing is None:
@@ -306,7 +318,7 @@ def read_price_evidence(session: Session, snapshot_date: date) -> dict[UUID, Mem
     """
 
     sql = text(
-            """
+        """
             WITH candidates AS (
                 SELECT
                     co.id,
@@ -353,7 +365,7 @@ def read_price_evidence(session: Session, snapshot_date: date) -> dict[UUID, Mem
             WHERE date_rank <= 2
             ORDER BY instrument_id, date_rank
             """
-        )
+    )
     rows = session.execute(sql, {"snapshot_date": snapshot_date}).mappings().all()
     by_instrument: dict[UUID, dict[int, Any]] = defaultdict(dict)
     for row in rows:

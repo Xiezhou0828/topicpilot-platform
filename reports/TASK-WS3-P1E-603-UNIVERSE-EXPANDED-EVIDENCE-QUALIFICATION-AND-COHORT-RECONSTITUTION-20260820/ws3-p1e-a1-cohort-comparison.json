@@ -1,0 +1,324 @@
+{
+  "by_market": [
+    {
+      "active_date_count": 420,
+      "event_count": 9752,
+      "first_date": "2024-11-12",
+      "instrument_count": 370,
+      "last_date": "2026-08-13",
+      "market": "TPE"
+    },
+    {
+      "active_date_count": 408,
+      "event_count": 4805,
+      "first_date": "2024-11-12",
+      "instrument_count": 231,
+      "last_date": "2026-08-13",
+      "market": "TWO"
+    }
+  ],
+  "by_month": [
+    {
+      "active_date_count": 14,
+      "event_count": 237,
+      "first_date": "2024-11-12",
+      "instrument_count": 105,
+      "last_date": "2024-11-29",
+      "month": "2024-11"
+    },
+    {
+      "active_date_count": 22,
+      "event_count": 553,
+      "first_date": "2024-12-02",
+      "instrument_count": 208,
+      "last_date": "2024-12-31",
+      "month": "2024-12"
+    },
+    {
+      "active_date_count": 15,
+      "event_count": 301,
+      "first_date": "2025-01-02",
+      "instrument_count": 134,
+      "last_date": "2025-01-22",
+      "month": "2025-01"
+    },
+    {
+      "active_date_count": 19,
+      "event_count": 1351,
+      "first_date": "2025-02-03",
+      "instrument_count": 364,
+      "last_date": "2025-02-27",
+      "month": "2025-02"
+    },
+    {
+      "active_date_count": 21,
+      "event_count": 845,
+      "first_date": "2025-03-03",
+      "instrument_count": 220,
+      "last_date": "2025-03-31",
+      "month": "2025-03"
+    },
+    {
+      "active_date_count": 14,
+      "event_count": 88,
+      "first_date": "2025-04-01",
+      "instrument_count": 38,
+      "last_date": "2025-04-30",
+      "month": "2025-04"
+    },
+    {
+      "active_date_count": 20,
+      "event_count": 720,
+      "first_date": "2025-05-02",
+      "instrument_count": 233,
+      "last_date": "2025-05-29",
+      "month": "2025-05"
+    },
+    {
+      "active_date_count": 21,
+      "event_count": 982,
+      "first_date": "2025-06-02",
+      "instrument_count": 269,
+      "last_date": "2025-06-30",
+      "month": "2025-06"
+    },
+    {
+      "active_date_count": 23,
+      "event_count": 1171,
+      "first_date": "2025-07-01",
+      "instrument_count": 306,
+      "last_date": "2025-07-31",
+      "month": "2025-07"
+    },
+    {
+      "active_date_count": 21,
+      "event_count": 1240,
+      "first_date": "2025-08-01",
+      "instrument_count": 367,
+      "last_date": "2025-08-29",
+      "month": "2025-08"
+    },
+    {
+      "active_date_count": 21,
+      "event_count": 786,
+      "first_date": "2025-09-01",
+      "instrument_count": 278,
+      "last_date": "2025-09-30",
+      "month": "2025-09"
+    },
+    {
+      "active_date_count": 20,
+      "event_count": 636,
+      "first_date": "2025-10-01",
+      "instrument_count": 241,
+      "last_date": "2025-10-31",
+      "month": "2025-10"
+    },
+    {
+      "active_date_count": 20,
+      "event_count": 406,
+      "first_date": "2025-11-03",
+      "instrument_count": 171,
+      "last_date": "2025-11-28",
+      "month": "2025-11"
+    },
+    {
+      "active_date_count": 22,
+      "event_count": 961,
+      "first_date": "2025-12-01",
+      "instrument_count": 300,
+      "last_date": "2025-12-31",
+      "month": "2025-12"
+    },
+    {
+      "active_date_count": 21,
+      "event_count": 1208,
+      "first_date": "2026-01-02",
+      "instrument_count": 394,
+      "last_date": "2026-01-30",
+      "month": "2026-01"
+    },
+    {
+      "active_date_count": 12,
+      "event_count": 364,
+      "first_date": "2026-02-02",
+      "instrument_count": 175,
+      "last_date": "2026-02-26",
+      "month": "2026-02"
+    },
+    {
+      "active_date_count": 22,
+      "event_count": 551,
+      "first_date": "2026-03-02",
+      "instrument_count": 222,
+      "last_date": "2026-03-31",
+      "month": "2026-03"
+    },
+    {
+      "active_date_count": 20,
+      "event_count": 685,
+      "first_date": "2026-04-01",
+      "instrument_count": 284,
+      "last_date": "2026-04-30",
+      "month": "2026-04"
+    },
+    {
+      "active_date_count": 20,
+      "event_count": 622,
+      "first_date": "2026-05-04",
+      "instrument_count": 281,
+      "last_date": "2026-05-29",
+      "month": "2026-05"
+    },
+    {
+      "active_date_count": 21,
+      "event_count": 433,
+      "first_date": "2026-06-01",
+      "instrument_count": 200,
+      "last_date": "2026-06-30",
+      "month": "2026-06"
+    },
+    {
+      "active_date_count": 22,
+      "event_count": 255,
+      "first_date": "2026-07-01",
+      "instrument_count": 113,
+      "last_date": "2026-07-31",
+      "month": "2026-07"
+    },
+    {
+      "active_date_count": 9,
+      "event_count": 162,
+      "first_date": "2026-08-03",
+      "instrument_count": 76,
+      "last_date": "2026-08-13",
+      "month": "2026-08"
+    }
+  ],
+  "by_quarter": [
+    {
+      "active_date_count": 36,
+      "event_count": 790,
+      "first_date": "2024-11-12",
+      "instrument_count": 250,
+      "last_date": "2024-12-31",
+      "quarter": "2024-Q4"
+    },
+    {
+      "active_date_count": 55,
+      "event_count": 2497,
+      "first_date": "2025-01-02",
+      "instrument_count": 460,
+      "last_date": "2025-03-31",
+      "quarter": "2025-Q1"
+    },
+    {
+      "active_date_count": 55,
+      "event_count": 1790,
+      "first_date": "2025-04-01",
+      "instrument_count": 372,
+      "last_date": "2025-06-30",
+      "quarter": "2025-Q2"
+    },
+    {
+      "active_date_count": 65,
+      "event_count": 3197,
+      "first_date": "2025-07-01",
+      "instrument_count": 520,
+      "last_date": "2025-09-30",
+      "quarter": "2025-Q3"
+    },
+    {
+      "active_date_count": 62,
+      "event_count": 2003,
+      "first_date": "2025-10-01",
+      "instrument_count": 443,
+      "last_date": "2025-12-31",
+      "quarter": "2025-Q4"
+    },
+    {
+      "active_date_count": 55,
+      "event_count": 2123,
+      "first_date": "2026-01-02",
+      "instrument_count": 486,
+      "last_date": "2026-03-31",
+      "quarter": "2026-Q1"
+    },
+    {
+      "active_date_count": 61,
+      "event_count": 1740,
+      "first_date": "2026-04-01",
+      "instrument_count": 459,
+      "last_date": "2026-06-30",
+      "quarter": "2026-Q2"
+    },
+    {
+      "active_date_count": 31,
+      "event_count": 417,
+      "first_date": "2026-07-01",
+      "instrument_count": 152,
+      "last_date": "2026-08-13",
+      "quarter": "2026-Q3"
+    }
+  ],
+  "by_year": [
+    {
+      "active_date_count": 36,
+      "event_count": 790,
+      "first_date": "2024-11-12",
+      "instrument_count": 250,
+      "last_date": "2024-12-31",
+      "year": "2024"
+    },
+    {
+      "active_date_count": 237,
+      "event_count": 9487,
+      "first_date": "2025-01-02",
+      "instrument_count": 592,
+      "last_date": "2025-12-31",
+      "year": "2025"
+    },
+    {
+      "active_date_count": 147,
+      "event_count": 4280,
+      "first_date": "2026-01-02",
+      "instrument_count": 587,
+      "last_date": "2026-08-13",
+      "year": "2026"
+    }
+  ],
+  "classification_is_descriptive_only": true,
+  "cohort_counts": {
+    "CONTINUED_CONSOLIDATION": 72,
+    "FAILED_BREAKOUT_A1": 423,
+    "STRUCTURE_LOSS_BEFORE_BREAKOUT": 119,
+    "SUCCESSFUL_A1": 13908,
+    "UNCLASSIFIED": 35
+  },
+  "expanded": {
+    "active_date_count": 420,
+    "event_count": 14557,
+    "first_date": "2024-11-12",
+    "instrument_count": 601,
+    "last_date": "2026-08-13"
+  },
+  "growth": {
+    "active_date_count": 6.363636363636363,
+    "event_count": 20.795714285714286,
+    "instrument_count": 2.0235690235690234
+  },
+  "prior": {
+    "active_date_count": 66,
+    "event_count": 700,
+    "frozen_cohorts": {
+      "CONTINUED_CONSOLIDATION": 30,
+      "FAILED_BREAKOUT_A1": 214,
+      "STRUCTURE_LOSS_BEFORE_BREAKOUT": 37,
+      "SUCCESSFUL_A1": 386,
+      "UNCLASSIFIED": 33
+    },
+    "instrument_count": 297,
+    "source_window": "2026-02-02..2026-08-13"
+  },
+  "success_definition": "A1 has at least one later A2 formation observation for the same instrument; otherwise frozen descriptive path taxonomy applies"
+}

@@ -1,0 +1,83 @@
+{
+  "task_id": "TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-CANONICAL-AUTHORITY-PROMOTION-AND-CONSUMER-HANDOFF-20260820",
+  "source_run_id": "TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-BOOTSTRAP-EXECUTION-20260819-RUN-001",
+  "requested_window": {
+    "start": "2024-08-13",
+    "end": "2026-08-13"
+  },
+  "formal_instruments": 603,
+  "accepted_ohlcv_rows": 288881,
+  "market_rows": {
+    "TPE": {
+      "accepted_full_ohlcv_rows": 177427,
+      "incomplete_view_rows": 32
+    },
+    "TWO": {
+      "accepted_full_ohlcv_rows": 111454,
+      "incomplete_view_rows": 240
+    }
+  },
+  "observed_surface": {
+    "view_rows": 289153,
+    "distinct_instruments": 603,
+    "incomplete_view_rows": 272,
+    "min_trade_date": "2024-08-13",
+    "max_trade_date": "2026-08-13",
+    "normalized_surface_sha256": "e803733e796d8f4d8cf00575cd4045f28c9364572fc61b31ef490e8a65ff47a4",
+    "normalized_surface_md5": "0cbdb8fe950c7cbe494dcc5cb50c6e33"
+  },
+  "provider_feasibility": {
+    "TPE": "TWSE_OFFICIAL_DAILY",
+    "TWO": "TPEX_OFFICIAL_DAILY",
+    "monthly_path": "already executed and lineage retained; no refetch in promotion task"
+  },
+  "quality": {
+    "duplicate_stable_keys": 0,
+    "candidate_alternative_rows_resolved": 50447,
+    "invalid_ohlcv": 0,
+    "accepted_rows_missing_lineage": 0,
+    "accepted_rows_with_complete_lineage": 288881,
+    "synthetic_fill": 0,
+    "adjustment_state": "UNKNOWN"
+  },
+  "source_adapter_observations": [
+    {
+      "source_code": "TPEX_OFFICIAL_DAILY",
+      "adapter_version": "tpex-official-daily.v1",
+      "canonical_family_observations": 48606
+    },
+    {
+      "source_code": "TPEX_OFFICIAL_DAILY",
+      "adapter_version": "tpex-official-daily.v2",
+      "canonical_family_observations": 227020
+    },
+    {
+      "source_code": "TWSE_OFFICIAL_DAILY",
+      "adapter_version": "twse-official-daily.v1",
+      "canonical_family_observations": 207070
+    },
+    {
+      "source_code": "TWSE_OFFICIAL_DAILY",
+      "adapter_version": "twse-official-daily.v2",
+      "canonical_family_observations": 233142
+    }
+  ],
+  "family_quality_counts": [
+    {
+      "family_code": "PRICE",
+      "quality_state": "ACCEPTED",
+      "count": 357630
+    },
+    {
+      "family_code": "PRICE",
+      "quality_state": "INCOMPLETE",
+      "count": 289
+    },
+    {
+      "family_code": "VOLUME",
+      "quality_state": "ACCEPTED",
+      "count": 357919
+    }
+  ],
+  "reconciliation": "PASS_WITH_BOUNDED_LIMITATIONS"
+}

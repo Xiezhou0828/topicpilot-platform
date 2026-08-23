@@ -1,0 +1,32 @@
+{
+  "migration": "0032_task_ws1_topic_lifecycle_contract_gap_closure",
+  "downRevision": "0031_task_topic_structural_role_score_projection",
+  "executionTarget": "LOCAL_ONLY_TOPICPILOT_DATABASE",
+  "execution": "APPLIED",
+  "currentRevisionAfter": "0032_task_ws1_topic_lifecycle_contract_gap_closure",
+  "addedContract": [
+    "snapshot_id",
+    "snapshot_identity",
+    "membership_snapshot_id",
+    "membership_snapshot_hash",
+    "relation_version",
+    "source_artifact_id",
+    "source_artifact_hash",
+    "lineage_hash",
+    "member_fact_hashes",
+    "correction_sequence",
+    "supersedes_snapshot_id",
+    "superseded_by_snapshot_id",
+    "supersession_state"
+  ],
+  "historicalBackfill": "NO",
+  "approximateReplay": "NO",
+  "productionMutation": "NO",
+  "formalLifecyclePublication": "NO",
+  "runtimeDryRun": {
+    "formalRowsBefore": 460,
+    "formalRowsAfter": 460,
+    "formalRowsWritten": 0,
+    "idempotentFormalRows": 92
+  }
+}

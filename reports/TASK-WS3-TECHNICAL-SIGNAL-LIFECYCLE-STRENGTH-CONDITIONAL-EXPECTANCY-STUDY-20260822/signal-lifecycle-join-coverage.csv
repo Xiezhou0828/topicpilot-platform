@@ -1,0 +1,4 @@
+cohort,signal_count,instrument_count,pair_count,valid_lifecycle_join_count,pending_count,insufficient_data_count,fail_closed_count,no_topic_match_count,ambiguous_topic_match_count,no_lifecycle_row_count,strength_complete_count,strength_incomplete_count,valid_five_stage_count,unmatched_retained
+A2,5277,599,0,1139,84,19,0,684,1226,2228,1139,4138,1036,YES
+LEGACY5,2471,544,0,513,30,9,0,274,631,1053,513,1958,474,YES
+BOTH,1120,330,560,208,16,4,0,130,308,474,208,912,188,YES

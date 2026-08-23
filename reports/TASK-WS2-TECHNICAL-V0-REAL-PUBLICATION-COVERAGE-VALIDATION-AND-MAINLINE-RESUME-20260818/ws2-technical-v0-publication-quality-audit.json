@@ -1,0 +1,46 @@
+{
+  "task_id": "TASK-WS2-TECHNICAL-V0-REAL-PUBLICATION-COVERAGE-VALIDATION-AND-MAINLINE-RESUME-20260818",
+  "quality_audit": {
+    "instrument_identity_correct": true,
+    "as_of_session_correct": true,
+    "ma60_value_traceable": true,
+    "ma60_algorithm_unchanged": true,
+    "eligibility_result_traceable": true,
+    "technical_state_matches_contract": true,
+    "publication_state_matches_contract": true,
+    "source_lineage_present": true,
+    "source_lineage_versioned_for_all_four_probes": true,
+    "known_event_disposition_present": true,
+    "machine_readable_failure_reasons": true,
+    "future_data_used": false,
+    "look_ahead_leakage_detected": false,
+    "browser_calculation_used": false,
+    "synthetic_data_used": false,
+    "canonical_ohlcv_rewritten": false,
+    "buy_sell_or_strategy_semantics_added": false,
+    "advanced_technical_added": false
+  },
+  "payload_fields_verified": [
+    "instrument_identity",
+    "session_date",
+    "as_of",
+    "required_observation_window",
+    "actual_observation_window",
+    "algorithm_id",
+    "algorithm_version",
+    "parameter_set",
+    "price_basis",
+    "continuity_state",
+    "continuity_evidence",
+    "event_lookup_state",
+    "event_lookup_evidence",
+    "source_lineage",
+    "publication_state",
+    "availability_reason"
+  ],
+  "defect_finding": {
+    "canonical_before_task": "known-event-aware overlay was absent from the canonical publication builder",
+    "task_worktree_fix": "minimal helper and builder integration; no MA60 or Technical V0 algorithm change",
+    "remaining_implementation_defect": false
+  }
+}

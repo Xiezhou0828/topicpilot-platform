@@ -1,0 +1,61 @@
+{
+  "schemaVersion": "topic-formula-research-experiment.v1",
+  "mode": "RESEARCH_ONLY",
+  "experimentId": "topicpilot-public-participation-baselines",
+  "experimentVersion": "v1",
+  "researchRuntimeVersion": "candidate-research-v1",
+  "analysisRuntimeVersion": "candidate-analysis-v1",
+  "corpus": {
+    "file": "topic_formula_candidate_evidence.v1.json",
+    "contentDigest": "449b2b23fc286558778c77c1c84e159eb5d264fa97d8db55d7bc8f2b489bfff4"
+  },
+  "candidates": [
+    {
+      "candidateId": "diffusion-participation-baseline",
+      "candidateVersion": "v1",
+      "scorerRuntimeVersion": "research-scorer-diffusion-participation-baseline.v1",
+      "aggregationMethod": "WEIGHTED_ARITHMETIC",
+      "breadth": {
+        "featureName": "synthetic_breadth_participation_counts",
+        "featureVersion": "v1",
+        "method": "DIFFUSION_PARTICIPATION",
+        "weight": 0.5
+      },
+      "leadership": {
+        "featureName": "synthetic_leadership_participation_counts",
+        "featureVersion": "v1",
+        "method": "DIFFUSION_PARTICIPATION",
+        "weight": 0.5
+      },
+      "sourceReferences": [
+        "conference-board-diffusion-index",
+        "federal-reserve-g17-diffusion-index",
+        "oecd-jrc-composite-indicator-handbook"
+      ]
+    },
+    {
+      "candidateId": "strict-participation-baseline",
+      "candidateVersion": "v1",
+      "scorerRuntimeVersion": "research-scorer-strict-participation-baseline.v1",
+      "aggregationMethod": "WEIGHTED_ARITHMETIC",
+      "breadth": {
+        "featureName": "synthetic_breadth_participation_counts",
+        "featureVersion": "v1",
+        "method": "STRICT_PARTICIPATION",
+        "weight": 0.5
+      },
+      "leadership": {
+        "featureName": "synthetic_leadership_participation_counts",
+        "featureVersion": "v1",
+        "method": "STRICT_PARTICIPATION",
+        "weight": 0.5
+      },
+      "sourceReferences": [
+        "conference-board-diffusion-index",
+        "federal-reserve-g17-diffusion-index",
+        "oecd-jrc-composite-indicator-handbook"
+      ]
+    }
+  ],
+  "manifestDigest": "3047187004fed660f3a9d0ee24fe5f1c697b093971f2a0cde6abe216e055a7ba"
+}

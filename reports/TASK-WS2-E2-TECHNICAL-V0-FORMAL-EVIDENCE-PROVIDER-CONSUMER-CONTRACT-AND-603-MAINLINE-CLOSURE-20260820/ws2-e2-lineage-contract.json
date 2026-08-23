@@ -1,0 +1,29 @@
+{
+  "task_id": "TASK-WS2-E2-TECHNICAL-V0-FORMAL-EVIDENCE-PROVIDER-CONSUMER-CONTRACT-AND-603-MAINLINE-CLOSURE-20260820",
+  "lineage_contract_version": "stock-technical-v0-lineage.v1",
+  "required_lineage": [
+    "technical_contract_version",
+    "technical_policy_version",
+    "indicator_version",
+    "algorithm_id",
+    "parameter_set",
+    "source_foundation_version",
+    "source_foundation_sha256",
+    "source_authority_content_sha256",
+    "source_code",
+    "adapter_version",
+    "normalization_contract_version",
+    "mapping_policy_version",
+    "reference_data_version",
+    "observation_semantics",
+    "session_date",
+    "as_of",
+    "continuity_state",
+    "continuity_evidence",
+    "lineage_reference"
+  ],
+  "lineage_payload_policy": "compact_versioned_reference_plus_stable_hash; no large artifact duplication",
+  "lineage_mismatch_behavior": "UNAVAILABLE_OR_ERROR_FAIL_CLOSED",
+  "lineage_contract_defined": "YES",
+  "status": "PASS"
+}

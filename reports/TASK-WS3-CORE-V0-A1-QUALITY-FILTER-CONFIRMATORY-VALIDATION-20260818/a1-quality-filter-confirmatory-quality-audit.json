@@ -1,0 +1,62 @@
+{
+  "a1_cohort_authority_reconciled": true,
+  "a1_formation_changed": false,
+  "a2_formation_changed": false,
+  "candidate_classification_counts": {
+    "INCONCLUSIVE": 7
+  },
+  "candidate_set_immutable": true,
+  "concurrent_change_reconciliation_required": false,
+  "confirmatory_freeze_created": true,
+  "confirmatory_independence_level": "BOUNDED",
+  "confirmatory_protocol_frozen_before_outcome_review": true,
+  "core_v0_frozen_spec_changed": false,
+  "current_canonical_head": "8bc9c8ec403e03aa104c6feac481e2d5e561e134",
+  "database_writes": false,
+  "deploy_executed": false,
+  "exploratory_source_head": "035587e4f263447e778f9384971885e03a53ecc2",
+  "frozen_spec_hash": "6e4cc504f969098e263cfa8e7c43240e9575a3f72f0641ba39da22794ea9870d",
+  "git_diff_check": "PASS",
+  "look_ahead_leakage_detected": false,
+  "ma60_policy_changed": false,
+  "migration_executed": false,
+  "new_combination_search_performed": false,
+  "new_feature_search_performed": false,
+  "next_task_changed": false,
+  "normalized_artifact_hashes": {
+    "aggregate_sha256": "6bc87a6b5ab182dae972bd198f4ee06dea90fea2050c3708b2da9cf10cd3075d",
+    "algorithm": "SHA-256",
+    "artifacts": {
+      "a1-quality-filter-confirmatory-candidate-comparison.csv": "b0aff0456dfd5e18a550649591dcb91767ef6d5099254d7d7e8b205a4a7b21f6",
+      "a1-quality-filter-confirmatory-concentration-analysis.json": "9abbeb6f1d3f472d58e04bfeece4703d90801aded9f4ea377f9604b3b41fcdcc",
+      "a1-quality-filter-confirmatory-forward-return-analysis.csv": "93966e42fc1b206229d9b37a083d3d70e497e6891df01e9700369bd81e8c5991",
+      "a1-quality-filter-confirmatory-freeze.json": "321eee383b3aa0fd5e006a43ddaa1c61229a1f7e29f3738e78d7e3abed44d1b4",
+      "a1-quality-filter-confirmatory-july-analysis.csv": "b549820740a795cc8c9ba2d881d33b57719a04f764a78bbf599bece7708d1aba",
+      "a1-quality-filter-confirmatory-market-stability.csv": "45675cb37461fc7cdf360ddd8b030498a52daeba4e23a105546772070b78e1d0",
+      "a1-quality-filter-confirmatory-retention-analysis.csv": "ffbffce3753f8936c0ad9551ba0acccb7d933e3a9a00c276831aba24b3ef4de4",
+      "a1-quality-filter-confirmatory-temporal-stability.csv": "09bf84f1c751d57efc04b58479b10f48682462c2989489b566a65f183d7ffa89"
+    },
+    "byte_normalization": "CRLF_TO_LF_BEFORE_HASH"
+  },
+  "outcome_derived_feature_detected": false,
+  "pit_feature_definitions_preserved": true,
+  "previous_threshold_research_available": true,
+  "production_mutation": false,
+  "push_executed": false,
+  "raw_a1_cohort_preserved": true,
+  "reproducibility_pass": "PASS",
+  "secret_scan": "PASS",
+  "source_canonical_head": "8bc9c8ec403e03aa104c6feac481e2d5e561e134",
+  "source_to_canonical_provenance": {
+    "final_canonical_head": "RECORDED_IN_FINAL_HANDOFF",
+    "canonical_head_at_promotion": "d7ad7f3f5d274f5ff444bd29c25cf70239522bb0",
+    "source_canonical_head": "8bc9c8ec403e03aa104c6feac481e2d5e561e134",
+    "task_source_commit": "bfbc8e99fec61af538dbb8df49025cfe221a1013"
+  },
+  "successful_failed_cohort_definitions_preserved": true,
+  "task_id": "TASK-WS3-CORE-V0-A1-QUALITY-FILTER-CONFIRMATORY-VALIDATION-20260818",
+  "threshold_retuning_performed": false,
+  "ws1_changed": false,
+  "ws2_changed": false,
+  "ws4_changed": false
+}

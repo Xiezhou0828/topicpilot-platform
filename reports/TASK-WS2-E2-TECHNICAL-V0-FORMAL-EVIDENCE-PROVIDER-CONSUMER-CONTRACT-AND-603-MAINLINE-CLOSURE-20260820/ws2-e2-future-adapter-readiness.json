@@ -1,0 +1,18 @@
+{
+  "task_id": "TASK-WS2-E2-TECHNICAL-V0-FORMAL-EVIDENCE-PROVIDER-CONSUMER-CONTRACT-AND-603-MAINLINE-CLOSURE-20260820",
+  "READY_FOR_FUTURE_API_ADAPTER": "YES",
+  "READY_FOR_FUTURE_UI_CONSUMER": "YES",
+  "readiness_is_contract_only": true,
+  "adapter_requirements": [
+    "use provider request operations rather than the E1 CSV",
+    "preserve logical and version identity",
+    "preserve session_date, as_of, required/actual windows, and PIT status",
+    "preserve source identity and lineage reference",
+    "propagate availability and limitation reasons",
+    "never compute indicator values in the browser",
+    "never map technical evidence to strategy or recommendation semantics"
+  ],
+  "api_route_created": "NO",
+  "ui_changed": "NO",
+  "status": "PASS"
+}

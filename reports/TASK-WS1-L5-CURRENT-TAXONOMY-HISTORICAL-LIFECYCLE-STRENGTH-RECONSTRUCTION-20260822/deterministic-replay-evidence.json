@@ -1,0 +1,16 @@
+{
+  "canonical_head": "dac1dd21cae214ea1ac3e5a511e48774ae2411c9",
+  "database_mutation": "NO",
+  "duplicate_topic_date_rows": 0,
+  "formal_persistence_mutation": "NO",
+  "forward_shadow_mutation": "NO",
+  "idempotency_check": "PASS",
+  "input_queries_read_only": true,
+  "normalized_dataset_sha256": "17faa9be1189d6fab1bdfe518a1faf9e90d9be1ec994008ed59beef8bf6ecb95",
+  "reconstruction_runs": 2,
+  "replay_duplicate_topic_date_rows": 0,
+  "replay_hash": "17faa9be1189d6fab1bdfe518a1faf9e90d9be1ec994008ed59beef8bf6ecb95",
+  "reproducible": "YES",
+  "source_class": "CURRENT_TAXONOMY_HISTORICAL_RECONSTRUCTION",
+  "task_id": "TASK-WS1-L5-CURRENT-TAXONOMY-HISTORICAL-LIFECYCLE-STRENGTH-RECONSTRUCTION-20260822"
+}

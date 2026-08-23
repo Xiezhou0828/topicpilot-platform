@@ -1,0 +1,258 @@
+{
+  "taskId": "TASK-OPS-DOCUMENTATION-PROVIDERS-OWNER-DISPOSITION-AND-DB-INTEGRATION-FIXTURE-CLOSURE-001",
+  "auditDate": "2026-08-16",
+  "canonicalPreSha": "d10a5b12769241227ae4d8314647bf102755c1ac",
+  "canonicalPostSha": "beac3b9b9e2b0c1b65a7ca53d2548eb77bfe6a28",
+  "documentation": {
+    "brokenLinkOccurrencesBefore": 13,
+    "brokenLinkOccurrencesAfter": 0,
+    "uniqueProviderPathsAudited": 8,
+    "providersCanonicalized": 0,
+    "indexSelfContained": true,
+    "documentationMdCreated": false,
+    "authorityScopeLinkCheck": {
+      "files": [
+        "docs/DOCUMENTATION_INDEX.md",
+        "docs/architecture/README.md"
+      ],
+      "linksChecked": 42,
+      "missing": 0,
+      "result": "PASS"
+    },
+    "repositoryWideLegacyScan": {
+      "missingOccurrences": 22,
+      "missingUniqueTargets": 11,
+      "result": "OWNER_RETAINED_OUT_OF_SCOPE_LEGACY_EVIDENCE"
+    },
+    "providers": [
+      {
+        "path": "docs/architecture/PRODUCT_SURFACES_AND_UX_CONTRACT.md",
+        "consumerOccurrences": [
+          "docs/DOCUMENTATION_INDEX.md:10",
+          "docs/architecture/README.md:29",
+          "docs/architecture/README.md:68"
+        ],
+        "statusInCleanCandidate": "MISSING",
+        "statusInCanonicalOwnerWorktree": "UNTRACKED",
+        "provenance": "canonical owner worktree architecture owner-doc set; source declares ACCEPTED/FROZEN product contract",
+        "completedTaskOrReport": "owner-retained source; no committed source-to-canonical promotion for this dependency graph",
+        "publicSafe": true,
+        "canonicalWorthy": true,
+        "disposition": "INTENTIONAL_NONCANONICAL_OWNER_RETAINED_INDEX_DEMOTED",
+        "ownerDecision": "explicitly promote the complete dependency graph before restoring the authority link"
+      },
+      {
+        "path": "docs/architecture/ARCHITECTURE_OVERVIEW.md",
+        "consumerOccurrences": [
+          "docs/DOCUMENTATION_INDEX.md:16",
+          "docs/architecture/README.md:31",
+          "docs/architecture/README.md:67"
+        ],
+        "statusInCleanCandidate": "MISSING",
+        "statusInCanonicalOwnerWorktree": "UNTRACKED",
+        "provenance": "canonical owner worktree architecture owner-doc set; source declares VERIFIED NEXT/V2 overview",
+        "completedTaskOrReport": "owner-retained source; dependency graph includes additional owner-retained architecture documents",
+        "publicSafe": true,
+        "canonicalWorthy": true,
+        "disposition": "INTENTIONAL_NONCANONICAL_OWNER_RETAINED_INDEX_REPOINTED_TO_TRACKED_ARCHITECTURE_BOOK",
+        "ownerDecision": "explicitly promote the complete dependency graph before restoring the overview link"
+      },
+      {
+        "path": "docs/architecture/01_SYSTEM_CONTEXT.md",
+        "consumerOccurrences": [
+          "docs/DOCUMENTATION_INDEX.md:17",
+          "docs/architecture/README.md:52"
+        ],
+        "statusInCleanCandidate": "MISSING",
+        "statusInCanonicalOwnerWorktree": "UNTRACKED",
+        "provenance": "canonical owner worktree numbered architecture chapter; source is public-safe draft context",
+        "completedTaskOrReport": "owner-retained source; chapter links to another owner-retained SYSTEM_CONTEXT.md",
+        "publicSafe": true,
+        "canonicalWorthy": false,
+        "disposition": "INTENTIONAL_NONCANONICAL_OWNER_RETAINED_INDEX_REPOINTED_TO_TRACKED_SYSTEM_OVERVIEW",
+        "ownerDecision": "none for current index closure; promote only as part of a future architecture-book graph review"
+      },
+      {
+        "path": "docs/architecture/PHASE_3_1D_MARKET_DATA_INPUT_PROFILE_AND_SOURCE_STRATEGY.md",
+        "consumerOccurrences": [
+          "docs/DOCUMENTATION_INDEX.md:20"
+        ],
+        "statusInCleanCandidate": "MISSING",
+        "statusInCanonicalOwnerWorktree": "UNTRACKED",
+        "provenance": "canonical owner worktree phase-planning document; source strategy scope is public-safe",
+        "completedTaskOrReport": "owner-retained planning evidence; no canonical source commit identified",
+        "publicSafe": true,
+        "canonicalWorthy": false,
+        "disposition": "INTENTIONAL_NONCANONICAL_OWNER_RETAINED_INDEX_DEMOTED",
+        "ownerDecision": "retain as planning evidence unless a named owner promotes it"
+      },
+      {
+        "path": "docs/architecture/PHASE_3_7_001_TOPIC_ENGINE_CONTRACT.md",
+        "consumerOccurrences": [
+          "docs/DOCUMENTATION_INDEX.md:21"
+        ],
+        "statusInCleanCandidate": "MISSING",
+        "statusInCanonicalOwnerWorktree": "UNTRACKED",
+        "provenance": "canonical owner worktree Phase 3.7 contract; source is public-safe but references owner-retained 003F evidence",
+        "completedTaskOrReport": "owner-retained contract source; complete dependency graph not canonicalized",
+        "publicSafe": true,
+        "canonicalWorthy": true,
+        "disposition": "INTENTIONAL_NONCANONICAL_OWNER_RETAINED_INDEX_DEMOTED",
+        "ownerDecision": "promote the contract and its dependency graph together, or keep the index demotion"
+      },
+      {
+        "path": "docs/research/",
+        "consumerOccurrences": [
+          "docs/DOCUMENTATION_INDEX.md:36"
+        ],
+        "statusInCleanCandidate": "MISSING",
+        "statusInCanonicalOwnerWorktree": "UNTRACKED_DIRECTORY",
+        "provenance": "canonical owner worktree research evidence",
+        "completedTaskOrReport": "historical/research evidence; no canonical authority status",
+        "publicSafe": true,
+        "canonicalWorthy": false,
+        "disposition": "INTENTIONAL_NONCANONICAL_OWNER_RETAINED_INDEX_DEMOTED",
+        "ownerDecision": "none; preserve owner evidence without making the directory authoritative"
+      },
+      {
+        "path": "docs/workshops/",
+        "consumerOccurrences": [
+          "docs/DOCUMENTATION_INDEX.md:36"
+        ],
+        "statusInCleanCandidate": "MISSING",
+        "statusInCanonicalOwnerWorktree": "UNTRACKED_DIRECTORY",
+        "provenance": "canonical owner worktree workshop evidence",
+        "completedTaskOrReport": "historical/planning evidence; no canonical authority status",
+        "publicSafe": true,
+        "canonicalWorthy": false,
+        "disposition": "INTENTIONAL_NONCANONICAL_OWNER_RETAINED_INDEX_DEMOTED",
+        "ownerDecision": "none; preserve owner evidence without making the directory authoritative"
+      },
+      {
+        "path": "docs/reports/DOCUMENTATION_CLEANUP_REPORT_2026-08-10.md",
+        "consumerOccurrences": [
+          "docs/DOCUMENTATION_INDEX.md:45"
+        ],
+        "statusInCleanCandidate": "MISSING",
+        "statusInCanonicalOwnerWorktree": "UNTRACKED",
+        "provenance": "canonical owner worktree historical cleanup report",
+        "completedTaskOrReport": "historical report source; it records the same owner-retained documentation set",
+        "publicSafe": true,
+        "canonicalWorthy": false,
+        "disposition": "INTENTIONAL_NONCANONICAL_OWNER_RETAINED_INDEX_DEMOTED",
+        "ownerDecision": "retain as evidence; canonicalize only if an owner wants the historical report committed"
+      }
+    ]
+  },
+  "branches": {
+    "localBranchesBefore": 44,
+    "mappedLocalBranches": 14,
+    "unmappedLocalBranchesBefore": 30,
+    "unmappedLocalBranchesAfter": 30,
+    "deletionsPerformed": 0,
+    "dispositionCounts": {
+      "ACTIVE_OWNER_WORK": 0,
+      "COMPLETE_CANONICALIZED": 4,
+      "COMPLETE_NOT_CANONICALIZED": 0,
+      "SUPERSEDED_BY_CANONICAL": 24,
+      "HISTORICAL_EVIDENCE_RETAIN": 1,
+      "UNKNOWN_OWNER_REVIEW_REQUIRED": 1
+    },
+    "safeToArchiveLaterCount": 28,
+    "ownerDecisionRequiredBranches": [
+      "codex/task-doc-opportunity-001-20260813"
+    ],
+    "ledger": [
+      {"branch": "codex/task-data-ref-001-20260813", "head": "af45356a0d55b789426865d63831188ba0267de1", "uniqueCommitCount": 4, "ancestorOfCanonical": false, "disposition": "HISTORICAL_EVIDENCE_RETAIN", "provenance": "reference identity conflict audit", "recommendedOwnerAction": "retain evidence; no deletion", "safeToArchiveLater": false},
+      {"branch": "codex/task-data-ref-005b-20260813", "head": "2a8c82de3c4cad0d2dbd4f42038ef863161af808", "uniqueCommitCount": 5, "ancestorOfCanonical": false, "disposition": "SUPERSEDED_BY_CANONICAL", "provenance": "reference identity remediation variant; superseded by c1a34de/0457de8 canonical reference lineage", "recommendedOwnerAction": "retain until provenance review, then archive", "safeToArchiveLater": true},
+      {"branch": "codex/task-data-ref-005c-20260813", "head": "446e318a9b158958ff3c6972994f68b2f5ca898b", "uniqueCommitCount": 6, "ancestorOfCanonical": false, "disposition": "SUPERSEDED_BY_CANONICAL", "provenance": "reference identity remediation variant", "recommendedOwnerAction": "retain until provenance review, then archive", "safeToArchiveLater": true},
+      {"branch": "codex/task-data-ref-005d-20260813", "head": "47c0c2d09bc0c5796a97fa1f81b4b6c1df28a7ad", "uniqueCommitCount": 9, "ancestorOfCanonical": false, "disposition": "SUPERSEDED_BY_CANONICAL", "provenance": "reference identity validation variant", "recommendedOwnerAction": "retain until provenance review, then archive", "safeToArchiveLater": true},
+      {"branch": "codex/task-data-ref-005e-20260813", "head": "71ba1ac27f2f72378df3df9266271de4f05f27d1", "uniqueCommitCount": 18, "ancestorOfCanonical": false, "disposition": "SUPERSEDED_BY_CANONICAL", "provenance": "blocked reference bootstrap evidence", "recommendedOwnerAction": "retain until provenance review, then archive", "safeToArchiveLater": true},
+      {"branch": "codex/task-data-ref-005g-20260814", "head": "a009953c2c9270b6c9ffbaef11ab4fe435cd0242", "uniqueCommitCount": 19, "ancestorOfCanonical": false, "disposition": "SUPERSEDED_BY_CANONICAL", "provenance": "reference market-calendar remediation variant", "recommendedOwnerAction": "retain until provenance review, then archive", "safeToArchiveLater": true},
+      {"branch": "codex/task-data-ref-005h-20260813", "head": "00b40762a9484d951d4cfe776b40557c64fb08fb", "uniqueCommitCount": 19, "ancestorOfCanonical": false, "disposition": "SUPERSEDED_BY_CANONICAL", "provenance": "reference market-calendar remediation variant", "recommendedOwnerAction": "retain until provenance review, then archive", "safeToArchiveLater": true},
+      {"branch": "codex/task-data-ref-005h-docs-20260813", "head": "1c9938733d3befc2e3d6e7fffd5763197986d19f", "uniqueCommitCount": 27, "ancestorOfCanonical": false, "disposition": "SUPERSEDED_BY_CANONICAL", "provenance": "reference G2 authority re-entry documentation", "recommendedOwnerAction": "retain until provenance review, then archive", "safeToArchiveLater": true},
+      {"branch": "codex/task-data-ref-006a-20260814", "head": "2c8e88b3c1de3e324a6a1f7b3d1e9d00e3eff868", "uniqueCommitCount": 28, "ancestorOfCanonical": false, "disposition": "SUPERSEDED_BY_CANONICAL", "provenance": "G2 provider preflight; capability represented in 0457de8", "recommendedOwnerAction": "retain until provenance review, then archive", "safeToArchiveLater": true},
+      {"branch": "codex/task-data-ref-006b-20260814", "head": "f9a3f82baec6910cd8f3e0076056f20f8d9a12d4", "uniqueCommitCount": 33, "ancestorOfCanonical": false, "disposition": "SUPERSEDED_BY_CANONICAL", "provenance": "reference closure report lineage; capability represented in 0457de8", "recommendedOwnerAction": "retain until provenance review, then archive", "safeToArchiveLater": true},
+      {"branch": "codex/task-data-ref-006f-20260814", "head": "b19b97ab383235f89b884958f2021c25b66e8846", "uniqueCommitCount": 32, "ancestorOfCanonical": false, "disposition": "SUPERSEDED_BY_CANONICAL", "provenance": "blocked reference transition handoff; later 006I/009 lineage supersedes", "recommendedOwnerAction": "retain until provenance review, then archive", "safeToArchiveLater": true},
+      {"branch": "codex/task-data-ref-006g-20260814", "head": "eb50d2d1e242290e2b9c6c95389bd7cd257caf26", "uniqueCommitCount": 33, "ancestorOfCanonical": false, "disposition": "SUPERSEDED_BY_CANONICAL", "provenance": "reference transition contract; later 006I/009 lineage supersedes", "recommendedOwnerAction": "retain until provenance review, then archive", "safeToArchiveLater": true},
+      {"branch": "codex/task-data-ref-006h-20260814", "head": "6c56a5ec0de288134b59c116822fc08170bc5161", "uniqueCommitCount": 35, "ancestorOfCanonical": false, "disposition": "SUPERSEDED_BY_CANONICAL", "provenance": "reference transition activation and G1 evidence; later 0457de8 lineage supersedes", "recommendedOwnerAction": "retain until provenance review, then archive", "safeToArchiveLater": true},
+      {"branch": "codex/task-data-ref-007-g2-scope-fix-20260814", "head": "056cdcedb099af423a5f7ef4589e1a6017217de8", "uniqueCommitCount": 37, "ancestorOfCanonical": false, "disposition": "SUPERSEDED_BY_CANONICAL", "provenance": "G2 scope-fix evidence represented in 0457de8 provider/reference lineage", "recommendedOwnerAction": "retain until provenance review, then archive", "safeToArchiveLater": true},
+      {"branch": "codex/task-data-ref-008-g3-market-semantics-20260814", "head": "b9c881af0fa34d29e9ac0ccdf123351741e7f62d", "uniqueCommitCount": 38, "ancestorOfCanonical": false, "disposition": "SUPERSEDED_BY_CANONICAL", "provenance": "G3 read-only market semantics evidence represented in 0457de8", "recommendedOwnerAction": "retain until provenance review, then archive", "safeToArchiveLater": true},
+      {"branch": "codex/task-data-ref-009-post-close-canary-20260814", "head": "edfeb0e59c53ccf957d2b100a4f4ec619f67b519", "uniqueCommitCount": 39, "ancestorOfCanonical": false, "disposition": "SUPERSEDED_BY_CANONICAL", "provenance": "post-close canary evidence represented in 0457de8", "recommendedOwnerAction": "retain until provenance review, then archive", "safeToArchiveLater": true},
+      {"branch": "codex/task-doc-opportunity-001-20260813", "head": "9dfa3d426064fa62bca54c6c5cfebb86c1997099", "uniqueCommitCount": 9, "ancestorOfCanonical": false, "disposition": "UNKNOWN_OWNER_REVIEW_REQUIRED", "provenance": "strategy/opportunity authority branch; no current canonical owner decision identified", "recommendedOwnerAction": "owner review; do not archive or absorb", "safeToArchiveLater": false},
+      {"branch": "codex/task-fe-be-stock-005-20260814", "head": "dd30da534aab6aa49d1d35b870d85541b04abe13", "uniqueCommitCount": 6, "ancestorOfCanonical": false, "disposition": "COMPLETE_CANONICALIZED", "provenance": "Stock EOD read capability represented by canonical f364655", "recommendedOwnerAction": "retain evidence until owner confirms, then archive", "safeToArchiveLater": true},
+      {"branch": "codex/task-fe-be-stock-005c-20260814", "head": "ec6687b98501c424102846851613481ace9f0549", "uniqueCommitCount": 2, "ancestorOfCanonical": false, "disposition": "COMPLETE_CANONICALIZED", "provenance": "Stock EOD Explorer/Drawer wiring represented by canonical f364655", "recommendedOwnerAction": "retain evidence until owner confirms, then archive", "safeToArchiveLater": true},
+      {"branch": "codex/task-fe-be-today-002b-reconciliation-20260813", "head": "9c1b1f9cc7c1e4510b61060ffa8a8a7928ee45bc", "uniqueCommitCount": 5, "ancestorOfCanonical": false, "disposition": "SUPERSEDED_BY_CANONICAL", "provenance": "Today Home/reference bundle lineage represented by current canonical Today/data commits", "recommendedOwnerAction": "retain until provenance review, then archive", "safeToArchiveLater": true},
+      {"branch": "codex/task-fe-be-today-003-20260813", "head": "93a2579a6f5f43e9d1da8f6f56bee3d9c4b770e", "uniqueCommitCount": 6, "ancestorOfCanonical": false, "disposition": "SUPERSEDED_BY_CANONICAL", "provenance": "Today heating/cooling integration superseded by canonical Today lineage", "recommendedOwnerAction": "retain until provenance review, then archive", "safeToArchiveLater": true},
+      {"branch": "codex/task-fe-be-today-003b-final-20260813", "head": "8a818935fe63eb3c3db9592c5068363c7ec941e9", "uniqueCommitCount": 8, "ancestorOfCanonical": false, "disposition": "SUPERSEDED_BY_CANONICAL", "provenance": "Today reconciliation closure superseded by canonical Today lineage", "recommendedOwnerAction": "retain until provenance review, then archive", "safeToArchiveLater": true},
+      {"branch": "codex/task-fe-be-today-003b-reconcile-20260813", "head": "eb5ef2c331c00d0cb55eccd33e921ac63a9fa207", "uniqueCommitCount": 7, "ancestorOfCanonical": false, "disposition": "SUPERSEDED_BY_CANONICAL", "provenance": "Today audit variant superseded by canonical Today lineage", "recommendedOwnerAction": "retain until provenance review, then archive", "safeToArchiveLater": true},
+      {"branch": "codex/task-fe-be-today-004c-20260813", "head": "b4c6dfb71d720fece3f5114b3607ddfa07d7e045", "uniqueCommitCount": 16, "ancestorOfCanonical": false, "disposition": "SUPERSEDED_BY_CANONICAL", "provenance": "Today daily focus story variant superseded by canonical Today lineage", "recommendedOwnerAction": "retain until provenance review, then archive", "safeToArchiveLater": true},
+      {"branch": "codex/task-fe-be-today-004c-r-20260813", "head": "3d3b4c53a10b820b9541d5ceb89265e3365666de", "uniqueCommitCount": 19, "ancestorOfCanonical": false, "disposition": "SUPERSEDED_BY_CANONICAL", "provenance": "Today daily focus reconciliation variant superseded by canonical Today lineage", "recommendedOwnerAction": "retain until provenance review, then archive", "safeToArchiveLater": true},
+      {"branch": "codex/task-fe-be-today-004c-r2-20260813", "head": "47b416fcd71845d91c2ea5577f8f7d2a2b1dab45", "uniqueCommitCount": 21, "ancestorOfCanonical": false, "disposition": "SUPERSEDED_BY_CANONICAL", "provenance": "Today daily focus reconciliation variant superseded by canonical Today lineage", "recommendedOwnerAction": "retain until provenance review, then archive", "safeToArchiveLater": true},
+      {"branch": "codex/task-fe-be-today-004d-r-20260814", "head": "a816967926c6105361991d09fe183c4f5d962d2a", "uniqueCommitCount": 45, "ancestorOfCanonical": false, "disposition": "SUPERSEDED_BY_CANONICAL", "provenance": "Today-004D reconciliation represented by canonical 17d796d/d89013b lineage", "recommendedOwnerAction": "retain until provenance review, then archive", "safeToArchiveLater": true},
+      {"branch": "codex/task-fe-be-today-004d-r-closure-20260814", "head": "c6d7bb02e6ccafaa4bfb45465b7b8af6a763ce66", "uniqueCommitCount": 47, "ancestorOfCanonical": false, "disposition": "SUPERSEDED_BY_CANONICAL", "provenance": "Today-004D closure represented by canonical 17d796d/d89013b lineage", "recommendedOwnerAction": "retain until provenance review, then archive", "safeToArchiveLater": true},
+      {"branch": "codex/task-fe-topic-detail-001-20260815", "head": "20adab43009335d51901f822a8f438b315c97a2d", "uniqueCommitCount": 2, "ancestorOfCanonical": false, "disposition": "COMPLETE_CANONICALIZED", "provenance": "formal-state research workspace represented by canonical d7b28e0", "recommendedOwnerAction": "retain evidence until owner confirms, then archive", "safeToArchiveLater": true},
+      {"branch": "codex/task-gov-worktree-cleanup-20260814", "head": "a7b80cb832d9b930fc1403edfd4bf0b0f907b87b", "uniqueCommitCount": 49, "ancestorOfCanonical": false, "disposition": "COMPLETE_CANONICALIZED", "provenance": "governance cleanup evidence represented by canonical governance closure lineage", "recommendedOwnerAction": "retain evidence until owner confirms, then archive", "safeToArchiveLater": true}
+    ]
+  },
+  "ownerState": {
+    "trackedDirtyCount": 18,
+    "untrackedCount": 156,
+    "predecessorUntrackedCount": 167,
+    "untrackedCountDeltaAttribution": "11-entry reduction observed after independent A Stock-004 promotion; no B cleanup performed",
+    "unattributedDirtyCount": 8,
+    "ownerDecisionRequiredFiles": [
+      "docs/business-rules/STOCK_STATE_RULES.md",
+      "docs/detectors/DETECTOR_TEMPLATE.md",
+      "docs/detectors/DET_RANGE_V1.md",
+      "docs/handoffs/TOPICPILOT_CHAT_HANDOFF_20260813.md",
+      "docs/workshops/WORKSHOP_3_BUSINESS_RULE_EXTRACTION.md",
+      "docs/workshops/WORKSHOP_4_DETECTOR_DESIGN_AND_CONFIG.md",
+      "docs/workshops/WORKSHOP_5_RUNTIME_ORCHESTRATION.md",
+      "docs/workshops/WORKSHOP_6_VALIDATION_AND_ANALYTICS.md"
+    ],
+    "trackedDirtyBuckets": {
+      "apps/web": 11,
+      "docs/architecture": 2,
+      "docs/data": 1,
+      "docs/ROADMAP.md": 1,
+      "docs/WORK_ORDERS.md": 1,
+      "fixtures/research": 1,
+      "PROJECT_CONTEXT.md": 1
+    },
+    "applicationOwnerStateStaged": false,
+    "cleanupPerformed": false
+  },
+  "dbFixture": {
+    "contractStatus": "PASS",
+    "implemented": true,
+    "fixtureId": "topicpilot-db-integration-v1",
+    "fixtureTestOnly": true,
+    "fixtureIdempotent": true,
+    "referenceFixtureState": "PASS: tw-reference-v1 ACTIVE; bundleSha256=daf19e9eb051255c631d0fff6d8fecf1273aecf52f9e958a62c778dfb6906295",
+    "historicalFixtureState": "PASS: synthetic approved representative rows for TPE:2330, TWO:6488, TPE:6806; 340 raw/timeline rows and 340 PRICE plus 340 VOLUME canonical rows; full 63826-row HIST-002B dataset not copied",
+    "migrationHead": "0030_task_topic_daily_state_formal_authority",
+    "representativeSessions": 340,
+    "referenceInstruments": 507,
+    "providerCalls": 0,
+    "productionMutation": false,
+    "activeRegistryReplacement": "PASS: test-only helper temporarily retires approved ACTIVE registry, runs isolated fixture, then restores status",
+    "validationProfiles": {
+      "seededBusinessSuite": "475 passed / 7 skipped / 0 failed / 0 errors",
+      "emptyStructuralAndMigrationSuite": "16 passed / 0 skipped / 0 failed / 0 errors",
+      "combinedPostResult": "491 passed / 7 skipped / 0 failed / 0 errors"
+    },
+    "replay": "PASS: second bootstrap produced identical row counts and bundle digest"
+  },
+  "safety": {
+    "databaseMutation": "NO_PRODUCTION",
+    "productionMutation": "NO",
+    "pushRemote": "NO",
+    "mergeMain": "NO",
+    "deploy": "NO",
+    "scheduler": "NO",
+    "nextTaskChanged": "NO",
+    "branchDelete": "NO",
+    "resetStashCleanForcePush": "NO"
+  }
+}

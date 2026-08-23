@@ -1,0 +1,114 @@
+{
+  "concentration_is_a_caveat_not_a_filter": true,
+  "instrument_count": 602,
+  "market_counts": {
+    "TPE": 14519,
+    "TWO": 9035
+  },
+  "outlier_removal_performed": false,
+  "primary_union_episode_count": 23554,
+  "schema_version": "ws3-successful-swing-concentration-outlier-audit.v1",
+  "top_10_share": 0.02271376411649826,
+  "top_instrument_share": [
+    {
+      "episode_count": 56,
+      "instrument_id": "1292fd08-9901-4e2f-8a65-37a79c1b953c",
+      "share": 0.00237751549630636
+    },
+    {
+      "episode_count": 55,
+      "instrument_id": "13640368-c6af-46c1-ba46-7e546a6a1112",
+      "share": 0.002335059862443746
+    },
+    {
+      "episode_count": 54,
+      "instrument_id": "b52ff135-9b8f-4a87-a3dc-ab133e6ba912",
+      "share": 0.002292604228581133
+    },
+    {
+      "episode_count": 54,
+      "instrument_id": "baaf6696-6ae3-42f8-a9d4-6ed0149e5563",
+      "share": 0.002292604228581133
+    },
+    {
+      "episode_count": 53,
+      "instrument_id": "30252e7d-c1b0-4134-86ee-e6e758f5911f",
+      "share": 0.002250148594718519
+    },
+    {
+      "episode_count": 53,
+      "instrument_id": "402730ac-64fb-4595-b705-41b35d65acfc",
+      "share": 0.002250148594718519
+    },
+    {
+      "episode_count": 53,
+      "instrument_id": "e4319a03-7f36-4cc8-bd5a-b56213eeb35d",
+      "share": 0.002250148594718519
+    },
+    {
+      "episode_count": 53,
+      "instrument_id": "8364eb8d-bf1a-4a02-8463-9176ba75ad48",
+      "share": 0.002250148594718519
+    },
+    {
+      "episode_count": 52,
+      "instrument_id": "84a428ca-94ae-4594-b19c-60384a8737aa",
+      "share": 0.0022076929608559055
+    },
+    {
+      "episode_count": 52,
+      "instrument_id": "2d7adfe6-6873-4c81-8863-4f3965d73c92",
+      "share": 0.0022076929608559055
+    },
+    {
+      "episode_count": 52,
+      "instrument_id": "e70ac1dc-4720-4a78-a83e-049fdea0c5a8",
+      "share": 0.0022076929608559055
+    },
+    {
+      "episode_count": 52,
+      "instrument_id": "06833556-8e76-4893-b49f-1cec4e82756f",
+      "share": 0.0022076929608559055
+    },
+    {
+      "episode_count": 51,
+      "instrument_id": "f79ea42a-676f-4948-a127-49922ba51c7e",
+      "share": 0.002165237326993292
+    },
+    {
+      "episode_count": 51,
+      "instrument_id": "19e11f23-111e-4ff1-bd2c-726cd72801aa",
+      "share": 0.002165237326993292
+    },
+    {
+      "episode_count": 51,
+      "instrument_id": "2c71acb0-e907-4961-82b4-3fee3548859b",
+      "share": 0.002165237326993292
+    },
+    {
+      "episode_count": 51,
+      "instrument_id": "3e1c36f0-38be-4d2f-a055-8ae2ae68e0a3",
+      "share": 0.002165237326993292
+    },
+    {
+      "episode_count": 51,
+      "instrument_id": "dea51d02-cf9e-4e1e-a5b9-fd7ba7570cc8",
+      "share": 0.002165237326993292
+    },
+    {
+      "episode_count": 50,
+      "instrument_id": "5334b0f4-93c3-444e-972c-7fa5d8caafcc",
+      "share": 0.0021227816931306785
+    },
+    {
+      "episode_count": 50,
+      "instrument_id": "58ff243d-30ac-4932-b66c-de8b2d0455f5",
+      "share": 0.0021227816931306785
+    },
+    {
+      "episode_count": 50,
+      "instrument_id": "2607f414-def7-4c3f-8941-cd6accbc1ce6",
+      "share": 0.0021227816931306785
+    }
+  ]
+}

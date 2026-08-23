@@ -1,0 +1,27 @@
+{
+  "TASK_ID": "TASK-WS3-A-STRUCTURAL-ELIGIBILITY-RECONSTRUCTION-AND-FALSE-POSITIVE-SEPARATION-20260821",
+  "large_panel_scan_count": 2,
+  "large_source_panels_rescanned_after_manifest": false,
+  "record_count": 13057,
+  "record_type_counts": {
+    "OWNER_DIAGNOSTIC": 8,
+    "OWNER_REFERENCE_SUCCESS": 42,
+    "PRIOR_A_LIKE": 13007
+  },
+  "report_generation_must_consume_this_manifest": true,
+  "schema_version": "ws3-a-structural-intermediate-manifest.v1",
+  "sha256": "cdee696ed6cb89b581cf114446fbc1b510c7a4f34099d8e3a0f43579400c2406",
+  "source_dataset_sha256": "e803733e796d8f4d8cf00575cd4045f28c9364572fc61b31ef490e8a65ff47a4",
+  "thresholds": {
+    "compression_observation_count": 39021,
+    "compression_q25": 0.36363636363636354,
+    "compression_q50": 0.4912280701754379,
+    "compression_q75": 0.6458333333333334,
+    "range_width_q25": 0.11941747572815531,
+    "range_width_q50": 0.17171717171717185,
+    "range_width_q75": 0.25510204081632654,
+    "threshold_selection_basis": "Pre-anchor descriptive quantiles only; no future outcome optimization or holdout selection.",
+    "version": "RESEARCH_CANDIDATE_DESCRIPTIVE_COHORT_QUANTILES_V1",
+    "width_observation_count": 39021
+  }
+}

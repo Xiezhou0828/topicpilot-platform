@@ -1,0 +1,31 @@
+{
+  "task_id": "TASK-WS3-CORE-V0-REAL-HISTORICAL-WALK-FORWARD-BASELINE-20260818",
+  "core_v0_frozen_spec_hash": "6e4cc504f969098e263cfa8e7c43240e9575a3f72f0641ba39da22794ea9870d",
+  "source_commit": "7d49ce7e8c4ed855479a763102048aba2938e1b0",
+  "source_reconciliation": {
+    "expected_real_rows": 63826,
+    "observed_real_rows": 63826,
+    "expected_distinct_instruments": 507,
+    "observed_distinct_instruments": 507,
+    "expected_date_range": "2026-02-02..2026-08-13",
+    "observed_date_range": "2026-02-02..2026-08-13",
+    "pass": true
+  },
+  "frozen_spec_hash_audit": true,
+  "lookahead_leakage_audit": "PASS; all candidate bars <= T and all forward outcomes > T",
+  "forward_horizon_censoring_audit": "PASS; incomplete horizons retained as censored, never zero-filled",
+  "method_a_eligibility_audit": "PASS; candidate formation only after frozen Close(T) >= MA60(T)",
+  "event_aware_handling_audit": {
+    "known_event_affected_formation_windows": 9731,
+    "known_event_excluded": 9731,
+    "partial_authority_windows_tracked": 279
+  },
+  "duplicate_observation_audit": 0,
+  "data_gap_fail_closed_audit": 309,
+  "result_reproducibility_audit": "YES",
+  "parameter_optimization_executed": false,
+  "future_outcomes_used_for_candidate": false,
+  "database_writes": false,
+  "migration_executed": false,
+  "production_mutation": false
+}

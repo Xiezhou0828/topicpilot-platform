@@ -1,0 +1,79 @@
+{
+  "dataset": {
+    "accepted_rows": 288881,
+    "end": "2026-08-13",
+    "instruments": 603,
+    "start": "2024-08-13",
+    "surface_sha256": "e803733e796d8f4d8cf00575cd4045f28c9364572fc61b31ef490e8a65ff47a4"
+  },
+  "fixed_semantics": {
+    "a2": "Committed A2 5,277 event panel and path-aware H1-H10 outcome reconstruction; no A2 definition changes",
+    "barriers": "5% before -5% and 10% before -5%; simultaneous same-session hits remain SAME_SESSION_ORDER_UNKNOWN",
+    "benchmark": "PIT-safe accepted benchmark absent; disposition only",
+    "cohorts": [
+      "A2_ONLY",
+      "LEGACY5_ONLY",
+      "BOTH_SAME_SESSION",
+      "BOTH_WITHIN_1_SESSION"
+    ],
+    "corporate_actions": "UNKNOWN_RAW_ONLY; synthetic adjustment prohibited",
+    "legacy5": "Committed LEGACY-5 raw-anchor H1/H3/H5/H10 outcome rows; no signal changes",
+    "ma60_ablation": "Only V0 and predeclared V2 LEGACY-5+MA60; no MA20/price threshold search",
+    "matching": "One-to-one instrument/date matching by accepted canonical session position within fixed +/-1 session; candidate assignment sorted by abs(delta), event_id, anchor_id",
+    "regime": "PIT-safe event-level regime evidence absent; disposition only"
+  },
+  "scan_disposition": {
+    "raw_panel_scans": 1,
+    "reason": "Required only for exact accepted-session positions and event-level LEGACY-5 barrier races; no download, volume rescan, writes, or production pipeline rerun",
+    "scan_type": "read-only accepted PRICE DAILY_BAR fields"
+  },
+  "schema_version": "ws3-a2-legacy5-joint-source-semantics.v1",
+  "source_files": [
+    {
+      "bytes": 4339227,
+      "path": "reports/TASK-WS3-LEGACY-5-STRATEGY-BENCHMARK-20260822/legacy5-raw-anchors.csv",
+      "sha256": "d54bc0f19b5a0ee38286cd8a820bb11c73571b9296a3ce2351306e6c558e992b"
+    },
+    {
+      "bytes": 23423107,
+      "path": "reports/TASK-WS3-LEGACY-5-STRATEGY-BENCHMARK-20260822/event-outcomes.csv",
+      "sha256": "acd578b20bfe1bc4fad8c09242b3c4963769a76734bf689fce8c98e83119762e"
+    },
+    {
+      "bytes": 1653,
+      "path": "reports/TASK-WS3-LEGACY-5-STRATEGY-BENCHMARK-20260822/legacy5-event-cohort-manifest.json",
+      "sha256": "c449f46ace1da21e3332e6ec293b735ec22176be1305282443c91bed657886c0"
+    },
+    {
+      "bytes": 24666854,
+      "path": "reports/TASK-WS3-A2-OUTCOME-RECONSTRUCTION-FAILURE-ATTRIBUTION-20260821/a2-path-aware-outcomes.csv",
+      "sha256": "3fa287b26a8db07e540a1f45bb663af52df4f88bed7156c69b357d31c9005538"
+    },
+    {
+      "bytes": 7172,
+      "path": "reports/TASK-WS3-A2-OUTCOME-RECONSTRUCTION-FAILURE-ATTRIBUTION-20260821/path-aware-outcome-manifest.json",
+      "sha256": "cef8da5ee7006ee23b2a919528bdfeb6b47e8f88ed6f37edbd41ddb860b35392"
+    },
+    {
+      "bytes": 81888767,
+      "path": "reports/TASK-WS3-P2E-A2-EXPANDED-CONFIRMATORY-VALIDATION-AND-ADVANTAGE-REVALIDATION-20260820/ws3-p2e-a2-expanded-event-panel.csv",
+      "sha256": "97b131479b90ce64a821f72a6c6cceb58d102aeb49c64eac60ba19dfca71bc52"
+    },
+    {
+      "bytes": 10356,
+      "path": "reports/TASK-WS3-P2E-A2-EXPANDED-CONFIRMATORY-VALIDATION-AND-ADVANTAGE-REVALIDATION-20260820/ws3-p2e-a2-confirmatory-protocol-freeze.json",
+      "sha256": "864bff2bf9d723a6c4968083da56afe77d4bd5b5c51a6c363fd9a5904f77b86d"
+    },
+    {
+      "bytes": 3232,
+      "path": "reports/TASK-WS3-LEGACY5-ELIGIBILITY-A2-COMPLEMENTARITY-STUDY-20260822/a2-legacy5-overlap-summary.csv",
+      "sha256": "c7b6ab8c766d02f00d2d4e24d652f61a6dbcbfffa85137de7504caf0a33fa088"
+    },
+    {
+      "bytes": 34932,
+      "path": "reports/TASK-WS3-LEGACY5-ELIGIBILITY-A2-COMPLEMENTARITY-STUDY-20260822/a2-legacy5-complementarity-path-metrics.csv",
+      "sha256": "fa6c2af3ee9f5e0e793ca44cd7390650e1384cb8587bb669c5819c2d9f01b89f"
+    }
+  ],
+  "task_id": "TASK-WS3-A2-LEGACY5-JOINT-SIGNAL-ROBUSTNESS-AND-BENCHMARK-VALIDATION-20260822"
+}

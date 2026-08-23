@@ -1,0 +1,1043 @@
+﻿instrument_code,instrument_name,market_code,topic_role,topic_name,topic_parent,topic_enabled,topic_level,topic_role_in_hierarchy,topic_weight_in_hierarchy,stock_topic_weight,topic_description,group_status,mapping_status,research_version
+3532,台勝科,TPE,PRIMARY,12 吋矽晶圓,晶圓材料,Y,X,核心,1,1.4,12 吋矽晶圓、12 吋磊晶片、再生晶圓及先進製程用晶圓材料。,啟用,MATCHED,topic-universe-mapping.v1
+5483,中美晶,TWO,PRIMARY,12 吋矽晶圓,晶圓材料,Y,X,核心,1,1.4,12 吋矽晶圓、12 吋磊晶片、再生晶圓及先進製程用晶圓材料。,啟用,MATCHED,topic-universe-mapping.v1
+6182,合晶,TWO,PRIMARY,12 吋矽晶圓,晶圓材料,Y,X,核心,1,1.4,12 吋矽晶圓、12 吋磊晶片、再生晶圓及先進製程用晶圓材料。,啟用,MATCHED,topic-universe-mapping.v1
+6488,環球晶,TWO,PRIMARY,12 吋矽晶圓,晶圓材料,Y,X,核心,1,1.5,12 吋矽晶圓、12 吋磊晶片、再生晶圓及先進製程用晶圓材料。,啟用,MATCHED,topic-universe-mapping.v1
+3532,台勝科,TPE,PRIMARY,8 吋矽晶圓,晶圓材料,Y,X,核心,1,1.4,8 吋矽晶圓、8 吋磊晶片、再生晶圓及其製造服務。,啟用,MATCHED,topic-universe-mapping.v1
+5483,中美晶,TWO,PRIMARY,8 吋矽晶圓,晶圓材料,Y,X,核心,1,1.4,8 吋矽晶圓、8 吋磊晶片、再生晶圓及其製造服務。,啟用,MATCHED,topic-universe-mapping.v1
+6182,合晶,TWO,PRIMARY,8 吋矽晶圓,晶圓材料,Y,X,核心,1,1.4,8 吋矽晶圓、8 吋磊晶片、再生晶圓及其製造服務。,啟用,MATCHED,topic-universe-mapping.v1
+6488,環球晶,TWO,PRIMARY,8 吋矽晶圓,晶圓材料,Y,X,核心,1,1.5,8 吋矽晶圓、8 吋磊晶片、再生晶圓及其製造服務。,啟用,MATCHED,topic-universe-mapping.v1
+3037,欣興,TPE,PRIMARY,ABF載板,封裝測試,Y,X,細分題材,0.9,1.5,ABF載板為高階封裝中承載與連接晶片的有機載板，涵蓋 ABF 載板設計、製造及材料供應；不含一般 PCB、封裝測試服務或非 ABF 基板。,啟用,MATCHED,topic-universe-mapping.v1
+3189,景碩,TPE,PRIMARY,ABF載板,封裝測試,Y,X,細分題材,0.9,1.4,ABF載板為高階封裝中承載與連接晶片的有機載板，涵蓋 ABF 載板設計、製造及材料供應；不含一般 PCB、封裝測試服務或非 ABF 基板。,啟用,MATCHED,topic-universe-mapping.v1
+4958,臻鼎-KY,TPE,PRIMARY,ABF載板,封裝測試,Y,X,細分題材,0.9,1.4,ABF載板為高階封裝中承載與連接晶片的有機載板，涵蓋 ABF 載板設計、製造及材料供應；不含一般 PCB、封裝測試服務或非 ABF 基板。,啟用,MATCHED,topic-universe-mapping.v1
+8046,南電,TPE,PRIMARY,ABF載板,封裝測試,Y,X,細分題材,0.9,1.4,ABF載板為高階封裝中承載與連接晶片的有機載板，涵蓋 ABF 載板設計、製造及材料供應；不含一般 PCB、封裝測試服務或非 ABF 基板。,啟用,MATCHED,topic-universe-mapping.v1
+2367,燿華,TPE,PRIMARY,ADAS,車用電子,Y,A,主流,0.9,1.3,駕駛輔助、雷達／鏡頭感知、影像處理、車用域控制與自動駕駛系統。,啟用,MATCHED,topic-universe-mapping.v1
+3715,定穎投控,TPE,PRIMARY,ADAS,車用電子,Y,A,主流,0.9,1.4,駕駛輔助、雷達／鏡頭感知、影像處理、車用域控制與自動駕駛系統。,啟用,MATCHED,topic-universe-mapping.v1
+2388,威盛,TPE,SECONDARY,ADAS,車用電子,Y,A,主流,0.9,0.7,駕駛輔助、雷達／鏡頭感知、影像處理、車用域控制與自動駕駛系統。,啟用,MATCHED,topic-universe-mapping.v1
+2401,凌陽,TPE,SECONDARY,ADAS,車用電子,Y,A,主流,0.9,0.6,駕駛輔助、雷達／鏡頭感知、影像處理、車用域控制與自動駕駛系統。,啟用,MATCHED,topic-universe-mapping.v1
+3362,先進光,TWO,SECONDARY,ADAS,車用電子,Y,A,主流,0.9,0.7,駕駛輔助、雷達／鏡頭感知、影像處理、車用域控制與自動駕駛系統。,啟用,MATCHED,topic-universe-mapping.v1
+6285,啟碁,TPE,SECONDARY,ADAS,車用電子,Y,A,主流,0.9,0.8,駕駛輔助、雷達／鏡頭感知、影像處理、車用域控制與自動駕駛系統。,啟用,MATCHED,topic-universe-mapping.v1
+2313,華通,TPE,PRIMARY,AI PCB,AI運算與伺服器,Y,D,核心,1,1.4,AI 伺服器主板、HDI、高層數伺服器板、AI 高速板與伺服器用高頻高速 PCB；ABF 載板有獨立題材時不再以 AI PCB 作為唯一分類。,啟用,MATCHED,topic-universe-mapping.v1
+2368,金像電,TPE,PRIMARY,AI PCB,AI運算與伺服器,Y,D,核心,1,1.5,AI 伺服器主板、HDI、高層數伺服器板、AI 高速板與伺服器用高頻高速 PCB；ABF 載板有獨立題材時不再以 AI PCB 作為唯一分類。,啟用,MATCHED,topic-universe-mapping.v1
+3037,欣興,TPE,PRIMARY,AI PCB,AI運算與伺服器,Y,D,核心,1,1.5,AI 伺服器主板、HDI、高層數伺服器板、AI 高速板與伺服器用高頻高速 PCB；ABF 載板有獨立題材時不再以 AI PCB 作為唯一分類。,啟用,MATCHED,topic-universe-mapping.v1
+3044,健鼎,TPE,PRIMARY,AI PCB,AI運算與伺服器,Y,D,核心,1,1.4,AI 伺服器主板、HDI、高層數伺服器板、AI 高速板與伺服器用高頻高速 PCB；ABF 載板有獨立題材時不再以 AI PCB 作為唯一分類。,啟用,MATCHED,topic-universe-mapping.v1
+3189,景碩,TPE,PRIMARY,AI PCB,AI運算與伺服器,Y,D,核心,1,1.4,AI 伺服器主板、HDI、高層數伺服器板、AI 高速板與伺服器用高頻高速 PCB；ABF 載板有獨立題材時不再以 AI PCB 作為唯一分類。,啟用,MATCHED,topic-universe-mapping.v1
+4958,臻鼎-KY,TPE,PRIMARY,AI PCB,AI運算與伺服器,Y,D,核心,1,1.4,AI 伺服器主板、HDI、高層數伺服器板、AI 高速板與伺服器用高頻高速 PCB；ABF 載板有獨立題材時不再以 AI PCB 作為唯一分類。,啟用,MATCHED,topic-universe-mapping.v1
+5439,高技,TWO,PRIMARY,AI PCB,AI運算與伺服器,Y,D,核心,1,1.3,AI 伺服器主板、HDI、高層數伺服器板、AI 高速板與伺服器用高頻高速 PCB；ABF 載板有獨立題材時不再以 AI PCB 作為唯一分類。,啟用,MATCHED,topic-universe-mapping.v1
+8046,南電,TPE,PRIMARY,AI PCB,AI運算與伺服器,Y,D,核心,1,1.4,AI 伺服器主板、HDI、高層數伺服器板、AI 高速板與伺服器用高頻高速 PCB；ABF 載板有獨立題材時不再以 AI PCB 作為唯一分類。,啟用,MATCHED,topic-universe-mapping.v1
+3715,定穎投控,TPE,SECONDARY,AI PCB,AI運算與伺服器,Y,D,核心,1,0.8,AI 伺服器主板、HDI、高層數伺服器板、AI 高速板與伺服器用高頻高速 PCB；ABF 載板有獨立題材時不再以 AI PCB 作為唯一分類。,啟用,MATCHED,topic-universe-mapping.v1
+2301,光寶科,TPE,PRIMARY,AI伺服器整機／ODM,AI運算與伺服器,Y,D,核心,1,1.4,AI 伺服器整機、伺服器 ODM、機櫃整合、主板／機箱組裝與資料中心硬體整合。,啟用,MATCHED,topic-universe-mapping.v1
+2317,鴻海,TPE,PRIMARY,AI伺服器整機／ODM,AI運算與伺服器,Y,D,核心,1,1.5,AI 伺服器整機、伺服器 ODM、機櫃整合、主板／機箱組裝與資料中心硬體整合。,啟用,MATCHED,topic-universe-mapping.v1
+2324,仁寶,TPE,PRIMARY,AI伺服器整機／ODM,AI運算與伺服器,Y,D,核心,1,1.3,AI 伺服器整機、伺服器 ODM、機櫃整合、主板／機箱組裝與資料中心硬體整合。,啟用,MATCHED,topic-universe-mapping.v1
+2356,英業達,TPE,PRIMARY,AI伺服器整機／ODM,AI運算與伺服器,Y,D,核心,1,1.4,AI 伺服器整機、伺服器 ODM、機櫃整合、主板／機箱組裝與資料中心硬體整合。,啟用,MATCHED,topic-universe-mapping.v1
+2376,技嘉,TPE,PRIMARY,AI伺服器整機／ODM,AI運算與伺服器,Y,D,核心,1,1.5,AI 伺服器整機、伺服器 ODM、機櫃整合、主板／機箱組裝與資料中心硬體整合。,啟用,MATCHED,topic-universe-mapping.v1
+2382,廣達,TPE,PRIMARY,AI伺服器整機／ODM,AI運算與伺服器,Y,D,核心,1,1.5,AI 伺服器整機、伺服器 ODM、機櫃整合、主板／機箱組裝與資料中心硬體整合。,啟用,MATCHED,topic-universe-mapping.v1
+2465,麗臺,TPE,PRIMARY,AI伺服器整機／ODM,AI運算與伺服器,Y,D,核心,1,1.2,AI 伺服器整機、伺服器 ODM、機櫃整合、主板／機箱組裝與資料中心硬體整合。,啟用,MATCHED,topic-universe-mapping.v1
+3231,緯創,TPE,PRIMARY,AI伺服器整機／ODM,AI運算與伺服器,Y,D,核心,1,1.5,AI 伺服器整機、伺服器 ODM、機櫃整合、主板／機箱組裝與資料中心硬體整合。,啟用,MATCHED,topic-universe-mapping.v1
+3693,營邦,TWO,PRIMARY,AI伺服器整機／ODM,AI運算與伺服器,Y,D,核心,1,1.4,AI 伺服器整機、伺服器 ODM、機櫃整合、主板／機箱組裝與資料中心硬體整合。,啟用,MATCHED,topic-universe-mapping.v1
+3706,神達,TPE,PRIMARY,AI伺服器整機／ODM,AI運算與伺服器,Y,D,核心,1,1.5,AI 伺服器整機、伺服器 ODM、機櫃整合、主板／機箱組裝與資料中心硬體整合。,啟用,MATCHED,topic-universe-mapping.v1
+4938,和碩,TPE,PRIMARY,AI伺服器整機／ODM,AI運算與伺服器,Y,D,核心,1,1.4,AI 伺服器整機、伺服器 ODM、機櫃整合、主板／機箱組裝與資料中心硬體整合。,啟用,MATCHED,topic-universe-mapping.v1
+6669,緯穎,TPE,PRIMARY,AI伺服器整機／ODM,AI運算與伺服器,Y,D,核心,1,1.5,AI 伺服器整機、伺服器 ODM、機櫃整合、主板／機箱組裝與資料中心硬體整合。,啟用,MATCHED,topic-universe-mapping.v1
+2353,宏碁,TPE,SECONDARY,AI伺服器整機／ODM,AI運算與伺服器,Y,D,核心,1,0.6,AI 伺服器整機、伺服器 ODM、機櫃整合、主板／機箱組裝與資料中心硬體整合。,啟用,MATCHED,topic-universe-mapping.v1
+2357,華碩,TPE,SECONDARY,AI伺服器整機／ODM,AI運算與伺服器,Y,D,核心,1,0.8,AI 伺服器整機、伺服器 ODM、機櫃整合、主板／機箱組裝與資料中心硬體整合。,啟用,MATCHED,topic-universe-mapping.v1
+2377,微星,TPE,SECONDARY,AI伺服器整機／ODM,AI運算與伺服器,Y,D,核心,1,0.6,AI 伺服器整機、伺服器 ODM、機櫃整合、主板／機箱組裝與資料中心硬體整合。,啟用,MATCHED,topic-universe-mapping.v1
+8210,藍天,TPE,SECONDARY,AI伺服器整機／ODM,AI運算與伺服器,Y,D,核心,1,0.6,AI 伺服器整機、伺服器 ODM、機櫃整合、主板／機箱組裝與資料中心硬體整合。,啟用,MATCHED,topic-universe-mapping.v1
+6419,京晨科,TWO,PRIMARY,AI影像辨識,AI視覺,Y,D,主流,0.9,1.2,AI 影像分析、辨識、醫療影像、影像理解與視覺 AI 軟體／平台。,啟用,MATCHED,topic-universe-mapping.v1
+6695,芯鼎,TPE,PRIMARY,AI影像辨識,AI視覺,Y,D,主流,0.9,1.3,AI 影像分析、辨識、醫療影像、影像理解與視覺 AI 軟體／平台。,啟用,MATCHED,topic-universe-mapping.v1
+6870,騰雲,TWO,PRIMARY,AI影像辨識,AI視覺,Y,D,主流,0.9,1.3,AI 影像分析、辨識、醫療影像、影像理解與視覺 AI 軟體／平台。,啟用,MATCHED,topic-universe-mapping.v1
+3022,威強電,TPE,SECONDARY,AI影像辨識,AI視覺,Y,D,主流,0.9,0.6,AI 影像分析、辨識、醫療影像、影像理解與視覺 AI 軟體／平台。,啟用,MATCHED,topic-universe-mapping.v1
+6789,采鈺,TPE,SECONDARY,AI影像辨識,AI視覺,Y,D,主流,0.9,0.8,AI 影像分析、辨識、醫療影像、影像理解與視覺 AI 軟體／平台。,啟用,MATCHED,topic-universe-mapping.v1
+1609,大亞,TPE,PRIMARY,AI電力基建,電力與能源,Y,B,主流,1,1.4,AI 資料中心供電、UPS、HVDC、變壓、配電、電源與電力管理；一般重電不因 AI 新聞自動掛入。,啟用,MATCHED,topic-universe-mapping.v1
+2301,光寶科,TPE,PRIMARY,AI電力基建,電力與能源,Y,B,主流,1,1.4,AI 資料中心供電、UPS、HVDC、變壓、配電、電源與電力管理；一般重電不因 AI 新聞自動掛入。,啟用,MATCHED,topic-universe-mapping.v1
+2308,台達電,TPE,PRIMARY,AI電力基建,電力與能源,Y,B,主流,1,1.5,AI 資料中心供電、UPS、HVDC、變壓、配電、電源與電力管理；一般重電不因 AI 新聞自動掛入。,啟用,MATCHED,topic-universe-mapping.v1
+3015,全漢,TPE,PRIMARY,AI電力基建,電力與能源,Y,B,主流,1,1.2,AI 資料中心供電、UPS、HVDC、變壓、配電、電源與電力管理；一般重電不因 AI 新聞自動掛入。,啟用,MATCHED,topic-universe-mapping.v1
+6282,康舒,TPE,PRIMARY,AI電力基建,電力與能源,Y,B,主流,1,1.3,AI 資料中心供電、UPS、HVDC、變壓、配電、電源與電力管理；一般重電不因 AI 新聞自動掛入。,啟用,MATCHED,topic-universe-mapping.v1
+6409,旭隼,TPE,PRIMARY,AI電力基建,電力與能源,Y,B,主流,1,1.4,AI 資料中心供電、UPS、HVDC、變壓、配電、電源與電力管理；一般重電不因 AI 新聞自動掛入。,啟用,MATCHED,topic-universe-mapping.v1
+1503,士電,TPE,SECONDARY,AI電力基建,電力與能源,Y,B,主流,1,0.9,AI 資料中心供電、UPS、HVDC、變壓、配電、電源與電力管理；一般重電不因 AI 新聞自動掛入。,啟用,MATCHED,topic-universe-mapping.v1
+1504,東元,TPE,SECONDARY,AI電力基建,電力與能源,Y,B,主流,1,0.8,AI 資料中心供電、UPS、HVDC、變壓、配電、電源與電力管理；一般重電不因 AI 新聞自動掛入。,啟用,MATCHED,topic-universe-mapping.v1
+1513,中興電,TPE,SECONDARY,AI電力基建,電力與能源,Y,B,主流,1,0.9,AI 資料中心供電、UPS、HVDC、變壓、配電、電源與電力管理；一般重電不因 AI 新聞自動掛入。,啟用,MATCHED,topic-universe-mapping.v1
+1514,亞力,TPE,SECONDARY,AI電力基建,電力與能源,Y,B,主流,1,0.8,AI 資料中心供電、UPS、HVDC、變壓、配電、電源與電力管理；一般重電不因 AI 新聞自動掛入。,啟用,MATCHED,topic-universe-mapping.v1
+1519,華城,TPE,SECONDARY,AI電力基建,電力與能源,Y,B,主流,1,0.9,AI 資料中心供電、UPS、HVDC、變壓、配電、電源與電力管理；一般重電不因 AI 新聞自動掛入。,啟用,MATCHED,topic-universe-mapping.v1
+5483,中美晶,TWO,SECONDARY,AI電力基建,電力與能源,Y,B,主流,1,0.9,AI 資料中心供電、UPS、HVDC、變壓、配電、電源與電力管理；一般重電不因 AI 新聞自動掛入。,啟用,MATCHED,topic-universe-mapping.v1
+6179,亞通,TWO,SECONDARY,AI電力基建,電力與能源,Y,B,主流,1,0.6,AI 資料中心供電、UPS、HVDC、變壓、配電、電源與電力管理；一般重電不因 AI 新聞自動掛入。,啟用,MATCHED,topic-universe-mapping.v1
+7788,松川精密,TPE,SECONDARY,AI電力基建,電力與能源,Y,B,主流,1,0.8,AI 資料中心供電、UPS、HVDC、變壓、配電、電源與電力管理；一般重電不因 AI 新聞自動掛入。,啟用,MATCHED,topic-universe-mapping.v1
+3035,智原,TPE,PRIMARY,ASIC,IC設計,Y,B,核心,1,1.4,| 客製化 ASIC、AI／HPC 加速器、CSP 客製晶片、ASIC 設計服務、NRE／Turnkey 設計。僅代理晶片、一般 IC 或單純封裝不收錄。,啟用,MATCHED,topic-universe-mapping.v1
+3443,創意,TPE,PRIMARY,ASIC,IC設計,Y,B,核心,1,1.5,| 客製化 ASIC、AI／HPC 加速器、CSP 客製晶片、ASIC 設計服務、NRE／Turnkey 設計。僅代理晶片、一般 IC 或單純封裝不收錄。,啟用,MATCHED,topic-universe-mapping.v1
+3661,世芯-KY,TPE,PRIMARY,ASIC,IC設計,Y,B,核心,1,1.5,| 客製化 ASIC、AI／HPC 加速器、CSP 客製晶片、ASIC 設計服務、NRE／Turnkey 設計。僅代理晶片、一般 IC 或單純封裝不收錄。,啟用,MATCHED,topic-universe-mapping.v1
+8054,安國,TWO,PRIMARY,ASIC,IC設計,Y,B,核心,1,1.4,| 客製化 ASIC、AI／HPC 加速器、CSP 客製晶片、ASIC 設計服務、NRE／Turnkey 設計。僅代理晶片、一般 IC 或單純封裝不收錄。,啟用,MATCHED,topic-universe-mapping.v1
+2454,聯發科,TPE,SECONDARY,ASIC,IC設計,Y,B,核心,1,0.8,| 客製化 ASIC、AI／HPC 加速器、CSP 客製晶片、ASIC 設計服務、NRE／Turnkey 設計。僅代理晶片、一般 IC 或單純封裝不收錄。,啟用,MATCHED,topic-universe-mapping.v1
+3034,聯詠,TPE,SECONDARY,ASIC,IC設計,Y,B,核心,1,0.8,| 客製化 ASIC、AI／HPC 加速器、CSP 客製晶片、ASIC 設計服務、NRE／Turnkey 設計。僅代理晶片、一般 IC 或單純封裝不收錄。,啟用,MATCHED,topic-universe-mapping.v1
+6462,神盾,TWO,SECONDARY,ASIC,IC設計,Y,B,核心,1,0.7,| 客製化 ASIC、AI／HPC 加速器、CSP 客製晶片、ASIC 設計服務、NRE／Turnkey 設計。僅代理晶片、一般 IC 或單純封裝不收錄。,啟用,MATCHED,topic-universe-mapping.v1
+3211,順達,TWO,PRIMARY,BBU,AI運算與伺服器,Y,B,主流,0.9,1.3,AI 伺服器／資料中心電池備援模組、BBU、超級電容備援與 BBU 電源管理。一般 UPS 或儲能櫃改歸其他題材。,啟用,MATCHED,topic-universe-mapping.v1
+4931,新盛力,TWO,PRIMARY,BBU,AI運算與伺服器,Y,B,主流,0.9,1.4,AI 伺服器／資料中心電池備援模組、BBU、超級電容備援與 BBU 電源管理。一般 UPS 或儲能櫃改歸其他題材。,啟用,MATCHED,topic-universe-mapping.v1
+6781,AES-KY,TPE,PRIMARY,BBU,AI運算與伺服器,Y,B,主流,0.9,1.5,AI 伺服器／資料中心電池備援模組、BBU、超級電容備援與 BBU 電源管理。一般 UPS 或儲能櫃改歸其他題材。,啟用,MATCHED,topic-universe-mapping.v1
+2301,光寶科,TPE,SECONDARY,BBU,AI運算與伺服器,Y,B,主流,0.9,0.9,AI 伺服器／資料中心電池備援模組、BBU、超級電容備援與 BBU 電源管理。一般 UPS 或儲能櫃改歸其他題材。,啟用,MATCHED,topic-universe-mapping.v1
+2308,台達電,TPE,SECONDARY,BBU,AI運算與伺服器,Y,B,主流,0.9,1.0,AI 伺服器／資料中心電池備援模組、BBU、超級電容備援與 BBU 電源管理。一般 UPS 或儲能櫃改歸其他題材。,啟用,MATCHED,topic-universe-mapping.v1
+1303,南亞,TPE,PRIMARY,CCL,高頻電子材料,Y,A,核心,1,1.2,| 銅箔基板、覆銅板、低損耗／高頻高速 CCL、BT／ABF 上游樹脂與載板上游基材。完成的 ABF 載板不歸 CCL。,啟用,MATCHED,topic-universe-mapping.v1
+2383,台光電,TPE,PRIMARY,CCL,高頻電子材料,Y,A,核心,1,1.5,| 銅箔基板、覆銅板、低損耗／高頻高速 CCL、BT／ABF 上游樹脂與載板上游基材。完成的 ABF 載板不歸 CCL。,啟用,MATCHED,topic-universe-mapping.v1
+4939,亞電,TWO,PRIMARY,CCL,高頻電子材料,Y,A,核心,1,1.2,| 銅箔基板、覆銅板、低損耗／高頻高速 CCL、BT／ABF 上游樹脂與載板上游基材。完成的 ABF 載板不歸 CCL。,啟用,MATCHED,topic-universe-mapping.v1
+6213,聯茂,TPE,PRIMARY,CCL,高頻電子材料,Y,A,核心,1,1.4,| 銅箔基板、覆銅板、低損耗／高頻高速 CCL、BT／ABF 上游樹脂與載板上游基材。完成的 ABF 載板不歸 CCL。,啟用,MATCHED,topic-universe-mapping.v1
+6274,台燿,TWO,PRIMARY,CCL,高頻電子材料,Y,A,核心,1,1.5,| 銅箔基板、覆銅板、低損耗／高頻高速 CCL、BT／ABF 上游樹脂與載板上游基材。完成的 ABF 載板不歸 CCL。,啟用,MATCHED,topic-universe-mapping.v1
+6672,騰輝電子-KY,TPE,PRIMARY,CCL,高頻電子材料,Y,A,核心,1,1.3,| 銅箔基板、覆銅板、低損耗／高頻高速 CCL、BT／ABF 上游樹脂與載板上游基材。完成的 ABF 載板不歸 CCL。,啟用,MATCHED,topic-universe-mapping.v1
+6727,亞泰金屬,TWO,PRIMARY,CCL,高頻電子材料,Y,A,核心,1,1.4,| 銅箔基板、覆銅板、低損耗／高頻高速 CCL、BT／ABF 上游樹脂與載板上游基材。完成的 ABF 載板不歸 CCL。,啟用,MATCHED,topic-universe-mapping.v1
+8039,台虹,TPE,PRIMARY,CCL,高頻電子材料,Y,A,核心,1,1.4,| 銅箔基板、覆銅板、低損耗／高頻高速 CCL、BT／ABF 上游樹脂與載板上游基材。完成的 ABF 載板不歸 CCL。,啟用,MATCHED,topic-universe-mapping.v1
+8358,金居,TWO,PRIMARY,CCL,高頻電子材料,Y,A,核心,1,1.4,| 銅箔基板、覆銅板、低損耗／高頻高速 CCL、BT／ABF 上游樹脂與載板上游基材。完成的 ABF 載板不歸 CCL。,啟用,MATCHED,topic-universe-mapping.v1
+1815,富喬,TWO,SECONDARY,CCL,高頻電子材料,Y,A,核心,1,0.8,| 銅箔基板、覆銅板、低損耗／高頻高速 CCL、BT／ABF 上游樹脂與載板上游基材。完成的 ABF 載板不歸 CCL。,啟用,MATCHED,topic-universe-mapping.v1
+2368,金像電,TPE,SECONDARY,CCL,高頻電子材料,Y,A,核心,1,0.8,| 銅箔基板、覆銅板、低損耗／高頻高速 CCL、BT／ABF 上游樹脂與載板上游基材。完成的 ABF 載板不歸 CCL。,啟用,MATCHED,topic-universe-mapping.v1
+5340,建榮,TWO,SECONDARY,CCL,高頻電子材料,Y,A,核心,1,0.8,| 銅箔基板、覆銅板、低損耗／高頻高速 CCL、BT／ABF 上游樹脂與載板上游基材。完成的 ABF 載板不歸 CCL。,啟用,MATCHED,topic-universe-mapping.v1
+2449,京元電子,TPE,PRIMARY,Chiplet,封裝測試,Y,A,次主流,0.7,1.4,| 小晶片異質整合、Die-to-Die、UCIe、2.5D／3D Chiplet 封裝、Chiplet 測試或互連。僅做一般 ABF 載板，不自動掛 Chiplet。,啟用,MATCHED,topic-universe-mapping.v1
+3037,欣興,TPE,PRIMARY,Chiplet,封裝測試,Y,A,次主流,0.7,1.5,| 小晶片異質整合、Die-to-Die、UCIe、2.5D／3D Chiplet 封裝、Chiplet 測試或互連。僅做一般 ABF 載板，不自動掛 Chiplet。,啟用,MATCHED,topic-universe-mapping.v1
+3189,景碩,TPE,PRIMARY,Chiplet,封裝測試,Y,A,次主流,0.7,1.4,| 小晶片異質整合、Die-to-Die、UCIe、2.5D／3D Chiplet 封裝、Chiplet 測試或互連。僅做一般 ABF 載板，不自動掛 Chiplet。,啟用,MATCHED,topic-universe-mapping.v1
+3265,台星科,TWO,PRIMARY,Chiplet,封裝測試,Y,A,次主流,0.7,1.3,| 小晶片異質整合、Die-to-Die、UCIe、2.5D／3D Chiplet 封裝、Chiplet 測試或互連。僅做一般 ABF 載板，不自動掛 Chiplet。,啟用,MATCHED,topic-universe-mapping.v1
+3374,精材,TWO,PRIMARY,Chiplet,封裝測試,Y,A,次主流,0.7,1.4,| 小晶片異質整合、Die-to-Die、UCIe、2.5D／3D Chiplet 封裝、Chiplet 測試或互連。僅做一般 ABF 載板，不自動掛 Chiplet。,啟用,MATCHED,topic-universe-mapping.v1
+3711,日月光投控,TPE,PRIMARY,Chiplet,封裝測試,Y,A,次主流,0.7,1.5,| 小晶片異質整合、Die-to-Die、UCIe、2.5D／3D Chiplet 封裝、Chiplet 測試或互連。僅做一般 ABF 載板，不自動掛 Chiplet。,啟用,MATCHED,topic-universe-mapping.v1
+6239,力成,TPE,PRIMARY,Chiplet,封裝測試,Y,A,次主流,0.7,1.5,| 小晶片異質整合、Die-to-Die、UCIe、2.5D／3D Chiplet 封裝、Chiplet 測試或互連。僅做一般 ABF 載板，不自動掛 Chiplet。,啟用,MATCHED,topic-universe-mapping.v1
+6257,矽格,TPE,PRIMARY,Chiplet,封裝測試,Y,A,次主流,0.7,1.3,| 小晶片異質整合、Die-to-Die、UCIe、2.5D／3D Chiplet 封裝、Chiplet 測試或互連。僅做一般 ABF 載板，不自動掛 Chiplet。,啟用,MATCHED,topic-universe-mapping.v1
+2467,志聖,TPE,SECONDARY,Chiplet,封裝測試,Y,A,次主流,0.7,0.8,| 小晶片異質整合、Die-to-Die、UCIe、2.5D／3D Chiplet 封裝、Chiplet 測試或互連。僅做一般 ABF 載板，不自動掛 Chiplet。,啟用,MATCHED,topic-universe-mapping.v1
+6187,萬潤,TWO,SECONDARY,Chiplet,封裝測試,Y,A,次主流,0.7,0.9,| 小晶片異質整合、Die-to-Die、UCIe、2.5D／3D Chiplet 封裝、Chiplet 測試或互連。僅做一般 ABF 載板，不自動掛 Chiplet。,啟用,MATCHED,topic-universe-mapping.v1
+6451,訊芯-KY,TPE,SECONDARY,Chiplet,封裝測試,Y,A,次主流,0.7,0.9,| 小晶片異質整合、Die-to-Die、UCIe、2.5D／3D Chiplet 封裝、Chiplet 測試或互連。僅做一般 ABF 載板，不自動掛 Chiplet。,啟用,MATCHED,topic-universe-mapping.v1
+6640,均華,TWO,SECONDARY,Chiplet,封裝測試,Y,A,次主流,0.7,0.9,| 小晶片異質整合、Die-to-Die、UCIe、2.5D／3D Chiplet 封裝、Chiplet 測試或互連。僅做一般 ABF 載板，不自動掛 Chiplet。,啟用,MATCHED,topic-universe-mapping.v1
+2330,台積電,TPE,PRIMARY,CoWoS,封裝測試,Y,D,主流,1,1.5,明確參與台積電 CoWoS／2.5D 封裝的中介層、封裝、測試、設備、材料或服務。僅因 AI 或載板需求受惠，不足以掛 CoWoS。,啟用,MATCHED,topic-universe-mapping.v1
+2467,志聖,TPE,SECONDARY,CoWoS,封裝測試,Y,D,主流,1,0.8,明確參與台積電 CoWoS／2.5D 封裝的中介層、封裝、測試、設備、材料或服務。僅因 AI 或載板需求受惠，不足以掛 CoWoS。,啟用,MATCHED,topic-universe-mapping.v1
+3131,弘塑,TWO,SECONDARY,CoWoS,封裝測試,Y,D,主流,1,0.9,明確參與台積電 CoWoS／2.5D 封裝的中介層、封裝、測試、設備、材料或服務。僅因 AI 或載板需求受惠，不足以掛 CoWoS。,啟用,MATCHED,topic-universe-mapping.v1
+3583,辛耘,TPE,SECONDARY,CoWoS,封裝測試,Y,D,主流,1,0.9,明確參與台積電 CoWoS／2.5D 封裝的中介層、封裝、測試、設備、材料或服務。僅因 AI 或載板需求受惠，不足以掛 CoWoS。,啟用,MATCHED,topic-universe-mapping.v1
+3711,日月光投控,TPE,SECONDARY,CoWoS,封裝測試,Y,D,主流,1,1.0,明確參與台積電 CoWoS／2.5D 封裝的中介層、封裝、測試、設備、材料或服務。僅因 AI 或載板需求受惠，不足以掛 CoWoS。,啟用,MATCHED,topic-universe-mapping.v1
+4542,科嶠,TWO,SECONDARY,CoWoS,封裝測試,Y,D,主流,1,0,明確參與台積電 CoWoS／2.5D 封裝的中介層、封裝、測試、設備、材料或服務。僅因 AI 或載板需求受惠，不足以掛 CoWoS。,啟用,MATCHED,topic-universe-mapping.v1
+6187,萬潤,TWO,SECONDARY,CoWoS,封裝測試,Y,D,主流,1,0.9,明確參與台積電 CoWoS／2.5D 封裝的中介層、封裝、測試、設備、材料或服務。僅因 AI 或載板需求受惠，不足以掛 CoWoS。,啟用,MATCHED,topic-universe-mapping.v1
+6515,穎崴,TPE,SECONDARY,CoWoS,封裝測試,Y,D,主流,1,0.0,明確參與台積電 CoWoS／2.5D 封裝的中介層、封裝、測試、設備、材料或服務。僅因 AI 或載板需求受惠，不足以掛 CoWoS。,啟用,MATCHED,topic-universe-mapping.v1
+6640,均華,TWO,SECONDARY,CoWoS,封裝測試,Y,D,主流,1,0.9,明確參與台積電 CoWoS／2.5D 封裝的中介層、封裝、測試、設備、材料或服務。僅因 AI 或載板需求受惠，不足以掛 CoWoS。,啟用,MATCHED,topic-universe-mapping.v1
+7734,印能科技,TWO,SECONDARY,CoWoS,封裝測試,Y,D,主流,1,0.0,明確參與台積電 CoWoS／2.5D 封裝的中介層、封裝、測試、設備、材料或服務。僅因 AI 或載板需求受惠，不足以掛 CoWoS。,啟用,MATCHED,topic-universe-mapping.v1
+8027,鈦昇,TWO,SECONDARY,CoWoS,封裝測試,Y,D,主流,1,0.9,明確參與台積電 CoWoS／2.5D 封裝的中介層、封裝、測試、設備、材料或服務。僅因 AI 或載板需求受惠，不足以掛 CoWoS。,啟用,MATCHED,topic-universe-mapping.v1
+8028,昇陽半導體,TPE,SECONDARY,CoWoS,封裝測試,Y,D,主流,1,0.0,明確參與台積電 CoWoS／2.5D 封裝的中介層、封裝、測試、設備、材料或服務。僅因 AI 或載板需求受惠，不足以掛 CoWoS。,啟用,MATCHED,topic-universe-mapping.v1
+2344,華邦電,TPE,PRIMARY,DRAM／DDR,記憶體,Y,D,核心,1,1.4,DRAM、DDR、LPDDR、HBM 記憶體晶片或相關製造／封裝供應鏈；HBM 需求若只是設備或材料受惠，依實際供應鏈分類。,啟用,MATCHED,topic-universe-mapping.v1
+2408,南亞科,TPE,PRIMARY,DRAM／DDR,記憶體,Y,D,核心,1,1.3,DRAM、DDR、LPDDR、HBM 記憶體晶片或相關製造／封裝供應鏈；HBM 需求若只是設備或材料受惠，依實際供應鏈分類。,啟用,MATCHED,topic-universe-mapping.v1
+2337,旺宏,TPE,SECONDARY,DRAM／DDR,記憶體,Y,D,核心,1,0.7,DRAM、DDR、LPDDR、HBM 記憶體晶片或相關製造／封裝供應鏈；HBM 需求若只是設備或材料受惠，依實際供應鏈分類。,啟用,MATCHED,topic-universe-mapping.v1
+2451,創見,TPE,SECONDARY,DRAM／DDR,記憶體,Y,D,核心,1,0.7,DRAM、DDR、LPDDR、HBM 記憶體晶片或相關製造／封裝供應鏈；HBM 需求若只是設備或材料受惠，依實際供應鏈分類。,啟用,MATCHED,topic-universe-mapping.v1
+3006,晶豪科,TPE,SECONDARY,DRAM／DDR,記憶體,Y,D,核心,1,0.6,DRAM、DDR、LPDDR、HBM 記憶體晶片或相關製造／封裝供應鏈；HBM 需求若只是設備或材料受惠，依實際供應鏈分類。,啟用,MATCHED,topic-universe-mapping.v1
+3260,威剛,TWO,SECONDARY,DRAM／DDR,記憶體,Y,D,核心,1,0.8,DRAM、DDR、LPDDR、HBM 記憶體晶片或相關製造／封裝供應鏈；HBM 需求若只是設備或材料受惠，依實際供應鏈分類。,啟用,MATCHED,topic-universe-mapping.v1
+4967,十銓,TPE,SECONDARY,DRAM／DDR,記憶體,Y,D,核心,1,0.8,DRAM、DDR、LPDDR、HBM 記憶體晶片或相關製造／封裝供應鏈；HBM 需求若只是設備或材料受惠，依實際供應鏈分類。,啟用,MATCHED,topic-universe-mapping.v1
+8096,擎亞,TWO,SECONDARY,DRAM／DDR,記憶體,Y,D,核心,1,0.7,DRAM、DDR、LPDDR、HBM 記憶體晶片或相關製造／封裝供應鏈；HBM 需求若只是設備或材料受惠，依實際供應鏈分類。,啟用,MATCHED,topic-universe-mapping.v1
+8271,宇瞻,TPE,SECONDARY,DRAM／DDR,記憶體,Y,D,核心,1,0.7,DRAM、DDR、LPDDR、HBM 記憶體晶片或相關製造／封裝供應鏈；HBM 需求若只是設備或材料受惠，依實際供應鏈分類。,啟用,MATCHED,topic-universe-mapping.v1
+3481,群創,TPE,PRIMARY,FOPLP,封裝測試,Y,X,主流,0.8,1.5,扇出型面板級封裝、面板級封裝設備、材料、載板與封裝服務；不能把一般面板製造直接視為 FOPLP。,啟用,MATCHED,topic-universe-mapping.v1
+3711,日月光投控,TPE,PRIMARY,FOPLP,封裝測試,Y,X,主流,0.8,1.5,扇出型面板級封裝、面板級封裝設備、材料、載板與封裝服務；不能把一般面板製造直接視為 FOPLP。,啟用,MATCHED,topic-universe-mapping.v1
+2467,志聖,TPE,SECONDARY,FOPLP,封裝測試,Y,X,主流,0.8,0.8,扇出型面板級封裝、面板級封裝設備、材料、載板與封裝服務；不能把一般面板製造直接視為 FOPLP。,啟用,MATCHED,topic-universe-mapping.v1
+6187,萬潤,TWO,SECONDARY,FOPLP,封裝測試,Y,X,主流,0.8,0.9,扇出型面板級封裝、面板級封裝設備、材料、載板與封裝服務；不能把一般面板製造直接視為 FOPLP。,啟用,MATCHED,topic-universe-mapping.v1
+6640,均華,TWO,SECONDARY,FOPLP,封裝測試,Y,X,主流,0.8,0.9,扇出型面板級封裝、面板級封裝設備、材料、載板與封裝服務；不能把一般面板製造直接視為 FOPLP。,啟用,MATCHED,topic-universe-mapping.v1
+7734,印能科技,TWO,SECONDARY,FOPLP,封裝測試,Y,X,主流,0.8,0.0,扇出型面板級封裝、面板級封裝設備、材料、載板與封裝服務；不能把一般面板製造直接視為 FOPLP。,啟用,MATCHED,topic-universe-mapping.v1
+8027,鈦昇,TWO,SECONDARY,FOPLP,封裝測試,Y,X,主流,0.8,0.9,扇出型面板級封裝、面板級封裝設備、材料、載板與封裝服務；不能把一般面板製造直接視為 FOPLP。,啟用,MATCHED,topic-universe-mapping.v1
+8064,東捷,TWO,SECONDARY,FOPLP,封裝測試,Y,X,主流,0.8,0.0,扇出型面板級封裝、面板級封裝設備、材料、載板與封裝服務；不能把一般面板製造直接視為 FOPLP。,啟用,MATCHED,topic-universe-mapping.v1
+3016,嘉晶,TPE,PRIMARY,GaN 晶圓／GaN-on-Si,晶圓材料,Y,X,次主流,0.8,1.3,GaN wafer、GaN-on-Si、GaN epi 及 GaN 射頻／功率元件用晶圓。,啟用,MATCHED,topic-universe-mapping.v1
+3707,漢磊,TWO,SECONDARY,GaN 晶圓／GaN-on-Si,晶圓材料,Y,X,次主流,0.8,0.8,GaN wafer、GaN-on-Si、GaN epi 及 GaN 射頻／功率元件用晶圓。,啟用,MATCHED,topic-universe-mapping.v1
+2342,茂矽,TPE,PRIMARY,IGBT／功率模組,功率半導體,Y,X,核心,1,1.3,IGBT、IGBT 模組、功率模組、逆變器模組與模組封裝。,啟用,MATCHED,topic-universe-mapping.v1
+2481,強茂,TPE,PRIMARY,IGBT／功率模組,功率半導體,Y,X,核心,1,1.3,IGBT、IGBT 模組、功率模組、逆變器模組與模組封裝。,啟用,MATCHED,topic-universe-mapping.v1
+5425,台半,TWO,PRIMARY,IGBT／功率模組,功率半導體,Y,X,核心,1,1.3,IGBT、IGBT 模組、功率模組、逆變器模組與模組封裝。,啟用,MATCHED,topic-universe-mapping.v1
+8255,朋程,TWO,PRIMARY,IGBT／功率模組,功率半導體,Y,X,核心,1,1.4,IGBT、IGBT 模組、功率模組、逆變器模組與模組封裝。,啟用,MATCHED,topic-universe-mapping.v1
+4919,新唐,TPE,PRIMARY,MCU,IC設計,Y,A,核心,1,1.4,微控制器、車用 MCU、工控 MCU、嵌入式控制器及其韌體／開發生態。一般 CPU、PMIC、功率元件不收錄。,啟用,MATCHED,topic-universe-mapping.v1
+5471,松翰,TPE,PRIMARY,MCU,IC設計,Y,A,核心,1,1.2,微控制器、車用 MCU、工控 MCU、嵌入式控制器及其韌體／開發生態。一般 CPU、PMIC、功率元件不收錄。,啟用,MATCHED,topic-universe-mapping.v1
+6202,盛群,TPE,PRIMARY,MCU,IC設計,Y,A,核心,1,1.2,微控制器、車用 MCU、工控 MCU、嵌入式控制器及其韌體／開發生態。一般 CPU、PMIC、功率元件不收錄。,啟用,MATCHED,topic-universe-mapping.v1
+2327,國巨,TPE,PRIMARY,MLCC,被動元件,Y,X,核心,1,1.4,積層陶瓷電容，包含車用、高壓、高容、AI 伺服器與消費電子 MLCC。,啟用,MATCHED,topic-universe-mapping.v1
+2492,華新科,TPE,PRIMARY,MLCC,被動元件,Y,X,核心,1,1.3,積層陶瓷電容，包含車用、高壓、高容、AI 伺服器與消費電子 MLCC。,啟用,MATCHED,topic-universe-mapping.v1
+3026,禾伸堂,TPE,PRIMARY,MLCC,被動元件,Y,X,核心,1,1.2,積層陶瓷電容，包含車用、高壓、高容、AI 伺服器與消費電子 MLCC。,啟用,MATCHED,topic-universe-mapping.v1
+3090,日電貿,TPE,PRIMARY,MLCC,被動元件,Y,X,核心,1,1.3,積層陶瓷電容，包含車用、高壓、高容、AI 伺服器與消費電子 MLCC。,啟用,MATCHED,topic-universe-mapping.v1
+6173,信昌電,TWO,PRIMARY,MLCC,被動元件,Y,X,核心,1,1.2,積層陶瓷電容，包含車用、高壓、高容、AI 伺服器與消費電子 MLCC。,啟用,MATCHED,topic-universe-mapping.v1
+2337,旺宏,TPE,PRIMARY,NAND Flash／SSD,記憶體,Y,D,核心,1,1.3,| NAND Flash、SSD 控制器、SSD 模組、企業級 SSD、儲存解決方案。單純記憶體通路不收錄。,啟用,MATCHED,topic-universe-mapping.v1
+2344,華邦電,TPE,PRIMARY,NAND Flash／SSD,記憶體,Y,D,核心,1,1.4,| NAND Flash、SSD 控制器、SSD 模組、企業級 SSD、儲存解決方案。單純記憶體通路不收錄。,啟用,MATCHED,topic-universe-mapping.v1
+2451,創見,TPE,SECONDARY,NAND Flash／SSD,記憶體,Y,D,核心,1,0.7,| NAND Flash、SSD 控制器、SSD 模組、企業級 SSD、儲存解決方案。單純記憶體通路不收錄。,啟用,MATCHED,topic-universe-mapping.v1
+3260,威剛,TWO,SECONDARY,NAND Flash／SSD,記憶體,Y,D,核心,1,0.8,| NAND Flash、SSD 控制器、SSD 模組、企業級 SSD、儲存解決方案。單純記憶體通路不收錄。,啟用,MATCHED,topic-universe-mapping.v1
+4967,十銓,TPE,SECONDARY,NAND Flash／SSD,記憶體,Y,D,核心,1,0.8,| NAND Flash、SSD 控制器、SSD 模組、企業級 SSD、儲存解決方案。單純記憶體通路不收錄。,啟用,MATCHED,topic-universe-mapping.v1
+4973,廣穎,TWO,SECONDARY,NAND Flash／SSD,記憶體,Y,D,核心,1,0,| NAND Flash、SSD 控制器、SSD 模組、企業級 SSD、儲存解決方案。單純記憶體通路不收錄。,啟用,MATCHED,topic-universe-mapping.v1
+8096,擎亞,TWO,SECONDARY,NAND Flash／SSD,記憶體,Y,D,核心,1,0.7,| NAND Flash、SSD 控制器、SSD 模組、企業級 SSD、儲存解決方案。單純記憶體通路不收錄。,啟用,MATCHED,topic-universe-mapping.v1
+8271,宇瞻,TPE,SECONDARY,NAND Flash／SSD,記憶體,Y,D,核心,1,0.7,| NAND Flash、SSD 控制器、SSD 模組、企業級 SSD、儲存解決方案。單純記憶體通路不收錄。,啟用,MATCHED,topic-universe-mapping.v1
+2337,旺宏,TPE,PRIMARY,NOR Flash／利基型記憶體,記憶體,Y,X,次主流,0.7,1.3,NOR、SLC、利基型記憶體、特殊嵌入式記憶體與非主流容量／規格產品。,啟用,MATCHED,topic-universe-mapping.v1
+2344,華邦電,TPE,PRIMARY,NOR Flash／利基型記憶體,記憶體,Y,X,次主流,0.7,1.4,NOR、SLC、利基型記憶體、特殊嵌入式記憶體與非主流容量／規格產品。,啟用,MATCHED,topic-universe-mapping.v1
+3006,晶豪科,TPE,PRIMARY,NOR Flash／利基型記憶體,記憶體,Y,X,次主流,0.7,1.2,NOR、SLC、利基型記憶體、特殊嵌入式記憶體與非主流容量／規格產品。,啟用,MATCHED,topic-universe-mapping.v1
+5351,鈺創,TWO,PRIMARY,NOR Flash／利基型記憶體,記憶體,Y,X,次主流,0.7,1.2,NOR、SLC、利基型記憶體、特殊嵌入式記憶體與非主流容量／規格產品。,啟用,MATCHED,topic-universe-mapping.v1
+2316,楠梓電,TPE,PRIMARY,PCB,高頻電子材料,Y,X,核心,1,1.2,一般 PCB、高層數板、HDI、軟板、載板製造；若明確為 AI 伺服器板，優先 AI PCB；若明確為 ABF 載板，優先 ABF載板候選。,啟用,MATCHED,topic-universe-mapping.v1
+3321,同泰,TPE,PRIMARY,PCB,高頻電子材料,Y,X,核心,1,1.1,一般 PCB、高層數板、HDI、軟板、載板製造；若明確為 AI 伺服器板，優先 AI PCB；若明確為 ABF 載板，優先 ABF載板候選。,啟用,MATCHED,topic-universe-mapping.v1
+3390,旭軟,TWO,PRIMARY,PCB,高頻電子材料,Y,X,核心,1,1.1,一般 PCB、高層數板、HDI、軟板、載板製造；若明確為 AI 伺服器板，優先 AI PCB；若明確為 ABF 載板，優先 ABF載板候選。,啟用,MATCHED,topic-universe-mapping.v1
+6153,嘉聯益,TPE,PRIMARY,PCB,高頻電子材料,Y,X,核心,1,1.1,一般 PCB、高層數板、HDI、軟板、載板製造；若明確為 AI 伺服器板，優先 AI PCB；若明確為 ABF 載板，優先 ABF載板候選。,啟用,MATCHED,topic-universe-mapping.v1
+6191,精成科,TPE,PRIMARY,PCB,高頻電子材料,Y,X,核心,1,1.3,一般 PCB、高層數板、HDI、軟板、載板製造；若明確為 AI 伺服器板，優先 AI PCB；若明確為 ABF 載板，優先 ABF載板候選。,啟用,MATCHED,topic-universe-mapping.v1
+6269,台郡,TPE,PRIMARY,PCB,高頻電子材料,Y,X,核心,1,1.2,一般 PCB、高層數板、HDI、軟板、載板製造；若明確為 AI 伺服器板，優先 AI PCB；若明確為 ABF 載板，優先 ABF載板候選。,啟用,MATCHED,topic-universe-mapping.v1
+2355,敬鵬,TPE,SECONDARY,PCB,高頻電子材料,Y,X,核心,1,0.7,一般 PCB、高層數板、HDI、軟板、載板製造；若明確為 AI 伺服器板，優先 AI PCB；若明確為 ABF 載板，優先 ABF載板候選。,啟用,MATCHED,topic-universe-mapping.v1
+2388,威盛,TPE,PRIMARY,RISC-V,IC設計,Y,X,主流,0.9,1.3,以 RISC-V ISA、CPU core、SoC、開發板或相關 IP／軟體生態為核心。僅使用 RISC-V 元件但非公司主力不收錄。,啟用,MATCHED,topic-universe-mapping.v1
+3035,智原,TPE,PRIMARY,RISC-V,IC設計,Y,X,主流,0.9,1.4,以 RISC-V ISA、CPU core、SoC、開發板或相關 IP／軟體生態為核心。僅使用 RISC-V 元件但非公司主力不收錄。,啟用,MATCHED,topic-universe-mapping.v1
+8054,安國,TWO,SECONDARY,RISC-V,IC設計,Y,X,主流,0.9,0.7,以 RISC-V ISA、CPU core、SoC、開發板或相關 IP／軟體生態為核心。僅使用 RISC-V 元件但非公司主力不收錄。,啟用,MATCHED,topic-universe-mapping.v1
+4966,譜瑞-KY,TWO,PRIMARY,Retimer／Redriver,高速互連,Y,X,主流,0.9,1.5,Retimer、Redriver、訊號重整與高速訊號完整性晶片。,啟用,MATCHED,topic-universe-mapping.v1
+3016,嘉晶,TPE,PRIMARY,SiC 晶圓／基板,晶圓材料,Y,X,主流,0.9,1.3,SiC wafer、SiC substrate、SiC epi、SiC 磊晶與功率元件用 SiC 基板。,啟用,MATCHED,topic-universe-mapping.v1
+3707,漢磊,TWO,PRIMARY,SiC 晶圓／基板,晶圓材料,Y,X,主流,0.9,1.4,SiC wafer、SiC substrate、SiC epi、SiC 磊晶與功率元件用 SiC 基板。,啟用,MATCHED,topic-universe-mapping.v1
+6488,環球晶,TWO,SECONDARY,SiC 晶圓／基板,晶圓材料,Y,X,主流,0.9,0.8,SiC wafer、SiC substrate、SiC epi、SiC 磊晶與功率元件用 SiC 基板。,啟用,MATCHED,topic-universe-mapping.v1
+2481,強茂,TPE,PRIMARY,SiC／GaN 功率元件,功率半導體,Y,X,主流,0.9,1.3,已量產或商業化的 SiC／GaN MOSFET、二極體、HEMT、功率模組；材料與晶圓改歸晶圓材料。,啟用,MATCHED,topic-universe-mapping.v1
+3707,漢磊,TWO,PRIMARY,SiC／GaN 功率元件,功率半導體,Y,X,主流,0.9,1.4,已量產或商業化的 SiC／GaN MOSFET、二極體、HEMT、功率模組；材料與晶圓改歸晶圓材料。,啟用,MATCHED,topic-universe-mapping.v1
+8255,朋程,TWO,PRIMARY,SiC／GaN 功率元件,功率半導體,Y,X,主流,0.9,1.4,已量產或商業化的 SiC／GaN MOSFET、二極體、HEMT、功率模組；材料與晶圓改歸晶圓材料。,啟用,MATCHED,topic-universe-mapping.v1
+2342,茂矽,TPE,SECONDARY,SiC／GaN 功率元件,功率半導體,Y,X,主流,0.9,0.7,已量產或商業化的 SiC／GaN MOSFET、二極體、HEMT、功率模組；材料與晶圓改歸晶圓材料。,啟用,MATCHED,topic-universe-mapping.v1
+3317,尼克森,TWO,SECONDARY,SiC／GaN 功率元件,功率半導體,Y,X,主流,0.9,0.7,已量產或商業化的 SiC／GaN MOSFET、二極體、HEMT、功率模組；材料與晶圓改歸晶圓材料。,啟用,MATCHED,topic-universe-mapping.v1
+2369,菱生,TPE,PRIMARY,一般封測,封裝測試,Y,X,核心,1,1.1,晶圓測試、成品測試、封裝代工、測試服務、封裝材料／介面服務，但不以先進封裝特殊技術為主要識別。,啟用,MATCHED,topic-universe-mapping.v1
+2441,超豐,TPE,PRIMARY,一般封測,封裝測試,Y,X,核心,1,1.2,晶圓測試、成品測試、封裝代工、測試服務、封裝材料／介面服務，但不以先進封裝特殊技術為主要識別。,啟用,MATCHED,topic-universe-mapping.v1
+2449,京元電子,TPE,PRIMARY,一般封測,封裝測試,Y,X,核心,1,1.4,晶圓測試、成品測試、封裝代工、測試服務、封裝材料／介面服務，但不以先進封裝特殊技術為主要識別。,啟用,MATCHED,topic-universe-mapping.v1
+3264,欣銓,TWO,PRIMARY,一般封測,封裝測試,Y,X,核心,1,1.3,晶圓測試、成品測試、封裝代工、測試服務、封裝材料／介面服務，但不以先進封裝特殊技術為主要識別。,啟用,MATCHED,topic-universe-mapping.v1
+3265,台星科,TWO,PRIMARY,一般封測,封裝測試,Y,X,核心,1,1.3,晶圓測試、成品測試、封裝代工、測試服務、封裝材料／介面服務，但不以先進封裝特殊技術為主要識別。,啟用,MATCHED,topic-universe-mapping.v1
+3374,精材,TWO,PRIMARY,一般封測,封裝測試,Y,X,核心,1,1.4,晶圓測試、成品測試、封裝代工、測試服務、封裝材料／介面服務，但不以先進封裝特殊技術為主要識別。,啟用,MATCHED,topic-universe-mapping.v1
+3450,聯鈞,TPE,PRIMARY,一般封測,封裝測試,Y,X,核心,1,1.5,晶圓測試、成品測試、封裝代工、測試服務、封裝材料／介面服務，但不以先進封裝特殊技術為主要識別。,啟用,MATCHED,topic-universe-mapping.v1
+3711,日月光投控,TPE,PRIMARY,一般封測,封裝測試,Y,X,核心,1,1.5,晶圓測試、成品測試、封裝代工、測試服務、封裝材料／介面服務，但不以先進封裝特殊技術為主要識別。,啟用,MATCHED,topic-universe-mapping.v1
+6147,頎邦,TWO,PRIMARY,一般封測,封裝測試,Y,X,核心,1,1.4,晶圓測試、成品測試、封裝代工、測試服務、封裝材料／介面服務，但不以先進封裝特殊技術為主要識別。,啟用,MATCHED,topic-universe-mapping.v1
+6239,力成,TPE,PRIMARY,一般封測,封裝測試,Y,X,核心,1,1.5,晶圓測試、成品測試、封裝代工、測試服務、封裝材料／介面服務，但不以先進封裝特殊技術為主要識別。,啟用,MATCHED,topic-universe-mapping.v1
+6257,矽格,TPE,PRIMARY,一般封測,封裝測試,Y,X,核心,1,1.3,晶圓測試、成品測試、封裝代工、測試服務、封裝材料／介面服務，但不以先進封裝特殊技術為主要識別。,啟用,MATCHED,topic-universe-mapping.v1
+6271,同欣電,TPE,PRIMARY,一般封測,封裝測試,Y,X,核心,1,1.3,晶圓測試、成品測試、封裝代工、測試服務、封裝材料／介面服務，但不以先進封裝特殊技術為主要識別。,啟用,MATCHED,topic-universe-mapping.v1
+6451,訊芯-KY,TPE,PRIMARY,一般封測,封裝測試,Y,X,核心,1,1.5,晶圓測試、成品測試、封裝代工、測試服務、封裝材料／介面服務，但不以先進封裝特殊技術為主要識別。,啟用,MATCHED,topic-universe-mapping.v1
+6525,捷敏-KY,TPE,PRIMARY,一般封測,封裝測試,Y,X,核心,1,1.3,晶圓測試、成品測試、封裝代工、測試服務、封裝材料／介面服務，但不以先進封裝特殊技術為主要識別。,啟用,MATCHED,topic-universe-mapping.v1
+6789,采鈺,TPE,PRIMARY,一般封測,封裝測試,Y,X,核心,1,1.4,晶圓測試、成品測試、封裝代工、測試服務、封裝材料／介面服務，但不以先進封裝特殊技術為主要識別。,啟用,MATCHED,topic-universe-mapping.v1
+8150,南茂,TPE,PRIMARY,一般封測,封裝測試,Y,X,核心,1,1.4,晶圓測試、成品測試、封裝代工、測試服務、封裝材料／介面服務，但不以先進封裝特殊技術為主要識別。,啟用,MATCHED,topic-universe-mapping.v1
+3322,建舜電,TWO,PRIMARY,一般連接器,電子連接,Y,B,核心,0.9,1.1,一般電子、工業、消費、車用連接器、端子與線束。,啟用,MATCHED,topic-universe-mapping.v1
+3484,崧騰,TWO,PRIMARY,一般連接器,電子連接,Y,B,核心,0.9,1.2,一般電子、工業、消費、車用連接器、端子與線束。,啟用,MATCHED,topic-universe-mapping.v1
+3550,聯穎,TPE,PRIMARY,一般連接器,電子連接,Y,B,核心,0.9,1.1,一般電子、工業、消費、車用連接器、端子與線束。,啟用,MATCHED,topic-universe-mapping.v1
+3605,宏致,TPE,PRIMARY,一般連接器,電子連接,Y,B,核心,0.9,1.2,一般電子、工業、消費、車用連接器、端子與線束。,啟用,MATCHED,topic-universe-mapping.v1
+3023,信邦,TPE,SECONDARY,一般連接器,電子連接,Y,B,核心,0.9,0.7,一般電子、工業、消費、車用連接器、端子與線束。,啟用,MATCHED,topic-universe-mapping.v1
+3526,凡甲,TWO,SECONDARY,一般連接器,電子連接,Y,B,核心,0.9,0.7,一般電子、工業、消費、車用連接器、端子與線束。,啟用,MATCHED,topic-universe-mapping.v1
+5457,宣德,TWO,SECONDARY,一般連接器,電子連接,Y,B,核心,0.9,0.7,一般電子、工業、消費、車用連接器、端子與線束。,啟用,MATCHED,topic-universe-mapping.v1
+6205,詮欣,TPE,SECONDARY,一般連接器,電子連接,Y,B,核心,0.9,0.7,一般電子、工業、消費、車用連接器、端子與線束。,啟用,MATCHED,topic-universe-mapping.v1
+6279,胡連,TWO,SECONDARY,一般連接器,電子連接,Y,B,核心,0.9,0.7,一般電子、工業、消費、車用連接器、端子與線束。,啟用,MATCHED,topic-universe-mapping.v1
+2313,華通,TPE,PRIMARY,低軌衛星,通訊與光電,Y,X,主流,0.9,1.4,衛星通訊、地面站、天線、衛星終端、通訊模組與太空通訊供應鏈。,啟用,MATCHED,topic-universe-mapping.v1
+2314,台揚,TPE,PRIMARY,低軌衛星,通訊與光電,Y,X,主流,0.9,1.3,衛星通訊、地面站、天線、衛星終端、通訊模組與太空通訊供應鏈。,啟用,MATCHED,topic-universe-mapping.v1
+2424,隴華,TPE,PRIMARY,低軌衛星,通訊與光電,Y,X,主流,0.9,1.2,衛星通訊、地面站、天線、衛星終端、通訊模組與太空通訊供應鏈。,啟用,MATCHED,topic-universe-mapping.v1
+3491,昇達科,TWO,PRIMARY,低軌衛星,通訊與光電,Y,X,主流,0.9,1.5,衛星通訊、地面站、天線、衛星終端、通訊模組與太空通訊供應鏈。,啟用,MATCHED,topic-universe-mapping.v1
+6285,啟碁,TPE,PRIMARY,低軌衛星,通訊與光電,Y,X,主流,0.9,1.4,衛星通訊、地面站、天線、衛星終端、通訊模組與太空通訊供應鏈。,啟用,MATCHED,topic-universe-mapping.v1
+2312,金寶,TPE,SECONDARY,低軌衛星,通訊與光電,Y,X,主流,0.9,0.8,衛星通訊、地面站、天線、衛星終端、通訊模組與太空通訊供應鏈。,啟用,MATCHED,topic-universe-mapping.v1
+3042,晶技,TPE,SECONDARY,低軌衛星,通訊與光電,Y,X,主流,0.9,0.7,衛星通訊、地面站、天線、衛星終端、通訊模組與太空通訊供應鏈。,啟用,MATCHED,topic-universe-mapping.v1
+5222,全訊,TPE,SECONDARY,低軌衛星,通訊與光電,Y,X,主流,0.9,0.7,衛星通訊、地面站、天線、衛星終端、通訊模組與太空通訊供應鏈。,啟用,MATCHED,topic-universe-mapping.v1
+6443,元晶,TPE,SECONDARY,低軌衛星,通訊與光電,Y,X,主流,0.9,0.8,衛星通訊、地面站、天線、衛星終端、通訊模組與太空通訊供應鏈。,啟用,MATCHED,topic-universe-mapping.v1
+7709,榮田,TWO,SECONDARY,低軌衛星,通訊與光電,Y,X,主流,0.9,0.8,衛星通訊、地面站、天線、衛星終端、通訊模組與太空通訊供應鏈。,啟用,MATCHED,topic-universe-mapping.v1
+1438,三地開發,TPE,PRIMARY,住宅營建,建設開發,Y,B,核心,1,1.3,住宅建案、建商、餘屋、交屋與住宅代銷。,啟用,MATCHED,topic-universe-mapping.v1
+2348,海悅,TPE,PRIMARY,住宅營建,建設開發,Y,B,核心,1,1.4,住宅建案、建商、餘屋、交屋與住宅代銷。,啟用,MATCHED,topic-universe-mapping.v1
+2501,國建,TPE,PRIMARY,住宅營建,建設開發,Y,B,核心,1,1.3,住宅建案、建商、餘屋、交屋與住宅代銷。,啟用,MATCHED,topic-universe-mapping.v1
+2511,太子,TPE,PRIMARY,住宅營建,建設開發,Y,B,核心,1,1.1,住宅建案、建商、餘屋、交屋與住宅代銷。,啟用,MATCHED,topic-universe-mapping.v1
+2520,冠德,TPE,PRIMARY,住宅營建,建設開發,Y,B,核心,1,1.4,住宅建案、建商、餘屋、交屋與住宅代銷。,啟用,MATCHED,topic-universe-mapping.v1
+2527,宏璟,TPE,PRIMARY,住宅營建,建設開發,Y,B,核心,1,1.3,住宅建案、建商、餘屋、交屋與住宅代銷。,啟用,MATCHED,topic-universe-mapping.v1
+2536,宏普,TPE,PRIMARY,住宅營建,建設開發,Y,B,核心,1,1.2,住宅建案、建商、餘屋、交屋與住宅代銷。,啟用,MATCHED,topic-universe-mapping.v1
+2539,櫻花建,TPE,PRIMARY,住宅營建,建設開發,Y,B,核心,1,1.3,住宅建案、建商、餘屋、交屋與住宅代銷。,啟用,MATCHED,topic-universe-mapping.v1
+2542,興富發,TPE,PRIMARY,住宅營建,建設開發,Y,B,核心,1,1.4,住宅建案、建商、餘屋、交屋與住宅代銷。,啟用,MATCHED,topic-universe-mapping.v1
+2548,華固,TPE,PRIMARY,住宅營建,建設開發,Y,B,核心,1,1.4,住宅建案、建商、餘屋、交屋與住宅代銷。,啟用,MATCHED,topic-universe-mapping.v1
+4513,福裕,TWO,PRIMARY,住宅營建,建設開發,Y,B,核心,1,1.2,住宅建案、建商、餘屋、交屋與住宅代銷。,啟用,MATCHED,topic-universe-mapping.v1
+5519,隆大,TPE,PRIMARY,住宅營建,建設開發,Y,B,核心,1,1.4,住宅建案、建商、餘屋、交屋與住宅代銷。,啟用,MATCHED,topic-universe-mapping.v1
+5534,長虹,TPE,PRIMARY,住宅營建,建設開發,Y,B,核心,1,1.4,住宅建案、建商、餘屋、交屋與住宅代銷。,啟用,MATCHED,topic-universe-mapping.v1
+6177,達麗,TPE,PRIMARY,住宅營建,建設開發,Y,B,核心,1,1.4,住宅建案、建商、餘屋、交屋與住宅代銷。,啟用,MATCHED,topic-universe-mapping.v1
+3622,洋華,TPE,SECONDARY,住宅營建,建設開發,Y,B,核心,1,0.6,住宅建案、建商、餘屋、交屋與住宅代銷。,啟用,MATCHED,topic-universe-mapping.v1
+2428,興勤,TPE,PRIMARY,保護元件,功率半導體,Y,X,補充,0.6,1.3,| TVS、ESD、保險絲、壓敏電阻與電路保護元件；一般電阻／電容不收錄。,啟用,MATCHED,topic-universe-mapping.v1
+2478,大毅,TPE,PRIMARY,保護元件,功率半導體,Y,X,補充,0.6,1.1,| TVS、ESD、保險絲、壓敏電阻與電路保護元件；一般電阻／電容不收錄。,啟用,MATCHED,topic-universe-mapping.v1
+6642,富致,TWO,PRIMARY,保護元件,功率半導體,Y,X,補充,0.6,1.3,| TVS、ESD、保險絲、壓敏電阻與電路保護元件；一般電阻／電容不收錄。,啟用,MATCHED,topic-universe-mapping.v1
+7788,松川精密,TPE,PRIMARY,保護元件,功率半導體,Y,X,補充,0.6,1.3,| TVS、ESD、保險絲、壓敏電阻與電路保護元件；一般電阻／電容不收錄。,啟用,MATCHED,topic-universe-mapping.v1
+1537,廣隆,TPE,PRIMARY,儲能,電力與能源,Y,A,主流,0.9,1.3,電池模組、儲能櫃、BMS、PCS、EMS、工商儲能與電網儲能。,啟用,MATCHED,topic-universe-mapping.v1
+3058,立德,TPE,PRIMARY,儲能,電力與能源,Y,A,主流,0.9,1.1,電池模組、儲能櫃、BMS、PCS、EMS、工商儲能與電網儲能。,啟用,MATCHED,topic-universe-mapping.v1
+3576,聯合再生,TPE,PRIMARY,儲能,電力與能源,Y,A,主流,0.9,1.2,電池模組、儲能櫃、BMS、PCS、EMS、工商儲能與電網儲能。,啟用,MATCHED,topic-universe-mapping.v1
+3617,碩天,TPE,PRIMARY,儲能,電力與能源,Y,A,主流,0.9,1.4,電池模組、儲能櫃、BMS、PCS、EMS、工商儲能與電網儲能。,啟用,MATCHED,topic-universe-mapping.v1
+5227,立凱-KY,TWO,PRIMARY,儲能,電力與能源,Y,A,主流,0.9,1.2,電池模組、儲能櫃、BMS、PCS、EMS、工商儲能與電網儲能。,啟用,MATCHED,topic-universe-mapping.v1
+6282,康舒,TPE,PRIMARY,儲能,電力與能源,Y,A,主流,0.9,1.3,電池模組、儲能櫃、BMS、PCS、EMS、工商儲能與電網儲能。,啟用,MATCHED,topic-universe-mapping.v1
+6806,森崴能源,TPE,PRIMARY,儲能,電力與能源,Y,A,主流,0.9,1.3,電池模組、儲能櫃、BMS、PCS、EMS、工商儲能與電網儲能。,啟用,MATCHED,topic-universe-mapping.v1
+8038,長園科,TWO,PRIMARY,儲能,電力與能源,Y,A,主流,0.9,1.2,電池模組、儲能櫃、BMS、PCS、EMS、工商儲能與電網儲能。,啟用,MATCHED,topic-universe-mapping.v1
+1438,三地開發,TPE,SECONDARY,儲能,電力與能源,Y,A,主流,0.9,0.8,電池模組、儲能櫃、BMS、PCS、EMS、工商儲能與電網儲能。,啟用,MATCHED,topic-universe-mapping.v1
+1504,東元,TPE,SECONDARY,儲能,電力與能源,Y,A,主流,0.9,0.8,電池模組、儲能櫃、BMS、PCS、EMS、工商儲能與電網儲能。,啟用,MATCHED,topic-universe-mapping.v1
+1609,大亞,TPE,SECONDARY,儲能,電力與能源,Y,A,主流,0.9,0.9,電池模組、儲能櫃、BMS、PCS、EMS、工商儲能與電網儲能。,啟用,MATCHED,topic-universe-mapping.v1
+2406,國碩,TPE,SECONDARY,儲能,電力與能源,Y,A,主流,0.9,0.5,電池模組、儲能櫃、BMS、PCS、EMS、工商儲能與電網儲能。,啟用,MATCHED,topic-universe-mapping.v1
+2457,飛宏,TPE,SECONDARY,儲能,電力與能源,Y,A,主流,0.9,0.6,電池模組、儲能櫃、BMS、PCS、EMS、工商儲能與電網儲能。,啟用,MATCHED,topic-universe-mapping.v1
+4931,新盛力,TWO,SECONDARY,儲能,電力與能源,Y,A,主流,0.9,0.7,電池模組、儲能櫃、BMS、PCS、EMS、工商儲能與電網儲能。,啟用,MATCHED,topic-universe-mapping.v1
+5483,中美晶,TWO,SECONDARY,儲能,電力與能源,Y,A,主流,0.9,0.9,電池模組、儲能櫃、BMS、PCS、EMS、工商儲能與電網儲能。,啟用,MATCHED,topic-universe-mapping.v1
+6781,AES-KY,TPE,SECONDARY,儲能,電力與能源,Y,A,主流,0.9,0.9,電池模組、儲能櫃、BMS、PCS、EMS、工商儲能與電網儲能。,啟用,MATCHED,topic-universe-mapping.v1
+8104,錸寶,TPE,SECONDARY,儲能,電力與能源,Y,A,主流,0.9,0.6,電池模組、儲能櫃、BMS、PCS、EMS、工商儲能與電網儲能。,啟用,MATCHED,topic-universe-mapping.v1
+2464,盟立,TPE,PRIMARY,先進封裝設備,半導體設備與製程,Y,X,核心,1,1.4,直接服務 CoWoS、SoIC、Chiplet、混合鍵合、RDL、先進封裝組裝／檢測的設備。只做一般封裝或設備零件者分到其他細題材。,啟用,MATCHED,topic-universe-mapping.v1
+2467,志聖,TPE,PRIMARY,先進封裝設備,半導體設備與製程,Y,X,核心,1,1.5,直接服務 CoWoS、SoIC、Chiplet、混合鍵合、RDL、先進封裝組裝／檢測的設備。只做一般封裝或設備零件者分到其他細題材。,啟用,MATCHED,topic-universe-mapping.v1
+3131,弘塑,TWO,PRIMARY,先進封裝設備,半導體設備與製程,Y,X,核心,1,1.5,直接服務 CoWoS、SoIC、Chiplet、混合鍵合、RDL、先進封裝組裝／檢測的設備。只做一般封裝或設備零件者分到其他細題材。,啟用,MATCHED,topic-universe-mapping.v1
+3583,辛耘,TPE,PRIMARY,先進封裝設備,半導體設備與製程,Y,X,核心,1,1.5,直接服務 CoWoS、SoIC、Chiplet、混合鍵合、RDL、先進封裝組裝／檢測的設備。只做一般封裝或設備零件者分到其他細題材。,啟用,MATCHED,topic-universe-mapping.v1
+5443,均豪,TWO,PRIMARY,先進封裝設備,半導體設備與製程,Y,X,核心,1,1.4,直接服務 CoWoS、SoIC、Chiplet、混合鍵合、RDL、先進封裝組裝／檢測的設備。只做一般封裝或設備零件者分到其他細題材。,啟用,MATCHED,topic-universe-mapping.v1
+6187,萬潤,TWO,PRIMARY,先進封裝設備,半導體設備與製程,Y,X,核心,1,1.5,直接服務 CoWoS、SoIC、Chiplet、混合鍵合、RDL、先進封裝組裝／檢測的設備。只做一般封裝或設備零件者分到其他細題材。,啟用,MATCHED,topic-universe-mapping.v1
+6640,均華,TWO,PRIMARY,先進封裝設備,半導體設備與製程,Y,X,核心,1,1.5,直接服務 CoWoS、SoIC、Chiplet、混合鍵合、RDL、先進封裝組裝／檢測的設備。只做一般封裝或設備零件者分到其他細題材。,啟用,MATCHED,topic-universe-mapping.v1
+7734,印能科技,TWO,PRIMARY,先進封裝設備,半導體設備與製程,Y,X,核心,1,1.5,直接服務 CoWoS、SoIC、Chiplet、混合鍵合、RDL、先進封裝組裝／檢測的設備。只做一般封裝或設備零件者分到其他細題材。,啟用,MATCHED,topic-universe-mapping.v1
+8027,鈦昇,TWO,PRIMARY,先進封裝設備,半導體設備與製程,Y,X,核心,1,1.5,直接服務 CoWoS、SoIC、Chiplet、混合鍵合、RDL、先進封裝組裝／檢測的設備。只做一般封裝或設備零件者分到其他細題材。,啟用,MATCHED,topic-universe-mapping.v1
+1597,直得,TPE,SECONDARY,先進封裝設備,半導體設備與製程,Y,X,核心,1,0.7,直接服務 CoWoS、SoIC、Chiplet、混合鍵合、RDL、先進封裝組裝／檢測的設備。只做一般封裝或設備零件者分到其他細題材。,啟用,MATCHED,topic-universe-mapping.v1
+2049,上銀,TPE,SECONDARY,先進封裝設備,半導體設備與製程,Y,X,核心,1,0.9,直接服務 CoWoS、SoIC、Chiplet、混合鍵合、RDL、先進封裝組裝／檢測的設備。只做一般封裝或設備零件者分到其他細題材。,啟用,MATCHED,topic-universe-mapping.v1
+2330,台積電,TPE,SECONDARY,先進封裝設備,半導體設備與製程,Y,X,核心,1,0.8,直接服務 CoWoS、SoIC、Chiplet、混合鍵合、RDL、先進封裝組裝／檢測的設備。只做一般封裝或設備零件者分到其他細題材。,啟用,MATCHED,topic-universe-mapping.v1
+2360,致茂,TPE,SECONDARY,先進封裝設備,半導體設備與製程,Y,X,核心,1,0.9,直接服務 CoWoS、SoIC、Chiplet、混合鍵合、RDL、先進封裝組裝／檢測的設備。只做一般封裝或設備零件者分到其他細題材。,啟用,MATCHED,topic-universe-mapping.v1
+6223,旺矽,TWO,SECONDARY,先進封裝設備,半導體設備與製程,Y,X,核心,1,0,直接服務 CoWoS、SoIC、Chiplet、混合鍵合、RDL、先進封裝組裝／檢測的設備。只做一般封裝或設備零件者分到其他細題材。,啟用,MATCHED,topic-universe-mapping.v1
+6510,精測,TWO,SECONDARY,先進封裝設備,半導體設備與製程,Y,X,核心,1,0.0,直接服務 CoWoS、SoIC、Chiplet、混合鍵合、RDL、先進封裝組裝／檢測的設備。只做一般封裝或設備零件者分到其他細題材。,啟用,MATCHED,topic-universe-mapping.v1
+6515,穎崴,TPE,SECONDARY,先進封裝設備,半導體設備與製程,Y,X,核心,1,0.0,直接服務 CoWoS、SoIC、Chiplet、混合鍵合、RDL、先進封裝組裝／檢測的設備。只做一般封裝或設備零件者分到其他細題材。,啟用,MATCHED,topic-universe-mapping.v1
+6683,雍智科技,TWO,SECONDARY,先進封裝設備,半導體設備與製程,Y,X,核心,1,0.7,直接服務 CoWoS、SoIC、Chiplet、混合鍵合、RDL、先進封裝組裝／檢測的設備。只做一般封裝或設備零件者分到其他細題材。,啟用,MATCHED,topic-universe-mapping.v1
+6937,天虹,TPE,SECONDARY,先進封裝設備,半導體設備與製程,Y,X,核心,1,0.8,直接服務 CoWoS、SoIC、Chiplet、混合鍵合、RDL、先進封裝組裝／檢測的設備。只做一般封裝或設備零件者分到其他細題材。,啟用,MATCHED,topic-universe-mapping.v1
+7769,鴻勁,TPE,SECONDARY,先進封裝設備,半導體設備與製程,Y,X,核心,1,0,直接服務 CoWoS、SoIC、Chiplet、混合鍵合、RDL、先進封裝組裝／檢測的設備。只做一般封裝或設備零件者分到其他細題材。,啟用,MATCHED,topic-universe-mapping.v1
+3081,聯亞,TWO,PRIMARY,光通訊,通訊與光電,Y,X,核心,1,1.5,光模組、雷射、光收發器、光纖元件與光通訊設備；若核心是矽光子，優先矽光子。,啟用,MATCHED,topic-universe-mapping.v1
+3163,波若威,TWO,PRIMARY,光通訊,通訊與光電,Y,X,核心,1,1.4,光模組、雷射、光收發器、光纖元件與光通訊設備；若核心是矽光子，優先矽光子。,啟用,MATCHED,topic-universe-mapping.v1
+3234,光環,TWO,PRIMARY,光通訊,通訊與光電,Y,X,核心,1,1.2,光模組、雷射、光收發器、光纖元件與光通訊設備；若核心是矽光子，優先矽光子。,啟用,MATCHED,topic-universe-mapping.v1
+3339,泰谷,TWO,PRIMARY,光通訊,通訊與光電,Y,X,核心,1,1.2,光模組、雷射、光收發器、光纖元件與光通訊設備；若核心是矽光子，優先矽光子。,啟用,MATCHED,topic-universe-mapping.v1
+3363,上詮,TWO,PRIMARY,光通訊,通訊與光電,Y,X,核心,1,1.5,光模組、雷射、光收發器、光纖元件與光通訊設備；若核心是矽光子，優先矽光子。,啟用,MATCHED,topic-universe-mapping.v1
+3450,聯鈞,TPE,PRIMARY,光通訊,通訊與光電,Y,X,核心,1,1.5,光模組、雷射、光收發器、光纖元件與光通訊設備；若核心是矽光子，優先矽光子。,啟用,MATCHED,topic-universe-mapping.v1
+4903,聯光通,TWO,PRIMARY,光通訊,通訊與光電,Y,X,核心,1,1.1,光模組、雷射、光收發器、光纖元件與光通訊設備；若核心是矽光子，優先矽光子。,啟用,MATCHED,topic-universe-mapping.v1
+4908,前鼎,TWO,PRIMARY,光通訊,通訊與光電,Y,X,核心,1,1.5,光模組、雷射、光收發器、光纖元件與光通訊設備；若核心是矽光子，優先矽光子。,啟用,MATCHED,topic-universe-mapping.v1
+4977,眾達-KY,TPE,PRIMARY,光通訊,通訊與光電,Y,X,核心,1,1.5,光模組、雷射、光收發器、光纖元件與光通訊設備；若核心是矽光子，優先矽光子。,啟用,MATCHED,topic-universe-mapping.v1
+4979,華星光,TWO,PRIMARY,光通訊,通訊與光電,Y,X,核心,1,1.5,光模組、雷射、光收發器、光纖元件與光通訊設備；若核心是矽光子，優先矽光子。,啟用,MATCHED,topic-universe-mapping.v1
+6442,光聖,TPE,PRIMARY,光通訊,通訊與光電,Y,X,核心,1,1.5,光模組、雷射、光收發器、光纖元件與光通訊設備；若核心是矽光子，優先矽光子。,啟用,MATCHED,topic-universe-mapping.v1
+6530,創威,TWO,PRIMARY,光通訊,通訊與光電,Y,X,核心,1,1.2,光模組、雷射、光收發器、光纖元件與光通訊設備；若核心是矽光子，優先矽光子。,啟用,MATCHED,topic-universe-mapping.v1
+6588,東典,TWO,PRIMARY,光通訊,通訊與光電,Y,X,核心,1,1.2,光模組、雷射、光收發器、光纖元件與光通訊設備；若核心是矽光子，優先矽光子。,啟用,MATCHED,topic-universe-mapping.v1
+4971,IET-KY,TWO,SECONDARY,光通訊,通訊與光電,Y,X,核心,1,0.7,光模組、雷射、光收發器、光纖元件與光通訊設備；若核心是矽光子，優先矽光子。,啟用,MATCHED,topic-universe-mapping.v1
+6426,統新,TPE,SECONDARY,光通訊,通訊與光電,Y,X,核心,1,0.8,光模組、雷射、光收發器、光纖元件與光通訊設備；若核心是矽光子，優先矽光子。,啟用,MATCHED,topic-universe-mapping.v1
+8111,立碁,TWO,SECONDARY,光通訊,通訊與光電,Y,X,核心,1,0.8,光模組、雷射、光收發器、光纖元件與光通訊設備；若核心是矽光子，優先矽光子。,啟用,MATCHED,topic-universe-mapping.v1
+2059,川湖,TPE,PRIMARY,其他 AI伺服器供應鏈,AI運算與伺服器,Y,B,補充,0.5,1.5,AI 伺服器零組件、機櫃、滑軌、電源、線材、網通或工業電腦等，具有 AI 伺服器實際訂單／產品，但沒有更精確細題材。,啟用,MATCHED,topic-universe-mapping.v1
+2312,金寶,TPE,PRIMARY,其他 AI伺服器供應鏈,AI運算與伺服器,Y,B,補充,0.5,1.3,AI 伺服器零組件、機櫃、滑軌、電源、線材、網通或工業電腦等，具有 AI 伺服器實際訂單／產品，但沒有更精確細題材。,啟用,MATCHED,topic-universe-mapping.v1
+2474,可成,TPE,PRIMARY,其他 AI伺服器供應鏈,AI運算與伺服器,Y,B,補充,0.5,1.2,AI 伺服器零組件、機櫃、滑軌、電源、線材、網通或工業電腦等，具有 AI 伺服器實際訂單／產品，但沒有更精確細題材。,啟用,MATCHED,topic-universe-mapping.v1
+3003,健策,TPE,PRIMARY,其他 AI伺服器供應鏈,AI運算與伺服器,Y,B,補充,0.5,1.5,AI 伺服器零組件、機櫃、滑軌、電源、線材、網通或工業電腦等，具有 AI 伺服器實際訂單／產品，但沒有更精確細題材。,啟用,MATCHED,topic-universe-mapping.v1
+3008,大立光,TPE,PRIMARY,其他 AI伺服器供應鏈,AI運算與伺服器,Y,B,補充,0.5,1.4,AI 伺服器零組件、機櫃、滑軌、電源、線材、網通或工業電腦等，具有 AI 伺服器實際訂單／產品，但沒有更精確細題材。,啟用,MATCHED,topic-universe-mapping.v1
+3013,晟銘電,TPE,PRIMARY,其他 AI伺服器供應鏈,AI運算與伺服器,Y,B,補充,0.5,1.4,AI 伺服器零組件、機櫃、滑軌、電源、線材、網通或工業電腦等，具有 AI 伺服器實際訂單／產品，但沒有更精確細題材。,啟用,MATCHED,topic-universe-mapping.v1
+3015,全漢,TPE,PRIMARY,其他 AI伺服器供應鏈,AI運算與伺服器,Y,B,補充,0.5,1.2,AI 伺服器零組件、機櫃、滑軌、電源、線材、網通或工業電腦等，具有 AI 伺服器實際訂單／產品，但沒有更精確細題材。,啟用,MATCHED,topic-universe-mapping.v1
+3060,銘異,TPE,PRIMARY,其他 AI伺服器供應鏈,AI運算與伺服器,Y,B,補充,0.5,1.1,AI 伺服器零組件、機櫃、滑軌、電源、線材、網通或工業電腦等，具有 AI 伺服器實際訂單／產品，但沒有更精確細題材。,啟用,MATCHED,topic-universe-mapping.v1
+3290,東浦,TWO,PRIMARY,其他 AI伺服器供應鏈,AI運算與伺服器,Y,B,補充,0.5,1.3,AI 伺服器零組件、機櫃、滑軌、電源、線材、網通或工業電腦等，具有 AI 伺服器實際訂單／產品，但沒有更精確細題材。,啟用,MATCHED,topic-universe-mapping.v1
+3479,安勤,TWO,PRIMARY,其他 AI伺服器供應鏈,AI運算與伺服器,Y,B,補充,0.5,1.3,AI 伺服器零組件、機櫃、滑軌、電源、線材、網通或工業電腦等，具有 AI 伺服器實際訂單／產品，但沒有更精確細題材。,啟用,MATCHED,topic-universe-mapping.v1
+3526,凡甲,TWO,PRIMARY,其他 AI伺服器供應鏈,AI運算與伺服器,Y,B,補充,0.5,1.4,AI 伺服器零組件、機櫃、滑軌、電源、線材、網通或工業電腦等，具有 AI 伺服器實際訂單／產品，但沒有更精確細題材。,啟用,MATCHED,topic-universe-mapping.v1
+3564,其陽,TWO,PRIMARY,其他 AI伺服器供應鏈,AI運算與伺服器,Y,B,補充,0.5,1.3,AI 伺服器零組件、機櫃、滑軌、電源、線材、網通或工業電腦等，具有 AI 伺服器實際訂單／產品，但沒有更精確細題材。,啟用,MATCHED,topic-universe-mapping.v1
+3617,碩天,TPE,PRIMARY,其他 AI伺服器供應鏈,AI運算與伺服器,Y,B,補充,0.5,1.4,AI 伺服器零組件、機櫃、滑軌、電源、線材、網通或工業電腦等，具有 AI 伺服器實際訂單／產品，但沒有更精確細題材。,啟用,MATCHED,topic-universe-mapping.v1
+3653,健策,TPE,PRIMARY,其他 AI伺服器供應鏈,AI運算與伺服器,Y,B,補充,0.5,1.5,AI 伺服器零組件、機櫃、滑軌、電源、線材、網通或工業電腦等，具有 AI 伺服器實際訂單／產品，但沒有更精確細題材。,啟用,MATCHED,topic-universe-mapping.v1
+3665,貿聯-KY,TPE,PRIMARY,其他 AI伺服器供應鏈,AI運算與伺服器,Y,B,補充,0.5,1.5,AI 伺服器零組件、機櫃、滑軌、電源、線材、網通或工業電腦等，具有 AI 伺服器實際訂單／產品，但沒有更精確細題材。,啟用,MATCHED,topic-universe-mapping.v1
+5243,乙盛-KY,TPE,PRIMARY,其他 AI伺服器供應鏈,AI運算與伺服器,Y,B,補充,0.5,1.3,AI 伺服器零組件、機櫃、滑軌、電源、線材、網通或工業電腦等，具有 AI 伺服器實際訂單／產品，但沒有更精確細題材。,啟用,MATCHED,topic-universe-mapping.v1
+6197,佳必琪,TPE,PRIMARY,其他 AI伺服器供應鏈,AI運算與伺服器,Y,B,補充,0.5,1.4,AI 伺服器零組件、機櫃、滑軌、電源、線材、網通或工業電腦等，具有 AI 伺服器實際訂單／產品，但沒有更精確細題材。,啟用,MATCHED,topic-universe-mapping.v1
+6414,樺漢,TPE,PRIMARY,其他 AI伺服器供應鏈,AI運算與伺服器,Y,B,補充,0.5,1.4,AI 伺服器零組件、機櫃、滑軌、電源、線材、網通或工業電腦等，具有 AI 伺服器實際訂單／產品，但沒有更精確細題材。,啟用,MATCHED,topic-universe-mapping.v1
+6805,富世達,TPE,PRIMARY,其他 AI伺服器供應鏈,AI運算與伺服器,Y,B,補充,0.5,1.5,AI 伺服器零組件、機櫃、滑軌、電源、線材、網通或工業電腦等，具有 AI 伺服器實際訂單／產品，但沒有更精確細題材。,啟用,MATCHED,topic-universe-mapping.v1
+6906,現觀科,TPE,PRIMARY,其他 AI伺服器供應鏈,AI運算與伺服器,Y,B,補充,0.5,1.4,AI 伺服器零組件、機櫃、滑軌、電源、線材、網通或工業電腦等，具有 AI 伺服器實際訂單／產品，但沒有更精確細題材。,啟用,MATCHED,topic-universe-mapping.v1
+8076,伍豐,TWO,PRIMARY,其他 AI伺服器供應鏈,AI運算與伺服器,Y,B,補充,0.5,0.9,AI 伺服器零組件、機櫃、滑軌、電源、線材、網通或工業電腦等，具有 AI 伺服器實際訂單／產品，但沒有更精確細題材。,啟用,MATCHED,topic-universe-mapping.v1
+2061,風青,TWO,SECONDARY,其他 AI伺服器供應鏈,AI運算與伺服器,Y,B,補充,0.5,0.6,AI 伺服器零組件、機櫃、滑軌、電源、線材、網通或工業電腦等，具有 AI 伺服器實際訂單／產品，但沒有更精確細題材。,啟用,MATCHED,topic-universe-mapping.v1
+2308,台達電,TPE,SECONDARY,其他 AI伺服器供應鏈,AI運算與伺服器,Y,B,補充,0.5,1.0,AI 伺服器零組件、機櫃、滑軌、電源、線材、網通或工業電腦等，具有 AI 伺服器實際訂單／產品，但沒有更精確細題材。,啟用,MATCHED,topic-universe-mapping.v1
+2316,楠梓電,TPE,SECONDARY,其他 AI伺服器供應鏈,AI運算與伺服器,Y,B,補充,0.5,0.6,AI 伺服器零組件、機櫃、滑軌、電源、線材、網通或工業電腦等，具有 AI 伺服器實際訂單／產品，但沒有更精確細題材。,啟用,MATCHED,topic-universe-mapping.v1
+2324,仁寶,TPE,SECONDARY,其他 AI伺服器供應鏈,AI運算與伺服器,Y,B,補充,0.5,0,AI 伺服器零組件、機櫃、滑軌、電源、線材、網通或工業電腦等，具有 AI 伺服器實際訂單／產品，但沒有更精確細題材。,啟用,MATCHED,topic-universe-mapping.v1
+2345,智邦,TPE,SECONDARY,其他 AI伺服器供應鏈,AI運算與伺服器,Y,B,補充,0.5,0.8,AI 伺服器零組件、機櫃、滑軌、電源、線材、網通或工業電腦等，具有 AI 伺服器實際訂單／產品，但沒有更精確細題材。,啟用,MATCHED,topic-universe-mapping.v1
+2367,燿華,TPE,SECONDARY,其他 AI伺服器供應鏈,AI運算與伺服器,Y,B,補充,0.5,0.7,AI 伺服器零組件、機櫃、滑軌、電源、線材、網通或工業電腦等，具有 AI 伺服器實際訂單／產品，但沒有更精確細題材。,啟用,MATCHED,topic-universe-mapping.v1
+2383,台光電,TPE,SECONDARY,其他 AI伺服器供應鏈,AI運算與伺服器,Y,B,補充,0.5,0.8,AI 伺服器零組件、機櫃、滑軌、電源、線材、網通或工業電腦等，具有 AI 伺服器實際訂單／產品，但沒有更精確細題材。,啟用,MATCHED,topic-universe-mapping.v1
+2395,研華,TPE,SECONDARY,其他 AI伺服器供應鏈,AI運算與伺服器,Y,B,補充,0.5,0.7,AI 伺服器零組件、機櫃、滑軌、電源、線材、網通或工業電腦等，具有 AI 伺服器實際訂單／產品，但沒有更精確細題材。,啟用,MATCHED,topic-universe-mapping.v1
+2421,建準,TPE,SECONDARY,其他 AI伺服器供應鏈,AI運算與伺服器,Y,B,補充,0.5,0.9,AI 伺服器零組件、機櫃、滑軌、電源、線材、網通或工業電腦等，具有 AI 伺服器實際訂單／產品，但沒有更精確細題材。,啟用,MATCHED,topic-universe-mapping.v1
+2425,承啟,TPE,SECONDARY,其他 AI伺服器供應鏈,AI運算與伺服器,Y,B,補充,0.5,0.6,AI 伺服器零組件、機櫃、滑軌、電源、線材、網通或工業電腦等，具有 AI 伺服器實際訂單／產品，但沒有更精確細題材。,啟用,MATCHED,topic-universe-mapping.v1
+2449,京元電子,TPE,SECONDARY,其他 AI伺服器供應鏈,AI運算與伺服器,Y,B,補充,0.5,0.8,AI 伺服器零組件、機櫃、滑軌、電源、線材、網通或工業電腦等，具有 AI 伺服器實際訂單／產品，但沒有更精確細題材。,啟用,MATCHED,topic-universe-mapping.v1
+3017,奇鋐,TPE,SECONDARY,其他 AI伺服器供應鏈,AI運算與伺服器,Y,B,補充,0.5,0.9,AI 伺服器零組件、機櫃、滑軌、電源、線材、網通或工業電腦等，具有 AI 伺服器實際訂單／產品，但沒有更精確細題材。,啟用,MATCHED,topic-universe-mapping.v1
+3094,聯傑,TPE,SECONDARY,其他 AI伺服器供應鏈,AI運算與伺服器,Y,B,補充,0.5,0.7,AI 伺服器零組件、機櫃、滑軌、電源、線材、網通或工業電腦等，具有 AI 伺服器實際訂單／產品，但沒有更精確細題材。,啟用,MATCHED,topic-universe-mapping.v1
+3257,虹冠電,TPE,SECONDARY,其他 AI伺服器供應鏈,AI運算與伺服器,Y,B,補充,0.5,0.8,AI 伺服器零組件、機櫃、滑軌、電源、線材、網通或工業電腦等，具有 AI 伺服器實際訂單／產品，但沒有更精確細題材。,啟用,MATCHED,topic-universe-mapping.v1
+3265,台星科,TWO,SECONDARY,其他 AI伺服器供應鏈,AI運算與伺服器,Y,B,補充,0.5,0.7,AI 伺服器零組件、機櫃、滑軌、電源、線材、網通或工業電腦等，具有 AI 伺服器實際訂單／產品，但沒有更精確細題材。,啟用,MATCHED,topic-universe-mapping.v1
+4916,事欣科,TPE,SECONDARY,其他 AI伺服器供應鏈,AI運算與伺服器,Y,B,補充,0.5,0.7,AI 伺服器零組件、機櫃、滑軌、電源、線材、網通或工業電腦等，具有 AI 伺服器實際訂單／產品，但沒有更精確細題材。,啟用,MATCHED,topic-universe-mapping.v1
+4979,華星光,TWO,SECONDARY,其他 AI伺服器供應鏈,AI運算與伺服器,Y,B,補充,0.5,0.8,AI 伺服器零組件、機櫃、滑軌、電源、線材、網通或工業電腦等，具有 AI 伺服器實際訂單／產品，但沒有更精確細題材。,啟用,MATCHED,topic-universe-mapping.v1
+5274,信驊,TWO,SECONDARY,其他 AI伺服器供應鏈,AI運算與伺服器,Y,B,補充,0.5,0.9,AI 伺服器零組件、機櫃、滑軌、電源、線材、網通或工業電腦等，具有 AI 伺服器實際訂單／產品，但沒有更精確細題材。,啟用,MATCHED,topic-universe-mapping.v1
+5289,宜鼎,TWO,SECONDARY,其他 AI伺服器供應鏈,AI運算與伺服器,Y,B,補充,0.5,0.7,AI 伺服器零組件、機櫃、滑軌、電源、線材、網通或工業電腦等，具有 AI 伺服器實際訂單／產品，但沒有更精確細題材。,啟用,MATCHED,topic-universe-mapping.v1
+5386,青雲,TWO,SECONDARY,其他 AI伺服器供應鏈,AI運算與伺服器,Y,B,補充,0.5,0.6,AI 伺服器零組件、機櫃、滑軌、電源、線材、網通或工業電腦等，具有 AI 伺服器實際訂單／產品，但沒有更精確細題材。,啟用,MATCHED,topic-universe-mapping.v1
+5426,振發,TWO,SECONDARY,其他 AI伺服器供應鏈,AI運算與伺服器,Y,B,補充,0.5,0.6,AI 伺服器零組件、機櫃、滑軌、電源、線材、網通或工業電腦等，具有 AI 伺服器實際訂單／產品，但沒有更精確細題材。,啟用,MATCHED,topic-universe-mapping.v1
+6138,茂達,TWO,SECONDARY,其他 AI伺服器供應鏈,AI運算與伺服器,Y,B,補充,0.5,0.7,AI 伺服器零組件、機櫃、滑軌、電源、線材、網通或工業電腦等，具有 AI 伺服器實際訂單／產品，但沒有更精確細題材。,啟用,MATCHED,topic-universe-mapping.v1
+6166,凌華,TPE,SECONDARY,其他 AI伺服器供應鏈,AI運算與伺服器,Y,B,補充,0.5,0.7,AI 伺服器零組件、機櫃、滑軌、電源、線材、網通或工業電腦等，具有 AI 伺服器實際訂單／產品，但沒有更精確細題材。,啟用,MATCHED,topic-universe-mapping.v1
+6213,聯茂,TPE,SECONDARY,其他 AI伺服器供應鏈,AI運算與伺服器,Y,B,補充,0.5,0.8,AI 伺服器零組件、機櫃、滑軌、電源、線材、網通或工業電腦等，具有 AI 伺服器實際訂單／產品，但沒有更精確細題材。,啟用,MATCHED,topic-universe-mapping.v1
+6257,矽格,TPE,SECONDARY,其他 AI伺服器供應鏈,AI運算與伺服器,Y,B,補充,0.5,0.7,AI 伺服器零組件、機櫃、滑軌、電源、線材、網通或工業電腦等，具有 AI 伺服器實際訂單／產品，但沒有更精確細題材。,啟用,MATCHED,topic-universe-mapping.v1
+6274,台燿,TWO,SECONDARY,其他 AI伺服器供應鏈,AI運算與伺服器,Y,B,補充,0.5,0.8,AI 伺服器零組件、機櫃、滑軌、電源、線材、網通或工業電腦等，具有 AI 伺服器實際訂單／產品，但沒有更精確細題材。,啟用,MATCHED,topic-universe-mapping.v1
+6282,康舒,TPE,SECONDARY,其他 AI伺服器供應鏈,AI運算與伺服器,Y,B,補充,0.5,0.7,AI 伺服器零組件、機櫃、滑軌、電源、線材、網通或工業電腦等，具有 AI 伺服器實際訂單／產品，但沒有更精確細題材。,啟用,MATCHED,topic-universe-mapping.v1
+6416,瑞祺電通,TPE,SECONDARY,其他 AI伺服器供應鏈,AI運算與伺服器,Y,B,補充,0.5,0.7,AI 伺服器零組件、機櫃、滑軌、電源、線材、網通或工業電腦等，具有 AI 伺服器實際訂單／產品，但沒有更精確細題材。,啟用,MATCHED,topic-universe-mapping.v1
+6442,光聖,TPE,SECONDARY,其他 AI伺服器供應鏈,AI運算與伺服器,Y,B,補充,0.5,0.8,AI 伺服器零組件、機櫃、滑軌、電源、線材、網通或工業電腦等，具有 AI 伺服器實際訂單／產品，但沒有更精確細題材。,啟用,MATCHED,topic-universe-mapping.v1
+6449,鈺邦,TPE,SECONDARY,其他 AI伺服器供應鏈,AI運算與伺服器,Y,B,補充,0.5,0.7,AI 伺服器零組件、機櫃、滑軌、電源、線材、網通或工業電腦等，具有 AI 伺服器實際訂單／產品，但沒有更精確細題材。,啟用,MATCHED,topic-universe-mapping.v1
+6451,訊芯-KY,TPE,SECONDARY,其他 AI伺服器供應鏈,AI運算與伺服器,Y,B,補充,0.5,0.9,AI 伺服器零組件、機櫃、滑軌、電源、線材、網通或工業電腦等，具有 AI 伺服器實際訂單／產品，但沒有更精確細題材。,啟用,MATCHED,topic-universe-mapping.v1
+6531,愛普*,TPE,SECONDARY,其他 AI伺服器供應鏈,AI運算與伺服器,Y,B,補充,0.5,0.0,AI 伺服器零組件、機櫃、滑軌、電源、線材、網通或工業電腦等，具有 AI 伺服器實際訂單／產品，但沒有更精確細題材。,啟用,MATCHED,topic-universe-mapping.v1
+6642,富致,TWO,SECONDARY,其他 AI伺服器供應鏈,AI運算與伺服器,Y,B,補充,0.5,0.7,AI 伺服器零組件、機櫃、滑軌、電源、線材、網通或工業電腦等，具有 AI 伺服器實際訂單／產品，但沒有更精確細題材。,啟用,MATCHED,topic-universe-mapping.v1
+6715,嘉基,TPE,SECONDARY,其他 AI伺服器供應鏈,AI運算與伺服器,Y,B,補充,0.5,0.8,AI 伺服器零組件、機櫃、滑軌、電源、線材、網通或工業電腦等，具有 AI 伺服器實際訂單／產品，但沒有更精確細題材。,啟用,MATCHED,topic-universe-mapping.v1
+6799,來頡,TPE,SECONDARY,其他 AI伺服器供應鏈,AI運算與伺服器,Y,B,補充,0.5,0.7,AI 伺服器零組件、機櫃、滑軌、電源、線材、網通或工業電腦等，具有 AI 伺服器實際訂單／產品，但沒有更精確細題材。,啟用,MATCHED,topic-universe-mapping.v1
+6821,聯寶,TWO,SECONDARY,其他 AI伺服器供應鏈,AI運算與伺服器,Y,B,補充,0.5,0.8,AI 伺服器零組件、機櫃、滑軌、電源、線材、網通或工業電腦等，具有 AI 伺服器實際訂單／產品，但沒有更精確細題材。,啟用,MATCHED,topic-universe-mapping.v1
+6831,邁科,TPE,SECONDARY,其他 AI伺服器供應鏈,AI運算與伺服器,Y,B,補充,0.5,0.7,AI 伺服器零組件、機櫃、滑軌、電源、線材、網通或工業電腦等，具有 AI 伺服器實際訂單／產品，但沒有更精確細題材。,啟用,MATCHED,topic-universe-mapping.v1
+8040,九暘,TWO,SECONDARY,其他 AI伺服器供應鏈,AI運算與伺服器,Y,B,補充,0.5,0.7,AI 伺服器零組件、機櫃、滑軌、電源、線材、網通或工業電腦等，具有 AI 伺服器實際訂單／產品，但沒有更精確細題材。,啟用,MATCHED,topic-universe-mapping.v1
+8042,金山電,TWO,SECONDARY,其他 AI伺服器供應鏈,AI運算與伺服器,Y,B,補充,0.5,0.7,AI 伺服器零組件、機櫃、滑軌、電源、線材、網通或工業電腦等，具有 AI 伺服器實際訂單／產品，但沒有更精確細題材。,啟用,MATCHED,topic-universe-mapping.v1
+8299,群聯,TWO,SECONDARY,其他 AI伺服器供應鏈,AI運算與伺服器,Y,B,補充,0.5,0.8,AI 伺服器零組件、機櫃、滑軌、電源、線材、網通或工業電腦等，具有 AI 伺服器實際訂單／產品，但沒有更精確細題材。,啟用,MATCHED,topic-universe-mapping.v1
+8358,金居,TWO,SECONDARY,其他 AI伺服器供應鏈,AI運算與伺服器,Y,B,補充,0.5,0.7,AI 伺服器零組件、機櫃、滑軌、電源、線材、網通或工業電腦等，具有 AI 伺服器實際訂單／產品，但沒有更精確細題材。,啟用,MATCHED,topic-universe-mapping.v1
+6419,京晨科,TWO,PRIMARY,其他 AI視覺,AI視覺,Y,D,補充,0.5,1.2,有 AI 視覺產品或服務，但無法歸入機器視覺、視覺檢測或 AI 影像辨識。,啟用,MATCHED,topic-universe-mapping.v1
+2379,瑞昱,TPE,PRIMARY,其他 IC設計,IC設計,Y,D,補充,0.5,1.4,有實際 IC 設計產品，但不符合 ASIC、MCU、RISC-V 或其他已命名細題材；例如驅動 IC、網通 IC、音訊 IC、一般邏輯 IC。,啟用,MATCHED,topic-universe-mapping.v1
+2388,威盛,TPE,PRIMARY,其他 IC設計,IC設計,Y,D,補充,0.5,1.3,有實際 IC 設計產品，但不符合 ASIC、MCU、RISC-V 或其他已命名細題材；例如驅動 IC、網通 IC、音訊 IC、一般邏輯 IC。,啟用,MATCHED,topic-universe-mapping.v1
+2401,凌陽,TPE,PRIMARY,其他 IC設計,IC設計,Y,D,補充,0.5,1.2,有實際 IC 設計產品，但不符合 ASIC、MCU、RISC-V 或其他已命名細題材；例如驅動 IC、網通 IC、音訊 IC、一般邏輯 IC。,啟用,MATCHED,topic-universe-mapping.v1
+2454,聯發科,TPE,PRIMARY,其他 IC設計,IC設計,Y,D,補充,0.5,1.5,有實際 IC 設計產品，但不符合 ASIC、MCU、RISC-V 或其他已命名細題材；例如驅動 IC、網通 IC、音訊 IC、一般邏輯 IC。,啟用,MATCHED,topic-universe-mapping.v1
+3094,聯傑,TPE,PRIMARY,其他 IC設計,IC設計,Y,D,補充,0.5,1.2,有實際 IC 設計產品，但不符合 ASIC、MCU、RISC-V 或其他已命名細題材；例如驅動 IC、網通 IC、音訊 IC、一般邏輯 IC。,啟用,MATCHED,topic-universe-mapping.v1
+3257,虹冠電,TPE,PRIMARY,其他 IC設計,IC設計,Y,D,補充,0.5,1.3,有實際 IC 設計產品，但不符合 ASIC、MCU、RISC-V 或其他已命名細題材；例如驅動 IC、網通 IC、音訊 IC、一般邏輯 IC。,啟用,MATCHED,topic-universe-mapping.v1
+3288,點晶,TWO,PRIMARY,其他 IC設計,IC設計,Y,D,補充,0.5,1.1,有實際 IC 設計產品，但不符合 ASIC、MCU、RISC-V 或其他已命名細題材；例如驅動 IC、網通 IC、音訊 IC、一般邏輯 IC。,啟用,MATCHED,topic-universe-mapping.v1
+3527,聚積,TWO,PRIMARY,其他 IC設計,IC設計,Y,D,補充,0.5,1.2,有實際 IC 設計產品，但不符合 ASIC、MCU、RISC-V 或其他已命名細題材；例如驅動 IC、網通 IC、音訊 IC、一般邏輯 IC。,啟用,MATCHED,topic-universe-mapping.v1
+3529,力旺,TWO,PRIMARY,其他 IC設計,IC設計,Y,D,補充,0.5,1.5,有實際 IC 設計產品，但不符合 ASIC、MCU、RISC-V 或其他已命名細題材；例如驅動 IC、網通 IC、音訊 IC、一般邏輯 IC。,啟用,MATCHED,topic-universe-mapping.v1
+3556,禾瑞亞,TWO,PRIMARY,其他 IC設計,IC設計,Y,D,補充,0.5,1.2,有實際 IC 設計產品，但不符合 ASIC、MCU、RISC-V 或其他已命名細題材；例如驅動 IC、網通 IC、音訊 IC、一般邏輯 IC。,啟用,MATCHED,topic-universe-mapping.v1
+3588,通嘉,TPE,PRIMARY,其他 IC設計,IC設計,Y,D,補充,0.5,1.2,有實際 IC 設計產品，但不符合 ASIC、MCU、RISC-V 或其他已命名細題材；例如驅動 IC、網通 IC、音訊 IC、一般邏輯 IC。,啟用,MATCHED,topic-universe-mapping.v1
+5274,信驊,TWO,PRIMARY,其他 IC設計,IC設計,Y,D,補充,0.5,1.5,有實際 IC 設計產品，但不符合 ASIC、MCU、RISC-V 或其他已命名細題材；例如驅動 IC、網通 IC、音訊 IC、一般邏輯 IC。,啟用,MATCHED,topic-universe-mapping.v1
+5302,太欣,TWO,PRIMARY,其他 IC設計,IC設計,Y,D,補充,0.5,1.0,有實際 IC 設計產品，但不符合 ASIC、MCU、RISC-V 或其他已命名細題材；例如驅動 IC、網通 IC、音訊 IC、一般邏輯 IC。,啟用,MATCHED,topic-universe-mapping.v1
+5351,鈺創,TWO,PRIMARY,其他 IC設計,IC設計,Y,D,補充,0.5,1.2,有實際 IC 設計產品，但不符合 ASIC、MCU、RISC-V 或其他已命名細題材；例如驅動 IC、網通 IC、音訊 IC、一般邏輯 IC。,啟用,MATCHED,topic-universe-mapping.v1
+5471,松翰,TPE,PRIMARY,其他 IC設計,IC設計,Y,D,補充,0.5,1.2,有實際 IC 設計產品，但不符合 ASIC、MCU、RISC-V 或其他已命名細題材；例如驅動 IC、網通 IC、音訊 IC、一般邏輯 IC。,啟用,MATCHED,topic-universe-mapping.v1
+6129,普誠,TWO,PRIMARY,其他 IC設計,IC設計,Y,D,補充,0.5,1.3,有實際 IC 設計產品，但不符合 ASIC、MCU、RISC-V 或其他已命名細題材；例如驅動 IC、網通 IC、音訊 IC、一般邏輯 IC。,啟用,MATCHED,topic-universe-mapping.v1
+6138,茂達,TWO,PRIMARY,其他 IC設計,IC設計,Y,D,補充,0.5,1.4,有實際 IC 設計產品，但不符合 ASIC、MCU、RISC-V 或其他已命名細題材；例如驅動 IC、網通 IC、音訊 IC、一般邏輯 IC。,啟用,MATCHED,topic-universe-mapping.v1
+6243,迅杰,TPE,PRIMARY,其他 IC設計,IC設計,Y,D,補充,0.5,1.2,有實際 IC 設計產品，但不符合 ASIC、MCU、RISC-V 或其他已命名細題材；例如驅動 IC、網通 IC、音訊 IC、一般邏輯 IC。,啟用,MATCHED,topic-universe-mapping.v1
+6291,沛亨,TWO,PRIMARY,其他 IC設計,IC設計,Y,D,補充,0.5,1.1,有實際 IC 設計產品，但不符合 ASIC、MCU、RISC-V 或其他已命名細題材；例如驅動 IC、網通 IC、音訊 IC、一般邏輯 IC。,啟用,MATCHED,topic-universe-mapping.v1
+6415,矽力-KY,TPE,PRIMARY,其他 IC設計,IC設計,Y,D,補充,0.5,1.4,有實際 IC 設計產品，但不符合 ASIC、MCU、RISC-V 或其他已命名細題材；例如驅動 IC、網通 IC、音訊 IC、一般邏輯 IC。,啟用,MATCHED,topic-universe-mapping.v1
+6462,神盾,TWO,PRIMARY,其他 IC設計,IC設計,Y,D,補充,0.5,1.4,有實際 IC 設計產品，但不符合 ASIC、MCU、RISC-V 或其他已命名細題材；例如驅動 IC、網通 IC、音訊 IC、一般邏輯 IC。,啟用,MATCHED,topic-universe-mapping.v1
+6526,達發,TPE,PRIMARY,其他 IC設計,IC設計,Y,D,補充,0.5,1.5,有實際 IC 設計產品，但不符合 ASIC、MCU、RISC-V 或其他已命名細題材；例如驅動 IC、網通 IC、音訊 IC、一般邏輯 IC。,啟用,MATCHED,topic-universe-mapping.v1
+6531,愛普*,TPE,PRIMARY,其他 IC設計,IC設計,Y,D,補充,0.5,1.4,有實際 IC 設計產品，但不符合 ASIC、MCU、RISC-V 或其他已命名細題材；例如驅動 IC、網通 IC、音訊 IC、一般邏輯 IC。,啟用,MATCHED,topic-universe-mapping.v1
+6643,M31,TWO,PRIMARY,其他 IC設計,IC設計,Y,D,補充,0.5,1.5,有實際 IC 設計產品，但不符合 ASIC、MCU、RISC-V 或其他已命名細題材；例如驅動 IC、網通 IC、音訊 IC、一般邏輯 IC。,啟用,MATCHED,topic-universe-mapping.v1
+6695,芯鼎,TPE,PRIMARY,其他 IC設計,IC設計,Y,D,補充,0.5,1.3,有實際 IC 設計產品，但不符合 ASIC、MCU、RISC-V 或其他已命名細題材；例如驅動 IC、網通 IC、音訊 IC、一般邏輯 IC。,啟用,MATCHED,topic-universe-mapping.v1
+6799,來頡,TPE,PRIMARY,其他 IC設計,IC設計,Y,D,補充,0.5,1.3,有實際 IC 設計產品，但不符合 ASIC、MCU、RISC-V 或其他已命名細題材；例如驅動 IC、網通 IC、音訊 IC、一般邏輯 IC。,啟用,MATCHED,topic-universe-mapping.v1
+6906,現觀科,TPE,PRIMARY,其他 IC設計,IC設計,Y,D,補充,0.5,1.4,有實際 IC 設計產品，但不符合 ASIC、MCU、RISC-V 或其他已命名細題材；例如驅動 IC、網通 IC、音訊 IC、一般邏輯 IC。,啟用,MATCHED,topic-universe-mapping.v1
+8016,矽創,TPE,PRIMARY,其他 IC設計,IC設計,Y,D,補充,0.5,1.4,有實際 IC 設計產品，但不符合 ASIC、MCU、RISC-V 或其他已命名細題材；例如驅動 IC、網通 IC、音訊 IC、一般邏輯 IC。,啟用,MATCHED,topic-universe-mapping.v1
+8024,佑華,TWO,PRIMARY,其他 IC設計,IC設計,Y,D,補充,0.5,1.1,有實際 IC 設計產品，但不符合 ASIC、MCU、RISC-V 或其他已命名細題材；例如驅動 IC、網通 IC、音訊 IC、一般邏輯 IC。,啟用,MATCHED,topic-universe-mapping.v1
+8040,九暘,TWO,PRIMARY,其他 IC設計,IC設計,Y,D,補充,0.5,1.3,有實際 IC 設計產品，但不符合 ASIC、MCU、RISC-V 或其他已命名細題材；例如驅動 IC、網通 IC、音訊 IC、一般邏輯 IC。,啟用,MATCHED,topic-universe-mapping.v1
+2399,映泰,TPE,SECONDARY,其他 IC設計,IC設計,Y,D,補充,0.5,0.5,有實際 IC 設計產品，但不符合 ASIC、MCU、RISC-V 或其他已命名細題材；例如驅動 IC、網通 IC、音訊 IC、一般邏輯 IC。,啟用,MATCHED,topic-universe-mapping.v1
+3035,智原,TPE,SECONDARY,其他 IC設計,IC設計,Y,D,補充,0.5,0.8,有實際 IC 設計產品，但不符合 ASIC、MCU、RISC-V 或其他已命名細題材；例如驅動 IC、網通 IC、音訊 IC、一般邏輯 IC。,啟用,MATCHED,topic-universe-mapping.v1
+4919,新唐,TPE,SECONDARY,其他 IC設計,IC設計,Y,D,補充,0.5,0.8,有實際 IC 設計產品，但不符合 ASIC、MCU、RISC-V 或其他已命名細題材；例如驅動 IC、網通 IC、音訊 IC、一般邏輯 IC。,啟用,MATCHED,topic-universe-mapping.v1
+6719,力智,TPE,SECONDARY,其他 IC設計,IC設計,Y,D,補充,0.5,0.7,有實際 IC 設計產品，但不符合 ASIC、MCU、RISC-V 或其他已命名細題材；例如驅動 IC、網通 IC、音訊 IC、一般邏輯 IC。,啟用,MATCHED,topic-universe-mapping.v1
+2375,凱美,TPE,SECONDARY,其他動元件,,,,,,0.7,,,UNMAPPED_TOPIC,topic-universe-mapping.v1
+2360,致茂,TPE,PRIMARY,其他半導體設備,半導體設備與製程,Y,X,補充,0.5,1.5,晶圓製造、封裝測試、清洗、檢測、再生晶圓、量測等設備，但無法歸入先進封裝設備或設備零組件。,啟用,MATCHED,topic-universe-mapping.v1
+2493,揚博,TPE,PRIMARY,其他半導體設備,半導體設備與製程,Y,X,補充,0.5,1.2,晶圓製造、封裝測試、清洗、檢測、再生晶圓、量測等設備，但無法歸入先進封裝設備或設備零組件。,啟用,MATCHED,topic-universe-mapping.v1
+3055,蔚華科,TPE,PRIMARY,其他半導體設備,半導體設備與製程,Y,X,補充,0.5,1.3,晶圓製造、封裝測試、清洗、檢測、再生晶圓、量測等設備，但無法歸入先進封裝設備或設備零組件。,啟用,MATCHED,topic-universe-mapping.v1
+3167,大量,TPE,PRIMARY,其他半導體設備,半導體設備與製程,Y,X,補充,0.5,1.2,晶圓製造、封裝測試、清洗、檢測、再生晶圓、量測等設備，但無法歸入先進封裝設備或設備零組件。,啟用,MATCHED,topic-universe-mapping.v1
+3498,陽程,TWO,PRIMARY,其他半導體設備,半導體設備與製程,Y,X,補充,0.5,1.3,晶圓製造、封裝測試、清洗、檢測、再生晶圓、量測等設備，但無法歸入先進封裝設備或設備零組件。,啟用,MATCHED,topic-universe-mapping.v1
+3535,晶彩科,TPE,PRIMARY,其他半導體設備,半導體設備與製程,Y,X,補充,0.5,1.3,晶圓製造、封裝測試、清洗、檢測、再生晶圓、量測等設備，但無法歸入先進封裝設備或設備零組件。,啟用,MATCHED,topic-universe-mapping.v1
+4542,科嶠,TWO,PRIMARY,其他半導體設備,半導體設備與製程,Y,X,補充,0.5,1.3,晶圓製造、封裝測試、清洗、檢測、再生晶圓、量測等設備，但無法歸入先進封裝設備或設備零組件。,啟用,MATCHED,topic-universe-mapping.v1
+4556,旭然,TWO,PRIMARY,其他半導體設備,半導體設備與製程,Y,X,補充,0.5,1.3,晶圓製造、封裝測試、清洗、檢測、再生晶圓、量測等設備，但無法歸入先進封裝設備或設備零組件。,啟用,MATCHED,topic-universe-mapping.v1
+4577,達航科技,TWO,PRIMARY,其他半導體設備,半導體設備與製程,Y,X,補充,0.5,1.2,晶圓製造、封裝測試、清洗、檢測、再生晶圓、量測等設備，但無法歸入先進封裝設備或設備零組件。,啟用,MATCHED,topic-universe-mapping.v1
+5498,凱威,TWO,PRIMARY,其他半導體設備,半導體設備與製程,Y,X,補充,0.5,1.3,晶圓製造、封裝測試、清洗、檢測、再生晶圓、量測等設備，但無法歸入先進封裝設備或設備零組件。,啟用,MATCHED,topic-universe-mapping.v1
+5536,聖暉*,TWO,PRIMARY,其他半導體設備,半導體設備與製程,Y,X,補充,0.5,1.4,晶圓製造、封裝測試、清洗、檢測、再生晶圓、量測等設備，但無法歸入先進封裝設備或設備零組件。,啟用,MATCHED,topic-universe-mapping.v1
+6196,帆宣,TPE,PRIMARY,其他半導體設備,半導體設備與製程,Y,X,補充,0.5,1.4,晶圓製造、封裝測試、清洗、檢測、再生晶圓、量測等設備，但無法歸入先進封裝設備或設備零組件。,啟用,MATCHED,topic-universe-mapping.v1
+6207,雷科,TWO,PRIMARY,其他半導體設備,半導體設備與製程,Y,X,補充,0.5,1.4,晶圓製造、封裝測試、清洗、檢測、再生晶圓、量測等設備，但無法歸入先進封裝設備或設備零組件。,啟用,MATCHED,topic-universe-mapping.v1
+6215,和椿,TPE,PRIMARY,其他半導體設備,半導體設備與製程,Y,X,補充,0.5,1.4,晶圓製造、封裝測試、清洗、檢測、再生晶圓、量測等設備，但無法歸入先進封裝設備或設備零組件。,啟用,MATCHED,topic-universe-mapping.v1
+6223,旺矽,TWO,PRIMARY,其他半導體設備,半導體設備與製程,Y,X,補充,0.5,1.4,晶圓製造、封裝測試、清洗、檢測、再生晶圓、量測等設備，但無法歸入先進封裝設備或設備零組件。,啟用,MATCHED,topic-universe-mapping.v1
+6510,精測,TWO,PRIMARY,其他半導體設備,半導體設備與製程,Y,X,補充,0.5,1.4,晶圓製造、封裝測試、清洗、檢測、再生晶圓、量測等設備，但無法歸入先進封裝設備或設備零組件。,啟用,MATCHED,topic-universe-mapping.v1
+6515,穎崴,TPE,PRIMARY,其他半導體設備,半導體設備與製程,Y,X,補充,0.5,1.5,晶圓製造、封裝測試、清洗、檢測、再生晶圓、量測等設備，但無法歸入先進封裝設備或設備零組件。,啟用,MATCHED,topic-universe-mapping.v1
+6613,朋億*,TWO,PRIMARY,其他半導體設備,半導體設備與製程,Y,X,補充,0.5,1.4,晶圓製造、封裝測試、清洗、檢測、再生晶圓、量測等設備，但無法歸入先進封裝設備或設備零組件。,啟用,MATCHED,topic-universe-mapping.v1
+6654,天正國際,TWO,PRIMARY,其他半導體設備,半導體設備與製程,Y,X,補充,0.5,1.2,晶圓製造、封裝測試、清洗、檢測、再生晶圓、量測等設備，但無法歸入先進封裝設備或設備零組件。,啟用,MATCHED,topic-universe-mapping.v1
+6667,信紘科,TWO,PRIMARY,其他半導體設備,半導體設備與製程,Y,X,補充,0.5,1.4,晶圓製造、封裝測試、清洗、檢測、再生晶圓、量測等設備，但無法歸入先進封裝設備或設備零組件。,啟用,MATCHED,topic-universe-mapping.v1
+6683,雍智科技,TWO,PRIMARY,其他半導體設備,半導體設備與製程,Y,X,補充,0.5,1.4,晶圓製造、封裝測試、清洗、檢測、再生晶圓、量測等設備，但無法歸入先進封裝設備或設備零組件。,啟用,MATCHED,topic-universe-mapping.v1
+6727,亞泰金屬,TWO,PRIMARY,其他半導體設備,半導體設備與製程,Y,X,補充,0.5,1.4,晶圓製造、封裝測試、清洗、檢測、再生晶圓、量測等設備，但無法歸入先進封裝設備或設備零組件。,啟用,MATCHED,topic-universe-mapping.v1
+6742,澤米,TPE,PRIMARY,其他半導體設備,半導體設備與製程,Y,X,補充,0.5,1.3,晶圓製造、封裝測試、清洗、檢測、再生晶圓、量測等設備，但無法歸入先進封裝設備或設備零組件。,啟用,MATCHED,topic-universe-mapping.v1
+6903,巨漢,TWO,PRIMARY,其他半導體設備,半導體設備與製程,Y,X,補充,0.5,1.3,晶圓製造、封裝測試、清洗、檢測、再生晶圓、量測等設備，但無法歸入先進封裝設備或設備零組件。,啟用,MATCHED,topic-universe-mapping.v1
+6937,天虹,TPE,PRIMARY,其他半導體設備,半導體設備與製程,Y,X,補充,0.5,1.4,晶圓製造、封裝測試、清洗、檢測、再生晶圓、量測等設備，但無法歸入先進封裝設備或設備零組件。,啟用,MATCHED,topic-universe-mapping.v1
+7709,榮田,TWO,PRIMARY,其他半導體設備,半導體設備與製程,Y,X,補充,0.5,1.3,晶圓製造、封裝測試、清洗、檢測、再生晶圓、量測等設備，但無法歸入先進封裝設備或設備零組件。,啟用,MATCHED,topic-universe-mapping.v1
+7769,鴻勁,TPE,PRIMARY,其他半導體設備,半導體設備與製程,Y,X,補充,0.5,1.5,晶圓製造、封裝測試、清洗、檢測、再生晶圓、量測等設備，但無法歸入先進封裝設備或設備零組件。,啟用,MATCHED,topic-universe-mapping.v1
+8028,昇陽半導體,TPE,PRIMARY,其他半導體設備,半導體設備與製程,Y,X,補充,0.5,1.4,晶圓製造、封裝測試、清洗、檢測、再生晶圓、量測等設備，但無法歸入先進封裝設備或設備零組件。,啟用,MATCHED,topic-universe-mapping.v1
+3413,京鼎,TPE,SECONDARY,其他半導體設備,半導體設備與製程,Y,X,補充,0.5,0.7,晶圓製造、封裝測試、清洗、檢測、再生晶圓、量測等設備，但無法歸入先進封裝設備或設備零組件。,啟用,MATCHED,topic-universe-mapping.v1
+4576,大銀微系統,TPE,SECONDARY,其他半導體設備,半導體設備與製程,Y,X,補充,0.5,0.8,晶圓製造、封裝測試、清洗、檢測、再生晶圓、量測等設備，但無法歸入先進封裝設備或設備零組件。,啟用,MATCHED,topic-universe-mapping.v1
+1723,中碳,TPE,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.2,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+1810,和成,TPE,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.1,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+2009,第一銅,TPE,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.2,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+2061,風青,TWO,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.1,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+2221,大甲,TWO,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.2,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+2305,全友,TPE,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.0,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+2414,精技,TPE,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.0,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+2460,建通,TPE,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.1,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+2486,一航,TPE,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.0,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+2491,吉祥全,TPE,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.0,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+2498,宏達電,TPE,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.2,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+3021,鴻名,TPE,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.0,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+3048,益登,TPE,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.0,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+3114,好德,TWO,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.0,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+3149,正達,TPE,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.1,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+3191,雲嘉南,TWO,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.0,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+3268,海德威,TWO,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.0,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+3285,微端,TWO,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.0,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+3296,勝德,TPE,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.0,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+3308,聯德,TPE,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.0,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+3360,尚立,TWO,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.0,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+3441,聯一光,TWO,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.1,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+3528,安馳,TPE,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.1,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+3537,堡達,TWO,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.0,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+3543,州巧,TPE,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.0,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+3597,映興,TWO,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.1,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+3615,安可,TWO,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.1,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+3622,洋華,TPE,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.1,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+3630,新鉅科,TWO,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.0,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+3708,上緯投控,TPE,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.2,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+3709,鑫聯大投控,TWO,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.0,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+4127,天良,TWO,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.0,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+4541,晟田,TWO,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.2,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+4564,元翎,TPE,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.2,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+4716,大立,TWO,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.1,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+4721,美琪瑪,TWO,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.2,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+4722,國精化,TPE,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.1,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+4729,熒茂,TWO,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.0,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+4764,雙鍵,TPE,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.0,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+4807,日成-KY,TPE,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.0,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+4939,亞電,TWO,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.2,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+4976,佳凌,TPE,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.1,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+5426,振發,TWO,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.1,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+5464,霖宏,TWO,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.0,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+5475,德宏,TWO,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.0,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+5488,松普,TWO,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.0,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+5489,彩富,TWO,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.1,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+5498,凱威,TWO,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.3,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+6116,彩晶,TPE,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.1,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+6127,九豪,TWO,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.1,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+6141,柏承,TPE,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.1,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+6156,松上,TWO,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.1,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+6168,宏齊,TPE,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.1,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+6209,今國光,TPE,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.1,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+6259,百徽,TWO,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.0,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+6265,方土昶,TWO,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.0,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+6270,倍微,TWO,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.0,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+6405,悅城,TPE,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.4,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+6517,保勝光學,TWO,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.3,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+6538,倉和,TWO,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.2,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+6585,鼎基,TPE,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.3,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+6668,中揚光,TPE,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.1,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+6693,廣寰科,TWO,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.0,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+6829,千附精密,TWO,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.3,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+6861,睿生光學,TPE,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.1,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+6909,藏寶灣科技,TPE,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.0,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+7610,聯友金屬,TPE,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.1,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+8021,尖點,TPE,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.2,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+8043,蜜望實,TWO,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.2,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+8064,東捷,TWO,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.1,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+8071,能率網通,TWO,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.0,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+8074,鉅橡,TWO,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.1,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+8092,建達,TWO,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.0,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+8104,錸寶,TPE,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.2,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+8240,華宏,TWO,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.1,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+8277,商丞,TWO,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.0,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+8383,千附,TWO,PRIMARY,其他原物料,傳統產業材料,Y,D,補充,0.5,1.1,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+1451,年興,TPE,SECONDARY,其他原物料,傳統產業材料,Y,D,補充,0.5,0.5,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+1785,光洋科,TWO,SECONDARY,其他原物料,傳統產業材料,Y,D,補充,0.5,0.6,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+1802,台玻,TPE,SECONDARY,其他原物料,傳統產業材料,Y,D,補充,0.5,0.6,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+3290,東浦,TWO,SECONDARY,其他原物料,傳統產業材料,Y,D,補充,0.5,0.8,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+4760,勤凱,TWO,SECONDARY,其他原物料,傳統產業材料,Y,D,補充,0.5,0.7,有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。,啟用,MATCHED,topic-universe-mapping.v1
+2630,亞航,TPE,PRIMARY,其他國防,軍工國防,Y,D,補充,0.5,1.3,國防訂單或軍工產品，但無法歸入無人機、雷達感測、船舶或航太零組件。,啟用,MATCHED,topic-universe-mapping.v1
+2634,漢翔,TPE,PRIMARY,其他國防,軍工國防,Y,D,補充,0.5,1.4,國防訂單或軍工產品，但無法歸入無人機、雷達感測、船舶或航太零組件。,啟用,MATCHED,topic-universe-mapping.v1
+3005,神基,TPE,PRIMARY,其他國防,軍工國防,Y,D,補充,0.5,1.3,國防訂單或軍工產品，但無法歸入無人機、雷達感測、船舶或航太零組件。,啟用,MATCHED,topic-universe-mapping.v1
+3213,茂訊,TWO,PRIMARY,其他國防,軍工國防,Y,D,補充,0.5,1.2,國防訂單或軍工產品，但無法歸入無人機、雷達感測、船舶或航太零組件。,啟用,MATCHED,topic-universe-mapping.v1
+4916,事欣科,TPE,PRIMARY,其他國防,軍工國防,Y,D,補充,0.5,1.3,國防訂單或軍工產品，但無法歸入無人機、雷達感測、船舶或航太零組件。,啟用,MATCHED,topic-universe-mapping.v1
+5222,全訊,TPE,PRIMARY,其他國防,軍工國防,Y,D,補充,0.5,1.4,國防訂單或軍工產品，但無法歸入無人機、雷達感測、船舶或航太零組件。,啟用,MATCHED,topic-universe-mapping.v1
+1342,八貫,TPE,SECONDARY,其他國防,軍工國防,Y,D,補充,0.5,0.6,國防訂單或軍工產品，但無法歸入無人機、雷達感測、船舶或航太零組件。,啟用,MATCHED,topic-universe-mapping.v1
+1474,弘裕,TPE,SECONDARY,其他國防,軍工國防,Y,D,補充,0.5,0.6,國防訂單或軍工產品，但無法歸入無人機、雷達感測、船舶或航太零組件。,啟用,MATCHED,topic-universe-mapping.v1
+1810,和成,TPE,SECONDARY,其他國防,軍工國防,Y,D,補充,0.5,0.6,國防訂單或軍工產品，但無法歸入無人機、雷達感測、船舶或航太零組件。,啟用,MATCHED,topic-universe-mapping.v1
+6517,保勝光學,TWO,SECONDARY,其他國防,軍工國防,Y,D,補充,0.5,0.7,國防訂單或軍工產品，但無法歸入無人機、雷達感測、船舶或航太零組件。,啟用,MATCHED,topic-universe-mapping.v1
+7402,邑錡,TWO,SECONDARY,其他國防,軍工國防,Y,D,補充,0.5,0.7,國防訂單或軍工產品，但無法歸入無人機、雷達感測、船舶或航太零組件。,啟用,MATCHED,topic-universe-mapping.v1
+7709,榮田,TWO,SECONDARY,其他國防,軍工國防,Y,D,補充,0.5,0.8,國防訂單或軍工產品，但無法歸入無人機、雷達感測、船舶或航太零組件。,啟用,MATCHED,topic-universe-mapping.v1
+2352,佳世達,TPE,PRIMARY,其他大型權值,大型權值,Y,X,補充,0.5,1.0,大型市值權值股，但不屬大型電子或大型金融。,啟用,MATCHED,topic-universe-mapping.v1
+2409,友達,TPE,PRIMARY,其他大型權值,大型權值,Y,X,補充,0.5,1.1,大型市值權值股，但不屬大型電子或大型金融。,啟用,MATCHED,topic-universe-mapping.v1
+7777,能率亞洲,TWO,PRIMARY,其他大型權值,大型權值,Y,X,補充,0.5,1.2,大型市值權值股，但不屬大型電子或大型金融。,啟用,MATCHED,topic-universe-mapping.v1
+1611,中電,TPE,PRIMARY,其他能源,電力與能源,Y,X,補充,0.5,1.0,有能源產品或服務，但無法歸入重電、儲能、太陽能、AI 電力或離岸風電。,啟用,MATCHED,topic-universe-mapping.v1
+6179,亞通,TWO,PRIMARY,其他能源,電力與能源,Y,X,補充,0.5,1.2,有能源產品或服務，但無法歸入重電、儲能、太陽能、AI 電力或離岸風電。,啟用,MATCHED,topic-universe-mapping.v1
+6803,崑鼎,TWO,PRIMARY,其他能源,電力與能源,Y,X,補充,0.5,1.3,有能源產品或服務，但無法歸入重電、儲能、太陽能、AI 電力或離岸風電。,啟用,MATCHED,topic-universe-mapping.v1
+6806,森崴能源,TPE,PRIMARY,其他能源,電力與能源,Y,X,補充,0.5,1.3,有能源產品或服務，但無法歸入重電、儲能、太陽能、AI 電力或離岸風電。,啟用,MATCHED,topic-universe-mapping.v1
+1513,中興電,TPE,SECONDARY,其他能源,電力與能源,Y,X,補充,0.5,0.9,有能源產品或服務，但無法歸入重電、儲能、太陽能、AI 電力或離岸風電。,啟用,MATCHED,topic-universe-mapping.v1
+2466,冠西電,TPE,PRIMARY,其他被動元件,被動元件,Y,X,補充,0.5,1.0,有明確被動元件產品，但不屬 MLCC、鋁電容、固態電容、電感或石英元件。,啟用,MATCHED,topic-universe-mapping.v1
+2483,百容,TPE,PRIMARY,其他被動元件,被動元件,Y,X,補充,0.5,1.0,有明確被動元件產品，但不屬 MLCC、鋁電容、固態電容、電感或石英元件。,啟用,MATCHED,topic-universe-mapping.v1
+3624,光頡,TWO,PRIMARY,其他被動元件,被動元件,Y,X,補充,0.5,1.2,有明確被動元件產品，但不屬 MLCC、鋁電容、固態電容、電感或石英元件。,啟用,MATCHED,topic-universe-mapping.v1
+5228,鈺鎧,TWO,PRIMARY,其他被動元件,被動元件,Y,X,補充,0.5,1.3,有明確被動元件產品，但不屬 MLCC、鋁電容、固態電容、電感或石英元件。,啟用,MATCHED,topic-universe-mapping.v1
+5328,華容,TWO,PRIMARY,其他被動元件,被動元件,Y,X,補充,0.5,1.0,有明確被動元件產品，但不屬 MLCC、鋁電容、固態電容、電感或石英元件。,啟用,MATCHED,topic-universe-mapping.v1
+6155,鈞寶,TPE,PRIMARY,其他被動元件,被動元件,Y,X,補充,0.5,1.1,有明確被動元件產品，但不屬 MLCC、鋁電容、固態電容、電感或石英元件。,啟用,MATCHED,topic-universe-mapping.v1
+6204,艾華,TWO,PRIMARY,其他被動元件,被動元件,Y,X,補充,0.5,1.0,有明確被動元件產品，但不屬 MLCC、鋁電容、固態電容、電感或石英元件。,啟用,MATCHED,topic-universe-mapping.v1
+6207,雷科,TWO,PRIMARY,其他被動元件,被動元件,Y,X,補充,0.5,1.4,有明確被動元件產品，但不屬 MLCC、鋁電容、固態電容、電感或石英元件。,啟用,MATCHED,topic-universe-mapping.v1
+6821,聯寶,TWO,PRIMARY,其他被動元件,被動元件,Y,X,補充,0.5,1.3,有明確被動元件產品，但不屬 MLCC、鋁電容、固態電容、電感或石英元件。,啟用,MATCHED,topic-universe-mapping.v1
+6834,天二科技,TPE,PRIMARY,其他被動元件,被動元件,Y,X,補充,0.5,1.2,有明確被動元件產品，但不屬 MLCC、鋁電容、固態電容、電感或石英元件。,啟用,MATCHED,topic-universe-mapping.v1
+2327,國巨,TPE,SECONDARY,其他被動元件,被動元件,Y,X,補充,0.5,0.8,有明確被動元件產品，但不屬 MLCC、鋁電容、固態電容、電感或石英元件。,啟用,MATCHED,topic-universe-mapping.v1
+2478,大毅,TPE,SECONDARY,其他被動元件,被動元件,Y,X,補充,0.5,0.0,有明確被動元件產品，但不屬 MLCC、鋁電容、固態電容、電感或石英元件。,啟用,MATCHED,topic-universe-mapping.v1
+2492,華新科,TPE,SECONDARY,其他被動元件,被動元件,Y,X,補充,0.5,0.0,有明確被動元件產品，但不屬 MLCC、鋁電容、固態電容、電感或石英元件。,啟用,MATCHED,topic-universe-mapping.v1
+3026,禾伸堂,TPE,SECONDARY,其他被動元件,被動元件,Y,X,補充,0.5,0.0,有明確被動元件產品，但不屬 MLCC、鋁電容、固態電容、電感或石英元件。,啟用,MATCHED,topic-universe-mapping.v1
+3090,日電貿,TPE,SECONDARY,其他被動元件,被動元件,Y,X,補充,0.5,0.7,有明確被動元件產品，但不屬 MLCC、鋁電容、固態電容、電感或石英元件。,啟用,MATCHED,topic-universe-mapping.v1
+3357,臺慶科,TWO,SECONDARY,其他被動元件,被動元件,Y,X,補充,0.5,0.0,有明確被動元件產品，但不屬 MLCC、鋁電容、固態電容、電感或石英元件。,啟用,MATCHED,topic-universe-mapping.v1
+6173,信昌電,TWO,SECONDARY,其他被動元件,被動元件,Y,X,補充,0.5,0.0,有明確被動元件產品，但不屬 MLCC、鋁電容、固態電容、電感或石英元件。,啟用,MATCHED,topic-universe-mapping.v1
+6175,立敦,TWO,SECONDARY,其他被動元件,被動元件,Y,X,補充,0.5,0,有明確被動元件產品，但不屬 MLCC、鋁電容、固態電容、電感或石英元件。,啟用,MATCHED,topic-universe-mapping.v1
+6432,今展科,TWO,SECONDARY,其他被動元件,被動元件,Y,X,補充,0.5,0.0,有明確被動元件產品，但不屬 MLCC、鋁電容、固態電容、電感或石英元件。,啟用,MATCHED,topic-universe-mapping.v1
+1319,東陽,TPE,PRIMARY,其他車用電子,車用電子,Y,D,補充,0.5,1.2,車用電子產品，但無法歸入 EV、ADAS、車用功率或車用連接器。,啟用,MATCHED,topic-universe-mapping.v1
+1536,和大,TPE,PRIMARY,其他車用電子,車用電子,Y,D,補充,0.5,1.1,車用電子產品，但無法歸入 EV、ADAS、車用功率或車用連接器。,啟用,MATCHED,topic-universe-mapping.v1
+1563,巧新,TPE,PRIMARY,其他車用電子,車用電子,Y,D,補充,0.5,1.1,車用電子產品，但無法歸入 EV、ADAS、車用功率或車用連接器。,啟用,MATCHED,topic-universe-mapping.v1
+1568,倉佑,TPE,PRIMARY,其他車用電子,車用電子,Y,D,補充,0.5,1.2,車用電子產品，但無法歸入 EV、ADAS、車用功率或車用連接器。,啟用,MATCHED,topic-universe-mapping.v1
+2243,宏旭-KY,TPE,PRIMARY,其他車用電子,車用電子,Y,D,補充,0.5,1.1,車用電子產品，但無法歸入 EV、ADAS、車用功率或車用連接器。,啟用,MATCHED,topic-universe-mapping.v1
+2351,順德,TPE,PRIMARY,其他車用電子,車用電子,Y,D,補充,0.5,1.3,車用電子產品，但無法歸入 EV、ADAS、車用功率或車用連接器。,啟用,MATCHED,topic-universe-mapping.v1
+2355,敬鵬,TPE,PRIMARY,其他車用電子,車用電子,Y,D,補充,0.5,1.2,車用電子產品，但無法歸入 EV、ADAS、車用功率或車用連接器。,啟用,MATCHED,topic-universe-mapping.v1
+2413,環科,TPE,PRIMARY,其他車用電子,車用電子,Y,D,補充,0.5,1.2,車用電子產品，但無法歸入 EV、ADAS、車用功率或車用連接器。,啟用,MATCHED,topic-universe-mapping.v1
+2457,飛宏,TPE,PRIMARY,其他車用電子,車用電子,Y,D,補充,0.5,1.2,車用電子產品，但無法歸入 EV、ADAS、車用功率或車用連接器。,啟用,MATCHED,topic-universe-mapping.v1
+3023,信邦,TPE,PRIMARY,其他車用電子,車用電子,Y,D,補充,0.5,1.3,車用電子產品，但無法歸入 EV、ADAS、車用功率或車用連接器。,啟用,MATCHED,topic-universe-mapping.v1
+3044,健鼎,TPE,PRIMARY,其他車用電子,車用電子,Y,D,補充,0.5,1.4,車用電子產品，但無法歸入 EV、ADAS、車用功率或車用連接器。,啟用,MATCHED,topic-universe-mapping.v1
+3290,東浦,TWO,PRIMARY,其他車用電子,車用電子,Y,D,補充,0.5,1.3,車用電子產品，但無法歸入 EV、ADAS、車用功率或車用連接器。,啟用,MATCHED,topic-universe-mapping.v1
+3346,麗清,TPE,PRIMARY,其他車用電子,車用電子,Y,D,補充,0.5,1.1,車用電子產品，但無法歸入 EV、ADAS、車用功率或車用連接器。,啟用,MATCHED,topic-universe-mapping.v1
+3715,定穎投控,TPE,PRIMARY,其他車用電子,車用電子,Y,D,補充,0.5,1.4,車用電子產品，但無法歸入 EV、ADAS、車用功率或車用連接器。,啟用,MATCHED,topic-universe-mapping.v1
+4551,智伸科,TPE,PRIMARY,其他車用電子,車用電子,Y,D,補充,0.5,1.2,車用電子產品，但無法歸入 EV、ADAS、車用功率或車用連接器。,啟用,MATCHED,topic-universe-mapping.v1
+5243,乙盛-KY,TPE,PRIMARY,其他車用電子,車用電子,Y,D,補充,0.5,1.3,車用電子產品，但無法歸入 EV、ADAS、車用功率或車用連接器。,啟用,MATCHED,topic-universe-mapping.v1
+5285,界霖,TPE,PRIMARY,其他車用電子,車用電子,Y,D,補充,0.5,1.3,車用電子產品，但無法歸入 EV、ADAS、車用功率或車用連接器。,啟用,MATCHED,topic-universe-mapping.v1
+5288,豐祥-KY,TPE,PRIMARY,其他車用電子,車用電子,Y,D,補充,0.5,1.1,車用電子產品，但無法歸入 EV、ADAS、車用功率或車用連接器。,啟用,MATCHED,topic-universe-mapping.v1
+5439,高技,TWO,PRIMARY,其他車用電子,車用電子,Y,D,補充,0.5,1.3,車用電子產品，但無法歸入 EV、ADAS、車用功率或車用連接器。,啟用,MATCHED,topic-universe-mapping.v1
+6279,胡連,TWO,PRIMARY,其他車用電子,車用電子,Y,D,補充,0.5,1.4,車用電子產品，但無法歸入 EV、ADAS、車用功率或車用連接器。,啟用,MATCHED,topic-universe-mapping.v1
+6548,長科*,TWO,PRIMARY,其他車用電子,車用電子,Y,D,補充,0.5,1.3,車用電子產品，但無法歸入 EV、ADAS、車用功率或車用連接器。,啟用,MATCHED,topic-universe-mapping.v1
+6605,帝寶,TPE,PRIMARY,其他車用電子,車用電子,Y,D,補充,0.5,1.3,車用電子產品，但無法歸入 EV、ADAS、車用功率或車用連接器。,啟用,MATCHED,topic-universe-mapping.v1
+1474,弘裕,TPE,SECONDARY,其他車用電子,車用電子,Y,D,補充,0.5,0.6,車用電子產品，但無法歸入 EV、ADAS、車用功率或車用連接器。,啟用,MATCHED,topic-universe-mapping.v1
+1605,華新,TPE,SECONDARY,其他車用電子,車用電子,Y,D,補充,0.5,0.8,車用電子產品，但無法歸入 EV、ADAS、車用功率或車用連接器。,啟用,MATCHED,topic-universe-mapping.v1
+2302,麗正,TPE,SECONDARY,其他車用電子,車用電子,Y,D,補充,0.5,0.6,車用電子產品，但無法歸入 EV、ADAS、車用功率或車用連接器。,啟用,MATCHED,topic-universe-mapping.v1
+2344,華邦電,TPE,SECONDARY,其他車用電子,車用電子,Y,D,補充,0.5,0.7,車用電子產品，但無法歸入 EV、ADAS、車用功率或車用連接器。,啟用,MATCHED,topic-universe-mapping.v1
+2428,興勤,TPE,SECONDARY,其他車用電子,車用電子,Y,D,補充,0.5,0.7,車用電子產品，但無法歸入 EV、ADAS、車用功率或車用連接器。,啟用,MATCHED,topic-universe-mapping.v1
+2460,建通,TPE,SECONDARY,其他車用電子,車用電子,Y,D,補充,0.5,0.6,車用電子產品，但無法歸入 EV、ADAS、車用功率或車用連接器。,啟用,MATCHED,topic-universe-mapping.v1
+2472,立隆電,TPE,SECONDARY,其他車用電子,車用電子,Y,D,補充,0.5,0.7,車用電子產品，但無法歸入 EV、ADAS、車用功率或車用連接器。,啟用,MATCHED,topic-universe-mapping.v1
+2481,強茂,TPE,SECONDARY,其他車用電子,車用電子,Y,D,補充,0.5,0.7,車用電子產品，但無法歸入 EV、ADAS、車用功率或車用連接器。,啟用,MATCHED,topic-universe-mapping.v1
+3149,正達,TPE,SECONDARY,其他車用電子,車用電子,Y,D,補充,0.5,0.6,車用電子產品，但無法歸入 EV、ADAS、車用功率或車用連接器。,啟用,MATCHED,topic-universe-mapping.v1
+3362,先進光,TWO,SECONDARY,其他車用電子,車用電子,Y,D,補充,0.5,0.7,車用電子產品，但無法歸入 EV、ADAS、車用功率或車用連接器。,啟用,MATCHED,topic-universe-mapping.v1
+3390,旭軟,TWO,SECONDARY,其他車用電子,車用電子,Y,D,補充,0.5,0.6,車用電子產品，但無法歸入 EV、ADAS、車用功率或車用連接器。,啟用,MATCHED,topic-universe-mapping.v1
+3675,德微,TWO,SECONDARY,其他車用電子,車用電子,Y,D,補充,0.5,0.7,車用電子產品，但無法歸入 EV、ADAS、車用功率或車用連接器。,啟用,MATCHED,topic-universe-mapping.v1
+3706,神達,TPE,SECONDARY,其他車用電子,車用電子,Y,D,補充,0.5,0.8,車用電子產品，但無法歸入 EV、ADAS、車用功率或車用連接器。,啟用,MATCHED,topic-universe-mapping.v1
+4564,元翎,TPE,SECONDARY,其他車用電子,車用電子,Y,D,補充,0.5,0.7,車用電子產品，但無法歸入 EV、ADAS、車用功率或車用連接器。,啟用,MATCHED,topic-universe-mapping.v1
+4721,美琪瑪,TWO,SECONDARY,其他車用電子,車用電子,Y,D,補充,0.5,0.7,車用電子產品，但無法歸入 EV、ADAS、車用功率或車用連接器。,啟用,MATCHED,topic-universe-mapping.v1
+4919,新唐,TPE,SECONDARY,其他車用電子,車用電子,Y,D,補充,0.5,0.8,車用電子產品，但無法歸入 EV、ADAS、車用功率或車用連接器。,啟用,MATCHED,topic-universe-mapping.v1
+4938,和碩,TPE,SECONDARY,其他車用電子,車用電子,Y,D,補充,0.5,0.7,車用電子產品，但無法歸入 EV、ADAS、車用功率或車用連接器。,啟用,MATCHED,topic-universe-mapping.v1
+5228,鈺鎧,TWO,SECONDARY,其他車用電子,車用電子,Y,D,補充,0.5,0.8,車用電子產品，但無法歸入 EV、ADAS、車用功率或車用連接器。,啟用,MATCHED,topic-universe-mapping.v1
+5425,台半,TWO,SECONDARY,其他車用電子,車用電子,Y,D,補充,0.5,0.7,車用電子產品，但無法歸入 EV、ADAS、車用功率或車用連接器。,啟用,MATCHED,topic-universe-mapping.v1
+6129,普誠,TWO,SECONDARY,其他車用電子,車用電子,Y,D,補充,0.5,0.7,車用電子產品，但無法歸入 EV、ADAS、車用功率或車用連接器。,啟用,MATCHED,topic-universe-mapping.v1
+6174,安碁,TWO,SECONDARY,其他車用電子,車用電子,Y,D,補充,0.5,0.8,車用電子產品，但無法歸入 EV、ADAS、車用功率或車用連接器。,啟用,MATCHED,topic-universe-mapping.v1
+6191,精成科,TPE,SECONDARY,其他車用電子,車用電子,Y,D,補充,0.5,0.0,車用電子產品，但無法歸入 EV、ADAS、車用功率或車用連接器。,啟用,MATCHED,topic-universe-mapping.v1
+6269,台郡,TPE,SECONDARY,其他車用電子,車用電子,Y,D,補充,0.5,0.6,車用電子產品，但無法歸入 EV、ADAS、車用功率或車用連接器。,啟用,MATCHED,topic-universe-mapping.v1
+6271,同欣電,TPE,SECONDARY,其他車用電子,車用電子,Y,D,補充,0.5,0.7,車用電子產品，但無法歸入 EV、ADAS、車用功率或車用連接器。,啟用,MATCHED,topic-universe-mapping.v1
+6275,元山,TWO,SECONDARY,其他車用電子,車用電子,Y,D,補充,0.5,0.7,車用電子產品，但無法歸入 EV、ADAS、車用功率或車用連接器。,啟用,MATCHED,topic-universe-mapping.v1
+6415,矽力-KY,TPE,SECONDARY,其他車用電子,車用電子,Y,D,補充,0.5,0.6,車用電子產品，但無法歸入 EV、ADAS、車用功率或車用連接器。,啟用,MATCHED,topic-universe-mapping.v1
+6642,富致,TWO,SECONDARY,其他車用電子,車用電子,Y,D,補充,0.5,0.7,車用電子產品，但無法歸入 EV、ADAS、車用功率或車用連接器。,啟用,MATCHED,topic-universe-mapping.v1
+6719,力智,TPE,SECONDARY,其他車用電子,車用電子,Y,D,補充,0.5,0.7,車用電子產品，但無法歸入 EV、ADAS、車用功率或車用連接器。,啟用,MATCHED,topic-universe-mapping.v1
+6742,澤米,TPE,SECONDARY,其他車用電子,車用電子,Y,D,補充,0.5,0.8,車用電子產品，但無法歸入 EV、ADAS、車用功率或車用連接器。,啟用,MATCHED,topic-universe-mapping.v1
+6789,采鈺,TPE,SECONDARY,其他車用電子,車用電子,Y,D,補充,0.5,0.8,車用電子產品，但無法歸入 EV、ADAS、車用功率或車用連接器。,啟用,MATCHED,topic-universe-mapping.v1
+6805,富世達,TPE,SECONDARY,其他車用電子,車用電子,Y,D,補充,0.5,0.9,車用電子產品，但無法歸入 EV、ADAS、車用功率或車用連接器。,啟用,MATCHED,topic-universe-mapping.v1
+7788,松川精密,TPE,SECONDARY,其他車用電子,車用電子,Y,D,補充,0.5,0.8,車用電子產品，但無法歸入 EV、ADAS、車用功率或車用連接器。,啟用,MATCHED,topic-universe-mapping.v1
+3339,泰谷,TWO,PRIMARY,其他通訊光電,通訊與光電,Y,X,補充,0.5,1.2,通訊或光電產品，但不屬網通、低軌衛星、矽光子或一般光通訊。,啟用,MATCHED,topic-universe-mapping.v1
+3504,揚明光,TPE,PRIMARY,其他通訊光電,通訊與光電,Y,X,補充,0.5,1.2,通訊或光電產品，但不屬網通、低軌衛星、矽光子或一般光通訊。,啟用,MATCHED,topic-universe-mapping.v1
+5371,中光電,TWO,PRIMARY,其他通訊光電,通訊與光電,Y,X,補充,0.5,1.3,通訊或光電產品，但不屬網通、低軌衛星、矽光子或一般光通訊。,啟用,MATCHED,topic-universe-mapping.v1
+6226,光鼎,TPE,PRIMARY,其他通訊光電,通訊與光電,Y,X,補充,0.5,1.1,通訊或光電產品，但不屬網通、低軌衛星、矽光子或一般光通訊。,啟用,MATCHED,topic-universe-mapping.v1
+8069,元太,TWO,PRIMARY,其他通訊光電,通訊與光電,Y,X,補充,0.5,1.5,通訊或光電產品，但不屬網通、低軌衛星、矽光子或一般光通訊。,啟用,MATCHED,topic-universe-mapping.v1
+3322,建舜電,TWO,PRIMARY,其他連接器,電子連接,Y,X,補充,0.5,1.1,明確為連接元件但無法歸高速或一般連接器的特殊連接方案。,啟用,MATCHED,topic-universe-mapping.v1
+2342,茂矽,TPE,PRIMARY,功率 MOSFET,功率半導體,Y,X,核心,1,1.3,MOSFET、Super Junction、低壓／高壓功率 MOSFET 及其製造商。,啟用,MATCHED,topic-universe-mapping.v1
+3317,尼克森,TWO,PRIMARY,功率 MOSFET,功率半導體,Y,X,核心,1,1.3,MOSFET、Super Junction、低壓／高壓功率 MOSFET 及其製造商。,啟用,MATCHED,topic-universe-mapping.v1
+4923,力士,TWO,PRIMARY,功率 MOSFET,功率半導體,Y,X,核心,1,1.2,MOSFET、Super Junction、低壓／高壓功率 MOSFET 及其製造商。,啟用,MATCHED,topic-universe-mapping.v1
+5299,杰力,TWO,PRIMARY,功率 MOSFET,功率半導體,Y,X,核心,1,1.2,MOSFET、Super Junction、低壓／高壓功率 MOSFET 及其製造商。,啟用,MATCHED,topic-universe-mapping.v1
+5425,台半,TWO,PRIMARY,功率 MOSFET,功率半導體,Y,X,核心,1,1.3,MOSFET、Super Junction、低壓／高壓功率 MOSFET 及其製造商。,啟用,MATCHED,topic-universe-mapping.v1
+6435,大中,TWO,PRIMARY,功率 MOSFET,功率半導體,Y,X,核心,1,1.2,MOSFET、Super Junction、低壓／高壓功率 MOSFET 及其製造商。,啟用,MATCHED,topic-universe-mapping.v1
+6651,全宇昕,TWO,PRIMARY,功率 MOSFET,功率半導體,Y,X,核心,1,1.2,MOSFET、Super Junction、低壓／高壓功率 MOSFET 及其製造商。,啟用,MATCHED,topic-universe-mapping.v1
+6719,力智,TPE,PRIMARY,功率 MOSFET,功率半導體,Y,X,核心,1,1.4,MOSFET、Super Junction、低壓／高壓功率 MOSFET 及其製造商。,啟用,MATCHED,topic-universe-mapping.v1
+8261,富鼎,TPE,PRIMARY,功率 MOSFET,功率半導體,Y,X,核心,1,1.3,MOSFET、Super Junction、低壓／高壓功率 MOSFET 及其製造商。,啟用,MATCHED,topic-universe-mapping.v1
+3257,虹冠電,TPE,SECONDARY,功率 MOSFET,功率半導體,Y,X,核心,1,0.8,MOSFET、Super Junction、低壓／高壓功率 MOSFET 及其製造商。,啟用,MATCHED,topic-universe-mapping.v1
+3588,通嘉,TPE,SECONDARY,功率 MOSFET,功率半導體,Y,X,核心,1,0.6,MOSFET、Super Junction、低壓／高壓功率 MOSFET 及其製造商。,啟用,MATCHED,topic-universe-mapping.v1
+2302,麗正,TPE,PRIMARY,功率二極體／整流器,功率半導體,Y,D,主流,0.8,1.2,整流二極體、蕭特基、TVS 以外的功率二極體與整流器。,啟用,MATCHED,topic-universe-mapping.v1
+2434,統懋,TPE,PRIMARY,功率二極體／整流器,功率半導體,Y,D,主流,0.8,1.1,整流二極體、蕭特基、TVS 以外的功率二極體與整流器。,啟用,MATCHED,topic-universe-mapping.v1
+2481,強茂,TPE,PRIMARY,功率二極體／整流器,功率半導體,Y,D,主流,0.8,1.3,整流二極體、蕭特基、TVS 以外的功率二極體與整流器。,啟用,MATCHED,topic-universe-mapping.v1
+3675,德微,TWO,PRIMARY,功率二極體／整流器,功率半導體,Y,D,主流,0.8,1.3,整流二極體、蕭特基、TVS 以外的功率二極體與整流器。,啟用,MATCHED,topic-universe-mapping.v1
+5425,台半,TWO,PRIMARY,功率二極體／整流器,功率半導體,Y,D,主流,0.8,1.3,整流二極體、蕭特基、TVS 以外的功率二極體與整流器。,啟用,MATCHED,topic-universe-mapping.v1
+6573,虹揚-KY,TPE,PRIMARY,功率二極體／整流器,功率半導體,Y,D,主流,0.8,1.2,整流二極體、蕭特基、TVS 以外的功率二極體與整流器。,啟用,MATCHED,topic-universe-mapping.v1
+3450,聯鈞,TPE,SECONDARY,功率半導體,,,大族群,,,0.8,功率半導體主大族群，彙整所屬正式細題材之觀察與市場表現。,啟用,UNMAPPED_TOPIC,topic-universe-mapping.v1
+1304,台聚,TPE,PRIMARY,化工原料／塑化報價,傳統產業材料,Y,A,核心,1,1.0,塑化、石化、化工原料與報價循環；不可只因使用化學品就歸入。,啟用,MATCHED,topic-universe-mapping.v1
+1314,中石化,TPE,PRIMARY,化工原料／塑化報價,傳統產業材料,Y,A,核心,1,1.1,塑化、石化、化工原料與報價循環；不可只因使用化學品就歸入。,啟用,MATCHED,topic-universe-mapping.v1
+1326,台化,TPE,PRIMARY,化工原料／塑化報價,傳統產業材料,Y,A,核心,1,1.3,塑化、石化、化工原料與報價循環；不可只因使用化學品就歸入。,啟用,MATCHED,topic-universe-mapping.v1
+1708,東鹼,TPE,PRIMARY,化工原料／塑化報價,傳統產業材料,Y,A,核心,1,1.1,塑化、石化、化工原料與報價循環；不可只因使用化學品就歸入。,啟用,MATCHED,topic-universe-mapping.v1
+1714,和桐,TPE,PRIMARY,化工原料／塑化報價,傳統產業材料,Y,A,核心,1,1.0,塑化、石化、化工原料與報價循環；不可只因使用化學品就歸入。,啟用,MATCHED,topic-universe-mapping.v1
+1725,元禎,TPE,PRIMARY,化工原料／塑化報價,傳統產業材料,Y,A,核心,1,1.0,塑化、石化、化工原料與報價循環；不可只因使用化學品就歸入。,啟用,MATCHED,topic-universe-mapping.v1
+2103,台橡,TPE,PRIMARY,化工原料／塑化報價,傳統產業材料,Y,A,核心,1,1.1,塑化、石化、化工原料與報價循環；不可只因使用化學品就歸入。,啟用,MATCHED,topic-universe-mapping.v1
+2104,國際中橡,TPE,PRIMARY,化工原料／塑化報價,傳統產業材料,Y,A,核心,1,1.2,塑化、石化、化工原料與報價循環；不可只因使用化學品就歸入。,啟用,MATCHED,topic-universe-mapping.v1
+2108,南帝,TPE,PRIMARY,化工原料／塑化報價,傳統產業材料,Y,A,核心,1,1.1,塑化、石化、化工原料與報價循環；不可只因使用化學品就歸入。,啟用,MATCHED,topic-universe-mapping.v1
+4707,磐亞,TWO,PRIMARY,化工原料／塑化報價,傳統產業材料,Y,A,核心,1,1.0,塑化、石化、化工原料與報價循環；不可只因使用化學品就歸入。,啟用,MATCHED,topic-universe-mapping.v1
+6505,台塑化,TPE,PRIMARY,化工原料／塑化報價,傳統產業材料,Y,A,核心,1,1.4,塑化、石化、化工原料與報價循環；不可只因使用化學品就歸入。,啟用,MATCHED,topic-universe-mapping.v1
+1303,南亞,TPE,SECONDARY,化工原料／塑化報價,傳統產業材料,Y,A,核心,1,0.7,塑化、石化、化工原料與報價循環；不可只因使用化學品就歸入。,啟用,MATCHED,topic-universe-mapping.v1
+1711,永光,TPE,SECONDARY,化工原料／塑化報價,傳統產業材料,Y,A,核心,1,0.7,塑化、石化、化工原料與報價循環；不可只因使用化學品就歸入。,啟用,MATCHED,topic-universe-mapping.v1
+1727,中華化,TPE,SECONDARY,化工原料／塑化報價,傳統產業材料,Y,A,核心,1,0.7,塑化、石化、化工原料與報價循環；不可只因使用化學品就歸入。,啟用,MATCHED,topic-universe-mapping.v1
+1773,勝一,TPE,SECONDARY,化工原料／塑化報價,傳統產業材料,Y,A,核心,1,0.7,塑化、石化、化工原料與報價循環；不可只因使用化學品就歸入。,啟用,MATCHED,topic-universe-mapping.v1
+2426,鼎元,TPE,PRIMARY,半導體原料,半導體材料,Y,X,核心,1,1.0,製程化學品、特殊氣體、石英耗材、光阻、靶材、清洗／蝕刻材料與晶圓製程耗材；矽晶圓應優先分到晶圓材料。,啟用,MATCHED,topic-universe-mapping.v1
+4971,IET-KY,TWO,PRIMARY,半導體原料,半導體材料,Y,X,核心,1,1.3,製程化學品、特殊氣體、石英耗材、光阻、靶材、清洗／蝕刻材料與晶圓製程耗材；矽晶圓應優先分到晶圓材料。,啟用,MATCHED,topic-universe-mapping.v1
+4991,環宇-KY,TWO,PRIMARY,半導體原料,半導體材料,Y,X,核心,1,1.4,製程化學品、特殊氣體、石英耗材、光阻、靶材、清洗／蝕刻材料與晶圓製程耗材；矽晶圓應優先分到晶圓材料。,啟用,MATCHED,topic-universe-mapping.v1
+2455,全新,TPE,SECONDARY,半導體原料,半導體材料,Y,X,核心,1,0.0,製程化學品、特殊氣體、石英耗材、光阻、靶材、清洗／蝕刻材料與晶圓製程耗材；矽晶圓應優先分到晶圓材料。,啟用,MATCHED,topic-universe-mapping.v1
+3413,京鼎,TPE,PRIMARY,半導體設備零組件,半導體設備與製程,Y,X,核心,1,1.4,真空、腔體、石英、陶瓷、精密機構、閥件、濕製程零件、耗材等設備關鍵零組件；不是整機設備商。,啟用,MATCHED,topic-universe-mapping.v1
+6830,汎銓,TPE,PRIMARY,半導體設備零組件,半導體設備與製程,Y,X,核心,1,1.4,真空、腔體、石英、陶瓷、精密機構、閥件、濕製程零件、耗材等設備關鍵零組件；不是整機設備商。,啟用,MATCHED,topic-universe-mapping.v1
+8091,翔名,TWO,PRIMARY,半導體設備零組件,半導體設備與製程,Y,X,核心,1,1.4,真空、腔體、石英、陶瓷、精密機構、閥件、濕製程零件、耗材等設備關鍵零組件；不是整機設備商。,啟用,MATCHED,topic-universe-mapping.v1
+1568,倉佑,TPE,SECONDARY,半導體設備零組件,半導體設備與製程,Y,X,核心,1,0.7,真空、腔體、石英、陶瓷、精密機構、閥件、濕製程零件、耗材等設備關鍵零組件；不是整機設備商。,啟用,MATCHED,topic-universe-mapping.v1
+1584,精剛,TWO,SECONDARY,半導體設備零組件,半導體設備與製程,Y,X,核心,1,0.8,真空、腔體、石英、陶瓷、精密機構、閥件、濕製程零件、耗材等設備關鍵零組件；不是整機設備商。,啟用,MATCHED,topic-universe-mapping.v1
+2221,大甲,TWO,SECONDARY,半導體設備零組件,半導體設備與製程,Y,X,核心,1,0.7,真空、腔體、石英、陶瓷、精密機構、閥件、濕製程零件、耗材等設備關鍵零組件；不是整機設備商。,啟用,MATCHED,topic-universe-mapping.v1
+6829,千附精密,TWO,SECONDARY,半導體設備零組件,半導體設備與製程,Y,X,核心,1,0.7,真空、腔體、石英、陶瓷、精密機構、閥件、濕製程零件、耗材等設備關鍵零組件；不是整機設備商。,啟用,MATCHED,topic-universe-mapping.v1
+2348,海悅,TPE,PRIMARY,商辦／都市更新,建設開發,Y,B,主流,0.8,1.4,商辦、都更、危老、開發權與商用不動產。,啟用,MATCHED,topic-universe-mapping.v1
+2520,冠德,TPE,PRIMARY,商辦／都市更新,建設開發,Y,B,主流,0.8,1.4,商辦、都更、危老、開發權與商用不動產。,啟用,MATCHED,topic-universe-mapping.v1
+2527,宏璟,TPE,PRIMARY,商辦／都市更新,建設開發,Y,B,主流,0.8,1.3,商辦、都更、危老、開發權與商用不動產。,啟用,MATCHED,topic-universe-mapping.v1
+2542,興富發,TPE,PRIMARY,商辦／都市更新,建設開發,Y,B,主流,0.8,1.4,商辦、都更、危老、開發權與商用不動產。,啟用,MATCHED,topic-universe-mapping.v1
+2548,華固,TPE,PRIMARY,商辦／都市更新,建設開發,Y,B,主流,0.8,1.4,商辦、都更、危老、開發權與商用不動產。,啟用,MATCHED,topic-universe-mapping.v1
+5519,隆大,TPE,PRIMARY,商辦／都市更新,建設開發,Y,B,主流,0.8,1.4,商辦、都更、危老、開發權與商用不動產。,啟用,MATCHED,topic-universe-mapping.v1
+5534,長虹,TPE,PRIMARY,商辦／都市更新,建設開發,Y,B,主流,0.8,1.4,商辦、都更、危老、開發權與商用不動產。,啟用,MATCHED,topic-universe-mapping.v1
+6177,達麗,TPE,PRIMARY,商辦／都市更新,建設開發,Y,B,主流,0.8,1.4,商辦、都更、危老、開發權與商用不動產。,啟用,MATCHED,topic-universe-mapping.v1
+1314,中石化,TPE,SECONDARY,商辦／都市更新,建設開發,Y,B,主流,0.8,0.6,商辦、都更、危老、開發權與商用不動產。,啟用,MATCHED,topic-universe-mapping.v1
+1438,三地開發,TPE,SECONDARY,商辦／都市更新,建設開發,Y,B,主流,0.8,0.8,商辦、都更、危老、開發權與商用不動產。,啟用,MATCHED,topic-universe-mapping.v1
+2536,宏普,TPE,SECONDARY,商辦／都市更新,建設開發,Y,B,主流,0.8,0.6,商辦、都更、危老、開發權與商用不動產。,啟用,MATCHED,topic-universe-mapping.v1
+2472,立隆電,TPE,PRIMARY,固態電容,被動元件,Y,X,主流,0.8,1.3,導電高分子、固態電容與高可靠度電容；若產品主體是鋁電解，優先歸鋁電容。,啟用,MATCHED,topic-universe-mapping.v1
+6449,鈺邦,TPE,PRIMARY,固態電容,被動元件,Y,X,主流,0.8,1.3,導電高分子、固態電容與高可靠度電容；若產品主體是鋁電解，優先歸鋁電容。,啟用,MATCHED,topic-universe-mapping.v1
+8042,金山電,TWO,PRIMARY,固態電容,被動元件,Y,X,主流,0.8,1.3,導電高分子、固態電容與高可靠度電容；若產品主體是鋁電解，優先歸鋁電容。,啟用,MATCHED,topic-universe-mapping.v1
+2303,聯電,TPE,PRIMARY,大型電子權值,大型權值,Y,D,核心,1,1.4,大型電子市值權值股標記；只作市場權重與觀察用途，不取代產業細題材。,啟用,MATCHED,topic-universe-mapping.v1
+2317,鴻海,TPE,PRIMARY,大型電子權值,大型權值,Y,D,核心,1,1.5,大型電子市值權值股標記；只作市場權重與觀察用途，不取代產業細題材。,啟用,MATCHED,topic-universe-mapping.v1
+2327,國巨,TPE,PRIMARY,大型電子權值,大型權值,Y,D,核心,1,1.4,大型電子市值權值股標記；只作市場權重與觀察用途，不取代產業細題材。,啟用,MATCHED,topic-universe-mapping.v1
+2330,台積電,TPE,PRIMARY,大型電子權值,大型權值,Y,D,核心,1,1.5,大型電子市值權值股標記；只作市場權重與觀察用途，不取代產業細題材。,啟用,MATCHED,topic-universe-mapping.v1
+2353,宏碁,TPE,PRIMARY,大型電子權值,大型權值,Y,D,核心,1,1.2,大型電子市值權值股標記；只作市場權重與觀察用途，不取代產業細題材。,啟用,MATCHED,topic-universe-mapping.v1
+2356,英業達,TPE,PRIMARY,大型電子權值,大型權值,Y,D,核心,1,1.4,大型電子市值權值股標記；只作市場權重與觀察用途，不取代產業細題材。,啟用,MATCHED,topic-universe-mapping.v1
+2357,華碩,TPE,PRIMARY,大型電子權值,大型權值,Y,D,核心,1,1.4,大型電子市值權值股標記；只作市場權重與觀察用途，不取代產業細題材。,啟用,MATCHED,topic-universe-mapping.v1
+2360,致茂,TPE,PRIMARY,大型電子權值,大型權值,Y,D,核心,1,1.5,大型電子市值權值股標記；只作市場權重與觀察用途，不取代產業細題材。,啟用,MATCHED,topic-universe-mapping.v1
+2382,廣達,TPE,PRIMARY,大型電子權值,大型權值,Y,D,核心,1,1.5,大型電子市值權值股標記；只作市場權重與觀察用途，不取代產業細題材。,啟用,MATCHED,topic-universe-mapping.v1
+2454,聯發科,TPE,PRIMARY,大型電子權值,大型權值,Y,D,核心,1,1.5,大型電子市值權值股標記；只作市場權重與觀察用途，不取代產業細題材。,啟用,MATCHED,topic-universe-mapping.v1
+2492,華新科,TPE,PRIMARY,大型電子權值,大型權值,Y,D,核心,1,1.3,大型電子市值權值股標記；只作市場權重與觀察用途，不取代產業細題材。,啟用,MATCHED,topic-universe-mapping.v1
+3008,大立光,TPE,PRIMARY,大型電子權值,大型權值,Y,D,核心,1,1.4,大型電子市值權值股標記；只作市場權重與觀察用途，不取代產業細題材。,啟用,MATCHED,topic-universe-mapping.v1
+3034,聯詠,TPE,PRIMARY,大型電子權值,大型權值,Y,D,核心,1,1.5,大型電子市值權值股標記；只作市場權重與觀察用途，不取代產業細題材。,啟用,MATCHED,topic-universe-mapping.v1
+3037,欣興,TPE,PRIMARY,大型電子權值,大型權值,Y,D,核心,1,1.5,大型電子市值權值股標記；只作市場權重與觀察用途，不取代產業細題材。,啟用,MATCHED,topic-universe-mapping.v1
+3231,緯創,TPE,PRIMARY,大型電子權值,大型權值,Y,D,核心,1,1.5,大型電子市值權值股標記；只作市場權重與觀察用途，不取代產業細題材。,啟用,MATCHED,topic-universe-mapping.v1
+3443,創意,TPE,PRIMARY,大型電子權值,大型權值,Y,D,核心,1,1.5,大型電子市值權值股標記；只作市場權重與觀察用途，不取代產業細題材。,啟用,MATCHED,topic-universe-mapping.v1
+3481,群創,TPE,PRIMARY,大型電子權值,大型權值,Y,D,核心,1,1.5,大型電子市值權值股標記；只作市場權重與觀察用途，不取代產業細題材。,啟用,MATCHED,topic-universe-mapping.v1
+3529,力旺,TWO,PRIMARY,大型電子權值,大型權值,Y,D,核心,1,1.5,大型電子市值權值股標記；只作市場權重與觀察用途，不取代產業細題材。,啟用,MATCHED,topic-universe-mapping.v1
+3661,世芯-KY,TPE,PRIMARY,大型電子權值,大型權值,Y,D,核心,1,1.5,大型電子市值權值股標記；只作市場權重與觀察用途，不取代產業細題材。,啟用,MATCHED,topic-universe-mapping.v1
+3711,日月光投控,TPE,PRIMARY,大型電子權值,大型權值,Y,D,核心,1,1.5,大型電子市值權值股標記；只作市場權重與觀察用途，不取代產業細題材。,啟用,MATCHED,topic-universe-mapping.v1
+4958,臻鼎-KY,TPE,PRIMARY,大型電子權值,大型權值,Y,D,核心,1,1.4,大型電子市值權值股標記；只作市場權重與觀察用途，不取代產業細題材。,啟用,MATCHED,topic-universe-mapping.v1
+5269,祥碩,TPE,PRIMARY,大型電子權值,大型權值,Y,D,核心,1,1.5,大型電子市值權值股標記；只作市場權重與觀察用途，不取代產業細題材。,啟用,MATCHED,topic-universe-mapping.v1
+5274,信驊,TWO,PRIMARY,大型電子權值,大型權值,Y,D,核心,1,1.5,大型電子市值權值股標記；只作市場權重與觀察用途，不取代產業細題材。,啟用,MATCHED,topic-universe-mapping.v1
+5347,世界,TWO,PRIMARY,大型電子權值,大型權值,Y,D,核心,1,1.4,大型電子市值權值股標記；只作市場權重與觀察用途，不取代產業細題材。,啟用,MATCHED,topic-universe-mapping.v1
+5434,崇越,TPE,PRIMARY,大型電子權值,大型權值,Y,D,核心,1,1.4,大型電子市值權值股標記；只作市場權重與觀察用途，不取代產業細題材。,啟用,MATCHED,topic-universe-mapping.v1
+6147,頎邦,TWO,PRIMARY,大型電子權值,大型權值,Y,D,核心,1,1.4,大型電子市值權值股標記；只作市場權重與觀察用途，不取代產業細題材。,啟用,MATCHED,topic-universe-mapping.v1
+6214,精誠,TPE,PRIMARY,大型電子權值,大型權值,Y,D,核心,1,1.5,大型電子市值權值股標記；只作市場權重與觀察用途，不取代產業細題材。,啟用,MATCHED,topic-universe-mapping.v1
+6239,力成,TPE,PRIMARY,大型電子權值,大型權值,Y,D,核心,1,1.5,大型電子市值權值股標記；只作市場權重與觀察用途，不取代產業細題材。,啟用,MATCHED,topic-universe-mapping.v1
+6462,神盾,TWO,PRIMARY,大型電子權值,大型權值,Y,D,核心,1,1.4,大型電子市值權值股標記；只作市場權重與觀察用途，不取代產業細題材。,啟用,MATCHED,topic-universe-mapping.v1
+6488,環球晶,TWO,PRIMARY,大型電子權值,大型權值,Y,D,核心,1,1.5,大型電子市值權值股標記；只作市場權重與觀察用途，不取代產業細題材。,啟用,MATCHED,topic-universe-mapping.v1
+6505,台塑化,TPE,PRIMARY,大型電子權值,大型權值,Y,D,核心,1,1.4,大型電子市值權值股標記；只作市場權重與觀察用途，不取代產業細題材。,啟用,MATCHED,topic-universe-mapping.v1
+6526,達發,TPE,PRIMARY,大型電子權值,大型權值,Y,D,核心,1,1.5,大型電子市值權值股標記；只作市場權重與觀察用途，不取代產業細題材。,啟用,MATCHED,topic-universe-mapping.v1
+6643,M31,TWO,PRIMARY,大型電子權值,大型權值,Y,D,核心,1,1.5,大型電子市值權值股標記；只作市場權重與觀察用途，不取代產業細題材。,啟用,MATCHED,topic-universe-mapping.v1
+6669,緯穎,TPE,PRIMARY,大型電子權值,大型權值,Y,D,核心,1,1.5,大型電子市值權值股標記；只作市場權重與觀察用途，不取代產業細題材。,啟用,MATCHED,topic-universe-mapping.v1
+6770,力積電,TPE,PRIMARY,大型電子權值,大型權值,Y,D,核心,1,1.3,大型電子市值權值股標記；只作市場權重與觀察用途，不取代產業細題材。,啟用,MATCHED,topic-universe-mapping.v1
+8016,矽創,TPE,PRIMARY,大型電子權值,大型權值,Y,D,核心,1,1.4,大型電子市值權值股標記；只作市場權重與觀察用途，不取代產業細題材。,啟用,MATCHED,topic-universe-mapping.v1
+8046,南電,TPE,PRIMARY,大型電子權值,大型權值,Y,D,核心,1,1.4,大型電子市值權值股標記；只作市場權重與觀察用途，不取代產業細題材。,啟用,MATCHED,topic-universe-mapping.v1
+8054,安國,TWO,PRIMARY,大型電子權值,大型權值,Y,D,核心,1,1.4,大型電子市值權值股標記；只作市場權重與觀察用途，不取代產業細題材。,啟用,MATCHED,topic-universe-mapping.v1
+8069,元太,TWO,PRIMARY,大型電子權值,大型權值,Y,D,核心,1,1.5,大型電子市值權值股標記；只作市場權重與觀察用途，不取代產業細題材。,啟用,MATCHED,topic-universe-mapping.v1
+8150,南茂,TPE,PRIMARY,大型電子權值,大型權值,Y,D,核心,1,1.4,大型電子市值權值股標記；只作市場權重與觀察用途，不取代產業細題材。,啟用,MATCHED,topic-universe-mapping.v1
+8210,藍天,TPE,PRIMARY,大型電子權值,大型權值,Y,D,核心,1,1.3,大型電子市值權值股標記；只作市場權重與觀察用途，不取代產業細題材。,啟用,MATCHED,topic-universe-mapping.v1
+8299,群聯,TWO,PRIMARY,大型電子權值,大型權值,Y,D,核心,1,1.5,大型電子市值權值股標記；只作市場權重與觀察用途，不取代產業細題材。,啟用,MATCHED,topic-universe-mapping.v1
+3532,台勝科,TPE,SECONDARY,大型電子權值,大型權值,Y,D,核心,1,0.7,大型電子市值權值股標記；只作市場權重與觀察用途，不取代產業細題材。,啟用,MATCHED,topic-universe-mapping.v1
+6182,合晶,TWO,SECONDARY,大型電子權值,大型權值,Y,D,核心,1,0.7,大型電子市值權值股標記；只作市場權重與觀察用途，不取代產業細題材。,啟用,MATCHED,topic-universe-mapping.v1
+2406,國碩,TPE,PRIMARY,太陽能,電力與能源,Y,X,核心,0.9,1.0,太陽能電池、模組、矽晶圓、導電漿、網版、案場與 EPC。,啟用,MATCHED,topic-universe-mapping.v1
+3058,立德,TPE,PRIMARY,太陽能,電力與能源,Y,X,核心,0.9,1.1,太陽能電池、模組、矽晶圓、導電漿、網版、案場與 EPC。,啟用,MATCHED,topic-universe-mapping.v1
+3576,聯合再生,TPE,PRIMARY,太陽能,電力與能源,Y,X,核心,0.9,1.2,太陽能電池、模組、矽晶圓、導電漿、網版、案場與 EPC。,啟用,MATCHED,topic-universe-mapping.v1
+3691,碩禾,TWO,PRIMARY,太陽能,電力與能源,Y,X,核心,0.9,1.1,太陽能電池、模組、矽晶圓、導電漿、網版、案場與 EPC。,啟用,MATCHED,topic-universe-mapping.v1
+4934,太極,TPE,PRIMARY,太陽能,電力與能源,Y,X,核心,0.9,1.1,太陽能電池、模組、矽晶圓、導電漿、網版、案場與 EPC。,啟用,MATCHED,topic-universe-mapping.v1
+5483,中美晶,TWO,PRIMARY,太陽能,電力與能源,Y,X,核心,0.9,1.4,太陽能電池、模組、矽晶圓、導電漿、網版、案場與 EPC。,啟用,MATCHED,topic-universe-mapping.v1
+6244,茂迪,TWO,PRIMARY,太陽能,電力與能源,Y,X,核心,0.9,1.2,太陽能電池、模組、矽晶圓、導電漿、網版、案場與 EPC。,啟用,MATCHED,topic-universe-mapping.v1
+6443,元晶,TPE,PRIMARY,太陽能,電力與能源,Y,X,核心,0.9,1.3,太陽能電池、模組、矽晶圓、導電漿、網版、案場與 EPC。,啟用,MATCHED,topic-universe-mapping.v1
+6477,安集,TPE,PRIMARY,太陽能,電力與能源,Y,X,核心,0.9,1.2,太陽能電池、模組、矽晶圓、導電漿、網版、案場與 EPC。,啟用,MATCHED,topic-universe-mapping.v1
+1304,台聚,TPE,SECONDARY,太陽能,電力與能源,Y,X,核心,0.9,0.6,太陽能電池、模組、矽晶圓、導電漿、網版、案場與 EPC。,啟用,MATCHED,topic-universe-mapping.v1
+1519,華城,TPE,SECONDARY,太陽能,電力與能源,Y,X,核心,0.9,0.9,太陽能電池、模組、矽晶圓、導電漿、網版、案場與 EPC。,啟用,MATCHED,topic-universe-mapping.v1
+1609,大亞,TPE,SECONDARY,太陽能,電力與能源,Y,X,核心,0.9,0.9,太陽能電池、模組、矽晶圓、導電漿、網版、案場與 EPC。,啟用,MATCHED,topic-universe-mapping.v1
+2031,新光鋼,TPE,SECONDARY,太陽能,電力與能源,Y,X,核心,0.9,0.8,太陽能電池、模組、矽晶圓、導電漿、網版、案場與 EPC。,啟用,MATCHED,topic-universe-mapping.v1
+6538,倉和,TWO,SECONDARY,太陽能,電力與能源,Y,X,核心,0.9,0.7,太陽能電池、模組、矽晶圓、導電漿、網版、案場與 EPC。,啟用,MATCHED,topic-universe-mapping.v1
+6803,崑鼎,TWO,SECONDARY,太陽能,電力與能源,Y,X,核心,0.9,0.7,太陽能電池、模組、矽晶圓、導電漿、網版、案場與 EPC。,啟用,MATCHED,topic-universe-mapping.v1
+6806,森崴能源,TPE,SECONDARY,太陽能,電力與能源,Y,X,核心,0.9,0.7,太陽能電池、模組、矽晶圓、導電漿、網版、案場與 EPC。,啟用,MATCHED,topic-universe-mapping.v1
+1504,東元,TPE,PRIMARY,工業自動化,自動化與機器人,Y,B,核心,1,1.2,PLC、工控、機器控制、運動控制、工業電腦與智慧工廠自動化設備。,啟用,MATCHED,topic-universe-mapping.v1
+1590,亞德客-KY,TPE,PRIMARY,工業自動化,自動化與機器人,Y,B,核心,1,1.3,PLC、工控、機器控制、運動控制、工業電腦與智慧工廠自動化設備。,啟用,MATCHED,topic-universe-mapping.v1
+2049,上銀,TPE,PRIMARY,工業自動化,自動化與機器人,Y,B,核心,1,1.4,PLC、工控、機器控制、運動控制、工業電腦與智慧工廠自動化設備。,啟用,MATCHED,topic-universe-mapping.v1
+2360,致茂,TPE,PRIMARY,工業自動化,自動化與機器人,Y,B,核心,1,1.5,PLC、工控、機器控制、運動控制、工業電腦與智慧工廠自動化設備。,啟用,MATCHED,topic-universe-mapping.v1
+2395,研華,TPE,PRIMARY,工業自動化,自動化與機器人,Y,B,核心,1,1.3,PLC、工控、機器控制、運動控制、工業電腦與智慧工廠自動化設備。,啟用,MATCHED,topic-universe-mapping.v1
+2464,盟立,TPE,PRIMARY,工業自動化,自動化與機器人,Y,B,核心,1,1.4,PLC、工控、機器控制、運動控制、工業電腦與智慧工廠自動化設備。,啟用,MATCHED,topic-universe-mapping.v1
+3022,威強電,TPE,PRIMARY,工業自動化,自動化與機器人,Y,B,核心,1,1.2,PLC、工控、機器控制、運動控制、工業電腦與智慧工廠自動化設備。,啟用,MATCHED,topic-universe-mapping.v1
+3498,陽程,TWO,PRIMARY,工業自動化,自動化與機器人,Y,B,核心,1,1.3,PLC、工控、機器控制、運動控制、工業電腦與智慧工廠自動化設備。,啟用,MATCHED,topic-universe-mapping.v1
+3577,泓格,TWO,PRIMARY,工業自動化,自動化與機器人,Y,B,核心,1,1.3,PLC、工控、機器控制、運動控制、工業電腦與智慧工廠自動化設備。,啟用,MATCHED,topic-universe-mapping.v1
+3652,精聯,TPE,PRIMARY,工業自動化,自動化與機器人,Y,B,核心,1,1.2,PLC、工控、機器控制、運動控制、工業電腦與智慧工廠自動化設備。,啟用,MATCHED,topic-universe-mapping.v1
+4540,全球傳動,TPE,PRIMARY,工業自動化,自動化與機器人,Y,B,核心,1,1.3,PLC、工控、機器控制、運動控制、工業電腦與智慧工廠自動化設備。,啟用,MATCHED,topic-universe-mapping.v1
+4562,穎漢,TPE,PRIMARY,工業自動化,自動化與機器人,Y,B,核心,1,1.2,PLC、工控、機器控制、運動控制、工業電腦與智慧工廠自動化設備。,啟用,MATCHED,topic-universe-mapping.v1
+4576,大銀微系統,TPE,PRIMARY,工業自動化,自動化與機器人,Y,B,核心,1,1.4,PLC、工控、機器控制、運動控制、工業電腦與智慧工廠自動化設備。,啟用,MATCHED,topic-universe-mapping.v1
+5443,均豪,TWO,PRIMARY,工業自動化,自動化與機器人,Y,B,核心,1,1.4,PLC、工控、機器控制、運動控制、工業電腦與智慧工廠自動化設備。,啟用,MATCHED,topic-universe-mapping.v1
+6166,凌華,TPE,PRIMARY,工業自動化,自動化與機器人,Y,B,核心,1,1.4,PLC、工控、機器控制、運動控制、工業電腦與智慧工廠自動化設備。,啟用,MATCHED,topic-universe-mapping.v1
+6215,和椿,TPE,PRIMARY,工業自動化,自動化與機器人,Y,B,核心,1,1.4,PLC、工控、機器控制、運動控制、工業電腦與智慧工廠自動化設備。,啟用,MATCHED,topic-universe-mapping.v1
+6414,樺漢,TPE,PRIMARY,工業自動化,自動化與機器人,Y,B,核心,1,1.4,PLC、工控、機器控制、運動控制、工業電腦與智慧工廠自動化設備。,啟用,MATCHED,topic-universe-mapping.v1
+6570,維田,TWO,PRIMARY,工業自動化,自動化與機器人,Y,B,核心,1,1.1,PLC、工控、機器控制、運動控制、工業電腦與智慧工廠自動化設備。,啟用,MATCHED,topic-universe-mapping.v1
+6603,富強鑫,TWO,PRIMARY,工業自動化,自動化與機器人,Y,B,核心,1,1.1,PLC、工控、機器控制、運動控制、工業電腦與智慧工廠自動化設備。,啟用,MATCHED,topic-universe-mapping.v1
+6870,騰雲,TWO,PRIMARY,工業自動化,自動化與機器人,Y,B,核心,1,1.3,PLC、工控、機器控制、運動控制、工業電腦與智慧工廠自動化設備。,啟用,MATCHED,topic-universe-mapping.v1
+7709,榮田,TWO,PRIMARY,工業自動化,自動化與機器人,Y,B,核心,1,1.3,PLC、工控、機器控制、運動控制、工業電腦與智慧工廠自動化設備。,啟用,MATCHED,topic-universe-mapping.v1
+7750,新代,TPE,PRIMARY,工業自動化,自動化與機器人,Y,B,核心,1,1.4,PLC、工控、機器控制、運動控制、工業電腦與智慧工廠自動化設備。,啟用,MATCHED,topic-universe-mapping.v1
+8374,羅昇,TPE,PRIMARY,工業自動化,自動化與機器人,Y,B,核心,1,1.4,PLC、工控、機器控制、運動控制、工業電腦與智慧工廠自動化設備。,啟用,MATCHED,topic-universe-mapping.v1
+1597,直得,TPE,SECONDARY,工業自動化,自動化與機器人,Y,B,核心,1,0.7,PLC、工控、機器控制、運動控制、工業電腦與智慧工廠自動化設備。,啟用,MATCHED,topic-universe-mapping.v1
+4513,福裕,TWO,SECONDARY,工業自動化,自動化與機器人,Y,B,核心,1,0.6,PLC、工控、機器控制、運動控制、工業電腦與智慧工廠自動化設備。,啟用,MATCHED,topic-universe-mapping.v1
+6196,帆宣,TPE,SECONDARY,工業自動化,自動化與機器人,Y,B,核心,1,0.7,PLC、工控、機器控制、運動控制、工業電腦與智慧工廠自動化設備。,啟用,MATCHED,topic-universe-mapping.v1
+2303,聯電,TPE,PRIMARY,成熟製程,半導體製造,Y,X,核心,1,1.4,28nm 以上或市場定義的成熟節點、特殊成熟製程與成熟製程代工。MCU／功率元件若已有更精確題材，優先使用產品題材。,啟用,MATCHED,topic-universe-mapping.v1
+5347,世界,TWO,PRIMARY,成熟製程,半導體製造,Y,X,核心,1,1.4,28nm 以上或市場定義的成熟節點、特殊成熟製程與成熟製程代工。MCU／功率元件若已有更精確題材，優先使用產品題材。,啟用,MATCHED,topic-universe-mapping.v1
+6770,力積電,TPE,PRIMARY,成熟製程,半導體製造,Y,X,核心,1,1.3,28nm 以上或市場定義的成熟節點、特殊成熟製程與成熟製程代工。MCU／功率元件若已有更精確題材，優先使用產品題材。,啟用,MATCHED,topic-universe-mapping.v1
+2421,建準,TPE,PRIMARY,散熱零組件,熱管理,Y,D,主流,0.9,1.4,散熱器、扣件、風扇零件、熱介面材料等零組件，但非完整風冷／液冷系統。,啟用,MATCHED,topic-universe-mapping.v1
+3003,健策,TPE,PRIMARY,散熱零組件,熱管理,Y,D,主流,0.9,1.5,散熱器、扣件、風扇零件、熱介面材料等零組件，但非完整風冷／液冷系統。,啟用,MATCHED,topic-universe-mapping.v1
+3013,晟銘電,TPE,PRIMARY,散熱零組件,熱管理,Y,D,主流,0.9,1.4,散熱器、扣件、風扇零件、熱介面材料等零組件，但非完整風冷／液冷系統。,啟用,MATCHED,topic-universe-mapping.v1
+3017,奇鋐,TPE,PRIMARY,散熱零組件,熱管理,Y,D,主流,0.9,1.5,散熱器、扣件、風扇零件、熱介面材料等零組件，但非完整風冷／液冷系統。,啟用,MATCHED,topic-universe-mapping.v1
+3324,雙鴻,TWO,PRIMARY,散熱零組件,熱管理,Y,D,主流,0.9,1.5,散熱器、扣件、風扇零件、熱介面材料等零組件，但非完整風冷／液冷系統。,啟用,MATCHED,topic-universe-mapping.v1
+3338,泰碩,TPE,PRIMARY,散熱零組件,熱管理,Y,D,主流,0.9,1.3,散熱器、扣件、風扇零件、熱介面材料等零組件，但非完整風冷／液冷系統。,啟用,MATCHED,topic-universe-mapping.v1
+3483,力致,TWO,PRIMARY,散熱零組件,熱管理,Y,D,主流,0.9,1.3,散熱器、扣件、風扇零件、熱介面材料等零組件，但非完整風冷／液冷系統。,啟用,MATCHED,topic-universe-mapping.v1
+3653,健策,TPE,PRIMARY,散熱零組件,熱管理,Y,D,主流,0.9,1.5,散熱器、扣件、風扇零件、熱介面材料等零組件，但非完整風冷／液冷系統。,啟用,MATCHED,topic-universe-mapping.v1
+6275,元山,TWO,PRIMARY,散熱零組件,熱管理,Y,D,主流,0.9,1.3,散熱器、扣件、風扇零件、熱介面材料等零組件，但非完整風冷／液冷系統。,啟用,MATCHED,topic-universe-mapping.v1
+6591,動力-KY,TPE,PRIMARY,散熱零組件,熱管理,Y,D,主流,0.9,1.2,散熱器、扣件、風扇零件、熱介面材料等零組件，但非完整風冷／液冷系統。,啟用,MATCHED,topic-universe-mapping.v1
+6805,富世達,TPE,PRIMARY,散熱零組件,熱管理,Y,D,主流,0.9,1.5,散熱器、扣件、風扇零件、熱介面材料等零組件，但非完整風冷／液冷系統。,啟用,MATCHED,topic-universe-mapping.v1
+6831,邁科,TPE,PRIMARY,散熱零組件,熱管理,Y,D,主流,0.9,1.3,散熱器、扣件、風扇零件、熱介面材料等零組件，但非完整風冷／液冷系統。,啟用,MATCHED,topic-universe-mapping.v1
+8996,高力,TPE,PRIMARY,散熱零組件,熱管理,Y,D,主流,0.9,1.5,散熱器、扣件、風扇零件、熱介面材料等零組件，但非完整風冷／液冷系統。,啟用,MATCHED,topic-universe-mapping.v1
+2330,台積電,TPE,PRIMARY,晶圓代工,半導體製造,Y,X,核心,1,1.5,受託晶圓製造、純晶圓代工與晶圓製造服務；不因公司設有自有晶圓廠就自動收錄。,啟用,MATCHED,topic-universe-mapping.v1
+4991,環宇-KY,TWO,PRIMARY,晶圓代工,半導體製造,Y,X,核心,1,1.4,受託晶圓製造、純晶圓代工與晶圓製造服務；不因公司設有自有晶圓廠就自動收錄。,啟用,MATCHED,topic-universe-mapping.v1
+5347,世界,TWO,PRIMARY,晶圓代工,半導體製造,Y,X,核心,1,1.4,受託晶圓製造、純晶圓代工與晶圓製造服務；不因公司設有自有晶圓廠就自動收錄。,啟用,MATCHED,topic-universe-mapping.v1
+5434,崇越,TPE,PRIMARY,晶圓材料,,,大族群,,,1.4,晶圓材料主大族群，彙整所屬正式細題材之觀察與市場表現。,啟用,UNMAPPED_TOPIC,topic-universe-mapping.v1
+3034,聯詠,TPE,PRIMARY,核心 IC設計,,,,,,1.5,,,UNMAPPED_TOPIC,topic-universe-mapping.v1
+2359,所羅門,TPE,SECONDARY,機器人系統整合,自動化與機器人,Y,D,主流,0.8,0.9,機器人本體、AMR／AGV、機器人整合、智慧工廠與自動化專案服務。,啟用,MATCHED,topic-universe-mapping.v1
+2464,盟立,TPE,SECONDARY,機器人系統整合,自動化與機器人,Y,D,主流,0.8,0.9,機器人本體、AMR／AGV、機器人整合、智慧工廠與自動化專案服務。,啟用,MATCHED,topic-universe-mapping.v1
+4585,達明,TPE,SECONDARY,機器人系統整合,自動化與機器人,Y,D,主流,0.8,0.9,機器人本體、AMR／AGV、機器人整合、智慧工廠與自動化專案服務。,啟用,MATCHED,topic-universe-mapping.v1
+6188,廣明,TWO,SECONDARY,機器人系統整合,自動化與機器人,Y,D,主流,0.8,0.9,機器人本體、AMR／AGV、機器人整合、智慧工廠與自動化專案服務。,啟用,MATCHED,topic-universe-mapping.v1
+6215,和椿,TPE,SECONDARY,機器人系統整合,自動化與機器人,Y,D,主流,0.8,0.9,機器人本體、AMR／AGV、機器人整合、智慧工廠與自動化專案服務。,啟用,MATCHED,topic-universe-mapping.v1
+6414,樺漢,TPE,SECONDARY,機器人系統整合,自動化與機器人,Y,D,主流,0.8,0.8,機器人本體、AMR／AGV、機器人整合、智慧工廠與自動化專案服務。,啟用,MATCHED,topic-universe-mapping.v1
+7750,新代,TPE,SECONDARY,機器人系統整合,自動化與機器人,Y,D,主流,0.8,0.8,機器人本體、AMR／AGV、機器人整合、智慧工廠與自動化專案服務。,啟用,MATCHED,topic-universe-mapping.v1
+8374,羅昇,TPE,SECONDARY,機器人系統整合,自動化與機器人,Y,D,主流,0.8,0.8,機器人本體、AMR／AGV、機器人整合、智慧工廠與自動化專案服務。,啟用,MATCHED,topic-universe-mapping.v1
+1597,直得,TPE,PRIMARY,機器人零組件,自動化與機器人,Y,A,核心,1,1.2,馬達、伺服、減速機、線性滑軌、滾珠螺桿、控制器、致動器與精密定位。,啟用,MATCHED,topic-universe-mapping.v1
+2049,上銀,TPE,PRIMARY,機器人零組件,自動化與機器人,Y,A,核心,1,1.4,馬達、伺服、減速機、線性滑軌、滾珠螺桿、控制器、致動器與精密定位。,啟用,MATCHED,topic-universe-mapping.v1
+2359,所羅門,TPE,PRIMARY,機器人零組件,自動化與機器人,Y,A,核心,1,1.5,馬達、伺服、減速機、線性滑軌、滾珠螺桿、控制器、致動器與精密定位。,啟用,MATCHED,topic-universe-mapping.v1
+4540,全球傳動,TPE,PRIMARY,機器人零組件,自動化與機器人,Y,A,核心,1,1.3,馬達、伺服、減速機、線性滑軌、滾珠螺桿、控制器、致動器與精密定位。,啟用,MATCHED,topic-universe-mapping.v1
+4576,大銀微系統,TPE,PRIMARY,機器人零組件,自動化與機器人,Y,A,核心,1,1.4,馬達、伺服、減速機、線性滑軌、滾珠螺桿、控制器、致動器與精密定位。,啟用,MATCHED,topic-universe-mapping.v1
+4585,達明,TPE,PRIMARY,機器人零組件,自動化與機器人,Y,A,核心,1,1.5,馬達、伺服、減速機、線性滑軌、滾珠螺桿、控制器、致動器與精密定位。,啟用,MATCHED,topic-universe-mapping.v1
+6188,廣明,TWO,PRIMARY,機器人零組件,自動化與機器人,Y,A,核心,1,1.4,馬達、伺服、減速機、線性滑軌、滾珠螺桿、控制器、致動器與精密定位。,啟用,MATCHED,topic-universe-mapping.v1
+1536,和大,TPE,SECONDARY,機器人零組件,自動化與機器人,Y,A,核心,1,0.6,馬達、伺服、減速機、線性滑軌、滾珠螺桿、控制器、致動器與精密定位。,啟用,MATCHED,topic-universe-mapping.v1
+1590,亞德客-KY,TPE,SECONDARY,機器人零組件,自動化與機器人,Y,A,核心,1,0.7,馬達、伺服、減速機、線性滑軌、滾珠螺桿、控制器、致動器與精密定位。,啟用,MATCHED,topic-universe-mapping.v1
+6215,和椿,TPE,SECONDARY,機器人零組件,自動化與機器人,Y,A,核心,1,0.9,馬達、伺服、減速機、線性滑軌、滾珠螺桿、控制器、致動器與精密定位。,啟用,MATCHED,topic-universe-mapping.v1
+7750,新代,TPE,SECONDARY,機器人零組件,自動化與機器人,Y,A,核心,1,0.8,馬達、伺服、減速機、線性滑軌、滾珠螺桿、控制器、致動器與精密定位。,啟用,MATCHED,topic-universe-mapping.v1
+2359,所羅門,TPE,PRIMARY,機器視覺,AI視覺,Y,D,核心,1,1.5,工業相機、鏡頭、3D 視覺、視覺感測與機器視覺系統。,啟用,MATCHED,topic-universe-mapping.v1
+3008,大立光,TPE,PRIMARY,機器視覺,AI視覺,Y,D,核心,1,1.4,工業相機、鏡頭、3D 視覺、視覺感測與機器視覺系統。,啟用,MATCHED,topic-universe-mapping.v1
+3362,先進光,TWO,PRIMARY,機器視覺,AI視覺,Y,D,核心,1,1.3,工業相機、鏡頭、3D 視覺、視覺感測與機器視覺系統。,啟用,MATCHED,topic-universe-mapping.v1
+4585,達明,TPE,PRIMARY,機器視覺,AI視覺,Y,D,核心,1,1.5,工業相機、鏡頭、3D 視覺、視覺感測與機器視覺系統。,啟用,MATCHED,topic-universe-mapping.v1
+6188,廣明,TWO,PRIMARY,機器視覺,AI視覺,Y,D,核心,1,1.4,工業相機、鏡頭、3D 視覺、視覺感測與機器視覺系統。,啟用,MATCHED,topic-universe-mapping.v1
+6742,澤米,TPE,PRIMARY,機器視覺,AI視覺,Y,D,核心,1,1.3,工業相機、鏡頭、3D 視覺、視覺感測與機器視覺系統。,啟用,MATCHED,topic-universe-mapping.v1
+7402,邑錡,TWO,PRIMARY,機器視覺,AI視覺,Y,D,核心,1,1.3,工業相機、鏡頭、3D 視覺、視覺感測與機器視覺系統。,啟用,MATCHED,topic-universe-mapping.v1
+8374,羅昇,TPE,PRIMARY,機器視覺,AI視覺,Y,D,核心,1,1.4,工業相機、鏡頭、3D 視覺、視覺感測與機器視覺系統。,啟用,MATCHED,topic-universe-mapping.v1
+3535,晶彩科,TPE,SECONDARY,機器視覺,AI視覺,Y,D,核心,1,0.7,工業相機、鏡頭、3D 視覺、視覺感測與機器視覺系統。,啟用,MATCHED,topic-universe-mapping.v1
+8033,雷虎,TPE,SECONDARY,機器視覺,AI視覺,Y,D,核心,1,0.7,工業相機、鏡頭、3D 視覺、視覺感測與機器視覺系統。,啟用,MATCHED,topic-universe-mapping.v1
+2308,台達電,TPE,PRIMARY,液冷散熱,熱管理,Y,D,核心,1,1.5,冷板、泵浦、管路、快接頭、CDU、冷卻液與液冷系統整合。,啟用,MATCHED,topic-universe-mapping.v1
+3017,奇鋐,TPE,PRIMARY,液冷散熱,熱管理,Y,D,核心,1,1.5,冷板、泵浦、管路、快接頭、CDU、冷卻液與液冷系統整合。,啟用,MATCHED,topic-universe-mapping.v1
+3324,雙鴻,TWO,PRIMARY,液冷散熱,熱管理,Y,D,核心,1,1.5,冷板、泵浦、管路、快接頭、CDU、冷卻液與液冷系統整合。,啟用,MATCHED,topic-universe-mapping.v1
+4556,旭然,TWO,PRIMARY,液冷散熱,熱管理,Y,D,核心,1,1.3,冷板、泵浦、管路、快接頭、CDU、冷卻液與液冷系統整合。,啟用,MATCHED,topic-universe-mapping.v1
+8996,高力,TPE,PRIMARY,液冷散熱,熱管理,Y,D,核心,1,1.5,冷板、泵浦、管路、快接頭、CDU、冷卻液與液冷系統整合。,啟用,MATCHED,topic-universe-mapping.v1
+2241,艾姆勒,TPE,SECONDARY,液冷散熱,熱管理,Y,D,核心,1,0.7,冷板、泵浦、管路、快接頭、CDU、冷卻液與液冷系統整合。,啟用,MATCHED,topic-universe-mapping.v1
+2301,光寶科,TPE,SECONDARY,液冷散熱,熱管理,Y,D,核心,1,0.9,冷板、泵浦、管路、快接頭、CDU、冷卻液與液冷系統整合。,啟用,MATCHED,topic-universe-mapping.v1
+2421,建準,TPE,SECONDARY,液冷散熱,熱管理,Y,D,核心,1,0.9,冷板、泵浦、管路、快接頭、CDU、冷卻液與液冷系統整合。,啟用,MATCHED,topic-universe-mapping.v1
+3013,晟銘電,TPE,SECONDARY,液冷散熱,熱管理,Y,D,核心,1,0.8,冷板、泵浦、管路、快接頭、CDU、冷卻液與液冷系統整合。,啟用,MATCHED,topic-universe-mapping.v1
+3338,泰碩,TPE,SECONDARY,液冷散熱,熱管理,Y,D,核心,1,0.7,冷板、泵浦、管路、快接頭、CDU、冷卻液與液冷系統整合。,啟用,MATCHED,topic-universe-mapping.v1
+3483,力致,TWO,SECONDARY,液冷散熱,熱管理,Y,D,核心,1,0.7,冷板、泵浦、管路、快接頭、CDU、冷卻液與液冷系統整合。,啟用,MATCHED,topic-universe-mapping.v1
+7402,邑錡,TWO,PRIMARY,無人機,軍工國防,Y,B,核心,1,1.3,無人機、無人載具、飛控、任務系統與軍用／商用無人系統。,啟用,MATCHED,topic-universe-mapping.v1
+8033,雷虎,TPE,PRIMARY,無人機,軍工國防,Y,B,核心,1,1.4,無人機、無人載具、飛控、任務系統與軍用／商用無人系統。,啟用,MATCHED,topic-universe-mapping.v1
+2424,隴華,TPE,SECONDARY,無人機,軍工國防,Y,B,核心,1,0,無人機、無人載具、飛控、任務系統與軍用／商用無人系統。,啟用,MATCHED,topic-universe-mapping.v1
+2630,亞航,TPE,SECONDARY,無人機,軍工國防,Y,B,核心,1,0.6,無人機、無人載具、飛控、任務系統與軍用／商用無人系統。,啟用,MATCHED,topic-universe-mapping.v1
+5371,中光電,TWO,SECONDARY,無人機,軍工國防,Y,B,核心,1,0.7,無人機、無人載具、飛控、任務系統與軍用／商用無人系統。,啟用,MATCHED,topic-universe-mapping.v1
+6517,保勝光學,TWO,SECONDARY,無人機,軍工國防,Y,B,核心,1,0.7,無人機、無人載具、飛控、任務系統與軍用／商用無人系統。,啟用,MATCHED,topic-universe-mapping.v1
+7714,創泓科,TWO,SECONDARY,無人機,軍工國防,Y,B,核心,1,0.7,無人機、無人載具、飛控、任務系統與軍用／商用無人系統。,啟用,MATCHED,topic-universe-mapping.v1
+2535,達欣工,TPE,PRIMARY,營建工程,建設開發,Y,D,核心,0.9,1.3,營造、工程承攬、公共工程、機電工程與基礎建設施工。,啟用,MATCHED,topic-universe-mapping.v1
+2546,根基,TPE,PRIMARY,營建工程,建設開發,Y,D,核心,0.9,1.3,營造、工程承攬、公共工程、機電工程與基礎建設施工。,啟用,MATCHED,topic-universe-mapping.v1
+6691,洋基工程,TPE,PRIMARY,營建工程,建設開發,Y,D,核心,0.9,1.4,營造、工程承攬、公共工程、機電工程與基礎建設施工。,啟用,MATCHED,topic-universe-mapping.v1
+2520,冠德,TPE,SECONDARY,營建工程,建設開發,Y,D,核心,0.9,0.8,營造、工程承攬、公共工程、機電工程與基礎建設施工。,啟用,MATCHED,topic-universe-mapping.v1
+2527,宏璟,TPE,SECONDARY,營建工程,建設開發,Y,D,核心,0.9,0.7,營造、工程承攬、公共工程、機電工程與基礎建設施工。,啟用,MATCHED,topic-universe-mapping.v1
+5519,隆大,TPE,SECONDARY,營建工程,建設開發,Y,D,核心,0.9,0.7,營造、工程承攬、公共工程、機電工程與基礎建設施工。,啟用,MATCHED,topic-universe-mapping.v1
+2303,聯電,TPE,SECONDARY,特殊製程,半導體製造,Y,X,主流,0.8,0.7,RF、BCD、CIS、MEMS、嵌入式非揮發記憶體等特殊製程平台。,啟用,MATCHED,topic-universe-mapping.v1
+2342,茂矽,TPE,SECONDARY,特殊製程,半導體製造,Y,X,主流,0.8,0.7,RF、BCD、CIS、MEMS、嵌入式非揮發記憶體等特殊製程平台。,啟用,MATCHED,topic-universe-mapping.v1
+5347,世界,TWO,SECONDARY,特殊製程,半導體製造,Y,X,主流,0.8,0.7,RF、BCD、CIS、MEMS、嵌入式非揮發記憶體等特殊製程平台。,啟用,MATCHED,topic-universe-mapping.v1
+6770,力積電,TPE,SECONDARY,特殊製程,半導體製造,Y,X,主流,0.8,0.7,RF、BCD、CIS、MEMS、嵌入式非揮發記憶體等特殊製程平台。,啟用,MATCHED,topic-universe-mapping.v1
+1584,精剛,TWO,PRIMARY,特殊鋼／高性能合金,傳統產業材料,Y,X,主流,0.9,1.3,高性能鋼、鎳基／鈦合金、航太與能源用特殊合金。,啟用,MATCHED,topic-universe-mapping.v1
+3004,豐達科,TPE,PRIMARY,特殊鋼／高性能合金,傳統產業材料,Y,X,主流,0.9,1.3,高性能鋼、鎳基／鈦合金、航太與能源用特殊合金。,啟用,MATCHED,topic-universe-mapping.v1
+2002,中鋼,TPE,SECONDARY,特殊鋼／高性能合金,傳統產業材料,Y,X,主流,0.9,0.8,高性能鋼、鎳基／鈦合金、航太與能源用特殊合金。,啟用,MATCHED,topic-universe-mapping.v1
+2351,順德,TPE,SECONDARY,特殊鋼／高性能合金,傳統產業材料,Y,X,主流,0.9,0.7,高性能鋼、鎳基／鈦合金、航太與能源用特殊合金。,啟用,MATCHED,topic-universe-mapping.v1
+5285,界霖,TPE,SECONDARY,特殊鋼／高性能合金,傳統產業材料,Y,X,主流,0.9,0.7,高性能鋼、鎳基／鈦合金、航太與能源用特殊合金。,啟用,MATCHED,topic-universe-mapping.v1
+6548,長科*,TWO,SECONDARY,特殊鋼／高性能合金,傳統產業材料,Y,X,主流,0.9,0,高性能鋼、鎳基／鈦合金、航太與能源用特殊合金。,啟用,MATCHED,topic-universe-mapping.v1
+6405,悅城,TPE,PRIMARY,玻璃基板,半導體設備與製程,Y,X,主流,0.9,1.4,半導體封裝用玻璃基板、玻璃載板、TGV、玻璃加工／檢測；顯示器玻璃若非半導體或封裝用途，應改看顯示相關題材。,啟用,MATCHED,topic-universe-mapping.v1
+6742,澤米,TPE,PRIMARY,玻璃基板,半導體設備與製程,Y,X,主流,0.9,1.3,半導體封裝用玻璃基板、玻璃載板、TGV、玻璃加工／檢測；顯示器玻璃若非半導體或封裝用途，應改看顯示相關題材。,啟用,MATCHED,topic-universe-mapping.v1
+1568,倉佑,TPE,SECONDARY,玻璃基板,半導體設備與製程,Y,X,主流,0.9,0.7,半導體封裝用玻璃基板、玻璃載板、TGV、玻璃加工／檢測；顯示器玻璃若非半導體或封裝用途，應改看顯示相關題材。,啟用,MATCHED,topic-universe-mapping.v1
+1802,台玻,TPE,SECONDARY,玻璃基板,半導體設備與製程,Y,X,主流,0.9,0.6,半導體封裝用玻璃基板、玻璃載板、TGV、玻璃加工／檢測；顯示器玻璃若非半導體或封裝用途，應改看顯示相關題材。,啟用,MATCHED,topic-universe-mapping.v1
+2464,盟立,TPE,SECONDARY,玻璃基板,半導體設備與製程,Y,X,主流,0.9,0.9,半導體封裝用玻璃基板、玻璃載板、TGV、玻璃加工／檢測；顯示器玻璃若非半導體或封裝用途，應改看顯示相關題材。,啟用,MATCHED,topic-universe-mapping.v1
+6207,雷科,TWO,SECONDARY,玻璃基板,半導體設備與製程,Y,X,主流,0.9,0.8,半導體封裝用玻璃基板、玻璃載板、TGV、玻璃加工／檢測；顯示器玻璃若非半導體或封裝用途，應改看顯示相關題材。,啟用,MATCHED,topic-universe-mapping.v1
+8027,鈦昇,TWO,SECONDARY,玻璃基板,半導體設備與製程,Y,X,主流,0.9,0.9,半導體封裝用玻璃基板、玻璃載板、TGV、玻璃加工／檢測；顯示器玻璃若非半導體或封裝用途，應改看顯示相關題材。,啟用,MATCHED,topic-universe-mapping.v1
+8064,東捷,TWO,SECONDARY,玻璃基板,半導體設備與製程,Y,X,主流,0.9,0.0,半導體封裝用玻璃基板、玻璃載板、TGV、玻璃加工／檢測；顯示器玻璃若非半導體或封裝用途，應改看顯示相關題材。,啟用,MATCHED,topic-universe-mapping.v1
+1303,南亞,TPE,PRIMARY,玻纖布,高頻電子材料,Y,X,主流,0.9,1.2,電子級玻纖布、低介電／低損耗玻纖布與 CCL 用玻璃纖維材料。一般紡織玻纖不收錄。,啟用,MATCHED,topic-universe-mapping.v1
+1802,台玻,TPE,PRIMARY,玻纖布,高頻電子材料,Y,X,主流,0.9,1.3,電子級玻纖布、低介電／低損耗玻纖布與 CCL 用玻璃纖維材料。一般紡織玻纖不收錄。,啟用,MATCHED,topic-universe-mapping.v1
+1815,富喬,TWO,PRIMARY,玻纖布,高頻電子材料,Y,X,主流,0.9,1.3,電子級玻纖布、低介電／低損耗玻纖布與 CCL 用玻璃纖維材料。一般紡織玻纖不收錄。,啟用,MATCHED,topic-universe-mapping.v1
+5340,建榮,TWO,PRIMARY,玻纖布,高頻電子材料,Y,X,主流,0.9,1.3,電子級玻纖布、低介電／低損耗玻纖布與 CCL 用玻璃纖維材料。一般紡織玻纖不收錄。,啟用,MATCHED,topic-universe-mapping.v1
+2484,希華,TPE,PRIMARY,石英元件,被動元件,Y,X,次主流,0.7,1.2,石英晶體、振盪器、TCXO、頻率控制與時脈元件。,啟用,MATCHED,topic-universe-mapping.v1
+3042,晶技,TPE,PRIMARY,石英元件,被動元件,Y,X,次主流,0.7,1.3,石英晶體、振盪器、TCXO、頻率控制與時脈元件。,啟用,MATCHED,topic-universe-mapping.v1
+3221,台嘉碩,TWO,PRIMARY,石英元件,被動元件,Y,X,次主流,0.7,1.2,石英晶體、振盪器、TCXO、頻率控制與時脈元件。,啟用,MATCHED,topic-universe-mapping.v1
+6174,安碁,TWO,PRIMARY,石英元件,被動元件,Y,X,次主流,0.7,1.3,石英晶體、振盪器、TCXO、頻率控制與時脈元件。,啟用,MATCHED,topic-universe-mapping.v1
+8182,加高,TWO,PRIMARY,石英元件,被動元件,Y,X,次主流,0.7,1.2,石英晶體、振盪器、TCXO、頻率控制與時脈元件。,啟用,MATCHED,topic-universe-mapping.v1
+3081,聯亞,TWO,PRIMARY,矽光子,通訊與光電,Y,X,主流,0.9,1.5,矽光子晶片、光引擎、CPO／LPO、光電整合與資料中心高速光傳輸。,啟用,MATCHED,topic-universe-mapping.v1
+3163,波若威,TWO,PRIMARY,矽光子,通訊與光電,Y,X,主流,0.9,1.4,矽光子晶片、光引擎、CPO／LPO、光電整合與資料中心高速光傳輸。,啟用,MATCHED,topic-universe-mapping.v1
+3339,泰谷,TWO,PRIMARY,矽光子,通訊與光電,Y,X,主流,0.9,1.2,矽光子晶片、光引擎、CPO／LPO、光電整合與資料中心高速光傳輸。,啟用,MATCHED,topic-universe-mapping.v1
+3363,上詮,TWO,PRIMARY,矽光子,通訊與光電,Y,X,主流,0.9,1.5,矽光子晶片、光引擎、CPO／LPO、光電整合與資料中心高速光傳輸。,啟用,MATCHED,topic-universe-mapping.v1
+3450,聯鈞,TPE,PRIMARY,矽光子,通訊與光電,Y,X,主流,0.9,1.5,矽光子晶片、光引擎、CPO／LPO、光電整合與資料中心高速光傳輸。,啟用,MATCHED,topic-universe-mapping.v1
+4908,前鼎,TWO,PRIMARY,矽光子,通訊與光電,Y,X,主流,0.9,1.5,矽光子晶片、光引擎、CPO／LPO、光電整合與資料中心高速光傳輸。,啟用,MATCHED,topic-universe-mapping.v1
+4977,眾達-KY,TPE,PRIMARY,矽光子,通訊與光電,Y,X,主流,0.9,1.5,矽光子晶片、光引擎、CPO／LPO、光電整合與資料中心高速光傳輸。,啟用,MATCHED,topic-universe-mapping.v1
+4979,華星光,TWO,PRIMARY,矽光子,通訊與光電,Y,X,主流,0.9,1.5,矽光子晶片、光引擎、CPO／LPO、光電整合與資料中心高速光傳輸。,啟用,MATCHED,topic-universe-mapping.v1
+6426,統新,TPE,PRIMARY,矽光子,通訊與光電,Y,X,主流,0.9,1.3,矽光子晶片、光引擎、CPO／LPO、光電整合與資料中心高速光傳輸。,啟用,MATCHED,topic-universe-mapping.v1
+6442,光聖,TPE,PRIMARY,矽光子,通訊與光電,Y,X,主流,0.9,1.5,矽光子晶片、光引擎、CPO／LPO、光電整合與資料中心高速光傳輸。,啟用,MATCHED,topic-universe-mapping.v1
+6451,訊芯-KY,TPE,PRIMARY,矽光子,通訊與光電,Y,X,主流,0.9,1.5,矽光子晶片、光引擎、CPO／LPO、光電整合與資料中心高速光傳輸。,啟用,MATCHED,topic-universe-mapping.v1
+8111,立碁,TWO,PRIMARY,矽光子,通訊與光電,Y,X,主流,0.9,1.3,矽光子晶片、光引擎、CPO／LPO、光電整合與資料中心高速光傳輸。,啟用,MATCHED,topic-universe-mapping.v1
+3234,光環,TWO,SECONDARY,矽光子,通訊與光電,Y,X,主流,0.9,0.6,矽光子晶片、光引擎、CPO／LPO、光電整合與資料中心高速光傳輸。,啟用,MATCHED,topic-universe-mapping.v1
+4991,環宇-KY,TWO,SECONDARY,矽光子,通訊與光電,Y,X,主流,0.9,0.8,矽光子晶片、光引擎、CPO／LPO、光電整合與資料中心高速光傳輸。,啟用,MATCHED,topic-universe-mapping.v1
+6830,汎銓,TPE,SECONDARY,矽光子,通訊與光電,Y,X,主流,0.9,0.7,矽光子晶片、光引擎、CPO／LPO、光電整合與資料中心高速光傳輸。,啟用,MATCHED,topic-universe-mapping.v1
+3029,零壹,TPE,PRIMARY,端點資安,資安服務,Y,X,主流,0.9,1.3,EDR、端點防護、行動／PC／伺服器端資安軟體。,啟用,MATCHED,topic-universe-mapping.v1
+3147,大綜,TWO,PRIMARY,端點資安,資安服務,Y,X,主流,0.9,1.3,EDR、端點防護、行動／PC／伺服器端資安軟體。,啟用,MATCHED,topic-universe-mapping.v1
+5410,國眾,TWO,PRIMARY,端點資安,資安服務,Y,X,主流,0.9,1.2,EDR、端點防護、行動／PC／伺服器端資安軟體。,啟用,MATCHED,topic-universe-mapping.v1
+6112,邁達特,TPE,PRIMARY,端點資安,資安服務,Y,X,主流,0.9,1.4,EDR、端點防護、行動／PC／伺服器端資安軟體。,啟用,MATCHED,topic-universe-mapping.v1
+6214,精誠,TPE,PRIMARY,端點資安,資安服務,Y,X,主流,0.9,1.5,EDR、端點防護、行動／PC／伺服器端資安軟體。,啟用,MATCHED,topic-universe-mapping.v1
+6690,安碁資訊,TWO,PRIMARY,端點資安,資安服務,Y,X,主流,0.9,1.4,EDR、端點防護、行動／PC／伺服器端資安軟體。,啟用,MATCHED,topic-universe-mapping.v1
+6752,叡揚,TWO,PRIMARY,端點資安,資安服務,Y,X,主流,0.9,1.4,EDR、端點防護、行動／PC／伺服器端資安軟體。,啟用,MATCHED,topic-universe-mapping.v1
+7714,創泓科,TWO,PRIMARY,端點資安,資安服務,Y,X,主流,0.9,1.4,EDR、端點防護、行動／PC／伺服器端資安軟體。,啟用,MATCHED,topic-universe-mapping.v1
+1342,八貫,TPE,PRIMARY,紡織,傳統產業材料,Y,D,主流,0.8,1.1,紡紗、織布、成衣、機能布與紡織材料。,啟用,MATCHED,topic-universe-mapping.v1
+1451,年興,TPE,PRIMARY,紡織,傳統產業材料,Y,D,主流,0.8,1.0,紡紗、織布、成衣、機能布與紡織材料。,啟用,MATCHED,topic-universe-mapping.v1
+1474,弘裕,TPE,PRIMARY,紡織,傳統產業材料,Y,D,主流,0.8,1.1,紡紗、織布、成衣、機能布與紡織材料。,啟用,MATCHED,topic-universe-mapping.v1
+1476,儒鴻,TPE,PRIMARY,紡織,傳統產業材料,Y,D,主流,0.8,1.3,紡紗、織布、成衣、機能布與紡織材料。,啟用,MATCHED,topic-universe-mapping.v1
+3029,零壹,TPE,PRIMARY,網路資安,資安服務,Y,D,核心,1,1.3,網路防火牆、SOC、零信任、網路監控、入侵偵測與企業網路防護。,啟用,MATCHED,topic-universe-mapping.v1
+3147,大綜,TWO,PRIMARY,網路資安,資安服務,Y,D,核心,1,1.3,網路防火牆、SOC、零信任、網路監控、入侵偵測與企業網路防護。,啟用,MATCHED,topic-universe-mapping.v1
+3564,其陽,TWO,PRIMARY,網路資安,資安服務,Y,D,核心,1,1.3,網路防火牆、SOC、零信任、網路監控、入侵偵測與企業網路防護。,啟用,MATCHED,topic-universe-mapping.v1
+5410,國眾,TWO,PRIMARY,網路資安,資安服務,Y,D,核心,1,1.2,網路防火牆、SOC、零信任、網路監控、入侵偵測與企業網路防護。,啟用,MATCHED,topic-universe-mapping.v1
+6112,邁達特,TPE,PRIMARY,網路資安,資安服務,Y,D,核心,1,1.4,網路防火牆、SOC、零信任、網路監控、入侵偵測與企業網路防護。,啟用,MATCHED,topic-universe-mapping.v1
+6214,精誠,TPE,PRIMARY,網路資安,資安服務,Y,D,核心,1,1.5,網路防火牆、SOC、零信任、網路監控、入侵偵測與企業網路防護。,啟用,MATCHED,topic-universe-mapping.v1
+6416,瑞祺電通,TPE,PRIMARY,網路資安,資安服務,Y,D,核心,1,1.3,網路防火牆、SOC、零信任、網路監控、入侵偵測與企業網路防護。,啟用,MATCHED,topic-universe-mapping.v1
+6690,安碁資訊,TWO,PRIMARY,網路資安,資安服務,Y,D,核心,1,1.4,網路防火牆、SOC、零信任、網路監控、入侵偵測與企業網路防護。,啟用,MATCHED,topic-universe-mapping.v1
+6752,叡揚,TWO,PRIMARY,網路資安,資安服務,Y,D,核心,1,1.4,網路防火牆、SOC、零信任、網路監控、入侵偵測與企業網路防護。,啟用,MATCHED,topic-universe-mapping.v1
+7714,創泓科,TWO,PRIMARY,網路資安,資安服務,Y,D,核心,1,1.4,網路防火牆、SOC、零信任、網路監控、入侵偵測與企業網路防護。,啟用,MATCHED,topic-universe-mapping.v1
+2314,台揚,TPE,PRIMARY,網通,通訊與光電,Y,B,核心,1,1.3,交換器、路由器、Wi-Fi、企業網路、資料中心網路與網通設備。,啟用,MATCHED,topic-universe-mapping.v1
+2332,友訊,TPE,PRIMARY,網通,通訊與光電,Y,B,核心,1,1.1,交換器、路由器、Wi-Fi、企業網路、資料中心網路與網通設備。,啟用,MATCHED,topic-universe-mapping.v1
+2345,智邦,TPE,PRIMARY,網通,通訊與光電,Y,B,核心,1,1.5,交換器、路由器、Wi-Fi、企業網路、資料中心網路與網通設備。,啟用,MATCHED,topic-universe-mapping.v1
+2413,環科,TPE,PRIMARY,網通,通訊與光電,Y,B,核心,1,1.2,交換器、路由器、Wi-Fi、企業網路、資料中心網路與網通設備。,啟用,MATCHED,topic-universe-mapping.v1
+2424,隴華,TPE,PRIMARY,網通,通訊與光電,Y,B,核心,1,1.2,交換器、路由器、Wi-Fi、企業網路、資料中心網路與網通設備。,啟用,MATCHED,topic-universe-mapping.v1
+2455,全新,TPE,PRIMARY,網通,通訊與光電,Y,B,核心,1,1.4,交換器、路由器、Wi-Fi、企業網路、資料中心網路與網通設備。,啟用,MATCHED,topic-universe-mapping.v1
+2485,兆赫,TPE,PRIMARY,網通,通訊與光電,Y,B,核心,1,1.1,交換器、路由器、Wi-Fi、企業網路、資料中心網路與網通設備。,啟用,MATCHED,topic-universe-mapping.v1
+3105,穩懋,TWO,PRIMARY,網通,通訊與光電,Y,B,核心,1,1.3,交換器、路由器、Wi-Fi、企業網路、資料中心網路與網通設備。,啟用,MATCHED,topic-universe-mapping.v1
+3152,璟德,TWO,PRIMARY,網通,通訊與光電,Y,B,核心,1,1.3,交換器、路由器、Wi-Fi、企業網路、資料中心網路與網通設備。,啟用,MATCHED,topic-universe-mapping.v1
+3234,光環,TWO,PRIMARY,網通,通訊與光電,Y,B,核心,1,1.2,交換器、路由器、Wi-Fi、企業網路、資料中心網路與網通設備。,啟用,MATCHED,topic-universe-mapping.v1
+3491,昇達科,TWO,PRIMARY,網通,通訊與光電,Y,B,核心,1,1.5,交換器、路由器、Wi-Fi、企業網路、資料中心網路與網通設備。,啟用,MATCHED,topic-universe-mapping.v1
+3558,神準,TWO,PRIMARY,網通,通訊與光電,Y,B,核心,1,1.3,交換器、路由器、Wi-Fi、企業網路、資料中心網路與網通設備。,啟用,MATCHED,topic-universe-mapping.v1
+3596,智易,TPE,PRIMARY,網通,通訊與光電,Y,B,核心,1,1.4,交換器、路由器、Wi-Fi、企業網路、資料中心網路與網通設備。,啟用,MATCHED,topic-universe-mapping.v1
+3694,海華,TPE,PRIMARY,網通,通訊與光電,Y,B,核心,1,1.2,交換器、路由器、Wi-Fi、企業網路、資料中心網路與網通設備。,啟用,MATCHED,topic-universe-mapping.v1
+5222,全訊,TPE,PRIMARY,網通,通訊與光電,Y,B,核心,1,1.4,交換器、路由器、Wi-Fi、企業網路、資料中心網路與網通設備。,啟用,MATCHED,topic-universe-mapping.v1
+5388,中磊,TPE,PRIMARY,網通,通訊與光電,Y,B,核心,1,1.4,交換器、路由器、Wi-Fi、企業網路、資料中心網路與網通設備。,啟用,MATCHED,topic-universe-mapping.v1
+6142,友勁,TPE,PRIMARY,網通,通訊與光電,Y,B,核心,1,1.1,交換器、路由器、Wi-Fi、企業網路、資料中心網路與網通設備。,啟用,MATCHED,topic-universe-mapping.v1
+6241,鑫永洋,TWO,PRIMARY,網通,通訊與光電,Y,B,核心,1,1.1,交換器、路由器、Wi-Fi、企業網路、資料中心網路與網通設備。,啟用,MATCHED,topic-universe-mapping.v1
+6285,啟碁,TPE,PRIMARY,網通,通訊與光電,Y,B,核心,1,1.4,交換器、路由器、Wi-Fi、企業網路、資料中心網路與網通設備。,啟用,MATCHED,topic-universe-mapping.v1
+8048,德勝,TWO,PRIMARY,網通,通訊與光電,Y,B,核心,1,1.2,交換器、路由器、Wi-Fi、企業網路、資料中心網路與網通設備。,啟用,MATCHED,topic-universe-mapping.v1
+2312,金寶,TPE,SECONDARY,網通,通訊與光電,Y,B,核心,1,0.8,交換器、路由器、Wi-Fi、企業網路、資料中心網路與網通設備。,啟用,MATCHED,topic-universe-mapping.v1
+3081,聯亞,TWO,SECONDARY,網通,通訊與光電,Y,B,核心,1,0.8,交換器、路由器、Wi-Fi、企業網路、資料中心網路與網通設備。,啟用,MATCHED,topic-universe-mapping.v1
+3163,波若威,TWO,SECONDARY,網通,通訊與光電,Y,B,核心,1,0.8,交換器、路由器、Wi-Fi、企業網路、資料中心網路與網通設備。,啟用,MATCHED,topic-universe-mapping.v1
+3363,上詮,TWO,SECONDARY,網通,通訊與光電,Y,B,核心,1,0.8,交換器、路由器、Wi-Fi、企業網路、資料中心網路與網通設備。,啟用,MATCHED,topic-universe-mapping.v1
+4908,前鼎,TWO,SECONDARY,網通,通訊與光電,Y,B,核心,1,0.8,交換器、路由器、Wi-Fi、企業網路、資料中心網路與網通設備。,啟用,MATCHED,topic-universe-mapping.v1
+4977,眾達-KY,TPE,SECONDARY,網通,通訊與光電,Y,B,核心,1,0.8,交換器、路由器、Wi-Fi、企業網路、資料中心網路與網通設備。,啟用,MATCHED,topic-universe-mapping.v1
+4991,環宇-KY,TWO,SECONDARY,網通,通訊與光電,Y,B,核心,1,0.8,交換器、路由器、Wi-Fi、企業網路、資料中心網路與網通設備。,啟用,MATCHED,topic-universe-mapping.v1
+5228,鈺鎧,TWO,SECONDARY,網通,通訊與光電,Y,B,核心,1,0.8,交換器、路由器、Wi-Fi、企業網路、資料中心網路與網通設備。,啟用,MATCHED,topic-universe-mapping.v1
+6174,安碁,TWO,SECONDARY,網通,通訊與光電,Y,B,核心,1,0.8,交換器、路由器、Wi-Fi、企業網路、資料中心網路與網通設備。,啟用,MATCHED,topic-universe-mapping.v1
+6526,達發,TPE,SECONDARY,網通,通訊與光電,Y,B,核心,1,0.8,交換器、路由器、Wi-Fi、企業網路、資料中心網路與網通設備。,啟用,MATCHED,topic-universe-mapping.v1
+6821,聯寶,TWO,SECONDARY,網通,通訊與光電,Y,B,核心,1,0.8,交換器、路由器、Wi-Fi、企業網路、資料中心網路與網通設備。,啟用,MATCHED,topic-universe-mapping.v1
+2630,亞航,TPE,PRIMARY,航太零組件,軍工國防,Y,B,核心,0.9,1.3,航太結構件、引擎零件、航電、飛機零件與太空設備零件。,啟用,MATCHED,topic-universe-mapping.v1
+2634,漢翔,TPE,PRIMARY,航太零組件,軍工國防,Y,B,核心,0.9,1.4,航太結構件、引擎零件、航電、飛機零件與太空設備零件。,啟用,MATCHED,topic-universe-mapping.v1
+2645,長榮航太,TPE,PRIMARY,航太零組件,軍工國防,Y,B,核心,0.9,1.3,航太結構件、引擎零件、航電、飛機零件與太空設備零件。,啟用,MATCHED,topic-universe-mapping.v1
+3004,豐達科,TPE,PRIMARY,航太零組件,軍工國防,Y,B,核心,0.9,1.3,航太結構件、引擎零件、航電、飛機零件與太空設備零件。,啟用,MATCHED,topic-universe-mapping.v1
+4572,駐龍,TPE,PRIMARY,航太零組件,軍工國防,Y,B,核心,0.9,1.3,航太結構件、引擎零件、航電、飛機零件與太空設備零件。,啟用,MATCHED,topic-universe-mapping.v1
+8222,寶一,TPE,PRIMARY,航太零組件,軍工國防,Y,B,核心,0.9,1.3,航太結構件、引擎零件、航電、飛機零件與太空設備零件。,啟用,MATCHED,topic-universe-mapping.v1
+1342,八貫,TPE,SECONDARY,航太零組件,軍工國防,Y,B,核心,0.9,0.6,航太結構件、引擎零件、航電、飛機零件與太空設備零件。,啟用,MATCHED,topic-universe-mapping.v1
+1563,巧新,TPE,SECONDARY,航太零組件,軍工國防,Y,B,核心,0.9,0.6,航太結構件、引擎零件、航電、飛機零件與太空設備零件。,啟用,MATCHED,topic-universe-mapping.v1
+1568,倉佑,TPE,SECONDARY,航太零組件,軍工國防,Y,B,核心,0.9,0.7,航太結構件、引擎零件、航電、飛機零件與太空設備零件。,啟用,MATCHED,topic-universe-mapping.v1
+1584,精剛,TWO,SECONDARY,航太零組件,軍工國防,Y,B,核心,0.9,0.8,航太結構件、引擎零件、航電、飛機零件與太空設備零件。,啟用,MATCHED,topic-universe-mapping.v1
+3005,神基,TPE,SECONDARY,航太零組件,軍工國防,Y,B,核心,0.9,0.8,航太結構件、引擎零件、航電、飛機零件與太空設備零件。,啟用,MATCHED,topic-universe-mapping.v1
+4541,晟田,TWO,SECONDARY,航太零組件,軍工國防,Y,B,核心,0.9,0.6,航太結構件、引擎零件、航電、飛機零件與太空設備零件。,啟用,MATCHED,topic-universe-mapping.v1
+5009,榮剛,TWO,SECONDARY,航太零組件,軍工國防,Y,B,核心,0.9,0.7,航太結構件、引擎零件、航電、飛機零件與太空設備零件。,啟用,MATCHED,topic-universe-mapping.v1
+6443,元晶,TPE,SECONDARY,航太零組件,軍工國防,Y,B,核心,0.9,0.8,航太結構件、引擎零件、航電、飛機零件與太空設備零件。,啟用,MATCHED,topic-universe-mapping.v1
+6753,龍德造船,TPE,SECONDARY,航太零組件,軍工國防,Y,B,核心,0.9,0.6,航太結構件、引擎零件、航電、飛機零件與太空設備零件。,啟用,MATCHED,topic-universe-mapping.v1
+6829,千附精密,TWO,SECONDARY,航太零組件,軍工國防,Y,B,核心,0.9,0.7,航太結構件、引擎零件、航電、飛機零件與太空設備零件。,啟用,MATCHED,topic-universe-mapping.v1
+7709,榮田,TWO,SECONDARY,航太零組件,軍工國防,Y,B,核心,0.9,0.8,航太結構件、引擎零件、航電、飛機零件與太空設備零件。,啟用,MATCHED,topic-universe-mapping.v1
+3535,晶彩科,TPE,PRIMARY,視覺檢測,AI視覺,Y,X,核心,1,1.3,AOI、瑕疵檢測、品質檢測、量測與製程視覺檢測。,啟用,MATCHED,topic-universe-mapping.v1
+2451,創見,TPE,PRIMARY,記憶體模組／通路,記憶體,Y,D,主流,0.9,1.2,記憶體模組、模組品牌、記憶體代理與通路；不含晶圓製造商。,啟用,MATCHED,topic-universe-mapping.v1
+3044,健鼎,TPE,PRIMARY,記憶體模組／通路,記憶體,Y,D,主流,0.9,1.4,記憶體模組、模組品牌、記憶體代理與通路；不含晶圓製造商。,啟用,MATCHED,topic-universe-mapping.v1
+3260,威剛,TWO,PRIMARY,記憶體模組／通路,記憶體,Y,D,主流,0.9,1.3,記憶體模組、模組品牌、記憶體代理與通路；不含晶圓製造商。,啟用,MATCHED,topic-universe-mapping.v1
+4967,十銓,TPE,PRIMARY,記憶體模組／通路,記憶體,Y,D,主流,0.9,1.3,記憶體模組、模組品牌、記憶體代理與通路；不含晶圓製造商。,啟用,MATCHED,topic-universe-mapping.v1
+4973,廣穎,TWO,PRIMARY,記憶體模組／通路,記憶體,Y,D,主流,0.9,1.2,記憶體模組、模組品牌、記憶體代理與通路；不含晶圓製造商。,啟用,MATCHED,topic-universe-mapping.v1
+5289,宜鼎,TWO,PRIMARY,記憶體模組／通路,記憶體,Y,D,主流,0.9,1.4,記憶體模組、模組品牌、記憶體代理與通路；不含晶圓製造商。,啟用,MATCHED,topic-universe-mapping.v1
+8088,品安,TWO,PRIMARY,記憶體模組／通路,記憶體,Y,D,主流,0.9,1.2,記憶體模組、模組品牌、記憶體代理與通路；不含晶圓製造商。,啟用,MATCHED,topic-universe-mapping.v1
+8096,擎亞,TWO,PRIMARY,記憶體模組／通路,記憶體,Y,D,主流,0.9,1.3,記憶體模組、模組品牌、記憶體代理與通路；不含晶圓製造商。,啟用,MATCHED,topic-universe-mapping.v1
+8112,至上,TPE,PRIMARY,記憶體模組／通路,記憶體,Y,D,主流,0.9,1.2,記憶體模組、模組品牌、記憶體代理與通路；不含晶圓製造商。,啟用,MATCHED,topic-universe-mapping.v1
+8271,宇瞻,TPE,PRIMARY,記憶體模組／通路,記憶體,Y,D,主流,0.9,1.3,記憶體模組、模組品牌、記憶體代理與通路；不含晶圓製造商。,啟用,MATCHED,topic-universe-mapping.v1
+8299,群聯,TWO,PRIMARY,記憶體模組／通路,記憶體,Y,D,主流,0.9,1.5,記憶體模組、模組品牌、記憶體代理與通路；不含晶圓製造商。,啟用,MATCHED,topic-universe-mapping.v1
+2408,南亞科,TPE,PRIMARY,記憶體製程,半導體製造,Y,X,次主流,0.7,1.3,記憶體晶圓製造流程或記憶體專用製程服務；一般記憶體產品公司不必然掛此題材。,啟用,MATCHED,topic-universe-mapping.v1
+2241,艾姆勒,TPE,PRIMARY,車用功率半導體,車用電子,Y,X,主流,0.9,1.2,| 車用 MOSFET、IGBT、SiC／GaN 與車用電源元件。,啟用,MATCHED,topic-universe-mapping.v1
+8255,朋程,TWO,PRIMARY,車用功率半導體,車用電子,Y,X,主流,0.9,1.4,| 車用 MOSFET、IGBT、SiC／GaN 與車用電源元件。,啟用,MATCHED,topic-universe-mapping.v1
+2327,國巨,TPE,SECONDARY,車用功率半導體,車用電子,Y,X,主流,0.9,0.8,| 車用 MOSFET、IGBT、SiC／GaN 與車用電源元件。,啟用,MATCHED,topic-universe-mapping.v1
+6525,捷敏-KY,TPE,SECONDARY,車用功率半導體,車用電子,Y,X,主流,0.9,0.7,| 車用 MOSFET、IGBT、SiC／GaN 與車用電源元件。,啟用,MATCHED,topic-universe-mapping.v1
+3023,信邦,TPE,PRIMARY,車用連接器,車用電子,Y,D,主流,0.8,1.3,車用高速、高壓、充電與車內連接器。,啟用,MATCHED,topic-universe-mapping.v1
+3484,崧騰,TWO,PRIMARY,車用連接器,車用電子,Y,D,主流,0.8,1.2,車用高速、高壓、充電與車內連接器。,啟用,MATCHED,topic-universe-mapping.v1
+3526,凡甲,TWO,PRIMARY,車用連接器,車用電子,Y,D,主流,0.8,1.4,車用高速、高壓、充電與車內連接器。,啟用,MATCHED,topic-universe-mapping.v1
+3665,貿聯-KY,TPE,PRIMARY,車用連接器,車用電子,Y,D,主流,0.8,1.5,車用高速、高壓、充電與車內連接器。,啟用,MATCHED,topic-universe-mapping.v1
+5457,宣德,TWO,PRIMARY,車用連接器,車用電子,Y,D,主流,0.8,1.3,車用高速、高壓、充電與車內連接器。,啟用,MATCHED,topic-universe-mapping.v1
+6205,詮欣,TPE,PRIMARY,車用連接器,車用電子,Y,D,主流,0.8,1.3,車用高速、高壓、充電與車內連接器。,啟用,MATCHED,topic-universe-mapping.v1
+6279,胡連,TWO,PRIMARY,車用連接器,車用電子,Y,D,主流,0.8,1.4,車用高速、高壓、充電與車內連接器。,啟用,MATCHED,topic-universe-mapping.v1
+2460,建通,TPE,SECONDARY,車用連接器,車用電子,Y,D,主流,0.8,0.6,車用高速、高壓、充電與車內連接器。,啟用,MATCHED,topic-universe-mapping.v1
+2317,鴻海,TPE,SECONDARY,車用電子,,,大族群,,,0.8,車用電子主大族群，彙整所屬正式細題材之觀察與市場表現。,啟用,UNMAPPED_TOPIC,topic-universe-mapping.v1
+2337,旺宏,TPE,SECONDARY,車用電子,,,大族群,,,0.7,車用電子主大族群，彙整所屬正式細題材之觀察與市場表現。,啟用,UNMAPPED_TOPIC,topic-universe-mapping.v1
+2634,漢翔,TPE,PRIMARY,軍工船舶,軍工國防,Y,B,主流,0.8,1.4,軍艦、軍用船艇、海事防衛與軍工造船。,啟用,MATCHED,topic-universe-mapping.v1
+6753,龍德造船,TPE,PRIMARY,軍工船舶,軍工國防,Y,B,主流,0.8,1.4,軍艦、軍用船艇、海事防衛與軍工造船。,啟用,MATCHED,topic-universe-mapping.v1
+2367,燿華,TPE,SECONDARY,通訊與光電,,,大族群,,,0.7,通訊與光電主大族群，彙整所屬正式細題材之觀察與市場表現。,啟用,UNMAPPED_TOPIC,topic-universe-mapping.v1
+1503,士電,TPE,PRIMARY,重電,電力與能源,Y,X,核心,1,1.4,變壓器、配電盤、開關設備、電網工程與輸配電設備。,啟用,MATCHED,topic-universe-mapping.v1
+1504,東元,TPE,PRIMARY,重電,電力與能源,Y,X,核心,1,1.2,變壓器、配電盤、開關設備、電網工程與輸配電設備。,啟用,MATCHED,topic-universe-mapping.v1
+1513,中興電,TPE,PRIMARY,重電,電力與能源,Y,X,核心,1,1.4,變壓器、配電盤、開關設備、電網工程與輸配電設備。,啟用,MATCHED,topic-universe-mapping.v1
+1514,亞力,TPE,PRIMARY,重電,電力與能源,Y,X,核心,1,1.3,變壓器、配電盤、開關設備、電網工程與輸配電設備。,啟用,MATCHED,topic-universe-mapping.v1
+1519,華城,TPE,PRIMARY,重電,電力與能源,Y,X,核心,1,1.5,變壓器、配電盤、開關設備、電網工程與輸配電設備。,啟用,MATCHED,topic-universe-mapping.v1
+1609,大亞,TPE,PRIMARY,重電,電力與能源,Y,X,核心,1,1.4,變壓器、配電盤、開關設備、電網工程與輸配電設備。,啟用,MATCHED,topic-universe-mapping.v1
+1605,華新,TPE,SECONDARY,重電,電力與能源,Y,X,核心,1,0.8,變壓器、配電盤、開關設備、電網工程與輸配電設備。,啟用,MATCHED,topic-universe-mapping.v1
+1612,宏泰,TPE,SECONDARY,重電,電力與能源,Y,X,核心,1,0.6,變壓器、配電盤、開關設備、電網工程與輸配電設備。,啟用,MATCHED,topic-universe-mapping.v1
+2375,凱美,TPE,PRIMARY,鋁電容,被動元件,Y,X,主流,0.8,1.2,鋁質電解電容、鋁固態電容及其電解液／箔材供應鏈。,啟用,MATCHED,topic-universe-mapping.v1
+2472,立隆電,TPE,PRIMARY,鋁電容,被動元件,Y,X,主流,0.8,1.3,鋁質電解電容、鋁固態電容及其電解液／箔材供應鏈。,啟用,MATCHED,topic-universe-mapping.v1
+3090,日電貿,TPE,PRIMARY,鋁電容,被動元件,Y,X,主流,0.8,1.3,鋁質電解電容、鋁固態電容及其電解液／箔材供應鏈。,啟用,MATCHED,topic-universe-mapping.v1
+6175,立敦,TWO,PRIMARY,鋁電容,被動元件,Y,X,主流,0.8,1.2,鋁質電解電容、鋁固態電容及其電解液／箔材供應鏈。,啟用,MATCHED,topic-universe-mapping.v1
+8042,金山電,TWO,PRIMARY,鋁電容,被動元件,Y,X,主流,0.8,1.3,鋁質電解電容、鋁固態電容及其電解液／箔材供應鏈。,啟用,MATCHED,topic-universe-mapping.v1
+1605,華新,TPE,PRIMARY,鋼鐵／不鏽鋼材料,傳統產業材料,Y,A,核心,1,1.2,鋼鐵、不鏽鋼、鋼胚、特殊加工與金屬材料報價。,啟用,MATCHED,topic-universe-mapping.v1
+1612,宏泰,TPE,PRIMARY,鋼鐵／不鏽鋼材料,傳統產業材料,Y,A,核心,1,1.1,鋼鐵、不鏽鋼、鋼胚、特殊加工與金屬材料報價。,啟用,MATCHED,topic-universe-mapping.v1
+2002,中鋼,TPE,PRIMARY,鋼鐵／不鏽鋼材料,傳統產業材料,Y,A,核心,1,1.4,鋼鐵、不鏽鋼、鋼胚、特殊加工與金屬材料報價。,啟用,MATCHED,topic-universe-mapping.v1
+2007,燁興,TPE,PRIMARY,鋼鐵／不鏽鋼材料,傳統產業材料,Y,A,核心,1,1.1,鋼鐵、不鏽鋼、鋼胚、特殊加工與金屬材料報價。,啟用,MATCHED,topic-universe-mapping.v1
+2025,千興,TPE,PRIMARY,鋼鐵／不鏽鋼材料,傳統產業材料,Y,A,核心,1,1.0,鋼鐵、不鏽鋼、鋼胚、特殊加工與金屬材料報價。,啟用,MATCHED,topic-universe-mapping.v1
+2027,大成鋼,TPE,PRIMARY,鋼鐵／不鏽鋼材料,傳統產業材料,Y,A,核心,1,1.2,鋼鐵、不鏽鋼、鋼胚、特殊加工與金屬材料報價。,啟用,MATCHED,topic-universe-mapping.v1
+2031,新光鋼,TPE,PRIMARY,鋼鐵／不鏽鋼材料,傳統產業材料,Y,A,核心,1,1.3,鋼鐵、不鏽鋼、鋼胚、特殊加工與金屬材料報價。,啟用,MATCHED,topic-universe-mapping.v1
+2034,允強,TPE,PRIMARY,鋼鐵／不鏽鋼材料,傳統產業材料,Y,A,核心,1,1.2,鋼鐵、不鏽鋼、鋼胚、特殊加工與金屬材料報價。,啟用,MATCHED,topic-universe-mapping.v1
+5009,榮剛,TWO,PRIMARY,鋼鐵／不鏽鋼材料,傳統產業材料,Y,A,核心,1,1.3,鋼鐵、不鏽鋼、鋼胚、特殊加工與金屬材料報價。,啟用,MATCHED,topic-universe-mapping.v1
+5011,久陽,TWO,PRIMARY,鋼鐵／不鏽鋼材料,傳統產業材料,Y,A,核心,1,1.1,鋼鐵、不鏽鋼、鋼胚、特殊加工與金屬材料報價。,啟用,MATCHED,topic-universe-mapping.v1
+9958,世紀鋼,TPE,SECONDARY,鋼鐵／不鏽鋼材料,傳統產業材料,Y,A,核心,1,0.8,鋼鐵、不鏽鋼、鋼胚、特殊加工與金屬材料報價。,啟用,MATCHED,topic-universe-mapping.v1
+3693,營邦,TWO,PRIMARY,開他 AI伺服器供應鏈,,,,,,1.4,,,UNMAPPED_TOPIC,topic-universe-mapping.v1
+3715,定穎投控,TPE,SECONDARY,開他 AI伺服器供應鏈,,,,,,0.8,,,UNMAPPED_TOPIC,topic-universe-mapping.v1
+7786,東方風能,TPE,PRIMARY,離岸風電／鋼構,電力與能源,Y,B,次主流,0.7,1.3,離岸風電水下基礎、風機鋼構、塔架與海事能源工程。,啟用,MATCHED,topic-universe-mapping.v1
+9958,世紀鋼,TPE,PRIMARY,離岸風電／鋼構,電力與能源,Y,B,次主流,0.7,1.4,離岸風電水下基礎、風機鋼構、塔架與海事能源工程。,啟用,MATCHED,topic-universe-mapping.v1
+2031,新光鋼,TPE,SECONDARY,離岸風電／鋼構,電力與能源,Y,B,次主流,0.7,0.8,離岸風電水下基礎、風機鋼構、塔架與海事能源工程。,啟用,MATCHED,topic-universe-mapping.v1
+3708,上緯投控,TPE,SECONDARY,離岸風電／鋼構,電力與能源,Y,B,次主流,0.7,0.7,離岸風電水下基礎、風機鋼構、塔架與海事能源工程。,啟用,MATCHED,topic-universe-mapping.v1
+6112,邁達特,TPE,PRIMARY,雲端資安,資安服務,Y,B,主流,0.9,1.4,雲端工作負載防護、SASE、雲端 IAM、雲端監控與雲端資安服務。,啟用,MATCHED,topic-universe-mapping.v1
+6214,精誠,TPE,PRIMARY,雲端資安,資安服務,Y,B,主流,0.9,1.5,雲端工作負載防護、SASE、雲端 IAM、雲端監控與雲端資安服務。,啟用,MATCHED,topic-universe-mapping.v1
+6690,安碁資訊,TWO,PRIMARY,雲端資安,資安服務,Y,B,主流,0.9,1.4,雲端工作負載防護、SASE、雲端 IAM、雲端監控與雲端資安服務。,啟用,MATCHED,topic-universe-mapping.v1
+6752,叡揚,TWO,PRIMARY,雲端資安,資安服務,Y,B,主流,0.9,1.4,雲端工作負載防護、SASE、雲端 IAM、雲端監控與雲端資安服務。,啟用,MATCHED,topic-universe-mapping.v1
+7714,創泓科,TWO,PRIMARY,雲端資安,資安服務,Y,B,主流,0.9,1.4,雲端工作負載防護、SASE、雲端 IAM、雲端監控與雲端資安服務。,啟用,MATCHED,topic-universe-mapping.v1
+3029,零壹,TPE,SECONDARY,雲端資安,資安服務,Y,B,主流,0.9,0.7,雲端工作負載防護、SASE、雲端 IAM、雲端監控與雲端資安服務。,啟用,MATCHED,topic-universe-mapping.v1
+3147,大綜,TWO,SECONDARY,雲端資安,資安服務,Y,B,主流,0.9,0.7,雲端工作負載防護、SASE、雲端 IAM、雲端監控與雲端資安服務。,啟用,MATCHED,topic-universe-mapping.v1
+5222,全訊,TPE,PRIMARY,雷達與感測,軍工國防,Y,X,核心,1,1.4,軍工雷達、電子偵察、軍用感測、警戒與目標追蹤系統。,啟用,MATCHED,topic-universe-mapping.v1
+7402,邑錡,TWO,PRIMARY,雷達與感測,軍工國防,Y,X,核心,1,1.3,軍工雷達、電子偵察、軍用感測、警戒與目標追蹤系統。,啟用,MATCHED,topic-universe-mapping.v1
+1810,和成,TPE,SECONDARY,雷達與感測,軍工國防,Y,X,核心,1,0.6,軍工雷達、電子偵察、軍用感測、警戒與目標追蹤系統。,啟用,MATCHED,topic-universe-mapping.v1
+2367,燿華,TPE,SECONDARY,雷達與感測,軍工國防,Y,X,核心,1,0.7,軍工雷達、電子偵察、軍用感測、警戒與目標追蹤系統。,啟用,MATCHED,topic-universe-mapping.v1
+2413,環科,TPE,SECONDARY,雷達與感測,軍工國防,Y,X,核心,1,0,軍工雷達、電子偵察、軍用感測、警戒與目標追蹤系統。,啟用,MATCHED,topic-universe-mapping.v1
+6829,千附精密,TWO,SECONDARY,雷達與感測,軍工國防,Y,X,核心,1,0.7,軍工雷達、電子偵察、軍用感測、警戒與目標追蹤系統。,啟用,MATCHED,topic-universe-mapping.v1
+1319,東陽,TPE,SECONDARY,電動車／EV,車用電子,Y,B,核心,1,0.7,電動車動力、充電、電池、車用電子與 EV 專用零組件。,啟用,MATCHED,topic-universe-mapping.v1
+1503,士電,TPE,SECONDARY,電動車／EV,車用電子,Y,B,核心,1,0.9,電動車動力、充電、電池、車用電子與 EV 專用零組件。,啟用,MATCHED,topic-universe-mapping.v1
+1537,廣隆,TPE,SECONDARY,電動車／EV,車用電子,Y,B,核心,1,0.7,電動車動力、充電、電池、車用電子與 EV 專用零組件。,啟用,MATCHED,topic-universe-mapping.v1
+2317,鴻海,TPE,SECONDARY,電動車／EV,車用電子,Y,B,核心,1,0.8,電動車動力、充電、電池、車用電子與 EV 專用零組件。,啟用,MATCHED,topic-universe-mapping.v1
+5227,立凱-KY,TWO,SECONDARY,電動車／EV,車用電子,Y,B,核心,1,0.7,電動車動力、充電、電池、車用電子與 EV 專用零組件。,啟用,MATCHED,topic-universe-mapping.v1
+6781,AES-KY,TPE,SECONDARY,電動車／EV,車用電子,Y,B,核心,1,0.9,電動車動力、充電、電池、車用電子與 EV 專用零組件。,啟用,MATCHED,topic-universe-mapping.v1
+1711,永光,TPE,PRIMARY,電子化學材料,半導體材料,Y,X,核心,1,1.3,| ABF／BT 樹脂、封裝膠材、電子級化學配方、感光材料與電子材料化學品。若是完成的 ABF 載板，改歸 ABF載板候選。,啟用,MATCHED,topic-universe-mapping.v1
+1727,中華化,TPE,PRIMARY,電子化學材料,半導體材料,Y,X,核心,1,1.3,| ABF／BT 樹脂、封裝膠材、電子級化學配方、感光材料與電子材料化學品。若是完成的 ABF 載板，改歸 ABF載板候選。,啟用,MATCHED,topic-universe-mapping.v1
+1773,勝一,TPE,PRIMARY,電子化學材料,半導體材料,Y,X,核心,1,1.4,| ABF／BT 樹脂、封裝膠材、電子級化學配方、感光材料與電子材料化學品。若是完成的 ABF 載板，改歸 ABF載板候選。,啟用,MATCHED,topic-universe-mapping.v1
+1785,光洋科,TWO,PRIMARY,電子化學材料,半導體材料,Y,X,核心,1,1.3,| ABF／BT 樹脂、封裝膠材、電子級化學配方、感光材料與電子材料化學品。若是完成的 ABF 載板，改歸 ABF載板候選。,啟用,MATCHED,topic-universe-mapping.v1
+4760,勤凱,TWO,PRIMARY,電子化學材料,半導體材料,Y,X,核心,1,1.3,| ABF／BT 樹脂、封裝膠材、電子級化學配方、感光材料與電子材料化學品。若是完成的 ABF 載板，改歸 ABF載板候選。,啟用,MATCHED,topic-universe-mapping.v1
+5434,崇越,TPE,PRIMARY,電子化學材料,半導體材料,Y,X,核心,1,1.4,| ABF／BT 樹脂、封裝膠材、電子級化學配方、感光材料與電子材料化學品。若是完成的 ABF 載板，改歸 ABF載板候選。,啟用,MATCHED,topic-universe-mapping.v1
+2327,國巨,TPE,PRIMARY,電感,被動元件,Y,X,核心,0.9,1.4,電感、功率電感、磁珠、磁性元件與高頻電感。,啟用,MATCHED,topic-universe-mapping.v1
+2375,凱美,TPE,PRIMARY,電感,被動元件,Y,X,核心,0.9,1.2,電感、功率電感、磁珠、磁性元件與高頻電感。,啟用,MATCHED,topic-universe-mapping.v1
+3236,千如,TWO,PRIMARY,電感,被動元件,Y,X,核心,0.9,1.1,電感、功率電感、磁珠、磁性元件與高頻電感。,啟用,MATCHED,topic-universe-mapping.v1
+3357,臺慶科,TWO,PRIMARY,電感,被動元件,Y,X,核心,0.9,1.2,電感、功率電感、磁珠、磁性元件與高頻電感。,啟用,MATCHED,topic-universe-mapping.v1
+5228,鈺鎧,TWO,PRIMARY,電感,被動元件,Y,X,核心,0.9,1.3,電感、功率電感、磁珠、磁性元件與高頻電感。,啟用,MATCHED,topic-universe-mapping.v1
+6432,今展科,TWO,PRIMARY,電感,被動元件,Y,X,核心,0.9,1.1,電感、功率電感、磁珠、磁性元件與高頻電感。,啟用,MATCHED,topic-universe-mapping.v1
+6821,聯寶,TWO,PRIMARY,電感,被動元件,Y,X,核心,0.9,1.3,電感、功率電感、磁珠、磁性元件與高頻電感。,啟用,MATCHED,topic-universe-mapping.v1
+2376,技嘉,TPE,PRIMARY,顯卡,AI運算與伺服器,Y,B,核心,1,1.5,GPU 板卡、AI 加速卡、繪圖卡、板卡代工與顯示卡供應鏈。,啟用,MATCHED,topic-universe-mapping.v1
+2377,微星,TPE,PRIMARY,顯卡,AI運算與伺服器,Y,B,核心,1,1.3,GPU 板卡、AI 加速卡、繪圖卡、板卡代工與顯示卡供應鏈。,啟用,MATCHED,topic-universe-mapping.v1
+2399,映泰,TPE,PRIMARY,顯卡,AI運算與伺服器,Y,B,核心,1,1.1,GPU 板卡、AI 加速卡、繪圖卡、板卡代工與顯示卡供應鏈。,啟用,MATCHED,topic-universe-mapping.v1
+2425,承啟,TPE,PRIMARY,顯卡,AI運算與伺服器,Y,B,核心,1,1.2,GPU 板卡、AI 加速卡、繪圖卡、板卡代工與顯示卡供應鏈。,啟用,MATCHED,topic-universe-mapping.v1
+2465,麗臺,TPE,PRIMARY,顯卡,AI運算與伺服器,Y,B,核心,1,1.2,GPU 板卡、AI 加速卡、繪圖卡、板卡代工與顯示卡供應鏈。,啟用,MATCHED,topic-universe-mapping.v1
+5386,青雲,TWO,PRIMARY,顯卡,AI運算與伺服器,Y,B,核心,1,1.2,GPU 板卡、AI 加速卡、繪圖卡、板卡代工與顯示卡供應鏈。,啟用,MATCHED,topic-universe-mapping.v1
+6150,撼訊,TWO,PRIMARY,顯卡,AI運算與伺服器,Y,B,核心,1,1.2,GPU 板卡、AI 加速卡、繪圖卡、板卡代工與顯示卡供應鏈。,啟用,MATCHED,topic-universe-mapping.v1
+2357,華碩,TPE,SECONDARY,顯卡,AI運算與伺服器,Y,B,核心,1,0.8,GPU 板卡、AI 加速卡、繪圖卡、板卡代工與顯示卡供應鏈。,啟用,MATCHED,topic-universe-mapping.v1
+2308,台達電,TPE,PRIMARY,風冷散熱,熱管理,Y,D,核心,0.9,1.5,風扇、散熱器、熱管、均熱板與風冷模組；若主要產品是液冷系統，不收錄。,啟用,MATCHED,topic-universe-mapping.v1
+2421,建準,TPE,PRIMARY,風冷散熱,熱管理,Y,D,核心,0.9,1.4,風扇、散熱器、熱管、均熱板與風冷模組；若主要產品是液冷系統，不收錄。,啟用,MATCHED,topic-universe-mapping.v1
+3071,協禧,TWO,PRIMARY,風冷散熱,熱管理,Y,D,核心,0.9,1.1,風扇、散熱器、熱管、均熱板與風冷模組；若主要產品是液冷系統，不收錄。,啟用,MATCHED,topic-universe-mapping.v1
+6275,元山,TWO,PRIMARY,風冷散熱,熱管理,Y,D,核心,0.9,1.3,風扇、散熱器、熱管、均熱板與風冷模組；若主要產品是液冷系統，不收錄。,啟用,MATCHED,topic-universe-mapping.v1
+6591,動力-KY,TPE,PRIMARY,風冷散熱,熱管理,Y,D,核心,0.9,1.2,風扇、散熱器、熱管、均熱板與風冷模組；若主要產品是液冷系統，不收錄。,啟用,MATCHED,topic-universe-mapping.v1
+6831,邁科,TPE,PRIMARY,風冷散熱,熱管理,Y,D,核心,0.9,1.3,風扇、散熱器、熱管、均熱板與風冷模組；若主要產品是液冷系統，不收錄。,啟用,MATCHED,topic-universe-mapping.v1
+2301,光寶科,TPE,SECONDARY,風冷散熱,熱管理,Y,D,核心,0.9,0.9,風扇、散熱器、熱管、均熱板與風冷模組；若主要產品是液冷系統，不收錄。,啟用,MATCHED,topic-universe-mapping.v1
+3338,泰碩,TPE,SECONDARY,風冷散熱,熱管理,Y,D,核心,0.9,0.7,風扇、散熱器、熱管、均熱板與風冷模組；若主要產品是液冷系統，不收錄。,啟用,MATCHED,topic-universe-mapping.v1
+3483,力致,TWO,SECONDARY,風冷散熱,熱管理,Y,D,核心,0.9,0.7,風扇、散熱器、熱管、均熱板與風冷模組；若主要產品是液冷系統，不收錄。,啟用,MATCHED,topic-universe-mapping.v1
+4966,譜瑞-KY,TWO,PRIMARY,高速介面,高速互連,Y,D,主流,0.9,1.5,高速 SerDes、介面控制 IC、PHY、USB／PCIe／Ethernet 介面產品。,啟用,MATCHED,topic-universe-mapping.v1
+5269,祥碩,TPE,PRIMARY,高速介面,高速互連,Y,D,主流,0.9,1.5,高速 SerDes、介面控制 IC、PHY、USB／PCIe／Ethernet 介面產品。,啟用,MATCHED,topic-universe-mapping.v1
+6684,安格,TWO,PRIMARY,高速介面,高速互連,Y,D,主流,0.9,1.2,高速 SerDes、介面控制 IC、PHY、USB／PCIe／Ethernet 介面產品。,啟用,MATCHED,topic-universe-mapping.v1
+6756,威鋒電子,TPE,PRIMARY,高速介面,高速互連,Y,D,主流,0.9,1.3,高速 SerDes、介面控制 IC、PHY、USB／PCIe／Ethernet 介面產品。,啟用,MATCHED,topic-universe-mapping.v1
+4966,譜瑞-KY,TWO,PRIMARY,高速傳輸,高速互連,Y,X,核心,1,1.5,USB4、Thunderbolt、PCIe、Retimer、Redriver、高速介面IC、線材與高速連接器。,啟用,MATCHED,topic-universe-mapping.v1
+5269,祥碩,TPE,PRIMARY,高速傳輸,高速互連,Y,X,核心,1,1.5,USB4、Thunderbolt、PCIe、Retimer、Redriver、高速介面IC、線材與高速連接器。,啟用,MATCHED,topic-universe-mapping.v1
+6684,安格,TWO,PRIMARY,高速傳輸,高速互連,Y,X,核心,1,1.2,USB4、Thunderbolt、PCIe、Retimer、Redriver、高速介面IC、線材與高速連接器。,啟用,MATCHED,topic-universe-mapping.v1
+6756,威鋒電子,TPE,PRIMARY,高速傳輸,高速互連,Y,X,核心,1,1.3,USB4、Thunderbolt、PCIe、Retimer、Redriver、高速介面IC、線材與高速連接器。,啟用,MATCHED,topic-universe-mapping.v1
+3605,宏致,TPE,PRIMARY,高速連接器,電子連接,Y,D,核心,1,1.2,112G／224G、PCIe、伺服器、資料中心、車用高速連接器與端子。,啟用,MATCHED,topic-universe-mapping.v1
+3665,貿聯-KY,TPE,PRIMARY,高速連接器,電子連接,Y,D,核心,1,1.5,112G／224G、PCIe、伺服器、資料中心、車用高速連接器與端子。,啟用,MATCHED,topic-universe-mapping.v1
+5457,宣德,TWO,PRIMARY,高速連接器,電子連接,Y,D,核心,1,1.3,112G／224G、PCIe、伺服器、資料中心、車用高速連接器與端子。,啟用,MATCHED,topic-universe-mapping.v1
+6197,佳必琪,TPE,PRIMARY,高速連接器,電子連接,Y,D,核心,1,1.4,112G／224G、PCIe、伺服器、資料中心、車用高速連接器與端子。,啟用,MATCHED,topic-universe-mapping.v1
+6205,詮欣,TPE,PRIMARY,高速連接器,電子連接,Y,D,核心,1,1.3,112G／224G、PCIe、伺服器、資料中心、車用高速連接器與端子。,啟用,MATCHED,topic-universe-mapping.v1
+6715,嘉基,TPE,PRIMARY,高速連接器,電子連接,Y,D,核心,1,1.4,112G／224G、PCIe、伺服器、資料中心、車用高速連接器與端子。,啟用,MATCHED,topic-universe-mapping.v1
+6213,聯茂,TPE,PRIMARY,高頻電子材料,,,大族群,,,1.4,高頻電子材料主大族群，彙整所屬正式細題材之觀察與市場表現。,啟用,UNMAPPED_TOPIC,topic-universe-mapping.v1
+6274,台燿,TWO,PRIMARY,高頻電子材料,,,大族群,,,1.5,高頻電子材料主大族群，彙整所屬正式細題材之觀察與市場表現。,啟用,UNMAPPED_TOPIC,topic-universe-mapping.v1

@@ -1,0 +1,85 @@
+{
+  "canonical_head": "dac1dd21cae214ea1ac3e5a511e48774ae2411c9",
+  "dataset": {
+    "actual_end": "2026-08-13",
+    "actual_start": "2026-02-03",
+    "date_count": 125,
+    "normalized_dataset_sha256": "17faa9be1189d6fab1bdfe518a1faf9e90d9be1ec994008ed59beef8bf6ecb95",
+    "row_count": 16250,
+    "topic_count": 130
+  },
+  "date_contract": {
+    "pre_window_end": "2026-02-01",
+    "pre_window_start": "2026-01-01",
+    "pre_window_synthetic_fill": false,
+    "requested_end": "2026-08-13",
+    "requested_start": "2026-02-03",
+    "warmup_date": "2026-02-02",
+    "warmup_emitted_as_research_row": false
+  },
+  "formal_member_fact_reconciliation": {
+    "blocks_bounded_research_output": false,
+    "closure_count": 4235,
+    "delta": 1,
+    "runtime_aggregate_count": 4236,
+    "state": "UNRESOLVED_RETAINED_METADATA"
+  },
+  "governance": {
+    "DEPLOY": "NO",
+    "FORMAL_PUBLICATION": "NO",
+    "FORWARD_SHADOW_MUTATED": "NO",
+    "LIFECYCLE_POLICY_CHANGED": "NO",
+    "NEXT_TASK_CHANGED": "NO",
+    "PRODUCTION_DB_MUTATION": "NO",
+    "PUSH": "NO",
+    "RETROSPECTIVE_RESEARCH_ONLY": "YES",
+    "STRENGTH_SCORE_CREATED": "NO",
+    "WS1_ONLY": "YES",
+    "WS3_STRATEGY_CHANGED": "NO"
+  },
+  "lifecycle_contract": {
+    "bootstrap": "first eligible research date uses unseen prior state; no pre-start claim",
+    "calculation_version": "topic-lifecycle-shadow.v1",
+    "persistence_hysteresis_changed": false,
+    "policy_version": "topic-lifecycle-policy.provisional.1",
+    "semantics_changed": false
+  },
+  "membership_contract": {
+    "live_tracking_universe_used": false,
+    "pit_claim": false,
+    "relation_selection": "latest non-superseded open-ended relation per topic/instrument",
+    "taxonomy": "CURRENT_FROZEN_CANONICAL_TAXONOMY"
+  },
+  "no_database_write": true,
+  "not_formal_publication": true,
+  "not_forward_shadow": true,
+  "not_pit_truth": true,
+  "price_contract": {
+    "adjustment_state": "UNKNOWN",
+    "economic_return_truth_asserted": false,
+    "return_definition": "raw close-to-close percentage change between available consecutive canonical bars",
+    "selection": "source_rank, retrieved_at DESC, observation_id DESC after successor exclusion",
+    "source": "accepted canonical PRICE observations with DAILY_BAR semantics"
+  },
+  "retrospective_research_only": true,
+  "source_artifacts_sha256": {
+    "reports/TASK-WS1-L2-HISTORICAL-LIFECYCLE-RECONSTRUCTION-PREFLIGHT-20260822/historical-reconstruction-input-inventory.csv": "b87186f876b19aa926c554e124a2e5a90d2f4c17c4bdee6c7a92c19cb2a3b6f1",
+    "reports/TASK-WS1-L2-HISTORICAL-LIFECYCLE-RECONSTRUCTION-PREFLIGHT-20260822/reconstruction-readiness.json": "7db5b1f36232f14fc0f4c7757cfaeb118067585856da379698f8320b3524d8b7"
+  },
+  "source_class": "CURRENT_TAXONOMY_HISTORICAL_RECONSTRUCTION",
+  "strength_contract": {
+    "dimension_labels": false,
+    "fields": [
+      "positive_breadth",
+      "strong_breadth",
+      "weak_ratio",
+      "average_change_pct"
+    ],
+    "leader_change_pct": "PROXY_EVIDENCE_ONLY",
+    "mode": "RAW_EVIDENCE_VECTOR",
+    "overall_level": false,
+    "quality_metadata_is_strength": false,
+    "score_0_to_100": false
+  },
+  "task_id": "TASK-WS1-L5-CURRENT-TAXONOMY-HISTORICAL-LIFECYCLE-STRENGTH-RECONSTRUCTION-20260822"
+}

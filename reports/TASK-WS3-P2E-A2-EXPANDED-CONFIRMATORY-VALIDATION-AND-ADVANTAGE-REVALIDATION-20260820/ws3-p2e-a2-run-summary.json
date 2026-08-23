@@ -1,0 +1,85 @@
+{
+  "A1_ORIGIN_SHOULD_BECOME_FORMATION_REQUIREMENT": "NO",
+  "A2_ACTIVE_DATE_COUNT": 410,
+  "A2_CLOSE_GT_2_TO_3PCT_DISPOSITION": "SUPPORTED_WITH_BOUNDED_LIMITATIONS",
+  "A2_CLOSE_GT_2_TO_3PCT_EVENT_COUNT": 712,
+  "A2_ENTRY_CANDIDATE_DISPOSITION_COUNTS": {
+    "FAILED_CONFIRMATION": 3,
+    "SUPPORTED_WITH_BOUNDED_LIMITATIONS": 2
+  },
+  "A2_EVENT_COUNT": 5277,
+  "A2_INSTRUMENT_COUNT": 599,
+  "A2_INVALIDATION_CANDIDATE_DISPOSITION_COUNTS": {
+    "INCONCLUSIVE": 9,
+    "SUPPORTED_WITH_BOUNDED_LIMITATIONS": 6
+  },
+  "A2_PROVISIONAL_SPEC_READINESS": "NO",
+  "DATASET_IDENTITY": {
+    "accepted_rows": 288881,
+    "instruments": 603,
+    "sha256": "e803733e796d8f4d8cf00575cd4045f28c9364572fc61b31ef490e8a65ff47a4",
+    "window": [
+      "2024-08-13",
+      "2026-08-13"
+    ]
+  },
+  "DEPLOY": "NO",
+  "DIRECT_ENTRY_ADVANTAGE": "NO_DIRECT_ENTRY_ADVANTAGE",
+  "GATE_0_DISPOSITION": "INCONCLUSIVE",
+  "MODIFIED_FILES": [
+    "services/api/src/topicpilot_api/research/ws3_p2e_a2_expanded_confirmatory_validation.py",
+    "reports/TASK-WS3-P2E-A2-EXPANDED-CONFIRMATORY-VALIDATION-AND-ADVANTAGE-REVALIDATION-20260820",
+    "docs/reports/TASK-WS3-P2E-A2-EXPANDED-CONFIRMATORY-VALIDATION-AND-ADVANTAGE-REVALIDATION-20260820/formal-closure-report.md"
+  ],
+  "NEXT_TASK_CHANGED": "NO",
+  "NORMALIZED_AGGREGATE_SHA256": "5beaece78916c11ec5fafb6f0aa08c2151ff28abfa741fab5522f67b10181bea",
+  "PIT_LOOKAHEAD_CHECKS": {
+    "duplicate_event": "PASS",
+    "future_session_leakage": "PASS",
+    "invalid_ohlcv": "PASS",
+    "lifecycle": "PASS",
+    "lineage": "PASS",
+    "lookahead": "PASS",
+    "pit_violation": "PASS",
+    "quarantine": "PASS",
+    "synthetic_fill": "PASS",
+    "unknown_adjustment_coercion": "PASS"
+  },
+  "PRODUCTION_MUTATION": "NO",
+  "PROMOTION_STATUS": "EVIDENCE_ONLY_NOT_PROMOTED",
+  "QUALITY_AUDIT": {
+    "a1_formation_unchanged": true,
+    "a2_formation_unchanged": true,
+    "adjustment_state": "UNKNOWN_RAW_ONLY",
+    "all_outcomes_evaluation_only": true,
+    "duplicate_event_id_count": 0,
+    "duplicate_session_count": 0,
+    "evaluation_excluded_known_event_horizon_count": 544,
+    "expanded_event_rows": 5277,
+    "formation_reconciliation_errors": {},
+    "future_session_dependency_in_formation": false,
+    "incomplete_lineage_count": 0,
+    "invalid_ohlcv_count": 0,
+    "lifecycle_leakage_count": 0,
+    "lookahead_leakage_detected": false,
+    "no_data_synthetic_fill_count": 0,
+    "pit_violation_count": 0,
+    "quality_gate_pass": true,
+    "quarantine_leakage_count": 0,
+    "raw_ohlcv_not_adjusted_truth": true,
+    "source_instrument_count": 603,
+    "source_lineage_preserved": true,
+    "source_panel_rows": 5277,
+    "source_rows_consumed": 288881,
+    "synthetic_fill_used": false,
+    "task_id": "TASK-WS3-P2E-A2-EXPANDED-CONFIRMATORY-VALIDATION-AND-ADVANTAGE-REVALIDATION-20260820",
+    "unknown_adjustment_coercion_count": 0,
+    "ws2_unchanged": true
+  },
+  "READY_TO_INTERPRET_A2_SUBHYPOTHESES": "NO",
+  "REPRODUCIBILITY_PASS": "YES",
+  "SCHEDULER_CHANGE": "NO",
+  "SOURCE_CANONICAL_HEAD": "3402adfa9129ca2a6cfad163835b90b54a6d9f3d",
+  "TASK_FINAL_STATUS": "COMPLETE_PASS_WITH_BOUNDED_LIMITATIONS",
+  "TASK_ID": "TASK-WS3-P2E-A2-EXPANDED-CONFIRMATORY-VALIDATION-AND-ADVANTAGE-REVALIDATION-20260820"
+}

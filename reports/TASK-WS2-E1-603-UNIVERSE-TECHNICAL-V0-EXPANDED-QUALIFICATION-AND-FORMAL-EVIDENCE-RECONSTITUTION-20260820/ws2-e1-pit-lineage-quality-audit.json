@@ -1,0 +1,21 @@
+{
+  "task_id": "TASK-WS2-E1-603-UNIVERSE-TECHNICAL-V0-EXPANDED-QUALIFICATION-AND-FORMAL-EVIDENCE-RECONSTITUTION-20260820",
+  "status": "NOT_RUN_SOURCE_CONTRACT_BLOCKED",
+  "checks": {
+    "quarantine_leakage_count": null,
+    "no_data_synthetic_fill_count": null,
+    "lifecycle_leakage_count": null,
+    "look_ahead_leakage_detected": "NOT_RUN",
+    "duplicate_evidence_key_count": null,
+    "invalid_technical_value_count": null,
+    "warmup_violation_count": null,
+    "source_lineage_mismatch_count": null,
+    "supersession_correctness": "NOT_RUN"
+  },
+  "prior_canonical_preserved": {
+    "pit_safe_instrument_count": 507,
+    "pit_unsafe_instrument_count": 0,
+    "look_ahead_leakage_detected": false
+  },
+  "reason": "The 603 accepted-row and PIT lineage manifests are not canonical inputs."
+}

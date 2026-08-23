@@ -1,0 +1,200 @@
+{
+  "task_id": "TASK-FE-BE-STOCK-006B-PHASE-2B-TECHNICAL-V0-IMPLEMENTATION",
+  "phase": "WS2_PHASE_2B",
+  "final_status": "IMPLEMENTED_AND_VALIDATED",
+  "canonical_status": "CANONICALIZED",
+  "release_status": "NOT_RUN",
+  "production_verification": "NOT_RUN",
+  "canonical_pre_sha": "a26fad00d2861c0ecbf763d3f2428b39343714fd",
+  "canonical_post_sha": "663c574c870d225bd93b66216ba98398d69c427c",
+  "predecessor_phase_2a2": {
+    "task_id": "TASK-FE-BE-STOCK-006B-PHASE-2A2-OWNER-TECHNICAL-V0-POLICY-CANONICAL-CLOSURE",
+    "canonical_head": "0608f176dabe40353cbdcae153eb9fcd3b58563a",
+    "routing": "READY_FOR_PHASE_2B_TECHNICAL_V0_IMPLEMENTATION",
+    "owner_policy_status": "CLOSED"
+  },
+  "technical_v0_version": "stock-technical-publication.v2",
+  "technical_policy_version": "stock-technical-v0-policy.v2",
+  "price_basis": "RAW_OBSERVED",
+  "continuity_policy": "FORMAL_RAW_OBSERVED + BOUNDED_CONTINUITY_ASSURANCE",
+  "indicator_level_continuity": true,
+  "unknown_fail_closed": true,
+  "symbol_level_global_block": false,
+  "indicator_families": [
+    "MA",
+    "DISTANCE_TO_MA20",
+    "RAW_CLOSE_RETURN",
+    "VOLUME_MA",
+    "VOLUME_RATIO",
+    "RSI",
+    "MACD"
+  ],
+  "indicator_outputs": [
+    "MA5",
+    "MA10",
+    "MA20",
+    "MA60",
+    "DISTANCE_TO_MA20",
+    "RAW_CLOSE_RETURN_5D",
+    "RAW_CLOSE_RETURN_20D",
+    "VOLUME_MA5",
+    "VOLUME_MA20",
+    "VOLUME_RATIO_20",
+    "RSI14",
+    "MACD_12_26_9",
+    "MACD_SIGNAL_12_26_9",
+    "MACD_HISTOGRAM_12_26_9"
+  ],
+  "algorithm_versions": {
+    "MA5": "SMA_CLOSE_V1",
+    "MA10": "SMA_CLOSE_V1",
+    "MA20": "SMA_CLOSE_V1",
+    "MA60": "SMA_CLOSE_V1",
+    "DISTANCE_TO_MA20": "DISTANCE_TO_MA20_V1",
+    "RAW_CLOSE_RETURN_5D": "RAW_OBSERVED_CLOSE_RETURN_V1",
+    "RAW_CLOSE_RETURN_20D": "RAW_OBSERVED_CLOSE_RETURN_V1",
+    "VOLUME_MA5": "SMA_VOLUME_QUANTITY_V1",
+    "VOLUME_MA20": "SMA_VOLUME_QUANTITY_V1",
+    "VOLUME_RATIO_20": "VOLUME_RATIO_20_V1",
+    "RSI14": "RSI_WILDER_14_V1",
+    "MACD_12_26_9": "MACD_12_26_9_SMA_SEEDED_EMA_V1",
+    "MACD_SIGNAL_12_26_9": "MACD_12_26_9_SMA_SEEDED_EMA_V1",
+    "MACD_HISTOGRAM_12_26_9": "MACD_12_26_9_SMA_SEEDED_EMA_V1"
+  },
+  "required_observations": {
+    "MA5": 5,
+    "MA10": 10,
+    "MA20": 20,
+    "MA60": 60,
+    "DISTANCE_TO_MA20": 20,
+    "RAW_CLOSE_RETURN_5D": 6,
+    "RAW_CLOSE_RETURN_20D": 21,
+    "VOLUME_MA5": 5,
+    "VOLUME_MA20": 20,
+    "VOLUME_RATIO_20": 20,
+    "RSI14": 15,
+    "MACD_12_26_9": 26,
+    "MACD_SIGNAL_12_26_9": 34,
+    "MACD_HISTOGRAM_12_26_9": 34
+  },
+  "warmup_policy": {
+    "MA": "SMA over exactly N accepted sessions ending at as_of_session",
+    "DISTANCE_TO_MA20": "MA20 window plus non-zero denominator",
+    "RAW_CLOSE_RETURN": "endpoint close divided by close N accepted sessions earlier minus one",
+    "VOLUME": "SMA over canonical volume quantity; no turnover substitution",
+    "RSI14": "14-change arithmetic seed, then Wilder recursive average gain/loss; no NaN",
+    "MACD": "EMA12/EMA26 SMA seeds; Signal EMA9 seeded from first 9 valid MACD values; Histogram line minus Signal"
+  },
+  "publication_states": {
+    "FORMAL": "Exact observations, lineage, algorithm, and CONTINUITY_PASS_BOUNDED satisfy the publication gate",
+    "UNAVAILABLE": "Required history/input/denominator/continuity gate is not satisfied; value is null with reason",
+    "DEFERRED": "Reserved for Advanced Technical or an explicitly deferred capability, not used to disguise V0 UNKNOWN",
+    "UNKNOWN": "Continuity state only; fail-closed and never equivalent to NO_EVENT"
+  },
+  "unavailable_reasons": [
+    "NO_ACCEPTED_CANONICAL_PRICE_OBSERVATIONS",
+    "UNAVAILABLE_INSUFFICIENT_HISTORY",
+    "UNAVAILABLE_INVALID_OBSERVATION",
+    "UNAVAILABLE_ZERO_DENOMINATOR",
+    "CONTINUITY_FAIL",
+    "CONTINUITY_UNKNOWN",
+    "CONTINUITY_AUTHORITY_UNAVAILABLE",
+    "CONTINUITY_AUTHORITY_INCOMPLETE",
+    "CONTINUITY_EVIDENCE_SCOPE_MISMATCH",
+    "CONTINUITY_EVIDENCE_CONFLICT",
+    "CONTINUITY_EVENT_RECORD_INVALID"
+  ],
+  "pit_semantics": {
+    "backend_only": true,
+    "as_of_bound": true,
+    "future_observations_excluded": true,
+    "accepted_session_order": [
+      "trading_date ASC",
+      "observed_at ASC",
+      "ordering_key ASC",
+      "observation_id ASC"
+    ],
+    "calendar_day_approximation": false,
+    "synthetic_sessions": false,
+    "forward_fill": false
+  },
+  "lineage_requirements": [
+    "V2_CANONICAL_OBSERVATION_CHAIN",
+    "RAW_OBSERVED_DAILY_BAR",
+    "source_code",
+    "adapter_version",
+    "normalization_contract_version",
+    "mapping_policy_version",
+    "reference_data_version",
+    "quality_state=ACCEPTED",
+    "instrument_identity",
+    "observation_id",
+    "ordering_key"
+  ],
+  "ws3_ma60_consumability": "BOUNDED",
+  "frontend_publication_state": "READY_FOR_FRONTEND_WIRING",
+  "ready_for_stock_technical_frontend_publication": "BOUNDED",
+  "ready_for_ws3_ma60_consumption": "BOUNDED",
+  "test_baseline": {
+    "backend_passed": 474,
+    "backend_skipped": 41,
+    "backend_failed": 0,
+    "warnings": 1,
+    "environment": "clean task worktree, Python 3.12 venv from services/api[dev]"
+  },
+  "test_post": {
+    "backend_passed": 483,
+    "backend_skipped": 41,
+    "backend_failed": 0,
+    "focused_passed": 14,
+    "focused_failed": 0,
+    "api_client_passed": 3,
+    "warnings": 1
+  },
+  "test_delta": {
+    "new_passed": 9,
+    "reason": "Nine new task-owned deterministic tests; no removal, deselection, or discovery reduction"
+  },
+  "validation": {
+    "ruff": "PASS",
+    "openapi_drift": "PASS",
+    "python_compile": "PASS (Python 3.12.13)",
+    "git_diff_check": "PASS",
+    "secret_scan": "PASS",
+    "db_validation": "NOT_REQUIRED_BY_IMPLEMENTATION; PostgreSQL tests NOT_RUN without test database",
+    "migration_changed": false,
+    "persistence_added": false,
+    "production_changed": false,
+    "g1_g2_g3": "NOT_RERUN_PRESERVED_CANONICAL_EVIDENCE",
+    "post_close_canary": "NOT_RERUN_PRESERVED_CANONICAL_EVIDENCE"
+  },
+  "remaining_blockers": [
+    "Runtime historical reader currently supplies no corporate-action continuity-evidence envelope; exact production windows therefore fail closed to CONTINUITY_UNKNOWN until supplied",
+    "Frontend UI wiring remains a bounded follow-up; generated API declarations are synchronized"
+  ],
+  "boundary": {
+    "advanced_technical": "DEFERRED",
+    "strategy_semantics_added": false,
+    "opportunity_modified": false,
+    "ws1_modified": false,
+    "ws3_modified": false,
+    "ws4_modified": false,
+    "production_mutation": false,
+    "release_candidate_created": false,
+    "push_remote": false,
+    "merge_main": false,
+    "deploy": false,
+    "next_task_changed": false,
+    "owner_state_preserved": true
+  },
+  "provenance": {
+    "source_branch": "codex/task-stock-technical-phase2b-20260816",
+    "source_worktree": "C:\\Users\\acer\\Documents\\Codex\\ws2b-20260816",
+    "source_implementation_commit": "fb8851e77feb828d3ea4a0f4fa4460483093f849",
+    "canonical_promotion_commit": "9b8ff5ca65b06af4b0c4c141e0aae86e8e440289",
+    "canonical_post_sha": "663c574c870d225bd93b66216ba98398d69c427c",
+    "hunk_level_reconciliation_used": false,
+    "owner_dirty_untracked_state_preserved": true,
+    "task_worktree_cleaned": true
+  }
+}

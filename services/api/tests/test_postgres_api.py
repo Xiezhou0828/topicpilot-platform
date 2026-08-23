@@ -77,7 +77,11 @@ def test_failed_import_rolls_back_every_table(clean_database: Engine) -> None:
         assert session.scalar(text("SELECT count(*) FROM stocks")) == 0
 
 
-def test_read_api_contract_pagination_nulls_and_problem_json(clean_database: Engine) -> None:
+def test_read_api_contract_pagination_nulls_and_problem_json(
+    clean_database: Engine, monkeypatch
+) -> None:
+    monkeypatch.delenv("RENDER_GIT_COMMIT", raising=False)
+    monkeypatch.delenv("GIT_SHA", raising=False)
     engine = imported_engine(clean_database)
     settings = Settings(
         DATABASE_URL=str(engine.url),
@@ -92,8 +96,8 @@ def test_read_api_contract_pagination_nulls_and_problem_json(clean_database: Eng
 
     app.dependency_overrides[get_db] = override_db
     with TestClient(app) as client:
-        assert client.get("/healthz").json() == {"status": "ok"}
-        assert client.get("/readyz").json() == {"status": "ready"}
+        assert client.get("/healthz").json() == {"status": "ok", "gitSha": "UNKNOWN"}
+        assert client.get("/readyz").json() == {"status": "ready", "gitSha": "UNKNOWN"}
 
         status = client.get("/api/v1/meta/data-status")
         assert status.status_code == 200

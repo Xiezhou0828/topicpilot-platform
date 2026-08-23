@@ -83,6 +83,10 @@ test("Today Market consumes backend-owned events through the shared envelope", a
   assert.match(page, /resource\.marketEvents/);
   assert.match(page, /event\.description/);
   assert.doesNotMatch(page, /const events = \[/);
-  assert.match(page, /const opportunities = \[/);
+  assert.match(mainlines, /opportunities: TodayOpportunityResource/);
+  assert.match(mainlines, /mapOpportunities\(resource, previewEnabled\)/);
+  assert.match(page, /OpportunityTeaserCard/);
+  assert.match(page, /mainlines\.resource\.opportunities/);
+  assert.doesNotMatch(page, /const opportunities = \[/);
   assert.doesNotMatch(page, /createTopicPilotClient|getTodayHome|getTodayMarket/);
 });

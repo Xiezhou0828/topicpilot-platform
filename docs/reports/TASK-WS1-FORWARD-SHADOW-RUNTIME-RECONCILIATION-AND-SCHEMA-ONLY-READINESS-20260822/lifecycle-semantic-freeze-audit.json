@@ -1,0 +1,28 @@
+{
+  "taskId": "TASK-WS1-LIFECYCLE-CANONICAL-COLLISION-RECONCILIATION-AND-PROMOTION-READINESS-20260822",
+  "sourceImplementation": "f7894b4",
+  "reconciledImplementation": "c46506e",
+  "backendEngineDiffFromSource": false,
+  "policyChanged": false,
+  "stageOrder": ["SPROUTING", "FERMENTING", "MAIN_RISE", "MATURE", "DECLINING"],
+  "ownerStageOrder": ["萌芽", "發酵", "主升", "成熟", "衰退"],
+  "thresholdsFrozen": {
+    "DECLINING": "positive breadth <= 0.35 AND weak ratio >= 0.35 AND average change <= -0.5",
+    "MAIN_RISE": "positive breadth >= 0.70 AND strong breadth >= 0.35 AND average change >= 1.5",
+    "MATURE": "previous stage MAIN_RISE/MATURE AND breadth 0.40-0.75 AND strong breadth <= 0.35 AND average change >= 0.25",
+    "FERMENTING": "breadth 0.45-<0.78 AND average change >= 0.5",
+    "SPROUTING": "leader proxy change >= 4.0 AND positive breadth <= 0.45"
+  },
+  "transitionPolicy": "existing persistence/hysteresis unchanged; candidate streak, two-day confirmation, bypass rules, illegal jump hold, and low-confidence hold remain provisional",
+  "inputSemantics": "formal PIT snapshot/member facts plus exact-date canonical daily-bar evidence; prior shadow result supports persistence",
+  "leaderSetSemantics": "formal Leader Set authority remains zero; leader is proxy evidence only",
+  "newTotalScore": false,
+  "newVolumeInput": false,
+  "newNewsInput": false,
+  "newLifecycleStage": false,
+  "qualityEvidence": {
+    "backendPytest": "31 passed",
+    "frontendContract": "7 passed",
+    "targetedTypeScript": "passed"
+  }
+}

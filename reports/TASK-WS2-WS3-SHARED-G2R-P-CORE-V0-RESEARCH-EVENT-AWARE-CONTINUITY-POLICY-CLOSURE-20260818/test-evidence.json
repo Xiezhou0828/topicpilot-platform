@@ -1,0 +1,63 @@
+{
+  "schemaVersion": "task-ws2-ws3-shared-g2r-p-core-v0-test-evidence.v1",
+  "taskId": "TASK-WS2-WS3-SHARED-G2R-P-CORE-V0-RESEARCH-EVENT-AWARE-CONTINUITY-POLICY-CLOSURE-20260818",
+  "validationEnvironment": "ephemeral Docker container using read-only mounted task worktree; no PostgreSQL service or API process started",
+  "commands": [
+    {
+      "command": "docker run --rm --user root -v C:\\Users\\acer\\Documents\\Codex\\g2r:/workspace:ro -w /workspace/services/api --entrypoint /bin/sh topicpilot-platform-api -c \"python -m pip install --no-cache-dir 'pytest>=8.3,<9' httpx2 && PYTHONPATH=/workspace/services/api/src python -m pytest -q tests/test_ws3_research_policy.py tests/test_core_v0_candidate_panel.py tests/test_technical_publication.py\"",
+      "result": "33 passed",
+      "scope": "WS3 event-aware policy, Core V0 candidate panel, and WS2 technical publication isolation"
+    },
+    {
+      "command": "docker run --rm --user root -v C:\\Users\\acer\\Documents\\Codex\\g2r:/workspace:ro -w /workspace/services/api --entrypoint /bin/sh topicpilot-platform-api -c \"python -m pip install --no-cache-dir 'ruff>=0.9,<1' && ruff check --no-cache src/topicpilot_api/research/ws3_research_policy.py src/topicpilot_api/research/core_v0_candidate_panel.py tests/test_ws3_research_policy.py tests/test_core_v0_candidate_panel.py\"",
+      "result": "All checks passed",
+      "scope": "Changed source and tests"
+    },
+    {
+      "command": "bundled Python 3.12 py_compile on changed source and test files",
+      "result": "4 files compiled successfully",
+      "scope": "Syntax validation"
+    },
+    {
+      "command": "git diff --check",
+      "result": "passed",
+      "scope": "Whitespace validation"
+    }
+  ],
+  "requiredCases": [
+    {
+      "case": "CASE_1_NORMAL_REAL_HISTORICAL_WINDOW",
+      "result": "PASS",
+      "assertion": "Real OHLCV and valid inputs with no known verified event are research eligible without COVERED_NO_EVENT."
+    },
+    {
+      "case": "CASE_2_KNOWN_VERIFIED_BREAKING_EVENT",
+      "result": "PASS",
+      "assertion": "EXCLUDE/CORRECT/ANNOTATE overlays preserve event handling; EXCLUDE prevents candidate formation."
+    },
+    {
+      "case": "CASE_3_CONTINUITY_AUTHORITY_UNKNOWN",
+      "result": "PASS",
+      "assertion": "UNKNOWN remains UNKNOWN while research eligibility may proceed."
+    },
+    {
+      "case": "CASE_4_INSUFFICIENT_OHLCV",
+      "result": "PASS",
+      "assertion": "Insufficient observations remain unavailable for INSUFFICIENT_TECHNICAL_OBSERVATIONS."
+    },
+    {
+      "case": "CASE_5_WS2_ISOLATION",
+      "result": "PASS",
+      "assertion": "Formal WS2 MA60/publication path still rejects UNKNOWN; all 15 existing technical-publication tests passed."
+    }
+  ],
+  "changedFiles": [
+    "services/api/src/topicpilot_api/research/ws3_research_policy.py",
+    "services/api/src/topicpilot_api/research/core_v0_candidate_panel.py",
+    "services/api/tests/test_ws3_research_policy.py",
+    "services/api/tests/test_core_v0_candidate_panel.py"
+  ],
+  "databaseMutation": false,
+  "productionMutation": false,
+  "rerunOfWS3Research": false
+}

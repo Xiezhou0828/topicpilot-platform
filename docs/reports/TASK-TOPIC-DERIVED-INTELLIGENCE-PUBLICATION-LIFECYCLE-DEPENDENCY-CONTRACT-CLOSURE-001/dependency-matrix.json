@@ -1,0 +1,185 @@
+{
+  "taskId": "TASK-TOPIC-DERIVED-INTELLIGENCE-PUBLICATION-LIFECYCLE-DEPENDENCY-CONTRACT-CLOSURE-001",
+  "sourceHead": "69b4166130554b9d1410b5f33c105fcf1ac70d67",
+  "boundary": {
+    "formalPitEarliestDate": "2026-08-07",
+    "boundedFormalEvidenceDates": [
+      "2026-08-07",
+      "2026-08-10",
+      "2026-08-11",
+      "2026-08-12",
+      "2026-08-13"
+    ],
+    "preBoundaryHistoricalAuthority": "NOT_AUTHORIZED",
+    "currentMappingHistoricalSubstitute": "PROHIBITED"
+  },
+  "publicationDesign": {
+    "scoreGradeMinimum": "ON_READ_DETERMINISTIC_FORMAL_DERIVATION",
+    "materialization": "NOT_PROVEN_REQUIRED; FUTURE DECISION AFTER PERFORMANCE_REPLAY_DOWNSTREAM_EVIDENCE",
+    "requiredLineage": [
+      "exactUpstreamSnapshotIdAndIdentity",
+      "membershipSnapshotIdAndHash",
+      "memberFactHashes",
+      "sourceArtifactIdsAndHashes",
+      "policyCandidateAlgorithmAndGradeVersions",
+      "approvedLeaderSetVersionArtifactAndEffectiveDate",
+      "observationAsOfSessionAndInputHash",
+      "correctionSequenceAndSupersessionState"
+    ]
+  },
+  "capabilities": [
+    {
+      "capability": "Score Publication",
+      "pit": "REQUIRED",
+      "score": "SUBJECT",
+      "grade": "NOT_REQUIRED",
+      "leaderSet": "REQUIRED_BY_CURRENT_POLICY",
+      "definitionAuthority": "REQUIRED_BUT_PUBLICATION_CONTRACT_MISSING",
+      "otherAuthority": ["CORE", "memberFacts", "asOfBinding", "lineage", "correction"],
+      "disposition": "BLOCKED_BY_LEADER_SET_AUTHORITY_AND_SCORE_PUBLICATION_CONTRACT"
+    },
+    {
+      "capability": "Grade Publication",
+      "pit": "REQUIRED",
+      "score": "REQUIRED",
+      "grade": "SUBJECT",
+      "leaderSet": "INHERITED_FROM_SCORE",
+      "definitionAuthority": "GRADE_LOGIC_EXISTS; PUBLICATION_CONTRACT_MISSING",
+      "otherAuthority": ["scoreLineage", "correction", "backendReadBoundary"],
+      "disposition": "BLOCKED_BY_SCORE_PUBLICATION_AND_LEADER_SET_AUTHORITY"
+    },
+    {
+      "capability": "Ranking",
+      "pit": "REQUIRED",
+      "score": "INDEPENDENT_UNLESS_APPROVED_DEFINITION_SAYS_OTHERWISE",
+      "grade": "INDEPENDENT_UNLESS_APPROVED_DEFINITION_SAYS_OTHERWISE",
+      "leaderSet": "NOT_ESTABLISHED",
+      "definitionAuthority": "MISSING_UNIVERSE_ORDER_TIE_BREAK_AND_AS_OF_POLICY",
+      "otherAuthority": ["crossTopicCompleteness", "replay", "correction"],
+      "disposition": "BLOCKED_BY_RANKING_DEFINITION_AUTHORITY"
+    },
+    {
+      "capability": "Breadth",
+      "pit": "REQUIRED",
+      "score": "INDEPENDENT",
+      "grade": "INDEPENDENT",
+      "leaderSet": "NOT_REQUIRED_BY_AUDITED_DEPENDENCY",
+      "definitionAuthority": "MISSING_FORMAL_DENOMINATOR_AND_CLASSIFICATION_DEFINITION",
+      "otherAuthority": ["memberEligibility", "missingNoTradeSemantics", "lineage"],
+      "disposition": "BLOCKED_BY_BREADTH_DEFINITION_AUTHORITY"
+    },
+    {
+      "capability": "Leadership",
+      "pit": "REQUIRED",
+      "score": "INDEPENDENT",
+      "grade": "INDEPENDENT",
+      "leaderSet": "REQUIRED",
+      "definitionAuthority": "MISSING_APPROVED_ROLE_AND_LEADER_SET_AUTHORITY",
+      "otherAuthority": ["weights", "effectiveDates", "correction"],
+      "disposition": "BLOCKED_BY_LEADER_SET_AUTHORITY"
+    },
+    {
+      "capability": "Concentration",
+      "pit": "REQUIRED",
+      "score": "INDEPENDENT",
+      "grade": "INDEPENDENT",
+      "leaderSet": "NOT_REQUIRED_BY_AUDITED_DEPENDENCY",
+      "definitionAuthority": "MISSING_FORMAL_CONTRIBUTION_AND_WEIGHT_DEFINITION",
+      "otherAuthority": ["smallSamplePolicy", "nullPolicy", "lineage"],
+      "disposition": "BLOCKED_BY_CONCENTRATION_DEFINITION_AUTHORITY"
+    },
+    {
+      "capability": "Lifecycle",
+      "pit": "REQUIRED_FOR_FORMAL_INPUT",
+      "score": "INDEPENDENT",
+      "grade": "INDEPENDENT",
+      "leaderSet": "PROXY_ONLY_IN_SHADOW; NO_FORMAL_DEPENDENCY_ESTABLISHED",
+      "definitionAuthority": "PRODUCT_MEANING_FROZEN; TRANSITION_POLICY_PROVISIONAL",
+      "otherAuthority": ["priorState", "canonicalPriceEvidence", "exactSnapshotLineage", "correctionPolicy"],
+      "disposition": "BLOCKED_BY_TRANSITION_POLICY_AND_FORMAL_UPSTREAM_LINEAGE_AUTHORITY"
+    },
+    {
+      "capability": "Topic Map Score lane",
+      "pit": "REQUIRED",
+      "score": "REQUIRED",
+      "grade": "INDEPENDENT",
+      "leaderSet": "INHERITED_FROM_SCORE_IF_REQUIRED",
+      "definitionAuthority": "SCORE_PUBLICATION_CONTRACT",
+      "otherAuthority": ["backendFieldAvailability", "browserNoDerivation"],
+      "disposition": "READY_AFTER_SCORE_PUBLICATION"
+    },
+    {
+      "capability": "Topic Map Grade lanes",
+      "pit": "REQUIRED",
+      "score": "REQUIRED",
+      "grade": "REQUIRED",
+      "leaderSet": "INHERITED_FROM_SCORE",
+      "definitionAuthority": "GRADE_PUBLICATION_CONTRACT",
+      "otherAuthority": ["backendFieldAvailability", "browserNoDerivation"],
+      "disposition": "READY_AFTER_GRADE_PUBLICATION"
+    },
+    {
+      "capability": "Topic Map derived/Lifecycle lane",
+      "pit": "REQUIRED",
+      "score": "DISPLAY_ONLY_SEPARATE",
+      "grade": "DISPLAY_ONLY_SEPARATE",
+      "leaderSet": "ONLY_IF_APPROVED_LANE_CONSUMES_IT",
+      "definitionAuthority": "LIFECYCLE_PUBLICATION_CONTRACT",
+      "otherAuthority": ["backendReadModel", "browserNoDerivation"],
+      "disposition": "READY_AFTER_LIFECYCLE_FORMAL_PUBLICATION_AND_SCORE_DISPLAY_AUTHORITY"
+    },
+    {
+      "capability": "Historical Topic Score",
+      "pit": "BOUNDED_DATES_ONLY",
+      "score": "REQUIRED",
+      "grade": "INDEPENDENT",
+      "leaderSet": "REQUIRED_BY_CURRENT_POLICY",
+      "definitionAuthority": "SCORE_PUBLICATION_CONTRACT",
+      "otherAuthority": ["walkForwardNoLeakage", "correction"],
+      "disposition": "NOT_AUTHORIZED_BEFORE_FORMAL_PIT_BOUNDARY; BLOCKED_BY_SCORE_PUBLICATION_AFTER_BOUNDARY"
+    },
+    {
+      "capability": "Historical Topic Grade",
+      "pit": "BOUNDED_DATES_ONLY",
+      "score": "REQUIRED",
+      "grade": "REQUIRED",
+      "leaderSet": "INHERITED_FROM_SCORE",
+      "definitionAuthority": "GRADE_PUBLICATION_CONTRACT",
+      "otherAuthority": ["walkForwardNoLeakage", "correction"],
+      "disposition": "NOT_AUTHORIZED_BEFORE_FORMAL_PIT_BOUNDARY; BLOCKED_BY_GRADE_PUBLICATION_AFTER_BOUNDARY"
+    },
+    {
+      "capability": "Historical Topic Ranking",
+      "pit": "BOUNDED_DATES_ONLY",
+      "score": "INDEPENDENT_UNLESS_APPROVED_DEFINITION_SAYS_OTHERWISE",
+      "grade": "INDEPENDENT_UNLESS_APPROVED_DEFINITION_SAYS_OTHERWISE",
+      "leaderSet": "NOT_ESTABLISHED",
+      "definitionAuthority": "RANKING_DEFINITION_AUTHORITY",
+      "otherAuthority": ["walkForwardNoLeakage", "correction"],
+      "disposition": "NOT_AUTHORIZED_BEFORE_FORMAL_PIT_BOUNDARY; BLOCKED_BY_RANKING_DEFINITION_AUTHORITY_AFTER_BOUNDARY"
+    },
+    {
+      "capability": "Historical Topic Lifecycle",
+      "pit": "BOUNDED_DATES_ONLY",
+      "score": "INDEPENDENT",
+      "grade": "INDEPENDENT",
+      "leaderSet": "FORMAL_ROLE_GAP_REMAINS",
+      "definitionAuthority": "TRANSITION_POLICY_AND_UPSTREAM_LINEAGE_AUTHORITY",
+      "otherAuthority": ["priorStateChain", "tradingDayPersistence", "correction"],
+      "disposition": "NOT_AUTHORIZED_BEFORE_FORMAL_PIT_BOUNDARY; BLOCKED_BY_TRANSITION_POLICY_AND_FORMAL_UPSTREAM_LINEAGE_AUTHORITY_AFTER_BOUNDARY"
+    }
+  ],
+  "validationState": {
+    "applicationCodeChanged": false,
+    "schemaOrMigrationChanged": false,
+    "databaseOrProductionMutation": false,
+    "gates": {
+      "G1": "PRESERVED_NOT_RERUN",
+      "G2": "PRESERVED_NOT_RERUN",
+      "G3": "PRESERVED_NOT_RERUN",
+      "postCloseCanary": "PRESERVED_NOT_RERUN",
+      "postgresql": "NOT_RUN",
+      "production": "NOT_RUN"
+    }
+  }
+}

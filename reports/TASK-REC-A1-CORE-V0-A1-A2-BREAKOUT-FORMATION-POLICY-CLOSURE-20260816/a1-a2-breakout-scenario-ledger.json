@@ -1,0 +1,63 @@
+{
+  "schema_version": "ws3-core-v0-a1-a2-breakout-scenarios.v1",
+  "task_id": "TASK-REC-A1-CORE-V0-A1-A2-BREAKOUT-FORMATION-POLICY-CLOSURE-20260816",
+  "reference_policy": "PRIOR_20_ACCEPTED_SESSION_HIGH",
+  "maturity_sessions": 5,
+  "evaluation_session_excluded_from_reference": true,
+  "scenarios": [
+    {
+      "id": "SCENARIO_1_IMMEDIATE_PULLBACK_AFTER_BREAKOUT",
+      "setup": "Reference was 100; the prior session closed at 105 and established a newer reference; T closes at 102.",
+      "reference_at_T": 105,
+      "reference_age_sessions_at_T": 1,
+      "a1_distance_pct": 0.0285714286,
+      "expected_a1": false,
+      "expected_a2": false,
+      "disposition": "NOT_A1_BECAUSE_NEW_REFERENCE_IS_IMMATURE; NO_OLDER_REFERENCE_FALLBACK"
+    },
+    {
+      "id": "SCENARIO_2_REFERENCE_AGE_ONE",
+      "setup": "A new High of 105 formed one accepted session before T; T closes at 103.",
+      "reference_at_T": 105,
+      "reference_age_sessions_at_T": 1,
+      "a1_distance_pct": 0.019047619,
+      "expected_a1": false,
+      "expected_a2": false,
+      "disposition": "NOT_A1_BECAUSE_REFERENCE_MATURITY_LT_5"
+    },
+    {
+      "id": "SCENARIO_3_MATURE_REFERENCE_PULLBACK",
+      "setup": "A High of 105 formed at least five accepted sessions before T; T closes at 103.",
+      "reference_at_T": 105,
+      "reference_age_sessions_at_T": 5,
+      "a1_distance_pct": 0.019047619,
+      "expected_a1": true,
+      "expected_a2": false,
+      "disposition": "A1_CAN_FORM_IF_L1_AND_PANEL_LINEAGE_PASS"
+    },
+    {
+      "id": "SCENARIO_4_INTRADAY_HIGH_ONLY",
+      "setup": "High(T) is above Reference(T), but Close(T) is at or below Reference(T).",
+      "reference_at_T": "R",
+      "expected_a1": false,
+      "expected_a2": false,
+      "disposition": "NOT_A2_CLOSE_CONFIRMATION_REQUIRED"
+    },
+    {
+      "id": "SCENARIO_5_CLOSE_CONFIRMED_BREAKOUT",
+      "setup": "Close(T) is strictly above a valid mature Reference(T).",
+      "reference_at_T": "R",
+      "expected_a1": false,
+      "expected_a2": true,
+      "disposition": "A2_CAN_FORM_IF_L1_AND_PANEL_LINEAGE_PASS"
+    },
+    {
+      "id": "SCENARIO_6_GAP_UP_CLOSE_CONFIRMED",
+      "setup": "Open(T) is above Reference(T) and Close(T) is also above Reference(T).",
+      "reference_at_T": "R",
+      "expected_a1": false,
+      "expected_a2": true,
+      "disposition": "A2_CAN_FORM; GAP_HAS_NO_V0_EXCLUSION_OR_THRESHOLD"
+    }
+  ]
+}

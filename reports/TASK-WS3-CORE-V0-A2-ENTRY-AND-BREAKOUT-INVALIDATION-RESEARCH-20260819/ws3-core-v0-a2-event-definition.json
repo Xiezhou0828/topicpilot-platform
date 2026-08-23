@@ -1,0 +1,164 @@
+{
+  "a2_authority": {
+    "candidate_id": "CORE_V0_A2_CONFIRMED_BREAKOUT",
+    "confirmation_policy": "single-session-close",
+    "definition_version": "core-v0-a2-confirmed-breakout.v1",
+    "evaluation_session_excluded_from_reference": true,
+    "formation_rule": "L1 Close(T) >= MA60(T), mature reference, and Close(T) > Reference(T)",
+    "gap_above_reference_can_form_a2": true,
+    "lineage_fields": [
+      "candidate_record_id",
+      "candidate_source_lineage",
+      "reference_birth_session",
+      "reference_age_sessions"
+    ],
+    "pit_validity": true,
+    "reference_formula": "max(High(s) for prior 20 accepted sessions strictly before T)",
+    "reference_maturity_sessions": 5,
+    "reference_policy_id": "PRIOR_20_ACCEPTED_SESSION_HIGH",
+    "source": "services/api/src/topicpilot_api/research/core_v0_candidate_panel.py",
+    "uses_intraday_high_for_confirmation": false
+  },
+  "a2_formation_changed": false,
+  "cost_authority": {
+    "results_are_gross": true,
+    "transaction_cost_authority_available": "NO"
+  },
+  "entry_extension": {
+    "bands": [
+      {
+        "band": "LE_0PCT",
+        "lower_exclusive": null,
+        "upper_inclusive": 0.0
+      },
+      {
+        "band": "GT_0_TO_1PCT",
+        "lower_exclusive": 0.0,
+        "upper_inclusive": 0.01
+      },
+      {
+        "band": "GT_1_TO_2PCT",
+        "lower_exclusive": 0.01,
+        "upper_inclusive": 0.02
+      },
+      {
+        "band": "GT_2_TO_3PCT",
+        "lower_exclusive": 0.02,
+        "upper_inclusive": 0.03
+      },
+      {
+        "band": "GT_3_TO_5PCT",
+        "lower_exclusive": 0.03,
+        "upper_inclusive": 0.05
+      },
+      {
+        "band": "GT_5PCT",
+        "lower_exclusive": 0.05,
+        "upper_inclusive": null
+      }
+    ],
+    "formula": "(entry_price / BREAKOUT_REFERENCE_PRICE) - 1",
+    "threshold_optimization": false
+  },
+  "entry_proxies": {
+    "NEXT_SESSION_CLOSE": {
+      "execution_assumption": "NEXT_SESSION_CLOSE_FILL",
+      "path_semantics": "sessions strictly after the next-session close",
+      "price": "Close(T+1)",
+      "timing": "next canonical trading-session close"
+    },
+    "NEXT_SESSION_OPEN": {
+      "execution_assumption": "NEXT_SESSION_OPEN_FILL",
+      "path_semantics": "entry session through the next h-1 canonical sessions",
+      "price": "Open(T+1)",
+      "timing": "next canonical trading-session open"
+    },
+    "OBSERVABLE_A2_CLOSE": {
+      "execution_assumption": "OBSERVABLE_CLOSE_FILL",
+      "path_semantics": "next canonical sessions strictly after T",
+      "price": "Close(T)",
+      "timing": "A2 signal-session close"
+    },
+    "THEORETICAL_REFERENCE_FILL": {
+      "execution_assumption": "THEORETICAL_REFERENCE_FILL",
+      "path_semantics": "next canonical sessions strictly after T",
+      "price": "Reference(T)",
+      "timing": "A2 signal session; price-only theoretical reference fill"
+    }
+  },
+  "event_deduplication": {
+    "dedup_selected_before_outcome_review": true,
+    "distinct_event_start": "first A2 row for an instrument, or an A2 row whose canonical session index is not immediately after the prior A2 row for that instrument",
+    "event_id": "SHA256(instrument_id|A2_start_date|A2_definition_version)",
+    "persistent_observation": "an A2 row immediately following the prior A2 row for the same instrument in canonical session order",
+    "profitability_based_deduplication": false,
+    "raw_observation_unit": "one formed A2 candidate panel row at one accepted canonical trading session",
+    "rule_id": "A2_CONTIGUOUS_CANONICAL_STATE_EPISODE_V1"
+  },
+  "forbidden_actions": [
+    "entry_threshold_optimization",
+    "stop_optimization",
+    "take_profit_optimization",
+    "holding_period_optimization",
+    "position_sizing",
+    "production_entry_or_stop_rule"
+  ],
+  "frozen_spec_hash": "6e4cc504f969098e263cfa8e7c43240e9575a3f72f0641ba39da22794ea9870d",
+  "mfe_mae": {
+    "horizons": [
+      1,
+      3,
+      5,
+      10
+    ],
+    "mae_formula": "min(low / entry_price - 1) over the defined next h canonical sessions",
+    "mfe_formula": "max(high / entry_price - 1) over the defined next h canonical sessions",
+    "next_close_proxy": "path begins strictly after the next-session close",
+    "next_open_proxy": "path includes the entry session and the next h-1 sessions",
+    "session_semantics": "canonical accepted trading sessions, not calendar days",
+    "signal_day_proxies": "path begins strictly after T"
+  },
+  "reference_loss_reclaim": {
+    "bounded_horizon_sessions": 10,
+    "close_loss": "first future canonical session with Close < BREAKOUT_REFERENCE_PRICE",
+    "depth_bands": [
+      {
+        "band": "NO_LOSS",
+        "lower_exclusive": null,
+        "upper_inclusive": 0.0
+      },
+      {
+        "band": "0_TO_MINUS_1PCT",
+        "lower_exclusive": -0.01,
+        "upper_inclusive": 0.0
+      },
+      {
+        "band": "MINUS_1_TO_2PCT",
+        "lower_exclusive": -0.02,
+        "upper_inclusive": -0.01
+      },
+      {
+        "band": "MINUS_2_TO_3PCT",
+        "lower_exclusive": -0.03,
+        "upper_inclusive": -0.02
+      },
+      {
+        "band": "MINUS_3_TO_5PCT",
+        "lower_exclusive": -0.05,
+        "upper_inclusive": -0.03
+      },
+      {
+        "band": "BELOW_MINUS_5PCT",
+        "lower_exclusive": null,
+        "upper_inclusive": -0.05
+      }
+    ],
+    "depth_bands_are_descriptive_only": true,
+    "no_stop_rule": true,
+    "primary_loss": "first future canonical session with Low < BREAKOUT_REFERENCE_PRICE",
+    "reclaim": "first session at or after primary loss with Close >= BREAKOUT_REFERENCE_PRICE"
+  },
+  "schema_version": "ws3-core-v0-a2-entry-breakout-invalidation-definition.v1",
+  "source_canonical_head": "2468ee6b5093dd2a37353424c74d9d719c643bb9",
+  "task_id": "TASK-WS3-CORE-V0-A2-ENTRY-AND-BREAKOUT-INVALIDATION-RESEARCH-20260819"
+}

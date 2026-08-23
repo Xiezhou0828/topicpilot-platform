@@ -1,0 +1,24 @@
+{
+  "task_id": "TASK-WS2-E1-603-UNIVERSE-TECHNICAL-V0-EXPANDED-QUALIFICATION-AND-FORMAL-EVIDENCE-RECONSTITUTION-20260820",
+  "status": "NOT_RUN_SOURCE_CONTRACT_BLOCKED",
+  "prior_baseline": {
+    "universe_count": 507,
+    "accepted_ohlcv_row_count": 63826,
+    "technical_eligible_count": 85,
+    "formal_evidence_blocked_count": 422,
+    "eligible_coverage_pct": 16.765285996055226,
+    "blocked_coverage_pct": 83.23471400394477
+  },
+  "expanded_target": {
+    "universe_count": 603,
+    "technical_eligibility": "NOT_RUN",
+    "formal_evidence": "NOT_RUN"
+  },
+  "delta": {
+    "eligible_count": null,
+    "blocked_count": null,
+    "eligible_coverage_pct": null,
+    "blocked_coverage_pct": null
+  },
+  "reason": "The 603 foundation is not in canonical HEAD; no expanded qualification was executed."
+}

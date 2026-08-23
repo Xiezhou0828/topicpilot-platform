@@ -1,0 +1,58 @@
+{
+  "authority_boundary": "staging candidate pack only; current canonical remains 507",
+  "forbidden_here": [
+    "PostgreSQL",
+    "OHLCV fetch",
+    "instrument ingestion",
+    "WS2",
+    "WS3"
+  ],
+  "future_stages": [
+    {
+      "executed_here": false,
+      "name": "Canonical identity/security validation",
+      "stage": "A"
+    },
+    {
+      "executed_here": false,
+      "name": "Canonical instrument ingestion",
+      "stage": "B"
+    },
+    {
+      "executed_here": false,
+      "name": "Provider mapping validation",
+      "stage": "C"
+    },
+    {
+      "executed_here": false,
+      "name": "Historical OHLCV bootstrap",
+      "stage": "D"
+    },
+    {
+      "executed_here": false,
+      "name": "Historical coverage/quality reconciliation",
+      "stage": "E"
+    },
+    {
+      "executed_here": false,
+      "name": "MA60 readiness",
+      "stage": "F"
+    },
+    {
+      "executed_here": false,
+      "name": "Technical V0 input readiness",
+      "stage": "G"
+    },
+    {
+      "executed_here": false,
+      "name": "Separate WS2 expanded-universe qualification",
+      "stage": "H"
+    },
+    {
+      "executed_here": false,
+      "name": "Later WS3 expanded-universe evidence validation",
+      "stage": "I"
+    }
+  ],
+  "task_id": "TASK-INSTRUMENT-UNIVERSE-96-STOCK-EXPANSION-REFERENCE-PACK-AND-RUNTIME-HANDOFF-20260819"
+}

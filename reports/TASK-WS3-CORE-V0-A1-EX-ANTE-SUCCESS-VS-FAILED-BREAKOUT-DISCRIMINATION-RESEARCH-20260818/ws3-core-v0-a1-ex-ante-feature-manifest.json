@@ -1,0 +1,920 @@
+{
+  "manifest_version": "ws3-core-v0-a1-ex-ante-feature-manifest.v1",
+  "task_id": "TASK-WS3-CORE-V0-A1-EX-ANTE-SUCCESS-VS-FAILED-BREAKOUT-DISCRIMINATION-RESEARCH-20260818",
+  "source_canonical_head": "3ab70b612cbb30335b43a5650d145488f9e8b2c1",
+  "source_baseline_head": "9ca9ba4f15359aa5ea96ba4c3d6bed9439d0346e",
+  "frozen_spec_hash": "6e4cc504f969098e263cfa8e7c43240e9575a3f72f0641ba39da22794ea9870d",
+  "dataset_authority": "canonical Postgres historical read model via read_historical_bars; REC-A1 event dataset preserved",
+  "feature_manifest_frozen": true,
+  "feature_manifest_frozen_before_outcome_comparison": true,
+  "outcome_labels_are_not_features": true,
+  "feature_timestamp_contract": "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP",
+  "forbidden_feature_term_hits": [],
+  "features": [
+    {
+      "feature_name": "reference_gap_pct",
+      "category": "BREAKOUT_PROXIMITY",
+      "definition": "(reference_value - close_t) / reference_value",
+      "input_columns": [
+        "close",
+        "candidate_inputs.reference_value"
+      ],
+      "lookback": "A1 reference and T close",
+      "timestamp_rule": "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP",
+      "point_in_time_available": true,
+      "derivation_method": "Frozen candidate reference lineage plus T close",
+      "missingness": {
+        "all_A1_count": 700,
+        "available_count": 700,
+        "missing_count": 0,
+        "missing_rate": 0.0,
+        "all_missing": false
+      },
+      "authority_source": "canonical Postgres historical read model via read_historical_bars; REC-A1 event dataset preserved",
+      "allowed_for_primary_analysis": true,
+      "allowed_for_multivariate": true
+    },
+    {
+      "feature_name": "recent_20_high_proximity",
+      "category": "BREAKOUT_PROXIMITY",
+      "definition": "close_t / max(high_{t-19..t}) - 1",
+      "input_columns": [
+        "high",
+        "close"
+      ],
+      "lookback": "20 sessions including T",
+      "timestamp_rule": "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP",
+      "point_in_time_available": true,
+      "derivation_method": "Trailing canonical OHLCV window",
+      "missingness": {
+        "all_A1_count": 700,
+        "available_count": 700,
+        "missing_count": 0,
+        "missing_rate": 0.0,
+        "all_missing": false
+      },
+      "authority_source": "canonical Postgres historical read model via read_historical_bars; REC-A1 event dataset preserved",
+      "allowed_for_primary_analysis": true,
+      "allowed_for_multivariate": false
+    },
+    {
+      "feature_name": "recent_20_close_range_location",
+      "category": "BREAKOUT_PROXIMITY",
+      "definition": "(close_t - min(close_{t-19..t})) / (max(close_{t-19..t}) - min(close_{t-19..t}))",
+      "input_columns": [
+        "close"
+      ],
+      "lookback": "20 sessions including T",
+      "timestamp_rule": "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP",
+      "point_in_time_available": true,
+      "derivation_method": "Trailing canonical close range",
+      "missingness": {
+        "all_A1_count": 700,
+        "available_count": 700,
+        "missing_count": 0,
+        "missing_rate": 0.0,
+        "all_missing": false
+      },
+      "authority_source": "canonical Postgres historical read model via read_historical_bars; REC-A1 event dataset preserved",
+      "allowed_for_primary_analysis": true,
+      "allowed_for_multivariate": false
+    },
+    {
+      "feature_name": "reference_touch_count_20",
+      "category": "BREAKOUT_PROXIMITY",
+      "definition": "count(high_s >= reference_value) / available trailing sessions",
+      "input_columns": [
+        "high",
+        "candidate_inputs.reference_value"
+      ],
+      "lookback": "20 sessions including T",
+      "timestamp_rule": "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP",
+      "point_in_time_available": true,
+      "derivation_method": "Frozen reference level and trailing high observations",
+      "missingness": {
+        "all_A1_count": 700,
+        "available_count": 700,
+        "missing_count": 0,
+        "missing_rate": 0.0,
+        "all_missing": false
+      },
+      "authority_source": "canonical Postgres historical read model via read_historical_bars; REC-A1 event dataset preserved",
+      "allowed_for_primary_analysis": true,
+      "allowed_for_multivariate": false
+    },
+    {
+      "feature_name": "recent_20_high_age_sessions",
+      "category": "CONSOLIDATION_STRUCTURE",
+      "definition": "sessions since the most recent trailing-20 maximum high",
+      "input_columns": [
+        "high"
+      ],
+      "lookback": "20 sessions including T",
+      "timestamp_rule": "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP",
+      "point_in_time_available": true,
+      "derivation_method": "Trailing high maximum and canonical session order",
+      "missingness": {
+        "all_A1_count": 700,
+        "available_count": 700,
+        "missing_count": 0,
+        "missing_rate": 0.0,
+        "all_missing": false
+      },
+      "authority_source": "canonical Postgres historical read model via read_historical_bars; REC-A1 event dataset preserved",
+      "allowed_for_primary_analysis": true,
+      "allowed_for_multivariate": false
+    },
+    {
+      "feature_name": "reference_below_high_streak",
+      "category": "CONSOLIDATION_STRUCTURE",
+      "definition": "consecutive sessions ending at T with high_s < frozen reference_value",
+      "input_columns": [
+        "high",
+        "candidate_inputs.reference_value"
+      ],
+      "lookback": "Available trailing history",
+      "timestamp_rule": "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP",
+      "point_in_time_available": true,
+      "derivation_method": "Frozen reference level and prior OHLCV path",
+      "missingness": {
+        "all_A1_count": 700,
+        "available_count": 700,
+        "missing_count": 0,
+        "missing_rate": 0.0,
+        "all_missing": false
+      },
+      "authority_source": "canonical Postgres historical read model via read_historical_bars; REC-A1 event dataset preserved",
+      "allowed_for_primary_analysis": true,
+      "allowed_for_multivariate": false
+    },
+    {
+      "feature_name": "return_1d",
+      "category": "MOMENTUM",
+      "definition": "close_t / close_{t-1} - 1",
+      "input_columns": [
+        "close"
+      ],
+      "lookback": "2 sessions",
+      "timestamp_rule": "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP",
+      "point_in_time_available": true,
+      "derivation_method": "Trailing canonical close return",
+      "missingness": {
+        "all_A1_count": 700,
+        "available_count": 700,
+        "missing_count": 0,
+        "missing_rate": 0.0,
+        "all_missing": false
+      },
+      "authority_source": "canonical Postgres historical read model via read_historical_bars; REC-A1 event dataset preserved",
+      "allowed_for_primary_analysis": true,
+      "allowed_for_multivariate": false
+    },
+    {
+      "feature_name": "return_3d",
+      "category": "MOMENTUM",
+      "definition": "close_t / close_{t-3} - 1",
+      "input_columns": [
+        "close"
+      ],
+      "lookback": "4 sessions",
+      "timestamp_rule": "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP",
+      "point_in_time_available": true,
+      "derivation_method": "Trailing canonical close return",
+      "missingness": {
+        "all_A1_count": 700,
+        "available_count": 700,
+        "missing_count": 0,
+        "missing_rate": 0.0,
+        "all_missing": false
+      },
+      "authority_source": "canonical Postgres historical read model via read_historical_bars; REC-A1 event dataset preserved",
+      "allowed_for_primary_analysis": true,
+      "allowed_for_multivariate": false
+    },
+    {
+      "feature_name": "return_5d",
+      "category": "MOMENTUM",
+      "definition": "close_t / close_{t-5} - 1",
+      "input_columns": [
+        "close"
+      ],
+      "lookback": "6 sessions",
+      "timestamp_rule": "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP",
+      "point_in_time_available": true,
+      "derivation_method": "Existing raw close return semantics",
+      "missingness": {
+        "all_A1_count": 700,
+        "available_count": 700,
+        "missing_count": 0,
+        "missing_rate": 0.0,
+        "all_missing": false
+      },
+      "authority_source": "canonical Postgres historical read model via read_historical_bars; REC-A1 event dataset preserved",
+      "allowed_for_primary_analysis": true,
+      "allowed_for_multivariate": true
+    },
+    {
+      "feature_name": "return_10d",
+      "category": "MOMENTUM",
+      "definition": "close_t / close_{t-10} - 1",
+      "input_columns": [
+        "close"
+      ],
+      "lookback": "11 sessions",
+      "timestamp_rule": "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP",
+      "point_in_time_available": true,
+      "derivation_method": "Trailing canonical close return",
+      "missingness": {
+        "all_A1_count": 700,
+        "available_count": 700,
+        "missing_count": 0,
+        "missing_rate": 0.0,
+        "all_missing": false
+      },
+      "authority_source": "canonical Postgres historical read model via read_historical_bars; REC-A1 event dataset preserved",
+      "allowed_for_primary_analysis": true,
+      "allowed_for_multivariate": false
+    },
+    {
+      "feature_name": "return_20d",
+      "category": "MOMENTUM",
+      "definition": "close_t / close_{t-20} - 1",
+      "input_columns": [
+        "close"
+      ],
+      "lookback": "21 sessions",
+      "timestamp_rule": "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP",
+      "point_in_time_available": true,
+      "derivation_method": "Existing raw close return semantics",
+      "missingness": {
+        "all_A1_count": 700,
+        "available_count": 700,
+        "missing_count": 0,
+        "missing_rate": 0.0,
+        "all_missing": false
+      },
+      "authority_source": "canonical Postgres historical read model via read_historical_bars; REC-A1 event dataset preserved",
+      "allowed_for_primary_analysis": true,
+      "allowed_for_multivariate": false
+    },
+    {
+      "feature_name": "close_ma20_distance",
+      "category": "MA_STRUCTURE",
+      "definition": "close_t / SMA20(close)_t - 1",
+      "input_columns": [
+        "close"
+      ],
+      "lookback": "20 sessions",
+      "timestamp_rule": "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP",
+      "point_in_time_available": true,
+      "derivation_method": "SMA_CLOSE_V1 deterministic derivation",
+      "missingness": {
+        "all_A1_count": 700,
+        "available_count": 700,
+        "missing_count": 0,
+        "missing_rate": 0.0,
+        "all_missing": false
+      },
+      "authority_source": "canonical Postgres historical read model via read_historical_bars; REC-A1 event dataset preserved",
+      "allowed_for_primary_analysis": true,
+      "allowed_for_multivariate": false
+    },
+    {
+      "feature_name": "close_ma60_distance",
+      "category": "MA_STRUCTURE",
+      "definition": "close_t / SMA60(close)_t - 1",
+      "input_columns": [
+        "close"
+      ],
+      "lookback": "60 sessions",
+      "timestamp_rule": "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP",
+      "point_in_time_available": true,
+      "derivation_method": "Existing frozen MA60 eligibility calculation",
+      "missingness": {
+        "all_A1_count": 700,
+        "available_count": 700,
+        "missing_count": 0,
+        "missing_rate": 0.0,
+        "all_missing": false
+      },
+      "authority_source": "canonical Postgres historical read model via read_historical_bars; REC-A1 event dataset preserved",
+      "allowed_for_primary_analysis": true,
+      "allowed_for_multivariate": true
+    },
+    {
+      "feature_name": "ma20_ma60_spread",
+      "category": "MA_STRUCTURE",
+      "definition": "SMA20(close)_t / SMA60(close)_t - 1",
+      "input_columns": [
+        "close"
+      ],
+      "lookback": "60 sessions",
+      "timestamp_rule": "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP",
+      "point_in_time_available": true,
+      "derivation_method": "SMA_CLOSE_V1 deterministic derivation",
+      "missingness": {
+        "all_A1_count": 700,
+        "available_count": 700,
+        "missing_count": 0,
+        "missing_rate": 0.0,
+        "all_missing": false
+      },
+      "authority_source": "canonical Postgres historical read model via read_historical_bars; REC-A1 event dataset preserved",
+      "allowed_for_primary_analysis": true,
+      "allowed_for_multivariate": false
+    },
+    {
+      "feature_name": "ma20_slope_5d",
+      "category": "MA_STRUCTURE",
+      "definition": "SMA20_t / SMA20_{t-5} - 1",
+      "input_columns": [
+        "close"
+      ],
+      "lookback": "65 sessions",
+      "timestamp_rule": "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP",
+      "point_in_time_available": true,
+      "derivation_method": "Trailing SMA20 slope",
+      "missingness": {
+        "all_A1_count": 700,
+        "available_count": 700,
+        "missing_count": 0,
+        "missing_rate": 0.0,
+        "all_missing": false
+      },
+      "authority_source": "canonical Postgres historical read model via read_historical_bars; REC-A1 event dataset preserved",
+      "allowed_for_primary_analysis": true,
+      "allowed_for_multivariate": false
+    },
+    {
+      "feature_name": "ma60_slope_5d",
+      "category": "MA_STRUCTURE",
+      "definition": "SMA60_t / SMA60_{t-5} - 1",
+      "input_columns": [
+        "close"
+      ],
+      "lookback": "65 sessions",
+      "timestamp_rule": "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP",
+      "point_in_time_available": true,
+      "derivation_method": "Trailing SMA60 slope",
+      "missingness": {
+        "all_A1_count": 700,
+        "available_count": 653,
+        "missing_count": 47,
+        "missing_rate": 0.06714285714285714,
+        "all_missing": false
+      },
+      "authority_source": "canonical Postgres historical read model via read_historical_bars; REC-A1 event dataset preserved",
+      "allowed_for_primary_analysis": true,
+      "allowed_for_multivariate": false
+    },
+    {
+      "feature_name": "ma60_slope_20d",
+      "category": "MA_STRUCTURE",
+      "definition": "SMA60_t / SMA60_{t-20} - 1",
+      "input_columns": [
+        "close"
+      ],
+      "lookback": "80 sessions",
+      "timestamp_rule": "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP",
+      "point_in_time_available": true,
+      "derivation_method": "Trailing SMA60 slope",
+      "missingness": {
+        "all_A1_count": 700,
+        "available_count": 393,
+        "missing_count": 307,
+        "missing_rate": 0.43857142857142856,
+        "all_missing": false
+      },
+      "authority_source": "canonical Postgres historical read model via read_historical_bars; REC-A1 event dataset preserved",
+      "allowed_for_primary_analysis": true,
+      "allowed_for_multivariate": false
+    },
+    {
+      "feature_name": "volume_ratio_5",
+      "category": "VOLUME_CONFIRMATION",
+      "definition": "volume_t / SMA5(volume)_t",
+      "input_columns": [
+        "volume"
+      ],
+      "lookback": "5 sessions",
+      "timestamp_rule": "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP",
+      "point_in_time_available": true,
+      "derivation_method": "SMA_VOLUME_QUANTITY_V1 deterministic derivation",
+      "missingness": {
+        "all_A1_count": 700,
+        "available_count": 700,
+        "missing_count": 0,
+        "missing_rate": 0.0,
+        "all_missing": false
+      },
+      "authority_source": "canonical Postgres historical read model via read_historical_bars; REC-A1 event dataset preserved",
+      "allowed_for_primary_analysis": true,
+      "allowed_for_multivariate": true
+    },
+    {
+      "feature_name": "volume_ratio_20",
+      "category": "VOLUME_CONFIRMATION",
+      "definition": "volume_t / SMA20(volume)_t",
+      "input_columns": [
+        "volume"
+      ],
+      "lookback": "20 sessions",
+      "timestamp_rule": "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP",
+      "point_in_time_available": true,
+      "derivation_method": "VOLUME_RATIO_20_V1 deterministic derivation",
+      "missingness": {
+        "all_A1_count": 700,
+        "available_count": 700,
+        "missing_count": 0,
+        "missing_rate": 0.0,
+        "all_missing": false
+      },
+      "authority_source": "canonical Postgres historical read model via read_historical_bars; REC-A1 event dataset preserved",
+      "allowed_for_primary_analysis": true,
+      "allowed_for_multivariate": true
+    },
+    {
+      "feature_name": "volume_ma5_ma20_spread",
+      "category": "VOLUME_CONFIRMATION",
+      "definition": "SMA5(volume)_t / SMA20(volume)_t - 1",
+      "input_columns": [
+        "volume"
+      ],
+      "lookback": "20 sessions",
+      "timestamp_rule": "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP",
+      "point_in_time_available": true,
+      "derivation_method": "Trailing volume averages",
+      "missingness": {
+        "all_A1_count": 700,
+        "available_count": 700,
+        "missing_count": 0,
+        "missing_rate": 0.0,
+        "all_missing": false
+      },
+      "authority_source": "canonical Postgres historical read model via read_historical_bars; REC-A1 event dataset preserved",
+      "allowed_for_primary_analysis": true,
+      "allowed_for_multivariate": false
+    },
+    {
+      "feature_name": "volume_expansion_5_vs_prior20",
+      "category": "VOLUME_CONFIRMATION",
+      "definition": "mean(volume_{t-4..t}) / mean(volume_{t-24..t-5}) - 1",
+      "input_columns": [
+        "volume"
+      ],
+      "lookback": "25 sessions",
+      "timestamp_rule": "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP",
+      "point_in_time_available": true,
+      "derivation_method": "Trailing-only volume expansion",
+      "missingness": {
+        "all_A1_count": 700,
+        "available_count": 700,
+        "missing_count": 0,
+        "missing_rate": 0.0,
+        "all_missing": false
+      },
+      "authority_source": "canonical Postgres historical read model via read_historical_bars; REC-A1 event dataset preserved",
+      "allowed_for_primary_analysis": true,
+      "allowed_for_multivariate": false
+    },
+    {
+      "feature_name": "true_range_pct",
+      "category": "VOLATILITY",
+      "definition": "(high_t - low_t) / close_t",
+      "input_columns": [
+        "high",
+        "low",
+        "close"
+      ],
+      "lookback": "1 session",
+      "timestamp_rule": "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP",
+      "point_in_time_available": true,
+      "derivation_method": "Same-day canonical OHLCV range",
+      "missingness": {
+        "all_A1_count": 700,
+        "available_count": 700,
+        "missing_count": 0,
+        "missing_rate": 0.0,
+        "all_missing": false
+      },
+      "authority_source": "canonical Postgres historical read model via read_historical_bars; REC-A1 event dataset preserved",
+      "allowed_for_primary_analysis": true,
+      "allowed_for_multivariate": false
+    },
+    {
+      "feature_name": "atr14_pct",
+      "category": "VOLATILITY",
+      "definition": "mean(high_s - low_s, s=t-13..t) / close_t",
+      "input_columns": [
+        "high",
+        "low",
+        "close"
+      ],
+      "lookback": "14 sessions",
+      "timestamp_rule": "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP",
+      "point_in_time_available": true,
+      "derivation_method": "Trailing raw true-range average",
+      "missingness": {
+        "all_A1_count": 700,
+        "available_count": 700,
+        "missing_count": 0,
+        "missing_rate": 0.0,
+        "all_missing": false
+      },
+      "authority_source": "canonical Postgres historical read model via read_historical_bars; REC-A1 event dataset preserved",
+      "allowed_for_primary_analysis": true,
+      "allowed_for_multivariate": true
+    },
+    {
+      "feature_name": "realized_volatility_20",
+      "category": "VOLATILITY",
+      "definition": "population stddev of trailing 1D close returns over 20 returns",
+      "input_columns": [
+        "close"
+      ],
+      "lookback": "21 sessions",
+      "timestamp_rule": "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP",
+      "point_in_time_available": true,
+      "derivation_method": "Trailing close-return dispersion",
+      "missingness": {
+        "all_A1_count": 700,
+        "available_count": 700,
+        "missing_count": 0,
+        "missing_rate": 0.0,
+        "all_missing": false
+      },
+      "authority_source": "canonical Postgres historical read model via read_historical_bars; REC-A1 event dataset preserved",
+      "allowed_for_primary_analysis": true,
+      "allowed_for_multivariate": false
+    },
+    {
+      "feature_name": "range_compression_5_vs20",
+      "category": "VOLATILITY",
+      "definition": "mean(high-low)_{t-4..t} / mean(high-low)_{t-19..t} - 1",
+      "input_columns": [
+        "high",
+        "low"
+      ],
+      "lookback": "20 sessions",
+      "timestamp_rule": "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP",
+      "point_in_time_available": true,
+      "derivation_method": "Trailing raw range compression",
+      "missingness": {
+        "all_A1_count": 700,
+        "available_count": 700,
+        "missing_count": 0,
+        "missing_rate": 0.0,
+        "all_missing": false
+      },
+      "authority_source": "canonical Postgres historical read model via read_historical_bars; REC-A1 event dataset preserved",
+      "allowed_for_primary_analysis": true,
+      "allowed_for_multivariate": false
+    },
+    {
+      "feature_name": "candle_body_range_fraction",
+      "category": "CANDLE_REJECTION",
+      "definition": "abs(close_t - open_t) / (high_t - low_t)",
+      "input_columns": [
+        "open",
+        "high",
+        "low",
+        "close"
+      ],
+      "lookback": "1 session",
+      "timestamp_rule": "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP",
+      "point_in_time_available": true,
+      "derivation_method": "A1-day canonical candle geometry",
+      "missingness": {
+        "all_A1_count": 700,
+        "available_count": 695,
+        "missing_count": 5,
+        "missing_rate": 0.007142857142857143,
+        "all_missing": false
+      },
+      "authority_source": "canonical Postgres historical read model via read_historical_bars; REC-A1 event dataset preserved",
+      "allowed_for_primary_analysis": true,
+      "allowed_for_multivariate": false
+    },
+    {
+      "feature_name": "upper_wick_range_fraction",
+      "category": "CANDLE_REJECTION",
+      "definition": "(high_t - max(open_t, close_t)) / (high_t - low_t)",
+      "input_columns": [
+        "open",
+        "high",
+        "low",
+        "close"
+      ],
+      "lookback": "1 session",
+      "timestamp_rule": "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP",
+      "point_in_time_available": true,
+      "derivation_method": "A1-day canonical candle geometry",
+      "missingness": {
+        "all_A1_count": 700,
+        "available_count": 695,
+        "missing_count": 5,
+        "missing_rate": 0.007142857142857143,
+        "all_missing": false
+      },
+      "authority_source": "canonical Postgres historical read model via read_historical_bars; REC-A1 event dataset preserved",
+      "allowed_for_primary_analysis": true,
+      "allowed_for_multivariate": false
+    },
+    {
+      "feature_name": "lower_wick_range_fraction",
+      "category": "CANDLE_REJECTION",
+      "definition": "(min(open_t, close_t) - low_t) / (high_t - low_t)",
+      "input_columns": [
+        "open",
+        "high",
+        "low",
+        "close"
+      ],
+      "lookback": "1 session",
+      "timestamp_rule": "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP",
+      "point_in_time_available": true,
+      "derivation_method": "A1-day canonical candle geometry",
+      "missingness": {
+        "all_A1_count": 700,
+        "available_count": 695,
+        "missing_count": 5,
+        "missing_rate": 0.007142857142857143,
+        "all_missing": false
+      },
+      "authority_source": "canonical Postgres historical read model via read_historical_bars; REC-A1 event dataset preserved",
+      "allowed_for_primary_analysis": true,
+      "allowed_for_multivariate": false
+    },
+    {
+      "feature_name": "close_location_value",
+      "category": "CANDLE_REJECTION",
+      "definition": "(close_t - low_t) / (high_t - low_t)",
+      "input_columns": [
+        "high",
+        "low",
+        "close"
+      ],
+      "lookback": "1 session",
+      "timestamp_rule": "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP",
+      "point_in_time_available": true,
+      "derivation_method": "A1-day canonical candle geometry",
+      "missingness": {
+        "all_A1_count": 700,
+        "available_count": 695,
+        "missing_count": 5,
+        "missing_rate": 0.007142857142857143,
+        "all_missing": false
+      },
+      "authority_source": "canonical Postgres historical read model via read_historical_bars; REC-A1 event dataset preserved",
+      "allowed_for_primary_analysis": true,
+      "allowed_for_multivariate": true
+    },
+    {
+      "feature_name": "gap_pct",
+      "category": "CANDLE_REJECTION",
+      "definition": "(open_t - close_{t-1}) / close_{t-1}",
+      "input_columns": [
+        "open",
+        "close"
+      ],
+      "lookback": "2 sessions",
+      "timestamp_rule": "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP",
+      "point_in_time_available": true,
+      "derivation_method": "Trailing prior close and T open",
+      "missingness": {
+        "all_A1_count": 700,
+        "available_count": 700,
+        "missing_count": 0,
+        "missing_rate": 0.0,
+        "all_missing": false
+      },
+      "authority_source": "canonical Postgres historical read model via read_historical_bars; REC-A1 event dataset preserved",
+      "allowed_for_primary_analysis": true,
+      "allowed_for_multivariate": false
+    },
+    {
+      "feature_name": "rsi14",
+      "category": "TECHNICAL_INDICATORS",
+      "definition": "RSI Wilder 14 using trailing close history through T",
+      "input_columns": [
+        "close"
+      ],
+      "lookback": "15+ sessions",
+      "timestamp_rule": "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP",
+      "point_in_time_available": true,
+      "derivation_method": "Existing RSI_WILDER_14_V1 derivation",
+      "missingness": {
+        "all_A1_count": 700,
+        "available_count": 700,
+        "missing_count": 0,
+        "missing_rate": 0.0,
+        "all_missing": false
+      },
+      "authority_source": "canonical Postgres historical read model via read_historical_bars; REC-A1 event dataset preserved",
+      "allowed_for_primary_analysis": true,
+      "allowed_for_multivariate": false
+    },
+    {
+      "feature_name": "macd_line_12_26",
+      "category": "TECHNICAL_INDICATORS",
+      "definition": "EMA12(close)_t - EMA26(close)_t with seeded EMA",
+      "input_columns": [
+        "close"
+      ],
+      "lookback": "26+ sessions",
+      "timestamp_rule": "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP",
+      "point_in_time_available": true,
+      "derivation_method": "Existing MACD_12_26_9_SMA_SEEDED_EMA_V1 derivation",
+      "missingness": {
+        "all_A1_count": 700,
+        "available_count": 700,
+        "missing_count": 0,
+        "missing_rate": 0.0,
+        "all_missing": false
+      },
+      "authority_source": "canonical Postgres historical read model via read_historical_bars; REC-A1 event dataset preserved",
+      "allowed_for_primary_analysis": true,
+      "allowed_for_multivariate": false
+    },
+    {
+      "feature_name": "macd_histogram_12_26_9",
+      "category": "TECHNICAL_INDICATORS",
+      "definition": "MACD line minus seeded signal through T",
+      "input_columns": [
+        "close"
+      ],
+      "lookback": "34+ sessions",
+      "timestamp_rule": "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP",
+      "point_in_time_available": true,
+      "derivation_method": "Existing MACD_12_26_9_SMA_SEEDED_EMA_V1 derivation",
+      "missingness": {
+        "all_A1_count": 700,
+        "available_count": 700,
+        "missing_count": 0,
+        "missing_rate": 0.0,
+        "all_missing": false
+      },
+      "authority_source": "canonical Postgres historical read model via read_historical_bars; REC-A1 event dataset preserved",
+      "allowed_for_primary_analysis": true,
+      "allowed_for_multivariate": false
+    },
+    {
+      "feature_name": "same_day_universe_breadth_above_ma60",
+      "category": "MARKET_REGIME",
+      "definition": "same-day valid-universe share with close >= trailing SMA60",
+      "input_columns": [
+        "close"
+      ],
+      "lookback": "60 sessions per instrument",
+      "timestamp_rule": "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP",
+      "point_in_time_available": true,
+      "derivation_method": "Point-in-time cross-sectional canonical OHLCV aggregation",
+      "missingness": {
+        "all_A1_count": 700,
+        "available_count": 700,
+        "missing_count": 0,
+        "missing_rate": 0.0,
+        "all_missing": false
+      },
+      "authority_source": "canonical Postgres historical read model via read_historical_bars; REC-A1 event dataset preserved",
+      "allowed_for_primary_analysis": true,
+      "allowed_for_multivariate": true
+    },
+    {
+      "feature_name": "same_day_universe_median_return_1d",
+      "category": "MARKET_REGIME",
+      "definition": "same-day median valid-universe 1D close return",
+      "input_columns": [
+        "close"
+      ],
+      "lookback": "2 sessions per instrument",
+      "timestamp_rule": "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP",
+      "point_in_time_available": true,
+      "derivation_method": "Point-in-time cross-sectional canonical OHLCV aggregation",
+      "missingness": {
+        "all_A1_count": 700,
+        "available_count": 700,
+        "missing_count": 0,
+        "missing_rate": 0.0,
+        "all_missing": false
+      },
+      "authority_source": "canonical Postgres historical read model via read_historical_bars; REC-A1 event dataset preserved",
+      "allowed_for_primary_analysis": true,
+      "allowed_for_multivariate": false
+    },
+    {
+      "feature_name": "same_day_universe_median_return_5d",
+      "category": "MARKET_REGIME",
+      "definition": "same-day median valid-universe 5D close return",
+      "input_columns": [
+        "close"
+      ],
+      "lookback": "6 sessions per instrument",
+      "timestamp_rule": "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP",
+      "point_in_time_available": true,
+      "derivation_method": "Point-in-time cross-sectional canonical OHLCV aggregation",
+      "missingness": {
+        "all_A1_count": 700,
+        "available_count": 700,
+        "missing_count": 0,
+        "missing_rate": 0.0,
+        "all_missing": false
+      },
+      "authority_source": "canonical Postgres historical read model via read_historical_bars; REC-A1 event dataset preserved",
+      "allowed_for_primary_analysis": true,
+      "allowed_for_multivariate": false
+    },
+    {
+      "feature_name": "same_day_signal_density",
+      "category": "MARKET_REGIME",
+      "definition": "A1 signal count on T divided by same-day valid-universe count",
+      "input_columns": [
+        "close"
+      ],
+      "lookback": "Same date T only",
+      "timestamp_rule": "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP",
+      "point_in_time_available": true,
+      "derivation_method": "Point-in-time frozen A1 formation output aggregation",
+      "missingness": {
+        "all_A1_count": 700,
+        "available_count": 700,
+        "missing_count": 0,
+        "missing_rate": 0.0,
+        "all_missing": false
+      },
+      "authority_source": "canonical Postgres historical read model via read_historical_bars; REC-A1 event dataset preserved",
+      "allowed_for_primary_analysis": true,
+      "allowed_for_multivariate": false
+    },
+    {
+      "feature_name": "trailing_20d_breadth_above_ma60",
+      "category": "MARKET_REGIME",
+      "definition": "mean of same-day universe breadth over prior 20 observed universe dates including T",
+      "input_columns": [
+        "close"
+      ],
+      "lookback": "20 global observed dates",
+      "timestamp_rule": "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP",
+      "point_in_time_available": true,
+      "derivation_method": "Trailing point-in-time market breadth aggregation",
+      "missingness": {
+        "all_A1_count": 700,
+        "available_count": 700,
+        "missing_count": 0,
+        "missing_rate": 0.0,
+        "all_missing": false
+      },
+      "authority_source": "canonical Postgres historical read model via read_historical_bars; REC-A1 event dataset preserved",
+      "allowed_for_primary_analysis": true,
+      "allowed_for_multivariate": false
+    },
+    {
+      "feature_name": "same_day_return_5d_percentile",
+      "category": "RELATIVE_CONTEXT",
+      "definition": "percentile rank of instrument 5D return within valid same-day universe",
+      "input_columns": [
+        "close"
+      ],
+      "lookback": "6 sessions per instrument and date cross-section",
+      "timestamp_rule": "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP",
+      "point_in_time_available": true,
+      "derivation_method": "Point-in-time cross-sectional rank; no future observations",
+      "missingness": {
+        "all_A1_count": 700,
+        "available_count": 700,
+        "missing_count": 0,
+        "missing_rate": 0.0,
+        "all_missing": false
+      },
+      "authority_source": "canonical Postgres historical read model via read_historical_bars; REC-A1 event dataset preserved",
+      "allowed_for_primary_analysis": true,
+      "allowed_for_multivariate": false
+    },
+    {
+      "feature_name": "same_day_volume_ratio_20_percentile",
+      "category": "RELATIVE_CONTEXT",
+      "definition": "percentile rank of instrument volume ratio 20 within valid same-day universe",
+      "input_columns": [
+        "volume"
+      ],
+      "lookback": "20 sessions per instrument and date cross-section",
+      "timestamp_rule": "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP",
+      "point_in_time_available": true,
+      "derivation_method": "Point-in-time cross-sectional rank; no future observations",
+      "missingness": {
+        "all_A1_count": 700,
+        "available_count": 700,
+        "missing_count": 0,
+        "missing_rate": 0.0,
+        "all_missing": false
+      },
+      "authority_source": "canonical Postgres historical read model via read_historical_bars; REC-A1 event dataset preserved",
+      "allowed_for_primary_analysis": true,
+      "allowed_for_multivariate": false
+    }
+  ],
+  "manifest_definition_sha256": "b761b7dcf3685ff2c64626da28da3f2c0f56ea97d6620f8f9b4fe03d2be7729d",
+  "feature_count": 40,
+  "point_in_time_valid_feature_count": 40,
+  "unavailable_feature_count": 0
+}

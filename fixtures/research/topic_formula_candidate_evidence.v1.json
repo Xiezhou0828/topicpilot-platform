@@ -1,0 +1,257 @@
+{
+  "schemaVersion": "topic-formula-replay-corpus.v1",
+  "mode": "RESEARCH_ONLY",
+  "corpusId": "topicpilot-public-synthetic-candidate-evidence",
+  "corpusVersion": "v1",
+  "contentDigest": "449b2b23fc286558778c77c1c84e159eb5d264fa97d8db55d7bc8f2b489bfff4",
+  "cases": [
+    {
+      "caseId": "complete-mixed-counts",
+      "caseVersion": "v1",
+      "labels": ["complete", "counts", "synthetic"],
+      "aggregation": {
+        "asOf": "2026-08-05",
+        "featureSetVersion": "synthetic-participation-counts.v1",
+        "runtimeVersion": "synthetic-feature-runtime.v1",
+        "aggregationVersion": "synthetic-aggregate.v1",
+        "topics": [
+          {
+            "topicId": "synthetic-topic-alpha",
+            "status": "READY_UNSCORED",
+            "quality": {
+              "readyFeatureCount": 2,
+              "insufficientFeatureCount": 0,
+              "invalidFeatureCount": 0,
+              "coverageMin": 1.0,
+              "coverageMean": 1.0
+            },
+            "qualityFlags": [],
+            "features": [
+              {
+                "featureName": "synthetic_breadth_participation_counts",
+                "featureVersion": "v1",
+                "status": "READY",
+                "value": {
+                  "positiveCount": 6,
+                  "unchangedCount": 2,
+                  "negativeCount": 2
+                },
+                "coverage": 1.0,
+                "qualityFlags": [],
+                "metadata": {"fixtureOnly": true, "upstreamClassification": "undefined"}
+              },
+              {
+                "featureName": "synthetic_leadership_participation_counts",
+                "featureVersion": "v1",
+                "status": "READY",
+                "value": {
+                  "positiveCount": 1,
+                  "unchangedCount": 1,
+                  "negativeCount": 1
+                },
+                "coverage": 1.0,
+                "qualityFlags": [],
+                "metadata": {"fixtureOnly": true, "upstreamClassification": "undefined"}
+              }
+            ]
+          },
+          {
+            "topicId": "synthetic-topic-beta",
+            "status": "READY_UNSCORED",
+            "quality": {
+              "readyFeatureCount": 2,
+              "insufficientFeatureCount": 0,
+              "invalidFeatureCount": 0,
+              "coverageMin": 1.0,
+              "coverageMean": 1.0
+            },
+            "qualityFlags": [],
+            "features": [
+              {
+                "featureName": "synthetic_breadth_participation_counts",
+                "featureVersion": "v1",
+                "status": "READY",
+                "value": {
+                  "positiveCount": 2,
+                  "unchangedCount": 2,
+                  "negativeCount": 6
+                },
+                "coverage": 1.0,
+                "qualityFlags": [],
+                "metadata": {"fixtureOnly": true, "upstreamClassification": "undefined"}
+              },
+              {
+                "featureName": "synthetic_leadership_participation_counts",
+                "featureVersion": "v1",
+                "status": "READY",
+                "value": {
+                  "positiveCount": 3,
+                  "unchangedCount": 0,
+                  "negativeCount": 1
+                },
+                "coverage": 1.0,
+                "qualityFlags": [],
+                "metadata": {"fixtureOnly": true, "upstreamClassification": "undefined"}
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "caseId": "missing-counts",
+      "caseVersion": "v1",
+      "labels": ["missing", "synthetic"],
+      "aggregation": {
+        "asOf": "2026-08-08",
+        "featureSetVersion": "synthetic-participation-counts.v1",
+        "runtimeVersion": "synthetic-feature-runtime.v1",
+        "aggregationVersion": "synthetic-aggregate.v1",
+        "topics": [
+          {
+            "topicId": "synthetic-topic-alpha",
+            "status": "DATA_INSUFFICIENT",
+            "quality": {
+              "readyFeatureCount": 1,
+              "insufficientFeatureCount": 1,
+              "invalidFeatureCount": 0,
+              "coverageMin": 0.5,
+              "coverageMean": 0.75
+            },
+            "qualityFlags": ["SYNTHETIC_MISSING_COUNTS"],
+            "features": [
+              {
+                "featureName": "synthetic_breadth_participation_counts",
+                "featureVersion": "v1",
+                "status": "DATA_INSUFFICIENT",
+                "value": null,
+                "coverage": 0.5,
+                "qualityFlags": ["SYNTHETIC_MISSING_COUNTS"],
+                "metadata": {"fixtureOnly": true, "upstreamClassification": "undefined"}
+              },
+              {
+                "featureName": "synthetic_leadership_participation_counts",
+                "featureVersion": "v1",
+                "status": "READY",
+                "value": {
+                  "positiveCount": 1,
+                  "unchangedCount": 0,
+                  "negativeCount": 1
+                },
+                "coverage": 1.0,
+                "qualityFlags": [],
+                "metadata": {"fixtureOnly": true, "upstreamClassification": "undefined"}
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "caseId": "unchanged-sensitive",
+      "caseVersion": "v1",
+      "labels": ["synthetic", "unchanged"],
+      "aggregation": {
+        "asOf": "2026-08-06",
+        "featureSetVersion": "synthetic-participation-counts.v1",
+        "runtimeVersion": "synthetic-feature-runtime.v1",
+        "aggregationVersion": "synthetic-aggregate.v1",
+        "topics": [
+          {
+            "topicId": "synthetic-topic-alpha",
+            "status": "READY_UNSCORED",
+            "quality": {
+              "readyFeatureCount": 2,
+              "insufficientFeatureCount": 0,
+              "invalidFeatureCount": 0,
+              "coverageMin": 1.0,
+              "coverageMean": 1.0
+            },
+            "qualityFlags": [],
+            "features": [
+              {
+                "featureName": "synthetic_breadth_participation_counts",
+                "featureVersion": "v1",
+                "status": "READY",
+                "value": {
+                  "positiveCount": 0,
+                  "unchangedCount": 10,
+                  "negativeCount": 0
+                },
+                "coverage": 1.0,
+                "qualityFlags": [],
+                "metadata": {"fixtureOnly": true, "upstreamClassification": "undefined"}
+              },
+              {
+                "featureName": "synthetic_leadership_participation_counts",
+                "featureVersion": "v1",
+                "status": "READY",
+                "value": {
+                  "positiveCount": 0,
+                  "unchangedCount": 2,
+                  "negativeCount": 0
+                },
+                "coverage": 1.0,
+                "qualityFlags": [],
+                "metadata": {"fixtureOnly": true, "upstreamClassification": "undefined"}
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "caseId": "valid-zero-participation",
+      "caseVersion": "v1",
+      "labels": ["synthetic", "zero"],
+      "aggregation": {
+        "asOf": "2026-08-07",
+        "featureSetVersion": "synthetic-participation-counts.v1",
+        "runtimeVersion": "synthetic-feature-runtime.v1",
+        "aggregationVersion": "synthetic-aggregate.v1",
+        "topics": [
+          {
+            "topicId": "synthetic-topic-alpha",
+            "status": "READY_UNSCORED",
+            "quality": {
+              "readyFeatureCount": 2,
+              "insufficientFeatureCount": 0,
+              "invalidFeatureCount": 0,
+              "coverageMin": 1.0,
+              "coverageMean": 1.0
+            },
+            "qualityFlags": [],
+            "features": [
+              {
+                "featureName": "synthetic_breadth_participation_counts",
+                "featureVersion": "v1",
+                "status": "READY",
+                "value": {
+                  "positiveCount": 0,
+                  "unchangedCount": 0,
+                  "negativeCount": 10
+                },
+                "coverage": 1.0,
+                "qualityFlags": [],
+                "metadata": {"fixtureOnly": true, "upstreamClassification": "undefined"}
+              },
+              {
+                "featureName": "synthetic_leadership_participation_counts",
+                "featureVersion": "v1",
+                "status": "READY",
+                "value": {
+                  "positiveCount": 0,
+                  "unchangedCount": 0,
+                  "negativeCount": 3
+                },
+                "coverage": 1.0,
+                "qualityFlags": [],
+                "metadata": {"fixtureOnly": true, "upstreamClassification": "undefined"}
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

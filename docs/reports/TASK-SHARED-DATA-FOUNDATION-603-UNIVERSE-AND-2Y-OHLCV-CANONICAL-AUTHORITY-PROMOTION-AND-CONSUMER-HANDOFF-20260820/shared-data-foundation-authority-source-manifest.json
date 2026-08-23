@@ -1,0 +1,87 @@
+{
+  "task_id": "TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-CANONICAL-AUTHORITY-PROMOTION-AND-CONSUMER-HANDOFF-20260820",
+  "source_canonical_head": "6ffe80f086cb98c7fa76f4846b29dc7ddfc946b0",
+  "bootstrap_source_final_canonical_head": "c40aa42e7cac665386009f29c94a8dafce896427",
+  "bootstrap_task_id": "TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-BOOTSTRAP-EXECUTION-20260819",
+  "source_uniquely_identified": true,
+  "source_identity": {
+    "run_id": "TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-BOOTSTRAP-EXECUTION-20260819-RUN-001",
+    "reference_version": "sdf-reference-603-v1",
+    "active_registry_id": "59cc1b17-5858-40d3-9366-a3c1e19eafdf",
+    "normalized_surface_sha256": "e803733e796d8f4d8cf00575cd4045f28c9364572fc61b31ef490e8a65ff47a4",
+    "normalized_surface_md5": "0cbdb8fe950c7cbe494dcc5cb50c6e33",
+    "accepted_ohlcv_rows": 288881
+  },
+  "source_artifacts": [
+    {
+      "path": "docs/reports/TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-BOOTSTRAP-EXECUTION-20260819/formal-task-closure-report.json",
+      "sha256": "1772f0164eaaa956efb60102defd71fb594781ec179047e392f8d5f5bf45ad22"
+    },
+    {
+      "path": "docs/reports/TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-BOOTSTRAP-EXECUTION-20260819/historical-bootstrap-run-manifest.json",
+      "sha256": "b122af7e91e4e0cf237f35d66c7d9fc2dcdab10ad56a95f034b990bc6d390660"
+    },
+    {
+      "path": "docs/reports/TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-BOOTSTRAP-EXECUTION-20260819/historical-acquisition-summary.json",
+      "sha256": "45470f5b3a7b31d42ffe92dede457c5846a1c61250b09be4864e50885e7675f0"
+    },
+    {
+      "path": "docs/reports/TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-BOOTSTRAP-EXECUTION-20260819/historical-checkpoint-work-item-ledger.json",
+      "sha256": "f78e2b0cdd5978c48b533404194327f2507f1790b7c39afb8d526ebb752e4b7d"
+    },
+    {
+      "path": "docs/reports/TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-BOOTSTRAP-EXECUTION-20260819/historical-coverage-by-instrument.tsv",
+      "sha256": "6a7bae643cc039e2dfebdb145c9c6f483eaae2d16c0a5cb7f899db3916cd773a"
+    },
+    {
+      "path": "docs/reports/TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-BOOTSTRAP-EXECUTION-20260819/historical-coverage-by-market.json",
+      "sha256": "e0dd9890b9cbbc9b9350047c0fb86ce65335453b0b9a6688b0f13d8e3aceb29b"
+    },
+    {
+      "path": "docs/reports/TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-BOOTSTRAP-EXECUTION-20260819/ohlcv-quality-audit.json",
+      "sha256": "52c574f4295e0788436e20a92f1593d2b05b2253918537d859d77f0ea5563609"
+    },
+    {
+      "path": "docs/reports/TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-BOOTSTRAP-EXECUTION-20260819/provider-lineage-audit.json",
+      "sha256": "3ba17debda440d75cb4fa5d1b4cb6a1f6281eaa77058e61c7b1a84ae51492341"
+    },
+    {
+      "path": "docs/reports/TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-BOOTSTRAP-EXECUTION-20260819/pit-reconstructability-audit.json",
+      "sha256": "49b97e3c62ee5e82821383bcb4de9b81826fa48417fcdec474e03910dbf0a3c3"
+    },
+    {
+      "path": "docs/reports/TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-BOOTSTRAP-EXECUTION-20260819/gap-lifecycle-classification-audit.json",
+      "sha256": "3a7329725fe92ff6bc5c88895c1a7d83f0562007d967eac17e1cc54fde90add9"
+    },
+    {
+      "path": "docs/reports/TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-BOOTSTRAP-EXECUTION-20260819/two-run-reproducibility-report.json",
+      "sha256": "651a49e6069bbadfeb55f3b676c77293eef4cd7132849df66b25d59b7cd7f893"
+    },
+    {
+      "path": "docs/reports/TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-BOOTSTRAP-EXECUTION-20260819/provider-error-no-data-quarantine-ledger.tsv",
+      "sha256": "80dae8dfc22b89313ed55fe808e71187814d06fa67b88821c411d1e9094d2f07"
+    },
+    {
+      "path": "docs/reports/TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-BOOTSTRAP-EXECUTION-20260819/formal-security-listing-authority-manifest.json",
+      "sha256": "bf9c91421048c09db1af21f6135cdbae13c391d90b4fca40fec9920704389bb1"
+    },
+    {
+      "path": "docs/reports/TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-BOOTSTRAP-EXECUTION-20260819/reference-authority-evidence-provenance-manifest.json",
+      "sha256": "bc0c338c36f262fb5f6f133a74843ea0e25e0326a6ddcc2a00bb2dd099246dc9"
+    },
+    {
+      "path": "docs/reports/TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-BOOTSTRAP-EXECUTION-20260819/603-universe-post-write-reconciliation.json",
+      "sha256": "d832c58baa806178891c5bc3baaca0529fd2dd58d7e4dba63e31ab3d09449195"
+    },
+    {
+      "path": "docs/reports/TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-BOOTSTRAP-EXECUTION-20260819/universe-idempotency-report.json",
+      "sha256": "3a942239085aff86336cfb67857dcb62307ece2f25f8cbec8a2904ffad53a512"
+    },
+    {
+      "path": "docs/reports/TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-BOOTSTRAP-EXECUTION-20260819/universe-rollback-manifest.json",
+      "sha256": "5dacc08161c39c0446c721f88e06223d0141a8effddd333f1f33090b6c064e4b"
+    }
+  ],
+  "source_artifact_count": 17,
+  "source_owner_dirty_or_untracked_required": false
+}

@@ -1,0 +1,129 @@
+{
+  "event_count": 5277,
+  "fail_closed_adjustment_rule": true,
+  "files": [
+    {
+      "path": "reports/TASK-WS3-A2-OUTCOME-RECONSTRUCTION-FAILURE-ATTRIBUTION-20260821/a2-path-aware-outcomes.csv",
+      "sha256": "3fa287b26a8db07e540a1f45bb663af52df4f88bed7156c69b357d31c9005538"
+    },
+    {
+      "path": "reports/TASK-WS3-A2-OUTCOME-RECONSTRUCTION-FAILURE-ATTRIBUTION-20260821/a2-source-reconstruction-reconciliation.csv",
+      "sha256": "805c13522e99d329cd0a3457526004a09810771078b0840b7990a80e1e6d1111"
+    },
+    {
+      "path": "reports/TASK-WS3-A2-OUTCOME-RECONSTRUCTION-FAILURE-ATTRIBUTION-20260821/failure-attribution.csv",
+      "sha256": "82c5da555e5475819a8e31d267011a45ccb29940c73f8db3bc57da6892543932"
+    },
+    {
+      "path": "reports/TASK-WS3-A2-OUTCOME-RECONSTRUCTION-FAILURE-ATTRIBUTION-20260821/owner-label-reconciliation-30-case.csv",
+      "sha256": "8255953aa18a86a7666f9c6d70aeae7399397ebfd5063cdc68b574988b918d19"
+    },
+    {
+      "path": "reports/TASK-WS3-A2-OUTCOME-RECONSTRUCTION-FAILURE-ATTRIBUTION-20260821/filter-ablation.csv",
+      "sha256": "1ca548f70a866612fbd2032c28c7581a5e01869e6c42565da735903c518a54aa"
+    },
+    {
+      "path": "reports/TASK-WS3-A2-OUTCOME-RECONSTRUCTION-FAILURE-ATTRIBUTION-20260821/extension-feature-comparison.csv",
+      "sha256": "39fc46e5f3760b796602979a809068252141014d12736b151bfc8a6bfb7ad647"
+    },
+    {
+      "path": "reports/TASK-WS3-A2-OUTCOME-RECONSTRUCTION-FAILURE-ATTRIBUTION-20260821/corporate-action-data-quality-audit.csv",
+      "sha256": "76caf3549db11bf22b5a1f26cc20f0504dea8490c32712a836011512d76822c2"
+    },
+    {
+      "path": "reports/TASK-WS3-A2-OUTCOME-RECONSTRUCTION-FAILURE-ATTRIBUTION-20260821/regime-attribution-audit.csv",
+      "sha256": "116a24ccacafba50650a9efe4380c851716c1b1750e23de8b90b561136941455"
+    },
+    {
+      "path": "reports/TASK-WS3-A2-OUTCOME-RECONSTRUCTION-FAILURE-ATTRIBUTION-20260821/run-summary.json",
+      "sha256": "ac0e1b7f5f65a85ffb5b0a92de58c3e8ce5e7a49fe976455e4db6627944224c9"
+    }
+  ],
+  "horizons": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10
+  ],
+  "metrics": [
+    "endpoint_return",
+    "mfe",
+    "mae",
+    "mfe_timing_session",
+    "mae_timing_session",
+    "path_ordering",
+    "mfe_before_mae"
+  ],
+  "outcome_row_count": 52770,
+  "schema_version": "ws3-a2-path-aware-outcome-manifest.v1",
+  "source_artifacts": {
+    "a2_event_panel": {
+      "exists": true,
+      "path": "C:\\Users\\acer\\Desktop\\題材領航\\topicpilot-platform\\reports\\TASK-WS3-P2E-A2-EXPANDED-CONFIRMATORY-VALIDATION-AND-ADVANTAGE-REVALIDATION-20260820\\ws3-p2e-a2-expanded-event-panel.csv",
+      "relative_path": "reports/TASK-WS3-P2E-A2-EXPANDED-CONFIRMATORY-VALIDATION-AND-ADVANTAGE-REVALIDATION-20260820/ws3-p2e-a2-expanded-event-panel.csv",
+      "sha256": "97b131479b90ce64a821f72a6c6cceb58d102aeb49c64eac60ba19dfca71bc52"
+    },
+    "a2_source_run_summary": {
+      "exists": true,
+      "path": "C:\\Users\\acer\\Desktop\\題材領航\\topicpilot-platform\\reports\\TASK-WS3-P2E-A2-EXPANDED-CONFIRMATORY-VALIDATION-AND-ADVANTAGE-REVALIDATION-20260820\\ws3-p2e-a2-run-summary.json",
+      "relative_path": "reports/TASK-WS3-P2E-A2-EXPANDED-CONFIRMATORY-VALIDATION-AND-ADVANTAGE-REVALIDATION-20260820/ws3-p2e-a2-run-summary.json",
+      "sha256": "50bda4fe3948fca0e6b5f66d41fff2437d5baf1baf5afe7c1648a9f52802be37"
+    },
+    "corporate_action_dataset": {
+      "exists": true,
+      "path": "C:\\Users\\acer\\Desktop\\題材領航\\topicpilot-platform\\reports\\TASK-REC-A1-CORPORATE-ACTION-RESEARCH-DATASET-IMPLEMENTATION\\REC-A1-CA-EVENTS-V0.json",
+      "relative_path": "reports/TASK-REC-A1-CORPORATE-ACTION-RESEARCH-DATASET-IMPLEMENTATION/REC-A1-CA-EVENTS-V0.json",
+      "sha256": "78f684d5b014f43f3b34393be1bc644805e67f05e18b21e7ab98d075a1cd60b2"
+    },
+    "market_stability": {
+      "exists": true,
+      "path": "C:\\Users\\acer\\Desktop\\題材領航\\topicpilot-platform\\reports\\TASK-WS3-P2E-A2-EXPANDED-CONFIRMATORY-VALIDATION-AND-ADVANTAGE-REVALIDATION-20260820\\ws3-p2e-a2-market-stability.csv",
+      "relative_path": "reports/TASK-WS3-P2E-A2-EXPANDED-CONFIRMATORY-VALIDATION-AND-ADVANTAGE-REVALIDATION-20260820/ws3-p2e-a2-market-stability.csv",
+      "sha256": "427cc56baae854074fdd0674fc85b5646bbd70704c35b738f1b9f550a400f0c3"
+    },
+    "owner_formal_closure": {
+      "exists": true,
+      "path": "C:\\Users\\acer\\Desktop\\題材領航\\topicpilot-platform\\reports\\TASK-WS3-A2-HISTORICAL-LABEL-AUDIT-AND-OWNER-REVIEW-HANDOFF-20260821\\formal-closure-report.md",
+      "relative_path": "reports/TASK-WS3-A2-HISTORICAL-LABEL-AUDIT-AND-OWNER-REVIEW-HANDOFF-20260821/formal-closure-report.md",
+      "sha256": "7dc13b9808440d6636ba644e9469dff55c9f9cd912b964fb8cd224997ba10cf7"
+    },
+    "owner_master_csv": {
+      "exists": true,
+      "path": "C:\\Users\\acer\\Desktop\\題材領航\\topicpilot-platform\\reports\\TASK-WS3-A2-HISTORICAL-LABEL-AUDIT-AND-OWNER-REVIEW-HANDOFF-20260821\\ws3-a2-historical-label-audit-master.csv",
+      "relative_path": "reports/TASK-WS3-A2-HISTORICAL-LABEL-AUDIT-AND-OWNER-REVIEW-HANDOFF-20260821/ws3-a2-historical-label-audit-master.csv",
+      "sha256": "2deac1a8e4b35c019f0380d05d9f4315024f91e6912735eef55181db753df76d"
+    },
+    "owner_review_pack": {
+      "exists": true,
+      "path": "C:\\Users\\acer\\Desktop\\題材領航\\topicpilot-platform\\reports\\TASK-WS3-A2-HISTORICAL-LABEL-AUDIT-AND-OWNER-REVIEW-HANDOFF-20260821\\WS3-A2-HISTORICAL-LABEL-OWNER-REVIEW-PACK.md",
+      "relative_path": "reports/TASK-WS3-A2-HISTORICAL-LABEL-AUDIT-AND-OWNER-REVIEW-HANDOFF-20260821/WS3-A2-HISTORICAL-LABEL-OWNER-REVIEW-PACK.md",
+      "sha256": "a8479ccd991bd5f0b233bede2daf8b415719fa5b19f06bd393cb69c698a0787d"
+    },
+    "structural_formal_closure": {
+      "exists": true,
+      "path": "C:\\Users\\acer\\Desktop\\題材領航\\topicpilot-platform\\docs\\reports\\TASK-WS3-A-STRUCTURAL-ELIGIBILITY-RECONSTRUCTION-AND-FALSE-POSITIVE-SEPARATION-20260821\\formal-closure-report.md",
+      "relative_path": "docs/reports/TASK-WS3-A-STRUCTURAL-ELIGIBILITY-RECONSTRUCTION-AND-FALSE-POSITIVE-SEPARATION-20260821/formal-closure-report.md",
+      "sha256": "353130cf70ad75857793ce842acc014a1a5d2b88bac5bcebbd4ccc34f42c2eee"
+    },
+    "structural_run_summary": {
+      "exists": true,
+      "path": "C:\\Users\\acer\\Desktop\\題材領航\\topicpilot-platform\\reports\\TASK-WS3-A-STRUCTURAL-ELIGIBILITY-RECONSTRUCTION-AND-FALSE-POSITIVE-SEPARATION-20260821\\ws3-a-structural-eligibility-run-summary.json",
+      "relative_path": "reports/TASK-WS3-A-STRUCTURAL-ELIGIBILITY-RECONSTRUCTION-AND-FALSE-POSITIVE-SEPARATION-20260821/ws3-a-structural-eligibility-run-summary.json",
+      "sha256": "4d46abb0224155a0d87349f4fd83a310630167a0bd55126e65e8c216d725a656"
+    }
+  },
+  "source_query": {
+    "accepted_price_rows": 288881,
+    "instrument_count": 603,
+    "source": "topicpilot.vw_daily_market_observations",
+    "volume_query_status": "NOT_SELECTED_FROM_PRICE_VIEW;ANCHOR_VOLUME_FROM_FROZEN_A2_PANEL",
+    "volume_unit_status": "SHARES_INFERRED_FROM_CANONICAL_PROVIDER_CONTRACT"
+  },
+  "task_id": "TASK-WS3-A2-OUTCOME-RECONSTRUCTION-FAILURE-ATTRIBUTION-20260821"
+}

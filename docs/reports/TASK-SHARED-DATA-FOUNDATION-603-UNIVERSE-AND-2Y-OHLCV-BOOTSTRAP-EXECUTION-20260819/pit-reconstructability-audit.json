@@ -1,0 +1,9 @@
+{
+  "task_id": "TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-BOOTSTRAP-EXECUTION-20260819",
+  "pit_reconstructable_instrument_count": 603,
+  "pit_reconstructable_rows": 288881,
+  "pit_limited_instrument_count": 16,
+  "pit_unusable_instrument_count": 0,
+  "limitation_definition": "PIT lineage is present for all accepted rows; 16 instruments have bounded coverage limitations (3 listing-date truncations + 13 provider/unresolved coverage-gap instruments).",
+  "supersession_filter": "vw_daily_market_observations excludes accepted/incomplete PRICE successors and selects one source candidate per instrument/trade_date."
+}

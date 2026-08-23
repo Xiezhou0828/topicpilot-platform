@@ -1,7 +1,7 @@
 # TopicPilot execution roadmap
 
 **Owner:** execution sequence, phase priority, status, and dependency routing
-**Last reviewed:** `2026-08-14`
+**Last reviewed:** `2026-08-22`
 
 This document owns execution routing. It does not replace the accepted product
 contract, architecture specifications, work orders, or validation reports.
@@ -28,6 +28,42 @@ Startup and handoff navigation belongs to [PROJECT_CONTEXT.md](../PROJECT_CONTEX
 
 ## Current operational baseline
 
+The protected data, historical, Today, Stock, and Topic foundations below
+remain the current baseline; the parallel execution routes are stated first so
+that active work does not get mistaken for a serialized release path.
+
+## Current Parallel Plan
+
+The 2026-08-22 execution route is four isolated workstreams. Completion or
+readiness in one workstream does not establish overall release readiness, and
+each workstream must preserve the authority boundaries below.
+
+- **WS1 — Topic Derived Intelligence / Structural Role & Score Projection:**
+  D001 is owner-decided and canonicalized; additive authority/read-model
+  infrastructure and fail-closed as-of resolvers are in the canonical path.
+  The next bounded step is Owner-reviewed, effective-dated authority ingestion
+  for Structural Role and approved Score Projection V1 data. Role/projection
+  records remain unpopulated, and Score/Grade publication is not authorized.
+  Topic Lifecycle API/frontend integration and fail-closed disclosure are now
+  committed; current live acceptance remains pending stage-bearing canonical
+  rows, so Forward Shadow is not formal publication.
+- **WS2 — Stock Technical V0:** policy, publication, and formal evidence
+  surfaces are canonicalized for exactly 14 PIT-safe indicators. The next
+  bounded step is Formal Evidence Provider & Consumer Contract integration of
+  the normalized read-only surface; no new indicator, strategy, MA60 policy,
+  migration, or Production activation is implied.
+- **WS3 — Core V0 research:** A1 is frozen awaiting forward evidence; A2
+  confirmed-breakout research and confirmatory validation remain bounded and
+  descriptive. A2 Origin Attribution is evidence-only and not promoted. The
+  expanded-universe/history route is for future runtime, coverage, and
+  qualification evidence; it does not change A1/A2 semantics or algorithms.
+  The latest Lifecycle-conditioned expectancy study is descriptive evidence
+  only, with bounded join coverage and no strategy filter, score, threshold,
+  OOS claim, or policy promotion.
+- **WS4 — Release-chain Closure / RC Qualification:** remains an independent
+  Owner-authorized lane. `READY_FOR_RELEASE_CHAIN_CLOSURE=YES` and
+  `READY_FOR_PRODUCTION_RELEASE=NO`; WS4 does not globally block WS1-WS3.
+
 ### Mainline A — DATA / Reference / Post-Close
 
 `TASK-DATA-REF-009A` is complete for the current handoff. G0, G1, G2, G3, and
@@ -47,9 +83,14 @@ baseline and targeted validation.
 
 ### Mainline B — Historical
 
-`HIST-001` is complete. The next historical slice is six-month local/full seed
-coverage with durable historical provenance, followed by technical and
-recommendation inputs suitable for replay and review.
+Historical persistence authority is canonically promoted to the V2 canonical
+observation chain. The local evidence reconciles 507 symbols and 63,826
+canonical OHLCV rows through 2026-08-13. Stock-006A historical bar read and
+raw historical price frontend publication are also canonically reconciled;
+the detailed current matrix is in the [current-state reconciliation report](reports/TASK-DOC-CURRENT-PROJECT-STATE-COLD-START-HANDOFF-RECONCILIATION-001.md).
+The next historical slice is adjustment/corporate-action provenance plus the
+expanded-universe/history evidence needed for bounded technical and research
+qualification. This does not authorize strategy or recommendation semantics.
 
 Historical OHLCV readiness is not historical Topic/System State readiness.
 Six months of prices do not by themselves reproduce historical topic scores,
@@ -59,20 +100,80 @@ effective-dated relations, policy versions, and provenance.
 
 ### Mainline C — Today
 
-Daily Focus and Market Events isolated wiring is complete on the shared Today
-resource path. Market Overview wiring and the remaining formal data/read-model
-gaps are follow-up work. The Today surface must preserve backend-owned order,
+Daily Focus, Main Topics, Heating/Cooling, Market Events, and Market Overview
+wiring are reconciled on the shared Today Home resource path. The remaining
+formal data/read-model gaps are follow-up work. The Today surface must preserve backend-owned order,
 metadata, and explicit `FORMAL` / `TEMPORARY` / `PREVIEW` / `UNAVAILABLE`
 semantics; missing indices, turnover, narrative, or derived market score must
 remain unavailable until a backend-owned contract exists.
 
+`TASK-FE-BE-TODAY-005B-INDEX-CONTRACT` is complete for the contract-only
+boundary: official TWSE/TPEx index mappings, raw-date normalization,
+provider-neutral typed results, reduced fixtures, and fail-closed tests are in
+the canonical repository. It does not authorize persistence, post-close
+capture, Home/API/client/frontend wiring, or turnover. Index activation remains
+pending source-use approval and protected upstream gates; TPEx turnover remains
+blocked pending exact semantics and usage approval.
+
+The 005B index series is archived at the contract boundary with execution state
+`WAITING_SOURCE_USE_APPROVAL`; no next Today index implementation is authorized
+until source-use approval and the protected upstream gate are closed.
+
 ### Mainline E — Stock
 
 Formal stock code/name search and formal topic-filter wiring are complete in
-isolation. The next execution slice is reconciliation, EOD presentation,
-漲跌幅 semantics, Stock Drawer regression/detail data, and remaining formal
-detail fields. Existing search/filter behavior remains backend-owned: the
-browser must not infer membership, ranking, sorting, or topic semantics.
+canonical through `TASK-OPS-STOCK-004-CANONICAL-RECONCILIATION-001`. EOD list,
+detail, Explorer, and Drawer wiring are also closed through Stock-005B/005C;
+raw historical bar backend and price frontend publication are closed through
+Stock-006A. Technical V0 policy/publication and its formal evidence surface
+are now a separate mainline; the next execution slice is the Formal Evidence
+Provider & Consumer Contract integration. Event markers, institution flow,
+narrative, and downstream Opportunity/recommendation contracts remain
+separate. Existing search/filter behavior remains backend-owned: the browser
+must not infer membership, ranking, sorting, or topic semantics.
+
+## Current Topic execution note
+
+Formal PIT daily state is canonically implemented and bounded-materialized by
+migration 0030. The authority is effective-dated membership plus valid
+identity/reference/session/calendar bindings; the materialization contains
+460 formal, published, non-superseded snapshots for five dates and 4,235
+member facts. Formal-only reads exclude research/shadow rows and pass the
+bounded replay/immutability checks.
+
+WS1 has now canonicalized additive Structural Role and Score Projection
+authority/read infrastructure with fail-closed as-of resolution. It is ready
+only for approved Owner-reviewed authority ingestion; no role/projection data
+has been populated and Score/Grade remain unpublished. Instrument-to-topic
+relations accept `0..N`, so a valid zero-topic instrument is retained without
+a placeholder topic. Missing derived data is Topic/as-of scoped and does not
+globally fail unrelated Topics or workstreams.
+
+This foundation still does not complete Topic Score, Grade, ranking, breadth,
+leadership, concentration, or Lifecycle publication. Those states remain
+separately governed as `DEFERRED`, `UNAVAILABLE`, or `SHADOW_ONLY / UNPUBLISHED`
+as recorded in the [current-state reconciliation report](reports/TASK-DOC-CURRENT-PROJECT-STATE-COLD-START-HANDOFF-RECONCILIATION-001.md).
+Lifecycle UI/API integration is committed, but live stage-bearing data remains
+unavailable and must stay fail-closed rather than becoming formal publication.
+The Topic Overview/Market Map UI is implemented, but formal lanes must remain
+empty or explicitly unavailable when the formal derived fields are null.
+
+## Release-hygiene closure checkpoint
+
+The two release-hygiene closure workstreams are closed: A closed the Stock-004
+canonical reconciliation and B closed the documentation provider, DB fixture,
+and owner/branch disposition blockers. The [A closure report](reports/TASK-OPS-STOCK-004-CANONICAL-RECONCILIATION-001.md)
+and [B closure report](reports/TASK-OPS-DOCUMENTATION-PROVIDERS-OWNER-DISPOSITION-AND-DB-INTEGRATION-FIXTURE-CLOSURE-001.md)
+remain the evidence owners.
+
+The `BLK-HYGIENE-01/02/03/04` blockers are closed:
+`BLK_HYGIENE_01_CLOSED=YES`, `BLK_HYGIENE_02_CLOSED=YES`,
+`BLK_HYGIENE_03_CLOSED=YES`, and `BLK_HYGIENE_04_CLOSED=YES`.
+`READY_FOR_RELEASE_CHAIN_CLOSURE=YES`; `READY_FOR_PRODUCTION_RELEASE=NO`.
+Owner dirty/untracked state remains preserved and classified. Release-chain
+closure remains an independent Owner-authorized WS4 lane; WS1-WS3 may continue
+within their bounded contracts. This checkpoint does not change `NEXT_TASK`,
+authorize Production mutation, or replace the product phase routing below.
 
 ## Phase priorities
 
@@ -89,15 +190,20 @@ browser must not infer membership, ranking, sorting, or topic semantics.
 
 ### Stock
 
-- Reconcile the isolated formal search and topic-filter implementation into the
-  canonical repository and validate the affected API/frontend boundary.
-- Finish EOD presentation, percentage-change semantics, Drawer regression/detail
-  data, and any missing formal fields without inventing browser-side values.
+- Stock-004 formal search and topic-filter wiring are canonicalized; the
+  affected API/frontend boundary is closed under the [reconciliation
+  report](reports/TASK-OPS-STOCK-004-CANONICAL-RECONCILIATION-001.md).
+- Stock-005B/005C EOD presentation and Explorer/Drawer wiring are also closed;
+  Stock-006A raw historical bar and price frontend publication are closed.
+- Finish technical publication, event/corporate-action markers, institution
+  flow, narrative, and downstream Opportunity/recommendation contracts without
+  inventing browser-side values.
 - Preserve backend ordering and formal/preview/unavailable disclosure.
 
 ### Today
 
-- Complete the Market Overview/formal-data follow-up on the shared Home resource.
+- Define the next formal-data contract for the remaining Market Overview gaps
+  on the shared Home resource; existing Market Overview wiring is complete.
 - Keep Daily Focus and Market Events as backend-owned projections. Temporary
   topic-snapshot-derived content must remain labelled `TEMPORARY`; it is not
   promoted to formal data by frontend wiring.
@@ -106,10 +212,15 @@ browser must not infer membership, ranking, sorting, or topic semantics.
 
 ### Topic page
 
-- Close the formal publication gap for Today Topic Map `S/A/B/D` groups.
-- Provide formal Topic Lifecycle data and missing detail fields.
-- Fix the large-group accordion same-row height coupling bug without changing
-  topic semantics or lifecycle derivation.
+- PIT membership and daily formal snapshots are already materialized under
+  migration 0030; this closes the bounded state foundation, not the derived
+  publication surface.
+- Provide formal Topic Score/Grade, ranking/breadth/leadership/concentration,
+  Lifecycle history, Today Topic Map `S/A/B/D`, and missing detail fields
+  through separately authorized backend work.
+- The large-group accordion same-row height coupling bug is complete via the
+  frontend-only layout fix; topic semantics and lifecycle derivation remain
+  unchanged.
 
 ### Favorites
 
@@ -125,6 +236,16 @@ The following are research candidates, not accepted production strategies:
 - A2 — Confirmed Breakout;
 - A3 — Strong Pullback / Retest;
 - Catch-up / rotation.
+
+REC-A1 Dataset/Protocol Freeze is canonically closed as research-only with
+owner-accepted residual uncertainty. A1 is frozen awaiting forward evidence.
+A2 confirmed-breakout formation remains frozen while entry/path and
+invalidation research/confirmatory validation stay bounded and descriptive.
+A2 Origin Attribution is evidence-only and not promoted. Opportunity remains
+shadow wiring; no candidate has an accepted strategy, production entry/stop,
+or recommendation publication. Expanded-universe/history work is evidence
+expansion and qualification routing only; it does not change strategy
+semantics or algorithms.
 
 Every candidate must pass this gate sequence:
 
@@ -203,5 +324,60 @@ cutover decision.
 Old `TASK-LIVE-002 = WAITING_LIVE_VALIDATION`, provider-activation blockers,
 old migration-head/repository snapshots, and old Opportunity “next gate” text
 are historical unless explicitly linked as current by this roadmap. They do not
-override the 2026-08-14 phase priorities. Do not edit or infer `NEXT_TASK` from
+override the 2026-08-22 Parallel Plan or its phase priorities. Do not edit or infer `NEXT_TASK` from
 this document.
+
+## Stock-005B canonical reconciliation checkpoint
+
+`TASK-FE-BE-STOCK-005B` is canonically reconciled: the additive StockEodRead
+backend/API projection is present on the existing list/detail routes, with
+OpenAPI and generated client artifacts aligned. The next Stock slice is
+`TASK-FE-BE-STOCK-005C` for Explorer/Drawer EOD wiring; technical detail remains
+Historical-dependent and canonical turnover remains nullable when upstream
+turnover_amount is unavailable.
+
+## Stock-005C canonical frontend checkpoint
+
+`TASK-FE-BE-STOCK-005C` is complete for the formal EOD frontend vertical:
+Explorer and the shared Drawer consume `StockEodRead` render-only, preserve
+intraday/EOD separation, fail closed for missing formal EOD, and keep Preview
+explicit. The existing Drawer interaction shell and advanced topic filter are
+regression-protected. Technical detail/publication, timeline/history,
+institution flow, narrative, Opportunity, and recommendation remain separate
+follow-up work.
+
+## Canonical-to-production delivery flow
+
+Every delivery follows the shared lifecycle:
+
+`IMPLEMENTED` -> `VALIDATED` -> `CANONICALIZED` -> `RELEASE_CANDIDATE` -> `PRODUCTION_RELEASED` -> `POST_DEPLOY_VERIFIED`.
+
+Roadmap status must distinguish `Implemented`, `Canonicalized`, `Release
+Candidate`, and `Production Released`; capability `COMPLETE` and test `PASS`
+do not advance a milestone by themselves. Canonicalization requires the
+approved files at a committed canonical SHA and a source-to-canonical SHA
+mapping. An isolated PASS is source evidence only, and a dirty-worktree PASS is
+diagnostic only. A clean candidate must be checked out from that exact SHA.
+
+Promotion routing is: canonical reconciliation -> clean exact-SHA candidate
+validation -> owner-authorized Production promotion -> post-deploy public and
+revision verification. Release readiness must cover exact-SHA API/Web
+provenance, fail-closed behavior, migration/data state, rollback readiness, and
+deployed revision verification. Local migration/data/materialization evidence
+does not establish Production readiness or visibility. `PUSH_REMOTE=NO` and
+`DEPLOY=NO` are safety boundaries, not terminal success states.
+
+`NEXT_TASK` is changed only by the Owner. Agents may record a recommendation,
+but may not promote a recommendation into an authorized next task.
+
+## Governance hardening checkpoint
+
+The execution flow may advance to a release candidate only when clean source
+state and reproducible lockfile-derived dependency state both pass. Commit-
+preserving canonical promotion is preferred; shared dirty-file hunk exceptions
+require explicit attribution and HEAD/index/worktree audit evidence. Before
+promotion, the repository/worktree/remote hygiene gate must classify divergence,
+stale or orphaned worktrees, uncommitted dependencies, and provenance gaps.
+Validation count deltas must carry explicit pre/post attribution with
+PASS/FAIL/SKIP/XFAIL/DESELECTED kept separate. This is an execution checkpoint,
+not a release runbook or authorization to clean owner state.

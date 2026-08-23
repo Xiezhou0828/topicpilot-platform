@@ -1,0 +1,38 @@
+{
+  "A1_NONTRANSITION_COUNT": 314,
+  "taxonomy_counts": {
+    "STRUCTURE_LOSS_BEFORE_BREAKOUT": 37,
+    "BREAKOUT_REJECTION_FAILED_BREAKOUT": 214,
+    "NO_BREAKOUT_CONTINUED_CONSOLIDATION": 30,
+    "UNCLASSIFIED": 33
+  },
+  "taxonomy_percentages": {
+    "BREAKOUT_REJECTION_FAILED_BREAKOUT": 0.6815286624203821,
+    "NO_BREAKOUT_CONTINUED_CONSOLIDATION": 0.09554140127388536,
+    "STRUCTURE_LOSS_BEFORE_BREAKOUT": 0.1178343949044586,
+    "DELAYED_OR_OUTSIDE_WINDOW_TRANSITION": 0.0,
+    "UNCLASSIFIED": 0.10509554140127389
+  },
+  "Q1_breakout_rejection_percentage": 0.6815286624203821,
+  "Q2_never_broke_out_percentage": 0.09554140127388536,
+  "Q3_structurally_intact_unresolved_percentage": 0.09554140127388536,
+  "Q3_structural_loss_before_breakout_percentage": 0.1178343949044586,
+  "Q4_unclassifiable_percentage": 0.10509554140127389,
+  "Q5_A1_NOT_TO_A2_approximates_FALSE_BREAKOUT": "YES_BOUNDED",
+  "Q6_separation_associated_with_observable_post_formation_failure": "YES_BOUNDED",
+  "Q7_explains_part_of_negative_validation": "YES",
+  "Q8_future_ex_ante_discrimination_research": "YES_RESEARCH_CANDIDATE",
+  "delayed_or_outside_window_transition": {
+    "count": 0,
+    "measurable_in_this_review": false,
+    "reason": "The established transition framework ends at the frozen research window; no additional transition horizon was introduced."
+  },
+  "interpretation_guardrail": "A1_NOT_TO_A2 is not equated with FALSE_BREAKOUT; labels are ex-post diagnostics only",
+  "provenance": {
+    "task_id": "TASK-WS3-CORE-V0-A1-A2-VALIDATION-STABILITY-AND-FAILURE-MODE-REVIEW-20260818",
+    "frozen_spec_hash": "6e4cc504f969098e263cfa8e7c43240e9575a3f72f0641ba39da22794ea9870d",
+    "source_baseline_head": "9ca9ba4f15359aa5ea96ba4c3d6bed9439d0346e",
+    "dataset_authority": "canonical Postgres historical read model via read_historical_bars; REC-A1 event dataset preserved",
+    "observation_count": 314
+  }
+}

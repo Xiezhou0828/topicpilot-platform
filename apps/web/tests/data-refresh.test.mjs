@@ -5,7 +5,7 @@ import { test } from "node:test";
 const root = new URL("../app/", import.meta.url);
 const read = (relative) => readFile(new URL(relative, root), "utf8");
 
-test("the V2 route tree uses one SnapshotProvider and explicit surface owners", async () => {
+test("the V2 route tree keeps shared providers and explicit surface owners", async () => {
   const [layout, rootPage, v2Page, home, topics, stocks, favorites, opportunities, store, quality] = await Promise.all([
     read("layout.tsx"),
     read("page.tsx"),
@@ -23,7 +23,8 @@ test("the V2 route tree uses one SnapshotProvider and explicit surface owners", 
   assert.match(v2Page, /import TodayMarketPage from "\.\/TodayMarketPage"/);
   assert.match(v2Page, /path === "\/"/);
   assert.match(v2Page, /<TodayMarketPage \/>/);
-  assert.match(home, /useSnapshot/);
+  assert.match(home, /useTodayMainlines/);
+  assert.match(home, /resource\.marketOverview/);
   assert.match(topics, /fetchTopics/);
   assert.match(stocks, /fetchFormalStocks/);
   assert.match(favorites, /fetchFormalStocks/);
@@ -42,7 +43,8 @@ test("V2 Home keeps research content separate from the scan-only Stock Explorer"
   assert.match(home, /mainlines\.resource\.data\.map/);
   assert.match(home, /mainlines\.resource\.state === "UNAVAILABLE"/);
   assert.match(home, /href=\{`\/topics\/\$\{topic\.slug\}`\}/);
-  assert.match(home, /href="\/opportunities"/);
+  assert.match(home, /OpportunityTeaserCard/);
+  assert.match(home, /mainlines\.resource\.opportunities/);
   assert.doesNotMatch(home, /strategyRegistry|strategyCandidates|Strong Buy|Buy|Sell|stop-loss|Entry Score/);
   assert.match(stocks, /fetchFormalStocks/);
   assert.match(stocks, /openDetailPanel/);

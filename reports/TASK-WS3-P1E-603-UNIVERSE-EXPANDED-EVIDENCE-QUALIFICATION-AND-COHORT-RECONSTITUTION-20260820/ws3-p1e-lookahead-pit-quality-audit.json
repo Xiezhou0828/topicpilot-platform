@@ -1,0 +1,52 @@
+{
+  "accepted_quality_state_only": true,
+  "adjustment_state": "UNKNOWN_RAW_ONLY",
+  "duplicate_session_count": 0,
+  "eligibility_status_counts": {
+    "ELIGIBLE": 238589,
+    "INELIGIBLE": 36172,
+    "LIMITED": 14120
+  },
+  "evaluation_horizon_leakage_detected": false,
+  "future_session_dependency_in_formation": false,
+  "instrument_count": 603,
+  "invalid_ohlcv_count": 0,
+  "known_event_formation_windows_excluded": 10947,
+  "lifecycle_leakage_count": 0,
+  "lineage_incomplete_rows": 0,
+  "lookahead_leakage_detected": false,
+  "no_data_synthetic_fill_count": 0,
+  "pit_instrument_status": {
+    "ELIGIBLE": 587,
+    "INELIGIBLE": 0,
+    "LIMITED": 16
+  },
+  "pit_instrument_status_authority": "Shared Data Foundation PIT reconstructability audit",
+  "pit_reconstructable_instrument_count": 603,
+  "provenance": {
+    "event_dataset_hash": "78f684d5b014f43f3b34393be1bc644805e67f05e18b21e7ab98d075a1cd60b2",
+    "shared_data_hash": "e803733e796d8f4d8cf00575cd4045f28c9364572fc61b31ef490e8a65ff47a4"
+  },
+  "quarantine_leakage_count": 0,
+  "source_lineage_policy": {
+    "accepted_price": "PRICE + ACCEPTED + DAILY_BAR",
+    "adjustment_state": "UNKNOWN; raw OHLCV is not adjusted truth",
+    "lifecycle": "DELISTED/SUSPENDED/TERMINATED interval excluded",
+    "source_lineage_required": [
+      "source_code",
+      "adapter_version",
+      "observation_semantics",
+      "reference_data_version",
+      "normalization_contract_version",
+      "mapping_policy_version",
+      "observation_id"
+    ],
+    "supersession": "accepted PRICE successor excluded",
+    "synthetic_fill": false
+  },
+  "source_rows_consumed": 288881,
+  "supersession_correctness": true,
+  "task_id": "TASK-WS3-P1E-603-UNIVERSE-EXPANDED-EVIDENCE-QUALIFICATION-AND-COHORT-RECONSTITUTION-20260820",
+  "two_year_window_not_truncated": true,
+  "unknown_not_coerced_to_false": true
+}

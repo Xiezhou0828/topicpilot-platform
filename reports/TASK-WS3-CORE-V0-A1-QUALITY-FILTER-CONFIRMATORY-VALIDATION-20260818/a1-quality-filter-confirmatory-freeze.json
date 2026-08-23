@@ -1,0 +1,463 @@
+{
+  "a1_cohort_authority": {
+    "definitions_reused": true,
+    "failed_breakout_a1_count": 214,
+    "raw_a1_count": 700,
+    "successful_a1_count": 386,
+    "taxonomy_reused": true
+  },
+  "candidate_count": 7,
+  "candidates": [
+    {
+      "candidate_id": "recent_20_high_proximity__UPPER_GE_Q30",
+      "candidate_type": "SINGLE_FEATURE",
+      "combination_logic": null,
+      "direction": "HIGHER_IN_SUCCESS",
+      "eligibility_rule": "RAW_A1 AND recent_20_high_proximity >= TRAIN_DERIVED_Q30",
+      "expected_directional_effect": {
+        "failed_breakout_rate_reduction": 0.05111111111111111,
+        "success_rate_delta": 0.05111111111111111
+      },
+      "expected_retention_range": [
+        0.618571,
+        0.818571
+      ],
+      "feature_definition": "close_t / max(high_{t-19..t}) - 1",
+      "feature_family": "BREAKOUT_PROXIMITY",
+      "feature_input_columns": [
+        "high",
+        "close"
+      ],
+      "feature_lookback": "20 sessions including T",
+      "feature_name": "recent_20_high_proximity",
+      "missing_data_behavior": "Missing feature does not pass the quality filter; RAW_A1 is preserved.",
+      "operator": ">=",
+      "pit_validity": true,
+      "selection_reason": "Previously classified ROBUST_THRESHOLD_REGION; included without post-freeze re-ranking.",
+      "source_exploratory_artifact": "reports/TASK-WS3-CORE-V0-A1-QUALITY-FILTER-THRESHOLD-AND-SENSITIVITY-RESEARCH-20260818/ws3-core-v0-a1-single-feature-threshold-surface.csv",
+      "source_exploratory_metric": {
+        "exploratory_date_concentration": "LOW",
+        "exploratory_failed_breakout_rate_reduction": 0.05111111111111111,
+        "exploratory_instrument_concentration": "MEDIUM",
+        "exploratory_july_behavior": "YES",
+        "exploratory_region_id": "recent_20_high_proximity__UPPER_GE_Q30",
+        "exploratory_retention_rate": 0.7185714285714285,
+        "exploratory_success_rate_delta": 0.05111111111111111,
+        "exploratory_temporal_consistency": "YES",
+        "exploratory_tpe_two_consistency": "YES",
+        "exploratory_validation_failed_breakout_rate_reduction": 0.07247298156389065,
+        "exploratory_validation_success_rate_delta": 0.07247298156389059
+      },
+      "threshold_fraction": 0.3,
+      "threshold_quantile": "Q30",
+      "threshold_value": -0.02684279376635195,
+      "timestamp_rule": "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP"
+    },
+    {
+      "candidate_id": "recent_20_high_proximity__UPPER_GE_Q40",
+      "candidate_type": "SINGLE_FEATURE",
+      "combination_logic": null,
+      "direction": "HIGHER_IN_SUCCESS",
+      "eligibility_rule": "RAW_A1 AND recent_20_high_proximity >= TRAIN_DERIVED_Q40",
+      "expected_directional_effect": {
+        "failed_breakout_rate_reduction": 0.06825696316262359,
+        "success_rate_delta": 0.06825696316262353
+      },
+      "expected_retention_range": [
+        0.507143,
+        0.707143
+      ],
+      "feature_definition": "close_t / max(high_{t-19..t}) - 1",
+      "feature_family": "BREAKOUT_PROXIMITY",
+      "feature_input_columns": [
+        "high",
+        "close"
+      ],
+      "feature_lookback": "20 sessions including T",
+      "feature_name": "recent_20_high_proximity",
+      "missing_data_behavior": "Missing feature does not pass the quality filter; RAW_A1 is preserved.",
+      "operator": ">=",
+      "pit_validity": true,
+      "selection_reason": "Previously classified ROBUST_THRESHOLD_REGION; included without post-freeze re-ranking.",
+      "source_exploratory_artifact": "reports/TASK-WS3-CORE-V0-A1-QUALITY-FILTER-THRESHOLD-AND-SENSITIVITY-RESEARCH-20260818/ws3-core-v0-a1-single-feature-threshold-surface.csv",
+      "source_exploratory_metric": {
+        "exploratory_date_concentration": "LOW",
+        "exploratory_failed_breakout_rate_reduction": 0.06825696316262359,
+        "exploratory_instrument_concentration": "MEDIUM",
+        "exploratory_july_behavior": "YES",
+        "exploratory_region_id": "recent_20_high_proximity__UPPER_GE_Q40",
+        "exploratory_retention_rate": 0.6071428571428571,
+        "exploratory_success_rate_delta": 0.06825696316262353,
+        "exploratory_temporal_consistency": "YES",
+        "exploratory_tpe_two_consistency": "YES",
+        "exploratory_validation_failed_breakout_rate_reduction": 0.10384949978251412,
+        "exploratory_validation_success_rate_delta": 0.10384949978251412
+      },
+      "threshold_fraction": 0.4,
+      "threshold_quantile": "Q40",
+      "threshold_value": -0.02413793103448276,
+      "timestamp_rule": "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP"
+    },
+    {
+      "candidate_id": "recent_20_high_proximity__UPPER_GE_Q50",
+      "candidate_type": "SINGLE_FEATURE",
+      "combination_logic": null,
+      "direction": "HIGHER_IN_SUCCESS",
+      "eligibility_rule": "RAW_A1 AND recent_20_high_proximity >= TRAIN_DERIVED_Q50",
+      "expected_directional_effect": {
+        "failed_breakout_rate_reduction": 0.06552742616033758,
+        "success_rate_delta": 0.06552742616033758
+      },
+      "expected_retention_range": [
+        0.404286,
+        0.604286
+      ],
+      "feature_definition": "close_t / max(high_{t-19..t}) - 1",
+      "feature_family": "BREAKOUT_PROXIMITY",
+      "feature_input_columns": [
+        "high",
+        "close"
+      ],
+      "feature_lookback": "20 sessions including T",
+      "feature_name": "recent_20_high_proximity",
+      "missing_data_behavior": "Missing feature does not pass the quality filter; RAW_A1 is preserved.",
+      "operator": ">=",
+      "pit_validity": true,
+      "selection_reason": "Previously classified ROBUST_THRESHOLD_REGION; included without post-freeze re-ranking.",
+      "source_exploratory_artifact": "reports/TASK-WS3-CORE-V0-A1-QUALITY-FILTER-THRESHOLD-AND-SENSITIVITY-RESEARCH-20260818/ws3-core-v0-a1-single-feature-threshold-surface.csv",
+      "source_exploratory_metric": {
+        "exploratory_date_concentration": "LOW",
+        "exploratory_failed_breakout_rate_reduction": 0.06552742616033758,
+        "exploratory_instrument_concentration": "MEDIUM",
+        "exploratory_july_behavior": "YES",
+        "exploratory_region_id": "recent_20_high_proximity__UPPER_GE_Q50",
+        "exploratory_retention_rate": 0.5042857142857143,
+        "exploratory_success_rate_delta": 0.06552742616033758,
+        "exploratory_temporal_consistency": "YES",
+        "exploratory_tpe_two_consistency": "YES",
+        "exploratory_validation_failed_breakout_rate_reduction": 0.09031021679243023,
+        "exploratory_validation_success_rate_delta": 0.09031021679243023
+      },
+      "threshold_fraction": 0.5,
+      "threshold_quantile": "Q50",
+      "threshold_value": -0.02147248243559719,
+      "timestamp_rule": "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP"
+    },
+    {
+      "candidate_id": "return_5d__LOWER_LE_Q60",
+      "candidate_type": "SINGLE_FEATURE",
+      "combination_logic": null,
+      "direction": "LOWER_IN_SUCCESS",
+      "eligibility_rule": "RAW_A1 AND return_5d <= TRAIN_DERIVED_Q60",
+      "expected_directional_effect": {
+        "failed_breakout_rate_reduction": 0.05103663985701523,
+        "success_rate_delta": 0.05103663985701523
+      },
+      "expected_retention_range": [
+        0.518571,
+        0.718571
+      ],
+      "feature_definition": "close_t / close_{t-5} - 1",
+      "feature_family": "MOMENTUM",
+      "feature_input_columns": [
+        "close"
+      ],
+      "feature_lookback": "6 sessions",
+      "feature_name": "return_5d",
+      "missing_data_behavior": "Missing feature does not pass the quality filter; RAW_A1 is preserved.",
+      "operator": "<=",
+      "pit_validity": true,
+      "selection_reason": "Previously classified ROBUST_THRESHOLD_REGION; included without post-freeze re-ranking.",
+      "source_exploratory_artifact": "reports/TASK-WS3-CORE-V0-A1-QUALITY-FILTER-THRESHOLD-AND-SENSITIVITY-RESEARCH-20260818/ws3-core-v0-a1-single-feature-threshold-surface.csv",
+      "source_exploratory_metric": {
+        "exploratory_date_concentration": "LOW",
+        "exploratory_failed_breakout_rate_reduction": 0.05103663985701523,
+        "exploratory_instrument_concentration": "MEDIUM",
+        "exploratory_july_behavior": "YES",
+        "exploratory_region_id": "return_5d__LOWER_LE_Q60",
+        "exploratory_retention_rate": 0.6185714285714285,
+        "exploratory_success_rate_delta": 0.05103663985701523,
+        "exploratory_temporal_consistency": "YES",
+        "exploratory_tpe_two_consistency": "YES",
+        "exploratory_validation_failed_breakout_rate_reduction": 0.1392014338345116,
+        "exploratory_validation_success_rate_delta": 0.13920143383451156
+      },
+      "threshold_fraction": 0.6,
+      "threshold_quantile": "Q60",
+      "threshold_value": 0.07389330024813896,
+      "timestamp_rule": "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP"
+    },
+    {
+      "candidate_id": "true_range_pct__LOWER_LE_Q60",
+      "candidate_type": "SINGLE_FEATURE",
+      "combination_logic": null,
+      "direction": "LOWER_IN_SUCCESS",
+      "eligibility_rule": "RAW_A1 AND true_range_pct <= TRAIN_DERIVED_Q60",
+      "expected_directional_effect": {
+        "failed_breakout_rate_reduction": 0.07541666666666669,
+        "success_rate_delta": 0.07541666666666669
+      },
+      "expected_retention_range": [
+        0.551429,
+        0.751429
+      ],
+      "feature_definition": "(high_t - low_t) / close_t",
+      "feature_family": "VOLATILITY",
+      "feature_input_columns": [
+        "high",
+        "low",
+        "close"
+      ],
+      "feature_lookback": "1 session",
+      "feature_name": "true_range_pct",
+      "missing_data_behavior": "Missing feature does not pass the quality filter; RAW_A1 is preserved.",
+      "operator": "<=",
+      "pit_validity": true,
+      "selection_reason": "Previously classified ROBUST_THRESHOLD_REGION; included without post-freeze re-ranking.",
+      "source_exploratory_artifact": "reports/TASK-WS3-CORE-V0-A1-QUALITY-FILTER-THRESHOLD-AND-SENSITIVITY-RESEARCH-20260818/ws3-core-v0-a1-single-feature-threshold-surface.csv",
+      "source_exploratory_metric": {
+        "exploratory_date_concentration": "LOW",
+        "exploratory_failed_breakout_rate_reduction": 0.07541666666666669,
+        "exploratory_instrument_concentration": "MEDIUM",
+        "exploratory_july_behavior": "YES",
+        "exploratory_region_id": "true_range_pct__LOWER_LE_Q60",
+        "exploratory_retention_rate": 0.6514285714285715,
+        "exploratory_success_rate_delta": 0.07541666666666669,
+        "exploratory_temporal_consistency": "YES",
+        "exploratory_tpe_two_consistency": "YES",
+        "exploratory_validation_failed_breakout_rate_reduction": 0.10544001453092361,
+        "exploratory_validation_success_rate_delta": 0.10544001453092355
+      },
+      "threshold_fraction": 0.6,
+      "threshold_quantile": "Q60",
+      "threshold_value": 0.05599185750636132,
+      "timestamp_rule": "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP"
+    },
+    {
+      "candidate_id": "true_range_pct__LOWER_LE_Q70",
+      "candidate_type": "SINGLE_FEATURE",
+      "combination_logic": null,
+      "direction": "LOWER_IN_SUCCESS",
+      "eligibility_rule": "RAW_A1 AND true_range_pct <= TRAIN_DERIVED_Q70",
+      "expected_directional_effect": {
+        "failed_breakout_rate_reduction": 0.050730593607305974,
+        "success_rate_delta": 0.05073059360730592
+      },
+      "expected_retention_range": [
+        0.635714,
+        0.835714
+      ],
+      "feature_definition": "(high_t - low_t) / close_t",
+      "feature_family": "VOLATILITY",
+      "feature_input_columns": [
+        "high",
+        "low",
+        "close"
+      ],
+      "feature_lookback": "1 session",
+      "feature_name": "true_range_pct",
+      "missing_data_behavior": "Missing feature does not pass the quality filter; RAW_A1 is preserved.",
+      "operator": "<=",
+      "pit_validity": true,
+      "selection_reason": "Previously classified ROBUST_THRESHOLD_REGION; included without post-freeze re-ranking.",
+      "source_exploratory_artifact": "reports/TASK-WS3-CORE-V0-A1-QUALITY-FILTER-THRESHOLD-AND-SENSITIVITY-RESEARCH-20260818/ws3-core-v0-a1-single-feature-threshold-surface.csv",
+      "source_exploratory_metric": {
+        "exploratory_date_concentration": "LOW",
+        "exploratory_failed_breakout_rate_reduction": 0.050730593607305974,
+        "exploratory_instrument_concentration": "MEDIUM",
+        "exploratory_july_behavior": "YES",
+        "exploratory_region_id": "true_range_pct__LOWER_LE_Q70",
+        "exploratory_retention_rate": 0.7357142857142858,
+        "exploratory_success_rate_delta": 0.05073059360730592,
+        "exploratory_temporal_consistency": "YES",
+        "exploratory_tpe_two_consistency": "YES",
+        "exploratory_validation_failed_breakout_rate_reduction": 0.08119621709124991,
+        "exploratory_validation_success_rate_delta": 0.0811962170912498
+      },
+      "threshold_fraction": 0.7,
+      "threshold_quantile": "Q70",
+      "threshold_value": 0.06408819993349192,
+      "timestamp_rule": "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP"
+    },
+    {
+      "candidate_id": "recent_20_high_proximity__AND__true_range_pct",
+      "candidate_type": "TWO_FEATURE_COMBINATION",
+      "combination_logic": {
+        "left_region_id": "recent_20_high_proximity__UPPER_GE_Q30",
+        "maximum_features": 2,
+        "operator": "AND",
+        "right_region_id": "true_range_pct__LOWER_LE_Q70"
+      },
+      "direction": [
+        "HIGHER_IN_SUCCESS",
+        "LOWER_IN_SUCCESS"
+      ],
+      "eligibility_rule": "RAW_A1 AND (recent_20_high_proximity__UPPER_GE_Q30) AND (true_range_pct__LOWER_LE_Q70); both features non-missing",
+      "expected_directional_effect": {
+        "failed_breakout_rate_reduction": 0.08687194525904207,
+        "success_rate_delta": 0.08687194525904207
+      },
+      "expected_retention_range": [
+        0.475714,
+        0.675714
+      ],
+      "feature_definition": [
+        "close_t / max(high_{t-19..t}) - 1",
+        "(high_t - low_t) / close_t"
+      ],
+      "feature_family": "BREAKOUT_PROXIMITY + VOLATILITY",
+      "feature_input_columns": [
+        [
+          "high",
+          "close"
+        ],
+        [
+          "high",
+          "low",
+          "close"
+        ]
+      ],
+      "feature_lookback": [
+        "20 sessions including T",
+        "1 session"
+      ],
+      "feature_name": "recent_20_high_proximity AND true_range_pct",
+      "missing_data_behavior": "Missing either feature fails the combination; RAW_A1 is preserved.",
+      "operator": [
+        ">=",
+        "<="
+      ],
+      "pit_validity": true,
+      "selection_reason": "Previously declared top two-feature diagnostic; no new pair search is permitted.",
+      "source_card": {
+        "candidate_id": "recent_20_high_proximity__AND__true_range_pct",
+        "candidate_type": "TWO_FEATURE_COMBINATION",
+        "date_concentration": "LOW",
+        "defensible_threshold_region": "recent_20_high_proximity__UPPER_GE_Q30 AND true_range_pct__LOWER_LE_Q70",
+        "failed_breakout_reduction": 0.08687194525904207,
+        "feature_or_combination": "recent_20_high_proximity AND true_range_pct",
+        "forward_return_diagnostics": {
+          "T+1": {
+            "N": 340,
+            "mean": 0.008774656819116152,
+            "median": 0.0015305177364082615,
+            "win_rate": 0.5294117647058824
+          },
+          "T+10": {
+            "N": 285,
+            "mean": 0.04625299236327662,
+            "median": 0.013245033112582781,
+            "win_rate": 0.6210526315789474
+          },
+          "T+3": {
+            "N": 332,
+            "mean": 0.01706955102953291,
+            "median": 0.004179463911768812,
+            "win_rate": 0.572289156626506
+          },
+          "T+5": {
+            "N": 320,
+            "mean": 0.021592760367210827,
+            "median": 0.007458881121474531,
+            "win_rate": 0.58125
+          }
+        },
+        "full_sample_success_rate_delta": 0.08687194525904207,
+        "instrument_concentration": "MEDIUM",
+        "july_behavior": "YES",
+        "major_caveat": "Bounded two-feature diagnostic only; complexity must be confirmed out of sample.",
+        "research_classification": "PROMISING_RESEARCH_CANDIDATE",
+        "retention_rate": 0.5757142857142857,
+        "threshold_plateau": "INHERITED_FROM_SINGLE_REGIONS",
+        "validation_success_rate_delta": 0.11434250444607175
+      },
+      "source_exploratory_artifact": "reports/TASK-WS3-CORE-V0-A1-QUALITY-FILTER-THRESHOLD-AND-SENSITIVITY-RESEARCH-20260818/ws3-core-v0-a1-two-feature-combination-diagnostic.csv",
+      "source_exploratory_metric": {
+        "exploratory_failed_breakout_rate_reduction": 0.08687194525904207,
+        "exploratory_july_behavior": "YES",
+        "exploratory_region_id": "recent_20_high_proximity__AND__true_range_pct",
+        "exploratory_retention_rate": 0.5757142857142857,
+        "exploratory_success_rate_delta": 0.08687194525904207,
+        "exploratory_tpe_two_consistency": "YES",
+        "exploratory_validation_success_rate_delta": 0.11434250444607175
+      },
+      "threshold_fraction": null,
+      "threshold_quantile": [
+        "Q30",
+        "Q70"
+      ],
+      "threshold_value": null,
+      "timestamp_rule": [
+        "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP",
+        "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP"
+      ]
+    }
+  ],
+  "combination_candidate_count": 1,
+  "confirmatory_independence": {
+    "justification": "The available 2026-02-02..2026-08-13 history was already inspected during exploratory threshold research; this is a frozen retrospective replay with no retuning, not independent new-data confirmation.",
+    "level": "BOUNDED",
+    "primary_segment": "HOLDOUT",
+    "primary_segment_dates": "2026-08-01..2026-08-13",
+    "stress_segment": "VALIDATION",
+    "stress_segment_dates": "2026-07-01..2026-07-31",
+    "untouched_temporal_data_available": false
+  },
+  "created_before_confirmatory_outcome_review": true,
+  "exploratory_artifacts_used": [
+    "reports/TASK-WS3-CORE-V0-A1-QUALITY-FILTER-THRESHOLD-AND-SENSITIVITY-RESEARCH-20260818/ws3-core-v0-a1-single-feature-threshold-surface.csv",
+    "reports/TASK-WS3-CORE-V0-A1-QUALITY-FILTER-THRESHOLD-AND-SENSITIVITY-RESEARCH-20260818/ws3-core-v0-a1-filter-candidate-cards.json",
+    "reports/TASK-WS3-CORE-V0-A1-QUALITY-FILTER-THRESHOLD-AND-SENSITIVITY-RESEARCH-20260818/ws3-core-v0-a1-threshold-quality-audit.json",
+    "reports/TASK-WS3-CORE-V0-A1-EX-ANTE-SUCCESS-VS-FAILED-BREAKOUT-DISCRIMINATION-RESEARCH-20260818/ws3-core-v0-a1-ex-ante-feature-manifest.json"
+  ],
+  "exploratory_final_canonical_head": "8bc9c8ec403e03aa104c6feac481e2d5e561e134",
+  "exploratory_source_canonical_head": "035587e4f263447e778f9384971885e03a53ecc2",
+  "exploratory_task_id": "TASK-WS3-CORE-V0-A1-QUALITY-FILTER-THRESHOLD-AND-SENSITIVITY-RESEARCH-20260818",
+  "frozen_spec_hash": "6e4cc504f969098e263cfa8e7c43240e9575a3f72f0641ba39da22794ea9870d",
+  "protocol": {
+    "candidate_filter_applied_after_raw_a1_formation": true,
+    "candidate_set_frozen_before_outcomes": true,
+    "classification_rules": {
+      "CONFIRMED": "Adequate confirmatory cohort; holdout success uplift and failed-breakout reduction each >= 3pp; no market contradiction; July direction non-negative; no HIGH concentration; not outlier-driven; forward support SUPPORTIVE or NON_DESTRUCTIVE; and independence level HIGH.",
+      "FAILED_CONFIRMATION": "Holdout quality direction is adverse, a market materially contradicts the frozen direction, or the frozen candidate has no meaningful confirmatory discrimination.",
+      "INCONCLUSIVE": "Insufficient confirmatory cohort, unresolved uncertainty, or materially mixed confirmatory direction without a clear adverse failure.",
+      "SUPPORTED_WITH_BOUNDED_LIMITATIONS": "Same frozen primary effect and market/no-outlier requirements as CONFIRMED, but independence is BOUNDED or a declared secondary limitation remains."
+    },
+    "concentration_rules": {
+      "date_low_top1_share_max": 0.1,
+      "date_medium_top1_share_max": 0.2,
+      "instrument_low_top5_share_max": 0.25,
+      "instrument_medium_top5_share_max": 0.4
+    },
+    "forward_outcomes_are_evaluation_only": true,
+    "forward_support_rule": "SUPPORTIVE if at least 2 of 4 confirmatory-horizon median deltas are positive and no median delta is below -0.05; NON_DESTRUCTIVE if all available median deltas are >= -0.05; otherwise MIXED or DESTRUCTIVE.",
+    "id": "a1-quality-filter-confirmatory.v1",
+    "meaningful_failed_breakout_reduction": 0.03,
+    "meaningful_success_uplift": 0.03,
+    "minimum_per_primary_cohort": 20,
+    "no_new_combination_search": true,
+    "no_new_feature_search": true,
+    "no_production_mutation": true,
+    "no_random_shuffle": true,
+    "no_retuning": true,
+    "outcome_horizons": [
+      "T+1",
+      "T+3",
+      "T+5",
+      "T+10"
+    ],
+    "outlier_rule": "OUTLIER_DRIVEN=YES only when mean improvement is positive while both median and 10-percent trimmed mean are non-positive on the confirmatory segment.",
+    "primary_outcome": "SUCCESSFUL_A1 versus FAILED_BREAKOUT_A1",
+    "raw_a1_preserved": true,
+    "segment_definitions": {
+      "HOLDOUT": "2026-08-01..2026-08-13 / primary confirmatory segment",
+      "TRAIN": "2026-05-12..2026-06-30 / DEVELOPMENT_AVAILABLE",
+      "VALIDATION": "2026-07-01..2026-07-31 / frozen July stress segment"
+    }
+  },
+  "schema_version": "a1-quality-filter-confirmatory-freeze.v1",
+  "single_feature_candidate_count": 6,
+  "source_canonical_head": "8bc9c8ec403e03aa104c6feac481e2d5e561e134",
+  "task_id": "TASK-WS3-CORE-V0-A1-QUALITY-FILTER-CONFIRMATORY-VALIDATION-20260818",
+  "upstream_task_id": "TASK-WS3-CORE-V0-A1-EX-ANTE-SUCCESS-VS-FAILED-BREAKOUT-DISCRIMINATION-RESEARCH-20260818"
+}

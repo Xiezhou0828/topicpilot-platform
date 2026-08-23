@@ -1,0 +1,18 @@
+{
+  "taskId": "TASK-WS1-LIFECYCLE-CANONICAL-COLLISION-RECONCILIATION-AND-PROMOTION-READINESS-20260822",
+  "latestCanonicalHead": "b569430d2a358cab6a5915aeaacff2810df4913c",
+  "freshCandidateBase": "b569430d2a358cab6a5915aeaacff2810df4913c",
+  "freshCandidateCommit": "c46506e",
+  "reconciliation": "PASS",
+  "candidateRuntimeReady": true,
+  "canonicalRuntimeReady": false,
+  "canonicalRuntimeDisposition": "NO_PROMOTION_BLOCKED_OWNER_DIRTY_AND_BASELINE_TS_GATE",
+  "promotion": "NO",
+  "blockers": [
+    "Owner dirty changes in TopicListPage.tsx and topic-api.ts remain uncommitted",
+    "Canonical dirty/untracked state must remain intact",
+    "Full-project TypeScript has an existing today-home.ts versus untracked api-client contract mismatch; WS1 changed-file TypeScript passes",
+    "A future promotion must start from the then-latest canonical HEAD after Owner disposition"
+  ],
+  "requiredNextRouting": "Owner commits or formally dispositions the overlapping files, then perform a fresh collision-aware reconciliation from the resulting canonical HEAD; do not cherry-pick either historical WS1 commit blindly"
+}

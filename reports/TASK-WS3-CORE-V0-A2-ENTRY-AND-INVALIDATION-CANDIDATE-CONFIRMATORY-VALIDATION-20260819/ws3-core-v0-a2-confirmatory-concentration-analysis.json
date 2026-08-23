@@ -1,0 +1,208 @@
+{
+  "entry_candidates": {
+    "A2_CLOSE_GT_0_TO_1PCT": {
+      "concentration_is_descriptive_only": true,
+      "event_count": 100,
+      "market_share": {
+        "TPE": 0.64,
+        "TWO": 0.36
+      },
+      "top_1_date_share": 0.08,
+      "top_5_instrument_share": 0.1
+    },
+    "A2_CLOSE_GT_1_TO_2PCT": {
+      "concentration_is_descriptive_only": true,
+      "event_count": 96,
+      "market_share": {
+        "TPE": 0.71875,
+        "TWO": 0.28125
+      },
+      "top_1_date_share": 0.10416666666666667,
+      "top_5_instrument_share": 0.10416666666666667
+    },
+    "A2_CLOSE_GT_2_TO_3PCT": {
+      "concentration_is_descriptive_only": true,
+      "event_count": 57,
+      "market_share": {
+        "TPE": 0.7368421052631579,
+        "TWO": 0.2631578947368421
+      },
+      "top_1_date_share": 0.08771929824561403,
+      "top_5_instrument_share": 0.17543859649122806
+    },
+    "A2_CLOSE_GT_3_TO_5PCT": {
+      "concentration_is_descriptive_only": true,
+      "event_count": 111,
+      "market_share": {
+        "TPE": 0.6126126126126126,
+        "TWO": 0.38738738738738737
+      },
+      "top_1_date_share": 0.0990990990990991,
+      "top_5_instrument_share": 0.0990990990990991
+    },
+    "A2_CLOSE_GT_5PCT": {
+      "concentration_is_descriptive_only": true,
+      "event_count": 126,
+      "market_share": {
+        "TPE": 0.626984126984127,
+        "TWO": 0.373015873015873
+      },
+      "top_1_date_share": 0.0873015873015873,
+      "top_5_instrument_share": 0.09523809523809523
+    }
+  },
+  "invalidation_candidates": {
+    "CLOSE_BELOW_THEN_RECLAIM": {
+      "concentration_is_descriptive_only": true,
+      "event_count": 198,
+      "market_share": {
+        "TPE": 0.6717171717171717,
+        "TWO": 0.3282828282828283
+      },
+      "top_1_date_share": 0.10101010101010101,
+      "top_5_instrument_share": 0.07575757575757576
+    },
+    "DEEP_LOSS_NO_RECLAIM": {
+      "concentration_is_descriptive_only": true,
+      "event_count": 90,
+      "market_share": {
+        "TPE": 0.6222222222222222,
+        "TWO": 0.37777777777777777
+      },
+      "top_1_date_share": 0.13333333333333333,
+      "top_5_instrument_share": 0.08888888888888889
+    },
+    "DEPTH_0_TO_MINUS_1PCT": {
+      "concentration_is_descriptive_only": true,
+      "event_count": 26,
+      "market_share": {
+        "TPE": 0.7307692307692307,
+        "TWO": 0.2692307692307692
+      },
+      "top_1_date_share": 0.15384615384615385,
+      "top_5_instrument_share": 0.23076923076923078
+    },
+    "DEPTH_BELOW_MINUS_5PCT": {
+      "concentration_is_descriptive_only": true,
+      "event_count": 229,
+      "market_share": {
+        "TPE": 0.6462882096069869,
+        "TWO": 0.3537117903930131
+      },
+      "top_1_date_share": 0.07860262008733625,
+      "top_5_instrument_share": 0.06550218340611354
+    },
+    "DEPTH_MINUS_1_TO_2PCT": {
+      "concentration_is_descriptive_only": true,
+      "event_count": 36,
+      "market_share": {
+        "TPE": 0.6388888888888888,
+        "TWO": 0.3611111111111111
+      },
+      "top_1_date_share": 0.1111111111111111,
+      "top_5_instrument_share": 0.2222222222222222
+    },
+    "DEPTH_MINUS_2_TO_3PCT": {
+      "concentration_is_descriptive_only": true,
+      "event_count": 19,
+      "market_share": {
+        "TPE": 0.6842105263157895,
+        "TWO": 0.3157894736842105
+      },
+      "top_1_date_share": 0.10526315789473684,
+      "top_5_instrument_share": 0.2631578947368421
+    },
+    "DEPTH_MINUS_3_TO_5PCT": {
+      "concentration_is_descriptive_only": true,
+      "event_count": 39,
+      "market_share": {
+        "TPE": 0.6410256410256411,
+        "TWO": 0.358974358974359
+      },
+      "top_1_date_share": 0.1794871794871795,
+      "top_5_instrument_share": 0.1794871794871795
+    },
+    "FAILED_RECLAIM_REFERENCE_LOSS": {
+      "concentration_is_descriptive_only": true,
+      "event_count": 95,
+      "market_share": {
+        "TPE": 0.6210526315789474,
+        "TWO": 0.37894736842105264
+      },
+      "top_1_date_share": 0.12631578947368421,
+      "top_5_instrument_share": 0.10526315789473684
+    },
+    "LOSS_NO_RECLAIM_PATH": {
+      "concentration_is_descriptive_only": true,
+      "event_count": 95,
+      "market_share": {
+        "TPE": 0.6210526315789474,
+        "TWO": 0.37894736842105264
+      },
+      "top_1_date_share": 0.12631578947368421,
+      "top_5_instrument_share": 0.10526315789473684
+    },
+    "MULTI_SESSION_BELOW_NO_RECLAIM": {
+      "concentration_is_descriptive_only": true,
+      "event_count": 86,
+      "market_share": {
+        "TPE": 0.6395348837209303,
+        "TWO": 0.36046511627906974
+      },
+      "top_1_date_share": 0.13953488372093023,
+      "top_5_instrument_share": 0.10465116279069768
+    },
+    "RECLAIMED_REFERENCE_LOSS": {
+      "concentration_is_descriptive_only": true,
+      "event_count": 254,
+      "market_share": {
+        "TPE": 0.6653543307086615,
+        "TWO": 0.3346456692913386
+      },
+      "top_1_date_share": 0.09448818897637795,
+      "top_5_instrument_share": 0.05905511811023622
+    },
+    "SHALLOW_LOSS_QUICK_RECLAIM": {
+      "concentration_is_descriptive_only": true,
+      "event_count": 27,
+      "market_share": {
+        "TPE": 0.7037037037037037,
+        "TWO": 0.2962962962962963
+      },
+      "top_1_date_share": 0.1111111111111111,
+      "top_5_instrument_share": 0.25925925925925924
+    },
+    "TIME_RECLAIM_2_SESSIONS": {
+      "concentration_is_descriptive_only": true,
+      "event_count": 44,
+      "market_share": {
+        "TPE": 0.6590909090909091,
+        "TWO": 0.3409090909090909
+      },
+      "top_1_date_share": 0.13636363636363635,
+      "top_5_instrument_share": 0.1590909090909091
+    },
+    "TIME_RECLAIM_3_PLUS_OR_NO_RECLAIM_H10": {
+      "concentration_is_descriptive_only": true,
+      "event_count": 213,
+      "market_share": {
+        "TPE": 0.6572769953051644,
+        "TWO": 0.3427230046948357
+      },
+      "top_1_date_share": 0.07042253521126761,
+      "top_5_instrument_share": 0.056338028169014086
+    },
+    "TIME_RECLAIM_WITHIN_1_SESSION": {
+      "concentration_is_descriptive_only": true,
+      "event_count": 92,
+      "market_share": {
+        "TPE": 0.6413043478260869,
+        "TWO": 0.358695652173913
+      },
+      "top_1_date_share": 0.14130434782608695,
+      "top_5_instrument_share": 0.11956521739130435
+    }
+  },
+  "outlier_policy": "mean, median, trimmed mean, win rate, quantiles, MFE and MAE are reported; no mean-only acceptance",
+  "task_id": "TASK-WS3-CORE-V0-A2-ENTRY-AND-INVALIDATION-CANDIDATE-CONFIRMATORY-VALIDATION-20260819"
+}

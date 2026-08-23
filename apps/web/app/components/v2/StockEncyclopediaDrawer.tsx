@@ -4,8 +4,11 @@ import Link from "next/link";
 import { X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { fetchFormalStock, type StockApiItem } from "../../lib/stock-api";
+import type { StockEodRead } from "../../lib/stock-api";
+import { selectStockQuote } from "../../lib/stock-eod-presenter";
 import { useFavoritesState } from "../FavoriteButton";
 import { FavoriteStar, Freshness, RoleChip } from "./V2Foundation";
+import { StockPriceHistoryPanel } from "./StockPriceHistoryPanel";
 
 export type StockDrawerTopic = { name: string; role: string | null };
 
@@ -27,6 +30,9 @@ export type StockDrawerItem = {
   industry?: string | null;
   price: number | null;
   changePct: number | null;
+  volume?: number | null;
+  eod?: StockEodRead | null;
+  updateMode?: string | null;
   dataFreshness: string | null;
   updatedAt?: string | null;
   dataDate?: string | null;
@@ -65,9 +71,12 @@ function formalDrawerItem(base: StockDrawerItem, detail: StockApiItem): StockDra
     listing: detail.listing,
     price: detail.price,
     changePct: detail.changePct,
+    volume: detail.volume,
+    eod: detail.eod,
+    updateMode: detail.updateMode,
     dataFreshness: detail.dataFreshness,
     updatedAt: detail.retrievedAt,
-    dataDate: asOfDate,
+    dataDate: detail.eod?.tradingDate ?? asOfDate,
     topics: detail.topicRelations.map((topic) => ({ name: topic.topicName, role: topic.topicRole })),
     mainTopic: detail.mainTopic,
     technicalEvidence: detail.technicalEvidence,
@@ -85,12 +94,46 @@ function displayValue(value: string | number | boolean | null | undefined): stri
   return value;
 }
 
+function displayNumber(value: number | null | undefined): string {
+  return value === null || value === undefined
+    ? "—"
+    : value.toLocaleString("zh-TW", { maximumFractionDigits: 4 });
+}
+
+function displaySigned(value: number | null | undefined): string {
+  return value === null || value === undefined ? "—" : `${value >= 0 ? "+" : ""}${displayNumber(value)}`;
+}
+
+function displayPercent(value: number | null | undefined): string {
+  return value === null || value === undefined ? "—" : `${value >= 0 ? "+" : ""}${value.toFixed(2)}%`;
+}
+
+const EOD_STATUS_LABEL: Record<string, string> = {
+  AVAILABLE: "可用",
+  PARTIAL: "部分可用",
+  UNAVAILABLE: "不可用",
+  NO_TRADE: "無交易",
+  SUSPENDED: "停牌",
+  ADJUSTMENT_UNKNOWN: "除權息狀態未知",
+  SOURCE_CONFLICT: "來源衝突",
+  PREVIEW: "Preview",
+};
+
+function statusLabel(value: string | null | undefined): string {
+  return value ? EOD_STATUS_LABEL[value] ?? value : "尚未提供";
+}
+
+function sourceLabel(source: StockEodRead["priceSource"] | StockEodRead["volumeSource"] | null | undefined): string {
+  if (!source) return "尚未提供";
+  return source.sourceCode;
+}
+
 function EvidenceGrid({ rows }: { rows: Array<[string, string | number | boolean | null | undefined]> }) {
   return <dl className="tp-stock-encyclopedia-evidence-grid">{rows.map(([name, value]) => <div key={name}><dt>{name}</dt><dd>{displayValue(value)}</dd></div>)}</dl>;
 }
 
 export function StockEncyclopediaDrawer({ stock, onClose, presentation = "overlay", isClosing = false }: { stock: StockDrawerItem; onClose: () => void; presentation?: "overlay" | "inline" | "push"; isClosing?: boolean }) {
-  const { codes: favoriteCodes, toggle: toggleFavorite } = useFavoritesState();
+  const { isFavorite, toggle: toggleFavorite } = useFavoritesState();
   const [formalDetailState, setFormalDetailState] = useState<{ symbol: string; data: StockApiItem | null; status: "available" | "unavailable"; error: string | null } | null>(null);
 
   useEffect(() => {
@@ -113,7 +156,9 @@ export function StockEncyclopediaDrawer({ stock, onClose, presentation = "overla
   const detailState = stock.isPreview === true ? "idle" : formalDetailState?.symbol === stock.code ? formalDetailState.status : "loading";
   const detailError = formalDetailState?.symbol === stock.code ? formalDetailState.error : null;
   const displayStock = formalDetail ? formalDrawerItem(stock, formalDetail) : stock;
-  const tone = displayStock.changePct === null ? "flat" : displayStock.changePct >= 0 ? "up" : "down";
+  const quote = selectStockQuote(displayStock);
+  const tone = quote.changePct === null ? "flat" : quote.changePct >= 0 ? "up" : "down";
+  const eodStatus = displayStock.isPreview ? "PREVIEW" : displayStock.eod?.dataStatus ?? "UNAVAILABLE";
   const technical = displayStock.technicalEvidence;
   const institutionEntries = Object.entries(displayStock.institutionFlows ?? {}).filter(([, value]) => value !== null && value !== undefined);
   const presentationClass = presentation === "inline"
@@ -128,12 +173,14 @@ export function StockEncyclopediaDrawer({ stock, onClose, presentation = "overla
         <h2 id="stock-encyclopedia-title">{displayStock.name}</h2>
         <span>{displayStock.code}{displayStock.market ? ` · ${displayStock.market}` : ""}{displayStock.exchange ? ` · ${displayStock.exchange}` : ""}</span>
       </div>
-      <div className="tp-stock-encyclopedia-actions"><FavoriteStar active={favoriteCodes.includes(displayStock.code)} onClick={() => toggleFavorite(displayStock.code)} /><button type="button" className="tp-stock-close" aria-label="Close stock drawer" title="Close" onClick={onClose}><X size={18} aria-hidden="true" /></button></div>
+      <div className="tp-stock-encyclopedia-actions"><FavoriteStar active={isFavorite(displayStock.code, displayStock.market)} onClick={() => toggleFavorite(displayStock.code, { market: displayStock.market, displayLabel: displayStock.name })} /><button type="button" className="tp-stock-close" aria-label="Close stock drawer" title="Close" onClick={onClose}><X size={18} aria-hidden="true" /></button></div>
     </header>
     <div className="tp-stock-encyclopedia-body">
+      <StockPriceHistoryPanel symbol={displayStock.code} market={displayStock.market} isPreview={displayStock.isPreview === true} />
       <div className="tp-stock-encyclopedia-freshness"><Freshness state={fresh(displayStock.dataFreshness)} asOf={displayStock.updatedAt ?? displayStock.dataDate ?? "資料日期待補"} />{displayStock.isPreview && <span className="tp-stock-preview-label">Preview</span>}{detailState === "loading" && <span className="tp-muted">正在讀取正式 detail</span>}{detailState === "unavailable" && !displayStock.isPreview && <span className="tp-muted">正式 detail 暫不可用</span>}</div>
       {detailError && !displayStock.isPreview && <p className="tp-stock-encyclopedia-muted">{detailError}</p>}
-      <div className="tp-stock-encyclopedia-price"><strong>{displayStock.price === null ? "—" : displayStock.price.toLocaleString("zh-TW", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong>{displayStock.changePct === null ? <span className="tp-muted">漲跌資料待更新</span> : <span className={`tp-topic-change tp-topic-change--${tone}`}>{displayStock.changePct >= 0 ? "+" : ""}{displayStock.changePct.toFixed(2)}%</span>}</div>
+      <div className="tp-stock-encyclopedia-price"><strong>{quote.price === null ? "—" : quote.price.toLocaleString("zh-TW", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong>{quote.changePct === null ? <span className="tp-muted">漲跌資料待更新</span> : <span className={`tp-topic-change tp-topic-change--${tone}`}>{displayPercent(quote.changePct)}</span>}</div>
+      <section className="tp-stock-encyclopedia-section tp-stock-eod-read" data-eod-status={eodStatus} aria-label="正式 EOD 資料"><div className="tp-stock-encyclopedia-section-heading"><h3>EOD 行情</h3><span>{statusLabel(eodStatus)}</span></div>{displayStock.eod && !displayStock.isPreview ? <><EvidenceGrid rows={[["收盤價", displayNumber(displayStock.eod.close)], ["前收", displayNumber(displayStock.eod.previousClose)], ["漲跌", displaySigned(displayStock.eod.change)], ["漲跌幅", displayPercent(displayStock.eod.changePct)], ["開盤", displayNumber(displayStock.eod.open)], ["最高", displayNumber(displayStock.eod.high)], ["最低", displayNumber(displayStock.eod.low)], ["成交量", displayNumber(displayStock.eod.volume)], ["成交金額", displayNumber(displayStock.eod.turnover)], ["交易日", displayStock.eod.tradingDate]]} /><div className="tp-stock-eod-lineage"><span>價格來源：{sourceLabel(displayStock.eod.priceSource)}</span><span>成交量來源：{sourceLabel(displayStock.eod.volumeSource)}</span><span>除權息：{displayStock.eod.adjustmentState}</span><span>觀測：{displayStock.eod.observedAt ?? "尚未提供"}</span><span>讀取：{displayStock.eod.retrievedAt ?? "尚未提供"}</span></div></> : <p className="tp-stock-encyclopedia-muted">{displayStock.isPreview ? "Preview 不代表正式 EOD；正式 API 可用後才顯示。" : "正式 EOD 尚未提供；不以盤中值、歷史資料或 Preview 補值。"}</p>}</section>
       <section className="tp-stock-encyclopedia-section"><div className="tp-stock-encyclopedia-section-heading"><h3>股票身份</h3><span>{displayStock.listing ?? displayStock.industry ?? "正式欄位待補"}</span></div><EvidenceGrid rows={[["市場", displayStock.market], ["交易所", displayStock.exchange], ["產業／類別", displayStock.industry], ["資料日期", displayStock.dataDate]]} /></section>
       <section className="tp-stock-encyclopedia-section"><div className="tp-stock-encyclopedia-section-heading"><h3>題材歸屬</h3><span>{displayStock.topics.length} 個關係</span></div>{displayStock.topics.length ? <div className="tp-stock-encyclopedia-topics">{displayStock.topics.map((topic) => <div className="tp-stock-encyclopedia-topic" key={`${topic.name}-${topic.role ?? "unknown"}`}><strong>{topic.name}</strong><RoleChip>{label(topic.role)}</RoleChip></div>)}</div> : <p className="tp-stock-encyclopedia-muted">正式題材關係尚未提供</p>}</section>
       <section className="tp-stock-encyclopedia-section"><div className="tp-stock-encyclopedia-section-heading"><h3>主要題材</h3><span>正式欄位優先</span></div>{displayStock.mainTopic ? <div className="tp-stock-encyclopedia-main-topic"><div><strong>{displayStock.mainTopic.name}</strong><p>{displayStock.mainTopic.state ?? "狀態尚未提供"}{displayStock.mainTopic.lifecycle ? ` · ${displayStock.mainTopic.lifecycle}` : ""}</p></div>{displayStock.mainTopic.grade && <RoleChip>{displayStock.mainTopic.grade}</RoleChip>}</div> : <p className="tp-stock-encyclopedia-muted">正式主題欄位尚未提供</p>}</section>

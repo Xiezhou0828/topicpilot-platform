@@ -1,0 +1,32 @@
+{
+  "task_id": "TASK-WS2-TECHNICAL-V0-REAL-PUBLICATION-COVERAGE-VALIDATION-AND-MAINLINE-RESUME-20260818",
+  "runner": "scripts/ws2_technical_v0_real_publication_probe.py",
+  "database_mode": "READ_ONLY",
+  "run_1": {
+    "summary_sha256": "c6ae5b3fed22a5912c3f4c0513a33c1fd7477840f1e2466b88c4ab5bb6fc9784",
+    "exit_status": 0
+  },
+  "run_2": {
+    "summary_sha256": "c6ae5b3fed22a5912c3f4c0513a33c1fd7477840f1e2466b88c4ab5bb6fc9784",
+    "exit_status": 0
+  },
+  "comparison": {
+    "aggregate_metrics_identical": true,
+    "representative_outputs_identical": true,
+    "publication_reproducible": true,
+    "look_ahead_leakage_detected": false
+  },
+  "not_run": [
+    "migration",
+    "seed/import",
+    "database write",
+    "provider refresh",
+    "scheduler",
+    "production mutation",
+    "deployment",
+    "promotion",
+    "push",
+    "merge",
+    "render"
+  ]
+}

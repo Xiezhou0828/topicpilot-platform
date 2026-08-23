@@ -1,0 +1,188 @@
+{
+  "schema_version": "ws3-core-v0-a1-a2-breakout-formation-policy.v1",
+  "task_id": "TASK-REC-A1-CORE-V0-A1-A2-BREAKOUT-FORMATION-POLICY-CLOSURE-20260816",
+  "workstream": "WS3",
+  "scope": "A1_PRE_BREAKOUT_AND_A2_CONFIRMED_BREAKOUT_ONLY",
+  "status": "FROZEN_RESEARCH_DEFINITION_EXECUTION_DEPENDENCIES_REMAIN",
+  "canonical_protocol": {
+    "id": "core-v0-walk-forward.v1",
+    "development": ["2026-02-02", "2026-06-30"],
+    "validation": ["2026-07-01", "2026-07-31"],
+    "holdout": ["2026-08-01", "2026-08-13"],
+    "minimum_prior_canonical_trading_sessions": 60,
+    "outcomes": ["T+1", "T+3", "T+5", "T+10"],
+    "outcomes_flow_backward": false,
+    "tuning_or_optimization": false,
+    "unchanged": true
+  },
+  "policy": {
+    "id": "core-v0-breakout-formation.v1",
+    "research_only": true,
+    "candidate_frozen_at": "T",
+    "no_lookahead": true,
+    "reference": {
+      "type": "PRIOR_20_ACCEPTED_SESSION_HIGH",
+      "window_accepted_sessions": 20,
+      "evaluation_session_included": false,
+      "formula": "max(High(s) for the prior 20 accepted daily trading sessions strictly before T)",
+      "accepted_session_basis": true,
+      "canonical_high_required": true,
+      "synthetic_backfill": false,
+      "reference_birth": {
+        "strictly_higher_high_starts_new_level": true,
+        "equal_high_resets_birth": false,
+        "field": "referenceBirthSession"
+      },
+      "maturity": {
+        "minimum_accepted_sessions": 5,
+        "age_formula": "count(accepted sessions s where referenceBirthSession < s <= T)",
+        "evaluation_session_counted": true,
+        "calendar_days_used": false,
+        "immature_reference_valid": false,
+        "unknown_birth_or_age_valid": false,
+        "fallback_to_older_lower_reference": false
+      },
+      "excluded_alternatives": [
+        "SWING_HIGH",
+        "SUBJECTIVE_RESISTANCE",
+        "ROLLING_CLOSE_HIGH",
+        "VOLUME_WEIGHTED_RESISTANCE",
+        "FIBONACCI",
+        "SUPPORT_RESISTANCE_ENGINE_OUTPUT"
+      ]
+    },
+    "a1": {
+      "candidate_id": "CORE_V0_A1_PRE_BREAKOUT",
+      "definition_version": "core-v0-a1-pre-breakout.v1",
+      "l1_required": true,
+      "reference_mature_required": true,
+      "close_relation": "Close(T) < Reference(T)",
+      "max_reference_distance_pct": 0.03,
+      "distance_formula": "0 < (Reference(T) - Close(T)) / Reference(T) <= 0.03",
+      "structure_improving_hard_gate": false,
+      "recent_immature_breakout_reclassified_as_a1": false,
+      "technical_fields_hard_gate": false
+    },
+    "a2": {
+      "candidate_id": "CORE_V0_A2_CONFIRMED_BREAKOUT",
+      "definition_version": "core-v0-a2-confirmed-breakout.v1",
+      "l1_required": true,
+      "reference_mature_required": true,
+      "close_relation": "Close(T) > Reference(T)",
+      "confirmation_policy": "single-session-close",
+      "confirmation_sessions": 1,
+      "uses_intraday_high_for_confirmation": false,
+      "extra_breakout_margin_pct": 0.0,
+      "gap_excluded": false,
+      "gap_above_reference_can_form_a2": true,
+      "technical_fields_hard_gate": false,
+      "high_above_reference_close_at_or_below_reference_is_a2": false
+    }
+  },
+  "minimum_panel": {
+    "candidate_specific": true,
+    "global_historical_topic_system_state_required": false,
+    "evaluation_identity": ["symbol", "accepted_evaluation_session", "evaluation_date", "as_of_T", "session_lineage"],
+    "stock_fields": ["canonical_close_through_T", "formal_ws2_ma60_evidence", "ma60_continuity_and_lineage"],
+    "topic_fields": ["pit_topic_membership_or_context_if_required_by_candidate_universe"],
+    "ohlcv_fields": {
+      "required_for_formation": ["high_for_prior_20_accepted_sessions", "close_at_T"],
+      "required_for_evidence_only": ["open_at_T", "low", "volume"],
+      "lineage_required": true
+    },
+    "candidate_inputs": ["reference_policy_and_version", "reference_value", "evaluation_session_excluded", "reference_birth_session", "reference_age_sessions", "reference_maturity", "close_comparison", "a1_distance_or_a2_breakout_result", "input_lineage"],
+    "forward_outcomes": {
+      "sessions": ["T+1", "T+3", "T+5", "T+10"],
+      "evaluation_only": true,
+      "can_change_candidate_eligibility": false,
+      "corporate_action_integrity_exclusion_can_only_invalidate_outcome": true
+    }
+  },
+  "dependencies": {
+    "ws2_ma60": {
+      "authority": "stock.sma.close.v1",
+      "period": 60,
+      "use_formal_ws2_contract": true,
+      "duplicate_ma60_calculation": false,
+      "date_level_readiness": "READY_AFTER_WS2_MA60_EVIDENCE_AND_CONTINUITY_LINEAGE"
+    },
+    "rec_a1": {
+      "freeze_reopened": false,
+      "reviewed_unknowns_reopened": false,
+      "formation_dependency": false,
+      "evaluation_integrity_dependency": true,
+      "current_bounded_disposition": "BLOCKED_BY_REC_A1_PROVENANCE_LEDGER_ARCHIVE_GAP"
+    },
+    "warmup": {
+      "minimum_prior_sessions": 60,
+      "synthetic_backfill": false,
+      "protocol_modified": false
+    }
+  },
+  "evidence_disposition": {
+    "volume": "L3_EVIDENCE_ONLY",
+    "rsi": "L3_EVIDENCE_ONLY",
+    "macd": "L3_EVIDENCE_ONLY",
+    "ma_slope": "L3_EVIDENCE_ONLY",
+    "return_acceleration": "L3_EVIDENCE_ONLY",
+    "pattern_score": "L3_EVIDENCE_ONLY",
+    "gap_magnitude": "L3_EVIDENCE_ONLY",
+    "a1_structure_improving": "EVIDENCE_ONLY_NO_V0_HARD_GATE"
+  },
+  "candidate_disposition_matrix": [
+    {
+      "candidate": "A1",
+      "rec_a1": "READY_AFTER_REC_A1_PROVENANCE_LEDGER_RECONCILIATION",
+      "minimum_panel": "READY_AFTER_CANDIDATE_SPECIFIC_MINIMUM_PANEL_EVIDENCE",
+      "definition_authority": "FROZEN_CORE_V0_DEFINITION_AUTHORITY",
+      "temporal_eligibility": "READY_AFTER_WS2_MA60_EVIDENCE_AND_60_SESSION_LINEAGE",
+      "outcome_coverage": "READY_AFTER_REC_A1_OUTCOME_INTEGRITY_AND_FORWARD_OUTCOME_PANEL",
+      "final_disposition": "READY_AFTER_WS2_MA60_EVIDENCE_CANDIDATE_PANEL_AND_OUTCOME_PROVENANCE",
+      "breakout_reference_blocker": false
+    },
+    {
+      "candidate": "A2",
+      "rec_a1": "READY_AFTER_REC_A1_PROVENANCE_LEDGER_RECONCILIATION",
+      "minimum_panel": "READY_AFTER_CANDIDATE_SPECIFIC_MINIMUM_PANEL_EVIDENCE",
+      "definition_authority": "FROZEN_CORE_V0_DEFINITION_AUTHORITY",
+      "temporal_eligibility": "READY_AFTER_WS2_MA60_EVIDENCE_AND_60_SESSION_LINEAGE",
+      "outcome_coverage": "READY_AFTER_REC_A1_OUTCOME_INTEGRITY_AND_FORWARD_OUTCOME_PANEL",
+      "final_disposition": "READY_AFTER_WS2_MA60_EVIDENCE_CANDIDATE_PANEL_AND_OUTCOME_PROVENANCE",
+      "breakout_reference_blocker": false
+    },
+    {
+      "candidate": "A3",
+      "rec_a1": "PRESERVED_BOUNDED_REC_A1_EVALUATION_DEPENDENCY",
+      "minimum_panel": "BLOCKED_BY_PULLBACK_ACCEPTANCE_AUTHORITY",
+      "definition_authority": "BLOCKED_BY_PULLBACK_ACCEPTANCE_AUTHORITY",
+      "temporal_eligibility": "BLOCKED_BY_PULLBACK_ACCEPTANCE_AUTHORITY",
+      "outcome_coverage": "READY_AFTER_REC_A1_OUTCOME_INTEGRITY_AND_FORWARD_OUTCOME_PANEL",
+      "final_disposition": "BLOCKED_BY_PULLBACK_ACCEPTANCE_AUTHORITY",
+      "breakout_reference_blocker": false
+    },
+    {
+      "candidate": "Catch-up",
+      "rec_a1": "PRESERVED_BOUNDED_REC_A1_EVALUATION_DEPENDENCY",
+      "minimum_panel": "BLOCKED_BY_CATCH_UP_DEFINITION_AUTHORITY",
+      "definition_authority": "BLOCKED_BY_CATCH_UP_DEFINITION_AUTHORITY",
+      "temporal_eligibility": "BLOCKED_BY_CATCH_UP_DEFINITION_AUTHORITY",
+      "outcome_coverage": "READY_AFTER_REC_A1_OUTCOME_INTEGRITY_AND_FORWARD_OUTCOME_PANEL",
+      "final_disposition": "BLOCKED_BY_CATCH_UP_DEFINITION_AUTHORITY",
+      "breakout_reference_blocker": false
+    }
+  ],
+  "lifecycle": {
+    "application_behavior_changed": false,
+    "walk_forward": "NOT_RUN_BY_SCOPE",
+    "performance_metrics": "NOT_RUN_BY_SCOPE",
+    "strategy_review": "NOT_RUN_BY_SCOPE",
+    "recommendation_publication": "NOT_RUN_BY_SCOPE",
+    "database": "NOT_RUN_BY_SCOPE",
+    "g1_g2_g3": "PRESERVED_NOT_RERUN",
+    "canary": "PRESERVED_NOT_RERUN",
+    "production": "NOT_RUN_BY_SCOPE",
+    "push": false,
+    "deploy": false,
+    "next_task_modified": false
+  }
+}

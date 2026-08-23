@@ -1,0 +1,53 @@
+analysis_window,metric,statistic,threshold,value,count,denominator,percentage,notes
+H5,MFE,COUNT,,5160,5160,5160,1.0,COMPLETE_RAW_PATH only; UNKNOWN_RAW_ONLY source series; no adjustment interpretation
+H5,MFE,MEAN,,0.08885297928001094,,5160,,Linear-interpolated quantile; mean is arithmetic mean
+H5,MFE,MEDIAN,,0.058641897551850786,,5160,,Linear-interpolated quantile; mean is arithmetic mean
+H5,MFE,P10,,0.006693452380952402,,5160,,Linear-interpolated quantile; mean is arithmetic mean
+H5,MFE,P25,,0.02243897559023611,,5160,,Linear-interpolated quantile; mean is arithmetic mean
+H5,MFE,P50,,0.058641897551850786,,5160,,Linear-interpolated quantile; mean is arithmetic mean
+H5,MFE,P75,,0.12365412365412365,,5160,,Linear-interpolated quantile; mean is arithmetic mean
+H5,MFE,P90,,0.21115052679654148,,5160,,Linear-interpolated quantile; mean is arithmetic mean
+H5,MFE,THRESHOLD_COUNT,+3%,,3517,5160,0.6815891472868217,Descriptive path excursion threshold; not a trading rule
+H5,MFE,THRESHOLD_COUNT,+5%,,2808,5160,0.5441860465116279,Descriptive path excursion threshold; not a trading rule
+H5,MFE,THRESHOLD_COUNT,+10%,,1563,5160,0.30290697674418604,Descriptive path excursion threshold; not a trading rule
+H5,MFE,THRESHOLD_COUNT,+15%,,1000,5160,0.1937984496124031,Descriptive path excursion threshold; not a trading rule
+H5,MFE,THRESHOLD_COUNT,+20%,,602,5160,0.11666666666666667,Descriptive path excursion threshold; not a trading rule
+H5,MAE,COUNT,,5160,5160,5160,1.0,COMPLETE_RAW_PATH only; UNKNOWN_RAW_ONLY source series; no adjustment interpretation
+H5,MAE,MEAN,,-0.04634305390519096,,5160,,Linear-interpolated quantile; mean is arithmetic mean
+H5,MAE,MEDIAN,,-0.038795497629482534,,5160,,Linear-interpolated quantile; mean is arithmetic mean
+H5,MAE,P10,,-0.11070575128812145,,5160,,Linear-interpolated quantile; mean is arithmetic mean
+H5,MAE,P25,,-0.07306174392999112,,5160,,Linear-interpolated quantile; mean is arithmetic mean
+H5,MAE,P50,,-0.038795497629482534,,5160,,Linear-interpolated quantile; mean is arithmetic mean
+H5,MAE,P75,,-0.014022472249947016,,5160,,Linear-interpolated quantile; mean is arithmetic mean
+H5,MAE,P90,,0.004349724700968267,,5160,,Linear-interpolated quantile; mean is arithmetic mean
+H5,MAE,THRESHOLD_COUNT,-3%,,3031,5160,0.5874031007751938,Descriptive path excursion threshold; not a trading rule
+H5,MAE,THRESHOLD_COUNT,-5%,,2072,5160,0.4015503875968992,Descriptive path excursion threshold; not a trading rule
+H5,MAE,THRESHOLD_COUNT,-8%,,1102,5160,0.21356589147286822,Descriptive path excursion threshold; not a trading rule
+H5,MAE,THRESHOLD_COUNT,-10%,,668,5160,0.12945736434108526,Descriptive path excursion threshold; not a trading rule
+H5,MAE,THRESHOLD_COUNT,-15%,,203,5160,0.03934108527131783,Descriptive path excursion threshold; not a trading rule
+H10,MFE,COUNT,,5146,5146,5146,1.0,COMPLETE_RAW_PATH only; UNKNOWN_RAW_ONLY source series; no adjustment interpretation
+H10,MFE,MEAN,,0.12841294755070257,,5146,,Linear-interpolated quantile; mean is arithmetic mean
+H10,MFE,MEDIAN,,0.08172141574378922,,5146,,Linear-interpolated quantile; mean is arithmetic mean
+H10,MFE,P10,,0.010230186463245139,,5146,,Linear-interpolated quantile; mean is arithmetic mean
+H10,MFE,P25,,0.03167576630143487,,5146,,Linear-interpolated quantile; mean is arithmetic mean
+H10,MFE,P50,,0.08172141574378922,,5146,,Linear-interpolated quantile; mean is arithmetic mean
+H10,MFE,P75,,0.18061723402690993,,5146,,Linear-interpolated quantile; mean is arithmetic mean
+H10,MFE,P90,,0.31496349185836137,,5146,,Linear-interpolated quantile; mean is arithmetic mean
+H10,MFE,THRESHOLD_COUNT,+3%,,3918,5146,0.7613680528565876,Descriptive path excursion threshold; not a trading rule
+H10,MFE,THRESHOLD_COUNT,+5%,,3303,5146,0.6418577535950253,Descriptive path excursion threshold; not a trading rule
+H10,MFE,THRESHOLD_COUNT,+10%,,2177,5146,0.4230470268169452,Descriptive path excursion threshold; not a trading rule
+H10,MFE,THRESHOLD_COUNT,+15%,,1554,5146,0.30198212203653324,Descriptive path excursion threshold; not a trading rule
+H10,MFE,THRESHOLD_COUNT,+20%,,1101,5146,0.2139525845316751,Descriptive path excursion threshold; not a trading rule
+H10,MAE,COUNT,,5146,5146,5146,1.0,COMPLETE_RAW_PATH only; UNKNOWN_RAW_ONLY source series; no adjustment interpretation
+H10,MAE,MEAN,,-0.06399610033476413,,5146,,Linear-interpolated quantile; mean is arithmetic mean
+H10,MAE,MEDIAN,,-0.05286106002499652,,5146,,Linear-interpolated quantile; mean is arithmetic mean
+H10,MAE,P10,,-0.14332648761385874,,5146,,Linear-interpolated quantile; mean is arithmetic mean
+H10,MAE,P25,,-0.09686265259185001,,5146,,Linear-interpolated quantile; mean is arithmetic mean
+H10,MAE,P50,,-0.05286106002499652,,5146,,Linear-interpolated quantile; mean is arithmetic mean
+H10,MAE,P75,,-0.02238805970149252,,5146,,Linear-interpolated quantile; mean is arithmetic mean
+H10,MAE,P90,,0.0,,5146,,Linear-interpolated quantile; mean is arithmetic mean
+H10,MAE,THRESHOLD_COUNT,-3%,,3520,5146,0.6840264282938204,Descriptive path excursion threshold; not a trading rule
+H10,MAE,THRESHOLD_COUNT,-5%,,2692,5146,0.5231247570928876,Descriptive path excursion threshold; not a trading rule
+H10,MAE,THRESHOLD_COUNT,-8%,,1714,5146,0.3330742324135251,Descriptive path excursion threshold; not a trading rule
+H10,MAE,THRESHOLD_COUNT,-10%,,1189,5146,0.2310532452390206,Descriptive path excursion threshold; not a trading rule
+H10,MAE,THRESHOLD_COUNT,-15%,,462,5146,0.08977846871356393,Descriptive path excursion threshold; not a trading rule

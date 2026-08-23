@@ -1,0 +1,147 @@
+{
+  "task_id": "WS1/L2",
+  "task_name": "2026 Historical Lifecycle Reconstruction Preflight",
+  "run_timestamp_utc": "2026-08-22T03:14:55.594Z",
+  "canonical_head": "b569430d2a358cab6a5915aeaacff2810df4913c",
+  "canonical_status_at_read": "DIRTY_OWNER_STATE_PRESERVED",
+  "source_runtime": {
+    "api_base": "http://127.0.0.1:8000",
+    "readyz": true,
+    "snapshot_endpoint": "/api/v2/topic-snapshots",
+    "topics_endpoint": "/api/v2/topics",
+    "admin_topics_endpoint": "/api/v1/admin/topics"
+  },
+  "policy_version": "topic-lifecycle-policy.provisional.1",
+  "calculation_version": "topic-lifecycle-shadow.v1",
+  "authority": "HISTORICAL_RECONSTRUCTED_SHADOW",
+  "forward_boundary": "2026-08-13",
+  "reconstruction_window_requested": {
+    "start": "2026-01-01",
+    "end": "2026-08-13"
+  },
+  "topic_count": 130,
+  "trading_day_rows": 147,
+  "topic_date_observations": 19110,
+  "status_counts": {
+    "NOT_RECONSTRUCTABLE": 18650,
+    "PARTIAL_FAIL_CLOSED": 460
+  },
+  "coverage_pct_strict_fully_reconstructable": 0,
+  "coverage_pct_bounded_pit_input_cells": 2.4071,
+  "formal_snapshot_dates": [
+    "2026-08-07",
+    "2026-08-10",
+    "2026-08-11",
+    "2026-08-12",
+    "2026-08-13"
+  ],
+  "trading_date_enumeration": {
+    "source": "tw-reference-v1 calendar weekdays excluding HOLIDAY/SUSPENDED",
+    "count": 147,
+    "calendar_blocked_dates_in_window": [
+      "2026-01-01",
+      "2026-02-12",
+      "2026-02-13",
+      "2026-02-16",
+      "2026-02-17",
+      "2026-02-18",
+      "2026-02-19",
+      "2026-02-20",
+      "2026-02-27",
+      "2026-02-28",
+      "2026-04-03",
+      "2026-04-04",
+      "2026-04-05",
+      "2026-04-06",
+      "2026-05-01",
+      "2026-06-19",
+      "2026-07-10"
+    ]
+  },
+  "formal_snapshot_stats": {
+    "date_min": "2026-08-07",
+    "date_max": "2026-08-13",
+    "dates": [
+      "2026-08-07",
+      "2026-08-10",
+      "2026-08-11",
+      "2026-08-12",
+      "2026-08-13"
+    ],
+    "total": 460,
+    "per_date": {
+      "2026-08-07": 92,
+      "2026-08-10": 92,
+      "2026-08-11": 92,
+      "2026-08-12": 92,
+      "2026-08-13": 92
+    },
+    "topics_per_date": {
+      "2026-08-07": 92,
+      "2026-08-10": 92,
+      "2026-08-11": 92,
+      "2026-08-12": 92,
+      "2026-08-13": 92
+    },
+    "publication_modes": [
+      "FORMAL"
+    ],
+    "membership_modes": [
+      "PIT_FORMAL"
+    ],
+    "finality_states": [
+      "FINAL"
+    ],
+    "publication_states": [
+      "PUBLISHED"
+    ],
+    "freshness_states": [
+      "AS_OF_TRADING_DATE"
+    ],
+    "data_statuses": {
+      "COMPLETE": 460
+    },
+    "expected_member_facts": 4240,
+    "observed_member_facts": 4236,
+    "no_trade_member_facts": 0,
+    "unknown_member_facts": 0,
+    "excluded_member_facts": 4,
+    "relation_versions": [
+      "v1"
+    ],
+    "mapping_effective_from": [
+      "2026-08-07"
+    ],
+    "mapping_policy_versions": [
+      "topic-membership-pit.v1"
+    ],
+    "reference_registry_versions": [
+      "tw-reference-v1",
+      "sdf-reference-603-v1"
+    ],
+    "calculation_versions": [
+      "topic-daily-state.v1"
+    ]
+  },
+  "static_historical_price_authority": {
+    "symbols": 507,
+    "rows": 63826,
+    "start": "2026-02-02",
+    "end": "2026-08-13"
+  },
+  "known_pit_gaps": 10,
+  "member_fact_reconciliation": {
+    "committed_closure_rows": 4235,
+    "runtime_snapshot_observed_count_sum": 4236,
+    "discrepancy": 1
+  },
+  "migration_0032": "NOT_PRESENT_IN_CANONICAL_CHECKOUT",
+  "forward_shadow_artifacts": "NOT_FOUND_IN_CANONICAL_CHECKOUT",
+  "database_mutation": "NO",
+  "historical_reconstruction_execution": "NO",
+  "backfill": "NO",
+  "engine_mutation": "NO",
+  "deploy": "NO",
+  "push": "NO",
+  "next_task_changed": "NO"
+}

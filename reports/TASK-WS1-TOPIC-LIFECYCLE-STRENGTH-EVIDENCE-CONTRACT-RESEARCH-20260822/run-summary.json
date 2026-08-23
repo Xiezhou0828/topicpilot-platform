@@ -1,0 +1,73 @@
+{
+  "taskId": "WS1-L3-TOPIC-LIFECYCLE-STRENGTH-EVIDENCE-CONTRACT-RESEARCH-20260822",
+  "workstream": "WS1_ONLY",
+  "scope": "research_contract_only",
+  "source": {
+    "repo": "C:\\Users\\acer\\Desktop\\題材領航\\topicpilot-platform",
+    "headAtRead": "b569430d2a358cab6a5915aeaacff2810df4913c",
+    "branchAtRead": "codex/task-ops-023a-p3c-runtime-sha-audit-20260813",
+    "worktreeState": "DIRTY_OWNER_STATE_PRESERVED",
+    "baselineStatusEntries": 184,
+    "baselineTrackedModifiedEntries": 22,
+    "baselineUntrackedEntries": 162,
+    "postWriteStatusEntries": 185,
+    "taskOwnedUntrackedFiles": 9
+  },
+  "conclusion": {
+    "strengthV0Defined": true,
+    "strengthV0Definition": "RAW_EVIDENCE_VECTOR_ONLY",
+    "recommendedAlternative": "A",
+    "dimensionLabels": "DEFERRED",
+    "overallOrdinalLevel": "NO_FOR_V0",
+    "totalScore": "NO",
+    "persistenceStrengthStatus": "PROVISIONAL_CONTEXT_ONLY"
+  },
+  "governance": {
+    "WS1_ONLY": "YES",
+    "LIFECYCLE_POLICY_CHANGED": "NO",
+    "STRENGTH_PRODUCTION_RULE": "NO",
+    "TOTAL_SCORE_CREATED": "NO",
+    "HISTORICAL_RECONSTRUCTION": "NO",
+    "DATABASE_MUTATION": "NO",
+    "DB_MUTATION": "NO",
+    "PRODUCTION_PUBLICATION": "NO",
+    "DEPLOY": "NO",
+    "PUSH": "NO",
+    "NEXT_TASK_CHANGED": "NO",
+    "WS2_TOUCHED": "NO",
+    "WS3_STRATEGY_IMPLEMENTATION": "NO",
+    "WS4_TOUCHED": "NO",
+    "L2_RESULT_USED": "NO"
+  },
+  "writeSet": [
+    "formal-closure-report.md",
+    "run-summary.json",
+    "topic-strength-evidence-inventory.csv",
+    "strength-dimension-analysis.md",
+    "strength-contract-alternatives.md",
+    "recommended-strength-contract-v0.md",
+    "frontend-api-read-model-proposal.json",
+    "historical-validation-plan.md",
+    "lifecycle-strength-separation-audit.json"
+  ],
+  "validation": {
+    "repositoryReadOnlyInspection": "PASS",
+    "contractConsistencyReview": "PASS",
+    "jsonFiles": "PASS_3_OF_3_PARSED",
+    "csvFiles": "PASS_21_ROWS_PARSED",
+    "requiredFiles": "PASS_9_OF_9_PRESENT",
+    "targetedWriteSetStatus": "PASS_9_UNTRACKED_TASK_FILES_ONLY",
+    "trailingWhitespace": "PASS",
+    "secretMarkerScan": "PASS",
+    "applicationTests": "NOT_RUN_BY_SCOPE",
+    "databaseAndMigration": "NOT_RUN_BY_SCOPE",
+    "historicalOutcomeOptimization": "NOT_RUN_AND_PROHIBITED",
+    "productionGates": "NOT_RUN_AND_PROHIBITED"
+  },
+  "ownerDecisionRequired": [
+    "Accept A/raw-vector as the Strength V0 contract.",
+    "Confirm stage age and candidate streak remain lifecycle context, not strength labels.",
+    "Approve future strength policy/denominator lineage before any API implementation.",
+    "Approve a pre-registered historical validation protocol before outcome review."
+  ]
+}

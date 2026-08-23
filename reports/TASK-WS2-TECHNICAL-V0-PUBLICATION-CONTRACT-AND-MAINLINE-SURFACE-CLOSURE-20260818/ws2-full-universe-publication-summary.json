@@ -1,0 +1,61 @@
+{
+  "classification": {
+    "data_limitation_count": 166,
+    "expected_policy_outcome_count": 445,
+    "implementation_defect_count": 0,
+    "known_event_blocked_count": 317,
+    "known_event_handled_count": 23
+  },
+  "dataset": {
+    "event_evidence_hash": "4d9b4912bd1c4613510e60c5cf4b5a629c367e1c94dd733d3b1dc3f935e0eb5d",
+    "event_evidence_identity_count": 341,
+    "event_evidence_record_count": 372,
+    "real_historical_rows": 63826,
+    "real_instrument_count": 507,
+    "source_authority": [
+      "TWSE_OFFICIAL_DAILY",
+      "TPEX_OFFICIAL_DAILY"
+    ]
+  },
+  "eligible_publication_counts": {
+    "eligible_available": 0,
+    "eligible_available_with_limitation": 85,
+    "eligible_blocked": 0,
+    "eligible_error": 0,
+    "technical_v0_eligible": 85
+  },
+  "errors": [],
+  "event_counts": {
+    "event_error": 0,
+    "event_known": 340,
+    "event_lookup_unavailable": 166,
+    "event_no_known_evidence": 1
+  },
+  "full_universe_reconciled": true,
+  "look_ahead_leakage_detected": false,
+  "ma60_policy_changed": false,
+  "normalized_surface_sha256": "5d2aecd41bd171f395852be00f910d98953ceab672c0b915323656a2ca9fc692",
+  "publication_counts": {
+    "publication_available": 0,
+    "publication_available_with_limitation": 85,
+    "publication_blocked": 422,
+    "publication_error": 0,
+    "publication_unavailable": 0
+  },
+  "qualification_as_of_date": "2026-08-13",
+  "qualification_date_range": [
+    "2026-02-02",
+    "2026-08-13"
+  ],
+  "task_id": "TASK-WS2-TECHNICAL-V0-PUBLICATION-CONTRACT-AND-MAINLINE-SURFACE-CLOSURE-20260818",
+  "technical_counts": {
+    "technical_error": 0,
+    "technical_ineligible": 127,
+    "technical_unavailable": 295,
+    "technical_v0_eligible": 85,
+    "technical_valid": 85
+  },
+  "technical_v0_algorithms_changed": false,
+  "total_classified_instruments": 507,
+  "total_formal_instruments": 507
+}

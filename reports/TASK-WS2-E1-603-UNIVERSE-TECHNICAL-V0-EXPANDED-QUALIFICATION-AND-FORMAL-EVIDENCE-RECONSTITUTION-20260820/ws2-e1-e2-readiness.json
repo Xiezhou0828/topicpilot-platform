@@ -1,0 +1,15 @@
+{
+  "task_id": "TASK-WS2-E1-603-UNIVERSE-TECHNICAL-V0-EXPANDED-QUALIFICATION-AND-FORMAL-EVIDENCE-RECONSTITUTION-20260820",
+  "ready_for_ws2_e2_provider_consumer_contract": "NO",
+  "disposition": "BLOCKED_SOURCE_CONTRACT",
+  "bounded_blocker": "603 Shared Data Foundation is absent from canonical HEAD.",
+  "affected_surface": [
+    "expanded universe identity authority",
+    "historical OHLCV lineage",
+    "eligibility",
+    "formal evidence",
+    "coverage",
+    "PIT/reproducibility"
+  ],
+  "minimum_next_task": "Canonicalize the Shared Data Foundation closure, then rerun E1 from that exact canonical SHA."
+}

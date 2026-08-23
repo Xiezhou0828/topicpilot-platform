@@ -1,0 +1,11 @@
+{
+  "task_id": "TASK-WS2-E1-603-UNIVERSE-TECHNICAL-V0-EXPANDED-QUALIFICATION-AND-FORMAL-EVIDENCE-RECONSTITUTION-20260820",
+  "status": "NOT_RUN_SOURCE_CONTRACT_BLOCKED",
+  "overlap_cohort": "NOT_SELECTED",
+  "technical_value_match_count": null,
+  "technical_value_mismatch_count": null,
+  "implementation_defect_count": null,
+  "prior_canonical_mismatch_count_preserved": 0,
+  "mismatch_classification": "NOT_RUN",
+  "reason": "No expanded OHLCV authority is available at the canonical source HEAD."
+}

@@ -47,9 +47,9 @@ test("V2 Home source contains the frozen market workflow and safety boundary", a
     "events-title",
     "rotation-title",
     "opportunities-title",
-    "isSyntheticPreview",
-    "canUseBackendData",
-    "只呈現研究入口，不在首頁完成推薦分析",
+    "marketOverview",
+    "市場廣度資料目前不可用",
+    "只顯示具備明確發布狀態的機會資料",
   ]) assert.match(home, new RegExp(marker));
   assert.match(home, /useTodayMainlines/);
   assert.match(home, /mainlines\.resource\.data\.map/);

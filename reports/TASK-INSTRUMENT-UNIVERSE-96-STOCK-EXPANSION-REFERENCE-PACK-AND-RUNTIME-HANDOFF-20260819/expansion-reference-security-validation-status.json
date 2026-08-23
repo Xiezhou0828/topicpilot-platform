@@ -1,0 +1,9 @@
+{
+  "authority_gap": "current static bundle has no formal provider/security metadata for absent candidates",
+  "security_type_formally_validated_count": 0,
+  "security_type_pending_canonical_validation_count": 96,
+  "security_type_rejected_count": 0,
+  "special_case_8932": "PENDING_CANONICAL_VALIDATION",
+  "status": "PENDING_CANONICAL_VALIDATION",
+  "task_id": "TASK-INSTRUMENT-UNIVERSE-96-STOCK-EXPANSION-REFERENCE-PACK-AND-RUNTIME-HANDOFF-20260819"
+}

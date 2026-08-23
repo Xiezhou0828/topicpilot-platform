@@ -1,0 +1,18 @@
+{
+  "task_id": "TASK-WS2-E2-TECHNICAL-V0-FORMAL-EVIDENCE-PROVIDER-CONSUMER-CONTRACT-AND-603-MAINLINE-CLOSURE-20260820",
+  "WS3_TECHNICAL_V0_CONSUMER_COMPATIBLE": "YES",
+  "probe_type": "BOUNDED_CONTRACT_SHAPE_COMPATIBILITY; WS3_NOT_RERUN",
+  "checks": {
+    "read_only_request_operations": "PASS",
+    "does_not_require_6_7gb_csv": "PASS",
+    "does_not_recompute_indicator_semantics": "PASS",
+    "session_and_as_of_preserved": "PASS",
+    "lineage_preserved": "PASS",
+    "unavailable_not_coerced": "PASS",
+    "continuity_state_preserved": "PASS",
+    "strategy_semantics_introduced": "NO"
+  },
+  "WS3_CHANGED": "NO",
+  "WS3_P2E_STARTED": "NO",
+  "compatibility_status": "PASS"
+}

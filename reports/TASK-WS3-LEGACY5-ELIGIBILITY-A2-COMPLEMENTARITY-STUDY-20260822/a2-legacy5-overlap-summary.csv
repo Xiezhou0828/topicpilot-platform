@@ -1,0 +1,17 @@
+variant,overlap_group,matching_window_sessions,event_count_definition,event_count,a2_event_count,legacy_event_count,pair_count,instrument_count,a2_instrument_count,legacy_instrument_count,candidate_pair_count_within_window,pit_safe,comparison_type
+V0_LEGACY5,A2_ONLY,1,unmatched event count for ONLY groups; one-to-one matched pair count for BOTH groups,4485,4485,0,0,599,599,0,793,YES,DESCRIPTIVE_COMPLEMENTARITY_ONLY
+V0_LEGACY5,LEGACY5_ONLY,1,unmatched event count for ONLY groups; one-to-one matched pair count for BOTH groups,1679,0,1679,0,504,0,504,793,YES,DESCRIPTIVE_COMPLEMENTARITY_ONLY
+V0_LEGACY5,BOTH_SAME_SESSION,1,unmatched event count for ONLY groups; one-to-one matched pair count for BOTH groups,560,560,560,560,330,330,330,793,YES,DESCRIPTIVE_COMPLEMENTARITY_ONLY
+V0_LEGACY5,BOTH_WITHIN_BOUNDED_WINDOW,1,unmatched event count for ONLY groups; one-to-one matched pair count for BOTH groups,232,232,232,232,185,185,185,793,YES,DESCRIPTIVE_COMPLEMENTARITY_ONLY
+V1_LEGACY5_MA20,A2_ONLY,1,unmatched event count for ONLY groups; one-to-one matched pair count for BOTH groups,4485,4485,0,0,599,599,0,793,YES,DESCRIPTIVE_COMPLEMENTARITY_ONLY
+V1_LEGACY5_MA20,LEGACY5_ONLY,1,unmatched event count for ONLY groups; one-to-one matched pair count for BOTH groups,1679,0,1679,0,504,0,504,793,YES,DESCRIPTIVE_COMPLEMENTARITY_ONLY
+V1_LEGACY5_MA20,BOTH_SAME_SESSION,1,unmatched event count for ONLY groups; one-to-one matched pair count for BOTH groups,560,560,560,560,330,330,330,793,YES,DESCRIPTIVE_COMPLEMENTARITY_ONLY
+V1_LEGACY5_MA20,BOTH_WITHIN_BOUNDED_WINDOW,1,unmatched event count for ONLY groups; one-to-one matched pair count for BOTH groups,232,232,232,232,185,185,185,793,YES,DESCRIPTIVE_COMPLEMENTARITY_ONLY
+V2_LEGACY5_MA60,A2_ONLY,1,unmatched event count for ONLY groups; one-to-one matched pair count for BOTH groups,4497,4497,0,0,599,599,0,781,YES,DESCRIPTIVE_COMPLEMENTARITY_ONLY
+V2_LEGACY5_MA60,LEGACY5_ONLY,1,unmatched event count for ONLY groups; one-to-one matched pair count for BOTH groups,1316,0,1316,0,475,0,475,781,YES,DESCRIPTIVE_COMPLEMENTARITY_ONLY
+V2_LEGACY5_MA60,BOTH_SAME_SESSION,1,unmatched event count for ONLY groups; one-to-one matched pair count for BOTH groups,560,560,560,560,330,330,330,781,YES,DESCRIPTIVE_COMPLEMENTARITY_ONLY
+V2_LEGACY5_MA60,BOTH_WITHIN_BOUNDED_WINDOW,1,unmatched event count for ONLY groups; one-to-one matched pair count for BOTH groups,220,220,220,220,177,177,177,781,YES,DESCRIPTIVE_COMPLEMENTARITY_ONLY
+V3_LEGACY5_MA20_MA60,A2_ONLY,1,unmatched event count for ONLY groups; one-to-one matched pair count for BOTH groups,4497,4497,0,0,599,599,0,781,YES,DESCRIPTIVE_COMPLEMENTARITY_ONLY
+V3_LEGACY5_MA20_MA60,LEGACY5_ONLY,1,unmatched event count for ONLY groups; one-to-one matched pair count for BOTH groups,1316,0,1316,0,475,0,475,781,YES,DESCRIPTIVE_COMPLEMENTARITY_ONLY
+V3_LEGACY5_MA20_MA60,BOTH_SAME_SESSION,1,unmatched event count for ONLY groups; one-to-one matched pair count for BOTH groups,560,560,560,560,330,330,330,781,YES,DESCRIPTIVE_COMPLEMENTARITY_ONLY
+V3_LEGACY5_MA20_MA60,BOTH_WITHIN_BOUNDED_WINDOW,1,unmatched event count for ONLY groups; one-to-one matched pair count for BOTH groups,220,220,220,220,177,177,177,781,YES,DESCRIPTIVE_COMPLEMENTARITY_ONLY

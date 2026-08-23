@@ -241,6 +241,11 @@
       },
       "HealthResponse": {
         "properties": {
+          "gitSha": {
+            "default": "UNKNOWN",
+            "title": "Gitsha",
+            "type": "string"
+          },
           "status": {
             "title": "Status",
             "type": "string"
@@ -252,8 +257,56 @@
         "title": "HealthResponse",
         "type": "object"
       },
+      "HistoricalLifecycle": {
+        "properties": {
+          "effectiveFrom": {
+            "format": "date",
+            "title": "Effectivefrom",
+            "type": "string"
+          },
+          "effectiveTo": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Effectiveto"
+          },
+          "evidenceId": {
+            "title": "Evidenceid",
+            "type": "string"
+          },
+          "statusCode": {
+            "title": "Statuscode",
+            "type": "string"
+          }
+        },
+        "required": [
+          "statusCode",
+          "effectiveFrom",
+          "evidenceId"
+        ],
+        "title": "HistoricalLifecycle",
+        "type": "object"
+      },
       "HistoricalPriceHistoryResponse": {
         "properties": {
+          "asOf": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Asof"
+          },
           "availabilityReason": {
             "anyOf": [
               {
@@ -269,12 +322,73 @@
             "title": "Code",
             "type": "string"
           },
+          "coverageState": {
+            "default": "UNKNOWN",
+            "title": "Coveragestate",
+            "type": "string"
+          },
+          "freshnessState": {
+            "default": "UNKNOWN",
+            "title": "Freshnessstate",
+            "type": "string"
+          },
+          "hasMore": {
+            "default": false,
+            "title": "Hasmore",
+            "type": "boolean"
+          },
           "items": {
             "items": {
               "$ref": "#/components/schemas/HistoricalPricePoint"
             },
             "title": "Items",
             "type": "array"
+          },
+          "latestObservedAt": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latestobservedat"
+          },
+          "latestRetrievedAt": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latestretrievedat"
+          },
+          "latestTradingDate": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latesttradingdate"
+          },
+          "lifecycle": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/HistoricalLifecycle"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "market": {
             "title": "Market",
@@ -293,6 +407,30 @@
             "format": "date",
             "title": "Requestedto",
             "type": "string"
+          },
+          "returnedFrom": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Returnedfrom"
+          },
+          "returnedTo": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Returnedto"
           },
           "status": {
             "title": "Status",
@@ -314,6 +452,22 @@
       },
       "HistoricalPricePoint": {
         "properties": {
+          "adapterVersion": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Adapterversion"
+          },
+          "adjustmentState": {
+            "default": "UNKNOWN",
+            "title": "Adjustmentstate",
+            "type": "string"
+          },
           "close": {
             "anyOf": [
               {
@@ -347,6 +501,28 @@
             ],
             "title": "Low"
           },
+          "mappingPolicyVersion": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mappingpolicyversion"
+          },
+          "normalizationContractVersion": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Normalizationcontractversion"
+          },
           "observedAt": {
             "format": "date-time",
             "title": "Observedat",
@@ -367,6 +543,39 @@
             "title": "Qualitystate",
             "type": "string"
           },
+          "referenceDataVersion": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Referencedataversion"
+          },
+          "retrievedAt": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Retrievedat"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/HistoricalPriceSource"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "sourceCode": {
             "title": "Sourcecode",
             "type": "string"
@@ -386,6 +595,39 @@
               }
             ],
             "title": "Volume"
+          },
+          "volumeAggregation": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Volumeaggregation"
+          },
+          "volumeScale": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Volumescale"
+          },
+          "volumeUnitCode": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Volumeunitcode"
           }
         },
         "required": [
@@ -400,6 +642,44 @@
           "qualityState"
         ],
         "title": "HistoricalPricePoint",
+        "type": "object"
+      },
+      "HistoricalPriceSource": {
+        "properties": {
+          "adapterVersion": {
+            "title": "Adapterversion",
+            "type": "string"
+          },
+          "mappingPolicyVersion": {
+            "title": "Mappingpolicyversion",
+            "type": "string"
+          },
+          "normalizationContractVersion": {
+            "title": "Normalizationcontractversion",
+            "type": "string"
+          },
+          "observationSemantics": {
+            "title": "Observationsemantics",
+            "type": "string"
+          },
+          "referenceDataVersion": {
+            "title": "Referencedataversion",
+            "type": "string"
+          },
+          "sourceCode": {
+            "title": "Sourcecode",
+            "type": "string"
+          }
+        },
+        "required": [
+          "sourceCode",
+          "adapterVersion",
+          "observationSemantics",
+          "referenceDataVersion",
+          "normalizationContractVersion",
+          "mappingPolicyVersion"
+        ],
+        "title": "HistoricalPriceSource",
         "type": "object"
       },
       "HomeDailyFocus": {
@@ -594,6 +874,10 @@
             "title": "Datadate"
           },
           "dataStatus": {
+            "enum": [
+              "PARTIAL",
+              "UNAVAILABLE"
+            ],
             "title": "Datastatus",
             "type": "string"
           },
@@ -1289,6 +1573,32 @@
           "reason"
         ],
         "title": "LiveTrackingResponse",
+        "type": "object"
+      },
+      "MigrationRevisionResponse": {
+        "properties": {
+          "alembicRevision": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Alembicrevision"
+          },
+          "readOnly": {
+            "const": true,
+            "default": true,
+            "title": "Readonly",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "alembicRevision"
+        ],
+        "title": "MigrationRevisionResponse",
         "type": "object"
       },
       "OpportunityShadowCard": {
@@ -2516,6 +2826,280 @@
         "title": "SnapshotResponse",
         "type": "object"
       },
+      "StockEodRead": {
+        "properties": {
+          "adjustmentState": {
+            "enum": [
+              "ADJUSTED",
+              "UNADJUSTED",
+              "UNKNOWN"
+            ],
+            "title": "Adjustmentstate",
+            "type": "string"
+          },
+          "change": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Change"
+          },
+          "changePct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Changepct"
+          },
+          "close": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Close"
+          },
+          "dataStatus": {
+            "enum": [
+              "AVAILABLE",
+              "PARTIAL",
+              "UNAVAILABLE",
+              "NO_TRADE",
+              "SUSPENDED",
+              "ADJUSTMENT_UNKNOWN",
+              "SOURCE_CONFLICT"
+            ],
+            "title": "Datastatus",
+            "type": "string"
+          },
+          "high": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "High"
+          },
+          "low": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Low"
+          },
+          "observedAt": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Observedat"
+          },
+          "open": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Open"
+          },
+          "previousClose": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Previousclose"
+          },
+          "priceSource": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/StockEodSource"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "retrievedAt": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Retrievedat"
+          },
+          "tradingDate": {
+            "format": "date",
+            "title": "Tradingdate",
+            "type": "string"
+          },
+          "turnover": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Turnover"
+          },
+          "volume": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Volume"
+          },
+          "volumeSource": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/StockEodSource"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "tradingDate",
+          "open",
+          "high",
+          "low",
+          "close",
+          "previousClose",
+          "change",
+          "changePct",
+          "volume",
+          "turnover",
+          "adjustmentState",
+          "priceSource",
+          "volumeSource",
+          "observedAt",
+          "retrievedAt",
+          "dataStatus"
+        ],
+        "title": "StockEodRead",
+        "type": "object"
+      },
+      "StockEodSource": {
+        "properties": {
+          "adapterVersion": {
+            "title": "Adapterversion",
+            "type": "string"
+          },
+          "adjustmentState": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Adjustmentstate"
+          },
+          "mappingPolicyVersion": {
+            "title": "Mappingpolicyversion",
+            "type": "string"
+          },
+          "normalizationContractVersion": {
+            "title": "Normalizationcontractversion",
+            "type": "string"
+          },
+          "observationSemantics": {
+            "title": "Observationsemantics",
+            "type": "string"
+          },
+          "observedAt": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Observedat"
+          },
+          "qualityState": {
+            "title": "Qualitystate",
+            "type": "string"
+          },
+          "referenceDataVersion": {
+            "title": "Referencedataversion",
+            "type": "string"
+          },
+          "retrievedAt": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Retrievedat"
+          },
+          "sourceCode": {
+            "title": "Sourcecode",
+            "type": "string"
+          }
+        },
+        "required": [
+          "sourceCode",
+          "adapterVersion",
+          "observationSemantics",
+          "qualityState",
+          "observedAt",
+          "retrievedAt",
+          "referenceDataVersion",
+          "normalizationContractVersion",
+          "mappingPolicyVersion"
+        ],
+        "title": "StockEodSource",
+        "type": "object"
+      },
       "StockReadModel": {
         "properties": {
           "active": {
@@ -2544,6 +3128,16 @@
           "enabled": {
             "title": "Enabled",
             "type": "boolean"
+          },
+          "eod": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/StockEodRead"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "exchange": {
             "anyOf": [
@@ -2776,6 +3370,7 @@
           "price",
           "changePct",
           "volume",
+          "eod",
           "observedAt",
           "retrievedAt",
           "dataFreshness",
@@ -3202,6 +3797,432 @@
         "title": "StockTechnicalEvidence",
         "type": "object"
       },
+      "StockTechnicalInputProvenance": {
+        "properties": {
+          "adapterVersions": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Adapterversions",
+            "type": "array"
+          },
+          "adjustmentState": {
+            "enum": [
+              "ADJUSTED",
+              "UNADJUSTED",
+              "UNKNOWN",
+              "CONFLICT"
+            ],
+            "title": "Adjustmentstate",
+            "type": "string"
+          },
+          "authority": {
+            "const": "V2_CANONICAL_OBSERVATION_CHAIN",
+            "title": "Authority",
+            "type": "string"
+          },
+          "latestObservedAt": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latestobservedat"
+          },
+          "latestRetrievedAt": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latestretrievedat"
+          },
+          "latestTradingDate": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latesttradingdate"
+          },
+          "lineageState": {
+            "enum": [
+              "VERSIONED",
+              "MIXED",
+              "INCOMPLETE"
+            ],
+            "title": "Lineagestate",
+            "type": "string"
+          },
+          "mappingPolicyVersions": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Mappingpolicyversions",
+            "type": "array"
+          },
+          "normalizationContractVersions": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Normalizationcontractversions",
+            "type": "array"
+          },
+          "observationCount": {
+            "title": "Observationcount",
+            "type": "integer"
+          },
+          "observationSemantics": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Observationsemantics",
+            "type": "array"
+          },
+          "qualityStates": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Qualitystates",
+            "type": "array"
+          },
+          "referenceDataVersions": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Referencedataversions",
+            "type": "array"
+          },
+          "returnedFrom": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Returnedfrom"
+          },
+          "returnedTo": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Returnedto"
+          },
+          "seriesSemantics": {
+            "const": "RAW_OBSERVED_DAILY_BAR",
+            "title": "Seriessemantics",
+            "type": "string"
+          },
+          "sourceCodes": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Sourcecodes",
+            "type": "array"
+          }
+        },
+        "required": [
+          "authority",
+          "seriesSemantics",
+          "adjustmentState",
+          "qualityStates",
+          "observationSemantics",
+          "sourceCodes",
+          "adapterVersions",
+          "normalizationContractVersions",
+          "mappingPolicyVersions",
+          "referenceDataVersions",
+          "lineageState",
+          "observationCount",
+          "returnedFrom",
+          "returnedTo",
+          "latestTradingDate",
+          "latestObservedAt",
+          "latestRetrievedAt"
+        ],
+        "title": "StockTechnicalInputProvenance",
+        "type": "object"
+      },
+      "StockTechnicalPublicationRead": {
+        "properties": {
+          "adjustmentPolicyId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Adjustmentpolicyid"
+          },
+          "algorithmId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Algorithmid"
+          },
+          "algorithmVersion": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Algorithmversion"
+          },
+          "asOf": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Asof"
+          },
+          "availabilityReasons": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Availabilityreasons",
+            "type": "array"
+          },
+          "browserCalculationAllowed": {
+            "const": "NO",
+            "title": "Browsercalculationallowed",
+            "type": "string"
+          },
+          "calculationOwner": {
+            "const": "BACKEND_ONLY",
+            "title": "Calculationowner",
+            "type": "string"
+          },
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "continuityPolicy": {
+            "title": "Continuitypolicy",
+            "type": "string"
+          },
+          "deferredIndicatorFamilies": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Deferredindicatorfamilies",
+            "type": "array"
+          },
+          "eventAuthorityStatus": {
+            "enum": [
+              "KNOWN_EVENT",
+              "NO_KNOWN_EVENT_EVIDENCE",
+              "LOOKUP_UNAVAILABLE",
+              "NOT_APPLICABLE",
+              "ERROR"
+            ],
+            "title": "Eventauthoritystatus",
+            "type": "string"
+          },
+          "inputState": {
+            "enum": [
+              "RAW_OBSERVED",
+              "UNAVAILABLE"
+            ],
+            "title": "Inputstate",
+            "type": "string"
+          },
+          "limitationReasons": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Limitationreasons",
+            "type": "array"
+          },
+          "market": {
+            "title": "Market",
+            "type": "string"
+          },
+          "parameterSetId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Parametersetid"
+          },
+          "priceBasis": {
+            "const": "RAW_OBSERVED",
+            "title": "Pricebasis",
+            "type": "string"
+          },
+          "provenance": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/StockTechnicalInputProvenance"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "publicationState": {
+            "enum": [
+              "FORMAL",
+              "FORMAL_WITH_LIMITATION",
+              "DEFERRED",
+              "UNAVAILABLE",
+              "NOT_PUBLISHED"
+            ],
+            "title": "Publicationstate",
+            "type": "string"
+          },
+          "publicationStatus": {
+            "enum": [
+              "AVAILABLE",
+              "AVAILABLE_WITH_LIMITATION",
+              "BLOCKED",
+              "UNAVAILABLE",
+              "ERROR"
+            ],
+            "title": "Publicationstatus",
+            "type": "string"
+          },
+          "publishedIndicators": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Publishedindicators",
+            "type": "array"
+          },
+          "reasonCodes": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Reasoncodes",
+            "type": "array"
+          },
+          "requestedFrom": {
+            "format": "date",
+            "title": "Requestedfrom",
+            "type": "string"
+          },
+          "requestedTo": {
+            "format": "date",
+            "title": "Requestedto",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "FORMAL",
+              "DEFERRED",
+              "UNAVAILABLE"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "technicalContractVersion": {
+            "title": "Technicalcontractversion",
+            "type": "string"
+          },
+          "technicalEligibility": {
+            "enum": [
+              "ELIGIBLE",
+              "INELIGIBLE",
+              "UNAVAILABLE",
+              "ERROR"
+            ],
+            "title": "Technicaleligibility",
+            "type": "string"
+          },
+          "technicalEvidence": {
+            "items": {
+              "$ref": "#/components/schemas/TechnicalEvidence"
+            },
+            "title": "Technicalevidence",
+            "type": "array"
+          },
+          "technicalPolicyVersion": {
+            "title": "Technicalpolicyversion",
+            "type": "string"
+          },
+          "technicalResultStatus": {
+            "enum": [
+              "VALID",
+              "INELIGIBLE",
+              "UNAVAILABLE",
+              "ERROR"
+            ],
+            "title": "Technicalresultstatus",
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "market",
+          "technicalContractVersion",
+          "requestedFrom",
+          "requestedTo",
+          "technicalPolicyVersion",
+          "status",
+          "publicationState",
+          "inputState",
+          "calculationOwner",
+          "browserCalculationAllowed",
+          "availabilityReasons",
+          "reasonCodes",
+          "limitationReasons",
+          "technicalResultStatus",
+          "technicalEligibility",
+          "eventAuthorityStatus",
+          "publicationStatus",
+          "deferredIndicatorFamilies",
+          "publishedIndicators",
+          "algorithmId",
+          "algorithmVersion",
+          "parameterSetId",
+          "adjustmentPolicyId",
+          "priceBasis",
+          "continuityPolicy",
+          "technicalEvidence",
+          "provenance"
+        ],
+        "title": "StockTechnicalPublicationRead",
+        "type": "object"
+      },
       "StockTopicRelationRead": {
         "properties": {
           "relationType": {
@@ -3400,6 +4421,256 @@
         "title": "StrategyResponse",
         "type": "object"
       },
+      "TechnicalEvidence": {
+        "properties": {
+          "actualObservationCount": {
+            "title": "Actualobservationcount",
+            "type": "integer"
+          },
+          "actualObservationWindow": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TechnicalObservationWindow"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "algorithmId": {
+            "title": "Algorithmid",
+            "type": "string"
+          },
+          "algorithmVersion": {
+            "title": "Algorithmversion",
+            "type": "string"
+          },
+          "asOf": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Asof"
+          },
+          "availabilityReason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Availabilityreason"
+          },
+          "continuityEvidence": {
+            "additionalProperties": true,
+            "title": "Continuityevidence",
+            "type": "object"
+          },
+          "continuityState": {
+            "enum": [
+              "CONTINUITY_PASS_BOUNDED",
+              "CONTINUITY_FAIL",
+              "CONTINUITY_UNKNOWN"
+            ],
+            "title": "Continuitystate",
+            "type": "string"
+          },
+          "eventAuthorityStatus": {
+            "enum": [
+              "KNOWN_EVENT",
+              "NO_KNOWN_EVENT_EVIDENCE",
+              "LOOKUP_UNAVAILABLE",
+              "NOT_APPLICABLE",
+              "ERROR"
+            ],
+            "title": "Eventauthoritystatus",
+            "type": "string"
+          },
+          "eventLookupEvidence": {
+            "additionalProperties": true,
+            "title": "Eventlookupevidence",
+            "type": "object"
+          },
+          "eventLookupState": {
+            "title": "Eventlookupstate",
+            "type": "string"
+          },
+          "indicatorFamily": {
+            "title": "Indicatorfamily",
+            "type": "string"
+          },
+          "indicatorId": {
+            "title": "Indicatorid",
+            "type": "string"
+          },
+          "indicatorVersion": {
+            "title": "Indicatorversion",
+            "type": "string"
+          },
+          "instrumentIdentity": {
+            "title": "Instrumentidentity",
+            "type": "string"
+          },
+          "knownEventHandling": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Knowneventhandling",
+            "type": "array"
+          },
+          "limitationReasons": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Limitationreasons",
+            "type": "array"
+          },
+          "market": {
+            "title": "Market",
+            "type": "string"
+          },
+          "parameterSet": {
+            "additionalProperties": true,
+            "title": "Parameterset",
+            "type": "object"
+          },
+          "priceBasis": {
+            "enum": [
+              "RAW_OBSERVED",
+              "NOT_PRICE_BASED"
+            ],
+            "title": "Pricebasis",
+            "type": "string"
+          },
+          "publicationState": {
+            "enum": [
+              "FORMAL",
+              "FORMAL_WITH_LIMITATION",
+              "UNAVAILABLE",
+              "DEFERRED",
+              "UNKNOWN"
+            ],
+            "title": "Publicationstate",
+            "type": "string"
+          },
+          "requiredObservationCount": {
+            "title": "Requiredobservationcount",
+            "type": "integer"
+          },
+          "requiredObservationWindow": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TechnicalObservationWindow"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "sessionDate": {
+            "format": "date",
+            "title": "Sessiondate",
+            "type": "string"
+          },
+          "sourceAuthority": {
+            "title": "Sourceauthority",
+            "type": "string"
+          },
+          "sourceLineage": {
+            "additionalProperties": true,
+            "title": "Sourcelineage",
+            "type": "object"
+          },
+          "symbol": {
+            "title": "Symbol",
+            "type": "string"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value"
+          }
+        },
+        "required": [
+          "instrumentIdentity",
+          "symbol",
+          "market",
+          "indicatorId",
+          "indicatorFamily",
+          "indicatorVersion",
+          "value",
+          "sessionDate",
+          "requiredObservationCount",
+          "actualObservationCount",
+          "algorithmId",
+          "algorithmVersion",
+          "parameterSet",
+          "priceBasis",
+          "continuityState",
+          "continuityEvidence",
+          "eventAuthorityStatus",
+          "eventLookupState",
+          "eventLookupEvidence",
+          "knownEventHandling",
+          "sourceAuthority",
+          "sourceLineage",
+          "publicationState"
+        ],
+        "title": "TechnicalEvidence",
+        "type": "object"
+      },
+      "TechnicalObservationWindow": {
+        "properties": {
+          "endSession": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Endsession"
+          },
+          "observationCount": {
+            "title": "Observationcount",
+            "type": "integer"
+          },
+          "startSession": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Startsession"
+          }
+        },
+        "required": [
+          "observationCount"
+        ],
+        "title": "TechnicalObservationWindow",
+        "type": "object"
+      },
       "TopicConstituentRead": {
         "properties": {
           "changePct": {
@@ -3416,6 +4687,28 @@
           "code": {
             "title": "Code",
             "type": "string"
+          },
+          "factHash": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Facthash"
+          },
+          "factState": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Factstate"
           },
           "freshness": {
             "title": "Freshness",
@@ -3436,6 +4729,18 @@
             ],
             "title": "Name"
           },
+          "observationDate": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Observationdate"
+          },
           "observedAt": {
             "anyOf": [
               {
@@ -3447,6 +4752,17 @@
               }
             ],
             "title": "Observedat"
+          },
+          "observedClassification": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Observedclassification"
           },
           "price": {
             "anyOf": [
@@ -3921,6 +5237,17 @@
             "title": "Currentstagetradingdays"
           },
           "dataStatus": {
+            "enum": [
+              "AVAILABLE",
+              "FORMAL_AVAILABLE",
+              "SHADOW_AVAILABLE",
+              "INSUFFICIENT_DATA",
+              "PENDING",
+              "PREVIEW",
+              "NOT_AVAILABLE",
+              "WAITING_FOR_FORMAL_LINEAGE",
+              "FAIL_CLOSED"
+            ],
             "title": "Datastatus",
             "type": "string"
           },
@@ -3947,6 +5274,11 @@
             },
             "title": "History",
             "type": "array"
+          },
+          "lineage": {
+            "additionalProperties": true,
+            "title": "Lineage",
+            "type": "object"
           },
           "policyVersion": {
             "anyOf": [
@@ -4134,9 +5466,24 @@
           "lifecycle": {
             "$ref": "#/components/schemas/TopicLifecycleRead"
           },
+          "lineage": {
+            "additionalProperties": true,
+            "title": "Lineage",
+            "type": "object"
+          },
           "name": {
             "title": "Name",
             "type": "string"
+          },
+          "publication": {
+            "additionalProperties": true,
+            "title": "Publication",
+            "type": "object"
+          },
+          "quality": {
+            "additionalProperties": true,
+            "title": "Quality",
+            "type": "object"
           },
           "readableState": {
             "title": "Readablestate",
@@ -4535,6 +5882,18 @@
       },
       "TopicSnapshotResponse": {
         "properties": {
+          "asOfAt": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Asofat"
+          },
           "averageChange": {
             "anyOf": [
               {
@@ -4549,6 +5908,28 @@
           "calculationVersion": {
             "title": "Calculationversion",
             "type": "string"
+          },
+          "calendarCode": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Calendarcode"
+          },
+          "correctionSequence": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Correctionsequence"
           },
           "coveragePct": {
             "anyOf": [
@@ -4565,6 +5946,141 @@
             "title": "Datastatus",
             "type": "string"
           },
+          "eligibleCount": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Eligiblecount"
+          },
+          "excludedCount": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Excludedcount"
+          },
+          "expectedCount": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expectedcount"
+          },
+          "finalityState": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Finalitystate"
+          },
+          "finalizedAt": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Finalizedat"
+          },
+          "flatCount": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Flatcount"
+          },
+          "freshnessState": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Freshnessstate"
+          },
+          "generatedAt": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Generatedat"
+          },
+          "generatedState": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Generatedstate"
+          },
+          "lineageHash": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lineagehash"
+          },
+          "mappingEffectiveFrom": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mappingeffectivefrom"
+          },
+          "mappingPolicyVersion": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mappingpolicyversion"
+          },
           "marketGrade": {
             "anyOf": [
               {
@@ -4575,6 +6091,61 @@
               }
             ],
             "title": "Marketgrade"
+          },
+          "membershipMode": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Membershipmode"
+          },
+          "membershipSnapshotHash": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Membershipsnapshothash"
+          },
+          "membershipSnapshotId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Membershipsnapshotid"
+          },
+          "negativeCount": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Negativecount"
+          },
+          "noTradeCount": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notradecount"
           },
           "observedStockCount": {
             "title": "Observedstockcount",
@@ -4591,22 +6162,185 @@
             ],
             "title": "Parenttopic"
           },
+          "positiveCount": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Positivecount"
+          },
+          "publicationMode": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Publicationmode"
+          },
+          "publicationState": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Publicationstate"
+          },
+          "publishedAt": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Publishedat"
+          },
+          "qualityFlags": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Qualityflags"
+          },
+          "referenceRegistryVersion": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Referenceregistryversion"
+          },
+          "relationVersion": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Relationversion"
+          },
           "scoreStatus": {
             "title": "Scorestatus",
             "type": "string"
+          },
+          "sessionCode": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sessioncode"
           },
           "snapshotDate": {
             "format": "date",
             "title": "Snapshotdate",
             "type": "string"
           },
+          "snapshotIdentity": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Snapshotidentity"
+          },
+          "sourceArtifactHash": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sourceartifacthash"
+          },
+          "sourceArtifactId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sourceartifactid"
+          },
+          "sourceRunId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sourcerunid"
+          },
           "stockCount": {
             "title": "Stockcount",
             "type": "integer"
           },
           "strongStockCount": {
-            "title": "Strongstockcount",
-            "type": "integer"
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Strongstockcount"
+          },
+          "supersedesSnapshotId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Supersedessnapshotid"
+          },
+          "supersessionReason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Supersessionreason"
           },
           "topicDirection": {
             "title": "Topicdirection",
@@ -4635,14 +6369,54 @@
             "title": "Topicslug",
             "type": "string"
           },
+          "tradingDayState": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tradingdaystate"
+          },
+          "unavailableReason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unavailablereason"
+          },
+          "unknownCount": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unknowncount"
+          },
           "updatedAt": {
             "format": "date-time",
             "title": "Updatedat",
             "type": "string"
           },
           "weakStockCount": {
-            "title": "Weakstockcount",
-            "type": "integer"
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Weakstockcount"
           }
         },
         "required": [
@@ -5206,6 +6980,28 @@
           }
         },
         "summary": "Markets",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
+    "/api/v1/admin/migration": {
+      "get": {
+        "description": "Expose the current migration marker through a read-only SELECT probe.",
+        "operationId": "migration_api_v1_admin_migration_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MigrationRevisionResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Migration",
         "tags": [
           "admin"
         ]
@@ -6912,6 +8708,186 @@
           }
         },
         "summary": "Read one formal stock",
+        "tags": [
+          "production-read-model"
+        ]
+      }
+    },
+    "/api/v2/stocks/{symbol}/price-history": {
+      "get": {
+        "operationId": "stock_price_history_api_v2_stocks__symbol__price_history_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "symbol",
+            "required": true,
+            "schema": {
+              "title": "Symbol",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "from",
+            "required": true,
+            "schema": {
+              "format": "date",
+              "title": "From",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "to",
+            "required": true,
+            "schema": {
+              "format": "date",
+              "title": "To",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "market",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Market"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 200,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HistoricalPriceHistoryResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Read bounded canonical daily price history",
+        "tags": [
+          "production-read-model"
+        ]
+      }
+    },
+    "/api/v2/stocks/{symbol}/technical": {
+      "get": {
+        "operationId": "stock_technical_api_v2_stocks__symbol__technical_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "symbol",
+            "required": true,
+            "schema": {
+              "title": "Symbol",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "from",
+            "required": true,
+            "schema": {
+              "format": "date",
+              "title": "From",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "to",
+            "required": true,
+            "schema": {
+              "format": "date",
+              "title": "To",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "market",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Market"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 200,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StockTechnicalPublicationRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Read Stock Technical V0 evidence and bounded publication status",
         "tags": [
           "production-read-model"
         ]

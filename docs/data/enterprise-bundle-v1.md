@@ -1,5 +1,7 @@
 # `enterprise_bundle.v1` contract overview
 
+> Generation: `SHARED` — the bridge contract understood by `LEGACY / V1` export and `NEXT / V2` import.
+
 ## Purpose
 
 The enterprise bundle is the only supported data exchange between the private

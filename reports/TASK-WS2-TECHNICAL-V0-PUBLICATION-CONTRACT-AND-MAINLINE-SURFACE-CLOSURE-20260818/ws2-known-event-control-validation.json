@@ -1,0 +1,68 @@
+{
+  "event_lookup_failure_control": {
+    "event_authority_status": "LOOKUP_UNAVAILABLE",
+    "identity": "TPE:1438",
+    "ma60_publication_state": "FORMAL_WITH_LIMITATION",
+    "ma60_reason": null,
+    "ma60_value": "21.820000000000000000",
+    "publication_status": "AVAILABLE_WITH_LIMITATION",
+    "technical_eligibility": "ELIGIBLE",
+    "technical_result_status": "VALID"
+  },
+  "external_controls": [
+    {
+      "bounded_limitation_allowed": false,
+      "event_type": "CAPITAL_REDUCTION",
+      "expected": "KNOWN_VERIFIED_BREAKING_EVENT_FOUND",
+      "identity": "TPE:2380",
+      "pass": true,
+      "publication_allowed": false,
+      "state": "KNOWN_VERIFIED_BREAKING_EVENT_FOUND"
+    },
+    {
+      "bounded_limitation_allowed": false,
+      "event_type": "SPLIT_REVERSE_SPLIT_PAR_VALUE_CHANGE",
+      "expected": "KNOWN_VERIFIED_BREAKING_EVENT_FOUND",
+      "identity": "TWO:5904",
+      "pass": true,
+      "publication_allowed": false,
+      "state": "KNOWN_VERIFIED_BREAKING_EVENT_FOUND"
+    }
+  ],
+  "insufficient_history_control": {
+    "event_authority_status": "NO_KNOWN_EVENT_EVIDENCE",
+    "identity": "TPE:1438",
+    "ma60_publication_state": "UNAVAILABLE",
+    "ma60_reason": "UNAVAILABLE_INSUFFICIENT_HISTORY",
+    "ma60_value": null,
+    "publication_status": "UNAVAILABLE",
+    "technical_eligibility": "UNAVAILABLE",
+    "technical_result_status": "UNAVAILABLE"
+  },
+  "invalid_identity_control": {
+    "bounded_limitation_allowed": false,
+    "reason": "INVALID_INSTRUMENT_IDENTITY",
+    "state": "EVENT_LOOKUP_UNAVAILABLE"
+  },
+  "known_event_control": {
+    "event_authority_status": "KNOWN_EVENT",
+    "identity": "TPE:2330",
+    "ma60_publication_state": "UNAVAILABLE",
+    "ma60_reason": "KNOWN_VERIFIED_EVENT_REQUIRES_EVENT_AWARE_HANDLING",
+    "ma60_value": null,
+    "publication_status": "BLOCKED",
+    "technical_eligibility": "UNAVAILABLE",
+    "technical_result_status": "UNAVAILABLE"
+  },
+  "ordinary_eligible_control": {
+    "event_authority_status": "NO_KNOWN_EVENT_EVIDENCE",
+    "identity": "TPE:1438",
+    "ma60_publication_state": "FORMAL",
+    "ma60_reason": null,
+    "ma60_value": "21.820000000000000000",
+    "publication_status": "AVAILABLE",
+    "technical_eligibility": "ELIGIBLE",
+    "technical_result_status": "VALID"
+  },
+  "pass": true
+}

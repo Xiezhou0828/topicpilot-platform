@@ -31,6 +31,15 @@ jobs:
           ref: ${{ inputs.release_ref }}
       - name: Require a committed revision
         run: git rev-parse --verify HEAD
+      - name: Require an exact release SHA
+        env:
+          RELEASE_REF: ${{ inputs.release_ref }}
+        run: |
+          if ! [[ "$RELEASE_REF" =~ ^[0-9a-fA-F]{40}$ ]]; then
+            echo "release_ref must be an exact 40-character commit SHA." >&2
+            exit 1
+          fi
+          test "$(git rev-parse HEAD)" = "$(echo "$RELEASE_REF" | tr '[:upper:]' '[:lower:]')"
       - name: Validate Compose and Render configuration
         run: |
           docker compose config --quiet
@@ -51,7 +60,12 @@ jobs:
             echo "RENDER_DEPLOY_HOOK_URL is not configured in production-api." >&2
             exit 1
           fi
-          curl --fail --silent --show-error --request POST "$RENDER_DEPLOY_HOOK_URL"
+          separator="?"
+          if [[ "$RENDER_DEPLOY_HOOK_URL" == *\?* ]]; then
+            separator="&"
+          fi
+          curl --fail --silent --show-error --request POST \
+            "${RENDER_DEPLOY_HOOK_URL}${separator}ref=${{ inputs.release_ref }}"
 
   package-web:
     name: Package Sites frontend

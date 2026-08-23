@@ -1,0 +1,37 @@
+{
+  "task_id": "TASK-WS3-CORE-V0-A1-EX-ANTE-SUCCESS-VS-FAILED-BREAKOUT-DISCRIMINATION-RESEARCH-20260818",
+  "source_canonical_head": "3ab70b612cbb30335b43a5650d145488f9e8b2c1",
+  "source_baseline_head": "9ca9ba4f15359aa5ea96ba4c3d6bed9439d0346e",
+  "frozen_spec_hash": "6e4cc504f969098e263cfa8e7c43240e9575a3f72f0641ba39da22794ea9870d",
+  "analytical_artifact_hashes": {
+    "algorithm": "SHA-256",
+    "byte_normalization": "CRLF_TO_LF_BEFORE_HASH",
+    "artifacts": {
+      "ws3-core-v0-a1-ex-ante-feature-manifest.json": "38aedb6e6f3e50e0e32e269a367224dd16fae398a6dd410db78212fc5e005e19",
+      "ws3-core-v0-a1-success-vs-failed-feature-comparison.csv": "5396e001be99d85c76403f975e2d0ad6e3390973bd52ba910f330d299f7c3489",
+      "ws3-core-v0-a1-feature-quantile-monotonicity.csv": "716629a3f75f5df1892090738837082b93c90d810d765881da513b10263ce806",
+      "ws3-core-v0-a1-feature-time-stability.csv": "6e520dd322baab8831676956053dc336df4d6dcbda018b484be78ec06950cd9b",
+      "ws3-core-v0-a1-feature-date-regime-confounding.csv": "7bc677845b244dab405ce2261519698884484b193942b4338f6c327f0d623bab",
+      "ws3-core-v0-a1-feature-family-assessment.json": "6c7cbafbc7374b53b0fbdf2292868661a6b8143bfa17a0faede7a6c552b361e2",
+      "ws3-core-v0-a1-multivariate-diagnostic.json": "e44e5b28fb0ff0502888c4bbec0b0db5ba4564a9b7c20214f068dc4fbed221d0"
+    },
+    "aggregate_sha256": "788e5f05769dabde10da461b694fbfaa189e13408c39229eb29783144cc67df6"
+  },
+  "A1_ex_ante_discrimination_supported": "YES",
+  "A1_quality_filter_research_candidate": "YES_RESEARCH_CANDIDATE",
+  "ready_for_A1_threshold_sensitivity_research": "YES",
+  "ready_for_A1_production_filter": "NO",
+  "multivariate_validation_result": "DIAGNOSTIC_ONLY_NO_PRODUCTION_CLAIM",
+  "remaining_blockers": "NO_PRODUCTION_FILTER_AUTHORITY; THRESHOLD_SENSITIVITY_REQUIRES_OWNER_REVIEW",
+  "not_authorized": [
+    "A1 definition change",
+    "A2 definition change",
+    "threshold optimization",
+    "parameter search",
+    "production ranking/filter",
+    "WS1/WS2/WS4",
+    "migration",
+    "deployment",
+    "NEXT_TASK change"
+  ]
+}

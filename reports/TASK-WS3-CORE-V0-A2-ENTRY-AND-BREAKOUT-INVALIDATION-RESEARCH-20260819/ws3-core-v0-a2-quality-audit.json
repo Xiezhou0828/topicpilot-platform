@@ -1,0 +1,116 @@
+{
+  "a1_formation_changed": false,
+  "a1_forward_validation_contract_created": true,
+  "a1_new_feature_search_performed": false,
+  "a1_threshold_retuning_performed": false,
+  "a2_definition_authority": {
+    "candidate_id": "CORE_V0_A2_CONFIRMED_BREAKOUT",
+    "confirmation_policy": "single-session-close",
+    "definition_version": "core-v0-a2-confirmed-breakout.v1",
+    "evaluation_session_excluded_from_reference": true,
+    "formation_rule": "L1 Close(T) >= MA60(T), mature reference, and Close(T) > Reference(T)",
+    "gap_above_reference_can_form_a2": true,
+    "lineage_fields": [
+      "candidate_record_id",
+      "candidate_source_lineage",
+      "reference_birth_session",
+      "reference_age_sessions"
+    ],
+    "pit_validity": true,
+    "reference_formula": "max(High(s) for prior 20 accepted sessions strictly before T)",
+    "reference_maturity_sessions": 5,
+    "reference_policy_id": "PRIOR_20_ACCEPTED_SESSION_HIGH",
+    "source": "services/api/src/topicpilot_api/research/core_v0_candidate_panel.py",
+    "uses_intraday_high_for_confirmation": false
+  },
+  "a2_distinct_event_count": 490,
+  "a2_formation_changed": false,
+  "a2_raw_observation_count": 512,
+  "collection_quality": {
+    "data_gap_fail_closed_signal_count": 309,
+    "duplicate_count": 0,
+    "event_metadata": {
+      "authority_state_counts": {
+        "AUTHORITATIVE": 353,
+        "PARTIAL": 19
+      },
+      "dataset_content_hash": "4d9b4912bd1c4613510e60c5cf4b5a629c367e1c94dd733d3b1dc3f935e0eb5d",
+      "dataset_file_sha256_normalized": "78f684d5b014f43f3b34393be1bc644805e67f05e18b21e7ab98d075a1cd60b2",
+      "dataset_version": "REC-A1-CA-EVENTS-V0",
+      "event_count": 372
+    },
+    "invalid_lineage_count": 0,
+    "known_event_formation_windows": 9731,
+    "malformed_or_invalid_lineage": 0,
+    "partial_authority_windows": 279,
+    "source_reconciliation": {
+      "expected_date_range": "2026-02-02..2026-08-13",
+      "expected_distinct_instruments": 507,
+      "expected_real_rows": 63826,
+      "observed_date_range": "2026-02-02..2026-08-13",
+      "observed_distinct_instruments": 507,
+      "observed_real_rows": 63826,
+      "pass": true
+    }
+  },
+  "current_canonical_head": "2468ee6b5093dd2a37353424c74d9d719c643bb9",
+  "database_writes": false,
+  "deploy_executed": false,
+  "entry_proxies_frozen_before_outcomes": true,
+  "entry_threshold_optimization_performed": false,
+  "event_deduplication_frozen_before_outcomes": true,
+  "frozen_spec_hash": "6e4cc504f969098e263cfa8e7c43240e9575a3f72f0641ba39da22794ea9870d",
+  "git_diff_check": "PASS",
+  "look_ahead_leakage_detected": false,
+  "migration_executed": false,
+  "normalized_artifact_hashes": {
+    "aggregate_sha256": "914e26c51d2fd481f4c0ce1bdfec863e857feed30eeecf1c18bb2fdf1b347878",
+    "algorithm": "SHA-256",
+    "artifacts": {
+      "ws3-core-v0-a1-quality-filter-forward-validation-contract.json": "2b27038c7fefe975c2a77b2be347480f62c968c7e3ad51dc820e658300be16ac",
+      "ws3-core-v0-a2-concentration-analysis.json": "3ae2f36af180c3ef95bb7a71c8c943352a649498867d1ab2bd94592b766347da",
+      "ws3-core-v0-a2-entry-extension-distribution.csv": "9e6bb2ba81776d3a92d57393f770ec57b4398d198f3a4c93ad8ed041c8f1b7a1",
+      "ws3-core-v0-a2-entry-proxy-comparison.csv": "a3c9177c8ace847f8fa0cd8144737ccade018b5e9a54744c174cc09ece95e583",
+      "ws3-core-v0-a2-event-definition.json": "12f9ac91dfc75199569effe2237fcd7f0aa4e6939df715ecd5e9e43c4f4b73b9",
+      "ws3-core-v0-a2-event-panel.csv": "d4429cab7a3e7ecf3b21c4e4a69e236aa85580006d6f150b22b9ed3c8b3991c8",
+      "ws3-core-v0-a2-extension-forward-return-analysis.csv": "6fbab885fae434a38a70a1a0bf27978d8fc1e6ee9e0ffb1936eae19ad0e9f794",
+      "ws3-core-v0-a2-immediate-vs-confirmation-entry.csv": "b51e45cc7565c1c117f9bda1e90c6f48331125664ea9e9f992c527866ca96abf",
+      "ws3-core-v0-a2-july-analysis.csv": "a3d640ab93141281aebe86efd9661750de764bf386b4c0aef835b696cf776941",
+      "ws3-core-v0-a2-market-stability.csv": "cfc580334c1e5bef29f37df01a34ce509e6065c7001f1b8cc99fe2ffd23b2354",
+      "ws3-core-v0-a2-mfe-mae-analysis.csv": "649ffb8c257dbab24efe899cf44acf99a388e2d31c044237992a495595947a3c",
+      "ws3-core-v0-a2-reference-loss-analysis.csv": "7b8da5925652ba5c635aff27fe81460eb3b7f09eddc07f7961ae7e56bc35c314",
+      "ws3-core-v0-a2-reference-reclaim-analysis.csv": "6ceab849231799b3b2f7521dfe00e74739eb1fb1d9c3321e7a9540b2f182629d",
+      "ws3-core-v0-a2-temporal-stability.csv": "a4e4f1d225bb56c00abd2231a884385e4aa648b0a7c22d3ca4be58f92a521068",
+      "ws3-core-v0-a2-time-to-failure-and-recovery.csv": "4527839a5e2d9972b2e9a998133a57442422f30b2470a6f361f18a8b6769597f"
+    },
+    "byte_normalization": "CRLF_TO_LF_BEFORE_HASH"
+  },
+  "outcome_derived_formation_feature_detected": false,
+  "production_mutation": false,
+  "push_executed": false,
+  "reproducibility_pass": "PASS",
+  "secret_scan": "PASS",
+  "source_canonical_head": "2468ee6b5093dd2a37353424c74d9d719c643bb9",
+  "source_reconciliation": {
+    "a1_rows": 700,
+    "a2_event_rows": 490,
+    "a2_rows": 512,
+    "instrument_count": 508,
+    "observed_date_count": 126
+  },
+  "source_to_canonical_provenance": {
+    "final_canonical_head": "RECORDED_IN_FINAL_HANDOFF",
+    "task_commit_sha": "c6c6df182c5db0e6becf7521b603a1c502d19918",
+    "task_source_head": "2468ee6b5093dd2a37353424c74d9d719c643bb9"
+  },
+  "states": {
+    "canonical_status": "READY_FOR_CANONICAL_RECONCILIATION",
+    "g1_g2_g3_canary": "PRESERVED_NOT_RERUN",
+    "production_verification": "NOT_RUN",
+    "release_status": "NOT_RUN"
+  },
+  "stop_optimization_performed": false,
+  "take_profit_optimization_performed": false,
+  "task_id": "TASK-WS3-CORE-V0-A2-ENTRY-AND-BREAKOUT-INVALIDATION-RESEARCH-20260819",
+  "transaction_cost_authority_available": "NO"
+}

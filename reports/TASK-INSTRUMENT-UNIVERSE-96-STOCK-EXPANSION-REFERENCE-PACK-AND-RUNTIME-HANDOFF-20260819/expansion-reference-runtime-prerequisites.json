@@ -1,0 +1,39 @@
+{
+  "current_environment": {
+    "canonical_database_available": false,
+    "canonical_historical_ohlcv_available": false,
+    "security_provider_validation_available": false
+  },
+  "prerequisites": [
+    {
+      "name": "safely identifiable canonical non-production PostgreSQL target",
+      "status": "REQUIRED"
+    },
+    {
+      "name": "readback from canonical instrument/security tables",
+      "status": "REQUIRED"
+    },
+    {
+      "name": "canonical historical OHLCV storage/source and writer",
+      "status": "REQUIRED"
+    },
+    {
+      "name": "formal provider/security metadata for all 96 candidates",
+      "status": "REQUIRED"
+    },
+    {
+      "name": "existing market/session/calendar semantics",
+      "status": "REQUIRED"
+    },
+    {
+      "name": "current Technical V0 manifest",
+      "status": "REQUIRED"
+    },
+    {
+      "name": "bounded non-production mutation permission",
+      "status": "REQUIRED"
+    }
+  ],
+  "runtime_required": true,
+  "task_id": "TASK-INSTRUMENT-UNIVERSE-96-STOCK-EXPANSION-REFERENCE-PACK-AND-RUNTIME-HANDOFF-20260819"
+}

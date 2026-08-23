@@ -1,0 +1,63 @@
+{
+  "taskId": "TASK-WS1-FORWARD-SHADOW-RUNTIME-RECONCILIATION-AND-SCHEMA-ONLY-READINESS-20260822",
+  "target": {
+    "database": "topicpilot",
+    "hostClass": "LOCAL_ONLY_DEFAULT",
+    "explicitDatabaseUrl": false,
+    "explicitMigrationDatabaseUrl": false
+  },
+  "evaluationDate": "2026-08-12",
+  "sourceInventory": {
+    "latestAcceptedDailyBarDate": "2026-08-13",
+    "acceptedDailyBarRows": 357630,
+    "instruments": 603,
+    "formalDatesAvailable": [
+      "2026-08-07",
+      "2026-08-10",
+      "2026-08-11",
+      "2026-08-12",
+      "2026-08-13"
+    ]
+  },
+  "pitSnapshot": {
+    "count": 92,
+    "publicationMode": "FORMAL",
+    "membershipMode": "PIT_FORMAL",
+    "publicationState": "PUBLISHED",
+    "finalityState": "FINAL",
+    "supersededBySnapshotId": "NULL_ONLY",
+    "completeLineageCount": 92
+  },
+  "memberFacts": {
+    "count": 848,
+    "observationDateBound": true,
+    "dateBoundPriceMatches": 847,
+    "nonMatchingFacts": 1
+  },
+  "priceEvidence": {
+    "sourceFamily": "PRICE",
+    "sourceSemantics": "DAILY_BAR",
+    "qualityState": "ACCEPTED",
+    "instrumentCount": 603,
+    "asOfDate": "2026-08-12"
+  },
+  "lifecycleResult": {
+    "evaluationMode": "SHADOW",
+    "calculationVersion": "topic-lifecycle-shadow.v1",
+    "policyVersion": "topic-lifecycle-policy.provisional.1",
+    "topicResults": 92,
+    "lineageBoundResults": 92,
+    "statusCounts": {
+      "PENDING": 76,
+      "SHADOW": 3,
+      "INSUFFICIENT_DATA": 12,
+      "WAITING_FOR_FORMAL_LINEAGE": 1
+    },
+    "blockedCase": {
+      "topicId": "ff7a78f9-1199-489b-880e-ddd41bdcd6c8",
+      "reason": "OBSERVED_MEMBER_FACT_NOT_BOUND_TO_CANONICAL_DAILY_BAR",
+      "disposition": "FAIL_CLOSED_NO_STAGE"
+    }
+  },
+  "chainVerdict": "READY_FOR_FORWARD_SHADOW_ACCUMULATION_WITH_PER_TOPIC_FAIL_CLOSED"
+}

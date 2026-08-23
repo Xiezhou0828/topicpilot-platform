@@ -1,0 +1,50 @@
+{
+  "schemaVersion": "task-ws2-ws3-shared-g2r-p-core-v0-real-coverage-rerun-readiness.v1",
+  "taskId": "TASK-WS2-WS3-SHARED-G2R-P-CORE-V0-RESEARCH-EVENT-AWARE-CONTINUITY-POLICY-CLOSURE-20260818",
+  "TASK_FINAL_STATUS": "COMPLETE_OWNER_POLICY_CLOSURE_AND_WS3_MINIMAL_ADAPTATION",
+  "OWNER_POLICY_RECORDED": "YES",
+  "WS3_CONTINUITY_POLICY": "EVENT_AWARE_RESEARCH",
+  "WS3_REQUIRES_AFFIRMATIVE_NO_EVENT": "NO",
+  "WS3_REQUIRES_COVERED_NO_EVENT": "NO",
+  "WS3_REQUIRES_CONTINUITY_PASS_BOUNDED": "NO",
+  "KNOWN_VERIFIED_EVENT_OVERLAY_PRESERVED": "YES",
+  "CONTINUITY_UNKNOWN_PRESERVED": "YES",
+  "UNKNOWN_TO_PASS_CONVERSION_COUNT": 0,
+  "COVERED_NO_EVENT_FABRICATION_COUNT": 0,
+  "REAL_HISTORICAL_OHLCV_REQUIREMENT_PRESERVED": "YES",
+  "MA60_POLICY_CHANGED": "NO",
+  "CORE_V0_STRATEGY_CHANGED": "NO",
+  "WS2_POLICY_CHANGED": "NO",
+  "G2R_C_REQUIRED_FOR_WS3": "NO",
+  "G2R_C_REQUIRED_FOR_WS2": "YES_OR_UNRESOLVED",
+  "SHARED_G3_STILL_REQUIRED": "PARTIAL",
+  "READY_FOR_WS3_REAL_COVERAGE_RERUN": "YES",
+  "READY_FOR_WS3_MAINLINE_CONTINUATION": "YES_BOUNDED_OWNER_POLICY_RECORDED",
+  "READY_FOR_WS2_MAINLINE_CONTINUATION": "NO_SEPARATE_FORMAL_AUTHORITY_GAP",
+  "WS3_REAL_COVERAGE_RERUN_EXECUTED": "NO",
+  "WS3_MAINLINE_RESEARCH_EXECUTED": "NO",
+  "WS3_READINESS_BASIS": {
+    "realHistoricalRows": 63826,
+    "realHistoricalDistinctInstruments": 507,
+    "window": ["2026-02-02", "2026-08-13"],
+    "officialSourceDistribution": {
+      "TWSE_OFFICIAL_DAILY": 39523,
+      "TPEX_OFFICIAL_DAILY": 24303
+    },
+    "continuityUnknownCells": 3688,
+    "coveredEventCells": 368,
+    "coveredNoEventCells": 0,
+    "interpretation": "Unknown cells no longer block WS3 research eligibility; they remain unknown and are not treated as no-event proof."
+  },
+  "remainingNonContinuityBlockers": [
+    "A real coverage rerun is intentionally not executed by this policy-closure task.",
+    "Candidate-specific MA60 evidence and other frozen Core V0 inputs still need to be supplied by the rerun.",
+    "Forward outcomes and REC-A1 integrity remain separate research dependencies where applicable."
+  ],
+  "productionOrPublication": {
+    "ws2FormalPublicationRelaxed": false,
+    "productionAuthorityChanged": false,
+    "databaseMutation": false,
+    "deployment": false
+  }
+}

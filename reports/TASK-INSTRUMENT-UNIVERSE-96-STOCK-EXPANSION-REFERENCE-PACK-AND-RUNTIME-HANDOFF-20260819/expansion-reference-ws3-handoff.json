@@ -1,0 +1,16 @@
+{
+  "A1_RESEARCH_EXECUTED": false,
+  "A2_RESEARCH_EXECUTED": false,
+  "WS3_THRESHOLD_RETUNING_AUTHORIZED": false,
+  "cohort_label": "EXPANDED_UNIVERSE_COHORT",
+  "expanded_candidate_count": 96,
+  "future_owner_options": [
+    "new-universe evidence",
+    "external-style validation cohort",
+    "additional forward evidence",
+    "later expanded research universe"
+  ],
+  "original_research_universe_count": 507,
+  "task_id": "TASK-INSTRUMENT-UNIVERSE-96-STOCK-EXPANSION-REFERENCE-PACK-AND-RUNTIME-HANDOFF-20260819",
+  "threshold_retuning_authorized": false
+}

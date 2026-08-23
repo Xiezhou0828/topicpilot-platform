@@ -1,0 +1,269 @@
+{
+  "task_id": "TASK-FE-BE-STOCK-006B-PHASE-2A-CONTINUITY-AUTHORITY-GAP-CLOSURE",
+  "phase": "WS2_PHASE_2A1",
+  "as_of": "2026-08-16",
+  "routing_outcome": "BLOCKED_BY_BOUNDED_CONTINUITY_AUTHORITY_GAP",
+  "next_task_changed": false,
+  "canonical_authority": {
+    "path": "C:\\Users\\acer\\Desktop\\題材領航\\topicpilot-platform",
+    "branch": "codex/task-ops-023a-p3c-runtime-sha-audit-20260813",
+    "head_at_source_preflight": "222156da35896a8c109545adb0e553c01a9f00ad",
+    "head_after_commit_preserving_promotion": "d61f4208e62c442d555cae698d68729b205f3a3b",
+    "head_at_final_parallel_audit_before_binding": "69e9ae60e286203ad6e8180fbe95aefe854c3f39",
+    "origin_main_at_source_preflight": "26f635b95d8d88fd7ed7e43949583347f3ab5feb",
+    "owner_dirty_tracked_modified_at_source_preflight": 18,
+    "owner_untracked_at_source_preflight": 156,
+    "owner_state_preserved": true
+  },
+  "source": {
+    "branch": "codex/task-stock-technical-phase2a1-20260816",
+    "worktree": "C:\\Users\\acer\\Documents\\Codex\\ws2a1-20260816",
+    "base_sha": "222156da35896a8c109545adb0e553c01a9f00ad",
+    "clean_at_base": true,
+    "source_commit_sha": "83156e48d04a7dfc37920e5dcd4a9216e848ab8d"
+  },
+  "parallel_worktree_audit": {
+    "classification_rule": "Do not infer WS ownership from stale names, branches, chat memory, or old reports; only explicit current worktree/branch evidence is retained.",
+    "ws1": {
+      "explicit_active_worktree_found_at_source_preflight": false,
+      "explicit_active_worktree_found_at_final_audit": true,
+      "final_worktree": "C:\\Users\\acer\\Documents\\Codex\\ws1-p2a-derived-authority-20260816",
+      "final_branch": "codex/task-topic-derived-intelligence-phase2a-20260816",
+      "final_head": "d61f4208e62c442d555cae698d68729b205f3a3b",
+      "final_clean": true,
+      "result": "CLEAN_CONCURRENT_WS1_WORKTREE_PRESERVED"
+    },
+    "ws3": {
+      "explicit_active_worktree_found_at_source_preflight": false,
+      "explicit_active_worktree_found_at_final_audit": false,
+      "result": "NO_EXPLICIT_ACTIVE_WS3_WORKTREE_FOUND; RECENT_WS3_CLOSURE_COMMITS_ARE_CANONICAL_EVIDENCE_ONLY"
+    },
+    "ws4": {
+      "explicit_active_worktree_found_at_source_preflight": false,
+      "explicit_active_worktree_found_at_final_audit": false,
+      "result": "NO_EXPLICIT_ACTIVE_WS4_WORKTREE_FOUND; RECENT_WS4_CLOSURE_COMMIT_IS_CANONICAL_EVIDENCE_ONLY"
+    },
+    "preexisting_worktrees_preserved": true
+  },
+  "d1_continuity": {
+    "policy": "EVENT_BOUNDED_INDICATOR_LEVEL",
+    "statuses": ["CONTINUITY_PASS", "CONTINUITY_FAIL", "CONTINUITY_UNKNOWN"],
+    "pass_requires_authoritative_empty_set_or_legal_resolution": true,
+    "fail_requires_exact_known_intersection_without_resolution": true,
+    "unknown_is_default_for_insufficient_authority": true,
+    "empty_event_result_equals_no_event": false,
+    "general_pass_authority": "NOT_ESTABLISHED",
+    "bounded_fail_authority": "EXACT_ACCEPTED_KNOWN_LIFECYCLE_INTERSECTION_ONLY",
+    "raw_ohlcv_rewritten": false
+  },
+  "authority_audit": [
+    {
+      "authority": "canonical_raw_price_volume_observations",
+      "evidence": "HIST-002B: 507 approved identities, 63826 accepted rows, 2026-02-02 through 2026-08-13",
+      "result": "PASS_RAW_OBSERVATION_ONLY",
+      "supports_continuity_pass": false
+    },
+    {
+      "authority": "identity_market_session_context",
+      "evidence": "tw-reference-v1; 314 TPE and 193 TWO identities; market-local historical lineage",
+      "result": "PASS_BOUNDED_CONTEXT",
+      "supports_continuity_pass": false
+    },
+    {
+      "authority": "adjustment_state_and_price_lineage",
+      "evidence": "HIST-002B and Stock-006A retain RAW_OBSERVED / ADJUSTMENT_STATE=UNKNOWN with no adjustment factor or event hash",
+      "result": "UNKNOWN",
+      "supports_continuity_pass": false
+    },
+    {
+      "authority": "rec_a1_event_family_coverage",
+      "evidence": "REC-A1 coverage matrix: 4056 identity-family cells, 368 COVERED_EVENT, 3688 UNKNOWN",
+      "result": "PARTIAL_UNKNOWN",
+      "supports_continuity_pass": false
+    },
+    {
+      "authority": "authoritative_empty_set_proof",
+      "evidence": "REC-A1 freeze: 353 event identities, 154 reviewed UNKNOWN identities, 0 authoritative no-event identities, AUTHORITATIVE_EMPTY_SET_COMPLETE=NO",
+      "result": "NOT_AVAILABLE",
+      "supports_continuity_pass": false
+    },
+    {
+      "authority": "bounded_known_lifecycle_event",
+      "evidence": "TPE:6806 effective termination 2026-06-23; last accepted bar 2026-06-22; no rows on or after effective date",
+      "result": "BOUNDED_KNOWN_INTERSECTION_ONLY",
+      "supports_continuity_fail_for_exact_intersection": true,
+      "supports_general_pass": false
+    },
+    {
+      "authority": "rec_a1_source_use_and_semantics",
+      "evidence": "Owner-approved internal research-only, partial and method-dependent; not exchange-grade completeness",
+      "result": "RESEARCH_ONLY_NOT_STOCK_FORMAL_AUTHORITY",
+      "supports_continuity_pass": false
+    }
+  ],
+  "d2_candidate_set": [
+    "MA5",
+    "MA10",
+    "MA20",
+    "MA60",
+    "price_vs_MA20",
+    "distance_to_MA20",
+    "5D_return",
+    "20D_return",
+    "Volume_MA5",
+    "Volume_MA20",
+    "volume_ratio",
+    "RSI14",
+    "MACD_12_26_9"
+  ],
+  "algorithm_policy_decisions": {
+    "sma_close": {
+      "candidate_algorithm": "arithmetic mean of last N accepted closes",
+      "minimum_observations": "N",
+      "warmup": "first value after N accepted observations",
+      "policy_state": "CANDIDATE_SHAPE_RETAINED_NUMERIC_POLICY_OPEN"
+    },
+    "price_vs_distance_ma20": {
+      "candidate_algorithm": "exact price comparison; distance=(close-SMA20)/SMA20",
+      "minimum_observations": 20,
+      "zero_denominator": "UNAVAILABLE",
+      "policy_state": "CANDIDATE_SHAPE_RETAINED_SERIALIZATION_POLICY_OPEN"
+    },
+    "raw_close_return": {
+      "candidate_algorithm": "close_t / close_(t-N) - 1",
+      "minimum_observations": "N+1",
+      "open_items": ["endpoint/session semantics", "raw vs adjusted/total-return boundary", "rounding"],
+      "policy_state": "OWNER_POLICY_DECISION_REQUIRED"
+    },
+    "volume": {
+      "candidate_algorithm": "arithmetic mean of accepted volume_quantity",
+      "open_items": ["cross-event comparability", "numeric serialization"],
+      "policy_state": "OWNER_POLICY_DECISION_REQUIRED"
+    },
+    "volume_ratio": {
+      "candidate_algorithm": "volume_t / VolumeMA20_t",
+      "open_items": ["denominator acceptance", "cross-event comparability", "rounding"],
+      "policy_state": "OWNER_POLICY_DECISION_REQUIRED"
+    },
+    "rsi14": {
+      "candidate_algorithm": "Wilder smoothing with 14-change seed",
+      "minimum_observations": 15,
+      "open_items": ["seed", "zero gain/loss", "restart pre-roll", "historical seed requirement", "rounding"],
+      "policy_state": "OWNER_POLICY_DECISION_REQUIRED"
+    },
+    "macd_12_26_9": {
+      "candidate_algorithm": "EMA alpha 2/(N+1), candidate SMA seed",
+      "minimum_observations": {"macd_line": 26, "signal_and_histogram": 34},
+      "open_items": ["EMA seed", "pre-roll", "signal/histogram warm-up", "line-only publication", "rounding"],
+      "policy_state": "OWNER_POLICY_DECISION_REQUIRED"
+    }
+  },
+  "indicator_readiness": [
+    {
+      "family": "MA5/10/20/60",
+      "observation_authority": "PASS_RAW_OBSERVATION_ONLY",
+      "required_window_warmup": "N accepted closes; first value after N",
+      "continuity_authority": "BOUNDED_EVALUATOR_REQUIRED_GENERAL_PASS_UNAVAILABLE",
+      "algorithm_numeric_authority": "ROUNDING_UNRESOLVED",
+      "disposition": "OWNER_POLICY_DECISION_REQUIRED",
+      "phase_2b_route": "OWNER_NUMERIC_POLICY_AND_BOUNDED_CONTINUITY_EVALUATOR"
+    },
+    {
+      "family": "price_vs_distance_MA20",
+      "observation_authority": "PASS_RAW_OBSERVATION_ONLY",
+      "required_window_warmup": "20 accepted closes",
+      "continuity_authority": "BOUNDED_EVALUATOR_REQUIRED_GENERAL_PASS_UNAVAILABLE",
+      "algorithm_numeric_authority": "DISTANCE_SERIALIZATION_AND_ROUNDING_UNRESOLVED",
+      "disposition": "OWNER_POLICY_DECISION_REQUIRED",
+      "phase_2b_route": "OWNER_DISTANCE_POLICY_AND_BOUNDED_CONTINUITY_EVALUATOR"
+    },
+    {
+      "family": "5D/20D_return",
+      "observation_authority": "PASS_RAW_OBSERVATION_ONLY",
+      "required_window_warmup": "N+1 endpoint closes; endpoint semantics open",
+      "continuity_authority": "BOUNDED_EVALUATOR_REQUIRED_GENERAL_PASS_UNAVAILABLE",
+      "algorithm_numeric_authority": "RETURN_ENDPOINT_AND_RAW_ADJUSTED_BOUNDARY_UNRESOLVED",
+      "disposition": "OWNER_POLICY_DECISION_REQUIRED",
+      "phase_2b_route": "OWNER_RETURN_POLICY_AND_BOUNDED_CONTINUITY_EVALUATOR"
+    },
+    {
+      "family": "Volume_MA5/20",
+      "observation_authority": "PASS_RAW_VOLUME_ONLY",
+      "required_window_warmup": "N accepted volume quantities",
+      "continuity_authority": "VOLUME_COMPARABILITY_AND_BOUNDED_EVALUATOR_REQUIRED",
+      "algorithm_numeric_authority": "SERIALIZATION_UNRESOLVED",
+      "disposition": "OWNER_POLICY_DECISION_REQUIRED",
+      "phase_2b_route": "OWNER_VOLUME_POLICY_AND_BOUNDED_CONTINUITY_EVALUATOR"
+    },
+    {
+      "family": "volume_ratio",
+      "observation_authority": "PASS_RAW_VOLUME_ONLY",
+      "required_window_warmup": "20-volume denominator candidate",
+      "continuity_authority": "VOLUME_COMPARABILITY_AND_BOUNDED_EVALUATOR_REQUIRED",
+      "algorithm_numeric_authority": "DENOMINATOR_AND_ROUNDING_UNRESOLVED",
+      "disposition": "OWNER_POLICY_DECISION_REQUIRED",
+      "phase_2b_route": "OWNER_RATIO_POLICY_AND_BOUNDED_CONTINUITY_EVALUATOR"
+    },
+    {
+      "family": "RSI14",
+      "observation_authority": "PASS_RAW_OBSERVATION_ONLY",
+      "required_window_warmup": "15-close seed candidate; recursive pre-roll open",
+      "continuity_authority": "RECURSIVE_BOUNDED_EVALUATOR_REQUIRED",
+      "algorithm_numeric_authority": "SEED_ZERO_PREROLL_ROUNDING_UNRESOLVED",
+      "disposition": "OWNER_POLICY_DECISION_REQUIRED",
+      "phase_2b_route": "OWNER_RSI_POLICY_AND_BOUNDED_CONTINUITY_EVALUATOR"
+    },
+    {
+      "family": "MACD_12_26_9",
+      "observation_authority": "PASS_RAW_OBSERVATION_ONLY",
+      "required_window_warmup": "26-close line / 34-close signal candidate; pre-roll open",
+      "continuity_authority": "RECURSIVE_BOUNDED_EVALUATOR_REQUIRED",
+      "algorithm_numeric_authority": "EMA_SEED_SIGNAL_WARMUP_ROUNDING_UNRESOLVED",
+      "disposition": "OWNER_POLICY_DECISION_REQUIRED",
+      "phase_2b_route": "OWNER_MACD_POLICY_AND_BOUNDED_CONTINUITY_EVALUATOR"
+    }
+  ],
+  "d3_boundary": {
+    "owned_chain": ["Observation", "Continuity/Eligibility", "Technical Evidence"],
+    "forbidden_semantics": ["BUY", "SELL", "entry", "target", "stop_loss", "win_rate", "strategy_acceptance", "opportunity_grade", "recommendation_score", "recommendation_gate"],
+    "advanced_technical": "DEFERRED",
+    "daily_ohlcv_is_true_order_flow": false
+  },
+  "d4_required_binding": ["indicator_id", "value_or_availability_reason", "session_date", "as_of", "required_observation_window", "actual_observation_window", "algorithm_id_version_parameter_set", "price_authority_source_lineage", "continuity_status_evidence", "publication_state"],
+  "state": {
+    "implementation": "NOT_RUN",
+    "validation": "DOCUMENTATION_SCOPE_ONLY",
+    "canonical_status_before_promotion": "SOURCE_VALIDATED_PENDING_PROMOTION",
+    "canonical_status_after_promotion": "CANONICALIZED",
+    "release": "NOT_RUN",
+    "production": "NOT_RUN",
+    "database": "NOT_RUN",
+    "technical_api_publication": "NOT_RUN",
+    "frontend": "NOT_RUN",
+    "provider": "NOT_RUN",
+    "scheduler": "NOT_RUN",
+    "g1": "NOT_RERUN_PRESERVED_EVIDENCE",
+    "g2": "NOT_RERUN_PRESERVED_EVIDENCE",
+    "g3": "NOT_RERUN_PRESERVED_EVIDENCE",
+    "post_close_canary": "NOT_RERUN_PRESERVED_EVIDENCE",
+    "push": "NO",
+    "deploy": "NO",
+    "production_mutation": "NO",
+    "next_task_changed": "NO",
+    "tests": "NO_NEW_TEST_DELTA"
+  },
+  "provenance": {
+    "architecture_policy_increment": "docs/architecture/STOCK_TECHNICAL_V0_CONTINUITY_AUTHORITY_CLOSURE.md",
+    "closure_report": "docs/reports/TASK-FE-BE-STOCK-006B-PHASE-2A-CONTINUITY-AUTHORITY-GAP-CLOSURE.md",
+    "readiness_audit": "reports/TASK-FE-BE-STOCK-006B-PHASE-2A-CONTINUITY-AUTHORITY-GAP-CLOSURE/indicator-readiness-audit.json",
+    "source_commit_sha": "83156e48d04a7dfc37920e5dcd4a9216e848ab8d",
+    "canonical_promotion_sha": "d61f4208e62c442d555cae698d68729b205f3a3b",
+    "canonical_head_at_closure_audit": "d61f4208e62c442d555cae698d68729b205f3a3b",
+    "source_to_canonical_commit_map": {
+      "9bb21f07c3b7a0117fcdf4212d2d7df99f2e1746": "1f29f0dbbf2a69c38c4768e18848f4bb5d14ad1a",
+      "83156e48d04a7dfc37920e5dcd4a9216e848ab8d": "d61f4208e62c442d555cae698d68729b205f3a3b"
+    },
+    "owner_state_preserved": true,
+    "next_task_changed": false
+  }
+}

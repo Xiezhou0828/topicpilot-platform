@@ -2,12 +2,12 @@
 
 from __future__ import annotations
 
-import os
 from datetime import date
 from typing import Any
 
 from topicpilot_api import __version__
 
+from ..release_provenance import runtime_git_sha
 from .exchange import TPEX_DAILY_ADAPTER_VERSION, TWSE_DAILY_ADAPTER_VERSION
 from .registry import build_historical_provider_registry
 from .taishin import TAISHIN_INTRADAY_ADAPTER_VERSION, TAISHIN_INTRADAY_SOURCE_CODE
@@ -84,7 +84,7 @@ def build_provider_lineage() -> dict[str, Any]:
     return {
         "status": "READY" if ready else "NOT_READY",
         "packageVersion": __version__,
-        "buildSha": os.getenv("RENDER_GIT_COMMIT") or os.getenv("GIT_SHA"),
+        "buildSha": runtime_git_sha(),
         "postClose": {
             "marketBatch": True,
             "sourceAuthority": {

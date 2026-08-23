@@ -1,0 +1,100 @@
+{
+  "A1_PRE_BREAKOUT": {
+    "date_concentration": {
+      "active_signal_dates": 66,
+      "max_signals_one_date": 36,
+      "median_signals_per_active_date": 9.5,
+      "top_5_signal_dates_share": 0.19285714285714287
+    },
+    "stock_concentration": {
+      "unique_instruments": 297,
+      "top_10_instrument_signal_share": 0.21714285714285714,
+      "top_10_instrument_positive_pnl_share": 0.2296252095956962,
+      "positive_pnl_horizon_used": 5
+    },
+    "outlier": {
+      "horizons": {
+        "1": {
+          "mean": 0.006237143832012744,
+          "median": 0.0,
+          "mean_excluding_top_1pct": 0.006049264786952275,
+          "mean_excluding_top_5pct": 0.006152023212697246,
+          "top_5_percent_positive_pnl_share": 0.2837771192671807
+        },
+        "3": {
+          "mean": 0.013089157524164601,
+          "median": 0.002881844380403458,
+          "mean_excluding_top_1pct": 0.012524792559121064,
+          "mean_excluding_top_5pct": 0.013182157060117385,
+          "top_5_percent_positive_pnl_share": 0.3610468365928196
+        },
+        "5": {
+          "mean": 0.020637173727993056,
+          "median": 0.003976158856636944,
+          "mean_excluding_top_1pct": 0.019987505737816557,
+          "mean_excluding_top_5pct": 0.020811712809861313,
+          "top_5_percent_positive_pnl_share": 0.37075641326141723
+        },
+        "10": {
+          "mean": 0.04758732410234259,
+          "median": 0.011928476569910832,
+          "mean_excluding_top_1pct": 0.04636494216997039,
+          "mean_excluding_top_5pct": 0.04878968044729969,
+          "top_5_percent_positive_pnl_share": 0.32842473089678675
+        }
+      },
+      "maximum_top_5_percent_positive_pnl_share": 0.37075641326141723,
+      "outlier_concentration_risk": "MEDIUM",
+      "risk_rubric": "LOW <= 0.35; MEDIUM > 0.35 and <= 0.50; HIGH > 0.50; descriptive only"
+    }
+  },
+  "A2_CONFIRMED_BREAKOUT": {
+    "date_concentration": {
+      "active_signal_dates": 62,
+      "max_signals_one_date": 37,
+      "median_signals_per_active_date": 6.0,
+      "top_5_signal_dates_share": 0.2734375
+    },
+    "stock_concentration": {
+      "unique_instruments": 320,
+      "top_10_instrument_signal_share": 0.068359375,
+      "top_10_instrument_positive_pnl_share": 0.19450647559856626,
+      "positive_pnl_horizon_used": 5
+    },
+    "outlier": {
+      "horizons": {
+        "1": {
+          "mean": 0.013336499095067261,
+          "median": 0.004884004884004884,
+          "mean_excluding_top_1pct": 0.013509148664631545,
+          "mean_excluding_top_5pct": 0.01438688731961498,
+          "top_5_percent_positive_pnl_share": 0.16404024120681324
+        },
+        "3": {
+          "mean": 0.017082845659529257,
+          "median": 0.002680160875585152,
+          "mean_excluding_top_1pct": 0.017652599779713767,
+          "mean_excluding_top_5pct": 0.019127308462040395,
+          "top_5_percent_positive_pnl_share": 0.3091787504846939
+        },
+        "5": {
+          "mean": 0.026113584459963746,
+          "median": 0.0112451958928469,
+          "mean_excluding_top_1pct": 0.027395898680024993,
+          "mean_excluding_top_5pct": 0.029255640832113676,
+          "top_5_percent_positive_pnl_share": 0.32660435095728996
+        },
+        "10": {
+          "mean": 0.04034718260556977,
+          "median": 0.0006775067750677507,
+          "mean_excluding_top_1pct": 0.04140548164900165,
+          "mean_excluding_top_5pct": 0.04162590979114265,
+          "top_5_percent_positive_pnl_share": 0.33909698566784097
+        }
+      },
+      "maximum_top_5_percent_positive_pnl_share": 0.33909698566784097,
+      "outlier_concentration_risk": "LOW",
+      "risk_rubric": "LOW <= 0.35; MEDIUM > 0.35 and <= 0.50; HIGH > 0.50; descriptive only"
+    }
+  }
+}

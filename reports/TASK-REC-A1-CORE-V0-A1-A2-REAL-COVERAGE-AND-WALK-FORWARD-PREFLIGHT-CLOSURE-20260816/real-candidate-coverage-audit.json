@@ -1,0 +1,115 @@
+{
+  "schemaVersion": "ws3-core-v0-real-candidate-coverage-audit.v1",
+  "taskId": "TASK-REC-A1-CORE-V0-A1-A2-REAL-COVERAGE-AND-WALK-FORWARD-PREFLIGHT-CLOSURE-20260816",
+  "auditMode": "READ_ONLY_REAL_COVERAGE_PREFLIGHT",
+  "canonical": {
+    "preSha": "1acac134cebc994fdab350aeeb64fe5e997008bf",
+    "finalAuditSha": "8cecf1737d8fa439526702f9ace70d97b16caefd",
+    "cleanSourceWorktree": true,
+    "ownerDirtyCheckoutUsed": false,
+    "ownerDirtyCheckoutExcludedReason": "Canonical owner checkout carried an uncommitted REC-A1 artifact; clean committed HEAD is the authority."
+  },
+  "protocol": {
+    "id": "core-v0-walk-forward.v1",
+    "development": ["2026-02-02", "2026-06-30"],
+    "validation": ["2026-07-01", "2026-07-31"],
+    "holdout": ["2026-08-01", "2026-08-13"],
+    "minimumPriorCanonicalTradingSessions": 60,
+    "outcomeHorizons": ["T+1", "T+3", "T+5", "T+10"],
+    "changed": false
+  },
+  "accessPreflight": {
+    "executed": true,
+    "databaseUrlPresent": false,
+    "testDatabaseUrlPresent": false,
+    "postgresEndpointsChecked": ["127.0.0.1:5432", "127.0.0.1:5433"],
+    "databaseReachable": false,
+    "committedCanonicalCandidatePanelExportPresent": false,
+    "committedCanonicalRowLevelOhlcvExportPresent": false,
+    "providersCalled": false,
+    "syntheticRowsUsed": false,
+    "rowsLoaded": 0,
+    "rowsLoadedInterpretation": "NO_QUERYABLE_CANONICAL_PANEL; NOT_ZERO_ELIGIBLE_DATES"
+  },
+  "rawAuthorityStaticEvidence": {
+    "status": "STATIC_EVIDENCE_ONLY",
+    "source": "docs/reports/TASK-DATA-HIST-002B_CANONICAL_RECONCILIATION_CLOSURE.md",
+    "identities": 507,
+    "acceptedRawOhlcvRows": 63826,
+    "window": "2026-02-02..2026-08-13",
+    "doesNotCertifyCandidateDateCoverage": true
+  },
+  "ws2RuntimeContinuityAttachment": {
+    "latestAuthoritySha": "8cecf1737d8fa439526702f9ace70d97b16caefd",
+    "implementationCommitSha": "d474025d0b21a94010ae2028dbe20856c36c5c62",
+    "provenanceBindingCommitSha": "2f384f2b19280148d014c8dd4e98cf215052eeaa",
+    "state": "IMPLEMENTED_LIFECYCLE_FAMILY_BOUNDED",
+    "passBoundedProduced": false,
+    "coverageCells": 4056,
+    "coveredEvent": 368,
+    "coveredNoEvent": 0,
+    "unknown": 3688,
+    "unknownIdentities": 154,
+    "runtimeIndicatorWindowAudit": "NOT_RUN_ENVIRONMENT_NOT_PROVIDED",
+    "realFormalWindowCount": 0,
+    "formalMa60Available": false
+  },
+  "windows": {
+    "development": {"symbolDates": null, "temporalEligible": null, "status": "NOT_AVAILABLE"},
+    "validation": {"symbolDates": null, "temporalEligible": null, "status": "NOT_AVAILABLE"},
+    "holdout": {"symbolDates": null, "temporalEligible": null, "status": "NOT_AVAILABLE"}
+  },
+  "temporalEligibility": {
+    "minimumPriorSessions": 60,
+    "acceptedSessionWarmupApplied": false,
+    "status": "BLOCKED_BY_REAL_CANDIDATE_PANEL_AUTHORITY_GAP"
+  },
+  "breakoutReferenceCoverage": {
+    "referencePolicy": "PRIOR_20_ACCEPTED_SESSION_HIGH",
+    "referenceWindowAcceptedSessions": 20,
+    "referenceExcludesT": true,
+    "maturitySessions": 5,
+    "referenceAvailableSymbolDates": null,
+    "matureReferenceSymbolDates": null,
+    "status": "NOT_AVAILABLE"
+  },
+  "preMa60Formation": {
+    "A1": {"count": null, "status": "NOT_AVAILABLE"},
+    "A2": {"count": null, "status": "NOT_AVAILABLE"}
+  },
+  "outcomes": {
+    "T+1": "NOT_AVAILABLE_NO_CANDIDATE_PANEL",
+    "T+3": "NOT_AVAILABLE_NO_CANDIDATE_PANEL",
+    "T+5": "NOT_AVAILABLE_NO_CANDIDATE_PANEL",
+    "T+10": "NOT_AVAILABLE_NO_CANDIDATE_PANEL",
+    "outcomesFlowBackward": false,
+    "performanceMetricsGenerated": false
+  },
+  "candidateDisposition": [
+    {
+      "candidate": "A1",
+      "definitionReady": true,
+      "realPanel": "NOT_AVAILABLE",
+      "temporalEligibility": "NOT_AVAILABLE",
+      "preMa60Formation": "NOT_AVAILABLE",
+      "ws2FormalMa60": "BOUNDED_NO_REAL_FORMAL_ROWS",
+      "outcomeCoverage": "NOT_AVAILABLE_NO_CANDIDATE_PANEL",
+      "finalDisposition": "BLOCKED_BY_REAL_CANDIDATE_PANEL_AUTHORITY_GAP"
+    },
+    {
+      "candidate": "A2",
+      "definitionReady": true,
+      "realPanel": "NOT_AVAILABLE",
+      "temporalEligibility": "NOT_AVAILABLE",
+      "preMa60Formation": "NOT_AVAILABLE",
+      "ws2FormalMa60": "BOUNDED_NO_REAL_FORMAL_ROWS",
+      "outcomeCoverage": "NOT_AVAILABLE_NO_CANDIDATE_PANEL",
+      "finalDisposition": "BLOCKED_BY_REAL_CANDIDATE_PANEL_AUTHORITY_GAP"
+    }
+  ],
+  "status": "BLOCKED_BY_REAL_CANDIDATE_PANEL_AUTHORITY_GAP",
+  "walkForwardExecuted": false,
+  "strategyReviewMade": false,
+  "recommendationPublished": false,
+  "productionMutated": false
+}

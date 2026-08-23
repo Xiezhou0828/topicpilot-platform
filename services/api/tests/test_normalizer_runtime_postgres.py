@@ -5,6 +5,10 @@ import uuid
 from datetime import UTC, datetime, timedelta
 
 import pytest
+from db_fixture_support import (
+    restore_active_reference_registries,
+    suspend_active_reference_registries,
+)
 from sqlalchemy import text
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session, sessionmaker
@@ -47,6 +51,7 @@ def runtime_ids(postgres_engine):
         "source_code": f"SYNTHETIC_{token}",
     }
     with postgres_engine.begin() as cx:
+        ids["previous_active"] = suspend_active_reference_registries(cx)
         cx.execute(
             text(
                 """
@@ -225,6 +230,7 @@ def runtime_ids(postgres_engine):
                 text("DELETE FROM topicpilot.reference_registry_sets WHERE id=:id"),
                 {"id": ids["reference"]},
             )
+            restore_active_reference_registries(cx, ids["previous_active"])
             cx.execute(
                 text("DELETE FROM topicpilot.observation_timeline_batches WHERE id=:id"),
                 {"id": ids["batch"]},

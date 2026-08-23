@@ -1,0 +1,144 @@
+{
+  "TASK_ID": "TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-BOOTSTRAP-EXECUTION-20260819",
+  "TASK_FINAL_STATUS": "COMPLETED_PASS_WITH_BOUNDED_LIMITATIONS",
+  "SOURCE_CANONICAL_HEAD": "c40aa42e7cac665386009f29c94a8dafce896427",
+  "TASK_COMMIT": "NOT_COMMITTED_OWNER_DIRTY_STATE_PRESERVED",
+  "FINAL_CANONICAL_HEAD": "c40aa42e7cac665386009f29c94a8dafce896427",
+  "FORMAL_SECURITY_AUTHORITY_PASS_COUNT": 96,
+  "FORMAL_SECURITY_AUTHORITY_PENDING_COUNT": 0,
+  "FORMAL_SECURITY_AUTHORITY_REJECTED_COUNT": 0,
+  "FORMAL_LISTING_AUTHORITY_PASS_COUNT": 96,
+  "FORMAL_LISTING_AUTHORITY_PENDING_COUNT": 0,
+  "GATE_1_FORMAL_REFERENCE_AUTHORITY": "PASS",
+  "SOURCE_FORMAL_INSTRUMENT_COUNT": 507,
+  "NEW_INSTRUMENT_COUNT": 96,
+  "FINAL_FORMAL_INSTRUMENT_COUNT": 603,
+  "NEW_ZERO_TOPIC_INSTRUMENT_COUNT": 96,
+  "NEW_STRUCTURAL_ROLE_RECORD_COUNT": 0,
+  "NEW_SCORE_PROJECTION_RECORD_COUNT": 0,
+  "UNIVERSE_TRANSACTION_ATOMIC": "PASS",
+  "UNIVERSE_BOOTSTRAP_IDEMPOTENT": "PASS",
+  "GATE_2_603_UNIVERSE": "PASS",
+  "HISTORICAL_REQUESTED_START": "2024-08-13",
+  "HISTORICAL_REQUESTED_END": "2026-08-13",
+  "TOTAL_HISTORICAL_WORK_ITEMS": 15075,
+  "COMPLETE_WORK_ITEMS": 14748,
+  "NO_DATA_WORK_ITEMS": 142,
+  "SKIPPED_LIFECYCLE_WORK_ITEMS": 41,
+  "ERROR_WORK_ITEMS": 0,
+  "QUARANTINED_WORK_ITEMS": 144,
+  "TOTAL_ACCEPTED_OHLCV_ROWS": 288881,
+  "TPE_ACCEPTED_ROWS": 177427,
+  "TWO_ACCEPTED_ROWS": 111454,
+  "FULL_REQUESTED_WINDOW_INSTRUMENT_COUNT": 587,
+  "LISTING_TRUNCATED_WINDOW_INSTRUMENT_COUNT": 3,
+  "PROVIDER_GAP_INSTRUMENT_COUNT": 13,
+  "UNRESOLVED_GAP_INSTRUMENT_COUNT": 13,
+  "DUPLICATE_SESSION_COUNT": 0,
+  "INVALID_OHLCV_COUNT": 0,
+  "INCOMPLETE_ACCEPTED_COUNT": 0,
+  "PIT_RECONSTRUCTABLE_INSTRUMENT_COUNT": 603,
+  "PIT_LIMITED_INSTRUMENT_COUNT": 16,
+  "PIT_UNUSABLE_INSTRUMENT_COUNT": 0,
+  "MA60_CALCULABLE_COUNT": 602,
+  "MA60_NONCALCULABLE_COUNT": 1,
+  "PROVIDER_LINEAGE_COMPLETE": "YES (accepted rows 288881/288881; non-lifecycle work items 15034/15034)",
+  "HISTORICAL_BOOTSTRAP_RESUMABLE": "YES",
+  "HISTORICAL_BOOTSTRAP_IDEMPOTENT": "YES (two-run normalized surface reconciliation)",
+  "REPRODUCIBLE": "PASS",
+  "NORMALIZED_AGGREGATE_SHA256": "e803733e796d8f4d8cf00575cd4045f28c9364572fc61b31ef490e8a65ff47a4",
+  "GATE_3_HISTORICAL_FOUNDATION": "PASS_WITH_BOUNDED_LIMITATIONS",
+  "DATABASE_MUTATION": "YES (canonical non-production local Docker Compose PostgreSQL only)",
+  "HISTORICAL_DATA_MUTATION": "YES (canonical raw/timeline/PRICE/VOLUME chain)",
+  "PRODUCTION_MUTATION": "NO",
+  "WS1_CHANGED": "NO",
+  "WS2_CHANGED": "NO",
+  "WS3_CHANGED": "NO",
+  "WS4_CHANGED": "NO",
+  "NEXT_TASK_CHANGED": "NO",
+  "READY_FOR_603_UNIVERSE_AND_2Y_OHLCV_BOOTSTRAP": "YES (bootstrap complete; bounded quarantine/gap ledger retained)",
+  "READY_FOR_WS1_96_STOCK_DELTA_ENRICHMENT": "YES_WITH_BOUNDED_COVERAGE_CAVEAT",
+  "READY_FOR_WS2_603_UNIVERSE_TECHNICAL_QUALIFICATION": "YES_WITH_BOUNDED_COVERAGE_CAVEAT",
+  "READY_FOR_WS3_P1E_EXPANDED_EVIDENCE_QUALIFICATION": "YES_WITH_BOUNDED_COVERAGE_CAVEAT",
+  "SHARED_DATA_FOUNDATION_603_2Y_CLOSURE": "COMPLETE_WITH_BOUNDED_LIMITATIONS",
+  "evidence": {
+    "checkpoint_status_counts": {
+      "complete": 14748,
+      "error": 144,
+      "no_data": 142,
+      "skipped_lifecycle": 41
+    },
+    "market_status_counts": {
+      "TPE": {
+        "complete": 9110,
+        "error": 29,
+        "no_data": 109,
+        "skipped_lifecycle": 2
+      },
+      "TWO": {
+        "complete": 5638,
+        "error": 115,
+        "no_data": 33,
+        "skipped_lifecycle": 39
+      }
+    },
+    "quality": {
+      "view_rows": 289153,
+      "distinct_keys": 289153,
+      "accepted_full_ohlcv": 288881,
+      "incomplete_view_rows": 272,
+      "candidate_rows_gt1": 50447,
+      "duplicate_stable_keys": 0
+    },
+    "invalid": {
+      "negative_ohlcv": 0,
+      "high_lt_low": 0,
+      "high_below_oc": 0,
+      "low_above_oc": 0,
+      "invalid_any": 0
+    },
+    "daily_by_market": {
+      "TPE": {
+        "view_rows": 177459,
+        "accepted_full_ohlcv_rows": 177427,
+        "incomplete_view_rows": 32
+      },
+      "TWO": {
+        "view_rows": 111694,
+        "accepted_full_ohlcv_rows": 111454,
+        "incomplete_view_rows": 240
+      }
+    },
+    "normalized_surface_md5": "0cbdb8fe950c7cbe494dcc5cb50c6e33",
+    "source_lineage": [
+      {
+        "source_code": "TPEX_OFFICIAL_DAILY",
+        "adapter_version": "tpex-official-daily.v1",
+        "canonical_family_observations": 48606
+      },
+      {
+        "source_code": "TPEX_OFFICIAL_DAILY",
+        "adapter_version": "tpex-official-daily.v2",
+        "canonical_family_observations": 227020
+      },
+      {
+        "source_code": "TWSE_OFFICIAL_DAILY",
+        "adapter_version": "twse-official-daily.v1",
+        "canonical_family_observations": 207070
+      },
+      {
+        "source_code": "TWSE_OFFICIAL_DAILY",
+        "adapter_version": "twse-official-daily.v2",
+        "canonical_family_observations": 233142
+      }
+    ]
+  },
+  "limitations": [
+    "144 work items remain explicit QUARANTINE; no synthetic fill.",
+    "142 work items are provider-returned NO_DATA and are not reclassified as holiday/no-event/not-listed/suspended/no-trade.",
+    "3 instruments are listing-date truncated by formal authority.",
+    "13 instruments have provider/unresolved coverage gaps; one ends before requested end.",
+    "adjustment_state remains UNKNOWN; no corporate-action continuity assumption.",
+    "No WS strategy semantics or NEXT_TASK were changed."
+  ]
+}

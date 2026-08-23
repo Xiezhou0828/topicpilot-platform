@@ -1,0 +1,44 @@
+{
+  "task_id": "TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-BOOTSTRAP-EXECUTION-20260819",
+  "run_id": "TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-BOOTSTRAP-EXECUTION-20260819-RUN-001",
+  "total_work_items": 15075,
+  "status_counts": {
+    "complete": 14748,
+    "error": 144,
+    "no_data": 142,
+    "skipped_lifecycle": 41
+  },
+  "status_by_market": {
+    "TPE": {
+      "complete": 9110,
+      "error": 29,
+      "no_data": 109,
+      "skipped_lifecycle": 2
+    },
+    "TWO": {
+      "complete": 5638,
+      "error": 115,
+      "no_data": 33,
+      "skipped_lifecycle": 39
+    }
+  },
+  "provider_request_lineage_by_status": {
+    "complete": {
+      "with_provider_request_lineage": 14748,
+      "total": 14748
+    },
+    "error": {
+      "with_provider_request_lineage": 144,
+      "total": 144
+    },
+    "no_data": {
+      "with_provider_request_lineage": 142,
+      "total": 142
+    },
+    "skipped_lifecycle": {
+      "with_provider_request_lineage": 0,
+      "total": 41
+    }
+  },
+  "note": "ERROR status is used only for explicit QUARANTINE rows in this run; unquarantined hard error count is zero."
+}

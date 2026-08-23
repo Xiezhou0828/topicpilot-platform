@@ -1,0 +1,11 @@
+{
+  "eligibility_and_reconstruction_runtime_seconds": 1952.944396,
+  "mode": "FULL_HISTORICAL_RECONSTRUCTION",
+  "peak_memory": "NOT_MEASURED",
+  "replay_id": "RUN-002-FINAL",
+  "scope_reduced": false,
+  "source_ohlcv_rows_consumed": 288881,
+  "task_id": "TASK-WS2-E1-603-UNIVERSE-TECHNICAL-V0-EXPANDED-QUALIFICATION-RESUME-AFTER-SOURCE-CONTRACT-UNBLOCK-20260820",
+  "total_formal_indicator_observation_count": 4044334,
+  "total_wall_clock_runtime_seconds": 1952.944396
+}

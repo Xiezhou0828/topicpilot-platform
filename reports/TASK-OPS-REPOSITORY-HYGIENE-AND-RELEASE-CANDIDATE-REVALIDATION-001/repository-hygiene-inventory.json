@@ -1,0 +1,329 @@
+{
+  "task_id": "TASK-OPS-REPOSITORY-HYGIENE-AND-RELEASE-CANDIDATE-REVALIDATION-001",
+  "audit_date": "2026-08-16",
+  "canonical_repository": "C:/Users/acer/Desktop/題材領航/topicpilot-platform",
+  "canonical_head_at_freeze": "c23d6f7f12fc53cb46ff08c437be6109d4658760",
+  "active_branch": "codex/task-ops-023a-p3c-runtime-sha-audit-20260813",
+  "remotes": {
+    "origin": "https://github.com/Xiezhou0828/topicpilot-platform.git",
+    "remote_heads_count": 6
+  },
+  "topology_counts": {
+    "worktree_count_after_candidate_creation": 18,
+    "local_branch_count": 44,
+    "mapped_local_branch_count": 14,
+    "unmapped_local_branch_count": 30,
+    "head_vs_origin_main_local_only": 48,
+    "head_vs_origin_main_remote_only": 50,
+    "head_vs_same_name_remote_local_only": 48,
+    "head_vs_same_name_remote_remote_only": 44,
+    "head_vs_local_main_local_only": 60,
+    "head_vs_local_main_remote_only": 0
+  },
+  "canonical_worktree_status": {
+    "status_entries": 185,
+    "tracked_dirty_files": 18,
+    "untracked_files": 167,
+    "staged_files": 0,
+    "owner_state_preserved": true
+  },
+  "disposition_counts": {
+    "active_owner_work": 1,
+    "complete_canonicalized": 12,
+    "complete_not_canonicalized": 1,
+    "superseded_by_canonical": 3,
+    "release_candidate_only": 1,
+    "audit_candidate_ephemeral": 2,
+    "stale_unknown_owner": 0,
+    "orphaned_workstreams": 0
+  },
+  "worktrees": [
+    {
+      "path": "C:/Users/acer/Desktop/題材領航/topicpilot-platform",
+      "branch": "codex/task-ops-023a-p3c-runtime-sha-audit-20260813",
+      "head": "c23d6f7f12fc53cb46ff08c437be6109d4658760",
+      "status": {"tracked_dirty": 18, "untracked": 167, "staged": 0},
+      "primary_disposition": "ACTIVE_OWNER_WORK",
+      "provenance": "current canonical owner worktree; Today/Topic/architecture/research owner state",
+      "ancestor_of_canonical": true,
+      "unique_commit_sha_lineage": false,
+      "recommended_disposition": "retain; owner attribution and explicit reconciliation required before cleanup"
+    },
+    {
+      "path": "C:/Users/acer/Desktop/題材領航/topicpilot-platform-task-doc-001",
+      "branch": "codex/task-doc-001-20260813",
+      "head": "a3d357393198dd321ca83080d3176c15a8a4eaff",
+      "status": {"tracked_dirty": 0, "untracked": 0, "staged": 0},
+      "primary_disposition": "COMPLETE_CANONICALIZED",
+      "provenance": "documentation task branch; current canonical documentation lineage supersedes the isolated branch",
+      "ancestor_of_canonical": false,
+      "unique_commit_sha_lineage": true,
+      "recommended_disposition": "retain until owner confirms historical evidence is no longer needed"
+    },
+    {
+      "path": "C:/Users/acer/Desktop/題材領航/topicpilot-platform-task-gov-validation-001-20260814",
+      "branch": "codex/task-gov-validation-001-20260814",
+      "head": "7183be42e1664a9a40e735ab16a14b0dfa4aba27",
+      "status": {"tracked_dirty": 0, "untracked": 0, "staged": 0},
+      "primary_disposition": "COMPLETE_CANONICALIZED",
+      "provenance": "governance validation evidence represented by later governance closure commits",
+      "ancestor_of_canonical": false,
+      "unique_commit_sha_lineage": true,
+      "recommended_disposition": "retain as evidence; no branch deletion performed"
+    },
+    {
+      "path": "C:/Users/acer/Documents/Codex/2026-08-12/topicpilot-release-p1c",
+      "branch": "DETACHED",
+      "head": "93f14996ec885c9ac9c787c72820073284277588",
+      "status": {"tracked_dirty": 1, "untracked": 1, "staged": 0},
+      "primary_disposition": "SUPERSEDED_BY_CANONICAL",
+      "secondary_flags": ["RELEASE_CANDIDATE_ONLY"],
+      "provenance": "historical P1C release candidate",
+      "ancestor_of_canonical": true,
+      "unique_commit_sha_lineage": false,
+      "recommended_disposition": "owner review; retain dirty evidence, do not clean automatically"
+    },
+    {
+      "path": "C:/Users/acer/Documents/Codex/2026-08-13/referenced-chatgpt-conversation-this-is-an-16/work/repo-today-004a-audit",
+      "branch": "DETACHED",
+      "head": "eb5ef2c331c00d0cb55eccd33e921ac63a9fa207",
+      "status": {"tracked_dirty": 0, "untracked": 1, "staged": 0},
+      "primary_disposition": "SUPERSEDED_BY_CANONICAL",
+      "secondary_flags": ["AUDIT_CANDIDATE_EPHEMERAL"],
+      "provenance": "Today-004A audit worktree",
+      "ancestor_of_canonical": false,
+      "unique_commit_sha_lineage": true,
+      "recommended_disposition": "retain evidence pending owner disposition"
+    },
+    {
+      "path": "C:/Users/acer/Documents/Codex/2026-08-13/referenced-chatgpt-conversation-this-is-an-16/work/repo-today-004b",
+      "branch": "codex/task-fe-be-today-004b-20260813",
+      "head": "ac4cf444574e4ffd6bb1dfbda78eac883ba499d4",
+      "status": {"tracked_dirty": 0, "untracked": 0, "staged": 0},
+      "primary_disposition": "COMPLETE_CANONICALIZED",
+      "provenance": "Today-004B reconciliation lineage represented by current Today canonical code",
+      "ancestor_of_canonical": false,
+      "unique_commit_sha_lineage": true,
+      "recommended_disposition": "retain as historical evidence"
+    },
+    {
+      "path": "C:/Users/acer/Documents/Codex/2026-08-13/referenced-chatgpt-conversation-this-is-an-16/work/repo-today-004b-main",
+      "branch": "main",
+      "head": "32f15f3c57240151bc5d35761e88c764448fa1cc",
+      "status": {"tracked_dirty": 0, "untracked": 0, "staged": 0},
+      "primary_disposition": "COMPLETE_CANONICALIZED",
+      "provenance": "local main baseline; not the active canonical release line",
+      "ancestor_of_canonical": false,
+      "unique_commit_sha_lineage": true,
+      "recommended_disposition": "retain; owner review of main/canonical divergence required"
+    },
+    {
+      "path": "C:/Users/acer/Documents/Codex/2026-08-13/referenced-chatgpt-conversation-this-is-an-16/work/repo-today-004b-r",
+      "branch": "codex/task-fe-be-today-004b-r-20260813",
+      "head": "a9f30f1ac892b6499d4cd2724a9b9218d8f305be",
+      "status": {"tracked_dirty": 0, "untracked": 0, "staged": 0},
+      "primary_disposition": "COMPLETE_CANONICALIZED",
+      "provenance": "Today-004B reconciliation variant represented by later canonical Today closure",
+      "ancestor_of_canonical": false,
+      "unique_commit_sha_lineage": true,
+      "recommended_disposition": "retain as historical evidence"
+    },
+    {
+      "path": "C:/Users/acer/Documents/Codex/2026-08-13/referenced-chatgpt-conversation-this-is-an-16/work/repo-today-004b-r2",
+      "branch": "codex/task-fe-be-today-004b-r2-20260813",
+      "head": "82419a27d0ed0322a3070670f77fb0a74554b679",
+      "status": {"tracked_dirty": 0, "untracked": 0, "staged": 0},
+      "primary_disposition": "COMPLETE_CANONICALIZED",
+      "provenance": "Today-004B reconciliation variant represented by later canonical Today closure",
+      "ancestor_of_canonical": false,
+      "unique_commit_sha_lineage": true,
+      "recommended_disposition": "retain as historical evidence"
+    },
+    {
+      "path": "C:/Users/acer/Documents/Codex/2026-08-13/referenced-chatgpt-conversation-this-is-an-3/work/repo-004b-reconciliation",
+      "branch": "codex/repo-004b-reconciliation-20260813",
+      "head": "bfab9f4520770a66168f938b0c15e6a1b7070f70",
+      "status": {"tracked_dirty": 0, "untracked": 0, "staged": 0},
+      "primary_disposition": "COMPLETE_CANONICALIZED",
+      "provenance": "Today-004B repository reconciliation; exact head is an ancestor of canonical",
+      "ancestor_of_canonical": true,
+      "unique_commit_sha_lineage": false,
+      "recommended_disposition": "retain or close only after owner review"
+    },
+    {
+      "path": "C:/Users/acer/Documents/Codex/2026-08-13/stock-002-worktree",
+      "branch": "codex/task-fe-be-stock-002-20260813",
+      "head": "c8d43955583f1a460aa45a31fd2304a302cf7c5c",
+      "status": {"tracked_dirty": 0, "untracked": 0, "staged": 0},
+      "primary_disposition": "COMPLETE_CANONICALIZED",
+      "provenance": "Stock Explorer foundation lineage represented by later canonical Stock code",
+      "ancestor_of_canonical": false,
+      "unique_commit_sha_lineage": true,
+      "recommended_disposition": "retain as historical evidence"
+    },
+    {
+      "path": "C:/Users/acer/Documents/Codex/2026-08-13/stock-002b-worktree",
+      "branch": "codex/task-fe-be-stock-002b-20260813",
+      "head": "e9041887f0949fb38dbaa8c6519ba5cbd0fd0c77",
+      "status": {"tracked_dirty": 0, "untracked": 0, "staged": 0},
+      "primary_disposition": "COMPLETE_CANONICALIZED",
+      "provenance": "Stock-002B reconciliation lineage represented by later canonical Stock code",
+      "ancestor_of_canonical": false,
+      "unique_commit_sha_lineage": true,
+      "recommended_disposition": "retain as historical evidence"
+    },
+    {
+      "path": "C:/Users/acer/Documents/Codex/2026-08-13/stock-003-worktree",
+      "branch": "codex/task-fe-be-stock-003-20260813",
+      "head": "2069ccc43bccaf079009fd30eef0049f72430c4d",
+      "status": {"tracked_dirty": 0, "untracked": 0, "staged": 0},
+      "primary_disposition": "COMPLETE_CANONICALIZED",
+      "provenance": "Stock-003 lineage represented by later canonical Stock code",
+      "ancestor_of_canonical": false,
+      "unique_commit_sha_lineage": true,
+      "recommended_disposition": "retain as historical evidence"
+    },
+    {
+      "path": "C:/Users/acer/Documents/Codex/2026-08-14/stock-004-worktree",
+      "branch": "codex/task-fe-be-stock-004-20260814",
+      "head": "8402f141979e9924c9cfa8a1fc1b8e5b36f176ab",
+      "status": {"tracked_dirty": 1, "untracked": 0, "staged": 0},
+      "primary_disposition": "COMPLETE_NOT_CANONICALIZED",
+      "provenance": "completed formal Stock code/name search and topic-filter branch; commits 0643711 and 429bff3",
+      "ancestor_of_canonical": false,
+      "unique_commit_sha_lineage": true,
+      "recommended_disposition": "CANONICAL_RECONCILIATION_REQUIRED; retain branch and dirty owner hunk"
+    },
+    {
+      "path": "C:/Users/acer/Documents/Codex/tp-b",
+      "branch": "codex/task-topic-daily-state-20260815",
+      "head": "39b03b922dfa3bfb311cbe3b74a3b43c8899907a",
+      "status": {"tracked_dirty": 0, "untracked": 0, "staged": 0},
+      "primary_disposition": "COMPLETE_CANONICALIZED",
+      "provenance": "B Topic Daily State implementation/report represented by canonical 32ebea7/f8736cf lineage",
+      "ancestor_of_canonical": false,
+      "unique_commit_sha_lineage": true,
+      "recommended_disposition": "retain source provenance; no branch deletion"
+    },
+    {
+      "path": "C:/Users/acer/Documents/Codex/tp-hidden-deps-candidate-20260815",
+      "branch": "DETACHED",
+      "head": "c37c72028ed1620cec5db6ae37c5ba9cc26d1c58",
+      "status": {"tracked_dirty": 0, "untracked": 0, "staged": 0},
+      "primary_disposition": "SUPERSEDED_BY_CANONICAL",
+      "secondary_flags": ["AUDIT_CANDIDATE_EPHEMERAL"],
+      "provenance": "prior hidden-dependency clean candidate; superseded by c23d6f7 revalidation candidate",
+      "ancestor_of_canonical": false,
+      "unique_commit_sha_lineage": true,
+      "recommended_disposition": "retain prior evidence; owner may close after report preservation"
+    },
+    {
+      "path": "D:/topicpilot-platform-task-repo-006a",
+      "branch": "codex/task-repo-006a-ruff",
+      "head": "798fd5c832d317c467d91bc6141d9f9980b44c03",
+      "status": {"tracked_dirty": 0, "untracked": 0, "staged": 0},
+      "primary_disposition": "COMPLETE_CANONICALIZED",
+      "provenance": "Ruff/repository validation task; exact head is an ancestor of canonical",
+      "ancestor_of_canonical": true,
+      "unique_commit_sha_lineage": false,
+      "recommended_disposition": "retain or close only after owner review"
+    },
+    {
+      "path": "C:/Users/acer/Documents/Codex/tp-revalidation-candidate-20260816",
+      "branch": "DETACHED",
+      "head": "c23d6f7f12fc53cb46ff08c437be6109d4658760",
+      "status": {"tracked_dirty": 0, "untracked": 0, "staged": 0},
+      "primary_disposition": "RELEASE_CANDIDATE_ONLY",
+      "provenance": "this task clean exact-SHA candidate; no canonical owner state inherited",
+      "ancestor_of_canonical": true,
+      "unique_commit_sha_lineage": false,
+      "recommended_disposition": "retain as validation evidence; do not promote to release-chain"
+    }
+  ],
+  "local_remote_reconciliation": {
+    "comparison": "HEAD...origin/main",
+    "local_only_commit_count": 48,
+    "remote_only_commit_count": 50,
+    "local_only_groups": [
+      {"count": 8, "lineage": "governance, B Topic Daily State, hidden dependency closure", "representative": ["5014d82", "32ebea7", "f8736cf", "50f1c7c", "d57c460", "dd24287", "103db3c", "c23d6f7"]},
+      {"count": 16, "lineage": "REC-A1 corporate-action/research and historical authority closure", "representative": ["850fee7", "9afd0a3", "cfb379e", "c85fa7e", "f2b0784"]},
+      {"count": 2, "lineage": "Stock-006A historical price UI and closure", "representative": ["203bbe3", "a69b1ec"]},
+      {"count": 2, "lineage": "Favorites local-state closure", "representative": ["5e13574", "60726dc"]},
+      {"count": 3, "lineage": "Topic formal-state research workspace and closure", "representative": ["d7b28e0", "0bafa4b", "ea896d7"]},
+      {"count": 8, "lineage": "Stock EOD/reconciliation lineage", "representative": ["f364655", "070a072", "88a4dcc", "b78d4db", "7aec60c"]},
+      {"count": 9, "lineage": "Today and related canonical reconciliation", "representative": ["017460d", "03fda13", "17d796d", "4d11abe", "889bae1"]}
+    ],
+    "remote_only_groups": [
+      {"count": 6, "lineage": "Today-004D and governance cleanup merge lineage", "representative": ["26f635b", "a7b80cb", "3682962", "c6d7bb0", "f866291", "a816967"]},
+      {"count": 3, "lineage": "DATA-REF-009 merge/CI lineage", "representative": ["12b0c7c", "ee3d5d1", "2893eaf"]},
+      {"count": 11, "lineage": "Stock search/topic-filter and Explorer integration", "representative": ["0643711", "429bff3", "8e0ffc7", "69138c2", "d4ad93e"]},
+      {"count": 16, "lineage": "Reference provider/G2/G3/bootstrap remediation", "representative": ["0643711", "be97696", "0ec5bcf", "4f97f8f", "c759563", "00b4076", "e904188"]},
+      {"count": 12, "lineage": "Today Home/mainline and shared resource lineage", "representative": ["8afad1a", "8a851ed", "82419a2", "d7b621d"]},
+      {"count": 2, "lineage": "reference integration and portable bundle hash CI", "representative": ["a5fba93", "1799be3"]}
+    ],
+    "canonical_represented_capabilities": ["B Topic Daily State", "hidden dependencies", "governance hardening", "Today shared Home", "Stock EOD", "historical price UI", "Favorites local state"],
+    "completed_not_in_canonical": ["formal Stock code/name search", "formal Stock topic filter"],
+    "unknown_or_conflicting": ["remote-only branch lineage not patch-equivalent to HEAD; owner must review 30 unmapped local branches and remote/main divergence"],
+    "canonical_reconciliation_required": true
+  },
+  "dirty_untracked_attribution": {
+    "tracked_dirty_by_bucket": {
+      "apps/web": 11,
+      "docs/architecture": 2,
+      "docs/data": 1,
+      "docs/ROADMAP.md": 1,
+      "docs/WORK_ORDERS.md": 1,
+      "fixtures/research": 1,
+      "PROJECT_CONTEXT.md": 1
+    },
+    "untracked_by_bucket": {
+      "apps/web owner Today/Topic tests": 3,
+      "docs/architecture owner doc set": 61,
+      "docs/business-rules detectors handoffs workshops": 8,
+      "docs/reports task reports": 33,
+      "docs/research": 4,
+      "docs/work-orders": 44,
+      "fixtures/research": 5,
+      "infra/scripts": 2,
+      "reports task metadata": 6,
+      "legacy-named report": 1
+    },
+    "unattributed_dirty_count": 8,
+    "attribution_status": "PATH_ATTRIBUTED_OWNER_RETAINED; 8 other owner-doc files lack explicit task provenance",
+    "recommended_disposition": "retain all owner state; no clean/reset/stash/branch deletion; owner decision required"
+  },
+  "candidate": {
+    "release_candidate_code_sha": "c23d6f7f12fc53cb46ff08c437be6109d4658760",
+    "clean_source_state": "PASS",
+    "canonical_baseline_self_contained": "NO",
+    "application_hidden_dependencies": "PASS; B provider, 0030 assertions, fixtures, work order, generated API files and report are tracked",
+    "documentation_hidden_dependencies": "BLOCKED; 13 committed-link occurrences resolve only to owner-untracked providers",
+    "broken_link_occurrences": 13,
+    "broken_link_unique_provider_paths": 8,
+    "reproducible_dependency_state": "PASS",
+    "dependency_install_method": "apps/web npm ci; packages/api-client npm ci; Python 3.12 fresh venv with services/api[dev] declared constraints",
+    "dependency_lock_or_declared_inputs": ["apps/web/package-lock.json", "packages/api-client/package-lock.json", "services/api/pyproject.toml"],
+    "dependency_proof": {
+      "node": "v24.16.0",
+      "npm": "11.13.0",
+      "python": "3.12.10",
+      "ruff": "0.16.3",
+      "web_lock_sha256": "7a459504207addb7856c69a24678f23d714d7312488c7df98515f652e7b19344",
+      "api_client_lock_sha256": "499c82f766ca4e920e4a166bf24d1a0a660c0fa5fb6d693e8f59f09ea90b7617",
+      "python_declared_sha256": "d4d170972ffe040e848752545877820efcc5c1aabb78cda8a1a34d28acc4f62a4d",
+      "python_distribution_digest_sha256": "d8c6e6a3a1d1a37e42d5738720a52fee8d71484b471f81ef3e4346d011f59e71"
+    }
+  },
+  "safety": {
+    "application_code_changed": false,
+    "database_mutation": "NO_PRODUCTION; ephemeral local databases 001 and 002 created/dropped only",
+    "production_mutation": false,
+    "push_remote": false,
+    "merge_main": false,
+    "deploy": false,
+    "scheduler": false,
+    "next_task_changed": false,
+    "branch_delete": false,
+    "reset_stash_clean": false
+  }
+}

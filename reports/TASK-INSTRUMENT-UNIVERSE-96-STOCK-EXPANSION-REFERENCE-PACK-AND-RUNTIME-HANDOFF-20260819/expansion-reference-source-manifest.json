@@ -1,0 +1,21 @@
+{
+  "authority_state": "EXPANSION_CANDIDATE_NOT_CANONICAL",
+  "expected_headers": [
+    "stock_code",
+    "stock_name",
+    "market",
+    "listing_status"
+  ],
+  "normalization": {
+    "listing_status": "lowercase active",
+    "market": "uppercase TPE/TWO",
+    "stock_code": "canonical string from numeric Excel value",
+    "stock_name": "trim only; no guessing/correction"
+  },
+  "source_file_name": "活頁簿1.xlsx",
+  "source_path": "C:\\Users\\acer\\Desktop\\活頁簿1.xlsx",
+  "source_row_count": 96,
+  "source_sha256": "8445cd8083f8b600badb7f57501af652259ad38698630177019e707a530617b6",
+  "task_id": "TASK-INSTRUMENT-UNIVERSE-96-STOCK-EXPANSION-REFERENCE-PACK-AND-RUNTIME-HANDOFF-20260819",
+  "worksheet": "工作表1"
+}

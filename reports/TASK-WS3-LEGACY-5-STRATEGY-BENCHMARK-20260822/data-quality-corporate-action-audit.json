@@ -1,0 +1,84 @@
+{
+  "corporate_action_governance": {
+    "adjusted_truth_used": false,
+    "adjustment_state": "UNKNOWN_RAW_ONLY",
+    "fail_closed_on_unknown_adjustment": true,
+    "known_event_overlay": "not used to alter legacy signal semantics; bounded governance carried forward",
+    "synthetic_adjustment": false
+  },
+  "dataset_identity": {
+    "active_reference_registry": "sdf-reference-603-v1",
+    "artifact_alias": "SDF-603-2Y-OHLCV-ACCEPTED-DAILY-V1",
+    "authority_version": "sdf-603-ohlcv-2y.v1",
+    "expected_instruments": 603,
+    "expected_normalized_surface_sha256": "e803733e796d8f4d8cf00575cd4045f28c9364572fc61b31ef490e8a65ff47a4",
+    "expected_rows": 288881,
+    "identity_status": "PASS",
+    "prior_accepted_surface_sha256": "e803733e796d8f4d8cf00575cd4045f28c9364572fc61b31ef490e8a65ff47a4",
+    "prior_manifest_path": "C:\\Users\\acer\\Documents\\Codex\\2026-08-22\\referenced-chatgpt-conversation-this-is-an\\work\\ws3-legacy-5-benchmark\\reports\\TASK-WS3-P1E-603-UNIVERSE-EXPANDED-EVIDENCE-QUALIFICATION-AND-COHORT-RECONSTITUTION-20260820\\ws3-p1e-source-contract-manifest.json",
+    "prior_manifest_sha256": "2c64f06f67d2d74b2a116be22f2c22fce5df131566f3ff93a99a9a810aa48443",
+    "queried_instruments": 603,
+    "queried_rows": 288881
+  },
+  "pit_governance": {
+    "accepted_quality_state_only": true,
+    "future_session_dependency_in_formation": false,
+    "lifecycle_leakage_count": 0,
+    "lookahead_leakage_detected": false,
+    "no_data_synthetic_fill_count": 0,
+    "pit_limited_instrument_count": 16,
+    "pit_unusable_instrument_count": 0,
+    "quarantine_leakage_count": 0,
+    "supersession_predicate_applied": true,
+    "unknown_continuity_preserved": true
+  },
+  "query_quality": {
+    "date_max": "2026-08-13",
+    "date_min": "2024-08-13",
+    "duplicate_session_count": 0,
+    "invalid_ohlcv_count": 0,
+    "observation_semantics_counts": {
+      "DAILY_BAR": 288881
+    },
+    "quality_state_counts": {
+      "ACCEPTED": 288881
+    },
+    "queried_instrument_count": 603,
+    "queried_rows": 288881,
+    "source_code_counts": {
+      "TPEX_OFFICIAL_DAILY": 111454,
+      "TWSE_OFFICIAL_DAILY": 177427
+    },
+    "volume_contract_basis": "reports/TASK-WS3-A2-OUTCOME-RECONSTRUCTION-FAILURE-ATTRIBUTION-20260821/path-aware-outcome-manifest.json",
+    "volume_contract_status": "PASS",
+    "volume_lot_mapping": "1 lot (張) = 1,000 shares; canonical SHARES quantity converted to lots by /1000; native LOTS retained",
+    "volume_unit_code_counts": {
+      "UNIT": 288881
+    },
+    "volume_unit_status_counts": {
+      "SHARES_CANONICAL_PROVIDER_CONTRACT": 288881
+    }
+  },
+  "schema_version": "ws3-legacy5-data-quality-corporate-action-audit.v1",
+  "strategy_governance": {
+    "a2_semantics_modified": false,
+    "buy_sell_rule_created": false,
+    "core_v0_modified": false,
+    "ma60_added_to_legacy5": false,
+    "model_fitting": false,
+    "price20_or_ma60_acceptance": false,
+    "stop_rule_created": false,
+    "threshold_search": false
+  },
+  "task_id": "TASK-WS3-LEGACY-5-STRATEGY-BENCHMARK-20260822",
+  "volume_governance": {
+    "canonical_unit_mapping": "official TWSE/TPEX UNIT scale 0 -> canonical shares under provider contract -> shares/1000 lots; LOTS -> native lots",
+    "contract_evidence": "reports/TASK-WS3-A2-OUTCOME-RECONSTRUCTION-FAILURE-ATTRIBUTION-20260821/path-aware-outcome-manifest.json",
+    "required_unit": "lots / 張",
+    "source_contract_status": "PASS",
+    "unit_code_counts": {
+      "UNIT": 288881
+    },
+    "unknown_unit_fail_closed": true
+  }
+}

@@ -1,0 +1,103 @@
+{
+  "schemaVersion": "ws3-core-v0-a1-a2-execution-readiness.v1",
+  "taskId": "TASK-REC-A1-CORE-V0-A1-A2-EXECUTABLE-CANDIDATE-PANEL-AND-READINESS-CLOSURE-20260816",
+  "canonicalSourceHead": "5186b2b086774ef9080bbc8767a937c942fec63e",
+  "protocol": {
+    "id": "core-v0-walk-forward.v1",
+    "development": "2026-02-02..2026-06-30",
+    "validation": "2026-07-01..2026-07-31",
+    "holdout": "2026-08-01..2026-08-13",
+    "minimumPriorCanonicalTradingSessions": 60,
+    "forwardOutcomeHorizons": ["T+1", "T+3", "T+5", "T+10"],
+    "outcomesFlowBackward": false,
+    "tuningOptimization": "FORBIDDEN",
+    "changed": false
+  },
+  "frozenFormationPolicy": {
+    "referencePolicy": "PRIOR_20_ACCEPTED_SESSION_HIGH",
+    "referenceWindowAcceptedSessions": 20,
+    "referenceExcludesT": true,
+    "referenceMaturitySessions": 5,
+    "a1ProximityPct": 0.03,
+    "a1StructureImprovingHardGate": false,
+    "a2Confirmation": "SINGLE_SESSION_CLOSE",
+    "a2ExtraBreakoutMarginPct": 0.0,
+    "gapUpExcluded": false,
+    "volumeHardGate": false,
+    "rsiHardGate": false,
+    "macdHardGate": false
+  },
+  "implementation": {
+    "module": "services/api/src/topicpilot_api/research/core_v0_candidate_panel.py",
+    "panelContractVersion": "core-v0-candidate-panel.v1",
+    "candidatePanelImplemented": {"A1": true, "A2": true},
+    "persistence": "NONE",
+    "apiUiProviderScheduler": "NOT_IMPLEMENTED_BY_SCOPE",
+    "productionActivation": false
+  },
+  "dependencies": {
+    "ws2": {
+      "authority": "stock.sma.close.v1 / SMA_CLOSE_V1 / period=60",
+      "canonicalPolicyState": "PHASE_2B_IMPLEMENTATION_PENDING_OWNER_AUTHORIZATION",
+      "formalEvidenceConsumable": "BOUNDED",
+      "panelBehavior": "WAITING_FOR_FORMAL_WS2_MA60_EVIDENCE",
+      "duplicateCalculation": false
+    },
+    "recA1": {
+      "formationDependency": false,
+      "evaluationIntegrityState": "BLOCKED_BY_REC_A1_PROVENANCE_LEDGER_ARCHIVE_GAP",
+      "candidateConsumption": "READY_AFTER_REC_A1_PROVENANCE_RECONCILIATION",
+      "freezeReopened": false,
+      "reviewedUnknownsReopened": false
+    },
+    "pitTopicContext": {
+      "binding": "CANDIDATE_SPECIFIC_REQUIRED_WHEN_UNIVERSE_REQUIRES",
+      "globalHistoricalTopicStateRequired": false,
+      "missingState": "UNAVAILABLE_PIT_TOPIC_CONTEXT"
+    }
+  },
+  "candidateMatrix": [
+    {
+      "candidate": "A1",
+      "definitionAuthority": "FROZEN_CORE_V0_DEFINITION_AUTHORITY",
+      "candidatePanel": "IMPLEMENTED_RESEARCH_ONLY",
+      "temporal60SessionEligibility": "IMPLEMENTED_BOUNDED_CHECK",
+      "referenceEvidence": "IMPLEMENTED_FROZEN_POLICY_CHECK",
+      "pitTopicContext": "IMPLEMENTED_CANDIDATE_SPECIFIC_BINDING",
+      "recA1": "READY_AFTER_REC_A1_PROVENANCE_RECONCILIATION",
+      "forwardOutcomeCoverage": "READY_AFTER_FORWARD_OUTCOME_PANEL",
+      "executionReadiness": "READY_AFTER_WS2_MA60_PUBLICATION",
+      "canonicalDateCoverage": "NOT_RUN_BY_SCOPE",
+      "readyForCoreV0WalkForwardExecution": false
+    },
+    {
+      "candidate": "A2",
+      "definitionAuthority": "FROZEN_CORE_V0_DEFINITION_AUTHORITY",
+      "candidatePanel": "IMPLEMENTED_RESEARCH_ONLY",
+      "temporal60SessionEligibility": "IMPLEMENTED_BOUNDED_CHECK",
+      "referenceEvidence": "IMPLEMENTED_FROZEN_POLICY_CHECK",
+      "pitTopicContext": "IMPLEMENTED_CANDIDATE_SPECIFIC_BINDING",
+      "recA1": "READY_AFTER_REC_A1_PROVENANCE_RECONCILIATION",
+      "forwardOutcomeCoverage": "READY_AFTER_FORWARD_OUTCOME_PANEL",
+      "executionReadiness": "READY_AFTER_WS2_MA60_PUBLICATION",
+      "canonicalDateCoverage": "NOT_RUN_BY_SCOPE",
+      "readyForCoreV0WalkForwardExecution": false
+    },
+    {
+      "candidate": "A3",
+      "definitionAuthority": "BLOCKED_BY_PULLBACK_ACCEPTANCE_AUTHORITY",
+      "candidatePanel": "NOT_IN_SCOPE_PRESERVED",
+      "executionReadiness": "BLOCKED_BY_PULLBACK_ACCEPTANCE_AUTHORITY"
+    },
+    {
+      "candidate": "Catch-up",
+      "definitionAuthority": "BLOCKED_BY_CATCH_UP_DEFINITION_AUTHORITY",
+      "candidatePanel": "NOT_IN_SCOPE_PRESERVED",
+      "executionReadiness": "BLOCKED_BY_CATCH_UP_DEFINITION_AUTHORITY"
+    }
+  ],
+  "globalReadyNo": "NOT_EMITTED",
+  "walkForwardExecuted": false,
+  "performanceMetricsGenerated": false,
+  "strategyAcceptedOrRejected": false
+}

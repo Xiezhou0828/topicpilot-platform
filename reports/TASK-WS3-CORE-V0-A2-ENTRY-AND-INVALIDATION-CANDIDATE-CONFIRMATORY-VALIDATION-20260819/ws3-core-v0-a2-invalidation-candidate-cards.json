@@ -1,0 +1,341 @@
+{
+  "candidate_count": 15,
+  "cards": [
+    {
+      "candidate_definition": {
+        "band": "0_TO_MINUS_1PCT",
+        "lower_exclusive": -0.01,
+        "upper_inclusive": 0.0
+      },
+      "candidate_family": "REFERENCE_LOSS_DEPTH",
+      "candidate_id": "DEPTH_0_TO_MINUS_1PCT",
+      "classification": "INCONCLUSIVE",
+      "major_caveat": "path state does not independently establish a stable recovery boundary under the frozen comparison framework",
+      "market_and_temporal_are_reported_separately": true,
+      "median_reclaim_time": 3.0,
+      "post_loss_T10": {
+        "post_loss_mae_median": 0.008475699408031945,
+        "post_loss_mfe_median": 0.2913414634146343,
+        "post_loss_return_median": 0.12493319290744465
+      },
+      "post_loss_T5": {
+        "post_loss_mae_median": 0.009522280360414803,
+        "post_loss_mfe_median": 0.2383055124223603,
+        "post_loss_return_median": 0.1418079908019546
+      },
+      "reclaim_rate": 1.0,
+      "sample_size": 26
+    },
+    {
+      "candidate_definition": {
+        "band": "MINUS_1_TO_2PCT",
+        "lower_exclusive": -0.02,
+        "upper_inclusive": -0.01
+      },
+      "candidate_family": "REFERENCE_LOSS_DEPTH",
+      "candidate_id": "DEPTH_MINUS_1_TO_2PCT",
+      "classification": "INCONCLUSIVE",
+      "major_caveat": "path state does not independently establish a stable recovery boundary under the frozen comparison framework",
+      "market_and_temporal_are_reported_separately": true,
+      "median_reclaim_time": 2,
+      "post_loss_T10": {
+        "post_loss_mae_median": -0.010568086883876393,
+        "post_loss_mfe_median": 0.20329919332910362,
+        "post_loss_return_median": 0.07968559218559212
+      },
+      "post_loss_T5": {
+        "post_loss_mae_median": -0.008878677544344682,
+        "post_loss_mfe_median": 0.1588762358757062,
+        "post_loss_return_median": 0.09179687500000011
+      },
+      "reclaim_rate": 0.9722222222222222,
+      "sample_size": 36
+    },
+    {
+      "candidate_definition": {
+        "band": "MINUS_2_TO_3PCT",
+        "lower_exclusive": -0.03,
+        "upper_inclusive": -0.02
+      },
+      "candidate_family": "REFERENCE_LOSS_DEPTH",
+      "candidate_id": "DEPTH_MINUS_2_TO_3PCT",
+      "classification": "INCONCLUSIVE",
+      "major_caveat": "candidate event count below frozen sample floor",
+      "market_and_temporal_are_reported_separately": true,
+      "median_reclaim_time": 3,
+      "post_loss_T10": {
+        "post_loss_mae_median": -0.027162589867739895,
+        "post_loss_mfe_median": 0.2774472629009763,
+        "post_loss_return_median": 0.14789522058823523
+      },
+      "post_loss_T5": {
+        "post_loss_mae_median": -0.018750000000000044,
+        "post_loss_mfe_median": 0.15026833631484804,
+        "post_loss_return_median": 0.08906250000000004
+      },
+      "reclaim_rate": 1.0,
+      "sample_size": 19
+    },
+    {
+      "candidate_definition": {
+        "band": "MINUS_3_TO_5PCT",
+        "lower_exclusive": -0.05,
+        "upper_inclusive": -0.03
+      },
+      "candidate_family": "REFERENCE_LOSS_DEPTH",
+      "candidate_id": "DEPTH_MINUS_3_TO_5PCT",
+      "classification": "INCONCLUSIVE",
+      "major_caveat": "path state does not independently establish a stable recovery boundary under the frozen comparison framework",
+      "market_and_temporal_are_reported_separately": true,
+      "median_reclaim_time": 3,
+      "post_loss_T10": {
+        "post_loss_mae_median": -0.03513793275466426,
+        "post_loss_mfe_median": 0.1871214684025012,
+        "post_loss_return_median": 0.062265480719660204
+      },
+      "post_loss_T5": {
+        "post_loss_mae_median": -0.03217158176943691,
+        "post_loss_mfe_median": 0.11956521739130443,
+        "post_loss_return_median": 0.06944444444444442
+      },
+      "reclaim_rate": 0.8974358974358975,
+      "sample_size": 39
+    },
+    {
+      "candidate_definition": {
+        "band": "BELOW_MINUS_5PCT",
+        "lower_exclusive": null,
+        "upper_inclusive": -0.05
+      },
+      "candidate_family": "REFERENCE_LOSS_DEPTH",
+      "candidate_id": "DEPTH_BELOW_MINUS_5PCT",
+      "classification": "SUPPORTED_WITH_BOUNDED_LIMITATIONS",
+      "major_caveat": "deeper or longer failure-like state has bounded support; segment and censoring limitations remain",
+      "market_and_temporal_are_reported_separately": true,
+      "median_reclaim_time": 2,
+      "post_loss_T10": {
+        "post_loss_mae_median": -0.1336477987421384,
+        "post_loss_mfe_median": 0.05974025974025965,
+        "post_loss_return_median": -0.05967078189300412
+      },
+      "post_loss_T5": {
+        "post_loss_mae_median": -0.10683760683760679,
+        "post_loss_mfe_median": 0.02941176470588225,
+        "post_loss_return_median": -0.053333333333333344
+      },
+      "reclaim_rate": 0.6069868995633187,
+      "sample_size": 229
+    },
+    {
+      "candidate_definition": "sessions_to_reclaim == 1",
+      "candidate_family": "TIME_BELOW_REFERENCE",
+      "candidate_id": "TIME_RECLAIM_WITHIN_1_SESSION",
+      "classification": "INCONCLUSIVE",
+      "major_caveat": "path state does not independently establish a stable recovery boundary under the frozen comparison framework",
+      "market_and_temporal_are_reported_separately": true,
+      "median_reclaim_time": 1,
+      "post_loss_T10": {
+        "post_loss_mae_median": -0.08132530120481918,
+        "post_loss_mfe_median": 0.11842105263157898,
+        "post_loss_return_median": 0.01666666666666683
+      },
+      "post_loss_T5": {
+        "post_loss_mae_median": -0.04609473242978901,
+        "post_loss_mfe_median": 0.10792057117358322,
+        "post_loss_return_median": -0.004792925414755345
+      },
+      "reclaim_rate": 0.9021739130434783,
+      "sample_size": 92
+    },
+    {
+      "candidate_definition": "sessions_to_reclaim == 2",
+      "candidate_family": "TIME_BELOW_REFERENCE",
+      "candidate_id": "TIME_RECLAIM_2_SESSIONS",
+      "classification": "INCONCLUSIVE",
+      "major_caveat": "path state does not independently establish a stable recovery boundary under the frozen comparison framework",
+      "market_and_temporal_are_reported_separately": true,
+      "median_reclaim_time": 2.0,
+      "post_loss_T10": {
+        "post_loss_mae_median": -0.06818745350855443,
+        "post_loss_mfe_median": 0.13698906160046054,
+        "post_loss_return_median": 0.0065502183406113135
+      },
+      "post_loss_T5": {
+        "post_loss_mae_median": -0.055854569807197496,
+        "post_loss_mfe_median": 0.10407976613785563,
+        "post_loss_return_median": 0.01345206517620301
+      },
+      "reclaim_rate": 1.0,
+      "sample_size": 44
+    },
+    {
+      "candidate_definition": "sessions_to_reclaim >= 3 or no reclaim within H10 with observed below-reference duration >= 3 sessions",
+      "candidate_family": "TIME_BELOW_REFERENCE",
+      "candidate_id": "TIME_RECLAIM_3_PLUS_OR_NO_RECLAIM_H10",
+      "classification": "SUPPORTED_WITH_BOUNDED_LIMITATIONS",
+      "major_caveat": "deeper or longer failure-like state has bounded support; segment and censoring limitations remain",
+      "market_and_temporal_are_reported_separately": true,
+      "median_reclaim_time": 5,
+      "post_loss_T10": {
+        "post_loss_mae_median": -0.1107068332496896,
+        "post_loss_mfe_median": 0.06486782126141499,
+        "post_loss_return_median": -0.030893640350877216
+      },
+      "post_loss_T5": {
+        "post_loss_mae_median": -0.08235294117647063,
+        "post_loss_mfe_median": 0.036363636363636376,
+        "post_loss_return_median": -0.020050125313283096
+      },
+      "reclaim_rate": 0.596244131455399,
+      "sample_size": 213
+    },
+    {
+      "candidate_definition": "reference_loss and reference_reclaimed",
+      "candidate_family": "RECLAIM_STATUS",
+      "candidate_id": "RECLAIMED_REFERENCE_LOSS",
+      "classification": "INCONCLUSIVE",
+      "major_caveat": "path state does not independently establish a stable recovery boundary under the frozen comparison framework",
+      "market_and_temporal_are_reported_separately": true,
+      "median_reclaim_time": 2.5,
+      "post_loss_T10": {
+        "post_loss_mae_median": -0.06430934656741105,
+        "post_loss_mfe_median": 0.14592740150509076,
+        "post_loss_return_median": 0.026590618957909817
+      },
+      "post_loss_T5": {
+        "post_loss_mae_median": -0.044787542887305354,
+        "post_loss_mfe_median": 0.09898583110281656,
+        "post_loss_return_median": 0.019499506341611572
+      },
+      "reclaim_rate": 1.0,
+      "sample_size": 254
+    },
+    {
+      "candidate_definition": "reference_loss and not reference_reclaimed within H10",
+      "candidate_family": "RECLAIM_STATUS",
+      "candidate_id": "FAILED_RECLAIM_REFERENCE_LOSS",
+      "classification": "SUPPORTED_WITH_BOUNDED_LIMITATIONS",
+      "major_caveat": "directional depth/reclaim contrast is present, but this remains a descriptive path state and not a stop rule",
+      "market_and_temporal_are_reported_separately": true,
+      "median_reclaim_time": null,
+      "post_loss_T10": {
+        "post_loss_mae_median": -0.1839887640449438,
+        "post_loss_mfe_median": -0.0023837902264600697,
+        "post_loss_return_median": -0.1097560975609756
+      },
+      "post_loss_T5": {
+        "post_loss_mae_median": -0.1536819637139808,
+        "post_loss_mfe_median": -0.013071895424836555,
+        "post_loss_return_median": -0.1001164144353901
+      },
+      "reclaim_rate": 0.0,
+      "sample_size": 95
+    },
+    {
+      "candidate_definition": "path_category == CLOSE_BELOW_REFERENCE_THEN_RECLAIM",
+      "candidate_family": "CLOSE_BELOW_REFERENCE",
+      "candidate_id": "CLOSE_BELOW_THEN_RECLAIM",
+      "classification": "INCONCLUSIVE",
+      "major_caveat": "path state does not independently establish a stable recovery boundary under the frozen comparison framework",
+      "market_and_temporal_are_reported_separately": true,
+      "median_reclaim_time": 2.5,
+      "post_loss_T10": {
+        "post_loss_mae_median": -0.09205217859064013,
+        "post_loss_mfe_median": 0.11152158373694998,
+        "post_loss_return_median": 0.0035046022472997596
+      },
+      "post_loss_T5": {
+        "post_loss_mae_median": -0.06348434946263182,
+        "post_loss_mfe_median": 0.0782685109295389,
+        "post_loss_return_median": -0.0005580357142856984
+      },
+      "reclaim_rate": 1.0,
+      "sample_size": 198
+    },
+    {
+      "candidate_definition": "path_category == LOSS_NO_RECLAIM_WITHIN_H10",
+      "candidate_family": "CLOSE_BELOW_REFERENCE",
+      "candidate_id": "LOSS_NO_RECLAIM_PATH",
+      "classification": "SUPPORTED_WITH_BOUNDED_LIMITATIONS",
+      "major_caveat": "deeper or longer failure-like state has bounded support; segment and censoring limitations remain",
+      "market_and_temporal_are_reported_separately": true,
+      "median_reclaim_time": null,
+      "post_loss_T10": {
+        "post_loss_mae_median": -0.1839887640449438,
+        "post_loss_mfe_median": -0.0023837902264600697,
+        "post_loss_return_median": -0.1097560975609756
+      },
+      "post_loss_T5": {
+        "post_loss_mae_median": -0.1536819637139808,
+        "post_loss_mfe_median": -0.013071895424836555,
+        "post_loss_return_median": -0.1001164144353901
+      },
+      "reclaim_rate": 0.0,
+      "sample_size": 95
+    },
+    {
+      "candidate_definition": "depth in first three loss bands and reclaim within 1 session",
+      "candidate_family": "PREDECLARED_COMBINATION",
+      "candidate_id": "SHALLOW_LOSS_QUICK_RECLAIM",
+      "classification": "SUPPORTED_WITH_BOUNDED_LIMITATIONS",
+      "major_caveat": "directional depth/reclaim contrast is present, but this remains a descriptive path state and not a stop rule",
+      "market_and_temporal_are_reported_separately": true,
+      "median_reclaim_time": 1,
+      "post_loss_T10": {
+        "post_loss_mae_median": 0.0,
+        "post_loss_mfe_median": 0.29000000000000004,
+        "post_loss_return_median": 0.1625000000000001
+      },
+      "post_loss_T5": {
+        "post_loss_mae_median": 0.0037174721189590088,
+        "post_loss_mfe_median": 0.20867208672086712,
+        "post_loss_return_median": 0.1367346938775511
+      },
+      "reclaim_rate": 1.0,
+      "sample_size": 27
+    },
+    {
+      "candidate_definition": "BELOW_MINUS_5PCT and no reclaim within H10",
+      "candidate_family": "PREDECLARED_COMBINATION",
+      "candidate_id": "DEEP_LOSS_NO_RECLAIM",
+      "classification": "SUPPORTED_WITH_BOUNDED_LIMITATIONS",
+      "major_caveat": "directional depth/reclaim contrast is present, but this remains a descriptive path state and not a stop rule",
+      "market_and_temporal_are_reported_separately": true,
+      "median_reclaim_time": null,
+      "post_loss_T10": {
+        "post_loss_mae_median": -0.19055667303265528,
+        "post_loss_mfe_median": -0.002805319483789759,
+        "post_loss_return_median": -0.117675395256917
+      },
+      "post_loss_T5": {
+        "post_loss_mae_median": -0.15431566485196507,
+        "post_loss_mfe_median": -0.013910003040437824,
+        "post_loss_return_median": -0.1025166820064427
+      },
+      "reclaim_rate": 0.0,
+      "sample_size": 90
+    },
+    {
+      "candidate_definition": "observed below-reference duration >= 3 sessions and no reclaim within H10",
+      "candidate_family": "PREDECLARED_COMBINATION",
+      "candidate_id": "MULTI_SESSION_BELOW_NO_RECLAIM",
+      "classification": "INCONCLUSIVE",
+      "major_caveat": "path state does not independently establish a stable recovery boundary under the frozen comparison framework",
+      "market_and_temporal_are_reported_separately": true,
+      "median_reclaim_time": null,
+      "post_loss_T10": {
+        "post_loss_mae_median": -0.19186991869918701,
+        "post_loss_mfe_median": -0.007696146169200002,
+        "post_loss_return_median": -0.1322358134829394
+      },
+      "post_loss_T5": {
+        "post_loss_mae_median": -0.15571868340042622,
+        "post_loss_mfe_median": -0.015791649441918132,
+        "post_loss_return_median": -0.10773677541970228
+      },
+      "reclaim_rate": 0.0,
+      "sample_size": 86
+    }
+  ],
+  "task_id": "TASK-WS3-CORE-V0-A2-ENTRY-AND-INVALIDATION-CANDIDATE-CONFIRMATORY-VALIDATION-20260819"
+}

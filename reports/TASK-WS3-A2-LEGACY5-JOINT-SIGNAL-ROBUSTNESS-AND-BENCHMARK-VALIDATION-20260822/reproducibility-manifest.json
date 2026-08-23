@@ -1,0 +1,29 @@
+{
+  "artifact_aggregate_sha256": "2dbde4f2e567bdcada811c0ea09d251f5d9a3847c465876c53ccc04dc50bab85",
+  "artifact_hashes_before_replay": {
+    "OWNER-DECISION-MEMO.md": "239fcee59763c8f52ff4d118827cd81d15b233d3b63b135f37949d8f57cd428e",
+    "benchmark-adjusted-analysis.csv": "80c45ad4087cf4f33acd5153a0339facfcbea434901829a493029c9ff9771afa",
+    "benchmark-not-available.csv": "80c45ad4087cf4f33acd5153a0339facfcbea434901829a493029c9ff9771afa",
+    "extreme-winner-dependence.csv": "a8f74ebd898a00068031419cf6763392feeb7009166b3edffdbfc1de6c8d25ca",
+    "instrument-concentration-analysis.csv": "8c6ade99d1910c29cda6be9dde8b75ef09a76e310b1b07113a6027eb61c91147",
+    "joint-signal-endpoint-robustness.csv": "462230ddd30befe675f5b912b9eafaa8e152b69edb8d9afc7399244758f53b4f",
+    "joint-signal-path-robustness.csv": "1cb7e7e9b0cdc1104836265158eb0d8b5e60941e01917543f443618c6983c443",
+    "ma60-joint-signal-ablation.csv": "15ceceb9e9fa4917c5633f15c38cc967586e5f909ca0f9deca65e47b628ab1dd",
+    "market-split-analysis.csv": "0faaf007db14deb6a63424f6d42f9a95c870e980a39055be4b30d5a026631de5",
+    "regime-not-available.csv": "0a1b318edfc853ec66a1e258d9cdc77993fef4ad492b98490655e987442954b7",
+    "regime-robustness.csv": "0a1b318edfc853ec66a1e258d9cdc77993fef4ad492b98490655e987442954b7",
+    "signal-timing-path-analysis.csv": "4fe3b34aa4f2615fecf2fdb96334b12bc0344753991cb9fbb1eef476a17df17b",
+    "source-semantics-reconciliation-manifest.json": "9fa5e54da5ab293abbd9bcc0e7a37f11344a62c6e71ecf80ca219d99651c93bd",
+    "statistical-robustness-summary.json": "11710758e80a1f86d92e337425207037bb0a379b1d13fbf60bb6d65abe928e46",
+    "time-stability-analysis.csv": "591751e81bc6b15759bedc212ec3bbfc9c3b5ff644317a5a08f45796ded2e0e7"
+  },
+  "bootstrap_replicates": 1000,
+  "bootstrap_seed": 20260822,
+  "database_access": "read_only",
+  "reconstruction_runs": 2,
+  "reproducible": "YES",
+  "schema_version": "ws3-a2-legacy5-joint-reproducibility.v1",
+  "source_surface_sha256": "e803733e796d8f4d8cf00575cd4045f28c9364572fc61b31ef490e8a65ff47a4",
+  "strategy_acceptance": "NO",
+  "task_id": "TASK-WS3-A2-LEGACY5-JOINT-SIGNAL-ROBUSTNESS-AND-BENCHMARK-VALIDATION-20260822"
+}

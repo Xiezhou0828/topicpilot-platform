@@ -1,0 +1,34 @@
+{
+  "task_id": "TASK-WS2-E2-TECHNICAL-V0-FORMAL-EVIDENCE-PROVIDER-CONSUMER-CONTRACT-AND-603-MAINLINE-CLOSURE-20260820",
+  "publication_states": {
+    "FORMAL": {"availability_state": "AVAILABLE", "value_allowed": true},
+    "FORMAL_WITH_LIMITATION": {"availability_state": "AVAILABLE_WITH_LIMITATION", "value_allowed": true},
+    "UNAVAILABLE": {"availability_state": "UNAVAILABLE", "value_allowed": false},
+    "DEFERRED": {"availability_state": "BLOCKED", "value_allowed": false}
+  },
+  "surface_publication_states": ["AVAILABLE", "AVAILABLE_WITH_LIMITATION", "BLOCKED", "UNAVAILABLE", "ERROR"],
+  "continuity_states": {
+    "CONTINUITY_PASS_BOUNDED": "continuity prerequisite may pass",
+    "CONTINUITY_FAIL": "unavailable; known unresolved break intersects window",
+    "CONTINUITY_UNKNOWN": "fail closed; unavailable or blocked"
+  },
+  "reason_propagation": [
+    "INSUFFICIENT_HISTORY",
+    "MISSING_REQUIRED_FIELD",
+    "INVALID_NUMERIC",
+    "CONTINUITY_FAIL",
+    "CONTINUITY_UNKNOWN",
+    "LINEAGE_INCOMPLETE",
+    "AS_OF_VIOLATION",
+    "DENOMINATOR_ZERO",
+    "ALGORITHM_POLICY_UNRESOLVED",
+    "SOURCE_CONFLICT",
+    "EVENT_LOOKUP_UNAVAILABLE",
+    "KNOWN_EVENT_HANDLED",
+    "NO_ACCEPTED_CANONICAL_PRICE_OBSERVATIONS"
+  ],
+  "empty_event_result_is_no_event": false,
+  "unavailable_is_zero_or_false": false,
+  "availability_contract_defined": "YES",
+  "status": "PASS"
+}

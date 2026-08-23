@@ -1,0 +1,17 @@
+variant,matching_window_sessions,legacy_minus_a2_session_delta,match_count,match_pct,interpretation,status,legacy_earlier_count,same_session_count,a2_earlier_count,mean_delta_sessions,median_delta_sessions
+V0_LEGACY5,1,-1,220,0.2777777777777778,negative=Legacy earlier; zero=same session; positive=Legacy later/A2 earlier,AVAILABLE,,,,,
+V0_LEGACY5,1,0,560,0.7070707070707071,negative=Legacy earlier; zero=same session; positive=Legacy later/A2 earlier,AVAILABLE,,,,,
+V0_LEGACY5,1,1,12,0.015151515151515152,negative=Legacy earlier; zero=same session; positive=Legacy later/A2 earlier,AVAILABLE,,,,,
+V0_LEGACY5,1,SUMMARY,792,1.0,negative=Legacy earlier; zero=same session; positive=Legacy later/A2 earlier,AVAILABLE,220,560,12,-0.26262626262626265,0.0
+V1_LEGACY5_MA20,1,-1,220,0.2777777777777778,negative=Legacy earlier; zero=same session; positive=Legacy later/A2 earlier,AVAILABLE,,,,,
+V1_LEGACY5_MA20,1,0,560,0.7070707070707071,negative=Legacy earlier; zero=same session; positive=Legacy later/A2 earlier,AVAILABLE,,,,,
+V1_LEGACY5_MA20,1,1,12,0.015151515151515152,negative=Legacy earlier; zero=same session; positive=Legacy later/A2 earlier,AVAILABLE,,,,,
+V1_LEGACY5_MA20,1,SUMMARY,792,1.0,negative=Legacy earlier; zero=same session; positive=Legacy later/A2 earlier,AVAILABLE,220,560,12,-0.26262626262626265,0.0
+V2_LEGACY5_MA60,1,-1,208,0.26666666666666666,negative=Legacy earlier; zero=same session; positive=Legacy later/A2 earlier,AVAILABLE,,,,,
+V2_LEGACY5_MA60,1,0,560,0.717948717948718,negative=Legacy earlier; zero=same session; positive=Legacy later/A2 earlier,AVAILABLE,,,,,
+V2_LEGACY5_MA60,1,1,12,0.015384615384615385,negative=Legacy earlier; zero=same session; positive=Legacy later/A2 earlier,AVAILABLE,,,,,
+V2_LEGACY5_MA60,1,SUMMARY,780,1.0,negative=Legacy earlier; zero=same session; positive=Legacy later/A2 earlier,AVAILABLE,208,560,12,-0.2512820512820513,0.0
+V3_LEGACY5_MA20_MA60,1,-1,208,0.26666666666666666,negative=Legacy earlier; zero=same session; positive=Legacy later/A2 earlier,AVAILABLE,,,,,
+V3_LEGACY5_MA20_MA60,1,0,560,0.717948717948718,negative=Legacy earlier; zero=same session; positive=Legacy later/A2 earlier,AVAILABLE,,,,,
+V3_LEGACY5_MA20_MA60,1,1,12,0.015384615384615385,negative=Legacy earlier; zero=same session; positive=Legacy later/A2 earlier,AVAILABLE,,,,,
+V3_LEGACY5_MA20_MA60,1,SUMMARY,780,1.0,negative=Legacy earlier; zero=same session; positive=Legacy later/A2 earlier,AVAILABLE,208,560,12,-0.2512820512820513,0.0

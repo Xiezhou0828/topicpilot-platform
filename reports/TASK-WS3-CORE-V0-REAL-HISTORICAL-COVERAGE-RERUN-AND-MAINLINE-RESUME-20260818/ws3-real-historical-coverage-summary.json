@@ -1,0 +1,110 @@
+{
+  "task_id": "TASK-WS3-CORE-V0-REAL-HISTORICAL-COVERAGE-RERUN-AND-MAINLINE-RESUME-20260818",
+  "execution": {
+    "mode": "REAL_HISTORICAL_COVERAGE_AUDIT_ONLY",
+    "database_runtime": "localhost:5432/topicpilot",
+    "database_writes": false,
+    "migrations_run": false,
+    "walk_forward_run": false,
+    "performance_metrics_produced": false,
+    "strategy_review_run": false,
+    "production_mutation": false
+  },
+  "frozen_protocol": {
+    "protocol_id": "core-v0-walk-forward.v1",
+    "development": "2026-02-02..2026-06-30",
+    "validation": "2026-07-01..2026-07-31",
+    "holdout": "2026-08-01..2026-08-13",
+    "outcomes": [
+      "T+1",
+      "T+3",
+      "T+5",
+      "T+10"
+    ],
+    "minimum_prior_canonical_trading_sessions": 60,
+    "tuning_optimization": "PROHIBITED",
+    "unchanged": true
+  },
+  "source_reconciliation": {
+    "expected": {
+      "real_historical_row_count": 63826,
+      "distinct_instrument_count": 507,
+      "date_min": "2026-02-02",
+      "date_max": "2026-08-13",
+      "source_distribution": {
+        "TWSE_OFFICIAL_DAILY": 39523,
+        "TPEX_OFFICIAL_DAILY": 24303
+      }
+    },
+    "observed": {
+      "real_historical_row_count": 63826,
+      "distinct_instrument_count": 507,
+      "date_min": "2026-02-02",
+      "date_max": "2026-08-13",
+      "source_distribution": {
+        "TPEX_OFFICIAL_DAILY": 24303,
+        "TWSE_OFFICIAL_DAILY": 39523
+      }
+    },
+    "pass": true,
+    "migration_head": "0031_task_topic_structural_role_score_projection",
+    "reader": "topicpilot_api.historical_read_model.read_historical_bars"
+  },
+  "coverage": {
+    "active_instrument_universe_count": 508,
+    "real_instrument_count": 507,
+    "real_observation_count_from_reader": 63826,
+    "ma60_calculable_instrument_count": 507,
+    "ma60_noncalculable_instrument_count": 0,
+    "ma60_calculable_instrument_date_count": 33913,
+    "ma60_insufficient_history_instrument_date_count": 29913,
+    "temporal_eligible_instrument_date_count": 33406,
+    "method_a_eligible_instrument_date_count": 16086,
+    "method_a_below_ma60_instrument_date_count": 7589,
+    "known_event_affected_window_count": 9778,
+    "known_event_excluded_count": 9778,
+    "known_event_corrected_count": 0,
+    "known_event_annotated_count": 0,
+    "partial_event_authority_window_count": 336,
+    "data_gap_count": 19,
+    "duplicate_observation_count": 0,
+    "invalid_identity_count": 0,
+    "synthetic_row_count": 0,
+    "invalid_source_lineage_count": 0,
+    "continuity_unknown_instrument_date_count": 63826,
+    "earliest_defensible_core_v0_date": "2026-05-12",
+    "latest_defensible_core_v0_date": "2026-08-13",
+    "defensible_research_trading_day_count": 66
+  },
+  "policy": {
+    "continuity_policy": "EVENT_AWARE_RESEARCH",
+    "continuity_unknown_preserved": true,
+    "continuity_unknown_still_fail_closed": true,
+    "continuity_unknown_blocks_ws3_research": false,
+    "partial_authority_is_not_no_event": true,
+    "forward_outcomes_used_for_candidate_formation": false
+  },
+  "event_authority": {
+    "dataset_version": "REC-A1-CA-EVENTS-V0",
+    "dataset_schema_version": "rec-a1-corporate-action-research-dataset.v0",
+    "dataset_content_hash": "4d9b4912bd1c4613510e60c5cf4b5a629c367e1c94dd733d3b1dc3f935e0eb5d",
+    "dataset_file_sha256": "78f684d5b014f43f3b34393be1bc644805e67f05e18b21e7ab98d075a1cd60b2",
+    "source_clean_worktree_file_sha256": "78f684d5b014f43f3b34393be1bc644805e67f05e18b21e7ab98d075a1cd60b2",
+    "canonical_worktree_file_sha256": "1091f97268ac01342a1803bc511780b9948c06c50176e367588b829af0d530e0",
+    "canonical_provenance_reconciliation": "LOGICAL_DATASET_CONTENT_MATCHES; BYTE_SHA_DIFFERENCE_IS_CHECKOUT_LINE_ENDING_ONLY; FREEZE_NOT_REOPENED",
+    "event_count": 372,
+    "authority_state_counts": {
+      "AUTHORITATIVE": 353,
+      "PARTIAL": 19
+    },
+    "authoritative_event_count": 353,
+    "partial_event_count": 19,
+    "source_path": "reports\\TASK-REC-A1-CORPORATE-ACTION-RESEARCH-DATASET-IMPLEMENTATION\\REC-A1-CA-EVENTS-V0.json"
+  },
+  "bounded_limitations": [
+    "REC-A1 research-only residual uncertainty remains UNKNOWN and was not re-reviewed.",
+    "PARTIAL event authority was tracked and not converted to a verified event or no-event assertion.",
+    "Formal WS2 technical publication remains governed by its own continuity contract.",
+    "Forward outcomes and the Core V0 walk-forward were not run in this task."
+  ]
+}

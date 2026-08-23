@@ -1,0 +1,233 @@
+{
+  "candidate_definitions_unchanged": true,
+  "entry": {
+    "artifact": "reports/TASK-WS3-CORE-V0-A2-ENTRY-AND-INVALIDATION-CANDIDATE-CONFIRMATORY-VALIDATION-20260819/ws3-core-v0-a2-entry-confirmatory-freeze.json",
+    "artifact_sha256": "5a039ee8e7f9e27750d5df84d40864166ea88d3f481bc54f1083871114fb60f8",
+    "candidate_count": 5,
+    "candidates": null,
+    "frozen_spec_hash": "6e4cc504f969098e263cfa8e7c43240e9575a3f72f0641ba39da22794ea9870d",
+    "primary_proxy": "OBSERVABLE_A2_CLOSE"
+  },
+  "formation": {
+    "artifact": "reports/TASK-WS3-CORE-V0-A2-ENTRY-AND-BREAKOUT-INVALIDATION-RESEARCH-20260819/ws3-core-v0-a2-event-definition.json",
+    "artifact_sha256": "12f9ac91dfc75199569effe2237fcd7f0aa4e6939df715ecd5e9e43c4f4b73b9",
+    "definition": {
+      "candidate_id": "CORE_V0_A2_CONFIRMED_BREAKOUT",
+      "confirmation_policy": "single-session-close",
+      "definition_version": "core-v0-a2-confirmed-breakout.v1",
+      "evaluation_session_excluded_from_reference": true,
+      "formation_rule": "L1 Close(T) >= MA60(T), mature reference, and Close(T) > Reference(T)",
+      "gap_above_reference_can_form_a2": true,
+      "lineage_fields": [
+        "candidate_record_id",
+        "candidate_source_lineage",
+        "reference_birth_session",
+        "reference_age_sessions"
+      ],
+      "pit_validity": true,
+      "reference_formula": "max(High(s) for prior 20 accepted sessions strictly before T)",
+      "reference_maturity_sessions": 5,
+      "reference_policy_id": "PRIOR_20_ACCEPTED_SESSION_HIGH",
+      "source": "services/api/src/topicpilot_api/research/core_v0_candidate_panel.py",
+      "uses_intraday_high_for_confirmation": false
+    },
+    "event_deduplication": {
+      "dedup_selected_before_outcome_review": true,
+      "distinct_event_start": "first A2 row for an instrument, or an A2 row whose canonical session index is not immediately after the prior A2 row for that instrument",
+      "event_id": "SHA256(instrument_id|A2_start_date|A2_definition_version)",
+      "persistent_observation": "an A2 row immediately following the prior A2 row for the same instrument in canonical session order",
+      "profitability_based_deduplication": false,
+      "raw_observation_unit": "one formed A2 candidate panel row at one accepted canonical trading session",
+      "rule_id": "A2_CONTIGUOUS_CANONICAL_STATE_EPISODE_V1"
+    },
+    "formation_changed": false
+  },
+  "formation_unchanged": true,
+  "invalidation": {
+    "artifact": "reports/TASK-WS3-CORE-V0-A2-ENTRY-AND-INVALIDATION-CANDIDATE-CONFIRMATORY-VALIDATION-20260819/ws3-core-v0-a2-invalidation-confirmatory-freeze.json",
+    "artifact_sha256": "0d474ca2512ed97456037e8b28ec73f0e2e93fa1a7ccf064fb2df396b5878fa2",
+    "candidate_count": 15,
+    "candidate_families": [
+      {
+        "candidate_id": "DEPTH_0_TO_MINUS_1PCT",
+        "definition": {
+          "band": "0_TO_MINUS_1PCT",
+          "lower_exclusive": -0.01,
+          "upper_inclusive": 0.0
+        },
+        "depth_band": "0_TO_MINUS_1PCT",
+        "family": "REFERENCE_LOSS_DEPTH"
+      },
+      {
+        "candidate_id": "DEPTH_MINUS_1_TO_2PCT",
+        "definition": {
+          "band": "MINUS_1_TO_2PCT",
+          "lower_exclusive": -0.02,
+          "upper_inclusive": -0.01
+        },
+        "depth_band": "MINUS_1_TO_2PCT",
+        "family": "REFERENCE_LOSS_DEPTH"
+      },
+      {
+        "candidate_id": "DEPTH_MINUS_2_TO_3PCT",
+        "definition": {
+          "band": "MINUS_2_TO_3PCT",
+          "lower_exclusive": -0.03,
+          "upper_inclusive": -0.02
+        },
+        "depth_band": "MINUS_2_TO_3PCT",
+        "family": "REFERENCE_LOSS_DEPTH"
+      },
+      {
+        "candidate_id": "DEPTH_MINUS_3_TO_5PCT",
+        "definition": {
+          "band": "MINUS_3_TO_5PCT",
+          "lower_exclusive": -0.05,
+          "upper_inclusive": -0.03
+        },
+        "depth_band": "MINUS_3_TO_5PCT",
+        "family": "REFERENCE_LOSS_DEPTH"
+      },
+      {
+        "candidate_id": "DEPTH_BELOW_MINUS_5PCT",
+        "definition": {
+          "band": "BELOW_MINUS_5PCT",
+          "lower_exclusive": null,
+          "upper_inclusive": -0.05
+        },
+        "depth_band": "BELOW_MINUS_5PCT",
+        "family": "REFERENCE_LOSS_DEPTH"
+      },
+      {
+        "candidate_id": "TIME_RECLAIM_WITHIN_1_SESSION",
+        "definition": "sessions_to_reclaim == 1",
+        "family": "TIME_BELOW_REFERENCE",
+        "time_state": "RECLAIM_WITHIN_1_SESSION"
+      },
+      {
+        "candidate_id": "TIME_RECLAIM_2_SESSIONS",
+        "definition": "sessions_to_reclaim == 2",
+        "family": "TIME_BELOW_REFERENCE",
+        "time_state": "RECLAIM_2_SESSIONS"
+      },
+      {
+        "candidate_id": "TIME_RECLAIM_3_PLUS_OR_NO_RECLAIM_H10",
+        "definition": "sessions_to_reclaim >= 3 or no reclaim within H10 with observed below-reference duration >= 3 sessions",
+        "family": "TIME_BELOW_REFERENCE",
+        "time_state": "RECLAIM_3_PLUS_OR_NO_RECLAIM_H10"
+      },
+      {
+        "candidate_id": "RECLAIMED_REFERENCE_LOSS",
+        "definition": "reference_loss and reference_reclaimed",
+        "family": "RECLAIM_STATUS",
+        "reclaim_state": "REFERENCE_LOSS_THEN_RECLAIM"
+      },
+      {
+        "candidate_id": "FAILED_RECLAIM_REFERENCE_LOSS",
+        "definition": "reference_loss and not reference_reclaimed within H10",
+        "family": "RECLAIM_STATUS",
+        "reclaim_state": "REFERENCE_LOSS_NO_RECLAIM_WITHIN_H10"
+      },
+      {
+        "candidate_id": "CLOSE_BELOW_THEN_RECLAIM",
+        "definition": "path_category == CLOSE_BELOW_REFERENCE_THEN_RECLAIM",
+        "family": "CLOSE_BELOW_REFERENCE",
+        "path_state": "CLOSE_BELOW_REFERENCE_THEN_RECLAIM"
+      },
+      {
+        "candidate_id": "LOSS_NO_RECLAIM_PATH",
+        "definition": "path_category == LOSS_NO_RECLAIM_WITHIN_H10",
+        "family": "CLOSE_BELOW_REFERENCE",
+        "path_state": "LOSS_NO_RECLAIM_WITHIN_H10"
+      },
+      {
+        "candidate_id": "SHALLOW_LOSS_QUICK_RECLAIM",
+        "definition": "depth in first three loss bands and reclaim within 1 session",
+        "family": "PREDECLARED_COMBINATION"
+      },
+      {
+        "candidate_id": "DEEP_LOSS_NO_RECLAIM",
+        "definition": "BELOW_MINUS_5PCT and no reclaim within H10",
+        "family": "PREDECLARED_COMBINATION"
+      },
+      {
+        "candidate_id": "MULTI_SESSION_BELOW_NO_RECLAIM",
+        "definition": "observed below-reference duration >= 3 sessions and no reclaim within H10",
+        "family": "PREDECLARED_COMBINATION"
+      }
+    ],
+    "decision_framework": {
+      "confirmed_requires": "sample floor, expected depth/time/reclaim direction, TPE/TWO and temporal direction not contradictory, and no concentration/outlier caveat that overturns the result",
+      "invalidation_comparison": "DEEP_LOSS_NO_RECLAIM versus SHALLOW_LOSS_QUICK_RECLAIM, using reclaim status and post-loss recovery direction; no stop threshold",
+      "no_combinatorial_search": true,
+      "no_single_metric_decides": true,
+      "no_stop_optimization": true,
+      "normal_retest_comparison": "shallow first-three depth bands versus BELOW_MINUS_5PCT, using reclaim rate and post-loss T+5/T+10 recovery direction before segment caveats",
+      "sample_floor_confirmed": 40,
+      "sample_floor_supported": 20,
+      "supported_requires": "sample floor and expected core path direction with bounded stability or maturity limitations"
+    },
+    "frozen_spec_hash": "6e4cc504f969098e263cfa8e7c43240e9575a3f72f0641ba39da22794ea9870d",
+    "post_loss_semantics": {
+      "exceeds_prior_a2_close": "any post-loss future Close >= A2 Close within observed H10 path",
+      "outcomes_evaluation_only": true,
+      "post_loss_horizon_path": "the next h canonical sessions strictly after the first loss session",
+      "post_loss_mae": "min(Low / BREAKOUT_REFERENCE_PRICE - 1) over the next h sessions strictly after loss",
+      "post_loss_mfe": "max(High / BREAKOUT_REFERENCE_PRICE - 1) over the next h sessions strictly after loss",
+      "post_loss_return": "Close(loss+h) / BREAKOUT_REFERENCE_PRICE - 1",
+      "primary_loss": "first future canonical session with Low < BREAKOUT_REFERENCE_PRICE",
+      "reclaim": "first session at or after loss with Close >= BREAKOUT_REFERENCE_PRICE"
+    }
+  },
+  "no_retuning": {
+    "extension_band_optimization": false,
+    "invalidation_reclaim_stop_optimization": false,
+    "origin_definition_changed": false,
+    "posthoc_repair": false,
+    "prior_20_high_changed": false,
+    "single_session_confirmation_changed": false,
+    "threshold_search": false
+  },
+  "p1e_capacity_sha256": "1f794fc8665139a0f2a795fae276097244f10d4b2a53ec59f5385e42308e15c8",
+  "p1e_invalidation_capacity_sha256": "180d5e0f3f62a61d2e4e9cb81a5ad4f700cd10881445b14c8764faf05d75530b",
+  "p1e_origin_comparison_sha256": "f2086b57b59316924103f3dad583611582f1cb1246afcd665298f930da5397d0",
+  "p1e_origin_panel_sha256": "80bb9ff67b5fbfc27b6961f002f1e0f7d833dc4fea3f65ff385ba99ca115f62e",
+  "p1e_panel_sha256": "65148ce7a6c4014800246c1a3fa1b18585d05b28697937a01628dd26f85c915b",
+  "promotion_status": "EVIDENCE_ONLY_NOT_PROMOTED",
+  "schema_version": "ws3-p2e-a2-frozen-contract-manifest.v1",
+  "source_contract": {
+    "accepted_ohlcv_row_count": 288881,
+    "authority_version": "sdf-603-ohlcv-2y.v1",
+    "expected": {
+      "a2_event_count": 5277,
+      "accepted_rows": 288881,
+      "instruments": 603,
+      "p1e_aggregate_sha256": "363af6741a6edbbb2b4a092aa1b3938e0492f5fb6169885dd05df12a7691224d",
+      "source_sha256": "e803733e796d8f4d8cf00575cd4045f28c9364572fc61b31ef490e8a65ff47a4"
+    },
+    "formal_instrument_count": 603,
+    "p1e_a2_event_count": 5277,
+    "p1e_aggregate_sha256": "363af6741a6edbbb2b4a092aa1b3938e0492f5fb6169885dd05df12a7691224d",
+    "p1e_reproducible": "YES",
+    "p1e_source_canonical_head": "c40aa42e7cac665386009f29c94a8dafce896427",
+    "panel_row_count": 5277,
+    "quality_snapshot": {
+      "adjustment_state": "UNKNOWN_RAW_ONLY",
+      "future_session_dependency_in_formation": false,
+      "lifecycle_leakage_count": 0,
+      "lineage_incomplete_rows": 0,
+      "lookahead_leakage_detected": false,
+      "no_data_synthetic_fill_count": 0,
+      "quarantine_leakage_count": 0,
+      "unknown_not_coerced_to_false": true
+    },
+    "source_canonical_head": "3402adfa9129ca2a6cfad163835b90b54a6d9f3d",
+    "source_manifest_sha256": "2c64f06f67d2d74b2a116be22f2c22fce5df131566f3ff93a99a9a810aa48443",
+    "source_normalized_aggregate_sha256": "e803733e796d8f4d8cf00575cd4045f28c9364572fc61b31ef490e8a65ff47a4",
+    "source_window": [
+      "2024-08-13",
+      "2026-08-13"
+    ]
+  },
+  "task_id": "TASK-WS3-P2E-A2-EXPANDED-CONFIRMATORY-VALIDATION-AND-ADVANTAGE-REVALIDATION-20260820"
+}

@@ -1,0 +1,130 @@
+{
+  "a1_formation_changed": false,
+  "candidate_count": 7,
+  "candidates": [
+    {
+      "candidate_id": "recent_20_high_proximity__UPPER_GE_Q30",
+      "candidate_type": "SINGLE_FEATURE",
+      "combination_logic": null,
+      "feature_definition": "close_t / max(high_{t-19..t}) - 1",
+      "feature_name": "recent_20_high_proximity",
+      "operator": ">=",
+      "pit_timestamp_rule": "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP",
+      "threshold_quantile": "Q30",
+      "threshold_value": -0.02684279376635195
+    },
+    {
+      "candidate_id": "recent_20_high_proximity__UPPER_GE_Q40",
+      "candidate_type": "SINGLE_FEATURE",
+      "combination_logic": null,
+      "feature_definition": "close_t / max(high_{t-19..t}) - 1",
+      "feature_name": "recent_20_high_proximity",
+      "operator": ">=",
+      "pit_timestamp_rule": "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP",
+      "threshold_quantile": "Q40",
+      "threshold_value": -0.02413793103448276
+    },
+    {
+      "candidate_id": "recent_20_high_proximity__UPPER_GE_Q50",
+      "candidate_type": "SINGLE_FEATURE",
+      "combination_logic": null,
+      "feature_definition": "close_t / max(high_{t-19..t}) - 1",
+      "feature_name": "recent_20_high_proximity",
+      "operator": ">=",
+      "pit_timestamp_rule": "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP",
+      "threshold_quantile": "Q50",
+      "threshold_value": -0.02147248243559719
+    },
+    {
+      "candidate_id": "return_5d__LOWER_LE_Q60",
+      "candidate_type": "SINGLE_FEATURE",
+      "combination_logic": null,
+      "feature_definition": "close_t / close_{t-5} - 1",
+      "feature_name": "return_5d",
+      "operator": "<=",
+      "pit_timestamp_rule": "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP",
+      "threshold_quantile": "Q60",
+      "threshold_value": 0.07389330024813896
+    },
+    {
+      "candidate_id": "true_range_pct__LOWER_LE_Q60",
+      "candidate_type": "SINGLE_FEATURE",
+      "combination_logic": null,
+      "feature_definition": "(high_t - low_t) / close_t",
+      "feature_name": "true_range_pct",
+      "operator": "<=",
+      "pit_timestamp_rule": "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP",
+      "threshold_quantile": "Q60",
+      "threshold_value": 0.05599185750636132
+    },
+    {
+      "candidate_id": "true_range_pct__LOWER_LE_Q70",
+      "candidate_type": "SINGLE_FEATURE",
+      "combination_logic": null,
+      "feature_definition": "(high_t - low_t) / close_t",
+      "feature_name": "true_range_pct",
+      "operator": "<=",
+      "pit_timestamp_rule": "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP",
+      "threshold_quantile": "Q70",
+      "threshold_value": 0.06408819993349192
+    },
+    {
+      "candidate_id": "recent_20_high_proximity__AND__true_range_pct",
+      "candidate_type": "TWO_FEATURE_COMBINATION",
+      "combination_logic": {
+        "left_region_id": "recent_20_high_proximity__UPPER_GE_Q30",
+        "maximum_features": 2,
+        "operator": "AND",
+        "right_region_id": "true_range_pct__LOWER_LE_Q70"
+      },
+      "feature_definition": [
+        "close_t / max(high_{t-19..t}) - 1",
+        "(high_t - low_t) / close_t"
+      ],
+      "feature_name": "recent_20_high_proximity AND true_range_pct",
+      "operator": [
+        ">=",
+        "<="
+      ],
+      "pit_timestamp_rule": [
+        "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP",
+        "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP"
+      ],
+      "threshold_quantile": [
+        "Q30",
+        "Q70"
+      ],
+      "threshold_value": null
+    }
+  ],
+  "execution_performed_by_this_contract": false,
+  "frozen_spec_hash": "6e4cc504f969098e263cfa8e7c43240e9575a3f72f0641ba39da22794ea9870d",
+  "new_combination_search_performed": false,
+  "new_feature_search_performed": false,
+  "outcome_maturity_requirements": {
+    "T+10_required_for_full_maturity": true,
+    "all_horizons_are_evaluation_only": true,
+    "candidate_formation_information_le_T_only": true,
+    "corporate_action_exclusion_can_only_invalidate_outcome": true,
+    "minimum_matured_events_per_primary_cohort": 20,
+    "minimum_matured_events_total": 40
+  },
+  "required_future_fields": [
+    "evaluation_session",
+    "symbol",
+    "candidate_inputs_as_of_T",
+    "PIT_source_lineage",
+    "T+1_outcome",
+    "T+3_outcome",
+    "T+5_outcome",
+    "T+10_outcome",
+    "REC_A1_integrity_state"
+  ],
+  "schema_version": "ws3-core-v0-a1-quality-filter-forward-validation-contract.v1",
+  "source_canonical_head": "2468ee6b5093dd2a37353424c74d9d719c643bb9",
+  "status": "FROZEN_AWAITING_FORWARD_EVIDENCE",
+  "task_id": "TASK-WS3-CORE-V0-A2-ENTRY-AND-BREAKOUT-INVALIDATION-RESEARCH-20260819",
+  "threshold_retuning_performed": false,
+  "thresholds_immutable_until_next_confirmatory_review": true,
+  "upstream_task_id": "TASK-WS3-CORE-V0-A1-QUALITY-FILTER-CONFIRMATORY-VALIDATION-20260818"
+}

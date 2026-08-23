@@ -33,6 +33,7 @@ class TopicLifecycleResult(Base, IdentityMixin, UpdatedAtMixin):
         ),
         Index("ix_topic_lifecycle_results_date", "evaluation_date", "topic_slug"),
         Index("ix_topic_lifecycle_results_topic_date", "topic_id", "evaluation_date"),
+        Index("ix_topic_lifecycle_results_snapshot", "snapshot_id"),
     )
 
     evaluation_date: Mapped[date] = mapped_column(Date, nullable=False)
@@ -62,6 +63,27 @@ class TopicLifecycleResult(Base, IdentityMixin, UpdatedAtMixin):
         String(16), nullable=False, default="SHADOW", server_default="SHADOW"
     )
     snapshot_date: Mapped[date | None] = mapped_column(Date)
+    # Nullable for pre-closure shadow rows; new formal rows are required to
+    # carry these exact upstream identities by TopicLifecycleEngine.
+    snapshot_id: Mapped[UUID | None] = mapped_column(
+        ForeignKey("topicpilot.topic_snapshots.id", ondelete="RESTRICT")
+    )
+    snapshot_identity: Mapped[str | None] = mapped_column(String(256))
+    membership_snapshot_id: Mapped[str | None] = mapped_column(String(128))
+    membership_snapshot_hash: Mapped[str | None] = mapped_column(String(128))
+    relation_version: Mapped[str | None] = mapped_column(String(128))
+    source_artifact_id: Mapped[str | None] = mapped_column(String(128))
+    source_artifact_hash: Mapped[str | None] = mapped_column(String(128))
+    lineage_hash: Mapped[str | None] = mapped_column(String(128))
+    member_fact_hashes: Mapped[dict[str, str] | None] = mapped_column(JSONB)
+    correction_sequence: Mapped[int | None] = mapped_column(Integer)
+    supersedes_snapshot_id: Mapped[UUID | None] = mapped_column(
+        ForeignKey("topicpilot.topic_snapshots.id", ondelete="RESTRICT")
+    )
+    superseded_by_snapshot_id: Mapped[UUID | None] = mapped_column(
+        ForeignKey("topicpilot.topic_snapshots.id", ondelete="RESTRICT")
+    )
+    supersession_state: Mapped[str | None] = mapped_column(String(32))
     average_change: Mapped[Decimal | None] = mapped_column(Numeric(12, 4))
     coverage_pct: Mapped[Decimal | None] = mapped_column(Numeric(7, 3))
 

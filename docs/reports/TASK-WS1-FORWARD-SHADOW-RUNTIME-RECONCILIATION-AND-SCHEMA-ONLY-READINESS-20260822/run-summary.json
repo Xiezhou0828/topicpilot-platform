@@ -1,0 +1,77 @@
+{
+  "taskId": "TASK-WS1-FORWARD-SHADOW-RUNTIME-RECONCILIATION-AND-SCHEMA-ONLY-READINESS-20260822",
+  "status": "COMPLETE_WITH_CANONICAL_PROMOTION_BLOCKED",
+  "isolatedBaseCanonicalHead": "b569430d2a358cab6a5915aeaacff2810df4913c",
+  "isolatedTaskCommit": "c46506e",
+  "reportCommit": "9a832f6",
+  "canonicalHeadUnchanged": "b569430d2a358cab6a5915aeaacff2810df4913c",
+  "forwardShadowEvidenceAccumulationReady": "YES_IN_ISOLATED_RUNTIME",
+  "canonicalRuntimeReady": "NO_PROMOTION_BLOCKED_OWNER_DIRTY_AND_BASELINE_TS_GATE",
+  "topicLifecycleClosureReady": false,
+  "migration0032": {
+    "status": "EXECUTED_SCHEMA_ONLY_LOCAL",
+    "revision": "0032_task_ws1_topic_lifecycle_contract_gap_closure",
+    "currentHeadAfter": "0032_task_ws1_topic_lifecycle_contract_gap_closure",
+    "historicalBackfill": "NO",
+    "productionMutation": "NO"
+  },
+  "forwardChain": {
+    "date": "2026-08-12",
+    "formalSnapshots": 92,
+    "memberFacts": 848,
+    "priceEvidenceInstruments": 603,
+    "dateBoundPriceMatches": 847,
+    "snapshotsWithCompleteLineage": 92,
+    "chainReady": true,
+    "readOnlyAvailability": {
+      "date": "2026-08-13",
+      "formalSnapshots": 92,
+      "memberFacts": 847,
+      "dateBoundPriceMatches": 847,
+      "snapshotsWithCompleteLineage": 92,
+      "shadowExecuted": false
+    }
+  },
+  "shadowDryRun": {
+    "evaluationMode": "SHADOW",
+    "topicResults": 92,
+    "persistedLineageBoundResults": 92,
+    "persistedNewResults": 91,
+    "blockedTopics": 1,
+    "dataStatusCounts": {
+      "PENDING": 76,
+      "SHADOW": 3,
+      "INSUFFICIENT_DATA": 12,
+      "WAITING_FOR_FORMAL_LINEAGE": 1
+    },
+    "formalLifecyclePublication": "NO"
+  },
+  "schedulerAndObservability": {
+    "schedulerPostCloseHook": true,
+    "formalPitMaterializerBeforeLifecycle": true,
+    "postCloseMetadataCarrier": true,
+    "localFormalRowsBefore": 460,
+    "localFormalRowsAfter": 460,
+    "idempotentFormalRows": 92,
+    "formalRowsWrittenByDryRun": 0
+  },
+  "quality": {
+    "pytest": "31 passed",
+    "frontendNodeContract": "7 passed",
+    "frontendChangedFilesTypeScript": "passed",
+    "frontendFullProjectTypeScript": "baseline failure outside WS1: today-home.ts vs canonical untracked api-client contract",
+    "ruffCheck": "passed",
+    "gitDiffCheck": "passed"
+  },
+  "governance": {
+    "promotion": "NO_OWNER_DIRTY_STATE_PRESERVED_AND_BASELINE_TS_GATE",
+    "deployment": "NO",
+    "remotePush": "NO",
+    "nextTaskChanged": false,
+    "otherWorkstreamsChanged": {
+      "WS2": false,
+      "WS3": false,
+      "WS4": false
+    }
+  }
+}

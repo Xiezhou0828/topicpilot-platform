@@ -18,6 +18,7 @@ from topicpilot_api.live_api import router as live_router
 from topicpilot_api.opportunity_shadow_api import router as opportunity_shadow_router
 from topicpilot_api.problems import ApiProblem, NotFoundProblem, install_problem_handlers
 from topicpilot_api.production_read_model_api import router as production_read_model_router
+from topicpilot_api.release_provenance import runtime_git_sha
 from topicpilot_api.repository import (
     data_status,
     get_stock,
@@ -90,7 +91,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     @application.get("/healthz", response_model=HealthResponse, tags=["operations"])
     def healthz() -> dict[str, str]:
-        return {"status": "ok"}
+        return {"status": "ok", "gitSha": runtime_git_sha()}
 
     @application.get(
         "/readyz",
@@ -108,7 +109,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                 "PostgreSQL is unavailable or migrations have not completed.",
                 "https://topicpilot.example/problems/not-ready",
             ) from exc
-        return {"status": "ready"}
+        return {"status": "ready", "gitSha": runtime_git_sha()}
 
     @application.get("/api/v1/meta/data-status", response_model=DataStatus, tags=["metadata"])
     def api_data_status(session: DbSession, request: Request) -> dict:

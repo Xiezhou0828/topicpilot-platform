@@ -1,0 +1,477 @@
+{
+  "candidates": {
+    "recent_20_high_proximity__AND__true_range_pct": {
+      "formal": {
+        "date_concentration_class": "LOW",
+        "event_count": 1878,
+        "instrument_concentration_class": "LOW",
+        "market_counts": {
+          "TPE": 1384,
+          "TWO": 494
+        },
+        "market_shares": {
+          "TPE": "0.7369542066027689030883919063",
+          "TWO": "0.2630457933972310969116080937"
+        },
+        "top10_instrument_count": 302,
+        "top10_instrument_share": "0.1608093716719914802981895634",
+        "top1_date": "2026-02-25",
+        "top1_date_count": 42,
+        "top1_date_share": "0.02236421725239616613418530351",
+        "top5_instrument_count": 187,
+        "top5_instrument_share": "0.09957401490947816826411075612"
+      },
+      "holdout": {
+        "date_concentration_class": "MEDIUM",
+        "event_count": 119,
+        "instrument_concentration_class": "MEDIUM",
+        "market_counts": {
+          "TPE": 103,
+          "TWO": 16
+        },
+        "market_shares": {
+          "TPE": "0.8655462184873949579831932773",
+          "TWO": "0.1344537815126050420168067227"
+        },
+        "top10_instrument_count": 54,
+        "top10_instrument_share": "0.4537815126050420168067226891",
+        "top1_date": "2026-08-10",
+        "top1_date_count": 20,
+        "top1_date_share": "0.1680672268907563025210084034",
+        "top5_instrument_count": 31,
+        "top5_instrument_share": "0.2605042016806722689075630252"
+      },
+      "holdout_t5_baseline_stats": {
+        "max": "0.378691372321945570353213665",
+        "mean": "0.02033486541174244276753211566",
+        "median": "0.007751937984496124031007752",
+        "min": "-0.1039823008849557522123893805",
+        "n": 49,
+        "p05": "-0.09443207126948774734966592428",
+        "p95": "0.1754358506151905360027824878",
+        "trimmed_mean_10pct": "0.01006625541257391722534701657",
+        "win_rate": "0.5714285714285714285714285714"
+      },
+      "holdout_t5_filtered_stats": {
+        "max": "0.183006535947712418300653595",
+        "mean": "0.007819105740621880342234377691",
+        "median": "0.007250359529598497554459338",
+        "min": "-0.1039823008849557522123893805",
+        "n": 32,
+        "p05": "-0.1004492742492896090930036096",
+        "p95": "0.1003355704697986430547081556",
+        "trimmed_mean_10pct": "0.006533271383881458158323530931",
+        "win_rate": "0.5625"
+      },
+      "no_events_deleted": true,
+      "outlier_driven": false,
+      "outlier_rule": "mean improvement positive while median and 10-percent trimmed mean are non-positive on HOLDOUT T+5"
+    },
+    "recent_20_high_proximity__UPPER_GE_Q30": {
+      "formal": {
+        "date_concentration_class": "LOW",
+        "event_count": 2196,
+        "instrument_concentration_class": "LOW",
+        "market_counts": {
+          "TPE": 1558,
+          "TWO": 638
+        },
+        "market_shares": {
+          "TPE": "0.7094717668488160291438979964",
+          "TWO": "0.2905282331511839708561020036"
+        },
+        "top10_instrument_count": 302,
+        "top10_instrument_share": "0.1375227686703096539162112933",
+        "top1_date": "2026-02-25",
+        "top1_date_count": 45,
+        "top1_date_share": "0.02049180327868852459016393443",
+        "top5_instrument_count": 187,
+        "top5_instrument_share": "0.08515482695810564663023679417"
+      },
+      "holdout": {
+        "date_concentration_class": "MEDIUM",
+        "event_count": 131,
+        "instrument_concentration_class": "LOW",
+        "market_counts": {
+          "TPE": 107,
+          "TWO": 24
+        },
+        "market_shares": {
+          "TPE": "0.8167938931297709923664122137",
+          "TWO": "0.1832061068702290076335877863"
+        },
+        "top10_instrument_count": 54,
+        "top10_instrument_share": "0.4122137404580152671755725191",
+        "top1_date": "2026-08-12",
+        "top1_date_count": 22,
+        "top1_date_share": "0.1679389312977099236641221374",
+        "top5_instrument_count": 31,
+        "top5_instrument_share": "0.2366412213740458015267175573"
+      },
+      "holdout_t5_baseline_stats": {
+        "max": "0.378691372321945570353213665",
+        "mean": "0.02033486541174244276753211566",
+        "median": "0.007751937984496124031007752",
+        "min": "-0.1039823008849557522123893805",
+        "n": 49,
+        "p05": "-0.09443207126948774734966592428",
+        "p95": "0.1754358506151905360027824878",
+        "trimmed_mean_10pct": "0.01006625541257391722534701657",
+        "win_rate": "0.5714285714285714285714285714"
+      },
+      "holdout_t5_filtered_stats": {
+        "max": "0.252427184466019417475728155",
+        "mean": "0.01826751306503883293429712553",
+        "median": "0.010095874033748164147775861",
+        "min": "-0.1039823008849557522123893805",
+        "n": 38,
+        "p05": "-0.09881345518777359595269180554",
+        "p95": "0.1669188296161036207915597871",
+        "trimmed_mean_10pct": "0.01250243987016800441860451301",
+        "win_rate": "0.6052631578947368421052631579"
+      },
+      "no_events_deleted": true,
+      "outlier_driven": false,
+      "outlier_rule": "mean improvement positive while median and 10-percent trimmed mean are non-positive on HOLDOUT T+5"
+    },
+    "recent_20_high_proximity__UPPER_GE_Q40": {
+      "formal": {
+        "date_concentration_class": "LOW",
+        "event_count": 1882,
+        "instrument_concentration_class": "LOW",
+        "market_counts": {
+          "TPE": 1326,
+          "TWO": 556
+        },
+        "market_shares": {
+          "TPE": "0.7045696068012752391073326249",
+          "TWO": "0.2954303931987247608926673751"
+        },
+        "top10_instrument_count": 273,
+        "top10_instrument_share": "0.1450584484590860786397449522",
+        "top1_date": "2026-02-25",
+        "top1_date_count": 42,
+        "top1_date_share": "0.02231668437832093517534537726",
+        "top5_instrument_count": 173,
+        "top5_instrument_share": "0.09192348565356004250797024442"
+      },
+      "holdout": {
+        "date_concentration_class": "MEDIUM",
+        "event_count": 116,
+        "instrument_concentration_class": "LOW",
+        "market_counts": {
+          "TPE": 95,
+          "TWO": 21
+        },
+        "market_shares": {
+          "TPE": "0.8189655172413793103448275862",
+          "TWO": "0.1810344827586206896551724138"
+        },
+        "top10_instrument_count": 47,
+        "top10_instrument_share": "0.4051724137931034482758620690",
+        "top1_date": "2026-08-10",
+        "top1_date_count": 21,
+        "top1_date_share": "0.1810344827586206896551724138",
+        "top5_instrument_count": 27,
+        "top5_instrument_share": "0.2327586206896551724137931034"
+      },
+      "holdout_t5_baseline_stats": {
+        "max": "0.378691372321945570353213665",
+        "mean": "0.02033486541174244276753211566",
+        "median": "0.007751937984496124031007752",
+        "min": "-0.1039823008849557522123893805",
+        "n": 49,
+        "p05": "-0.09443207126948774734966592428",
+        "p95": "0.1754358506151905360027824878",
+        "trimmed_mean_10pct": "0.01006625541257391722534701657",
+        "win_rate": "0.5714285714285714285714285714"
+      },
+      "holdout_t5_filtered_stats": {
+        "max": "0.252427184466019417475728155",
+        "mean": "0.01517995787363454502280899985",
+        "median": "0.008405980317276374586285303",
+        "min": "-0.1039823008849557522123893805",
+        "n": 34,
+        "p05": "-0.09990400122878427101605099454",
+        "p95": "0.1707041722823644945613958813",
+        "trimmed_mean_10pct": "0.007929683824195536452412844321",
+        "win_rate": "0.5882352941176470588235294118"
+      },
+      "no_events_deleted": true,
+      "outlier_driven": false,
+      "outlier_rule": "mean improvement positive while median and 10-percent trimmed mean are non-positive on HOLDOUT T+5"
+    },
+    "recent_20_high_proximity__UPPER_GE_Q50": {
+      "formal": {
+        "date_concentration_class": "LOW",
+        "event_count": 1556,
+        "instrument_concentration_class": "LOW",
+        "market_counts": {
+          "TPE": 1097,
+          "TWO": 459
+        },
+        "market_shares": {
+          "TPE": "0.7050128534704370179948586118",
+          "TWO": "0.2949871465295629820051413882"
+        },
+        "top10_instrument_count": 236,
+        "top10_instrument_share": "0.1516709511568123393316195373",
+        "top1_date": "2026-02-25",
+        "top1_date_count": 36,
+        "top1_date_share": "0.02313624678663239074550128535",
+        "top5_instrument_count": 152,
+        "top5_instrument_share": "0.09768637532133676092544987147"
+      },
+      "holdout": {
+        "date_concentration_class": "MEDIUM",
+        "event_count": 95,
+        "instrument_concentration_class": "MEDIUM",
+        "market_counts": {
+          "TPE": 78,
+          "TWO": 17
+        },
+        "market_shares": {
+          "TPE": "0.8210526315789473684210526316",
+          "TWO": "0.1789473684210526315789473684"
+        },
+        "top10_instrument_count": 44,
+        "top10_instrument_share": "0.4631578947368421052631578947",
+        "top1_date": "2026-08-10",
+        "top1_date_count": 19,
+        "top1_date_share": "0.2",
+        "top5_instrument_count": 26,
+        "top5_instrument_share": "0.2736842105263157894736842105"
+      },
+      "holdout_t5_baseline_stats": {
+        "max": "0.378691372321945570353213665",
+        "mean": "0.02033486541174244276753211566",
+        "median": "0.007751937984496124031007752",
+        "min": "-0.1039823008849557522123893805",
+        "n": 49,
+        "p05": "-0.09443207126948774734966592428",
+        "p95": "0.1754358506151905360027824878",
+        "trimmed_mean_10pct": "0.01006625541257391722534701657",
+        "win_rate": "0.5714285714285714285714285714"
+      },
+      "holdout_t5_filtered_stats": {
+        "max": "0.183006535947712418300653595",
+        "mean": "0.02019911433150815501993302918",
+        "median": "0.011614401858304297328687573",
+        "min": "-0.1039823008849557522123893805",
+        "n": 25,
+        "p05": "-0.07404867693059168442469729561",
+        "p95": "0.1536352227463700874596348159",
+        "trimmed_mean_10pct": "0.01651876397731042782064004570",
+        "win_rate": "0.64"
+      },
+      "no_events_deleted": true,
+      "outlier_driven": false,
+      "outlier_rule": "mean improvement positive while median and 10-percent trimmed mean are non-positive on HOLDOUT T+5"
+    },
+    "return_5d__LOWER_LE_Q60": {
+      "formal": {
+        "date_concentration_class": "LOW",
+        "event_count": 1999,
+        "instrument_concentration_class": "LOW",
+        "market_counts": {
+          "TPE": 1440,
+          "TWO": 559
+        },
+        "market_shares": {
+          "TPE": "0.7203601800900450225112556278",
+          "TWO": "0.2796398199099549774887443722"
+        },
+        "top10_instrument_count": 317,
+        "top10_instrument_share": "0.1585792896448224112056028014",
+        "top1_date": "2026-04-17",
+        "top1_date_count": 42,
+        "top1_date_share": "0.02101050525262631315657828914",
+        "top5_instrument_count": 197,
+        "top5_instrument_share": "0.09854927463731865932966483242"
+      },
+      "holdout": {
+        "date_concentration_class": "MEDIUM",
+        "event_count": 105,
+        "instrument_concentration_class": "MEDIUM",
+        "market_counts": {
+          "TPE": 94,
+          "TWO": 11
+        },
+        "market_shares": {
+          "TPE": "0.8952380952380952380952380952",
+          "TWO": "0.1047619047619047619047619048"
+        },
+        "top10_instrument_count": 57,
+        "top10_instrument_share": "0.5428571428571428571428571429",
+        "top1_date": "2026-08-07",
+        "top1_date_count": 15,
+        "top1_date_share": "0.1428571428571428571428571429",
+        "top5_instrument_count": 33,
+        "top5_instrument_share": "0.3142857142857142857142857143"
+      },
+      "holdout_t5_baseline_stats": {
+        "max": "0.378691372321945570353213665",
+        "mean": "0.02033486541174244276753211566",
+        "median": "0.007751937984496124031007752",
+        "min": "-0.1039823008849557522123893805",
+        "n": 49,
+        "p05": "-0.09443207126948774734966592428",
+        "p95": "0.1754358506151905360027824878",
+        "trimmed_mean_10pct": "0.01006625541257391722534701657",
+        "win_rate": "0.5714285714285714285714285714"
+      },
+      "holdout_t5_filtered_stats": {
+        "max": "0.378691372321945570353213665",
+        "mean": "0.01120569956355644705937279463",
+        "median": "0.003952569169960474308300395",
+        "min": "-0.1039823008849557522123893805",
+        "n": 33,
+        "p05": "-0.1001766377390369397818907918",
+        "p95": "0.1005833853572426563967881513",
+        "trimmed_mean_10pct": "0.002747799476984573661372156511",
+        "win_rate": "0.5454545454545454545454545455"
+      },
+      "no_events_deleted": true,
+      "outlier_driven": false,
+      "outlier_rule": "mean improvement positive while median and 10-percent trimmed mean are non-positive on HOLDOUT T+5"
+    },
+    "true_range_pct__LOWER_LE_Q60": {
+      "formal": {
+        "date_concentration_class": "LOW",
+        "event_count": 2227,
+        "instrument_concentration_class": "LOW",
+        "market_counts": {
+          "TPE": 1622,
+          "TWO": 605
+        },
+        "market_shares": {
+          "TPE": "0.7283340817242927705433318366",
+          "TWO": "0.2716659182757072294566681634"
+        },
+        "top10_instrument_count": 323,
+        "top10_instrument_share": "0.1450381679389312977099236641",
+        "top1_date": "2026-02-25",
+        "top1_date_count": 50,
+        "top1_date_share": "0.02245172878311629995509654243",
+        "top5_instrument_count": 199,
+        "top5_instrument_share": "0.08935788055680287382128423889"
+      },
+      "holdout": {
+        "date_concentration_class": "MEDIUM",
+        "event_count": 128,
+        "instrument_concentration_class": "MEDIUM",
+        "market_counts": {
+          "TPE": 113,
+          "TWO": 15
+        },
+        "market_shares": {
+          "TPE": "0.8828125",
+          "TWO": "0.1171875"
+        },
+        "top10_instrument_count": 59,
+        "top10_instrument_share": "0.4609375",
+        "top1_date": "2026-08-12",
+        "top1_date_count": 21,
+        "top1_date_share": "0.1640625",
+        "top5_instrument_count": 34,
+        "top5_instrument_share": "0.265625"
+      },
+      "holdout_t5_baseline_stats": {
+        "max": "0.378691372321945570353213665",
+        "mean": "0.02033486541174244276753211566",
+        "median": "0.007751937984496124031007752",
+        "min": "-0.1039823008849557522123893805",
+        "n": 49,
+        "p05": "-0.09443207126948774734966592428",
+        "p95": "0.1754358506151905360027824878",
+        "trimmed_mean_10pct": "0.01006625541257391722534701657",
+        "win_rate": "0.5714285714285714285714285714"
+      },
+      "holdout_t5_filtered_stats": {
+        "max": "0.378691372321945570353213665",
+        "mean": "0.01420488067387196956031055864",
+        "median": "0.007250359529598497554459338",
+        "min": "-0.1039823008849557522123893805",
+        "n": 38,
+        "p05": "-0.09881345518777359595269180554",
+        "p95": "0.1047237076648840046939988118",
+        "trimmed_mean_10pct": "0.006018893401013320421159408484",
+        "win_rate": "0.5789473684210526315789473684"
+      },
+      "no_events_deleted": true,
+      "outlier_driven": false,
+      "outlier_rule": "mean improvement positive while median and 10-percent trimmed mean are non-positive on HOLDOUT T+5"
+    },
+    "true_range_pct__LOWER_LE_Q70": {
+      "formal": {
+        "date_concentration_class": "LOW",
+        "event_count": 2432,
+        "instrument_concentration_class": "LOW",
+        "market_counts": {
+          "TPE": 1754,
+          "TWO": 678
+        },
+        "market_shares": {
+          "TPE": "0.7212171052631578947368421053",
+          "TWO": "0.2787828947368421052631578947"
+        },
+        "top10_instrument_count": 325,
+        "top10_instrument_share": "0.1336348684210526315789473684",
+        "top1_date": "2026-02-25",
+        "top1_date_count": 55,
+        "top1_date_share": "0.02261513157894736842105263158",
+        "top5_instrument_count": 201,
+        "top5_instrument_share": "0.08264802631578947368421052632"
+      },
+      "holdout": {
+        "date_concentration_class": "MEDIUM",
+        "event_count": 139,
+        "instrument_concentration_class": "LOW",
+        "market_counts": {
+          "TPE": 121,
+          "TWO": 18
+        },
+        "market_shares": {
+          "TPE": "0.8705035971223021582733812950",
+          "TWO": "0.1294964028776978417266187050"
+        },
+        "top10_instrument_count": 59,
+        "top10_instrument_share": "0.4244604316546762589928057554",
+        "top1_date": "2026-08-10",
+        "top1_date_count": 22,
+        "top1_date_share": "0.1582733812949640287769784173",
+        "top5_instrument_count": 34,
+        "top5_instrument_share": "0.2446043165467625899280575540"
+      },
+      "holdout_t5_baseline_stats": {
+        "max": "0.378691372321945570353213665",
+        "mean": "0.02033486541174244276753211566",
+        "median": "0.007751937984496124031007752",
+        "min": "-0.1039823008849557522123893805",
+        "n": 49,
+        "p05": "-0.09443207126948774734966592428",
+        "p95": "0.1754358506151905360027824878",
+        "trimmed_mean_10pct": "0.01006625541257391722534701657",
+        "win_rate": "0.5714285714285714285714285714"
+      },
+      "holdout_t5_filtered_stats": {
+        "max": "0.378691372321945570353213665",
+        "mean": "0.01420857023859621931112956364",
+        "median": "0.005440696409140369967355822",
+        "min": "-0.1039823008849557522123893805",
+        "n": 41,
+        "p05": "-0.0979955456570155902004454343",
+        "p95": "0.111856823266219239373601790",
+        "trimmed_mean_10pct": "0.006442440588779186474524975564",
+        "win_rate": "0.5609756097560975609756097561"
+      },
+      "no_events_deleted": true,
+      "outlier_driven": false,
+      "outlier_rule": "mean improvement positive while median and 10-percent trimmed mean are non-positive on HOLDOUT T+5"
+    }
+  },
+  "outlier_policy": "descriptive audit only; no event, candidate, cohort, month, or outlier deletion",
+  "schema_version": "ws3-p2e-a1-concentration-outlier-audit.v1",
+  "source_foundation_sha256": "e803733e796d8f4d8cf00575cd4045f28c9364572fc61b31ef490e8a65ff47a4",
+  "task_id": "TASK-WS3-P2E-A1-FROZEN-CANDIDATE-CONFIRMATORY-VALIDATION-603-UNIVERSE-20260820"
+}

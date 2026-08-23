@@ -13,14 +13,15 @@ test("guide remains a fixed navigation destination with a defined workflow", asy
   }
 });
 
-test("V2 Home exposes guided freshness states without recommendation language", async () => {
+test("V2 Home exposes guided publication states without recommendation language", async () => {
   const [home, foundation] = await Promise.all([
     read("components/v2/TodayMarketPage.tsx"),
     read("components/v2/V2Foundation.tsx"),
   ]);
-  for (const marker of ["freshnessLabel", "isSyntheticPreview", "canUseBackendData", "market-overview-title", "tp-home-live-status"]) {
+  for (const marker of ["useTodayMainlines", "resource.marketOverview", "market-overview-title", "tp-home-mainlines-state"]) {
     assert.match(home, new RegExp(marker));
   }
+  assert.doesNotMatch(home, /freshnessLabel|isSyntheticPreview|canUseBackendData|useSnapshot/);
   assert.match(foundation, /DataState/);
   assert.match(foundation, /state === "UNAVAILABLE"/);
   assert.match(foundation, /tp-state-\$\{/);

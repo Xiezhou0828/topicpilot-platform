@@ -1,0 +1,129 @@
+{
+  "task_id": "TASK-TOPIC-STRUCTURAL-ROLE-AUTHORITY-READ-MODEL-AND-SCORE-PROJECTION-MINIMAL-IMPLEMENTATION-003",
+  "predecessor_task": "TASK-TOPIC-STRUCTURAL-ROLE-SCORE-PROJECTION-POLICY-AND-MINIMAL-AUTHORITY-CLOSURE-002",
+  "canonical_pre_sha": "1acac134cebc994fdab350aeeb64fe5e997008bf",
+  "canonical_post_sha": "1597068099139ea9df03d6f2b944fb9b7a7f4267",
+  "source_branch": "codex/task-topic-structural-role-authority-score-projection-implementation-20260816",
+  "scope": "minimal_structural_role_authority_score_projection_infrastructure_only",
+  "structural_role_schema_state": "IMPLEMENTED_ADDITIVE_MIGRATION_0031",
+  "structural_role_resolver_state": "IMPLEMENTED_AND_VALIDATED_FAIL_CLOSED_CURRENT_AND_HISTORICAL",
+  "score_projection_schema_state": "IMPLEMENTED_ADDITIVE_READ_MODEL_0031",
+  "score_projection_resolver_state": "IMPLEMENTED_AND_VALIDATED_FAIL_CLOSED_CURRENT_AND_HISTORICAL",
+  "governed_leader_set_adapter_state": "IMPLEMENTED_AND_VALIDATED_DETERMINISTIC_COMPATIBILITY_ONLY",
+  "approval_artifact_reconciliation_state": {
+    "status": "BLOCKED_BY_COMMITTED_PM_APPROVAL_ARTIFACT_RECONCILIATION",
+    "referenced_artifact": "docs/reports/PHASE_3_7_003F_PM_FORMULA_APPROVAL_BRIEF.md",
+    "owner_untracked_copy_observed": true,
+    "owner_untracked_copy_sha256": "C304032F41BCA466B70C5F1919F239B52030E6F1D5D284506C63623F649AADDF",
+    "canonical_committed": false,
+    "missing_provenance": [
+      "committed_digest_or_manifest_binding",
+      "commit_provenance_for_the_owner_untracked_copy",
+      "canonical_attestation_binding_copy_to_original_approval_artifact"
+    ],
+    "formula_reopened": false
+  },
+  "migration_changed": true,
+  "persistence_changed": true,
+  "runtime_write_or_publication_changed": false,
+  "role_authority_records_populated": "0_NOT_YET_POPULATED",
+  "projection_records_populated": "0_NOT_YET_POPULATED",
+  "role_ingestion_ready": "YES_APPROVED_OWNER_REVIEWED_DATA_ONLY",
+  "projection_ingestion_ready": "YES_APPROVED_PROJECTION_DATA_ONLY",
+  "score_implementation_ready": "YES_INFRASTRUCTURE_ONLY",
+  "grade_implementation_ready": "YES_INFRASTRUCTURE_ONLY",
+  "score_publication_ready": "NO",
+  "grade_publication_ready": "NO",
+  "ready_for_score_grade_backend_publication_implementation": "YES_ROUTING_ONLY",
+  "remaining_blockers": [
+    {
+      "code": "BLOCKED_BY_COMMITTED_PM_APPROVAL_ARTIFACT_RECONCILIATION",
+      "scope": "formal Score/Grade activation and publication provenance"
+    },
+    {
+      "code": "GOVERNED_ROLE_DATA_NOT_YET_POPULATED",
+      "scope": "no Owner-approved Structural Role Authority rows were bulk-created"
+    },
+    {
+      "code": "SCORE_PROJECTION_DATA_NOT_YET_POPULATED",
+      "scope": "no Owner-approved Score Projection V1 rows were bulk-created"
+    }
+  ],
+  "topic_scope": {
+    "eligibility_unit": "topic_id_and_as_of",
+    "missing_topic_projection": "UNAVAILABLE_FAIL_CLOSED",
+    "global_blocker": false
+  },
+  "write_set": [
+    "services/api/src/topicpilot_api/orm/models.py",
+    "services/api/src/topicpilot_api/orm/score_projections.py",
+    "services/api/src/topicpilot_api/orm/__init__.py",
+    "services/api/src/topicpilot_api/topic_engine/structural_role_authority.py",
+    "services/api/src/topicpilot_api/topic_engine/score_projection.py",
+    "services/api/src/topicpilot_api/topic_engine/__init__.py",
+    "services/api/alembic/versions/0031_task_topic_structural_role_score_projection.py",
+    "services/api/tests/test_structural_role_score_projection.py",
+    "services/api/tests/test_canonical_observation_implementation.py",
+    "services/api/tests/test_v2_architecture_freeze.py",
+    "docs/architecture/TOPIC_DERIVED_INTELLIGENCE_DEFINITION_AND_PUBLICATION_AUTHORITY_CLOSURE.md",
+    "docs/reports/TASK-TOPIC-STRUCTURAL-ROLE-AUTHORITY-READ-MODEL-AND-SCORE-PROJECTION-MINIMAL-IMPLEMENTATION-003.md",
+    "docs/reports/TASK-TOPIC-STRUCTURAL-ROLE-AUTHORITY-READ-MODEL-AND-SCORE-PROJECTION-MINIMAL-IMPLEMENTATION-003/implementation-evidence.json"
+  ],
+  "prohibited_scope_changed": {
+    "bulk_507_role_assignment": false,
+    "runtime_ai_selection": false,
+    "automatic_projection_selection": false,
+    "score_formula": false,
+    "grade_formula": false,
+    "score_api_publication": false,
+    "grade_api_publication": false,
+    "topic_map": false,
+    "ranking": false,
+    "breadth": false,
+    "dynamic_leadership": false,
+    "concentration": false,
+    "lifecycle": false,
+    "historical_backfill": false,
+    "opportunity": false,
+    "recommendation": false,
+    "production": false,
+    "ws2": false,
+    "ws3": false,
+    "ws4": false,
+    "next_task": false
+  },
+  "validation": {
+    "focused_tests": "14_pass",
+    "relevant_regression_tests": "16_pass",
+    "backend_full_suite": "506_pass_41_skipped",
+    "test_count_pre": 533,
+    "test_count_post": 547,
+    "test_count_delta": 14,
+    "test_count_delta_reason": "new_fail_closed_structural_role_and_projection_coverage",
+    "test_count_delta_status": "EXPLAINED",
+    "ruff": "PASS",
+    "python_compile": "PASS",
+    "migration_offline_upgrade": "PASS",
+    "migration_offline_downgrade": "PASS",
+    "database_fixture_or_integration": "NOT_RUN_ENVIRONMENT_NOT_PROVIDED",
+    "json_parse": "PASS",
+    "lineage_and_correction_assertions": "PASS",
+    "git_diff_check": "PASS",
+    "secret_scan": "PASS_NO_MATCHES",
+    "g1_g2_g3": "PRESERVED_NOT_RERUN",
+    "post_close_canary": "PRESERVED_NOT_RERUN",
+    "production_deploy_scheduler": "NOT_RUN_PROHIBITED",
+    "initial_pythonpath_collection_error": "ENVIRONMENT_ONLY_REPOSITORY_ROOT_PATH_MISSING",
+    "final_collection_environment": "PYTHONPATH_REPOSITORY_ROOT_PLUS_SERVICES_API_SRC"
+  },
+  "release_state": {
+    "canonical_status": "CANONICALIZED",
+    "release_status": "NOT_RELEASE_CANDIDATE",
+    "production_verification": "NOT_PERFORMED",
+    "push_remote": "NO",
+    "merge_main": "NO",
+    "deploy": "NO",
+    "production_mutation": "NO",
+    "scheduler_activation": "NO"
+  }
+}

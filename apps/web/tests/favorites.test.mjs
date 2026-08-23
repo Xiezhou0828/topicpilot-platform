@@ -2,12 +2,20 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
 import {
+  FAVORITE_ENTITY_TYPES,
+  FAVORITES_SCHEMA_VERSION,
   FAVORITES_STORAGE_KEY,
   TOPIC_FAVORITES_STORAGE_KEY,
   buildFavoriteEntries,
+  createFavoriteIdentity,
+  favoriteIdentityKey,
+  favoriteIdentityMatches,
   filterFavoriteEntries,
   groupFavoriteEntries,
+  normalizeFavoriteIdentities,
   normalizeFavoriteCodes,
+  serializeFavoriteIdentities,
+  stableStockId,
 } from "../app/lib/favorites-view.mjs";
 
 const stock = (code, name, parentGroup, topic) => ({
@@ -21,6 +29,25 @@ test("existing local favorite format is preserved and normalized without a secon
   assert.equal(FAVORITES_STORAGE_KEY, "topic-pilot-favorites");
   assert.equal(TOPIC_FAVORITES_STORAGE_KEY, "topic-pilot-topic-favorites");
   assert.deepEqual(normalizeFavoriteCodes(["DEMO-A1", " DEMO-B2 ", "DEMO-A1", "", null]), ["DEMO-A1", "DEMO-B2"]);
+});
+
+test("favorite identity contract is versioned and separates entity type and market", () => {
+  const stock = createFavoriteIdentity({ entityType: FAVORITE_ENTITY_TYPES.STOCK, stableId: "2330", market: "TPE", displayLabel: "台積電" });
+  const topic = createFavoriteIdentity({ entityType: FAVORITE_ENTITY_TYPES.TOPIC, stableId: "pcb" });
+  assert.equal(stableStockId("2330", "TPE"), "TPE:2330");
+  assert.deepEqual(stock, { version: FAVORITES_SCHEMA_VERSION, entityType: "STOCK", stableId: "TPE:2330", displayLabel: "台積電" });
+  assert.equal(favoriteIdentityKey(stock), "STOCK:TPE:2330");
+  assert.notEqual(favoriteIdentityKey(stock), favoriteIdentityKey(topic));
+  assert.equal(favoriteIdentityMatches(stock, createFavoriteIdentity({ entityType: "STOCK", stableId: "2330" })), true);
+  assert.equal(favoriteIdentityMatches(stock, createFavoriteIdentity({ entityType: "STOCK", stableId: "2330", market: "TWO" })), false);
+});
+
+test("structured storage round-trips and malformed/legacy values fail safe", () => {
+  const identity = createFavoriteIdentity({ entityType: "TOPIC", stableId: "cpo", displayLabel: "CPO" });
+  const serialized = serializeFavoriteIdentities([identity], "TOPIC");
+  assert.deepEqual(normalizeFavoriteIdentities(JSON.parse(serialized), "TOPIC"), [identity]);
+  assert.deepEqual(normalizeFavoriteIdentities([" cpo ", "cpo", null], "TOPIC"), [createFavoriteIdentity({ entityType: "TOPIC", stableId: "cpo" })]);
+  assert.deepEqual(normalizeFavoriteIdentities({ version: 999, items: [{ entityType: "UNKNOWN" }, null, { stableId: "" }] }, "TOPIC"), []);
 });
 
 test("favorite entries preserve local order and retain stocks missing from snapshot", () => {
@@ -69,13 +96,25 @@ test("favorites route, navigation and shared change event are wired", () => {
   const button = readFileSync(new URL("../app/components/FavoriteButton.tsx", import.meta.url), "utf8");
   const page = readFileSync(new URL("../app/favorites/page.tsx", import.meta.url), "utf8");
   const workspace = readFileSync(new URL("../app/components/v2/FavoritesWorkspacePage.tsx", import.meta.url), "utf8");
+  const topicDetail = readFileSync(new URL("../app/components/v2/TopicDetailPage.tsx", import.meta.url), "utf8");
+  const explorer = readFileSync(new URL("../app/components/v2/StockExplorerPage.tsx", import.meta.url), "utf8");
+  const drawer = readFileSync(new URL("../app/components/v2/StockEncyclopediaDrawer.tsx", import.meta.url), "utf8");
   assert.match(nav, /\["收藏", "\/favorites"\]/);
   assert.match(button, /FAVORITES_CHANGED_EVENT/);
   assert.match(button, /window\.addEventListener\("storage"/);
+  assert.match(button, /normalizeFavoriteIdentities/);
+  assert.match(button, /serializeFavoriteIdentities/);
+  assert.match(button, /favoriteIdentityMatches/);
   assert.match(page, /FavoritesWorkspacePage/);
   assert.match(workspace, /今日有變化/);
   assert.match(workspace, /role="tablist"/);
   assert.match(workspace, /StockEncyclopediaDrawer/);
   assert.match(workspace, /href=\{`\/topics\/\$\{slug\}`\}/);
+  assert.match(workspace, /裝置上的使用者偏好/);
+  assert.match(topicDetail, /useTopicFavoritesState/);
+  assert.doesNotMatch(topicDetail, /const \[favorite, setFavorite\]/);
+  assert.match(explorer, /FavoriteStar/);
+  assert.match(explorer, /toggleFavorite\(stock\.code/);
+  assert.match(drawer, /isFavorite\(displayStock\.code, displayStock\.market\)/);
   assert.doesNotMatch(workspace, /成本|張數|損益|買進|賣出|推薦/);
 });

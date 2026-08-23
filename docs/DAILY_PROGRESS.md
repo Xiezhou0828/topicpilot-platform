@@ -632,3 +632,91 @@ Append-only engineering log. Entries describe V2 only; V1 remains the formal pro
   `NEXT_TASK` change was made.
 - Added `TASK-REPO-002_FRONTEND_RELEASE_GATE_REPORT.md`. Frontend and Lifecycle
   gates are now READY; TASK-REPO-001 data-governance review remains unchanged.
+
+## 2026-08-14 TASK-TOPIC-PUB-001 Field-Level Publication Disclosure
+
+- Corrected Topic task/document naming to domain/task identities and removed the
+  Topic work-slot use of `Mainline A` / `A1`; the existing Mainline A DATA /
+  Reference / Post-Close authority is unchanged.
+- Added adapter-owned field-level publication states for Topic identity,
+  relations, score/grade, Snapshot-backed status, Lifecycle, and detail-domain
+  gaps. Topic List/Detail now disclose `FORMAL`, `FORMAL_NOT_WIRED`, `PREVIEW`,
+  `DEFERRED`, `UNAVAILABLE`, and `CONTRACT_GAP` without browser scoring, grade,
+  Lifecycle, ranking, membership, or Preview fallback.
+- Focused Topic tests passed `10/10`; TypeScript passed; changed-file ESLint
+  passed; production build passed. Full ESLint timed out without diagnostics;
+  route smoke was not run because the environment blocked starting a local
+  background server. No backend, schema, provider, Today, Stock, or production
+  behavior changed.
+
+## 2026-08-14 TASK-DATA-HIST-002B canonical reconciliation and closure
+
+- Reconciled the completed isolated full-universe historical seed against the
+  canonical V2 repository and current local PostgreSQL evidence. The approved
+  `tw-reference-v1` bundle contains 507 physical identities: 314 TPE and 193
+  TWO.
+- Read-only local verification confirms 63,826 OHLCV rows across 507 symbols,
+  TWSE 39,523 and TPEx 24,303, from 2026-02-02 through 2026-08-13. Extra
+  universe rows, invalid OHLCV, duplicate keys, missing required lineage, and
+  unexplained gaps are all zero; 6806 stops at 2026-06-22 after its
+  2026-06-23 termination event.
+- Canonical V2 official exchange providers, transactional ingestion,
+  request-keyed idempotence, provider lineage, reference-bundle validation,
+  lifecycle/no-trade semantics, and local-only guards are present. The
+  predecessor plain-table runner remains isolated evidence and was not copied
+  as a duplicate V2 persistence path.
+- Validation: canonical focused tests 16 passed; source historical contract
+  tests 9 passed; canonical config/migration/reference/preflight tests 22
+  passed with one PostgreSQL skip; bundle validation and diff/secret checks
+  passed. Migration upgrade was not run because the local database is at
+  Alembic 0017 while canonical head is 0029 and closure is read-only.
+- No Production mutation, Production DB access, scheduler, deploy, push,
+  merge, recommendation activation, or `NEXT_TASK` change occurred. G1/G2/G3
+  and Post-Close Canary remain `PRESERVED PASS`.
+- Closure report: `docs/reports/TASK-DATA-HIST-002B_CANONICAL_RECONCILIATION_CLOSURE.md`.
+
+## 2026-08-15 TASK-FE-BE-STOCK-005C Stock Explorer / Drawer EOD formal wiring
+
+- Wired the existing V2 Stock Explorer and shared Stock Encyclopedia Drawer to
+  the canonical nullable `StockEodRead` projection from the formal list/detail
+  routes. Completed-session rows render backend-owned close, previous close,
+  change, change percentage, OHLC, volume, turnover, trading date, status, and
+  source/as-of metadata.
+- Preserved the intraday latest-quote boundary, explicit Preview disclosure,
+  fail-closed null/error semantics, advanced topic filtering, and the Drawer
+  push/close/Escape/header-offset/full-height/sticky/internal-scroll behavior.
+- Added an EOD presenter and focused regression coverage for formal EOD,
+  intraday/EOD separation, all canonical status values, null turnover, API
+  error handling, Preview boundaries, stale-detail protection, and the
+  browser render-only business-rule guard.
+- Validation: focused EOD tests 8 passed, full frontend tests 104 passed,
+  TypeScript passed, changed-file ESLint passed, production frontend build
+  passed, and protected G1/G2/G3/Post-Close Canary evidence remains preserved.
+  No backend, OpenAPI, generated client, historical, reference, Today, Topic,
+  recommendation, Production, or `NEXT_TASK` change.
+
+## 2026-08-15 TASK-FE-TOPIC-DETAIL-001 Topic Detail Research Workspace
+
+- Completed the Topic Detail research workspace IA and formal-state-aware
+  rendering: header identity, Today status, the existing three Topic status
+  dimensions, formal constituents/relations, lifecycle, description,
+  hierarchy/related topics, and a fail-closed historical/rotation shell.
+- Preserved field-level publication disclosure from TASK-TOPIC-PUB-001. Mixed
+  FORMAL, PREVIEW, DEFERRED, UNAVAILABLE, FORMAL_NOT_WIRED, and CONTRACT_GAP
+  states remain explicit; API errors do not fall back to Preview.
+- No fabricated score, grade, lifecycle, leadership, breadth, concentration,
+  ranking, or historical metrics were added. Remaining Topic backend/data gaps
+  stay deferred or unavailable. Backend, OpenAPI, database, Production, and
+  `NEXT_TASK` state were unchanged.
+- Validation: focused Topic tests 15 passed, full frontend tests 113 passed,
+  TypeScript, changed-file ESLint, and production build passed. Route smoke was
+  not run because the environment blocks the required background runtime.
+- Closure report: `docs/reports/TASK-FE-TOPIC-DETAIL-001_TOPIC_DETAIL_RESEARCH_WORKSPACE.md`.
+
+## 2026-08-15 TASK-FE-FAVORITES-001 Shared Favorites State and UX
+
+- Completed the shared local-device Favorites capability for the currently supported `STOCK` and `TOPIC` entities across Stock Explorer, Stock Drawer, Topic List, Topic Detail, and the Favorites workspace. Shared state, reload persistence, cross-surface synchronization, malformed-storage fail-safe handling, and keyboard/accessibility semantics are in place.
+- Kept local user preference state semantically separate from formal market data, Preview data, API errors, unavailable responses, Recommendation, backend read models, and server/account synchronization. API/data refresh cannot clear a stored favorite identity.
+- Today currently has no favorite affordance and therefore remains explicitly out of scope for a toggle/sync claim. No backend, database, Production, `NEXT_TASK`, or server-sync change was made.
+- Validation: Favorites focused tests 8 passed, related Stock/Topic regression tests 17 passed, full frontend source-contract tests 115 passed. TypeScript, changed-file ESLint, and production build were blocked by the incomplete local dependency tree; route smoke was not run because the environment restricts the required runtime.
+- Closure report: `docs/reports/TASK-FE-FAVORITES-001_SHARED_FAVORITES_STATE_AND_UX.md`.

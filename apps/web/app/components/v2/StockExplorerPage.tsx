@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { AppShell, Card, DataState, EmptyState, Freshness, PageContainer } from "./V2Foundation";
+import { AppShell, Card, DataState, EmptyState, FavoriteStar, Freshness, PageContainer } from "./V2Foundation";
 import { StockEncyclopediaDrawer, type StockDrawerItem } from "./StockEncyclopediaDrawer";
 import {
   fetchFormalStocks,
@@ -10,6 +10,9 @@ import {
   type StockApiItem,
   type StockApiResource,
 } from "../../lib/stock-api";
+import { selectStockQuote } from "../../lib/stock-eod-presenter";
+import type { StockEodRead } from "../../lib/stock-api";
+import { useFavoritesState } from "../FavoriteButton";
 import { fetchTopics, type TopicResource, type TopicSummary } from "../../lib/topic-api";
 import { useSnapshot } from "../../lib/snapshot-store";
 import type { StockView } from "../../lib/types";
@@ -25,6 +28,7 @@ type ExplorerRow = {
   price: number | null;
   changePct: number | null;
   volume: number | null;
+  eod: StockEodRead | null;
   dataFreshness: string | null;
   updateMode: string;
   observedAt: string | null;
@@ -87,7 +91,7 @@ const UI = {
   opportunities: "\u6709\u6a5f\u6703",
   allUpdateModes: "\u5168\u90e8\u66f4\u65b0\u6a21\u5f0f",
   count: "\u6a94",
-  unavailableFilter: "正式 API 尚未提供",
+  unavailableFilter: "Formal API unavailable",
 } as const;
 
 function formatPrice(value: number | null): string {
@@ -123,11 +127,12 @@ function fromFormal(item: StockApiItem): ExplorerRow {
     price: item.price,
     changePct: item.changePct,
     volume: item.volume,
+    eod: item.eod,
     dataFreshness: item.dataFreshness,
     updateMode: item.updateMode,
     observedAt: item.observedAt,
-    dataDate: asOfDate(item),
-    updatedAt: item.retrievedAt,
+    dataDate: item.eod?.tradingDate ?? asOfDate(item),
+    updatedAt: item.eod?.retrievedAt ?? item.retrievedAt,
     topics: (item.topicRelations ?? []).map((relation) => ({
       slug: relation.topicSlug,
       name: relation.topicName,
@@ -153,6 +158,7 @@ function fromPreview(item: StockView): ExplorerRow {
     price: item.price,
     changePct: item.change,
     volume: item.volume,
+    eod: null,
     dataFreshness: item.dataFreshness,
     updateMode: "POST_CLOSE",
     observedAt: null,
@@ -173,6 +179,10 @@ function isLive(row: ExplorerRow): boolean {
   return row.updateMode.toUpperCase() === "INTRADAY";
 }
 
+function hasValue(record: Record<string, unknown> | null): boolean {
+  return Object.values(record ?? {}).some((value) => value !== null && value !== undefined && value !== "");
+}
+
 function compareRows(a: ExplorerRow, b: ExplorerRow, sort: SortKey): number {
   const left = sort === "change" ? a.changePct : sort === "price" ? a.price : a.volume;
   const right = sort === "change" ? b.changePct : sort === "price" ? b.price : b.volume;
@@ -188,6 +198,7 @@ function apiSort(sort: SortKey): string {
 
 export default function StockExplorerPage() {
   const { bundle } = useSnapshot();
+  const { isFavorite, toggle: toggleFavorite } = useFavoritesState();
   const [resource, setResource] = useState<StockApiResource | null>(null);
   const [topicResource, setTopicResource] = useState<TopicResource<TopicSummary[]> | null>(null);
   const [market, setMarket] = useState("all");
@@ -203,6 +214,8 @@ export default function StockExplorerPage() {
   const [selected, setSelected] = useState<ExplorerRow | null>(null);
   const [detailPanelState, setDetailPanelState] = useState<DetailPanelState>("closed");
   const [lastSorted, setLastSorted] = useState(() => new Date());
+  const orderRef = useRef<string[]>([]);
+  const [formalOrder, setFormalOrder] = useState<string[]>([]);
   const requestIdRef = useRef(0);
   const controllerRef = useRef<AbortController | null>(null);
   const detailCloseTimerRef = useRef<number | null>(null);
@@ -249,12 +262,20 @@ export default function StockExplorerPage() {
     controllerRef.current = controller;
     const next = await fetchFormalStocks(query, { signal: controller.signal });
     if (requestId !== requestIdRef.current) return;
+    if (next.source === "api" && next.data) {
+      const incomingCodes = next.data.map((item) => item.code);
+      orderRef.current = incomingCodes;
+      setFormalOrder(incomingCodes);
+    }
     setResource(next);
   }, []);
 
   useEffect(() => {
-    void loadFormal(formalQuery);
-    return () => controllerRef.current?.abort();
+    const timer = window.setTimeout(() => void loadFormal(formalQuery), 0);
+    return () => {
+      window.clearTimeout(timer);
+      controllerRef.current?.abort();
+    };
   }, [formalQuery, loadFormal]);
 
   useEffect(() => {
@@ -291,10 +312,35 @@ export default function StockExplorerPage() {
     return bundle.source === "snapshot" ? bundle.stockUniverse.map(fromPreview) : [];
   }, [bundle.source, bundle.stockUniverse, resource]);
 
+  const filteredRows = useMemo(() => baseRows.filter((row) => {
+    const technicalMatch = technical === "all"
+      || (technical === "above20" && row.technicalEvidence?.above20MA === true)
+      || (technical === "above60" && row.technicalEvidence?.above60MA === true)
+      || (technical === "available" && row.technicalEvidence !== null);
+    const chipMatch = chip === "all" || (chip === "available" && hasValue(row.institutionFlows));
+    const strategyMatch = strategy === "all"
+      || (strategy === "favorite" && (isFavorite(row.code, row.market) || row.favorite !== null))
+      || (strategy === "opportunity" && row.opportunity !== null);
+    const modeMatch = mode === "all" || (mode === "live" ? isLive(row) : !isLive(row));
+    return (market === "all" || row.market === market)
+      && modeMatch
+      && (resource?.source === "api" || !topic || row.topics.some((item) => item.slug === topic))
+      && technicalMatch
+      && chipMatch
+      && strategyMatch;
+  }), [baseRows, chip, isFavorite, market, mode, resource?.source, strategy, technical, topic]);
+
   const displayRows = useMemo(() => {
-    if (resource?.source === "api") return baseRows;
-    return [...baseRows].sort((a, b) => compareRows(a, b, sort));
-  }, [baseRows, resource?.source, sort]);
+    if (resource?.source !== "api") return [...filteredRows].sort((a, b) => compareRows(a, b, sort));
+    const byCode = new Map(filteredRows.map((row) => [row.code, row]));
+    const ordered = formalOrder.flatMap((code) => {
+      const row = byCode.get(code);
+      return row ? [row] : [];
+    });
+    const known = new Set(ordered.map((row) => row.code));
+    ordered.push(...filteredRows.filter((row) => !known.has(row.code)));
+    return ordered;
+  }, [filteredRows, formalOrder, resource?.source, sort]);
 
   const drawerItem = (stock: ExplorerRow): StockDrawerItem => ({
     code: stock.code,
@@ -304,6 +350,9 @@ export default function StockExplorerPage() {
     listing: stock.listing,
     price: stock.price,
     changePct: stock.changePct,
+    volume: stock.volume,
+    eod: stock.eod,
+    updateMode: stock.updateMode,
     dataFreshness: stock.dataFreshness,
     updatedAt: stock.updatedAt,
     dataDate: stock.dataDate,
@@ -359,7 +408,7 @@ export default function StockExplorerPage() {
             <label><span>{UI.updateMode}</span><select value={mode} onChange={(event) => setMode(event.target.value)}><option value="all">{UI.allUpdateModes}</option><option value="live">{UI.live}</option><option value="eod">{UI.eod}</option></select></label>
           </Card>}
           <div className="tp-stock-segments"><button type="button" className={mode === "all" ? "is-active" : ""} onClick={() => setMode("all")}>{UI.all}</button><button type="button" className={mode === "live" ? "is-active" : ""} onClick={() => setMode("live")}>{UI.live}</button><button type="button" className={mode === "eod" ? "is-active" : ""} onClick={() => setMode("eod")}>{UI.eod}</button><span className="tp-muted">{UI.lastSorted} {lastSorted.toLocaleTimeString("zh-TW", { hour: "2-digit", minute: "2-digit" })} · {displayRows.length}/{total} {UI.count}</span></div>
-          {resource === null ? <Card><EmptyState title={UI.loading} description="PostgreSQL-backed Stock read model" /></Card> : resource.source === "unavailable" ? <Card><EmptyState title={UI.unavailable} description={resource.error ?? UI.unavailableDescription} /></Card> : displayRows.length === 0 ? <Card><EmptyState title={UI.noRows} description={UI.unavailableDescription} /></Card> : <div className="tp-stock-grid">{displayRows.map((stock) => <button type="button" className={`tp-stock-tile ${selected?.code === stock.code ? "is-selected" : ""} ${isLive(stock) ? "" : "is-eod"}`} key={stock.code} onClick={() => openDetailPanel(stock)} aria-label={`${stock.name} ${stock.code}`}><span className="tp-stock-tile-top"><strong>{stock.name}</strong><em>{isLive(stock) ? UI.live : UI.eod}</em></span><small>{stock.code} · {stock.market} · {stock.topics[0]?.name ?? UI.noTopic}</small><span className="tp-stock-tile-quote"><b>{formatPrice(stock.price)}</b><i className={stock.changePct === null ? "tp-muted" : stock.changePct < 0 ? "tp-stock-down" : "tp-stock-up"}>{formatChange(stock.changePct)}</i></span>{!isLive(stock) && <span className="tp-stock-eod-note">{UI.postClose}</span>}</button>)}</div>}
+          {resource === null ? <Card><EmptyState title={UI.loading} description="PostgreSQL-backed Stock read model" /></Card> : resource.source === "unavailable" ? <Card><EmptyState title={UI.unavailable} description={resource.error ?? UI.unavailableDescription} /></Card> : displayRows.length === 0 ? <Card><EmptyState title={UI.noRows} description={UI.unavailableDescription} /></Card> : <div className="tp-stock-grid">{displayRows.map((stock) => { const quote = selectStockQuote(stock); const favorite = isFavorite(stock.code, stock.market); return <div className="tp-stock-tile-wrap" key={stock.code}><button type="button" className={`tp-stock-tile ${selected?.code === stock.code ? "is-selected" : ""} ${isLive(stock) ? "" : "is-eod"}`} onClick={() => openDetailPanel(stock)} aria-label={`${stock.name} ${stock.code}`}><span className="tp-stock-tile-top"><strong>{stock.name}</strong><em>{isLive(stock) ? UI.live : UI.eod}</em></span><small>{stock.code} · {stock.market} · {stock.topics[0]?.name ?? UI.noTopic}</small><span className="tp-stock-tile-quote"><b>{formatPrice(quote.price)}</b><i className={quote.changePct === null ? "tp-muted" : quote.changePct < 0 ? "tp-stock-down" : "tp-stock-up"}>{formatChange(quote.changePct)}</i></span>{!isLive(stock) && <span className="tp-stock-eod-note">{stock.isPreview ? "Preview" : quote.dataStatus === "UNAVAILABLE" ? "EOD 資料尚未提供" : `${UI.postClose} · ${quote.dataStatus}`}</span>}</button><FavoriteStar active={favorite} onClick={(event) => { event.stopPropagation(); toggleFavorite(stock.code, { market: stock.market, displayLabel: stock.name }); }} /></div>; })}</div>}
         </div>
         {selected && <StockEncyclopediaDrawer presentation="push" isClosing={detailPanelState === "closing"} stock={drawerItem(selected)} onClose={closeDetailPanel} />}
       </section>

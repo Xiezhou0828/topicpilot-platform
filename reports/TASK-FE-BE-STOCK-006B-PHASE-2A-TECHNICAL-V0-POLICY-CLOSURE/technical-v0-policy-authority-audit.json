@@ -1,0 +1,208 @@
+{
+  "task_id": "TASK-FE-BE-STOCK-006B-PHASE-2A-TECHNICAL-V0-POLICY-CLOSURE",
+  "phase": "WS2_PHASE_2A",
+  "as_of": "2026-08-16",
+  "canonical_authority": {
+    "path": "C:\\Users\\acer\\Desktop\\題材領航\\topicpilot-platform",
+    "branch": "codex/task-ops-023a-p3c-runtime-sha-audit-20260813",
+    "head": "69b4166130554b9d1410b5f33c105fcf1ac70d67",
+    "origin_main_at_preflight": "26f635b95d8d88fd7ed7e43949583347f3ab5feb",
+    "owner_dirty_tracked_modified_at_start": 18,
+    "owner_untracked_at_start": 167,
+    "owner_state_preserved": true
+  },
+  "source": {
+    "branch": "codex/task-stock-technical-phase2a-20260816",
+    "worktree": "C:\\Users\\acer\\Documents\\Codex\\ws2-2a-20260816",
+    "base_sha": "69b4166130554b9d1410b5f33c105fcf1ac70d67",
+    "clean_at_base": true
+  },
+  "routing_outcome": "BLOCKED_BY_BOUNDED_CONTINUITY_AUTHORITY_GAP",
+  "next_task_recommendation": "TASK-FE-BE-STOCK-006B-PHASE-2A-CONTINUITY-AUTHORITY-GAP-CLOSURE",
+  "next_task_changed": false,
+  "d1_continuity": {
+    "policy": "EVENT_BOUNDED_INDICATOR_LEVEL",
+    "statuses": [
+      "CONTINUITY_PASS",
+      "CONTINUITY_FAIL",
+      "CONTINUITY_UNKNOWN"
+    ],
+    "pass_allows_formal_prerequisite": true,
+    "fail_closed_on_fail": true,
+    "fail_closed_on_unknown": true,
+    "empty_event_result_equals_no_event": false,
+    "current_general_pass_authority": "NOT_ESTABLISHED",
+    "current_safe_classification": "CONTINUITY_UNKNOWN"
+  },
+  "authority_audit": [
+    {
+      "authority": "canonical_raw_price_volume_observations",
+      "evidence": "HIST-002B and persistence promotion; 507 symbols and 63826 accepted price/volume rows",
+      "result": "PASS_RAW_OBSERVATION_ONLY",
+      "supports_continuity_pass": false
+    },
+    {
+      "authority": "adjustment_state",
+      "evidence": "HIST-002B, Stock-006A, and Stock-006B foundation retain ADJUSTMENT_STATE=UNKNOWN / RAW_OBSERVED",
+      "result": "UNKNOWN",
+      "supports_continuity_pass": false
+    },
+    {
+      "authority": "corporate_action_event_coverage",
+      "evidence": "REC-A1 source/semantics closure and bounded export closure are research-only and partial/method-dependent",
+      "result": "PARTIAL_UNKNOWN",
+      "supports_continuity_pass": false
+    },
+    {
+      "authority": "authoritative_empty_set_proof",
+      "evidence": "REC-A1 canonical freeze records AUTHORITATIVE_NO_EVENT_IDENTITIES=0 and AUTHORITATIVE_EMPTY_SET_COMPLETE=NO",
+      "result": "NOT_AVAILABLE",
+      "supports_continuity_pass": false
+    },
+    {
+      "authority": "bounded_known_event",
+      "evidence": "Canonical bounded lifecycle evidence for TPE:6806; research event rows are not formal Stock authority",
+      "result": "BOUNDED_KNOWN_ONLY",
+      "supports_continuity_fail_for_exact_intersection": true,
+      "supports_general_pass": false
+    },
+    {
+      "authority": "market_identity_session_calendar",
+      "evidence": "tw-reference-v1 and market-local historical read lineage",
+      "result": "PASS_BOUNDED_CONTEXT",
+      "supports_continuity_pass": false
+    },
+    {
+      "authority": "technical_algorithm_warmup_rounding",
+      "evidence": "Phase 1 foundation requires a future explicit contract; no accepted Stock V0 algorithm contract exists",
+      "result": "UNRESOLVED_DEFERRED",
+      "supports_continuity_pass": false
+    }
+  ],
+  "d2_candidate_families": [
+    {
+      "indicator_ids": ["stock.sma.close.v1"],
+      "members": ["MA5", "MA10", "MA20", "MA60"],
+      "input": "accepted_daily_close",
+      "parameters": "period=N",
+      "minimum_observations": "N",
+      "candidate_warmup": "first value after N accepted observations",
+      "continuity_window": "last N accepted sessions ending at anchor session",
+      "policy_state": "PROPOSED_CANDIDATE_CONTINUITY_BLOCKED"
+    },
+    {
+      "indicator_ids": ["stock.price_vs_sma20.v1", "stock.distance_to_sma20.v1"],
+      "members": ["price_vs_MA20", "distance_to_MA20"],
+      "input": "accepted_daily_close",
+      "parameters": "period=20",
+      "minimum_observations": 20,
+      "candidate_warmup": "same 20-observation SMA20 window",
+      "continuity_window": "last 20 accepted sessions including anchor close",
+      "policy_state": "PROPOSED_CANDIDATE_ROUNDING_AND_CONTINUITY_BLOCKED"
+    },
+    {
+      "indicator_ids": ["stock.raw_close_return.v1"],
+      "members": ["5D_return", "20D_return"],
+      "input": "accepted_raw_observed_daily_close",
+      "parameters": "horizon=N; candidate close_t/close_t-N - 1",
+      "minimum_observations": "N+1",
+      "candidate_warmup": "first value after both endpoints and required window checks",
+      "continuity_window": "inclusive anchor-to-anchor window [t-N,t]",
+      "policy_state": "UNRESOLVED_RETURN_SEMANTICS_AND_CONTINUITY_BLOCKED"
+    },
+    {
+      "indicator_ids": ["stock.sma.volume.v1", "stock.volume_ratio_to_sma20.v1"],
+      "members": ["Volume_MA5", "Volume_MA20", "volume_ratio"],
+      "input": "accepted_daily_volume_quantity_with_unit_and_aggregation",
+      "parameters": "period=N; ratio candidate volume_t / VolumeMA20_t",
+      "minimum_observations": "N; ratio 20",
+      "candidate_warmup": "first value after required volume window",
+      "continuity_window": "last N/20 accepted volume sessions ending at anchor",
+      "policy_state": "PROPOSED_CANDIDATE_VOLUME_COMPARABILITY_AND_CONTINUITY_BLOCKED"
+    },
+    {
+      "indicator_ids": ["stock.rsi.wilder.v1"],
+      "members": ["RSI14"],
+      "input": "accepted_daily_close",
+      "parameters": "period=14; candidate Wilder smoothing",
+      "minimum_observations": 15,
+      "candidate_warmup": "14 changes for first seed; restart/pre-roll unresolved",
+      "continuity_window": "seed and any required recursive state window",
+      "policy_state": "UNRESOLVED_SEED_PREROLL_ROUNDING_AND_CONTINUITY_BLOCKED"
+    },
+    {
+      "indicator_ids": ["stock.macd.ema.v1"],
+      "members": ["MACD_12_26_9"],
+      "input": "accepted_daily_close",
+      "parameters": "fast=12; slow=26; signal=9; candidate alpha=2/(period+1)",
+      "minimum_observations": {"macd_line": 26, "signal_and_histogram": 34},
+      "candidate_warmup": "SMA-seeded fast/slow EMA and 9 MACD-line signal seed; pre-roll unresolved",
+      "continuity_window": "26/34 observation seed window plus any required recursive pre-roll",
+      "policy_state": "UNRESOLVED_SEED_PREROLL_ROUNDING_AND_CONTINUITY_BLOCKED"
+    }
+  ],
+  "d3_boundary": {
+    "owned_chain": ["Observation", "Continuity/Eligibility", "Technical Evidence"],
+    "forbidden_semantics": [
+      "BUY",
+      "SELL",
+      "entry",
+      "target",
+      "stop_loss",
+      "win_rate",
+      "position_sizing",
+      "strategy_acceptance",
+      "opportunity_grade",
+      "recommendation_score",
+      "recommendation_gate"
+    ],
+    "advanced_technical": "DEFERRED",
+    "daily_ohlcv_is_true_order_flow": false
+  },
+  "d4_required_binding": [
+    "indicator_id",
+    "value_or_availability_reason",
+    "session_date",
+    "as_of",
+    "required_observation_window",
+    "actual_observation_window",
+    "algorithm_id_version_parameter_set",
+    "price_authority_source_lineage",
+    "continuity_status_evidence",
+    "publication_state"
+  ],
+  "bounded_gap": {
+    "requires_full_adjusted_price_engine": false,
+    "minimum_evidence": [
+      "source-approved versioned event/adjustment evidence by identity/market/family/effective-date/as-of",
+      "authoritative complete empty-set result when PASS is claimed",
+      "known event to FAIL and unresolved coverage to UNKNOWN without mutating raw OHLCV",
+      "legal continuity resolution fields where PASS is claimed"
+    ]
+  },
+  "state": {
+    "implementation": "NOT_RUN",
+    "validation": "DOCUMENTATION_SCOPE_ONLY",
+    "database": "NOT_RUN",
+    "technical_api_publication": "NOT_RUN",
+    "frontend": "NOT_RUN",
+    "provider": "NOT_RUN",
+    "scheduler": "NOT_RUN",
+    "production": "NOT_RUN",
+    "g1": "NOT_RERUN_PRESERVED_EVIDENCE",
+    "g2": "NOT_RERUN_PRESERVED_EVIDENCE",
+    "g3": "NOT_RERUN_PRESERVED_EVIDENCE",
+    "post_close_canary": "NOT_RERUN_PRESERVED_EVIDENCE",
+    "push": "NO",
+    "deploy": "NO",
+    "production_mutation": "NO",
+    "next_task_changed": "NO"
+  },
+  "provenance": {
+    "architecture_policy_contract": "docs/architecture/STOCK_TECHNICAL_V0_POLICY_CONTRACT.md",
+    "closure_report": "docs/reports/TASK-FE-BE-STOCK-006B-PHASE-2A-TECHNICAL-V0-POLICY-CLOSURE.md",
+    "phase1_contract": "docs/architecture/STOCK_TECHNICAL_PUBLICATION_FOUNDATION.md",
+    "phase1_closure": "docs/reports/TASK-FE-BE-STOCK-006B-TECHNICAL-PUBLICATION-FOUNDATION.md",
+    "canonical_state_rule": "committed canonical evidence only; owner-untracked evidence is not authority"
+  }
+}

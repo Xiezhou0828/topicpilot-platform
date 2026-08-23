@@ -1,0 +1,1187 @@
+{
+  "canonical_source_head": "2468ee6b5093dd2a37353424c74d9d719c643bb9",
+  "counts": {
+    "availability_metadata_field_count": 7,
+    "continuity_state_count": 1,
+    "deferred_indicator_count": 8,
+    "derived_indicator_count": 14,
+    "eligibility_state_count": 2,
+    "formal_v0_indicator_count": 14,
+    "implemented_not_formal_count": 0,
+    "legacy_indicator_count": 16,
+    "publication_metadata_field_count": 19,
+    "raw_observation_field_count": 2,
+    "research_only_indicator_count": 0,
+    "technical_field_count": 31
+  },
+  "coverage_hash": "c0c804dacf173f50f2980fc530b4e1c40888c33f3323e562f29883e1c38b6d9c",
+  "deferred_indicators": [
+    {
+      "category": "DEFERRED",
+      "formal_status": "DEFERRED",
+      "indicator_id": "LIQUIDITY_SWEEP",
+      "notes": "No new implementation or inference permitted in this task."
+    },
+    {
+      "category": "DEFERRED",
+      "formal_status": "DEFERRED",
+      "indicator_id": "ORDER_FLOW",
+      "notes": "No new implementation or inference permitted in this task."
+    },
+    {
+      "category": "DEFERRED",
+      "formal_status": "DEFERRED",
+      "indicator_id": "ANCHORED_VWAP",
+      "notes": "No new implementation or inference permitted in this task."
+    },
+    {
+      "category": "DEFERRED",
+      "formal_status": "DEFERRED",
+      "indicator_id": "VOLUME_PROFILE",
+      "notes": "No new implementation or inference permitted in this task."
+    },
+    {
+      "category": "DEFERRED",
+      "formal_status": "DEFERRED",
+      "indicator_id": "FVG",
+      "notes": "No new implementation or inference permitted in this task."
+    },
+    {
+      "category": "DEFERRED",
+      "formal_status": "DEFERRED",
+      "indicator_id": "FIBONACCI",
+      "notes": "No new implementation or inference permitted in this task."
+    },
+    {
+      "category": "DEFERRED",
+      "formal_status": "DEFERRED",
+      "indicator_id": "SUPPLY_AND_DEMAND",
+      "notes": "No new implementation or inference permitted in this task."
+    },
+    {
+      "category": "DEFERRED",
+      "formal_status": "DEFERRED",
+      "indicator_id": "TRADING_PATTERNS",
+      "notes": "No new implementation or inference permitted in this task."
+    }
+  ],
+  "event_authority": {
+    "dataset_content_hash": "4d9b4912bd1c4613510e60c5cf4b5a629c367e1c94dd733d3b1dc3f935e0eb5d",
+    "dataset_version": "REC-A1-CA-EVENTS-V0",
+    "event_identity_count": 341,
+    "event_record_count": 372,
+    "event_type_count": 5,
+    "event_types": [
+      "CASH_DIVIDEND_EX_DIVIDEND",
+      "COMBINED_EX_RIGHT_EX_DIVIDEND_SEMANTIC_PARTIAL",
+      "LISTING_TERMINATION_RESUMPTION_DISCONTINUITY",
+      "RIGHTS_ISSUE_CAPITAL_INCREASE_REFERENCE_RESET",
+      "STOCK_DIVIDEND_EX_RIGHT"
+    ],
+    "path": "reports\\TASK-REC-A1-CORPORATE-ACTION-RESEARCH-DATASET-IMPLEMENTATION\\REC-A1-CA-EVENTS-V0.json",
+    "reference_version": "tw-reference-v1",
+    "semantic_version": "CA-EVENT-SCHEMA-V0"
+  },
+  "field_inventory": [
+    {
+      "category": "RAW_OBSERVATION",
+      "field_id": "close",
+      "status": "CURRENT_INPUT"
+    },
+    {
+      "category": "RAW_OBSERVATION",
+      "field_id": "volume",
+      "status": "CURRENT_INPUT"
+    },
+    {
+      "category": "ELIGIBILITY_STATE",
+      "field_id": "technical_result_status",
+      "status": "CURRENT_SURFACE"
+    },
+    {
+      "category": "ELIGIBILITY_STATE",
+      "field_id": "technical_eligibility",
+      "status": "CURRENT_SURFACE"
+    },
+    {
+      "category": "CONTINUITY_STATE",
+      "field_id": "continuity_state",
+      "status": "CURRENT_SURFACE"
+    },
+    {
+      "category": "PUBLICATION_METADATA",
+      "field_id": "instrument_identity",
+      "status": "CURRENT_SURFACE"
+    },
+    {
+      "category": "PUBLICATION_METADATA",
+      "field_id": "symbol",
+      "status": "CURRENT_SURFACE"
+    },
+    {
+      "category": "PUBLICATION_METADATA",
+      "field_id": "market",
+      "status": "CURRENT_SURFACE"
+    },
+    {
+      "category": "PUBLICATION_METADATA",
+      "field_id": "indicator_id",
+      "status": "CURRENT_SURFACE"
+    },
+    {
+      "category": "PUBLICATION_METADATA",
+      "field_id": "indicator_family",
+      "status": "CURRENT_SURFACE"
+    },
+    {
+      "category": "PUBLICATION_METADATA",
+      "field_id": "indicator_version",
+      "status": "CURRENT_SURFACE"
+    },
+    {
+      "category": "PUBLICATION_METADATA",
+      "field_id": "session_date",
+      "status": "CURRENT_SURFACE"
+    },
+    {
+      "category": "PUBLICATION_METADATA",
+      "field_id": "as_of",
+      "status": "CURRENT_SURFACE"
+    },
+    {
+      "category": "PUBLICATION_METADATA",
+      "field_id": "required_observation_count",
+      "status": "CURRENT_SURFACE"
+    },
+    {
+      "category": "PUBLICATION_METADATA",
+      "field_id": "actual_observation_count",
+      "status": "CURRENT_SURFACE"
+    },
+    {
+      "category": "PUBLICATION_METADATA",
+      "field_id": "required_observation_window",
+      "status": "CURRENT_SURFACE"
+    },
+    {
+      "category": "PUBLICATION_METADATA",
+      "field_id": "actual_observation_window",
+      "status": "CURRENT_SURFACE"
+    },
+    {
+      "category": "PUBLICATION_METADATA",
+      "field_id": "algorithm_id",
+      "status": "CURRENT_SURFACE"
+    },
+    {
+      "category": "PUBLICATION_METADATA",
+      "field_id": "algorithm_version",
+      "status": "CURRENT_SURFACE"
+    },
+    {
+      "category": "PUBLICATION_METADATA",
+      "field_id": "parameter_set",
+      "status": "CURRENT_SURFACE"
+    },
+    {
+      "category": "PUBLICATION_METADATA",
+      "field_id": "price_basis",
+      "status": "CURRENT_SURFACE"
+    },
+    {
+      "category": "PUBLICATION_METADATA",
+      "field_id": "source_authority",
+      "status": "CURRENT_SURFACE"
+    },
+    {
+      "category": "PUBLICATION_METADATA",
+      "field_id": "source_lineage",
+      "status": "CURRENT_SURFACE"
+    },
+    {
+      "category": "PUBLICATION_METADATA",
+      "field_id": "publication_state",
+      "status": "CURRENT_SURFACE"
+    },
+    {
+      "category": "AVAILABILITY_METADATA",
+      "field_id": "availability_reason",
+      "status": "CURRENT_SURFACE"
+    },
+    {
+      "category": "AVAILABILITY_METADATA",
+      "field_id": "limitation_reasons",
+      "status": "CURRENT_SURFACE"
+    },
+    {
+      "category": "AVAILABILITY_METADATA",
+      "field_id": "event_authority_status",
+      "status": "CURRENT_SURFACE"
+    },
+    {
+      "category": "AVAILABILITY_METADATA",
+      "field_id": "event_lookup_state",
+      "status": "CURRENT_SURFACE"
+    },
+    {
+      "category": "AVAILABILITY_METADATA",
+      "field_id": "event_lookup_evidence",
+      "status": "CURRENT_SURFACE"
+    },
+    {
+      "category": "AVAILABILITY_METADATA",
+      "field_id": "known_event_handling",
+      "status": "CURRENT_SURFACE"
+    },
+    {
+      "category": "AVAILABILITY_METADATA",
+      "field_id": "reason_codes",
+      "status": "CURRENT_SURFACE"
+    }
+  ],
+  "field_inventory_scope": "Formal evidence-surface fields and direct raw inputs; legacy adapter fields are listed separately.",
+  "formal_v0_indicators": [
+    {
+      "PIT_safe": true,
+      "algorithm_id": "SMA_CLOSE_V1",
+      "algorithm_version": "SMA_CLOSE_V1",
+      "as_of_rule": "value at session T uses only accepted observations and event authority available for the requested window ending at T",
+      "calculation_definition": "arithmetic mean of the last N accepted raw close observations",
+      "category": "DERIVED_INDICATOR",
+      "continuity_requirement": "indicator-level bounded evaluation; CONTINUITY_FAIL blocks; CONTINUITY_UNKNOWN blocks ordinary formal clearance",
+      "current_consumer": [
+        "/api/v2/stocks/{symbol}/technical",
+        "services/api/tests/test_technical_publication.py",
+        "future WS3 read-only research consumption; no WS3 modification"
+      ],
+      "display_name": "MA5",
+      "event_affected_behavior": "known verified breaking event intersecting the required window is unavailable; valid raw value may be FORMAL_WITH_LIMITATION only for explicit lookup limitation",
+      "formal_status": "FORMAL_V0",
+      "historical_reconstructability": "YES_BOUNDED_FROM_CANONICAL_63826_ROWS",
+      "implementation_location": [
+        "services/api/src/topicpilot_api/technical_publication.py",
+        "services/api/src/topicpilot_api/schemas.py"
+      ],
+      "indicator_id": "MA5",
+      "input_fields": [
+        "accepted_raw_close"
+      ],
+      "lookback_window": 5,
+      "minimum_history": 5,
+      "notes": "Invented indicators and parameter changes are prohibited by this inventory task.",
+      "null_rule": "missing, invalid, insufficient, continuity-failed, or disallowed-authority input remains unavailable",
+      "parameters": {
+        "input": "accepted_raw_close",
+        "period": 5
+      },
+      "publication_eligibility": "value exists, required history exists, valid lineage, indicator-window continuity passes or bounded limitation is explicitly allowed",
+      "publication_state_behavior": [
+        "FORMAL",
+        "FORMAL_WITH_LIMITATION",
+        "UNAVAILABLE"
+      ],
+      "rounding_rule": "no intermediate rounding; Decimal authority boundary",
+      "session_rule": "canonical market-local accepted sessions ordered by trading_date, observed_at, ordering_key, observation_id",
+      "source_lineage_requirement": "V2_CANONICAL_OBSERVATION_CHAIN with VERSIONED source/adapter/normalization/mapping/reference lineage",
+      "test_coverage": "services/api/tests/test_technical_publication.py",
+      "version": "stock-technical-v0-policy.v4",
+      "warmup_rule": "first value after N accepted observations"
+    },
+    {
+      "PIT_safe": true,
+      "algorithm_id": "SMA_CLOSE_V1",
+      "algorithm_version": "SMA_CLOSE_V1",
+      "as_of_rule": "value at session T uses only accepted observations and event authority available for the requested window ending at T",
+      "calculation_definition": "arithmetic mean of the last N accepted raw close observations",
+      "category": "DERIVED_INDICATOR",
+      "continuity_requirement": "indicator-level bounded evaluation; CONTINUITY_FAIL blocks; CONTINUITY_UNKNOWN blocks ordinary formal clearance",
+      "current_consumer": [
+        "/api/v2/stocks/{symbol}/technical",
+        "services/api/tests/test_technical_publication.py",
+        "future WS3 read-only research consumption; no WS3 modification"
+      ],
+      "display_name": "MA10",
+      "event_affected_behavior": "known verified breaking event intersecting the required window is unavailable; valid raw value may be FORMAL_WITH_LIMITATION only for explicit lookup limitation",
+      "formal_status": "FORMAL_V0",
+      "historical_reconstructability": "YES_BOUNDED_FROM_CANONICAL_63826_ROWS",
+      "implementation_location": [
+        "services/api/src/topicpilot_api/technical_publication.py",
+        "services/api/src/topicpilot_api/schemas.py"
+      ],
+      "indicator_id": "MA10",
+      "input_fields": [
+        "accepted_raw_close"
+      ],
+      "lookback_window": 10,
+      "minimum_history": 10,
+      "notes": "Invented indicators and parameter changes are prohibited by this inventory task.",
+      "null_rule": "missing, invalid, insufficient, continuity-failed, or disallowed-authority input remains unavailable",
+      "parameters": {
+        "input": "accepted_raw_close",
+        "period": 10
+      },
+      "publication_eligibility": "value exists, required history exists, valid lineage, indicator-window continuity passes or bounded limitation is explicitly allowed",
+      "publication_state_behavior": [
+        "FORMAL",
+        "FORMAL_WITH_LIMITATION",
+        "UNAVAILABLE"
+      ],
+      "rounding_rule": "no intermediate rounding; Decimal authority boundary",
+      "session_rule": "canonical market-local accepted sessions ordered by trading_date, observed_at, ordering_key, observation_id",
+      "source_lineage_requirement": "V2_CANONICAL_OBSERVATION_CHAIN with VERSIONED source/adapter/normalization/mapping/reference lineage",
+      "test_coverage": "services/api/tests/test_technical_publication.py",
+      "version": "stock-technical-v0-policy.v4",
+      "warmup_rule": "first value after N accepted observations"
+    },
+    {
+      "PIT_safe": true,
+      "algorithm_id": "SMA_CLOSE_V1",
+      "algorithm_version": "SMA_CLOSE_V1",
+      "as_of_rule": "value at session T uses only accepted observations and event authority available for the requested window ending at T",
+      "calculation_definition": "arithmetic mean of the last N accepted raw close observations",
+      "category": "DERIVED_INDICATOR",
+      "continuity_requirement": "indicator-level bounded evaluation; CONTINUITY_FAIL blocks; CONTINUITY_UNKNOWN blocks ordinary formal clearance",
+      "current_consumer": [
+        "/api/v2/stocks/{symbol}/technical",
+        "services/api/tests/test_technical_publication.py",
+        "future WS3 read-only research consumption; no WS3 modification"
+      ],
+      "display_name": "MA20",
+      "event_affected_behavior": "known verified breaking event intersecting the required window is unavailable; valid raw value may be FORMAL_WITH_LIMITATION only for explicit lookup limitation",
+      "formal_status": "FORMAL_V0",
+      "historical_reconstructability": "YES_BOUNDED_FROM_CANONICAL_63826_ROWS",
+      "implementation_location": [
+        "services/api/src/topicpilot_api/technical_publication.py",
+        "services/api/src/topicpilot_api/schemas.py"
+      ],
+      "indicator_id": "MA20",
+      "input_fields": [
+        "accepted_raw_close"
+      ],
+      "lookback_window": 20,
+      "minimum_history": 20,
+      "notes": "Invented indicators and parameter changes are prohibited by this inventory task.",
+      "null_rule": "missing, invalid, insufficient, continuity-failed, or disallowed-authority input remains unavailable",
+      "parameters": {
+        "input": "accepted_raw_close",
+        "period": 20
+      },
+      "publication_eligibility": "value exists, required history exists, valid lineage, indicator-window continuity passes or bounded limitation is explicitly allowed",
+      "publication_state_behavior": [
+        "FORMAL",
+        "FORMAL_WITH_LIMITATION",
+        "UNAVAILABLE"
+      ],
+      "rounding_rule": "no intermediate rounding; Decimal authority boundary",
+      "session_rule": "canonical market-local accepted sessions ordered by trading_date, observed_at, ordering_key, observation_id",
+      "source_lineage_requirement": "V2_CANONICAL_OBSERVATION_CHAIN with VERSIONED source/adapter/normalization/mapping/reference lineage",
+      "test_coverage": "services/api/tests/test_technical_publication.py",
+      "version": "stock-technical-v0-policy.v4",
+      "warmup_rule": "first value after N accepted observations"
+    },
+    {
+      "PIT_safe": true,
+      "algorithm_id": "SMA_CLOSE_V1",
+      "algorithm_version": "SMA_CLOSE_V1",
+      "as_of_rule": "value at session T uses only accepted observations and event authority available for the requested window ending at T",
+      "calculation_definition": "arithmetic mean of the last N accepted raw close observations",
+      "category": "DERIVED_INDICATOR",
+      "continuity_requirement": "indicator-level bounded evaluation; CONTINUITY_FAIL blocks; CONTINUITY_UNKNOWN blocks ordinary formal clearance",
+      "current_consumer": [
+        "/api/v2/stocks/{symbol}/technical",
+        "services/api/tests/test_technical_publication.py",
+        "future WS3 read-only research consumption; no WS3 modification"
+      ],
+      "display_name": "MA60",
+      "event_affected_behavior": "known verified breaking event intersecting the required window is unavailable; valid raw value may be FORMAL_WITH_LIMITATION only for explicit lookup limitation",
+      "formal_status": "FORMAL_V0",
+      "historical_reconstructability": "YES_BOUNDED_FROM_CANONICAL_63826_ROWS",
+      "implementation_location": [
+        "services/api/src/topicpilot_api/technical_publication.py",
+        "services/api/src/topicpilot_api/schemas.py"
+      ],
+      "indicator_id": "MA60",
+      "input_fields": [
+        "accepted_raw_close"
+      ],
+      "lookback_window": 60,
+      "minimum_history": 60,
+      "notes": "Invented indicators and parameter changes are prohibited by this inventory task.",
+      "null_rule": "missing, invalid, insufficient, continuity-failed, or disallowed-authority input remains unavailable",
+      "parameters": {
+        "input": "accepted_raw_close",
+        "period": 60
+      },
+      "publication_eligibility": "value exists, required history exists, valid lineage, indicator-window continuity passes or bounded limitation is explicitly allowed",
+      "publication_state_behavior": [
+        "FORMAL",
+        "FORMAL_WITH_LIMITATION",
+        "UNAVAILABLE"
+      ],
+      "rounding_rule": "no intermediate rounding; Decimal authority boundary",
+      "session_rule": "canonical market-local accepted sessions ordered by trading_date, observed_at, ordering_key, observation_id",
+      "source_lineage_requirement": "V2_CANONICAL_OBSERVATION_CHAIN with VERSIONED source/adapter/normalization/mapping/reference lineage",
+      "test_coverage": "services/api/tests/test_technical_publication.py",
+      "version": "stock-technical-v0-policy.v4",
+      "warmup_rule": "first value after N accepted observations"
+    },
+    {
+      "PIT_safe": true,
+      "algorithm_id": "DISTANCE_TO_MA20_V1",
+      "algorithm_version": "DISTANCE_TO_MA20_V1",
+      "as_of_rule": "value at session T uses only accepted observations and event authority available for the requested window ending at T",
+      "calculation_definition": "(close_t - MA20_t) / MA20_t",
+      "category": "DERIVED_INDICATOR",
+      "continuity_requirement": "indicator-level bounded evaluation; CONTINUITY_FAIL blocks; CONTINUITY_UNKNOWN blocks ordinary formal clearance",
+      "current_consumer": [
+        "/api/v2/stocks/{symbol}/technical",
+        "services/api/tests/test_technical_publication.py",
+        "future WS3 read-only research consumption; no WS3 modification"
+      ],
+      "display_name": "DISTANCE_TO_MA20",
+      "event_affected_behavior": "known verified breaking event intersecting the required window is unavailable; valid raw value may be FORMAL_WITH_LIMITATION only for explicit lookup limitation",
+      "formal_status": "FORMAL_V0",
+      "historical_reconstructability": "YES_BOUNDED_FROM_CANONICAL_63826_ROWS",
+      "implementation_location": [
+        "services/api/src/topicpilot_api/technical_publication.py",
+        "services/api/src/topicpilot_api/schemas.py"
+      ],
+      "indicator_id": "DISTANCE_TO_MA20",
+      "input_fields": [
+        "accepted_raw_close"
+      ],
+      "lookback_window": 20,
+      "minimum_history": 20,
+      "notes": "Invented indicators and parameter changes are prohibited by this inventory task.",
+      "null_rule": "missing, invalid, insufficient, continuity-failed, or disallowed-authority input remains unavailable",
+      "parameters": {
+        "formula": "(close_t - MA20_t) / MA20_t",
+        "ma_period": 20
+      },
+      "publication_eligibility": "value exists, required history exists, valid lineage, indicator-window continuity passes or bounded limitation is explicitly allowed",
+      "publication_state_behavior": [
+        "FORMAL",
+        "FORMAL_WITH_LIMITATION",
+        "UNAVAILABLE"
+      ],
+      "rounding_rule": "no intermediate rounding; zero denominator unavailable",
+      "session_rule": "canonical market-local accepted sessions ordered by trading_date, observed_at, ordering_key, observation_id",
+      "source_lineage_requirement": "V2_CANONICAL_OBSERVATION_CHAIN with VERSIONED source/adapter/normalization/mapping/reference lineage",
+      "test_coverage": "services/api/tests/test_technical_publication.py",
+      "version": "stock-technical-v0-policy.v4",
+      "warmup_rule": "same 20 accepted-close window as MA20"
+    },
+    {
+      "PIT_safe": true,
+      "algorithm_id": "RAW_OBSERVED_CLOSE_RETURN_V1",
+      "algorithm_version": "RAW_OBSERVED_CLOSE_RETURN_V1",
+      "as_of_rule": "value at session T uses only accepted observations and event authority available for the requested window ending at T",
+      "calculation_definition": "close_t / close_(t-N) - 1 using raw observed close",
+      "category": "DERIVED_INDICATOR",
+      "continuity_requirement": "indicator-level bounded evaluation; CONTINUITY_FAIL blocks; CONTINUITY_UNKNOWN blocks ordinary formal clearance",
+      "current_consumer": [
+        "/api/v2/stocks/{symbol}/technical",
+        "services/api/tests/test_technical_publication.py",
+        "future WS3 read-only research consumption; no WS3 modification"
+      ],
+      "display_name": "RAW_CLOSE_RETURN_5D",
+      "event_affected_behavior": "known verified breaking event intersecting the required window is unavailable; valid raw value may be FORMAL_WITH_LIMITATION only for explicit lookup limitation",
+      "formal_status": "FORMAL_V0",
+      "historical_reconstructability": "YES_BOUNDED_FROM_CANONICAL_63826_ROWS",
+      "implementation_location": [
+        "services/api/src/topicpilot_api/technical_publication.py",
+        "services/api/src/topicpilot_api/schemas.py"
+      ],
+      "indicator_id": "RAW_CLOSE_RETURN_5D",
+      "input_fields": [
+        "accepted_raw_close"
+      ],
+      "lookback_window": 6,
+      "minimum_history": 6,
+      "notes": "Invented indicators and parameter changes are prohibited by this inventory task.",
+      "null_rule": "missing, invalid, insufficient, continuity-failed, or disallowed-authority input remains unavailable",
+      "parameters": {
+        "formula": "close_t / close_(t-N) - 1",
+        "period": 5
+      },
+      "publication_eligibility": "value exists, required history exists, valid lineage, indicator-window continuity passes or bounded limitation is explicitly allowed",
+      "publication_state_behavior": [
+        "FORMAL",
+        "FORMAL_WITH_LIMITATION",
+        "UNAVAILABLE"
+      ],
+      "rounding_rule": "no intermediate rounding; raw observed, not adjusted or total return",
+      "session_rule": "canonical market-local accepted sessions ordered by trading_date, observed_at, ordering_key, observation_id",
+      "source_lineage_requirement": "V2_CANONICAL_OBSERVATION_CHAIN with VERSIONED source/adapter/normalization/mapping/reference lineage",
+      "test_coverage": "services/api/tests/test_technical_publication.py",
+      "version": "stock-technical-v0-policy.v4",
+      "warmup_rule": "N+1 accepted closes including anchor and endpoint"
+    },
+    {
+      "PIT_safe": true,
+      "algorithm_id": "RAW_OBSERVED_CLOSE_RETURN_V1",
+      "algorithm_version": "RAW_OBSERVED_CLOSE_RETURN_V1",
+      "as_of_rule": "value at session T uses only accepted observations and event authority available for the requested window ending at T",
+      "calculation_definition": "close_t / close_(t-N) - 1 using raw observed close",
+      "category": "DERIVED_INDICATOR",
+      "continuity_requirement": "indicator-level bounded evaluation; CONTINUITY_FAIL blocks; CONTINUITY_UNKNOWN blocks ordinary formal clearance",
+      "current_consumer": [
+        "/api/v2/stocks/{symbol}/technical",
+        "services/api/tests/test_technical_publication.py",
+        "future WS3 read-only research consumption; no WS3 modification"
+      ],
+      "display_name": "RAW_CLOSE_RETURN_20D",
+      "event_affected_behavior": "known verified breaking event intersecting the required window is unavailable; valid raw value may be FORMAL_WITH_LIMITATION only for explicit lookup limitation",
+      "formal_status": "FORMAL_V0",
+      "historical_reconstructability": "YES_BOUNDED_FROM_CANONICAL_63826_ROWS",
+      "implementation_location": [
+        "services/api/src/topicpilot_api/technical_publication.py",
+        "services/api/src/topicpilot_api/schemas.py"
+      ],
+      "indicator_id": "RAW_CLOSE_RETURN_20D",
+      "input_fields": [
+        "accepted_raw_close"
+      ],
+      "lookback_window": 21,
+      "minimum_history": 21,
+      "notes": "Invented indicators and parameter changes are prohibited by this inventory task.",
+      "null_rule": "missing, invalid, insufficient, continuity-failed, or disallowed-authority input remains unavailable",
+      "parameters": {
+        "formula": "close_t / close_(t-N) - 1",
+        "period": 20
+      },
+      "publication_eligibility": "value exists, required history exists, valid lineage, indicator-window continuity passes or bounded limitation is explicitly allowed",
+      "publication_state_behavior": [
+        "FORMAL",
+        "FORMAL_WITH_LIMITATION",
+        "UNAVAILABLE"
+      ],
+      "rounding_rule": "no intermediate rounding; raw observed, not adjusted or total return",
+      "session_rule": "canonical market-local accepted sessions ordered by trading_date, observed_at, ordering_key, observation_id",
+      "source_lineage_requirement": "V2_CANONICAL_OBSERVATION_CHAIN with VERSIONED source/adapter/normalization/mapping/reference lineage",
+      "test_coverage": "services/api/tests/test_technical_publication.py",
+      "version": "stock-technical-v0-policy.v4",
+      "warmup_rule": "N+1 accepted closes including anchor and endpoint"
+    },
+    {
+      "PIT_safe": true,
+      "algorithm_id": "SMA_VOLUME_QUANTITY_V1",
+      "algorithm_version": "SMA_VOLUME_QUANTITY_V1",
+      "as_of_rule": "value at session T uses only accepted observations and event authority available for the requested window ending at T",
+      "calculation_definition": "arithmetic mean of canonical volume_quantity",
+      "category": "DERIVED_INDICATOR",
+      "continuity_requirement": "indicator-level bounded evaluation; CONTINUITY_FAIL blocks; CONTINUITY_UNKNOWN blocks ordinary formal clearance",
+      "current_consumer": [
+        "/api/v2/stocks/{symbol}/technical",
+        "services/api/tests/test_technical_publication.py",
+        "future WS3 read-only research consumption; no WS3 modification"
+      ],
+      "display_name": "VOLUME_MA5",
+      "event_affected_behavior": "known verified breaking event intersecting the required window is unavailable; valid raw value may be FORMAL_WITH_LIMITATION only for explicit lookup limitation",
+      "formal_status": "FORMAL_V0",
+      "historical_reconstructability": "YES_BOUNDED_FROM_CANONICAL_63826_ROWS",
+      "implementation_location": [
+        "services/api/src/topicpilot_api/technical_publication.py",
+        "services/api/src/topicpilot_api/schemas.py"
+      ],
+      "indicator_id": "VOLUME_MA5",
+      "input_fields": [
+        "canonical_volume_quantity"
+      ],
+      "lookback_window": 5,
+      "minimum_history": 5,
+      "notes": "Invented indicators and parameter changes are prohibited by this inventory task.",
+      "null_rule": "missing, invalid, insufficient, continuity-failed, or disallowed-authority input remains unavailable",
+      "parameters": {
+        "input": "canonical_volume_quantity",
+        "period": 5
+      },
+      "publication_eligibility": "value exists, required history exists, valid lineage, indicator-window continuity passes or bounded limitation is explicitly allowed",
+      "publication_state_behavior": [
+        "FORMAL",
+        "FORMAL_WITH_LIMITATION",
+        "UNAVAILABLE"
+      ],
+      "rounding_rule": "no intermediate rounding; source unit/scale retained",
+      "session_rule": "canonical market-local accepted sessions ordered by trading_date, observed_at, ordering_key, observation_id",
+      "source_lineage_requirement": "V2_CANONICAL_OBSERVATION_CHAIN with VERSIONED source/adapter/normalization/mapping/reference lineage",
+      "test_coverage": "services/api/tests/test_technical_publication.py",
+      "version": "stock-technical-v0-policy.v4",
+      "warmup_rule": "first value after N accepted volume observations"
+    },
+    {
+      "PIT_safe": true,
+      "algorithm_id": "SMA_VOLUME_QUANTITY_V1",
+      "algorithm_version": "SMA_VOLUME_QUANTITY_V1",
+      "as_of_rule": "value at session T uses only accepted observations and event authority available for the requested window ending at T",
+      "calculation_definition": "arithmetic mean of canonical volume_quantity",
+      "category": "DERIVED_INDICATOR",
+      "continuity_requirement": "indicator-level bounded evaluation; CONTINUITY_FAIL blocks; CONTINUITY_UNKNOWN blocks ordinary formal clearance",
+      "current_consumer": [
+        "/api/v2/stocks/{symbol}/technical",
+        "services/api/tests/test_technical_publication.py",
+        "future WS3 read-only research consumption; no WS3 modification"
+      ],
+      "display_name": "VOLUME_MA20",
+      "event_affected_behavior": "known verified breaking event intersecting the required window is unavailable; valid raw value may be FORMAL_WITH_LIMITATION only for explicit lookup limitation",
+      "formal_status": "FORMAL_V0",
+      "historical_reconstructability": "YES_BOUNDED_FROM_CANONICAL_63826_ROWS",
+      "implementation_location": [
+        "services/api/src/topicpilot_api/technical_publication.py",
+        "services/api/src/topicpilot_api/schemas.py"
+      ],
+      "indicator_id": "VOLUME_MA20",
+      "input_fields": [
+        "canonical_volume_quantity"
+      ],
+      "lookback_window": 20,
+      "minimum_history": 20,
+      "notes": "Invented indicators and parameter changes are prohibited by this inventory task.",
+      "null_rule": "missing, invalid, insufficient, continuity-failed, or disallowed-authority input remains unavailable",
+      "parameters": {
+        "input": "canonical_volume_quantity",
+        "period": 20
+      },
+      "publication_eligibility": "value exists, required history exists, valid lineage, indicator-window continuity passes or bounded limitation is explicitly allowed",
+      "publication_state_behavior": [
+        "FORMAL",
+        "FORMAL_WITH_LIMITATION",
+        "UNAVAILABLE"
+      ],
+      "rounding_rule": "no intermediate rounding; source unit/scale retained",
+      "session_rule": "canonical market-local accepted sessions ordered by trading_date, observed_at, ordering_key, observation_id",
+      "source_lineage_requirement": "V2_CANONICAL_OBSERVATION_CHAIN with VERSIONED source/adapter/normalization/mapping/reference lineage",
+      "test_coverage": "services/api/tests/test_technical_publication.py",
+      "version": "stock-technical-v0-policy.v4",
+      "warmup_rule": "first value after N accepted volume observations"
+    },
+    {
+      "PIT_safe": true,
+      "algorithm_id": "VOLUME_RATIO_20_V1",
+      "algorithm_version": "VOLUME_RATIO_20_V1",
+      "as_of_rule": "value at session T uses only accepted observations and event authority available for the requested window ending at T",
+      "calculation_definition": "current session volume / VOLUME_MA20",
+      "category": "DERIVED_INDICATOR",
+      "continuity_requirement": "indicator-level bounded evaluation; CONTINUITY_FAIL blocks; CONTINUITY_UNKNOWN blocks ordinary formal clearance",
+      "current_consumer": [
+        "/api/v2/stocks/{symbol}/technical",
+        "services/api/tests/test_technical_publication.py",
+        "future WS3 read-only research consumption; no WS3 modification"
+      ],
+      "display_name": "VOLUME_RATIO_20",
+      "event_affected_behavior": "known verified breaking event intersecting the required window is unavailable; valid raw value may be FORMAL_WITH_LIMITATION only for explicit lookup limitation",
+      "formal_status": "FORMAL_V0",
+      "historical_reconstructability": "YES_BOUNDED_FROM_CANONICAL_63826_ROWS",
+      "implementation_location": [
+        "services/api/src/topicpilot_api/technical_publication.py",
+        "services/api/src/topicpilot_api/schemas.py"
+      ],
+      "indicator_id": "VOLUME_RATIO_20",
+      "input_fields": [
+        "canonical_volume_quantity"
+      ],
+      "lookback_window": 20,
+      "minimum_history": 20,
+      "notes": "Invented indicators and parameter changes are prohibited by this inventory task.",
+      "null_rule": "missing, invalid, insufficient, continuity-failed, or disallowed-authority input remains unavailable",
+      "parameters": {
+        "formula": "current_volume / VOLUME_MA20",
+        "period": 20
+      },
+      "publication_eligibility": "value exists, required history exists, valid lineage, indicator-window continuity passes or bounded limitation is explicitly allowed",
+      "publication_state_behavior": [
+        "FORMAL",
+        "FORMAL_WITH_LIMITATION",
+        "UNAVAILABLE"
+      ],
+      "rounding_rule": "canonical Decimal ratio boundary; zero denominator unavailable",
+      "session_rule": "canonical market-local accepted sessions ordered by trading_date, observed_at, ordering_key, observation_id",
+      "source_lineage_requirement": "V2_CANONICAL_OBSERVATION_CHAIN with VERSIONED source/adapter/normalization/mapping/reference lineage",
+      "test_coverage": "services/api/tests/test_technical_publication.py",
+      "version": "stock-technical-v0-policy.v4",
+      "warmup_rule": "20 accepted volume observations including anchor"
+    },
+    {
+      "PIT_safe": true,
+      "algorithm_id": "RSI_WILDER_14_V1",
+      "algorithm_version": "RSI_WILDER_14_V1",
+      "as_of_rule": "value at session T uses only accepted observations and event authority available for the requested window ending at T",
+      "calculation_definition": "Wilder RSI over 14 close changes",
+      "category": "DERIVED_INDICATOR",
+      "continuity_requirement": "indicator-level bounded evaluation; CONTINUITY_FAIL blocks; CONTINUITY_UNKNOWN blocks ordinary formal clearance",
+      "current_consumer": [
+        "/api/v2/stocks/{symbol}/technical",
+        "services/api/tests/test_technical_publication.py",
+        "future WS3 read-only research consumption; no WS3 modification"
+      ],
+      "display_name": "RSI14",
+      "event_affected_behavior": "known verified breaking event intersecting the required window is unavailable; valid raw value may be FORMAL_WITH_LIMITATION only for explicit lookup limitation",
+      "formal_status": "FORMAL_V0",
+      "historical_reconstructability": "YES_BOUNDED_FROM_CANONICAL_63826_ROWS",
+      "implementation_location": [
+        "services/api/src/topicpilot_api/technical_publication.py",
+        "services/api/src/topicpilot_api/schemas.py"
+      ],
+      "indicator_id": "RSI14",
+      "input_fields": [
+        "accepted_raw_close"
+      ],
+      "lookback_window": 15,
+      "minimum_history": 15,
+      "notes": "Invented indicators and parameter changes are prohibited by this inventory task.",
+      "null_rule": "missing, invalid, insufficient, continuity-failed, or disallowed-authority input remains unavailable",
+      "parameters": {
+        "period": 14,
+        "seed": "arithmetic_mean_of_first_14_changes"
+      },
+      "publication_eligibility": "value exists, required history exists, valid lineage, indicator-window continuity passes or bounded limitation is explicitly allowed",
+      "publication_state_behavior": [
+        "FORMAL",
+        "FORMAL_WITH_LIMITATION",
+        "UNAVAILABLE"
+      ],
+      "rounding_rule": "no intermediate rounding; flat=50, all-gain=100, all-loss=0",
+      "session_rule": "canonical market-local accepted sessions ordered by trading_date, observed_at, ordering_key, observation_id",
+      "source_lineage_requirement": "V2_CANONICAL_OBSERVATION_CHAIN with VERSIONED source/adapter/normalization/mapping/reference lineage",
+      "test_coverage": "services/api/tests/test_technical_publication.py",
+      "version": "stock-technical-v0-policy.v4",
+      "warmup_rule": "minimum 15 closes; arithmetic seed then Wilder recursion"
+    },
+    {
+      "PIT_safe": true,
+      "algorithm_id": "MACD_12_26_9_SMA_SEEDED_EMA_V1",
+      "algorithm_version": "MACD_12_26_9_SMA_SEEDED_EMA_V1",
+      "as_of_rule": "value at session T uses only accepted observations and event authority available for the requested window ending at T",
+      "calculation_definition": "EMA12 minus EMA26; signal EMA9 of valid MACD line; histogram=line-signal",
+      "category": "DERIVED_INDICATOR",
+      "continuity_requirement": "indicator-level bounded evaluation; CONTINUITY_FAIL blocks; CONTINUITY_UNKNOWN blocks ordinary formal clearance",
+      "current_consumer": [
+        "/api/v2/stocks/{symbol}/technical",
+        "services/api/tests/test_technical_publication.py",
+        "future WS3 read-only research consumption; no WS3 modification"
+      ],
+      "display_name": "MACD_12_26_9",
+      "event_affected_behavior": "known verified breaking event intersecting the required window is unavailable; valid raw value may be FORMAL_WITH_LIMITATION only for explicit lookup limitation",
+      "formal_status": "FORMAL_V0",
+      "historical_reconstructability": "YES_BOUNDED_FROM_CANONICAL_63826_ROWS",
+      "implementation_location": [
+        "services/api/src/topicpilot_api/technical_publication.py",
+        "services/api/src/topicpilot_api/schemas.py"
+      ],
+      "indicator_id": "MACD_12_26_9",
+      "input_fields": [
+        "accepted_raw_close"
+      ],
+      "lookback_window": 26,
+      "minimum_history": 26,
+      "notes": "Invented indicators and parameter changes are prohibited by this inventory task.",
+      "null_rule": "missing, invalid, insufficient, continuity-failed, or disallowed-authority input remains unavailable",
+      "parameters": {
+        "alpha": "2/(N+1)",
+        "ema_seed": "SMA",
+        "fast": 12,
+        "signal": 9,
+        "signal_seed": "first_9_valid_macd_values",
+        "slow": 26
+      },
+      "publication_eligibility": "value exists, required history exists, valid lineage, indicator-window continuity passes or bounded limitation is explicitly allowed",
+      "publication_state_behavior": [
+        "FORMAL",
+        "FORMAL_WITH_LIMITATION",
+        "UNAVAILABLE"
+      ],
+      "rounding_rule": "no intermediate rounding; SMA-seeded EMA",
+      "session_rule": "canonical market-local accepted sessions ordered by trading_date, observed_at, ordering_key, observation_id",
+      "source_lineage_requirement": "V2_CANONICAL_OBSERVATION_CHAIN with VERSIONED source/adapter/normalization/mapping/reference lineage",
+      "test_coverage": "services/api/tests/test_technical_publication.py",
+      "version": "stock-technical-v0-policy.v4",
+      "warmup_rule": "MACD first valid at 26 closes; signal/histogram first valid at 34 closes"
+    },
+    {
+      "PIT_safe": true,
+      "algorithm_id": "MACD_12_26_9_SMA_SEEDED_EMA_V1",
+      "algorithm_version": "MACD_12_26_9_SMA_SEEDED_EMA_V1",
+      "as_of_rule": "value at session T uses only accepted observations and event authority available for the requested window ending at T",
+      "calculation_definition": "EMA12 minus EMA26; signal EMA9 of valid MACD line; histogram=line-signal",
+      "category": "DERIVED_INDICATOR",
+      "continuity_requirement": "indicator-level bounded evaluation; CONTINUITY_FAIL blocks; CONTINUITY_UNKNOWN blocks ordinary formal clearance",
+      "current_consumer": [
+        "/api/v2/stocks/{symbol}/technical",
+        "services/api/tests/test_technical_publication.py",
+        "future WS3 read-only research consumption; no WS3 modification"
+      ],
+      "display_name": "MACD_SIGNAL_12_26_9",
+      "event_affected_behavior": "known verified breaking event intersecting the required window is unavailable; valid raw value may be FORMAL_WITH_LIMITATION only for explicit lookup limitation",
+      "formal_status": "FORMAL_V0",
+      "historical_reconstructability": "YES_BOUNDED_FROM_CANONICAL_63826_ROWS",
+      "implementation_location": [
+        "services/api/src/topicpilot_api/technical_publication.py",
+        "services/api/src/topicpilot_api/schemas.py"
+      ],
+      "indicator_id": "MACD_SIGNAL_12_26_9",
+      "input_fields": [
+        "accepted_raw_close"
+      ],
+      "lookback_window": 34,
+      "minimum_history": 34,
+      "notes": "Invented indicators and parameter changes are prohibited by this inventory task.",
+      "null_rule": "missing, invalid, insufficient, continuity-failed, or disallowed-authority input remains unavailable",
+      "parameters": {
+        "alpha": "2/(N+1)",
+        "ema_seed": "SMA",
+        "fast": 12,
+        "signal": 9,
+        "signal_seed": "first_9_valid_macd_values",
+        "slow": 26
+      },
+      "publication_eligibility": "value exists, required history exists, valid lineage, indicator-window continuity passes or bounded limitation is explicitly allowed",
+      "publication_state_behavior": [
+        "FORMAL",
+        "FORMAL_WITH_LIMITATION",
+        "UNAVAILABLE"
+      ],
+      "rounding_rule": "no intermediate rounding; SMA-seeded EMA",
+      "session_rule": "canonical market-local accepted sessions ordered by trading_date, observed_at, ordering_key, observation_id",
+      "source_lineage_requirement": "V2_CANONICAL_OBSERVATION_CHAIN with VERSIONED source/adapter/normalization/mapping/reference lineage",
+      "test_coverage": "services/api/tests/test_technical_publication.py",
+      "version": "stock-technical-v0-policy.v4",
+      "warmup_rule": "MACD first valid at 26 closes; signal/histogram first valid at 34 closes"
+    },
+    {
+      "PIT_safe": true,
+      "algorithm_id": "MACD_12_26_9_SMA_SEEDED_EMA_V1",
+      "algorithm_version": "MACD_12_26_9_SMA_SEEDED_EMA_V1",
+      "as_of_rule": "value at session T uses only accepted observations and event authority available for the requested window ending at T",
+      "calculation_definition": "EMA12 minus EMA26; signal EMA9 of valid MACD line; histogram=line-signal",
+      "category": "DERIVED_INDICATOR",
+      "continuity_requirement": "indicator-level bounded evaluation; CONTINUITY_FAIL blocks; CONTINUITY_UNKNOWN blocks ordinary formal clearance",
+      "current_consumer": [
+        "/api/v2/stocks/{symbol}/technical",
+        "services/api/tests/test_technical_publication.py",
+        "future WS3 read-only research consumption; no WS3 modification"
+      ],
+      "display_name": "MACD_HISTOGRAM_12_26_9",
+      "event_affected_behavior": "known verified breaking event intersecting the required window is unavailable; valid raw value may be FORMAL_WITH_LIMITATION only for explicit lookup limitation",
+      "formal_status": "FORMAL_V0",
+      "historical_reconstructability": "YES_BOUNDED_FROM_CANONICAL_63826_ROWS",
+      "implementation_location": [
+        "services/api/src/topicpilot_api/technical_publication.py",
+        "services/api/src/topicpilot_api/schemas.py"
+      ],
+      "indicator_id": "MACD_HISTOGRAM_12_26_9",
+      "input_fields": [
+        "accepted_raw_close"
+      ],
+      "lookback_window": 34,
+      "minimum_history": 34,
+      "notes": "Invented indicators and parameter changes are prohibited by this inventory task.",
+      "null_rule": "missing, invalid, insufficient, continuity-failed, or disallowed-authority input remains unavailable",
+      "parameters": {
+        "alpha": "2/(N+1)",
+        "ema_seed": "SMA",
+        "fast": 12,
+        "signal": 9,
+        "signal_seed": "first_9_valid_macd_values",
+        "slow": 26
+      },
+      "publication_eligibility": "value exists, required history exists, valid lineage, indicator-window continuity passes or bounded limitation is explicitly allowed",
+      "publication_state_behavior": [
+        "FORMAL",
+        "FORMAL_WITH_LIMITATION",
+        "UNAVAILABLE"
+      ],
+      "rounding_rule": "no intermediate rounding; SMA-seeded EMA",
+      "session_rule": "canonical market-local accepted sessions ordered by trading_date, observed_at, ordering_key, observation_id",
+      "source_lineage_requirement": "V2_CANONICAL_OBSERVATION_CHAIN with VERSIONED source/adapter/normalization/mapping/reference lineage",
+      "test_coverage": "services/api/tests/test_technical_publication.py",
+      "version": "stock-technical-v0-policy.v4",
+      "warmup_rule": "MACD first valid at 26 closes; signal/histogram first valid at 34 closes"
+    }
+  ],
+  "implementation_locations": [
+    "services/api/src/topicpilot_api/technical_publication.py",
+    "services/api/src/topicpilot_api/known_event_aware_publication.py",
+    "services/api/src/topicpilot_api/schemas.py",
+    "services/api/src/topicpilot_api/production_read_model_api.py",
+    "services/api/tests/test_technical_publication.py"
+  ],
+  "implemented_but_not_formal": [],
+  "input_authority": "V2_CANONICAL_OBSERVATION_CHAIN",
+  "legacy_surface_fields": [
+    {
+      "category": "LEGACY",
+      "field_id": "ma20",
+      "formal_status": "LEGACY_NOT_V2_AUTHORITY",
+      "implementation_location": [
+        "apps/web/app/lib/snapshot-adapter.ts"
+      ],
+      "notes": "Read-only legacy snapshot adapter field; not a V2 Technical V0 calculation or publication authority."
+    },
+    {
+      "category": "LEGACY",
+      "field_id": "ma60",
+      "formal_status": "LEGACY_NOT_V2_AUTHORITY",
+      "implementation_location": [
+        "apps/web/app/lib/snapshot-adapter.ts"
+      ],
+      "notes": "Read-only legacy snapshot adapter field; not a V2 Technical V0 calculation or publication authority."
+    },
+    {
+      "category": "LEGACY",
+      "field_id": "ma20SlopePct",
+      "formal_status": "LEGACY_NOT_V2_AUTHORITY",
+      "implementation_location": [
+        "apps/web/app/lib/snapshot-adapter.ts"
+      ],
+      "notes": "Read-only legacy snapshot adapter field; not a V2 Technical V0 calculation or publication authority."
+    },
+    {
+      "category": "LEGACY",
+      "field_id": "daysAboveMa20",
+      "formal_status": "LEGACY_NOT_V2_AUTHORITY",
+      "implementation_location": [
+        "apps/web/app/lib/snapshot-adapter.ts"
+      ],
+      "notes": "Read-only legacy snapshot adapter field; not a V2 Technical V0 calculation or publication authority."
+    },
+    {
+      "category": "LEGACY",
+      "field_id": "rs5Pct",
+      "formal_status": "LEGACY_NOT_V2_AUTHORITY",
+      "implementation_location": [
+        "apps/web/app/lib/snapshot-adapter.ts"
+      ],
+      "notes": "Read-only legacy snapshot adapter field; not a V2 Technical V0 calculation or publication authority."
+    },
+    {
+      "category": "LEGACY",
+      "field_id": "rs20Pct",
+      "formal_status": "LEGACY_NOT_V2_AUTHORITY",
+      "implementation_location": [
+        "apps/web/app/lib/snapshot-adapter.ts"
+      ],
+      "notes": "Read-only legacy snapshot adapter field; not a V2 Technical V0 calculation or publication authority."
+    },
+    {
+      "category": "LEGACY",
+      "field_id": "distanceTo20DayHighPct",
+      "formal_status": "LEGACY_NOT_V2_AUTHORITY",
+      "implementation_location": [
+        "apps/web/app/lib/snapshot-adapter.ts"
+      ],
+      "notes": "Read-only legacy snapshot adapter field; not a V2 Technical V0 calculation or publication authority."
+    },
+    {
+      "category": "LEGACY",
+      "field_id": "macdDif",
+      "formal_status": "LEGACY_NOT_V2_AUTHORITY",
+      "implementation_location": [
+        "apps/web/app/lib/snapshot-adapter.ts"
+      ],
+      "notes": "Read-only legacy snapshot adapter field; not a V2 Technical V0 calculation or publication authority."
+    },
+    {
+      "category": "LEGACY",
+      "field_id": "macdSignal",
+      "formal_status": "LEGACY_NOT_V2_AUTHORITY",
+      "implementation_location": [
+        "apps/web/app/lib/snapshot-adapter.ts"
+      ],
+      "notes": "Read-only legacy snapshot adapter field; not a V2 Technical V0 calculation or publication authority."
+    },
+    {
+      "category": "LEGACY",
+      "field_id": "macdHist",
+      "formal_status": "LEGACY_NOT_V2_AUTHORITY",
+      "implementation_location": [
+        "apps/web/app/lib/snapshot-adapter.ts"
+      ],
+      "notes": "Read-only legacy snapshot adapter field; not a V2 Technical V0 calculation or publication authority."
+    },
+    {
+      "category": "LEGACY",
+      "field_id": "kdK",
+      "formal_status": "LEGACY_NOT_V2_AUTHORITY",
+      "implementation_location": [
+        "apps/web/app/lib/snapshot-adapter.ts"
+      ],
+      "notes": "Read-only legacy snapshot adapter field; not a V2 Technical V0 calculation or publication authority."
+    },
+    {
+      "category": "LEGACY",
+      "field_id": "kdD",
+      "formal_status": "LEGACY_NOT_V2_AUTHORITY",
+      "implementation_location": [
+        "apps/web/app/lib/snapshot-adapter.ts"
+      ],
+      "notes": "Read-only legacy snapshot adapter field; not a V2 Technical V0 calculation or publication authority."
+    },
+    {
+      "category": "LEGACY",
+      "field_id": "rsi14",
+      "formal_status": "LEGACY_NOT_V2_AUTHORITY",
+      "implementation_location": [
+        "apps/web/app/lib/snapshot-adapter.ts"
+      ],
+      "notes": "Read-only legacy snapshot adapter field; not a V2 Technical V0 calculation or publication authority."
+    },
+    {
+      "category": "LEGACY",
+      "field_id": "volumeRatio",
+      "formal_status": "LEGACY_NOT_V2_AUTHORITY",
+      "implementation_location": [
+        "apps/web/app/lib/snapshot-adapter.ts"
+      ],
+      "notes": "Read-only legacy snapshot adapter field; not a V2 Technical V0 calculation or publication authority."
+    },
+    {
+      "category": "LEGACY",
+      "field_id": "upVolumeRatio",
+      "formal_status": "LEGACY_NOT_V2_AUTHORITY",
+      "implementation_location": [
+        "apps/web/app/lib/snapshot-adapter.ts"
+      ],
+      "notes": "Read-only legacy snapshot adapter field; not a V2 Technical V0 calculation or publication authority."
+    },
+    {
+      "category": "LEGACY",
+      "field_id": "pullbackVolumeShrinkRatio",
+      "formal_status": "LEGACY_NOT_V2_AUTHORITY",
+      "implementation_location": [
+        "apps/web/app/lib/snapshot-adapter.ts"
+      ],
+      "notes": "Read-only legacy snapshot adapter field; not a V2 Technical V0 calculation or publication authority."
+    },
+    {
+      "category": "DERIVED_PUBLICATION_FIELD",
+      "field_id": "reclaimedMa20",
+      "formal_status": "LEGACY_DERIVED_STATE_NOT_V2_AUTHORITY",
+      "implementation_location": [
+        "apps/web/app/lib/snapshot-adapter.ts"
+      ],
+      "notes": "Legacy display/screener state; not a formal V2 indicator."
+    },
+    {
+      "category": "DERIVED_PUBLICATION_FIELD",
+      "field_id": "movingAverageAlignment",
+      "formal_status": "LEGACY_DERIVED_STATE_NOT_V2_AUTHORITY",
+      "implementation_location": [
+        "apps/web/app/lib/snapshot-adapter.ts"
+      ],
+      "notes": "Legacy display/screener state; not a formal V2 indicator."
+    },
+    {
+      "category": "DERIVED_PUBLICATION_FIELD",
+      "field_id": "structureState",
+      "formal_status": "LEGACY_DERIVED_STATE_NOT_V2_AUTHORITY",
+      "implementation_location": [
+        "apps/web/app/lib/snapshot-adapter.ts"
+      ],
+      "notes": "Legacy display/screener state; not a formal V2 indicator."
+    },
+    {
+      "category": "DERIVED_PUBLICATION_FIELD",
+      "field_id": "rsState",
+      "formal_status": "LEGACY_DERIVED_STATE_NOT_V2_AUTHORITY",
+      "implementation_location": [
+        "apps/web/app/lib/snapshot-adapter.ts"
+      ],
+      "notes": "Legacy display/screener state; not a formal V2 indicator."
+    },
+    {
+      "category": "DERIVED_PUBLICATION_FIELD",
+      "field_id": "breakout20DayHigh",
+      "formal_status": "LEGACY_DERIVED_STATE_NOT_V2_AUTHORITY",
+      "implementation_location": [
+        "apps/web/app/lib/snapshot-adapter.ts"
+      ],
+      "notes": "Legacy display/screener state; not a formal V2 indicator."
+    },
+    {
+      "category": "DERIVED_PUBLICATION_FIELD",
+      "field_id": "macdHistTurnedPositive",
+      "formal_status": "LEGACY_DERIVED_STATE_NOT_V2_AUTHORITY",
+      "implementation_location": [
+        "apps/web/app/lib/snapshot-adapter.ts"
+      ],
+      "notes": "Legacy display/screener state; not a formal V2 indicator."
+    },
+    {
+      "category": "DERIVED_PUBLICATION_FIELD",
+      "field_id": "macdGoldenCross",
+      "formal_status": "LEGACY_DERIVED_STATE_NOT_V2_AUTHORITY",
+      "implementation_location": [
+        "apps/web/app/lib/snapshot-adapter.ts"
+      ],
+      "notes": "Legacy display/screener state; not a formal V2 indicator."
+    },
+    {
+      "category": "DERIVED_PUBLICATION_FIELD",
+      "field_id": "difAboveZero",
+      "formal_status": "LEGACY_DERIVED_STATE_NOT_V2_AUTHORITY",
+      "implementation_location": [
+        "apps/web/app/lib/snapshot-adapter.ts"
+      ],
+      "notes": "Legacy display/screener state; not a formal V2 indicator."
+    },
+    {
+      "category": "DERIVED_PUBLICATION_FIELD",
+      "field_id": "kdGoldenCross",
+      "formal_status": "LEGACY_DERIVED_STATE_NOT_V2_AUTHORITY",
+      "implementation_location": [
+        "apps/web/app/lib/snapshot-adapter.ts"
+      ],
+      "notes": "Legacy display/screener state; not a formal V2 indicator."
+    },
+    {
+      "category": "DERIVED_PUBLICATION_FIELD",
+      "field_id": "kdLowGoldenCross",
+      "formal_status": "LEGACY_DERIVED_STATE_NOT_V2_AUTHORITY",
+      "implementation_location": [
+        "apps/web/app/lib/snapshot-adapter.ts"
+      ],
+      "notes": "Legacy display/screener state; not a formal V2 indicator."
+    },
+    {
+      "category": "DERIVED_PUBLICATION_FIELD",
+      "field_id": "kdMidLowGoldenCross",
+      "formal_status": "LEGACY_DERIVED_STATE_NOT_V2_AUTHORITY",
+      "implementation_location": [
+        "apps/web/app/lib/snapshot-adapter.ts"
+      ],
+      "notes": "Legacy display/screener state; not a formal V2 indicator."
+    },
+    {
+      "category": "DERIVED_PUBLICATION_FIELD",
+      "field_id": "volumeStatus",
+      "formal_status": "LEGACY_DERIVED_STATE_NOT_V2_AUTHORITY",
+      "implementation_location": [
+        "apps/web/app/lib/snapshot-adapter.ts"
+      ],
+      "notes": "Legacy display/screener state; not a formal V2 indicator."
+    },
+    {
+      "category": "DERIVED_PUBLICATION_FIELD",
+      "field_id": "breakoutWithVolume",
+      "formal_status": "LEGACY_DERIVED_STATE_NOT_V2_AUTHORITY",
+      "implementation_location": [
+        "apps/web/app/lib/snapshot-adapter.ts"
+      ],
+      "notes": "Legacy display/screener state; not a formal V2 indicator."
+    },
+    {
+      "category": "DERIVED_PUBLICATION_FIELD",
+      "field_id": "restartConfirmed",
+      "formal_status": "LEGACY_DERIVED_STATE_NOT_V2_AUTHORITY",
+      "implementation_location": [
+        "apps/web/app/lib/snapshot-adapter.ts"
+      ],
+      "notes": "Legacy display/screener state; not a formal V2 indicator."
+    }
+  ],
+  "manifest_version": "technical-v0-indicator-inventory.v1",
+  "research_only_indicators": [],
+  "task_id": "TASK-WS2-TECHNICAL-V0-INDICATOR-INVENTORY-AND-FORMAL-EVIDENCE-SURFACE-20260819",
+  "technical_contract_version": "stock-technical-publication.v3",
+  "technical_policy_version": "stock-technical-v0-policy.v4"
+}

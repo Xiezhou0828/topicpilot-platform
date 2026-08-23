@@ -1,0 +1,2 @@
+status,analysis,required_source,disposition,cohort_scope,horizons
+NOT_AVAILABLE,REGIME_ROBUSTNESS,PIT-safe event-level market-regime evidence,Existing regime-attribution audit records a missing PIT-safe index/breadth/peer source; no retrospective regime classification was performed,A2_ONLY|LEGACY5_ONLY|BOTH_SAME_SESSION,5|10

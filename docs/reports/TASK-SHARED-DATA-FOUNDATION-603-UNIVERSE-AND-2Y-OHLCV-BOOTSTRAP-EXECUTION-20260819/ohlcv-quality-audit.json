@@ -1,0 +1,36 @@
+{
+  "task_id": "TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-BOOTSTRAP-EXECUTION-20260819",
+  "requested_window": [
+    "2024-08-13",
+    "2026-08-13"
+  ],
+  "accepted_full_ohlcv_rows": 288881,
+  "by_market": {
+    "TPE": {
+      "view_rows": 177459,
+      "accepted_full_ohlcv_rows": 177427,
+      "incomplete_view_rows": 32
+    },
+    "TWO": {
+      "view_rows": 111694,
+      "accepted_full_ohlcv_rows": 111454,
+      "incomplete_view_rows": 240
+    }
+  },
+  "duplicate_session_count_after_supersession_filter": 0,
+  "candidate_alternative_rows_resolved": 50447,
+  "invalid_ohlcv_count": 0,
+  "invalid_detail": {
+    "negative_ohlcv": 0,
+    "high_lt_low": 0,
+    "high_below_oc": 0,
+    "low_above_oc": 0,
+    "invalid_any": 0
+  },
+  "incomplete_accepted_count": 0,
+  "incomplete_canonical_observation_count": 289,
+  "incomplete_view_rows": 272,
+  "incomplete_warning": "MISSING_OHLC_FIELD",
+  "synthetic_fill_count": 0,
+  "adjustment_state": "UNKNOWN (all accepted canonical PRICE observations)"
+}

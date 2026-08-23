@@ -1,0 +1,765 @@
+{
+  "candidate_count": 14,
+  "candidates": [
+    {
+      "T10_evaluable_count": 739,
+      "T10_stats": {
+        "max": 0.3652597402597403,
+        "mean": -0.08388270288359656,
+        "median": -0.07211538461538461,
+        "min": -0.4878186968838527,
+        "n": 739
+      },
+      "T1_evaluable_count": 739,
+      "T1_stats": {
+        "max": 0.0625,
+        "mean": -0.04681815602623551,
+        "median": -0.04234527687296417,
+        "min": -0.18979591836734694,
+        "n": 739
+      },
+      "T3_evaluable_count": 739,
+      "T3_stats": {
+        "max": 0.2718253968253968,
+        "mean": -0.06689828656895415,
+        "median": -0.05825242718446602,
+        "min": -0.2587360594795539,
+        "n": 739
+      },
+      "T5_evaluable_count": 739,
+      "T5_stats": {
+        "max": 0.35119047619047616,
+        "mean": -0.07828476207332354,
+        "median": -0.06893203883495146,
+        "min": -0.371875,
+        "n": 739
+      },
+      "active_date_count": 279,
+      "candidate_id": "DEEP_NO_RECLAIM",
+      "descriptive_path_only": true,
+      "disposition": "READY_WITH_BOUNDED_LIMITATIONS",
+      "event_count": 739,
+      "instrument_count": 435,
+      "market_counts": {
+        "TPE": 456,
+        "TWO": 283
+      },
+      "retention": 0.19219765929778934,
+      "temporal_coverage": [
+        "2024_PARTIAL",
+        "2025",
+        "2026_THROUGH_CANONICAL_END"
+      ],
+      "year_counts": {
+        "2024": 45,
+        "2025": 373,
+        "2026": 321
+      }
+    },
+    {
+      "T10_evaluable_count": 397,
+      "T10_stats": {
+        "max": 0.7864693446088795,
+        "mean": 0.09798894578795318,
+        "median": 0.061224489795918366,
+        "min": -0.21895424836601307,
+        "n": 397
+      },
+      "T1_evaluable_count": 397,
+      "T1_stats": {
+        "max": 0.2527646129541864,
+        "mean": 0.04382438567573274,
+        "median": 0.02734375,
+        "min": -0.046511627906976744,
+        "n": 397
+      },
+      "T3_evaluable_count": 397,
+      "T3_stats": {
+        "max": 0.3833580980683507,
+        "mean": 0.07435251929425601,
+        "median": 0.04501607717041801,
+        "min": -0.08646616541353383,
+        "n": 397
+      },
+      "T5_evaluable_count": 397,
+      "T5_stats": {
+        "max": 0.4650817236255572,
+        "mean": 0.0860435657283972,
+        "median": 0.05863192182410423,
+        "min": -0.09012875536480687,
+        "n": 397
+      },
+      "active_date_count": 208,
+      "candidate_id": "DEPTH_0_TO_MINUS_1PCT",
+      "descriptive_path_only": true,
+      "disposition": "READY_WITH_BOUNDED_LIMITATIONS",
+      "event_count": 397,
+      "instrument_count": 291,
+      "market_counts": {
+        "TPE": 254,
+        "TWO": 143
+      },
+      "retention": 0.10325097529258778,
+      "temporal_coverage": [
+        "2024_PARTIAL",
+        "2025",
+        "2026_THROUGH_CANONICAL_END"
+      ],
+      "year_counts": {
+        "2024": 18,
+        "2025": 246,
+        "2026": 133
+      }
+    },
+    {
+      "T10_evaluable_count": 1913,
+      "T10_stats": {
+        "max": 0.7157490396927016,
+        "mean": -0.03456503510480327,
+        "median": -0.05185185185185185,
+        "min": -0.7440366972477064,
+        "n": 1913
+      },
+      "T1_evaluable_count": 1913,
+      "T1_stats": {
+        "max": 0.18936170212765957,
+        "mean": -0.024184934858559708,
+        "median": -0.023346303501945526,
+        "min": -0.18979591836734694,
+        "n": 1913
+      },
+      "T3_evaluable_count": 1913,
+      "T3_stats": {
+        "max": 0.30666666666666664,
+        "mean": -0.035191890928997174,
+        "median": -0.03636363636363636,
+        "min": -0.2587360594795539,
+        "n": 1913
+      },
+      "T5_evaluable_count": 1913,
+      "T5_stats": {
+        "max": 0.47503201024327785,
+        "mean": -0.038945935100164884,
+        "median": -0.04356435643564356,
+        "min": -0.371875,
+        "n": 1913
+      },
+      "active_date_count": 370,
+      "candidate_id": "DEPTH_BELOW_MINUS_5PCT",
+      "descriptive_path_only": true,
+      "disposition": "READY_WITH_BOUNDED_LIMITATIONS",
+      "event_count": 1913,
+      "instrument_count": 570,
+      "market_counts": {
+        "TPE": 1153,
+        "TWO": 760
+      },
+      "retention": 0.49752925877763327,
+      "temporal_coverage": [
+        "2024_PARTIAL",
+        "2025",
+        "2026_THROUGH_CANONICAL_END"
+      ],
+      "year_counts": {
+        "2024": 97,
+        "2025": 917,
+        "2026": 899
+      }
+    },
+    {
+      "T10_evaluable_count": 438,
+      "T10_stats": {
+        "max": 1.342281879194631,
+        "mean": 0.09666190289842026,
+        "median": 0.04876309049054891,
+        "min": -0.272,
+        "n": 438
+      },
+      "T1_evaluable_count": 438,
+      "T1_stats": {
+        "max": 0.24093264248704663,
+        "mean": 0.029736508271761084,
+        "median": 0.014814814814814815,
+        "min": -0.04746835443037975,
+        "n": 438
+      },
+      "T3_evaluable_count": 438,
+      "T3_stats": {
+        "max": 0.40414507772020725,
+        "mean": 0.05248173335060497,
+        "median": 0.03383529589371981,
+        "min": -0.07911392405063292,
+        "n": 438
+      },
+      "T5_evaluable_count": 438,
+      "T5_stats": {
+        "max": 0.6037037037037037,
+        "mean": 0.07172687312291265,
+        "median": 0.0411578555472822,
+        "min": -0.07817969661610269,
+        "n": 438
+      },
+      "active_date_count": 226,
+      "candidate_id": "DEPTH_MINUS_1_TO_2PCT",
+      "descriptive_path_only": true,
+      "disposition": "READY_WITH_BOUNDED_LIMITATIONS",
+      "event_count": 438,
+      "instrument_count": 295,
+      "market_counts": {
+        "TPE": 280,
+        "TWO": 158
+      },
+      "retention": 0.11391417425227568,
+      "temporal_coverage": [
+        "2024_PARTIAL",
+        "2025",
+        "2026_THROUGH_CANONICAL_END"
+      ],
+      "year_counts": {
+        "2024": 20,
+        "2025": 262,
+        "2026": 156
+      }
+    },
+    {
+      "T10_evaluable_count": 375,
+      "T10_stats": {
+        "max": 0.8751560549313359,
+        "mean": 0.0791951526404142,
+        "median": 0.03363914373088685,
+        "min": -0.2340966921119593,
+        "n": 375
+      },
+      "T1_evaluable_count": 376,
+      "T1_stats": {
+        "max": 0.22131147540983606,
+        "mean": 0.01629324845406805,
+        "median": 0.005316322608361408,
+        "min": -0.04108108108108108,
+        "n": 376
+      },
+      "T3_evaluable_count": 376,
+      "T3_stats": {
+        "max": 0.37216828478964403,
+        "mean": 0.038747562263786055,
+        "median": 0.013888888888888888,
+        "min": -0.11764705882352941,
+        "n": 376
+      },
+      "T5_evaluable_count": 376,
+      "T5_stats": {
+        "max": 0.6213275299238302,
+        "mean": 0.0561543624229776,
+        "median": 0.023241199505572692,
+        "min": -0.1643243243243243,
+        "n": 376
+      },
+      "active_date_count": 223,
+      "candidate_id": "DEPTH_MINUS_2_TO_3PCT",
+      "descriptive_path_only": true,
+      "disposition": "READY_WITH_BOUNDED_LIMITATIONS",
+      "event_count": 376,
+      "instrument_count": 266,
+      "market_counts": {
+        "TPE": 257,
+        "TWO": 119
+      },
+      "retention": 0.09778933680104031,
+      "temporal_coverage": [
+        "2024_PARTIAL",
+        "2025",
+        "2026_THROUGH_CANONICAL_END"
+      ],
+      "year_counts": {
+        "2024": 22,
+        "2025": 223,
+        "2026": 131
+      }
+    },
+    {
+      "T10_evaluable_count": 720,
+      "T10_stats": {
+        "max": 0.8777292576419214,
+        "mean": 0.04793924718105647,
+        "median": 0.006676690054571778,
+        "min": -0.19508448540706605,
+        "n": 720
+      },
+      "T1_evaluable_count": 721,
+      "T1_stats": {
+        "max": 0.24285714285714285,
+        "mean": 0.0037333566704558035,
+        "median": -0.004405286343612335,
+        "min": -0.04905660377358491,
+        "n": 721
+      },
+      "T3_evaluable_count": 721,
+      "T3_stats": {
+        "max": 0.3345008756567426,
+        "mean": 0.014948208477642846,
+        "median": 0.0,
+        "min": -0.09375,
+        "n": 721
+      },
+      "T5_evaluable_count": 721,
+      "T5_stats": {
+        "max": 0.5530864197530864,
+        "mean": 0.028454034131834418,
+        "median": 0.0033500837520938024,
+        "min": -0.15524193548387097,
+        "n": 721
+      },
+      "active_date_count": 280,
+      "candidate_id": "DEPTH_MINUS_3_TO_5PCT",
+      "descriptive_path_only": true,
+      "disposition": "READY_WITH_BOUNDED_LIMITATIONS",
+      "event_count": 721,
+      "instrument_count": 415,
+      "market_counts": {
+        "TPE": 454,
+        "TWO": 267
+      },
+      "retention": 0.18751625487646295,
+      "temporal_coverage": [
+        "2024_PARTIAL",
+        "2025",
+        "2026_THROUGH_CANONICAL_END"
+      ],
+      "year_counts": {
+        "2024": 39,
+        "2025": 408,
+        "2026": 274
+      }
+    },
+    {
+      "T10_evaluable_count": 855,
+      "T10_stats": {
+        "max": 0.3652597402597403,
+        "mean": -0.07432605311302314,
+        "median": -0.06544502617801047,
+        "min": -0.4878186968838527,
+        "n": 855
+      },
+      "T1_evaluable_count": 855,
+      "T1_stats": {
+        "max": 0.077577045696068,
+        "mean": -0.04241291841055365,
+        "median": -0.03765227021040975,
+        "min": -0.18979591836734694,
+        "n": 855
+      },
+      "T3_evaluable_count": 855,
+      "T3_stats": {
+        "max": 0.2718253968253968,
+        "mean": -0.060021829881320404,
+        "median": -0.05263157894736842,
+        "min": -0.2587360594795539,
+        "n": 855
+      },
+      "T5_evaluable_count": 855,
+      "T5_stats": {
+        "max": 0.35119047619047616,
+        "mean": -0.06970218805807883,
+        "median": -0.06181015452538632,
+        "min": -0.371875,
+        "n": 855
+      },
+      "active_date_count": 298,
+      "candidate_id": "FAILED_RECLAIM",
+      "descriptive_path_only": true,
+      "disposition": "READY_WITH_BOUNDED_LIMITATIONS",
+      "event_count": 855,
+      "instrument_count": 468,
+      "market_counts": {
+        "TPE": 529,
+        "TWO": 326
+      },
+      "retention": 0.2223667100130039,
+      "temporal_coverage": [
+        "2024_PARTIAL",
+        "2025",
+        "2026_THROUGH_CANONICAL_END"
+      ],
+      "year_counts": {
+        "2024": 54,
+        "2025": 447,
+        "2026": 354
+      }
+    },
+    {
+      "T10_evaluable_count": 0,
+      "T10_stats": {
+        "max": null,
+        "mean": null,
+        "median": null,
+        "min": null,
+        "n": 0
+      },
+      "T1_evaluable_count": 0,
+      "T1_stats": {
+        "max": null,
+        "mean": null,
+        "median": null,
+        "min": null,
+        "n": 0
+      },
+      "T3_evaluable_count": 0,
+      "T3_stats": {
+        "max": null,
+        "mean": null,
+        "median": null,
+        "min": null,
+        "n": 0
+      },
+      "T5_evaluable_count": 0,
+      "T5_stats": {
+        "max": null,
+        "mean": null,
+        "median": null,
+        "min": null,
+        "n": 0
+      },
+      "active_date_count": 0,
+      "candidate_id": "MULTI_SESSION_BELOW_NO_RECLAIM",
+      "descriptive_path_only": true,
+      "disposition": "NOT_READY_FOR_P2E",
+      "event_count": 0,
+      "instrument_count": 0,
+      "market_counts": {},
+      "retention": 0.0,
+      "temporal_coverage": [],
+      "year_counts": {}
+    },
+    {
+      "T10_evaluable_count": 2988,
+      "T10_stats": {
+        "max": 1.342281879194631,
+        "mean": 0.047817880995310445,
+        "median": 0.015366451730088094,
+        "min": -0.7440366972477064,
+        "n": 2988
+      },
+      "T1_evaluable_count": 2990,
+      "T1_stats": {
+        "max": 0.2527646129541864,
+        "mean": 0.009778644873252215,
+        "median": 0.00392156862745098,
+        "min": -0.15128593040847202,
+        "n": 2990
+      },
+      "T3_evaluable_count": 2990,
+      "T3_stats": {
+        "max": 0.40414507772020725,
+        "mean": 0.020685039562644152,
+        "median": 0.00616808385169967,
+        "min": -0.19806338028169015,
+        "n": 2990
+      },
+      "T5_evaluable_count": 2990,
+      "T5_stats": {
+        "max": 0.6213275299238302,
+        "mean": 0.030868515667272105,
+        "median": 0.010380622837370242,
+        "min": -0.2904929577464789,
+        "n": 2990
+      },
+      "active_date_count": 381,
+      "candidate_id": "RECLAIM",
+      "descriptive_path_only": true,
+      "disposition": "READY_WITH_BOUNDED_LIMITATIONS",
+      "event_count": 2990,
+      "instrument_count": 592,
+      "market_counts": {
+        "TPE": 1869,
+        "TWO": 1121
+      },
+      "retention": 0.7776332899869961,
+      "temporal_coverage": [
+        "2024_PARTIAL",
+        "2025",
+        "2026_THROUGH_CANONICAL_END"
+      ],
+      "year_counts": {
+        "2024": 142,
+        "2025": 1609,
+        "2026": 1239
+      }
+    },
+    {
+      "T10_evaluable_count": 529,
+      "T10_stats": {
+        "max": 0.8777292576419214,
+        "mean": 0.04511887144030809,
+        "median": 0.013084112149532711,
+        "min": -0.7440366972477064,
+        "n": 529
+      },
+      "T1_evaluable_count": 529,
+      "T1_stats": {
+        "max": 0.18421052631578946,
+        "mean": 0.02243164833597739,
+        "median": 0.0121580547112462,
+        "min": -0.09868421052631579,
+        "n": 529
+      },
+      "T3_evaluable_count": 529,
+      "T3_stats": {
+        "max": 0.3236929922135706,
+        "mean": 0.02840091446618454,
+        "median": 0.00851063829787234,
+        "min": -0.15833333333333333,
+        "n": 529
+      },
+      "T5_evaluable_count": 529,
+      "T5_stats": {
+        "max": 0.47503201024327785,
+        "mean": 0.037029263259508734,
+        "median": 0.014285714285714285,
+        "min": -0.1593984962406015,
+        "n": 529
+      },
+      "active_date_count": 245,
+      "candidate_id": "RECLAIM_2_SESSIONS",
+      "descriptive_path_only": true,
+      "disposition": "READY_WITH_BOUNDED_LIMITATIONS",
+      "event_count": 529,
+      "instrument_count": 351,
+      "market_counts": {
+        "TPE": 331,
+        "TWO": 198
+      },
+      "retention": 0.13758127438231468,
+      "temporal_coverage": [
+        "2024_PARTIAL",
+        "2025",
+        "2026_THROUGH_CANONICAL_END"
+      ],
+      "year_counts": {
+        "2024": 28,
+        "2025": 275,
+        "2026": 226
+      }
+    },
+    {
+      "T10_evaluable_count": 2371,
+      "T10_stats": {
+        "max": 0.8751560549313359,
+        "mean": 0.004483076039610465,
+        "median": -0.014953271028037384,
+        "min": -0.4878186968838527,
+        "n": 2371
+      },
+      "T1_evaluable_count": 2372,
+      "T1_stats": {
+        "max": 0.225,
+        "mean": -0.016774157603583598,
+        "median": -0.015524507306055556,
+        "min": -0.18979591836734694,
+        "n": 2372
+      },
+      "T3_evaluable_count": 2372,
+      "T3_stats": {
+        "max": 0.3438520130576714,
+        "mean": -0.012782476563465574,
+        "median": -0.017298944920398775,
+        "min": -0.2587360594795539,
+        "n": 2372
+      },
+      "T5_evaluable_count": 2372,
+      "T5_stats": {
+        "max": 0.6213275299238302,
+        "mean": -0.0077318642872693565,
+        "median": -0.01660243252954524,
+        "min": -0.371875,
+        "n": 2372
+      },
+      "active_date_count": 386,
+      "candidate_id": "RECLAIM_3_PLUS_OR_NO_RECLAIM_H10",
+      "descriptive_path_only": true,
+      "disposition": "READY_WITH_BOUNDED_LIMITATIONS",
+      "event_count": 2372,
+      "instrument_count": 590,
+      "market_counts": {
+        "TPE": 1472,
+        "TWO": 900
+      },
+      "retention": 0.6169050715214565,
+      "temporal_coverage": [
+        "2024_PARTIAL",
+        "2025",
+        "2026_THROUGH_CANONICAL_END"
+      ],
+      "year_counts": {
+        "2024": 127,
+        "2025": 1272,
+        "2026": 973
+      }
+    },
+    {
+      "T10_evaluable_count": 943,
+      "T10_stats": {
+        "max": 1.342281879194631,
+        "mean": 0.047543792916769266,
+        "median": 0.016666666666666666,
+        "min": -0.389937106918239,
+        "n": 943
+      },
+      "T1_evaluable_count": 944,
+      "T1_stats": {
+        "max": 0.2527646129541864,
+        "mean": 0.02213671906352649,
+        "median": 0.00915753987555138,
+        "min": -0.09615384615384616,
+        "n": 944
+      },
+      "T3_evaluable_count": 944,
+      "T3_stats": {
+        "max": 0.40414507772020725,
+        "mean": 0.027357578813247668,
+        "median": 0.009554372568071198,
+        "min": -0.19806338028169015,
+        "n": 944
+      },
+      "T5_evaluable_count": 944,
+      "T5_stats": {
+        "max": 0.6037037037037037,
+        "mean": 0.03331884839047562,
+        "median": 0.01142796370509666,
+        "min": -0.2904929577464789,
+        "n": 944
+      },
+      "active_date_count": 313,
+      "candidate_id": "RECLAIM_WITHIN_1_SESSION",
+      "descriptive_path_only": true,
+      "disposition": "READY_WITH_BOUNDED_LIMITATIONS",
+      "event_count": 944,
+      "instrument_count": 465,
+      "market_counts": {
+        "TPE": 595,
+        "TWO": 349
+      },
+      "retention": 0.24551365409622886,
+      "temporal_coverage": [
+        "2024_PARTIAL",
+        "2025",
+        "2026_THROUGH_CANONICAL_END"
+      ],
+      "year_counts": {
+        "2024": 41,
+        "2025": 509,
+        "2026": 394
+      }
+    },
+    {
+      "T10_evaluable_count": 3843,
+      "T10_stats": {
+        "max": 1.342281879194631,
+        "mean": 0.02064300104146573,
+        "median": -0.0032822757111597373,
+        "min": -0.7440366972477064,
+        "n": 3843
+      },
+      "T1_evaluable_count": 3845,
+      "T1_stats": {
+        "max": 0.2527646129541864,
+        "mean": -0.0018270213446031857,
+        "median": -0.0046875,
+        "min": -0.18979591836734694,
+        "n": 3845
+      },
+      "T3_evaluable_count": 3845,
+      "T3_stats": {
+        "max": 0.40414507772020725,
+        "mean": 0.002738518528940723,
+        "median": -0.006024096385542169,
+        "min": -0.2587360594795539,
+        "n": 3845
+      },
+      "T5_evaluable_count": 3845,
+      "T5_stats": {
+        "max": 0.6213275299238302,
+        "mean": 0.008504939156173263,
+        "median": -0.0061633281972265025,
+        "min": -0.371875,
+        "n": 3845
+      },
+      "active_date_count": 396,
+      "candidate_id": "REFERENCE_LOSS",
+      "descriptive_path_only": true,
+      "disposition": "READY_WITH_BOUNDED_LIMITATIONS",
+      "event_count": 3845,
+      "instrument_count": 598,
+      "market_counts": {
+        "TPE": 2398,
+        "TWO": 1447
+      },
+      "retention": 1.0,
+      "temporal_coverage": [
+        "2024_PARTIAL",
+        "2025",
+        "2026_THROUGH_CANONICAL_END"
+      ],
+      "year_counts": {
+        "2024": 196,
+        "2025": 2056,
+        "2026": 1593
+      }
+    },
+    {
+      "T10_evaluable_count": 402,
+      "T10_stats": {
+        "max": 1.342281879194631,
+        "mean": 0.12064148656177213,
+        "median": 0.06715900079302141,
+        "min": -0.0614406779661017,
+        "n": 402
+      },
+      "T1_evaluable_count": 402,
+      "T1_stats": {
+        "max": 0.2527646129541864,
+        "mean": 0.04539704299477304,
+        "median": 0.025439137134052388,
+        "min": -0.020833333333333332,
+        "n": 402
+      },
+      "T3_evaluable_count": 402,
+      "T3_stats": {
+        "max": 0.40414507772020725,
+        "mean": 0.0768860375065873,
+        "median": 0.04893295677799607,
+        "min": -0.02486678507992895,
+        "n": 402
+      },
+      "T5_evaluable_count": 402,
+      "T5_stats": {
+        "max": 0.6037037037037037,
+        "mean": 0.0954551489959981,
+        "median": 0.06504934210526317,
+        "min": -0.025787965616045846,
+        "n": 402
+      },
+      "active_date_count": 211,
+      "candidate_id": "SHALLOW_QUICK_RECLAIM",
+      "descriptive_path_only": true,
+      "disposition": "READY_WITH_BOUNDED_LIMITATIONS",
+      "event_count": 402,
+      "instrument_count": 285,
+      "market_counts": {
+        "TPE": 263,
+        "TWO": 139
+      },
+      "retention": 0.10455136540962288,
+      "temporal_coverage": [
+        "2024_PARTIAL",
+        "2025",
+        "2026_THROUGH_CANONICAL_END"
+      ],
+      "year_counts": {
+        "2024": 18,
+        "2025": 239,
+        "2026": 145
+      }
+    }
+  ],
+  "no_stop_rule": true
+}

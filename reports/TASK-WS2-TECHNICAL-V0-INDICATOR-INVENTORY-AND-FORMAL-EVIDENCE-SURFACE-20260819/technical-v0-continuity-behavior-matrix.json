@@ -1,0 +1,259 @@
+{
+  "event_authority_is_not_no_event": true,
+  "matrix_version": "technical-v0-continuity-behavior.v1",
+  "rows": [
+    {
+      "affected_event_types_in_authority": [
+        "CASH_DIVIDEND_EX_DIVIDEND",
+        "COMBINED_EX_RIGHT_EX_DIVIDEND_SEMANTIC_PARTIAL",
+        "LISTING_TERMINATION_RESUMPTION_DISCONTINUITY",
+        "RIGHTS_ISSUE_CAPITAL_INCREASE_REFERENCE_RESET",
+        "STOCK_DIVIDEND_EX_RIGHT"
+      ],
+      "continuity_fail_behavior": "UNAVAILABLE with CONTINUITY_FAIL",
+      "continuity_unknown_behavior": "fail closed for ordinary formal publication; no empty event result is treated as NO_EVENT",
+      "formal_with_limitation_permitted": true,
+      "indicator_id": "MA5",
+      "known_event_behavior": "known verified event intersecting this indicator window blocks the value unless continuity_resolved is true",
+      "lookup_unavailable_behavior": "ordinary formal clearance unavailable; otherwise valid raw value may be FORMAL_WITH_LIMITATION with EVENT_LOOKUP_UNAVAILABLE",
+      "required_window": 5,
+      "requires_continuity_evaluation": true,
+      "source": "services/api/src/topicpilot_api/technical_publication.py"
+    },
+    {
+      "affected_event_types_in_authority": [
+        "CASH_DIVIDEND_EX_DIVIDEND",
+        "COMBINED_EX_RIGHT_EX_DIVIDEND_SEMANTIC_PARTIAL",
+        "LISTING_TERMINATION_RESUMPTION_DISCONTINUITY",
+        "RIGHTS_ISSUE_CAPITAL_INCREASE_REFERENCE_RESET",
+        "STOCK_DIVIDEND_EX_RIGHT"
+      ],
+      "continuity_fail_behavior": "UNAVAILABLE with CONTINUITY_FAIL",
+      "continuity_unknown_behavior": "fail closed for ordinary formal publication; no empty event result is treated as NO_EVENT",
+      "formal_with_limitation_permitted": true,
+      "indicator_id": "MA10",
+      "known_event_behavior": "known verified event intersecting this indicator window blocks the value unless continuity_resolved is true",
+      "lookup_unavailable_behavior": "ordinary formal clearance unavailable; otherwise valid raw value may be FORMAL_WITH_LIMITATION with EVENT_LOOKUP_UNAVAILABLE",
+      "required_window": 10,
+      "requires_continuity_evaluation": true,
+      "source": "services/api/src/topicpilot_api/technical_publication.py"
+    },
+    {
+      "affected_event_types_in_authority": [
+        "CASH_DIVIDEND_EX_DIVIDEND",
+        "COMBINED_EX_RIGHT_EX_DIVIDEND_SEMANTIC_PARTIAL",
+        "LISTING_TERMINATION_RESUMPTION_DISCONTINUITY",
+        "RIGHTS_ISSUE_CAPITAL_INCREASE_REFERENCE_RESET",
+        "STOCK_DIVIDEND_EX_RIGHT"
+      ],
+      "continuity_fail_behavior": "UNAVAILABLE with CONTINUITY_FAIL",
+      "continuity_unknown_behavior": "fail closed for ordinary formal publication; no empty event result is treated as NO_EVENT",
+      "formal_with_limitation_permitted": true,
+      "indicator_id": "MA20",
+      "known_event_behavior": "known verified event intersecting this indicator window blocks the value unless continuity_resolved is true",
+      "lookup_unavailable_behavior": "ordinary formal clearance unavailable; otherwise valid raw value may be FORMAL_WITH_LIMITATION with EVENT_LOOKUP_UNAVAILABLE",
+      "required_window": 20,
+      "requires_continuity_evaluation": true,
+      "source": "services/api/src/topicpilot_api/technical_publication.py"
+    },
+    {
+      "affected_event_types_in_authority": [
+        "CASH_DIVIDEND_EX_DIVIDEND",
+        "COMBINED_EX_RIGHT_EX_DIVIDEND_SEMANTIC_PARTIAL",
+        "LISTING_TERMINATION_RESUMPTION_DISCONTINUITY",
+        "RIGHTS_ISSUE_CAPITAL_INCREASE_REFERENCE_RESET",
+        "STOCK_DIVIDEND_EX_RIGHT"
+      ],
+      "continuity_fail_behavior": "UNAVAILABLE with CONTINUITY_FAIL",
+      "continuity_unknown_behavior": "fail closed for ordinary formal publication; no empty event result is treated as NO_EVENT",
+      "formal_with_limitation_permitted": true,
+      "indicator_id": "MA60",
+      "known_event_behavior": "known verified event intersecting this indicator window blocks the value unless continuity_resolved is true",
+      "lookup_unavailable_behavior": "ordinary formal clearance unavailable; otherwise valid raw value may be FORMAL_WITH_LIMITATION with EVENT_LOOKUP_UNAVAILABLE",
+      "required_window": 60,
+      "requires_continuity_evaluation": true,
+      "source": "services/api/src/topicpilot_api/technical_publication.py"
+    },
+    {
+      "affected_event_types_in_authority": [
+        "CASH_DIVIDEND_EX_DIVIDEND",
+        "COMBINED_EX_RIGHT_EX_DIVIDEND_SEMANTIC_PARTIAL",
+        "LISTING_TERMINATION_RESUMPTION_DISCONTINUITY",
+        "RIGHTS_ISSUE_CAPITAL_INCREASE_REFERENCE_RESET",
+        "STOCK_DIVIDEND_EX_RIGHT"
+      ],
+      "continuity_fail_behavior": "UNAVAILABLE with CONTINUITY_FAIL",
+      "continuity_unknown_behavior": "fail closed for ordinary formal publication; no empty event result is treated as NO_EVENT",
+      "formal_with_limitation_permitted": true,
+      "indicator_id": "DISTANCE_TO_MA20",
+      "known_event_behavior": "known verified event intersecting this indicator window blocks the value unless continuity_resolved is true",
+      "lookup_unavailable_behavior": "ordinary formal clearance unavailable; otherwise valid raw value may be FORMAL_WITH_LIMITATION with EVENT_LOOKUP_UNAVAILABLE",
+      "required_window": 20,
+      "requires_continuity_evaluation": true,
+      "source": "services/api/src/topicpilot_api/technical_publication.py"
+    },
+    {
+      "affected_event_types_in_authority": [
+        "CASH_DIVIDEND_EX_DIVIDEND",
+        "COMBINED_EX_RIGHT_EX_DIVIDEND_SEMANTIC_PARTIAL",
+        "LISTING_TERMINATION_RESUMPTION_DISCONTINUITY",
+        "RIGHTS_ISSUE_CAPITAL_INCREASE_REFERENCE_RESET",
+        "STOCK_DIVIDEND_EX_RIGHT"
+      ],
+      "continuity_fail_behavior": "UNAVAILABLE with CONTINUITY_FAIL",
+      "continuity_unknown_behavior": "fail closed for ordinary formal publication; no empty event result is treated as NO_EVENT",
+      "formal_with_limitation_permitted": true,
+      "indicator_id": "RAW_CLOSE_RETURN_5D",
+      "known_event_behavior": "known verified event intersecting this indicator window blocks the value unless continuity_resolved is true",
+      "lookup_unavailable_behavior": "ordinary formal clearance unavailable; otherwise valid raw value may be FORMAL_WITH_LIMITATION with EVENT_LOOKUP_UNAVAILABLE",
+      "required_window": 6,
+      "requires_continuity_evaluation": true,
+      "source": "services/api/src/topicpilot_api/technical_publication.py"
+    },
+    {
+      "affected_event_types_in_authority": [
+        "CASH_DIVIDEND_EX_DIVIDEND",
+        "COMBINED_EX_RIGHT_EX_DIVIDEND_SEMANTIC_PARTIAL",
+        "LISTING_TERMINATION_RESUMPTION_DISCONTINUITY",
+        "RIGHTS_ISSUE_CAPITAL_INCREASE_REFERENCE_RESET",
+        "STOCK_DIVIDEND_EX_RIGHT"
+      ],
+      "continuity_fail_behavior": "UNAVAILABLE with CONTINUITY_FAIL",
+      "continuity_unknown_behavior": "fail closed for ordinary formal publication; no empty event result is treated as NO_EVENT",
+      "formal_with_limitation_permitted": true,
+      "indicator_id": "RAW_CLOSE_RETURN_20D",
+      "known_event_behavior": "known verified event intersecting this indicator window blocks the value unless continuity_resolved is true",
+      "lookup_unavailable_behavior": "ordinary formal clearance unavailable; otherwise valid raw value may be FORMAL_WITH_LIMITATION with EVENT_LOOKUP_UNAVAILABLE",
+      "required_window": 21,
+      "requires_continuity_evaluation": true,
+      "source": "services/api/src/topicpilot_api/technical_publication.py"
+    },
+    {
+      "affected_event_types_in_authority": [
+        "CASH_DIVIDEND_EX_DIVIDEND",
+        "COMBINED_EX_RIGHT_EX_DIVIDEND_SEMANTIC_PARTIAL",
+        "LISTING_TERMINATION_RESUMPTION_DISCONTINUITY",
+        "RIGHTS_ISSUE_CAPITAL_INCREASE_REFERENCE_RESET",
+        "STOCK_DIVIDEND_EX_RIGHT"
+      ],
+      "continuity_fail_behavior": "UNAVAILABLE with CONTINUITY_FAIL",
+      "continuity_unknown_behavior": "fail closed for ordinary formal publication; no empty event result is treated as NO_EVENT",
+      "formal_with_limitation_permitted": true,
+      "indicator_id": "VOLUME_MA5",
+      "known_event_behavior": "known verified event intersecting this indicator window blocks the value unless continuity_resolved is true",
+      "lookup_unavailable_behavior": "ordinary formal clearance unavailable; otherwise valid raw value may be FORMAL_WITH_LIMITATION with EVENT_LOOKUP_UNAVAILABLE",
+      "required_window": 5,
+      "requires_continuity_evaluation": true,
+      "source": "services/api/src/topicpilot_api/technical_publication.py"
+    },
+    {
+      "affected_event_types_in_authority": [
+        "CASH_DIVIDEND_EX_DIVIDEND",
+        "COMBINED_EX_RIGHT_EX_DIVIDEND_SEMANTIC_PARTIAL",
+        "LISTING_TERMINATION_RESUMPTION_DISCONTINUITY",
+        "RIGHTS_ISSUE_CAPITAL_INCREASE_REFERENCE_RESET",
+        "STOCK_DIVIDEND_EX_RIGHT"
+      ],
+      "continuity_fail_behavior": "UNAVAILABLE with CONTINUITY_FAIL",
+      "continuity_unknown_behavior": "fail closed for ordinary formal publication; no empty event result is treated as NO_EVENT",
+      "formal_with_limitation_permitted": true,
+      "indicator_id": "VOLUME_MA20",
+      "known_event_behavior": "known verified event intersecting this indicator window blocks the value unless continuity_resolved is true",
+      "lookup_unavailable_behavior": "ordinary formal clearance unavailable; otherwise valid raw value may be FORMAL_WITH_LIMITATION with EVENT_LOOKUP_UNAVAILABLE",
+      "required_window": 20,
+      "requires_continuity_evaluation": true,
+      "source": "services/api/src/topicpilot_api/technical_publication.py"
+    },
+    {
+      "affected_event_types_in_authority": [
+        "CASH_DIVIDEND_EX_DIVIDEND",
+        "COMBINED_EX_RIGHT_EX_DIVIDEND_SEMANTIC_PARTIAL",
+        "LISTING_TERMINATION_RESUMPTION_DISCONTINUITY",
+        "RIGHTS_ISSUE_CAPITAL_INCREASE_REFERENCE_RESET",
+        "STOCK_DIVIDEND_EX_RIGHT"
+      ],
+      "continuity_fail_behavior": "UNAVAILABLE with CONTINUITY_FAIL",
+      "continuity_unknown_behavior": "fail closed for ordinary formal publication; no empty event result is treated as NO_EVENT",
+      "formal_with_limitation_permitted": true,
+      "indicator_id": "VOLUME_RATIO_20",
+      "known_event_behavior": "known verified event intersecting this indicator window blocks the value unless continuity_resolved is true",
+      "lookup_unavailable_behavior": "ordinary formal clearance unavailable; otherwise valid raw value may be FORMAL_WITH_LIMITATION with EVENT_LOOKUP_UNAVAILABLE",
+      "required_window": 20,
+      "requires_continuity_evaluation": true,
+      "source": "services/api/src/topicpilot_api/technical_publication.py"
+    },
+    {
+      "affected_event_types_in_authority": [
+        "CASH_DIVIDEND_EX_DIVIDEND",
+        "COMBINED_EX_RIGHT_EX_DIVIDEND_SEMANTIC_PARTIAL",
+        "LISTING_TERMINATION_RESUMPTION_DISCONTINUITY",
+        "RIGHTS_ISSUE_CAPITAL_INCREASE_REFERENCE_RESET",
+        "STOCK_DIVIDEND_EX_RIGHT"
+      ],
+      "continuity_fail_behavior": "UNAVAILABLE with CONTINUITY_FAIL",
+      "continuity_unknown_behavior": "fail closed for ordinary formal publication; no empty event result is treated as NO_EVENT",
+      "formal_with_limitation_permitted": true,
+      "indicator_id": "RSI14",
+      "known_event_behavior": "known verified event intersecting this indicator window blocks the value unless continuity_resolved is true",
+      "lookup_unavailable_behavior": "ordinary formal clearance unavailable; otherwise valid raw value may be FORMAL_WITH_LIMITATION with EVENT_LOOKUP_UNAVAILABLE",
+      "required_window": 15,
+      "requires_continuity_evaluation": true,
+      "source": "services/api/src/topicpilot_api/technical_publication.py"
+    },
+    {
+      "affected_event_types_in_authority": [
+        "CASH_DIVIDEND_EX_DIVIDEND",
+        "COMBINED_EX_RIGHT_EX_DIVIDEND_SEMANTIC_PARTIAL",
+        "LISTING_TERMINATION_RESUMPTION_DISCONTINUITY",
+        "RIGHTS_ISSUE_CAPITAL_INCREASE_REFERENCE_RESET",
+        "STOCK_DIVIDEND_EX_RIGHT"
+      ],
+      "continuity_fail_behavior": "UNAVAILABLE with CONTINUITY_FAIL",
+      "continuity_unknown_behavior": "fail closed for ordinary formal publication; no empty event result is treated as NO_EVENT",
+      "formal_with_limitation_permitted": true,
+      "indicator_id": "MACD_12_26_9",
+      "known_event_behavior": "known verified event intersecting this indicator window blocks the value unless continuity_resolved is true",
+      "lookup_unavailable_behavior": "ordinary formal clearance unavailable; otherwise valid raw value may be FORMAL_WITH_LIMITATION with EVENT_LOOKUP_UNAVAILABLE",
+      "required_window": 26,
+      "requires_continuity_evaluation": true,
+      "source": "services/api/src/topicpilot_api/technical_publication.py"
+    },
+    {
+      "affected_event_types_in_authority": [
+        "CASH_DIVIDEND_EX_DIVIDEND",
+        "COMBINED_EX_RIGHT_EX_DIVIDEND_SEMANTIC_PARTIAL",
+        "LISTING_TERMINATION_RESUMPTION_DISCONTINUITY",
+        "RIGHTS_ISSUE_CAPITAL_INCREASE_REFERENCE_RESET",
+        "STOCK_DIVIDEND_EX_RIGHT"
+      ],
+      "continuity_fail_behavior": "UNAVAILABLE with CONTINUITY_FAIL",
+      "continuity_unknown_behavior": "fail closed for ordinary formal publication; no empty event result is treated as NO_EVENT",
+      "formal_with_limitation_permitted": true,
+      "indicator_id": "MACD_SIGNAL_12_26_9",
+      "known_event_behavior": "known verified event intersecting this indicator window blocks the value unless continuity_resolved is true",
+      "lookup_unavailable_behavior": "ordinary formal clearance unavailable; otherwise valid raw value may be FORMAL_WITH_LIMITATION with EVENT_LOOKUP_UNAVAILABLE",
+      "required_window": 34,
+      "requires_continuity_evaluation": true,
+      "source": "services/api/src/topicpilot_api/technical_publication.py"
+    },
+    {
+      "affected_event_types_in_authority": [
+        "CASH_DIVIDEND_EX_DIVIDEND",
+        "COMBINED_EX_RIGHT_EX_DIVIDEND_SEMANTIC_PARTIAL",
+        "LISTING_TERMINATION_RESUMPTION_DISCONTINUITY",
+        "RIGHTS_ISSUE_CAPITAL_INCREASE_REFERENCE_RESET",
+        "STOCK_DIVIDEND_EX_RIGHT"
+      ],
+      "continuity_fail_behavior": "UNAVAILABLE with CONTINUITY_FAIL",
+      "continuity_unknown_behavior": "fail closed for ordinary formal publication; no empty event result is treated as NO_EVENT",
+      "formal_with_limitation_permitted": true,
+      "indicator_id": "MACD_HISTOGRAM_12_26_9",
+      "known_event_behavior": "known verified event intersecting this indicator window blocks the value unless continuity_resolved is true",
+      "lookup_unavailable_behavior": "ordinary formal clearance unavailable; otherwise valid raw value may be FORMAL_WITH_LIMITATION with EVENT_LOOKUP_UNAVAILABLE",
+      "required_window": 34,
+      "requires_continuity_evaluation": true,
+      "source": "services/api/src/topicpilot_api/technical_publication.py"
+    }
+  ],
+  "task_id": "TASK-WS2-TECHNICAL-V0-INDICATOR-INVENTORY-AND-FORMAL-EVIDENCE-SURFACE-20260819"
+}

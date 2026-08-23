@@ -9,7 +9,17 @@ export type StockListQuery = NonNullable<
   operations["stocks_api_v2_stocks_get"]["parameters"]["query"]
 >;
 
+export type StockEodRead = components["schemas"]["StockEodRead"];
 export type StockApiRelation = components["schemas"]["StockTopicRelationRead"];
+export type StockHistoryRead = components["schemas"]["HistoricalPriceHistoryResponse"];
+export type StockHistoryPoint = components["schemas"]["HistoricalPricePoint"];
+
+export type StockHistoryResource = {
+  source: "api" | "unavailable";
+  data: StockHistoryRead | null;
+  error: string | null;
+  state: "UNAVAILABLE" | "ERROR" | null;
+};
 
 export type StockApiMainTopic = {
   name: string;
@@ -94,23 +104,21 @@ export async function fetchFormalStocks(
     };
   }
 
-  const pageLimit = query.limit ?? 1000;
-  const initialOffset = query.offset ?? 0;
   const params: Record<string, string> = {
-    limit: String(pageLimit),
-    offset: String(initialOffset),
+    limit: "1000",
+    offset: "0",
     sort: query.sort ?? "symbolAsc",
   };
   const normalizedSearch = query.search?.trim();
   if (normalizedSearch) params.search = normalizedSearch;
   if (query.market) params.market = query.market;
   if (query.topic) params.topic = query.topic;
-  if (query.updateMode) params.updateMode = query.updateMode;
+  if (query.updateMode && query.updateMode !== "all") params.updateMode = query.updateMode;
 
   try {
     const first = await fetchStockPage(base, params, options.signal);
     const items = first.items.map(normalizeStock);
-    let offset = initialOffset + items.length;
+    let offset = items.length;
     while (offset < first.total) {
       const next = await fetchStockPage(base, { ...params, offset: String(offset) }, options.signal);
       if (!next.items.length) break;
@@ -153,6 +161,49 @@ export async function fetchFormalStock(
       source: "unavailable",
       data: null,
       error: error instanceof Error ? error.message : "Formal stock detail request failed.",
+    };
+  }
+}
+
+export async function fetchFormalStockHistory(
+  symbol: string,
+  options: { market?: string | null; signal?: AbortSignal } = {},
+): Promise<StockHistoryResource> {
+  const base = getFormalApiBaseUrl();
+  if (!base) {
+    return {
+      source: "unavailable",
+      data: null,
+      error: "Formal FastAPI origin is not configured; historical price history is unavailable.",
+      state: "UNAVAILABLE",
+    };
+  }
+
+  const params = new URLSearchParams({
+    from: "2000-01-01",
+    to: "2100-01-01",
+    limit: "200",
+  });
+  if (options.market) params.set("market", options.market);
+
+  try {
+    const response = await fetch(
+      `${base}/api/v2/stocks/${encodeURIComponent(symbol)}/price-history?${params.toString()}`,
+      { cache: "no-store", signal: options.signal },
+    );
+    if (!response.ok) throw new Error(`FastAPI stock price history returned HTTP ${response.status}`);
+    return {
+      source: "api",
+      data: await response.json() as StockHistoryRead,
+      error: null,
+      state: null,
+    };
+  } catch (error) {
+    return {
+      source: "unavailable",
+      data: null,
+      error: error instanceof Error ? error.message : "Formal stock price history request failed.",
+      state: "ERROR",
     };
   }
 }

@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "task-ws2-ws3-shared-g2r-p-core-v0-g2r-c-g3-routing-reassessment.v1",
+  "taskId": "TASK-WS2-WS3-SHARED-G2R-P-CORE-V0-RESEARCH-EVENT-AWARE-CONTINUITY-POLICY-CLOSURE-20260818",
+  "G2R_C_REQUIRED_FOR_WS3": "NO",
+  "G2R_C_REQUIRED_FOR_WS2": "YES_OR_UNRESOLVED",
+  "SHARED_G3_STILL_REQUIRED": "PARTIAL",
+  "G2R_C_EXECUTED": false,
+  "SHARED_G3_EXECUTED": false,
+  "routing": {
+    "WS3": {
+      "status": "CONTINUITY_AUTHORITY_DEPENDENCY_REMOVED_FOR_RESEARCH",
+      "reason": "Owner policy allows real observed OHLCV research with NO_KNOWN_VERIFIED_BREAKING_EVENT; affirmative no-event proof, COVERED_NO_EVENT, and CONTINUITY_PASS_BOUNDED are not prerequisites.",
+      "nextAction": "Owner/orchestrator may issue a separate bounded WS3 real-coverage rerun task."
+    },
+    "WS2": {
+      "status": "FORMAL_CONTINUITY_AUTHORITY_DEPENDENCY_REMAINS",
+      "reason": "technical_publication.py remains fail-closed for CONTINUITY_UNKNOWN and formal publication still requires bounded continuity evidence.",
+      "nextAction": "Keep G2R-C/G3 requirements separate and unresolved/required for formal WS2 needs."
+    },
+    "SHARED_G3": {
+      "ws3OnlyAffirmativeNoEventDependency": "OBSOLETE",
+      "independentWs2OrSharedRequirements": "PRESERVED",
+      "execution": "NOT_STARTED"
+    }
+  },
+  "couplingDecision": "WS3 research and WS2 formal publication are now explicitly decoupled for continuity admissibility; no downstream task was started.",
+  "prohibitionsHonored": [
+    "no G2R-C",
+    "no Shared-G3",
+    "no G2R-B3 rerun",
+    "no G2R-B4",
+    "no promotion/push/deploy",
+    "no OHLCV or production mutation"
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "TASK_ID": "TASK-WS3-A-STRUCTURAL-ELIGIBILITY-RECONSTRUCTION-AND-FALSE-POSITIVE-SEPARATION-20260821",
+  "dataset_id": "SDF-603-2Y-OHLCV-ACCEPTED-DAILY-V1",
+  "dataset_sha256": "e803733e796d8f4d8cf00575cd4045f28c9364572fc61b31ef490e8a65ff47a4",
+  "deterministic_replay_status": "PASS_MANIFEST_ORDER_AND_REPORT_INPUT_RELOAD",
+  "feature_search_after_results": false,
+  "intermediate_manifest_record_count": 13057,
+  "intermediate_manifest_sha256": "cdee696ed6cb89b581cf114446fbc1b510c7a4f34099d8e3a0f43579400c2406",
+  "large_panel_scan_count": 2,
+  "large_source_panels_rescanned_after_manifest": false,
+  "prior_ab_manifest_sha256": "a3572927ed0f5aa7299f74ba8bbbffb357e1cec7cfb8ff37718d677db34eef91",
+  "raw_ohlcv_not_adjusted_truth": true,
+  "relative_strength": "UNAVAILABLE_NO_CANONICAL_BENCHMARK",
+  "report_generation_used_intermediate_manifest": true,
+  "schema_version": "ws3-a-structural-eligibility-reproducibility-manifest.v1",
+  "source_artifact_hashes_from_upstream_reproducibility": {
+    "ws3-successful-swing-feature-manifest.json": "e5392cd142554616b621b5ff69b681ab3d44fd63d1877b29e8e07ba1d3873f14",
+    "ws3-successful-swing-matched-control-panel.csv": "b451c47937a19b781957cb6a2ad55fc35454564299095a994962eac0392d5521",
+    "ws3-successful-swing-pre-event-feature-panel.csv": "0867421384fff9b2123a48217855c95214b5da5266a7889561b06d18ee05c6c5",
+    "ws3-successful-swing-raw-anchor-panel.csv": "2a393ad083230dd81a5cb73c8456ad3a20ff705aeef96f2cba68fc0c7257da38"
+  },
+  "source_canonical_head": "8ae27521622e11bb01f7f7e52e1ed8f98d95c124",
+  "source_to_canonical_provenance": "Pending isolated commit; canonical promotion recorded in closure after acceptance.",
+  "synthetic_fill": false
+}

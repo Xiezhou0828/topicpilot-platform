@@ -1,0 +1,26 @@
+{
+  "db_access": "read_only",
+  "normalized_aggregate_sha256": "9a8c61048519348a64cbdc46165847c4bfd3b1cd007227c7c37a083f69bb0f22",
+  "normalized_artifact_hashes": {
+    "OWNER-DECISION-MEMO.md": "4d827217aa8153dd2ffae20ccf48add3c8d1e83cb12c6ef5998bccf3c8b3a6d8",
+    "a2-path-aware-benchmark.csv": "5b9cb147a51f51525fb97fb7cdbe82f4bf1d05d44f2fd92a5d41df2ff25b85f4",
+    "barrier-race-summary.csv": "6e25380cee94847950e625e5d56749bf328c89c0e55c5464fb9d80f5ad7599c2",
+    "data-quality-corporate-action-audit.json": "94b82501c99a41c3c92cb6c31c70f44845cd130bcb91416dc68478dded81895b",
+    "endpoint-summary.csv": "9d0f96321ecff99af6ae982bed7b0e74a92611f68c819318b5db6adc6a24b7ab",
+    "event-outcomes.csv": "0876305dd4286d505f1dcea57864895e5459c78e9b0c708fd025278c25e9ce7a",
+    "legacy5-distinct-episodes.csv": "f0c6a6fb3d0d14ab40cde7999c7848e0fdbcd28590b9712785eab166c2be00c8",
+    "legacy5-event-cohort-manifest.json": "ba0ab5564d356262b31001e453c632d7e58bf72b26943240fd8f84a1e9b93df0",
+    "legacy5-raw-anchors.csv": "9345c52d1ef3b3a8ccd2fe8364d041ee07a770ab8698ad9d96f5de01033df7b7",
+    "mfe-mae-summary.csv": "ef995dfa507f01dcf78b6cc12b67a74bdb8ed47fabaf13695c13185d2503653b",
+    "time-to-opportunity.csv": "db5ed062177c77e3ab93f89bb844faa4a81c05534d71d71c9e437f8e716b2029",
+    "variant-comparison.csv": "5c480ed8cadd514bbad2ebbf203fbe33572d1947f54c5cfbb47effe27e12374d"
+  },
+  "prior_replay_aggregate_sha256": "9a8c61048519348a64cbdc46165847c4bfd3b1cd007227c7c37a083f69bb0f22",
+  "reconstruction_runs": 9,
+  "reproducible": "YES",
+  "schema_version": "ws3-legacy5-reproducibility-manifest.v1",
+  "source_manifest_sha256": "2c64f06f67d2d74b2a116be22f2c22fce5df131566f3ff93a99a9a810aa48443",
+  "source_surface_sha256": "e803733e796d8f4d8cf00575cd4045f28c9364572fc61b31ef490e8a65ff47a4",
+  "strategy_acceptance": "NO",
+  "task_id": "TASK-WS3-LEGACY-5-STRATEGY-BENCHMARK-20260822"
+}
