@@ -135,24 +135,29 @@ jobs:
           json_get("/openapi.json")
 
           topics = json_get("/api/v2/topics?limit=200&offset=0")
-          if topics.get("total") != 130 or len(topics.get("items", [])) != 130:
+          topic_items = topics.get("items", [])
+          topic_total = topics.get("total")
+          # The formal read model reports the current enabled/effective topic
+          # authority.  Do not freeze this package gate to a historical row
+          # count; an empty formal publication is also a truthful result.
+          if not isinstance(topic_total, int) or topic_total < 0 or len(topic_items) != topic_total:
               raise SystemExit(
-                  f"formal topic contract mismatch: total={topics.get('total')} "
-                  f"items={len(topics.get('items', []))}"
+                  f"formal topic contract mismatch: total={topic_total} "
+                  f"items={len(topic_items)}"
               )
-          topic_items = topics["items"]
           slug = topic_items[0].get("slug") if topic_items else None
-          if not slug:
-              raise SystemExit("formal topic response has no detail slug")
-          json_get("/api/v2/topics/" + quote(slug, safe=""))
+          if slug:
+              json_get("/api/v2/topics/" + quote(slug, safe=""))
 
           stocks = json_get("/api/v2/stocks?limit=1000&offset=0")
-          if stocks.get("total") != 507 or len(stocks.get("items", [])) != 507:
+          stock_items = stocks.get("items", [])
+          stock_total = stocks.get("total")
+          if not isinstance(stock_total, int) or stock_total < 0 or len(stock_items) != stock_total:
               raise SystemExit(
-                  f"formal stock contract mismatch: total={stocks.get('total')} "
-                  f"items={len(stocks.get('items', []))}"
+                  f"formal stock contract mismatch: total={stock_total} "
+                  f"items={len(stock_items)}"
               )
-          details = {str(item.get("symbol")): item for item in stocks["items"]}
+          details = {str(item.get("symbol")): item for item in stock_items}
           for symbol in ("2330", "6806"):
               if symbol not in details:
                   raise SystemExit(f"formal stock universe is missing {symbol}")

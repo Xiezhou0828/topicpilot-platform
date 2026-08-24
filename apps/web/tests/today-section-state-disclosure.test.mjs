@@ -65,3 +65,12 @@ test("Today sections preserve Temporary instead of collapsing partial Home data 
   assert.match(page, /resource\.temporarySections\.includes\(sectionKey\)/);
   assert.match(page, /resource\.missingSections\.includes\(sectionKey\)/);
 });
+
+test("Today disclosure uses product section labels instead of the debug fallback", async () => {
+  const page = await read("components/v2/TodayMarketPage.tsx");
+
+  assert.doesNotMatch(page, /another Today section/);
+  assert.match(page, /marketEvents: "Market Events"/);
+  assert.match(page, /opportunities: "Today Opportunities"/);
+  assert.match(page, /return disclosureSectionLabels\[value\] \?\? "其他區塊"/);
+});

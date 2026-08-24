@@ -1,5 +1,12 @@
 """Provider-neutral market-data capability contracts."""
 
+from .aggregate_contract import (
+    AggregateContractError,
+    MarketAggregateResult,
+    fetch_official_market_aggregates,
+    parse_tpex_market_aggregate,
+    parse_twse_market_aggregate,
+)
 from .exchange import (
     TPEX_DAILY_ADAPTER_VERSION,
     TPEX_DAILY_SOURCE_CODE,
@@ -52,6 +59,7 @@ __all__ = [
     "TWSE_DAILY_SOURCE_CODE",
     "YAHOO_QUOTE_ADAPTER_VERSION",
     "YAHOO_QUOTE_SOURCE_CODE",
+    "AggregateContractError",
     "HistoricalBar",
     "HistoricalFetchResult",
     "HistoricalIngestionError",
@@ -61,6 +69,7 @@ __all__ = [
     "HistoryAvailability",
     "IndexContractError",
     "IndexDataStatus",
+    "MarketAggregateResult",
     "MarketIndexResult",
     "TaishinHistoryClient",
     "TaishinIntradayClient",
@@ -71,10 +80,13 @@ __all__ = [
     "TwseOfficialDailyProvider",
     "YahooChartHistoricalProvider",
     "YahooQuoteProvider",
+    "fetch_official_market_aggregates",
     "fetch_official_market_indexes",
     "ingest_historical",
     "parse_tpex_index_crosscheck",
+    "parse_tpex_market_aggregate",
     "parse_tpex_market_index",
+    "parse_twse_market_aggregate",
     "parse_twse_market_index",
     "probe_history_availability",
     "unavailable_market_index",

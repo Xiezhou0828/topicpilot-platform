@@ -88,13 +88,15 @@ const disclosureSectionLabels: Record<string, string> = {
   coolingTopics: "Cooling",
   dailyFocus: "Daily Focus",
   marketPulse: "Market Events",
+  marketEvents: "Market Events",
   marketOverview: "Market Overview",
+  opportunities: "Today Opportunities",
   [["market", "Indices"].join("")]: "Market indices",
   [["turn", "over"].join("")]: "Market turnover",
 };
 
 function friendlySectionName(value: string): string {
-  return disclosureSectionLabels[value] ?? "another Today section";
+  return disclosureSectionLabels[value] ?? "其他區塊";
 }
 
 function friendlySourceName(value: string | null): string {

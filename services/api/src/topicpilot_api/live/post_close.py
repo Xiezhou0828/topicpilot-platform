@@ -15,6 +15,7 @@ from sqlalchemy.orm import Session
 
 from topicpilot_api.daily_market import DailyMarketReconciliation, reconcile_daily_market
 from topicpilot_api.home_v2_publication import materialize_home_v2
+from topicpilot_api.market_data.aggregate_contract import fetch_official_market_aggregates
 from topicpilot_api.market_data.index_contract import fetch_official_market_indexes
 from topicpilot_api.market_data.ingestion import HistoricalSourceRegistration, ingest_historical
 from topicpilot_api.market_data.rate_limit import RateLimitedTransport
@@ -402,6 +403,12 @@ class PostCloseUpdater:
                     as_of=self._now(),
                     transport=_official_transport,
                 ),
+                market_aggregate_facts=fetch_official_market_aggregates(
+                    target_date=local_date,
+                    retrieved_at=self._now(),
+                    as_of=self._now(),
+                    transport=_official_transport,
+                ),
             )
             if reconciliation.downstream_ready
             else {
@@ -451,6 +458,7 @@ class PostCloseUpdater:
         eligible_instrument_ids: Collection[Any] | None = None,
         source_run_id: str | None = None,
         market_index_facts: Collection[Any] = (),
+        market_aggregate_facts: Collection[Any] = (),
     ) -> dict[str, Any]:
         try:
             result = TopicSnapshotEngine(self.session).run_once(
@@ -471,40 +479,50 @@ class PostCloseUpdater:
                         "writes": formal_state["writes"],
                         "preBoundaryBackfill": formal_state["preBoundaryBackfill"],
                     }
-                    result["lifecycle"] = TopicLifecycleEngine(self.session).run_once(
-                        evaluation_date=snapshot_date,
-                    )
                 except Exception as exc:
-                    # Formal PIT materialization and lifecycle remain additive
-                    # shadow work. A missing authority/migration or transient
-                    # failure must not discard the canonical research snapshot
-                    # already committed above.
+                    # Formal PIT materialization remains additive shadow work.
+                    # A missing authority/migration or transient failure must
+                    # not discard the canonical research snapshot already
+                    # committed above.
                     self.session.rollback()
                     result["formalTopicDailyState"] = {
                         "status": "FORMAL_STATE_UNAVAILABLE",
                         "error": type(exc).__name__,
                     }
-                    result["lifecycle"] = {
-                        "status": "WAITING_FOR_FORMAL_SNAPSHOT",
-                        "error": type(exc).__name__,
-                    }
-                else:
+                if result["formalTopicDailyState"]["status"] == "SUCCESS":
                     try:
-                        result["homePublication"] = materialize_home_v2(
-                            self.session,
-                            trading_date=snapshot_date,
-                            source_run_id=source_run_id,
-                            market_index_facts=tuple(market_index_facts),
+                        result["lifecycle"] = TopicLifecycleEngine(self.session).run_once(
+                            evaluation_date=snapshot_date,
                         )
                     except Exception as exc:
-                        # Home publication has its own typed gate.  A Home
-                        # persistence failure must not rewrite a successfully
-                        # materialized formal topic state as unavailable.
+                        # Lifecycle V1.1 is a parallel acceptance boundary.
+                        # Its failure is recorded without making the core
+                        # Home publication depend on an unaccepted policy
+                        # engine.
                         self.session.rollback()
-                        result["homePublication"] = {
-                            "status": "HOME_PUBLICATION_UNAVAILABLE",
+                        result["lifecycle"] = {
+                            "status": "LIFECYCLE_UNAVAILABLE",
                             "error": type(exc).__name__,
                         }
+                else:
+                    result["lifecycle"] = {"status": "WAITING_FOR_FORMAL_SNAPSHOT"}
+                try:
+                    result["homePublication"] = materialize_home_v2(
+                        self.session,
+                        trading_date=snapshot_date,
+                        source_run_id=source_run_id,
+                        market_index_facts=tuple(market_index_facts),
+                        market_aggregate_facts=tuple(market_aggregate_facts),
+                    )
+                except Exception as exc:
+                    # Home publication has its own typed gate.  A Home
+                    # persistence failure must not rewrite a successfully
+                    # materialized formal topic state as unavailable.
+                    self.session.rollback()
+                    result["homePublication"] = {
+                        "status": "HOME_PUBLICATION_UNAVAILABLE",
+                        "error": type(exc).__name__,
+                    }
             elif market_closed:
                 result["lifecycle"] = {"status": "MARKET_CLOSED"}
             return result

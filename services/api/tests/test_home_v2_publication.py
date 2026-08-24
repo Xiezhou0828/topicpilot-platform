@@ -145,7 +145,7 @@ def test_daily_focus_is_rule_based_and_fail_closed_without_evidence():
     ).status == "UNAVAILABLE"
 
 
-def test_home_gate_requires_market_and_formal_topics_but_not_optional_sections():
+def test_home_gate_requires_formal_market_facts_but_topics_and_focus_are_section_level():
     market = SectionResult(
         "AVAILABLE",
         date(2026, 8, 21),
@@ -165,6 +165,39 @@ def test_home_gate_requires_market_and_formal_topics_but_not_optional_sections()
     assert validate_home_gate(market_overview=market, main_topics=topics, daily_focus=focus) == (
         "PUBLISHED",
         None,
+    )
+    no_topics = SectionResult(
+        "UNAVAILABLE",
+        date(2026, 8, 21),
+        None,
+        "formal",
+        "NO_FORMAL_TOPIC_PUBLICATION",
+        "尚未完成",
+        [],
+    )
+    assert validate_home_gate(market_overview=market, main_topics=no_topics, daily_focus=focus) == (
+        "PUBLISHED",
+        None,
+    )
+
+
+def test_home_gate_rejects_missing_market_even_when_topic_evidence_exists():
+    market = SectionResult(
+        "UNAVAILABLE",
+        date(2026, 8, 21),
+        None,
+        "formal",
+        "NO_PUBLISHED_MARKET_FACTS",
+        "尚未完成",
+        {},
+    )
+    topics = SectionResult(
+        "AVAILABLE", date(2026, 8, 21), None, "formal", None, None, [{"slug": "ai"}]
+    )
+
+    assert validate_home_gate(market_overview=market, main_topics=topics, daily_focus=topics) == (
+        "UNAVAILABLE",
+        "NO_PUBLISHED_MARKET_FACTS",
     )
 
 

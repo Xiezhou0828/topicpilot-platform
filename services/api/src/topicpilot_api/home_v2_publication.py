@@ -2,9 +2,10 @@
 """Deterministic V2 Today/Home materialization and publication policy.
 
 The request path reads the persisted envelope produced here.  This module is
-deliberately provider-neutral: official index/turnover adapters hand in typed
-facts, while canonical daily observations provide the safe fallback breadth
-and topic evidence.
+deliberately provider-neutral: official index/aggregate adapters hand in
+typed facts, while canonical daily observations remain a compatibility
+fallback only when the established post-close path has not supplied an
+official whole-market aggregate result.
 """
 
 from __future__ import annotations
@@ -46,6 +47,7 @@ USER_MESSAGES = {
     "DAILY_FOCUS_EVIDENCE_INCOMPLETE": "今日市場重點尚未完成。",
     "UPSTREAM_SOURCE_UNAVAILABLE": "這項市場資料目前無法提供。",
     "NO_FORMAL_MARKET_BREADTH": "市場廣度資料目前無法提供。",
+    "PARTIAL_MARKET_FACTS": "部分市場資料目前無法提供。",
     "OPTIONAL_SECTION_NOT_FORMAL": "此區塊目前尚未建立正式資料來源。",
 }
 
@@ -322,7 +324,13 @@ def build_daily_focus(
 def validate_home_gate(
     *, market_overview: SectionResult, main_topics: SectionResult, daily_focus: SectionResult
 ) -> tuple[str, str | None]:
-    """Return the deterministic Home finality gate."""
+    """Return the core Home finality gate.
+
+    Market/session authority is the only section-level data requirement for a
+    publishable envelope.  Main Topics and Daily Focus are independently
+    typed sections: they are published when evidence exists and remain
+    unavailable when it does not, without poisoning the whole Home envelope.
+    """
 
     market_payload = market_overview.payload if isinstance(market_overview.payload, Mapping) else {}
     health = market_payload.get("marketHealth") or {}
@@ -332,16 +340,11 @@ def validate_home_gate(
         or health.get("advance") is not None
         or any(item.get("value") is not None for item in market_payload.get("indices", []))
     )
-    topics_ready = main_topics.status in {"AVAILABLE", "PARTIAL"} and bool(main_topics.payload)
-    if market_minimum and topics_ready:
+    if market_minimum and market_overview.status in {"AVAILABLE", "PARTIAL"}:
         return "PUBLISHED", None
     if not market_minimum:
         return "UNAVAILABLE", "NO_PUBLISHED_MARKET_FACTS"
-    if not topics_ready:
-        return "UNAVAILABLE", "NO_FORMAL_TOPIC_PUBLICATION"
-    if daily_focus.status == "UNAVAILABLE":
-        return "PUBLISHED", None
-    return "PUBLISHED", None
+    return "UNAVAILABLE", "NO_PUBLISHED_MARKET_FACTS"
 
 
 def _latest_canonical_date(session: Session) -> date | None:
@@ -531,6 +534,59 @@ def _turnover_payload(item: MarketTurnoverFact | Mapping[str, Any]) -> dict[str,
     }
 
 
+def _aggregate_fact_input(item: Any) -> dict[str, Any]:
+    """Map a typed official aggregate result without losing NULL evidence."""
+
+    if hasattr(item, "to_dict"):
+        status = getattr(item, "data_status", "UNAVAILABLE")
+        status = getattr(status, "value", status)
+        return {
+            "market": getattr(item, "market", None),
+            "tradingDate": getattr(item, "trading_date", None),
+            "turnover": getattr(item, "turnover", None),
+            "currency": getattr(item, "currency", None),
+            "turnoverUnit": getattr(item, "turnover_unit", None),
+            "turnoverScale": getattr(item, "turnover_scale", None),
+            "eligible": getattr(item, "eligible", None),
+            "observed": getattr(item, "observed", None),
+            "advancers": getattr(item, "advancers", None),
+            "decliners": getattr(item, "decliners", None),
+            "unchanged": getattr(item, "unchanged", None),
+            "unavailable": getattr(item, "unavailable", None),
+            "limitUpCount": getattr(item, "limit_up_count", None),
+            "limitDownCount": getattr(item, "limit_down_count", None),
+            "source": getattr(item, "source", None),
+            "sourceEndpoint": getattr(item, "source_endpoint", None),
+            "lineage": getattr(item, "lineage", None),
+            "asOf": getattr(item, "as_of", None),
+            "status": status,
+            "reasonCode": getattr(item, "status_reason", None),
+        }
+    raw = dict(item)
+    return {
+        "market": raw.get("market"),
+        "tradingDate": raw.get("trading_date", raw.get("tradingDate")),
+        "turnover": raw.get("turnover", raw.get("value")),
+        "currency": raw.get("currency", "TWD"),
+        "turnoverUnit": raw.get("turnover_unit", raw.get("turnoverUnit", raw.get("unit", "TWD"))),
+        "turnoverScale": raw.get("turnover_scale", raw.get("turnoverScale", raw.get("scale", 0))),
+        "eligible": raw.get("eligible"),
+        "observed": raw.get("observed"),
+        "advancers": raw.get("advancers", raw.get("advance")),
+        "decliners": raw.get("decliners", raw.get("decline")),
+        "unchanged": raw.get("unchanged", raw.get("flat")),
+        "unavailable": raw.get("unavailable"),
+        "limitUpCount": raw.get("limit_up_count", raw.get("limitUpCount", raw.get("limitUp"))),
+        "limitDownCount": raw.get("limit_down_count", raw.get("limitDownCount", raw.get("limitDown"))),
+        "source": raw.get("source"),
+        "sourceEndpoint": raw.get("source_endpoint", raw.get("sourceEndpoint")),
+        "lineage": raw.get("lineage"),
+        "asOf": raw.get("as_of", raw.get("asOf")),
+        "status": raw.get("status", raw.get("dataStatus", "UNAVAILABLE")),
+        "reasonCode": raw.get("reason_code", raw.get("reasonCode", raw.get("statusReason"))),
+    }
+
+
 def materialize_home_v2(
     session: Session,
     *,
@@ -538,6 +594,7 @@ def materialize_home_v2(
     source_run_id: str | None = None,
     market_index_facts: Sequence[Any] = (),
     turnover_facts: Sequence[MarketTurnoverFact | Mapping[str, Any]] = (),
+    market_aggregate_facts: Sequence[Any] = (),
     now: datetime | None = None,
 ) -> dict[str, Any]:
     """Materialize and persist one deterministic Home envelope."""
@@ -548,32 +605,67 @@ def materialize_home_v2(
         raise ValueError("HOME_SOURCE_DATE_UNAVAILABLE")
     index_inputs = [_index_fact_input(item) for item in market_index_facts]
     turnover_inputs = [_turnover_payload(item) for item in turnover_facts]
-    breadth_rows, breadth_as_of = _breadth(session, trading_date)
-    breadth_payload = [
-        {
-            "market": row["market"],
-            "eligible": int(row["eligible"] or 0),
-            "observed": int(row["observed"] or 0),
-            "advance": int(row["advance"] or 0),
-            "decline": int(row["decline"] or 0),
-            "flat": int(row["flat"] or 0),
-            "unavailable": int(row["unavailable"] or 0),
-            "coverage": {
-                "denominator": "active date-effective EQUITY instruments in TPE/TWO",
+    aggregate_inputs = [_aggregate_fact_input(item) for item in market_aggregate_facts]
+    aggregate_by_market = {item.get("market"): item for item in aggregate_inputs}
+    if aggregate_inputs:
+        breadth_payload = []
+        for market in ("TPE", "TWO"):
+            fact = aggregate_by_market.get(market) or {}
+            available = fact.get("status") == "AVAILABLE"
+            breadth_payload.append(
+                {
+                    "market": market,
+                    "eligible": int(fact["eligible"] or 0) if available else 0,
+                    "observed": int(fact["observed"] or 0) if available else 0,
+                    "advance": int(fact["advancers"]) if available and fact.get("advancers") is not None else None,
+                    "decline": int(fact["decliners"]) if available and fact.get("decliners") is not None else None,
+                    "flat": int(fact["unchanged"]) if available and fact.get("unchanged") is not None else None,
+                    "unavailable": int(fact["unavailable"] or 0) if available else 0,
+                    "coverage": {
+                        "denominator": "official whole-market stock aggregate",
+                        "eligible": fact.get("eligible"),
+                        "observed": fact.get("observed"),
+                        "authority": fact.get("source"),
+                        "endpoint": fact.get("sourceEndpoint"),
+                        "status": fact.get("status", "UNAVAILABLE"),
+                        "reasonCode": fact.get("reasonCode"),
+                    },
+                    "asOf": fact.get("asOf"),
+                    "source": fact.get("source") or "official market aggregate provider",
+                }
+            )
+        breadth_as_of = max(
+            (item["asOf"] for item in breadth_payload if item.get("asOf")),
+            default=None,
+        )
+        breadth_rows = []
+    else:
+        breadth_rows, breadth_as_of = _breadth(session, trading_date)
+        breadth_payload = [
+            {
+                "market": row["market"],
                 "eligible": int(row["eligible"] or 0),
                 "observed": int(row["observed"] or 0),
-            },
-            "asOf": row["as_of"],
-            "source": "topicpilot.vw_daily_market_observations",
-        }
-        for row in breadth_rows
-    ]
-    for item, row in zip(breadth_payload, breadth_rows, strict=True):
-        item["advance"] = int(row["advance"] or 0)
-        item["decline"] = int(row["decline"] or 0)
-        item["flat"] = int(row["flat"] or 0)
-        item["unavailable"] = int(row["unavailable"] or 0)
-        item["coverage"]["priceObserved"] = int(row["priced"] or 0)
+                "advance": int(row["advance"] or 0),
+                "decline": int(row["decline"] or 0),
+                "flat": int(row["flat"] or 0),
+                "unavailable": int(row["unavailable"] or 0),
+                "coverage": {
+                    "denominator": "active date-effective EQUITY instruments in TPE/TWO",
+                    "eligible": int(row["eligible"] or 0),
+                    "observed": int(row["observed"] or 0),
+                },
+                "asOf": row["as_of"],
+                "source": "topicpilot.vw_daily_market_observations",
+            }
+            for row in breadth_rows
+        ]
+        for item, row in zip(breadth_payload, breadth_rows, strict=True):
+            item["advance"] = int(row["advance"] or 0)
+            item["decline"] = int(row["decline"] or 0)
+            item["flat"] = int(row["flat"] or 0)
+            item["unavailable"] = int(row["unavailable"] or 0)
+            item["coverage"]["priceObserved"] = int(row["priced"] or 0)
 
     total_eligible = sum(item["eligible"] for item in breadth_payload)
     total_observed = sum(item["observed"] for item in breadth_payload)
@@ -613,6 +705,24 @@ def materialize_home_v2(
             },
         )
     indices = [by_market_index[market] for market in ("TPE", "TWO")]
+    if aggregate_inputs:
+        turnover_inputs = [
+            {
+                "market": item.get("market"),
+                "tradingDate": item.get("tradingDate"),
+                "session": "CLOSE",
+                "value": _number(item.get("turnover")),
+                "currency": item.get("currency"),
+                "unit": item.get("turnoverUnit"),
+                "scale": item.get("turnoverScale"),
+                "asOf": item.get("asOf"),
+                "source": item.get("source"),
+                "lineage": item.get("lineage"),
+                "status": item.get("status", "UNAVAILABLE"),
+                "reasonCode": item.get("reasonCode"),
+            }
+            for item in aggregate_inputs
+        ]
     turnover = [_turnover_payload(item) for item in turnover_inputs]
     turnover_by_market = {item.get("market"): item for item in turnover}
     for market in ("TPE", "TWO"):
@@ -634,34 +744,51 @@ def materialize_home_v2(
             },
         )
     turnover = [turnover_by_market[market] for market in ("TPE", "TWO")]
+    available_indices = [item for item in indices if item.get("status") == "AVAILABLE" and item.get("value") is not None]
+    available_turnover = [item for item in turnover if item.get("status") == "AVAILABLE" and item.get("value") is not None]
+    if aggregate_inputs:
+        market_data_status = (
+            "AVAILABLE"
+            if all(aggregate_by_market.get(market, {}).get("status") == "AVAILABLE" for market in ("TPE", "TWO"))
+            else "PARTIAL"
+            if aggregate_inputs and (available_indices or available_turnover or total_observed)
+            else "UNAVAILABLE"
+        )
+    else:
+        market_data_status = "AVAILABLE" if total_observed else "UNAVAILABLE"
+    aggregate_limits = [item for item in aggregate_inputs if item.get("status") == "AVAILABLE"]
+    limit_up_values = [item.get("limitUpCount") for item in aggregate_limits]
+    limit_down_values = [item.get("limitDownCount") for item in aggregate_limits]
+    limits_complete = len(aggregate_limits) == 2 and all(value is not None for value in limit_up_values + limit_down_values)
+    limits_payload = {
+        "limitUp": sum(int(value) for value in limit_up_values) if limits_complete else None,
+        "limitDown": sum(int(value) for value in limit_down_values) if limits_complete else None,
+        "reasonCode": None if limits_complete else "PARTIAL_LIMIT_AUTHORITY" if aggregate_limits else "UPSTREAM_SOURCE_UNAVAILABLE",
+        "source": ";".join(sorted({str(item.get("source")) for item in aggregate_inputs if item.get("source")})) or "official market aggregate provider",
+    }
     market_overview_payload = {
         "dataDate": trading_date,
         "updatedAt": breadth_as_of,
-        "dataStatus": "AVAILABLE" if total_observed else "UNAVAILABLE",
-        "trackedStockCount": total_eligible,
+        "dataStatus": market_data_status,
+        "trackedStockCount": sum(int(item.get("eligible") or 0) for item in breadth_payload) if aggregate_inputs else total_eligible,
         "trackedTopicCount": 0,
         "latestSnapshotTime": breadth_as_of,
         "marketHealth": market_health,
         "breadth": breadth_payload,
         "indices": indices,
         "turnover": turnover,
-        "limits": {
-            "limitUp": None,
-            "limitDown": None,
-            "reasonCode": "UPSTREAM_SOURCE_UNAVAILABLE",
-            "source": "official market aggregate provider",
-        },
+        "limits": limits_payload,
         "source": HOME_SOURCE,
     }
-    market_status = "AVAILABLE" if total_observed else "UNAVAILABLE"
-    market_reason = None if total_observed else "NO_PUBLISHED_MARKET_FACTS"
+    market_status = market_data_status
+    market_reason = None if market_status == "AVAILABLE" else "PARTIAL_MARKET_FACTS" if market_status == "PARTIAL" else "NO_PUBLISHED_MARKET_FACTS"
     market_section = _status(
         market_status,
         data_date=trading_date,
         as_of=breadth_as_of,
         source=HOME_SOURCE,
         reason_code=market_reason,
-        detail=("canonical breadth is available" if total_observed else "no canonical daily breadth rows"),
+        detail=("official whole-market aggregate facts are available" if aggregate_inputs and market_status == "AVAILABLE" else "official whole-market aggregate facts are partial" if aggregate_inputs else "canonical breadth is available" if total_observed else "no canonical daily breadth rows"),
         payload=market_overview_payload,
     )
 
@@ -774,7 +901,8 @@ def materialize_home_v2(
                 "formalTopics": "topicpilot.topic_snapshots",
             },
             "completeness": {
-                "required": ["marketOverview", "mainTopics"],
+                "required": ["marketOverview"],
+                "sectionAvailableWhenEvidenceExists": ["dailyFocus", "mainTopics"],
                 "optional": ["heatingTopics", "coolingTopics", "marketEvents", "opportunities"],
                 "sectionStatuses": section_statuses,
             },
@@ -788,8 +916,8 @@ def materialize_home_v2(
         "opportunities": [],
         "sectionStatuses": section_statuses,
         "dataQuality": {
-            "status": "AVAILABLE" if publication_state == "PUBLISHED" and all(
-                item.status != "UNAVAILABLE" for key, item in sections.items() if key in {"marketOverview", "mainTopics"}
+            "status": "AVAILABLE" if publication_state == "PUBLISHED" and market_section.status == "AVAILABLE" and all(
+                item.status != "UNAVAILABLE" for key, item in sections.items() if key in {"marketOverview"}
             ) else "PARTIAL" if publication_state == "PUBLISHED" else "UNAVAILABLE",
             "source": HOME_SOURCE,
             "classification": "FORMAL",
@@ -924,6 +1052,38 @@ def materialize_home_v2(
                 coverage=item["coverage"],
             )
         )
+    session.add(
+        HomeMarketFact(
+            publication_id=publication.id,
+            fact_type="LIMITS",
+            market="TPE+TWO",
+            index_code=None,
+            index_name=None,
+            trading_date=trading_date,
+            session="CLOSE",
+            as_of_at=breadth_as_of,
+            source=limits_payload["source"],
+            lineage="official whole-market limit-count authority; missing market values remain NULL",
+            publication_state="PUBLISHED"
+            if limits_payload["limitUp"] is not None or limits_payload["limitDown"] is not None
+            else "UNAVAILABLE",
+            reason_code=limits_payload["reasonCode"],
+            coverage={
+                "limitUp": limits_payload["limitUp"],
+                "limitDown": limits_payload["limitDown"],
+                "markets": [
+                    {
+                        "market": item.get("market"),
+                        "limitUp": item.get("limitUpCount"),
+                        "limitDown": item.get("limitDownCount"),
+                        "source": item.get("source"),
+                        "reasonCode": item.get("reasonCode"),
+                    }
+                    for item in aggregate_inputs
+                ],
+            },
+        )
+    )
     session.commit()
     return {
         "status": "SUCCESS",
@@ -968,11 +1128,19 @@ def empty_home_v2(now: datetime, *, tracked_stock_count: int = 0) -> dict[str, A
             if key == "marketOverview"
             else "NO_FORMAL_TOPIC_PUBLICATION"
             if key == "mainTopics"
+            else "DAILY_FOCUS_EVIDENCE_INCOMPLETE"
+            if key == "dailyFocus"
+            else "INSUFFICIENT_ROTATION_HISTORY"
+            if key in {"heatingTopics", "coolingTopics"}
             else "OPTIONAL_SECTION_NOT_FORMAL",
             "userMessage": USER_MESSAGES["NO_PUBLISHED_MARKET_FACTS"]
             if key == "marketOverview"
             else USER_MESSAGES["NO_FORMAL_TOPIC_PUBLICATION"]
             if key == "mainTopics"
+            else USER_MESSAGES["DAILY_FOCUS_EVIDENCE_INCOMPLETE"]
+            if key == "dailyFocus"
+            else USER_MESSAGES["INSUFFICIENT_ROTATION_HISTORY"]
+            if key in {"heatingTopics", "coolingTopics"}
             else USER_MESSAGES["OPTIONAL_SECTION_NOT_FORMAL"],
         }
         for key in SECTION_KEYS
