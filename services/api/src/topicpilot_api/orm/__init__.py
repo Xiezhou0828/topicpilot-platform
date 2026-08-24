@@ -2,6 +2,7 @@
 
 from . import (
     canonical_observations,
+    home,
     identity,
     import_audit,  # noqa: F401
     lifecycle,
@@ -15,6 +16,7 @@ from . import (
 )
 from .base import Base
 from .canonical_observations import *  # noqa: F403
+from .home import HomeMarketFact, HomePublication, HomePublicationSection  # noqa: F401
 from .identity import *  # noqa: F403
 from .import_audit import LegacyImportArtifact, LegacyImportRecord, LegacyImportRun
 from .lifecycle import TopicLifecycleResult
@@ -57,6 +59,7 @@ __all__ = [
 ]
 for _module in (
     canonical_observations,
+    home,
     identity,
     live,
     lifecycle,

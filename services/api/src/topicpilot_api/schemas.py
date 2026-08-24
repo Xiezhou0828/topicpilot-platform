@@ -609,6 +609,13 @@ class TopicLifecycleRead(ApiModel):
     current_stage: str | None = Field(alias="currentStage")
     current_stage_entered_at: date | None = Field(alias="currentStageEnteredAt")
     current_stage_trading_days: int | None = Field(alias="currentStageTradingDays")
+    main_rise_segment: int | None = Field(default=None, alias="mainRiseSegment")
+    segment_entry_date: date | None = Field(default=None, alias="segmentEntryDate")
+    segment_anchor_date: date | None = Field(default=None, alias="segmentAnchorDate")
+    days_since_meaningful_expansion: int | None = Field(
+        default=None, alias="daysSinceMeaningfulExpansion"
+    )
+    drawdown_from_peak_pct: float | None = Field(default=None, alias="drawdownFromPeakPct")
     history: list[TopicLifecycleSegmentRead] = Field(default_factory=list)
     data_status: LifecycleAvailability = Field(alias="dataStatus")
     evaluation_date: date | None = Field(default=None, alias="evaluationDate")
@@ -887,6 +894,92 @@ class OpportunityShadowResponse(ApiModel):
     opportunity: OpportunityShadowCard | None = None
 
 
+class HomeSectionStatus(ApiModel):
+    status: Literal["AVAILABLE", "PARTIAL", "UNAVAILABLE"]
+    data_date: date | None = Field(alias="dataDate")
+    as_of: datetime | None = Field(alias="asOf")
+    source: str | None = None
+    reason_code: str | None = Field(alias="reasonCode", default=None)
+    user_message: str | None = Field(alias="userMessage", default=None)
+
+
+class HomePublicationLineage(ApiModel):
+    canonical_daily_market: str | None = Field(alias="canonicalDailyMarket", default=None)
+    formal_topics: str | None = Field(alias="formalTopics", default=None)
+
+
+class HomePublication(ApiModel):
+    trading_date: date | None = Field(alias="tradingDate")
+    as_of: datetime | None = Field(alias="asOf")
+    generated_at: datetime | None = Field(alias="generatedAt")
+    published_at: datetime | None = Field(alias="publishedAt")
+    state: Literal[
+        "COLLECTED",
+        "MATERIALIZED",
+        "VALIDATED",
+        "PUBLISHED",
+        "UNAVAILABLE",
+        "SUPERSEDED",
+    ]
+    version: str
+    source_run_id: str | None = Field(alias="sourceRunId", default=None)
+    source_dataset_id: str | None = Field(alias="sourceDatasetId", default=None)
+    lineage: HomePublicationLineage = Field(default_factory=HomePublicationLineage)
+    completeness: dict[str, Any] = Field(default_factory=dict)
+
+
+class HomeMarketIndex(ApiModel):
+    market: str
+    index_code: str = Field(alias="indexCode")
+    index_name: str = Field(alias="indexName")
+    trading_date: date | None = Field(alias="tradingDate")
+    session: str | None = None
+    value: float | None
+    previous_close: float | None = Field(alias="previousClose")
+    change: float | None
+    change_pct: float | None = Field(alias="changePct")
+    as_of: datetime | None = Field(alias="asOf")
+    source: str | None = None
+    lineage: str | None = None
+    status: str
+    reason_code: str | None = Field(alias="reasonCode", default=None)
+
+
+class HomeMarketTurnover(ApiModel):
+    market: str
+    trading_date: date | None = Field(alias="tradingDate")
+    session: str | None = None
+    value: float | None
+    currency: str | None
+    unit: str | None
+    scale: int | None
+    as_of: datetime | None = Field(alias="asOf")
+    source: str | None = None
+    lineage: str | None = None
+    status: str
+    reason_code: str | None = Field(alias="reasonCode", default=None)
+
+
+class HomeMarketBreadth(ApiModel):
+    market: str
+    eligible: int
+    observed: int
+    advance: int | None
+    decline: int | None
+    flat: int | None
+    unavailable: int
+    coverage: dict[str, Any] = Field(default_factory=dict)
+    as_of: datetime | None = Field(alias="asOf")
+    source: str
+
+
+class HomeMarketLimits(ApiModel):
+    limit_up: int | None = Field(alias="limitUp")
+    limit_down: int | None = Field(alias="limitDown")
+    reason_code: str | None = Field(alias="reasonCode", default=None)
+    source: str | None = None
+
+
 class HomeMarketHealth(ApiModel):
     market: str
     status: str
@@ -900,11 +993,15 @@ class HomeMarketHealth(ApiModel):
 class HomeMarketOverview(ApiModel):
     data_date: date | None = Field(alias="dataDate")
     updated_at: datetime | None = Field(alias="updatedAt")
-    data_status: Literal["PARTIAL", "UNAVAILABLE"] = Field(alias="dataStatus")
+    data_status: Literal["AVAILABLE", "PARTIAL", "UNAVAILABLE"] = Field(alias="dataStatus")
     tracked_stock_count: int = Field(alias="trackedStockCount")
     tracked_topic_count: int = Field(alias="trackedTopicCount")
     latest_snapshot_time: datetime | None = Field(alias="latestSnapshotTime")
     market_health: HomeMarketHealth | None = Field(alias="marketHealth")
+    breadth: list[HomeMarketBreadth] = Field(default_factory=list)
+    indices: list[HomeMarketIndex] = Field(default_factory=list)
+    turnover: list[HomeMarketTurnover] = Field(default_factory=list)
+    limits: HomeMarketLimits | None = None
     source: str
 
 
@@ -915,6 +1012,8 @@ class HomeDailyFocus(ApiModel):
     bullets: list[str] = Field(default_factory=list)
     data_date: date | None = Field(alias="dataDate")
     source: str
+    reason_code: str | None = Field(alias="reasonCode", default=None)
+    user_message: str | None = Field(alias="userMessage", default=None)
 
 
 class HomeTopicCard(ApiModel):
@@ -927,6 +1026,7 @@ class HomeTopicCard(ApiModel):
     summary: str
     favorite: bool
     data_date: date | None = Field(alias="dataDate")
+    ranking_evidence: dict[str, Any] = Field(alias="rankingEvidence", default_factory=dict)
 
 
 class HomeMarketPulseEvent(ApiModel):
@@ -943,8 +1043,11 @@ class HomeRotationTopic(ApiModel):
     topic: str
     topic_slug: str = Field(alias="topicSlug")
     strength_delta: float = Field(alias="strengthDelta")
-    current_grade: str = Field(alias="currentGrade")
+    current_grade: str | None = Field(alias="currentGrade")
     summary: str
+    data_date: date | None = Field(alias="dataDate", default=None)
+    as_of: datetime | None = Field(alias="asOf", default=None)
+    rotation_evidence: dict[str, Any] = Field(alias="rotationEvidence", default_factory=dict)
 
 
 class HomeOpportunityStock(ApiModel):
@@ -976,6 +1079,7 @@ class HomeDataQuality(ApiModel):
     temporary_sections: list[str] = Field(alias="temporarySections", default_factory=list)
     missing_sections: list[str] = Field(alias="missingSections", default_factory=list)
     notes: list[str] = Field(default_factory=list)
+    diagnostic_codes: dict[str, str] = Field(alias="diagnosticCodes", default_factory=dict)
 
 
 class HomeResponse(ApiModel):
@@ -990,3 +1094,7 @@ class HomeResponse(ApiModel):
     cooling_topics: list[HomeRotationTopic] = Field(alias="coolingTopics", default_factory=list)
     opportunities: list[HomeOpportunityTopic] = Field(default_factory=list)
     data_quality: HomeDataQuality = Field(alias="dataQuality")
+    publication: HomePublication | None = None
+    section_statuses: dict[str, HomeSectionStatus] = Field(
+        alias="sectionStatuses", default_factory=dict
+    )

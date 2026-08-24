@@ -17,7 +17,7 @@ test("Today exposes an auditable six-state section contract", async () => {
   assert.match(adapter, /resource\.transportState === "ERROR"/);
   assert.match(adapter, /return "ERROR"/);
   assert.match(adapter, /const state = resource\.publicationState/);
-  assert.match(page, /ERROR: "Load error"/);
+  assert.match(page, /ERROR: "讀取失敗"/);
   assert.match(page, /role=\{isError \? "alert" : "status"\}/);
 });
 

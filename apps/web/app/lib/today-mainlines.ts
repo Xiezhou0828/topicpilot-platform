@@ -173,7 +173,17 @@ function metadata(resource: TodayHomeResource): TodaySectionMetadata {
 }
 
 function transportErrorReason(resource: TodayHomeResource, section: string): string {
-  return resource.metadata.reason ?? `Today ${section} could not be loaded; no substitute data was used.`;
+  return resource.metadata.reason ?? `目前無法讀取${section}資料。`;
+}
+
+function sectionUserMessage(
+  resource: TodayHomeResource,
+  section: string,
+  defaultMessage: string,
+): string {
+  return resource.metadata.sectionStatuses[section]?.userMessage
+    ?? resource.metadata.reason
+    ?? defaultMessage;
 }
 
 function isHomeRotationTopic(value: HomeRotationTopic): boolean {
@@ -235,7 +245,7 @@ function mapDailyFocus(
       state: "UNAVAILABLE",
       data: null,
       ...dailyMetadata,
-      reason: "Home.dailyFocus is incomplete; Today Market Story is unavailable.",
+      reason: sectionUserMessage(resource, "dailyFocus", "今日市場重點尚未完成。"),
     };
   }
 
@@ -247,7 +257,7 @@ function mapDailyFocus(
       state,
       data: null,
       ...dailyMetadata,
-      reason: resource.metadata.reason ?? "Formal Today Market Story is not ready; non-formal data is hidden.",
+      reason: resource.metadata.reason ?? "今日市場重點尚未完成。",
     };
   }
 
@@ -257,7 +267,7 @@ function mapDailyFocus(
     ...dailyMetadata,
     reason: state === "FORMAL"
       ? null
-      : resource.metadata.reason ?? "Home.dailyFocus is temporary and is not formal production insight.",
+      : resource.metadata.reason ?? "今日市場重點目前僅供預覽。",
   };
 }
 
@@ -303,7 +313,7 @@ function mapMarketEvents(
       state: "UNAVAILABLE",
       data: [],
       ...shared,
-      reason: "Home.marketPulse is empty; Today Market Events are unavailable.",
+      reason: sectionUserMessage(resource, "marketEvents", "今日市場事件尚未提供。"),
     };
   }
 
@@ -312,7 +322,7 @@ function mapMarketEvents(
       state: "UNAVAILABLE",
       data: [],
       ...shared,
-      reason: "Home.marketPulse has incomplete fields; Today Market Events are unavailable.",
+      reason: sectionUserMessage(resource, "marketEvents", "今日市場事件尚未提供。"),
     };
   }
 
@@ -321,7 +331,7 @@ function mapMarketEvents(
       state,
       data: [],
       ...shared,
-      reason: resource.metadata.reason ?? "Formal Today Market Events are not ready; non-formal data is hidden.",
+      reason: resource.metadata.reason ?? "今日市場事件尚未完成。",
     };
   }
 
@@ -331,7 +341,7 @@ function mapMarketEvents(
     ...shared,
     reason: state === "FORMAL"
       ? null
-      : resource.metadata.reason ?? "Home.marketPulse is temporary and is not formal production insight.",
+      : resource.metadata.reason ?? "今日市場事件目前僅供預覽。",
   };
 }
 
@@ -415,7 +425,7 @@ function mapOpportunities(
       state: "UNAVAILABLE",
       data: [],
       ...shared,
-      reason: "Home.opportunities is empty; Today opportunities are unavailable.",
+      reason: sectionUserMessage(resource, "opportunities", "今日機會資料尚未提供。"),
     };
   }
 
@@ -424,7 +434,7 @@ function mapOpportunities(
       state: "UNAVAILABLE",
       data: [],
       ...shared,
-      reason: "Home.opportunities has incomplete fields; Today opportunities are unavailable.",
+      reason: sectionUserMessage(resource, "opportunities", "今日機會資料尚未提供。"),
     };
   }
 
@@ -442,7 +452,7 @@ function mapOpportunities(
       state: "PREVIEW",
       data,
       ...shared,
-      reason: "Home opportunities are non-formal; Today Preview is explicitly enabled.",
+      reason: "今日機會尚未正式發布，目前僅在預覽模式顯示。",
     };
   }
 
@@ -451,8 +461,8 @@ function mapOpportunities(
     data: [],
     ...shared,
     reason: hasShadowOpportunityData(resource, data)
-      ? "Home opportunities are Shadow or temporary data; explicit Today Preview is required."
-      : "No formal Today Opportunity publication authority is configured; the teaser is unavailable.",
+      ? "今日機會資料尚未完成正式驗證。"
+      : "今日機會目前尚未提供正式資料。",
   };
 }
 
@@ -522,7 +532,7 @@ function mapMarketOverview(
       asOf,
       source,
       dataStatus,
-      reason: "Home.marketOverview is incomplete; Today Market Overview is unavailable.",
+      reason: sectionUserMessage(resource, "marketOverview", "市場資料尚未完整。"),
     };
   }
 
@@ -535,7 +545,7 @@ function mapMarketOverview(
       asOf,
       source,
       dataStatus,
-      reason: resource.metadata.reason ?? "Formal Today Market Overview is not ready; non-formal data is hidden.",
+      reason: resource.metadata.reason ?? "市場概況尚未完成發布。",
     };
   }
 
@@ -549,7 +559,7 @@ function mapMarketOverview(
     dataStatus,
     reason: state === "FORMAL"
       ? null
-      : resource.metadata.reason ?? "Home.marketOverview is temporary and is not formal production data.",
+      : resource.metadata.reason ?? "市場概況目前僅供預覽。",
   };
 }
 
@@ -579,7 +589,7 @@ function mapRotation(
       state: "UNAVAILABLE",
       data: [],
       ...shared,
-      reason: `Home.${section} is empty; Today rotation is unavailable.`,
+      reason: sectionUserMessage(resource, section, "目前沒有足夠的 14 日資料。"),
     };
   }
 
@@ -588,7 +598,7 @@ function mapRotation(
       state: "UNAVAILABLE",
       data: [],
       ...shared,
-      reason: `Home.${section} has incomplete fields; Today rotation is unavailable.`,
+      reason: sectionUserMessage(resource, section, "目前沒有足夠的 14 日資料。"),
     };
   }
 
@@ -597,7 +607,7 @@ function mapRotation(
       state,
       data: [],
       ...shared,
-      reason: resource.metadata.reason ?? "Formal Today rotation data is not ready; non-formal data is hidden.",
+      reason: resource.metadata.reason ?? "目前沒有足夠的 14 日資料。",
     };
   }
 
@@ -607,7 +617,7 @@ function mapRotation(
     ...shared,
     reason: state === "FORMAL"
       ? null
-      : resource.metadata.reason ?? `Home.${section} is temporary and is not formal production insight.`,
+      : resource.metadata.reason ?? `${section === "heatingTopics" ? "升溫" : "降溫"}資料目前僅供預覽。`,
   };
 }
 
@@ -645,7 +655,7 @@ export function toTodayMainlinesResource(
       state: "UNAVAILABLE",
       data: [],
       ...shared,
-      reason: resource.metadata.reason ?? "Home.mainTopics is empty; Today mainlines are unavailable.",
+      reason: sectionUserMessage(resource, "mainTopics", "題材資料尚未完成發布。"),
       dailyFocus,
       marketEvents,
       marketOverview,
@@ -660,7 +670,7 @@ export function toTodayMainlinesResource(
       state,
       data: [],
       ...shared,
-      reason: resource.metadata.reason ?? "Formal Today mainlines are not ready; non-formal data is hidden.",
+      reason: resource.metadata.reason ?? "今日主線尚未完成發布。",
       dailyFocus,
       marketEvents,
       marketOverview,
@@ -676,7 +686,7 @@ export function toTodayMainlinesResource(
     ...shared,
     reason: state === "FORMAL"
       ? null
-      : resource.metadata.reason ?? "Home.mainTopics is temporary and is not formal production insight.",
+      : resource.metadata.reason ?? "今日主線目前僅供預覽。",
     dailyFocus,
     marketEvents,
     marketOverview,

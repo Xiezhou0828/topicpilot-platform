@@ -33,6 +33,9 @@ IMPLEMENTED_V2_TABLES = {
     "topic_score_projections",
     "topic_score_projection_members",
     "topic_lifecycle_results",
+    "home_publications",
+    "home_publication_sections",
+    "home_market_facts",
 }
 
 

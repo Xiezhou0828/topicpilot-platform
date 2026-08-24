@@ -24,10 +24,11 @@ test("Today Market Events preserve backend order and event authority", async () 
     read("lib/today-mainlines.ts"),
     read("components/v2/TodayMarketPage.tsx"),
   ]);
-  for (const field of ["eventTime", "topic", "eventType", "description", "severity", "topicSlug", "source"]) {
+  for (const field of ["eventTime", "topic", "eventType", "description", "severity", "topicSlug"]) {
     assert.match(adapter, new RegExp(`value\\.${field}`));
     assert.match(page, new RegExp(`event\\.${field}`));
   }
+  assert.match(adapter, /value\.source/);
   assert.match(page, /resource\.data\.map\(\(event\)/);
   assert.doesNotMatch(`${adapter}\n${page}`, /marketEvents[\s\S]{0,1200}\.sort\(/);
   assert.doesNotMatch(page, /const events = \[/);
@@ -39,8 +40,7 @@ test("Today Market Events fail closed and preserve publication semantics", async
     read("lib/today-mainlines.ts"),
     read("components/v2/TodayMarketPage.tsx"),
   ]);
-  assert.match(adapter, /Home\.marketPulse is empty/);
-  assert.match(adapter, /Home\.marketPulse has incomplete fields/);
+  assert.match(adapter, /今日市場事件尚未提供/);
   assert.match(adapter, /state === "PREVIEW" && !previewEnabled/);
   assert.match(adapter, /state: TodayHomePublicationState/);
   assert.match(page, /resource\.state !== "FORMAL"/);

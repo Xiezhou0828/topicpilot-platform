@@ -44,7 +44,7 @@ test("Today Market Overview preserves publication states and fails closed", asyn
     read("components/v2/TodayMarketPage.tsx"),
   ]);
   assert.match(adapter, /state: TodayHomePublicationState/);
-  assert.match(adapter, /Home\.marketOverview is incomplete/);
+  assert.match(adapter, /市場資料尚未完整/);
   assert.match(adapter, /state === "PREVIEW" && !previewEnabled/);
   assert.match(adapter, /state === "UNAVAILABLE"/);
   assert.match(page, /resource\.state !== "FORMAL"/);

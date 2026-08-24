@@ -17,6 +17,8 @@ export type HomeOpportunityStock = components["schemas"]["HomeOpportunityStock"]
 export type HomeOpportunityTopic = components["schemas"]["HomeOpportunityTopic"];
 export type HomeMarketOverview = components["schemas"]["HomeMarketOverview"];
 export type HomeDataQuality = components["schemas"]["HomeDataQuality"];
+export type HomeSectionStatus = components["schemas"]["HomeSectionStatus"];
+export type HomePublication = components["schemas"]["HomePublication"];
 
 export type TodayHomeTransportState = "LOADING" | "READY" | "ERROR";
 export type TodayHomePublicationState = "FORMAL" | "TEMPORARY" | "PREVIEW" | "UNAVAILABLE";
@@ -35,6 +37,7 @@ export type TodayHomeMetadata = {
   classification: string | null;
   status: string | null;
   reason: string | null;
+  sectionStatuses: Record<string, HomeSectionStatus>;
 };
 
 export type TodayHomeSections = {
@@ -88,6 +91,7 @@ function emptyMetadata(reason: string | null = null): TodayHomeMetadata {
     classification: null,
     status: null,
     reason,
+    sectionStatuses: {},
   };
 }
 
@@ -130,6 +134,7 @@ function metadataFromHome(home: HomeResponse): TodayHomeMetadata {
     classification: quality.classification ?? null,
     status: quality.status || home.marketOverview.dataStatus || null,
     reason: null,
+    sectionStatuses: home.sectionStatuses ?? {},
   };
 }
 
@@ -159,10 +164,25 @@ function classifyPublication(
   home: HomeResponse,
   previewEnabled: boolean,
 ): { state: TodayHomePublicationState; reason: string | null } {
+  if (home.publication) {
+    if (home.publication.state === "PUBLISHED") {
+      return { state: "FORMAL", reason: null };
+    }
+    if (home.publication.state === "UNAVAILABLE") {
+      return { state: "UNAVAILABLE", reason: "今日市場資料尚未完成發布。" };
+    }
+    if (previewEnabled) {
+      return {
+        state: "PREVIEW",
+        reason: "今日資料尚未完成正式發布，僅在明確開啟預覽時顯示。",
+      };
+    }
+    return { state: "UNAVAILABLE", reason: "今日市場資料尚未完成發布。" };
+  }
   if (hasUnknownPublicationMetadata(home)) {
     return {
       state: "UNAVAILABLE",
-      reason: "Home publication metadata is incomplete; Today Home is unavailable.",
+      reason: "今日市場資料尚未完成發布。",
     };
   }
 
@@ -178,20 +198,20 @@ function classifyPublication(
   if (previewEnabled) {
     return {
       state: "PREVIEW",
-      reason: "Home publication is non-formal; Preview is explicitly enabled.",
+      reason: "今日資料尚未正式發布，目前僅在預覽模式顯示。",
     };
   }
 
   if (temporary && !gateUnavailable && !previewOnly) {
     return {
       state: "TEMPORARY",
-      reason: "Home publication is temporary; formal Today sections remain fail-closed.",
+      reason: "今日資料仍在整理中，正式區塊暫不顯示。",
     };
   }
 
   return {
     state: "UNAVAILABLE",
-    reason: "Formal Today Home data is not ready; non-formal data is hidden.",
+    reason: "今日市場資料尚未完成發布。",
   };
 }
 

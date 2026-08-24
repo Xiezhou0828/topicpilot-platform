@@ -4,7 +4,8 @@ This module is deliberately limited to parsing and mapping the two official
 broad-market index sources identified by TASK-FE-BE-TODAY-005B0.  It does not
 fetch data, persist facts, expose FastAPI routes, or map turnover.  Invalid or
 incomplete provider payloads become ``UNAVAILABLE`` results; they never fall
-back to Preview and never coerce missing numbers to zero.
+back to Preview and never coerce missing numbers to zero. The optional fetch
+helper below keeps transport injection at the runtime boundary.
 """
 
 from __future__ import annotations
@@ -12,7 +13,7 @@ from __future__ import annotations
 import hashlib
 import json
 import unicodedata
-from collections.abc import Mapping, Sequence
+from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
 from datetime import date, datetime
 from decimal import Decimal, InvalidOperation
@@ -520,6 +521,55 @@ def parse_tpex_index_crosscheck(payload: object) -> tuple[TpexIndexCrossCheck, .
     return tuple(points)
 
 
+def fetch_official_market_indexes(
+    *,
+    target_date: date,
+    retrieved_at: datetime,
+    as_of: datetime,
+    transport: Callable[[str, float], bytes],
+    timeout: float = 30.0,
+) -> tuple[MarketIndexResult, ...]:
+    """Fetch and validate both official broad-market index facts.
+
+    Transport and date mismatches become explicit unavailable facts. A missing
+    aggregate never falls back to constituent prices or Preview data.
+    """
+
+    results: list[MarketIndexResult] = []
+    for market, endpoint, parser in (
+        ("TPE", TWSE_MARKET_INDEX_ENDPOINT, parse_twse_market_index),
+        ("TWO", TPEX_MARKET_INDEX_ENDPOINT, parse_tpex_market_index),
+    ):
+        try:
+            payload = json.loads(transport(endpoint, timeout).decode("utf-8"))
+            parser_kwargs = {"target_date": target_date} if market == "TWO" else {}
+            result = parser(
+                payload,
+                retrieved_at=retrieved_at,
+                as_of=as_of,
+                **parser_kwargs,
+            )
+            if (
+                result.trading_date != target_date
+                and result.data_status == IndexDataStatus.AVAILABLE
+            ):
+                result = unavailable_market_index(
+                    market,
+                    retrieved_at=retrieved_at,
+                    as_of=as_of,
+                    reason="PROVIDER_DATE_MISMATCH",
+                )
+        except Exception:
+            result = unavailable_market_index(
+                market,
+                retrieved_at=retrieved_at,
+                as_of=as_of,
+                reason="PROVIDER_REQUEST_FAILED",
+            )
+        results.append(result)
+    return tuple(results)
+
+
 __all__ = [
     "CORRECTION_EVIDENCE",
     "FINALITY_NOT_EXPLICIT",
@@ -554,6 +604,7 @@ __all__ = [
     "IndexDataStatus",
     "MarketIndexResult",
     "TpexIndexCrossCheck",
+    "fetch_official_market_indexes",
     "parse_tpex_index_crosscheck",
     "parse_tpex_market_index",
     "parse_twse_market_index",

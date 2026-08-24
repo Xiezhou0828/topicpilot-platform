@@ -46,12 +46,12 @@ function SectionHeading({ id, eyebrow, title, description, link, trailing }: { i
 
 function MainlinesState({ loading, state, reason, dataDate, section = "Today section" }: { loading: boolean; state: TodaySectionState; reason: string | null; dataDate: string | null; section?: string }) {
   const labels: Record<TodaySectionState | "LOADING", string> = {
-    LOADING: "Loading",
-    FORMAL: "Formal data",
-    TEMPORARY: "Temporary data",
-    PREVIEW: "Preview data",
-    UNAVAILABLE: "Unavailable",
-    ERROR: "Load error",
+    LOADING: "讀取中",
+    FORMAL: "正式資料",
+    TEMPORARY: "暫時資料",
+    PREVIEW: "預覽資料",
+    UNAVAILABLE: "尚未提供",
+    ERROR: "讀取失敗",
   };
   const effectiveState = loading ? "LOADING" : state;
   const isError = effectiveState === "ERROR";
@@ -64,7 +64,7 @@ function MainlinesState({ loading, state, reason, dataDate, section = "Today sec
       aria-live={isError ? "assertive" : "polite"}
     >
       <span className="tp-data-state">{label}</span>
-      <p>{loading ? `Loading ${section}.` : reason ?? `${section} is not currently publishable.`}</p>
+      <p>{loading ? `正在讀取${section}。` : reason ?? `${section}目前尚未提供。`}</p>
       {dataDate && <small>資料日：{dataDate}</small>}
     </div>
   );
@@ -101,12 +101,12 @@ function friendlySourceName(value: string | null): string {
   if (!value) return "Not disclosed";
   const normalized = value.trim().toUpperCase();
   const labels: Record<string, string> = {
-    POSTGRESQL: "backend database",
-    BACKEND: "backend service",
+    POSTGRESQL: "正式資料來源",
+    BACKEND: "正式資料來源",
     TWSE: "TWSE source",
     TPEX: "TPEx source",
   };
-  return labels[normalized] ?? "backend-provided source";
+  return labels[normalized] ?? "正式資料來源";
 }
 
 function SectionDisclosure({
@@ -121,34 +121,36 @@ function SectionDisclosure({
   sectionLabel: string;
 }) {
   const stateLabel: Record<TodaySectionState | "LOADING", string> = {
-    LOADING: "Loading",
-    FORMAL: "Formal data",
-    TEMPORARY: "Temporary data",
-    PREVIEW: "Preview data",
-    UNAVAILABLE: "Unavailable",
-    ERROR: "Load error",
+    LOADING: "讀取中",
+    FORMAL: "正式資料",
+    TEMPORARY: "暫時資料",
+    PREVIEW: "預覽資料",
+    UNAVAILABLE: "尚未提供",
+    ERROR: "讀取失敗",
   };
   const effectiveState = loading ? "LOADING" : resource.state;
   const messages = [
     resource.temporarySections.includes(sectionKey)
-      ? `${sectionLabel} is temporarily published and is not formal data.`
+      ? `${sectionLabel}目前為暫時資料，尚未納入正式發布。`
       : null,
     resource.missingSections.includes(sectionKey)
-      ? `${sectionLabel} is not complete enough to publish.`
+      ? `${sectionLabel}目前尚未完成發布。`
       : null,
     resource.temporarySections.some((value) => value !== sectionKey)
-      ? `Other temporary sections: ${resource.temporarySections.filter((value) => value !== sectionKey).map(friendlySectionName).join(", ")}.`
+      ? `其他暫時資料：${resource.temporarySections.filter((value) => value !== sectionKey).map(friendlySectionName).join("、")}。`
       : null,
     resource.missingSections.some((value) => value !== sectionKey)
-      ? `Other unavailable sections: ${resource.missingSections.filter((value) => value !== sectionKey).map(friendlySectionName).join(", ")}.`
+      ? `其他尚未提供區塊：${resource.missingSections.filter((value) => value !== sectionKey).map(friendlySectionName).join("、")}。`
       : null,
-    ...resource.qualityNotes.map((note) => `Data note: ${note}`),
+    ...resource.qualityNotes
+      .filter((note) => !/public\.|ingestion|Home\.|backend|postgres/i.test(note))
+      .map((note) => `資料提示：${note}`),
   ].filter((message): message is string => Boolean(message));
 
   return (
     <div className="tp-home-section-disclosure" aria-label={`${sectionLabel} data disclosure`}>
       <small>
-        Status: {stateLabel[effectiveState]} · Data date: {resource.dataDate ?? "Not disclosed"} · As of: {resource.asOf ?? "Not disclosed"} · Latest snapshot: {resource.latestSnapshotTime ?? "Not disclosed"} · Generated: {resource.generatedAt ?? "Not disclosed"} · Source: {friendlySourceName(resource.source)}
+        狀態：{stateLabel[effectiveState]} · 資料日：{resource.dataDate ?? "尚未提供"} · 截至：{resource.asOf ?? "尚未提供"} · 最近更新：{resource.latestSnapshotTime ?? "尚未提供"} · 產生時間：{resource.generatedAt ?? "尚未提供"} · 來源：{friendlySourceName(resource.source)}
       </small>
       {messages.length > 0 && (
         <ul data-quality-disclosure="true">
@@ -231,7 +233,7 @@ function MarketOverviewCard({
   const health = overview?.marketHealth ?? null;
   return (
     <Card className="tp-home-overview-card">
-      <SectionHeading id="market-overview-title" title="市場概況" description="只顯示 Home contract 提供的市場總覽資料。" />
+      <SectionHeading id="market-overview-title" title="市場概況" description="只顯示已完成整理的市場總覽資料。" />
       {loading || resource.state === "UNAVAILABLE" || resource.state === "ERROR" ? (
         <MainlinesState
           loading={loading}
@@ -273,7 +275,7 @@ function MarketOverviewCard({
         <MainlinesState
           loading={false}
           state="UNAVAILABLE"
-          reason="Home.marketOverview is unavailable."
+          reason="市場資料尚未完整。"
           dataDate={resource.dataDate}
           section="市場概況"
         />
@@ -292,7 +294,7 @@ function MarketEventsCard({
 }) {
   return (
     <Card className="tp-home-events-card">
-      <SectionHeading id="events-title" title="盤中重要事件" description="只記錄 backend contract 提供的市場事件。" />
+      <SectionHeading id="events-title" title="盤中重要事件" description="只顯示已完成發布的市場事件。" />
       {loading || resource.state === "UNAVAILABLE" || resource.state === "ERROR" ? (
         <MainlinesState
           loading={loading}
@@ -320,7 +322,7 @@ function MarketEventsCard({
                 <div>
                   <Link href={`/topics/${event.topicSlug}`}><strong>{event.topic}</strong></Link>
                   <span>{event.description}</span>
-                  <small>{event.eventType} · {event.severity} · {event.source}</small>
+                  <small>{event.eventType} · {event.severity}</small>
                 </div>
               </li>
             ))}
@@ -422,7 +424,7 @@ export default function TodayMarketPage() {
                       {mainlines.resource.dailyFocus.data.bullets?.map((bullet) => <li key={bullet}>{bullet}</li>)}
                     </ul>
                     <div className="tp-home-one-line"><span>今日一句話</span><strong>{mainlines.resource.dailyFocus.data.headline}</strong></div>
-                    <small>模式：{mainlines.resource.dailyFocus.mode} · 來源：{mainlines.resource.dailyFocus.source}{mainlines.resource.dailyFocus.dataDate && ` · 資料日：${mainlines.resource.dailyFocus.dataDate}`}</small>
+                      <small>規則式整理{mainlines.resource.dailyFocus.dataDate && ` · 資料日：${mainlines.resource.dailyFocus.dataDate}`}</small>
                   </>
                 )}
               </>

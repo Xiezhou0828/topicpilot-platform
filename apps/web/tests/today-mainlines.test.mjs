@@ -85,6 +85,6 @@ test("Today heating and cooling fail closed and only expose Preview explicitly",
   assert.match(adapter, /state: "UNAVAILABLE"/);
   assert.match(adapter, /data\.length === 0/);
   assert.match(adapter, /data\.every\(isHomeRotationTopic\)/);
-  assert.match(adapter, /Formal Today rotation data is not ready/);
+  assert.match(adapter, /目前沒有足夠的 14 日資料/);
   assert.doesNotMatch(adapter, /fallback|rank|ranking|direction inference|strength calculation/i);
 });

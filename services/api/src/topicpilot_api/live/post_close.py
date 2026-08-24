@@ -14,6 +14,8 @@ from sqlalchemy import and_, or_, select
 from sqlalchemy.orm import Session
 
 from topicpilot_api.daily_market import DailyMarketReconciliation, reconcile_daily_market
+from topicpilot_api.home_v2_publication import materialize_home_v2
+from topicpilot_api.market_data.index_contract import fetch_official_market_indexes
 from topicpilot_api.market_data.ingestion import HistoricalSourceRegistration, ingest_historical
 from topicpilot_api.market_data.rate_limit import RateLimitedTransport
 from topicpilot_api.market_data.registry import build_historical_provider_registry
@@ -393,6 +395,13 @@ class PostCloseUpdater:
             self._run_snapshot(
                 local_date,
                 eligible_instrument_ids=eligible_instrument_ids,
+                source_run_id=str(run_id),
+                market_index_facts=fetch_official_market_indexes(
+                    target_date=local_date,
+                    retrieved_at=self._now(),
+                    as_of=self._now(),
+                    transport=_official_transport,
+                ),
             )
             if reconciliation.downstream_ready
             else {
@@ -440,6 +449,8 @@ class PostCloseUpdater:
         *,
         market_closed: bool = False,
         eligible_instrument_ids: Collection[Any] | None = None,
+        source_run_id: str | None = None,
+        market_index_facts: Collection[Any] = (),
     ) -> dict[str, Any]:
         try:
             result = TopicSnapshotEngine(self.session).run_once(
@@ -477,6 +488,23 @@ class PostCloseUpdater:
                         "status": "WAITING_FOR_FORMAL_SNAPSHOT",
                         "error": type(exc).__name__,
                     }
+                else:
+                    try:
+                        result["homePublication"] = materialize_home_v2(
+                            self.session,
+                            trading_date=snapshot_date,
+                            source_run_id=source_run_id,
+                            market_index_facts=tuple(market_index_facts),
+                        )
+                    except Exception as exc:
+                        # Home publication has its own typed gate.  A Home
+                        # persistence failure must not rewrite a successfully
+                        # materialized formal topic state as unavailable.
+                        self.session.rollback()
+                        result["homePublication"] = {
+                            "status": "HOME_PUBLICATION_UNAVAILABLE",
+                            "error": type(exc).__name__,
+                        }
             elif market_closed:
                 result["lifecycle"] = {"status": "MARKET_CLOSED"}
             return result

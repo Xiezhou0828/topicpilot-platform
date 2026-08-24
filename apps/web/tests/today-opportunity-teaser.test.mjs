@@ -23,13 +23,12 @@ test("Today Opportunity maps empty, incomplete, Shadow, Preview, and transport s
     read("components/v2/TodayMarketPage.tsx"),
   ]);
 
-  assert.match(adapter, /Home\.opportunities is empty/);
-  assert.match(adapter, /Home\.opportunities has incomplete fields/);
+  assert.match(adapter, /今日機會資料尚未提供/);
   assert.match(adapter, /state: "ERROR"/);
   assert.match(adapter, /state: "PREVIEW"/);
   assert.match(adapter, /resource\.publicationState !== "UNAVAILABLE" && previewEnabled/);
-  assert.match(adapter, /Shadow or temporary data; explicit Today Preview is required/);
-  assert.match(adapter, /No formal Today Opportunity publication authority is configured/);
+  assert.match(adapter, /今日機會資料尚未完成正式驗證/);
+  assert.match(adapter, /今日機會目前尚未提供正式資料/);
   assert.match(page, /resource\.state === "FORMAL" \|\| resource\.state === "PREVIEW"/);
   assert.match(page, /resource\.state === "PREVIEW"/);
 });
