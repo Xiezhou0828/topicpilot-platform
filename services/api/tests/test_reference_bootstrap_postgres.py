@@ -129,7 +129,7 @@ def test_empty_database_bootstrap_dry_run_rerun_activation_and_reference_check(p
                 required_session_code="REGULAR",
                 required_calendar_code="TW_MARKET",
             )
-        assert ready["referenceLoadStatus"] == "READY"
+        assert ready["referenceLoadStatus"] == "READY", ready
         assert ready["instrumentCount"] == 507
         assert ready["REFERENCE_CALENDAR_DATE_COUNT"] == 24
 
