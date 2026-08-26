@@ -90,7 +90,7 @@ jobs:
       - name: Reference bootstrap PostgreSQL integration
         run: python -m pytest services/api/tests/test_reference_bootstrap_postgres.py -q
       - name: Backend tests
-        run: python -m pytest services/api/tests -m "not research and not governance"
+        run: python -m pytest services/api/tests -m "not research and not governance and not postgres"
       - name: OpenAPI contract and drift check
         env:
           PYTHONPATH: services/api/src

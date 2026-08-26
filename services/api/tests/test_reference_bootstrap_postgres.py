@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import replace
+from datetime import date
 from pathlib import Path
 
 import pytest
@@ -133,13 +134,29 @@ def test_empty_database_bootstrap_dry_run_rerun_activation_and_reference_check(p
                 required_session_code="REGULAR",
                 required_calendar_code="TW_MARKET",
             )
-        if ready["referenceLoadStatus"] != "READY":
-            pytest.fail(
-                "reference preflight details:\n"
-                + "\n".join(f"{key}={value!r}" for key, value in sorted(ready.items()))
-            )
+        assert ready["referenceLoadStatus"] == "READY"
         assert ready["instrumentCount"] == 507
         assert ready["REFERENCE_CALENDAR_DATE_COUNT"] == 24
+
+        with postgres_engine.connect() as connection:
+            lifecycle_rows = connection.execute(
+                text(
+                    "SELECT rl.status_code, rl.effective_from, rl.effective_to "
+                    "FROM topicpilot.reference_instrument_lifecycles rl "
+                    "JOIN topicpilot.instruments i ON i.id = rl.instrument_id "
+                    "JOIN topicpilot.markets m ON m.id = i.market_id "
+                    "WHERE rl.registry_set_id = ("
+                    "SELECT id FROM topicpilot.reference_registry_sets "
+                    "WHERE reference_data_version = :reference_version"
+                    ") AND i.instrument_code = '5371' AND m.code = 'TWO' "
+                    "ORDER BY rl.effective_from"
+                ),
+                {"reference_version": reference_version},
+            ).all()
+        assert lifecycle_rows == [
+            ("SUSPENDED", date(2026, 8, 24), date(2026, 9, 2)),
+            ("TERMINATED", date(2026, 9, 3), None),
+        ]
 
         second_manifest = dict(bundle.manifest)
         second_version = f"{reference_version}-test-second"
