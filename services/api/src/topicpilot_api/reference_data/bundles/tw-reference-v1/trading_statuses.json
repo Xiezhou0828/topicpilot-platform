@@ -19,5 +19,8 @@
   },
   {
     "code": "UNKNOWN"
+  },
+  {
+    "code": "TERMINATED"
   }
 ]

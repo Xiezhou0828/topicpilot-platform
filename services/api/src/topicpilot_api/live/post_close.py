@@ -330,7 +330,13 @@ class PostCloseUpdater:
                         error_code = (
                             "APPROVED_NO_TRADE"
                             if result.instrument_status
-                            in {"SUSPENDED", "NO_TRADE", "EXCHANGE_CONFIRMED_NO_DATA"}
+                            in {
+                                "SUSPENDED",
+                                "NO_TRADE",
+                                "EXCHANGE_CONFIRMED_NO_DATA",
+                                "DELISTED",
+                                "TERMINATED",
+                            }
                             and result.priced_count == 0
                             else None
                         )
@@ -338,9 +344,10 @@ class PostCloseUpdater:
                     else:
                         skipped_count += 1
                         attempt_status = "SKIPPED"
-                        error_code = "UNEXPLAINED_MISSING_DATA"
+                        error_code = "MISSING_MARKET_DATA"
                         error_message = result.status_reason or (
-                            "official provider returned no priced or approved no-trade evidence"
+                            "official provider returned no priced bar and no "
+                            "lifecycle-authorized no-trade evidence"
                         )
                 except Exception as exc:
                     self.session.rollback()

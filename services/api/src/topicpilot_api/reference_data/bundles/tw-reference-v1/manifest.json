@@ -1,34 +1,17 @@
 {
   "bundleSchemaVersion": "reference-bundle.v1",
-  "bundleSha256": "daf19e9eb051255c631d0fff6d8fecf1273aecf52f9e958a62c778dfb6906295",
-  "derivedSummary": {
-    "adjustmentCount": 3,
-    "calendarDateCount": 24,
-    "calendarHolidayCount": 23,
-    "calendarSuspendedCount": 1,
-    "currencyCount": 1,
-    "instrumentCount": 507,
-    "instrumentCountByMarket": {
-      "TPE": 314,
-      "TWO": 193
-    },
-    "lifecycleEventCount": 1,
-    "marketCount": 2,
-    "sessionCount": 1,
-    "timezoneCount": 1,
-    "tradingStatusCount": 7
-  },
+  "bundleSha256": "66edf7395785c4a19f36c39d22911b83843621f5cfdda49f90ea42099fa9a543",
   "files": {
     "adjustments.json": "1217e6f4722bb87afe5d2d033caabbfcd9cdc128e3e1067b6c79a5e5f669e558",
     "calendar_dates.json": "08f972307f5fef79e2154d3b96419c0206d0f5a60ae735f680492962143c7439",
     "currencies.json": "eb4b8c3d49b294f72d177fcb98f60d899325c856edce5e8272921290b17bce36",
-    "evidence.json": "707e8e2a807cd90559d47734cf7b26f955e87d72fdd4d289cd25eb5028fdd5d2",
-    "instrument_lifecycles.json": "1a9acb274cc9ca21ee0747470cec47ea8fd82c77ee278f8306bd8bb044da4dd5",
+    "evidence.json": "4c5e25c4a0bb43ffd44ca264780a0e240602a34c62370035272d54482f5ed15a",
+    "instrument_lifecycles.json": "22f25d0dd1fb1e18d90843e146ed26c758f7c7342cb5513aafbe811033c6ac75",
     "instruments.json": "dd5d538d85b6d04b7a69e90c365852ffe9412adfd8bff7885631a32f2b8bc58f",
     "markets.json": "816e0fd8bcd1c9d9597a4ef99a00fe2eed4c2756be1d9033a50a310c11c401bf",
     "sessions.json": "f8b2366c25dc79b16b610710ce510073d631827802aee78782b3cc7c6bbfcd28",
     "timezones.json": "d68a0d38253a8fcc3719427db19e92f4c09dc91a6c785d37bff414a28cfccf3c",
-    "trading_statuses.json": "dfd0c0269bf977e6c1e635352dee7b5b07dfe2af5d0ccb75886f66b4fe4ade77"
+    "trading_statuses.json": "1eb693d2ba1e94438559c5dc637da6110d7edeef62b66a0221a9d9437a227ad2"
   },
   "generatedOrCurated": "GENERATED_WITH_CURATED_GOVERNANCE_INPUTS",
   "governance": {
@@ -39,7 +22,7 @@
     "marketAuthority": "provider registry plus existing identity bootstrap defaults",
     "statusAuthority": "DAILY_TRADING_STATUS_CODES plus explicit evidence validation"
   },
-  "referenceDataVersion": "tw-reference-v1",
+  "referenceDataVersion": "tw-reference-v1-rollover-daf19e9eb051255c",
   "sourceArtifacts": [
     {
       "acceptedRowCount": 507,

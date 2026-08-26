@@ -3,13 +3,13 @@
 from __future__ import annotations
 
 from collections.abc import Callable, Iterable, Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import date, datetime, time, timezone
 from decimal import Decimal
 from uuid import UUID
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
-from sqlalchemy import select
+from sqlalchemy import or_, select
 from sqlalchemy.orm import Session
 
 from topicpilot_api.normalizer import (
@@ -29,6 +29,8 @@ from topicpilot_api.orm.models import (
     ObservationTimelineBatch,
     ObservationTimelineEntry,
     RawMarketObservation,
+    ReferenceInstrumentLifecycle,
+    ReferenceRegistrySet,
 )
 
 from .history import (
@@ -178,6 +180,107 @@ def _load_instrument(session: Session, code: str, market_code: str) -> tuple[Ins
             "INSTRUMENT_NOT_FOUND", f"active V2 identity not found: {market_code}/{code}"
         )
     return row[0], row[1]
+
+
+def _effective_lifecycle_status(
+    session: Session,
+    *,
+    instrument_id: UUID,
+    reference_data_version: str,
+    trading_date: date,
+) -> str | None:
+    """Resolve the authoritative instrument state for one date."""
+
+    registry_id = session.scalar(
+        select(ReferenceRegistrySet.id).where(
+            ReferenceRegistrySet.reference_data_version == reference_data_version,
+            ReferenceRegistrySet.status == "ACTIVE",
+        )
+    )
+    if registry_id is None:
+        return None
+    return session.scalar(
+        select(ReferenceInstrumentLifecycle.status_code)
+        .where(
+            ReferenceInstrumentLifecycle.registry_set_id == registry_id,
+            ReferenceInstrumentLifecycle.instrument_id == instrument_id,
+            ReferenceInstrumentLifecycle.effective_from <= trading_date,
+            or_(
+                ReferenceInstrumentLifecycle.effective_to.is_(None),
+                ReferenceInstrumentLifecycle.effective_to >= trading_date,
+            ),
+        )
+        .order_by(
+            ReferenceInstrumentLifecycle.effective_from.desc(),
+            ReferenceInstrumentLifecycle.id.desc(),
+        )
+        .limit(1)
+    )
+
+
+def classify_authoritative_no_trade_result(
+    result: HistoricalFetchResult,
+    *,
+    lifecycle_status: str | None,
+    trading_date: date | None,
+) -> HistoricalFetchResult:
+    """Separate lifecycle-authorized no-trade from active missing data."""
+
+    if trading_date is None:
+        return result
+    if lifecycle_status in {"SUSPENDED", "DELISTED", "TERMINATED"}:
+        if result.bars:
+            raise HistoricalIngestionError(
+                "LIFECYCLE_PROVIDER_CONFLICT",
+                f"{lifecycle_status} instrument returned an observation on "
+                f"{trading_date.isoformat()}",
+            )
+        return replace(
+            result,
+            instrument_status=lifecycle_status,
+            status_reason=(
+                result.status_reason
+                or f"reference lifecycle authorizes {lifecycle_status} on "
+                f"{trading_date.isoformat()}"
+            ),
+            status_explicit=True,
+        )
+    if result.has_priced_observation:
+        return result
+    return replace(
+        result,
+        instrument_status="UNKNOWN",
+        status_reason=(
+            f"MISSING_MARKET_DATA: no priced bar for active instrument on "
+            f"{trading_date.isoformat()}"
+        ),
+        status_explicit=True,
+    )
+
+
+def _apply_authoritative_no_trade_state(
+    session: Session,
+    result: HistoricalFetchResult,
+    *,
+    instrument_id: UUID,
+    reference_data_version: str,
+    trading_date: date | None,
+) -> HistoricalFetchResult:
+    lifecycle_status = (
+        _effective_lifecycle_status(
+            session,
+            instrument_id=instrument_id,
+            reference_data_version=reference_data_version,
+            trading_date=trading_date,
+        )
+        if trading_date is not None
+        else None
+    )
+    return classify_authoritative_no_trade_result(
+        result,
+        lifecycle_status=lifecycle_status,
+        trading_date=trading_date,
+    )
 
 
 def _get_or_create_source(
@@ -370,6 +473,13 @@ def ingest_historical(
     for (code, market_code), result, bars in fetched:
         instrument, market = _load_instrument(session, code, market_code)
         status_date = requested_from if requested_from == requested_to else None
+        result = _apply_authoritative_no_trade_state(
+            session,
+            result,
+            instrument_id=instrument.id,
+            reference_data_version=reference_data_version,
+            trading_date=status_date,
+        )
         observations: list[tuple[date, HistoricalBar | None, dict[str, str | None]]] = [
             (bar.trading_date, bar, _bar_payload(result, bar)) for bar in bars
         ]
@@ -384,7 +494,7 @@ def ingest_historical(
         if not observations:
             all_covered = False
         counts["provider"] += len(bars)
-        for trading_date, bar, payload in observations:
+        for trading_date, _bar, payload in observations:
             observed_at = _observed_at(trading_date, market.timezone)
             close_present = payload.get("close") is not None
             status_code = payload.get("instrument_status")
@@ -423,7 +533,9 @@ def ingest_historical(
                 raw = RawMarketObservation(
                     source_id=source.id,
                     instrument_id=instrument.id,
-                    upstream_observation_id=f"{result.source_symbol}:{bar.trading_date.isoformat()}",
+                    # A legitimate no-trade observation has no HistoricalBar.
+                    # Its stable identity is anchored to the requested date.
+                    upstream_observation_id=f"{result.source_symbol}:{trading_date.isoformat()}",
                     source_instrument_identifier=result.source_symbol,
                     observed_at=observed_at,
                     retrieved_at=result.retrieved_at,
@@ -458,7 +570,7 @@ def ingest_historical(
                     observed_at=raw.observed_at,
                     received_at=result.retrieved_at,
                     retrieved_at=result.retrieved_at,
-                    ordering_key=bar.trading_date.isoformat(),
+                    ordering_key=trading_date.isoformat(),
                     payload=payload,
                     content_hash=stable_hash({"raw": raw_hash, "payload": payload}),
                     supersedes_id=prior_entry.id if prior_entry else None,
