@@ -129,7 +129,11 @@ def test_empty_database_bootstrap_dry_run_rerun_activation_and_reference_check(p
                 required_session_code="REGULAR",
                 required_calendar_code="TW_MARKET",
             )
-        assert ready["referenceLoadStatus"] == "READY", ready
+        if ready["referenceLoadStatus"] != "READY":
+            pytest.fail(
+                "reference preflight details:\n"
+                + "\n".join(f"{key}={value!r}" for key, value in sorted(ready.items()))
+            )
         assert ready["instrumentCount"] == 507
         assert ready["REFERENCE_CALENDAR_DATE_COUNT"] == 24
 
