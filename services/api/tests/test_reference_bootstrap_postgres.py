@@ -48,6 +48,16 @@ def _cleanup(engine, versions: tuple[str, ...]) -> None:
             )
         connection.execute(
             text(
+                "DELETE FROM topicpilot.reference_instrument_lifecycles "
+                "WHERE instrument_id IN ("
+                "SELECT id FROM topicpilot.instruments "
+                "WHERE market_id IN (SELECT id FROM topicpilot.markets "
+                "WHERE code IN ('TPE', 'TWO'))"
+                ")"
+            )
+        )
+        connection.execute(
+            text(
                 "DELETE FROM topicpilot.reference_registry_sets "
                 "WHERE reference_data_version = ANY(:versions)"
             ),
@@ -91,7 +101,9 @@ def test_empty_database_bootstrap_dry_run_rerun_activation_and_reference_check(p
         assert _table_count(postgres_engine, "markets") == 2
         assert _table_count(postgres_engine, "instruments") == 507
         assert _table_count(postgres_engine, "reference_calendar_dates") == 24
-        assert _table_count(postgres_engine, "reference_instrument_lifecycles") == 1
+        assert _table_count(postgres_engine, "reference_instrument_lifecycles") == len(
+            bundle.instrument_lifecycles
+        )
 
         before_dry_run = {
             table: _table_count(postgres_engine, table)

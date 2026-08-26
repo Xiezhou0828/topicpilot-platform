@@ -37,12 +37,14 @@ DAILY_TRADING_STATUS_CODES: Final = frozenset(
         "SUSPENDED",
         "NO_TRADE",
         "EXCHANGE_CONFIRMED_NO_DATA",
+        "DELISTED",
+        "TERMINATED",
         "UNKNOWN",
         "OPEN",
     }
 )
 COVERED_NO_TRADE_STATUS_CODES: Final = frozenset(
-    {"SUSPENDED", "NO_TRADE", "EXCHANGE_CONFIRMED_NO_DATA"}
+    {"SUSPENDED", "NO_TRADE", "EXCHANGE_CONFIRMED_NO_DATA", "DELISTED", "TERMINATED"}
 )
 
 

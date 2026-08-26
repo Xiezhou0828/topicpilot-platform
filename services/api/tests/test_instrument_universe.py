@@ -9,6 +9,7 @@ from topicpilot_api.instrument_universe import (
     build_date_effective_instrument_universe,
     evaluate_instrument_eligibility,
     is_instrument_eligible_on_date,
+    resolve_lifecycle_status,
 )
 
 
@@ -55,6 +56,35 @@ def test_future_validity_is_not_eligible_before_valid_from():
         "INSTRUMENT_NOT_YET_VALID"
     )
     assert is_instrument_eligible_on_date(row, date(2026, 8, 14)) is True
+
+
+def test_5371_lifecycle_preserves_pre_suspension_and_terminal_boundaries():
+    row = InstrumentUniverseRow(
+        market_code="TWO",
+        instrument_code="5371",
+        instrument_type="EQUITY",
+        is_active=True,
+        lifecycle_events=(
+            InstrumentLifecycle(
+                "SUSPENDED",
+                date(2026, 8, 24),
+                effective_to=date(2026, 9, 2),
+                evidence_id="suspended-5371",
+            ),
+            InstrumentLifecycle(
+                "TERMINATED",
+                date(2026, 9, 3),
+                evidence_id="terminated-5371",
+            ),
+        ),
+    )
+
+    assert resolve_lifecycle_status(row, date(2026, 8, 21)) is None
+    assert is_instrument_eligible_on_date(row, date(2026, 8, 21)) is True
+    assert resolve_lifecycle_status(row, date(2026, 8, 24)) == "SUSPENDED"
+    assert is_instrument_eligible_on_date(row, date(2026, 8, 24)) is False
+    assert resolve_lifecycle_status(row, date(2026, 9, 3)) == "TERMINATED"
+    assert is_instrument_eligible_on_date(row, date(2026, 9, 3)) is False
 
 
 @pytest.mark.parametrize(

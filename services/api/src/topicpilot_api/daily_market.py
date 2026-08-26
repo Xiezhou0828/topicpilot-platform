@@ -176,7 +176,10 @@ def reconcile_daily_market(
                 count(d.instrument_id) FILTER (WHERE d.close IS NOT NULL) AS priced_count
                 ,count(d.instrument_id) FILTER (
                     WHERE d.close IS NOT NULL
-                       OR d.status_code IN ('SUSPENDED', 'NO_TRADE', 'EXCHANGE_CONFIRMED_NO_DATA')
+                       OR d.status_code IN (
+                           'SUSPENDED', 'NO_TRADE', 'EXCHANGE_CONFIRMED_NO_DATA',
+                           'DELISTED', 'TERMINATED'
+                       )
                 ) AS covered_count
             FROM topicpilot.markets m
             JOIN topicpilot.instruments i ON i.market_id = m.id

@@ -112,13 +112,18 @@ def _result(
     market_code: str,
     source_code: str,
     adapter_version: str,
-    bars: list[HistoricalBar],
+    bars: list[HistoricalBar | None],
     retrieved_at: datetime,
     instrument_status: str | None = None,
     status_reason: str | None = None,
     status_explicit: bool = False,
 ) -> HistoricalFetchResult:
-    by_date = {bar.trading_date: bar for bar in bars}
+    # Provider adapters may use ``None`` to represent a symbol absent from an
+    # official market-level payload. Absence is a result state, not a bar;
+    # filter it before any date dereference and let the caller apply the
+    # lifecycle-aware no-trade policy.
+    accepted_bars = tuple(bar for bar in bars if bar is not None)
+    by_date = {bar.trading_date: bar for bar in accepted_bars}
     ordered = tuple(by_date[day] for day in sorted(by_date))
     if instrument_status is None:
         instrument_status = (

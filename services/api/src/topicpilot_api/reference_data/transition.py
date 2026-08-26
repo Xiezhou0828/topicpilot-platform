@@ -9,6 +9,8 @@ new row by an append-only transition provenance record.
 
 from __future__ import annotations
 
+import hashlib
+import re
 from dataclasses import dataclass, replace
 from typing import Any
 
@@ -28,6 +30,11 @@ from .bootstrap import (
 from .bundle import ReferenceBundle, validate_bundle
 
 TRANSITION_KIND = "BUNDLE_ROLLOVER"
+REFERENCE_VERSION_MAX_LENGTH = 64
+_ROLLOVER_VERSION_RE = re.compile(r"(?P<family>.+)-rollover-[0-9a-f]{16}$")
+_ROLLOVER_DIGEST_LENGTH = 16
+_COMPACT_FAMILY_PREFIX_LENGTH = 20
+_COMPACT_DIGEST_LENGTH = 32
 TRANSITION_WRITE_SET = frozenset(
     {*REFERENCE_WRITE_SET, "reference_registry_transitions"}
 )
@@ -76,14 +83,30 @@ class ReferenceRegistryTransitionResult:
 
 
 def derive_transition_version(source_version: str, bundle_sha256: str) -> str:
-    """Return the only registry version allowed for a bundle rollover."""
+    """Return a deterministic, bounded successor version for a bundle rollover.
 
-    if not source_version or len(source_version) > 64:
+    Existing first-generation rollover names remain unchanged. A generated
+    rollover suffix is parsed back to its stable family before deriving the
+    next target, so repeated transitions do not grow without bound. Long
+    families use a deterministic compact form that still binds the complete
+    family and bundle hash.
+    """
+
+    if not source_version or len(source_version) > REFERENCE_VERSION_MAX_LENGTH:
         raise ReferenceBootstrapConflict("source reference version is invalid")
     if len(bundle_sha256) != 64 or any(char not in "0123456789abcdef" for char in bundle_sha256):
         raise ReferenceBootstrapConflict("bundle hash is invalid")
-    target = f"{source_version}-rollover-{bundle_sha256[:16]}"
-    if len(target) > 64:
+
+    rollover_match = _ROLLOVER_VERSION_RE.fullmatch(source_version)
+    family = rollover_match.group("family") if rollover_match else source_version
+    target = f"{family}-rollover-{bundle_sha256[:_ROLLOVER_DIGEST_LENGTH]}"
+    if len(target) > REFERENCE_VERSION_MAX_LENGTH:
+        safe_prefix = re.sub(r"[^A-Za-z0-9_-]+", "-", family).strip("-_")
+        safe_prefix = safe_prefix[:_COMPACT_FAMILY_PREFIX_LENGTH] or "reference"
+        identity = f"{family}\0{bundle_sha256}".encode()
+        compact_digest = hashlib.sha256(identity).hexdigest()[:_COMPACT_DIGEST_LENGTH]
+        target = f"{safe_prefix}-r-{compact_digest}"
+    if len(target) > REFERENCE_VERSION_MAX_LENGTH:
         raise ReferenceBootstrapConflict("derived transition reference version is too long")
     return target
 
@@ -313,6 +336,7 @@ def transition_reference_registry(
 
 __all__ = [
     "NON_REFERENCE_WRITE_SET",
+    "REFERENCE_VERSION_MAX_LENGTH",
     "REFERENCE_WRITE_SET",
     "TRANSITION_KIND",
     "TRANSITION_WRITE_SET",
