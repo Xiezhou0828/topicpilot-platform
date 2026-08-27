@@ -16,6 +16,8 @@ DAILY_TRADING_STATUS_CODES = frozenset(
         "SUSPENDED",
         "NO_TRADE",
         "EXCHANGE_CONFIRMED_NO_DATA",
+        "DELISTED",
+        "TERMINATED",
         "UNKNOWN",
         # Kept for compatibility with the pre-022A reference fixtures.
         "OPEN",

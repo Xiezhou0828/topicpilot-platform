@@ -1,6 +1,28 @@
 {
   "description": "Per-symbol legal suspension or permanent delisting evidence. Intraday no-latest-trade evidence is fetched from official MIS at export time.",
   "suspensions": {
+    "5371": {
+      "events": [
+        {
+          "effectiveFrom": "2026-08-24",
+          "effectiveTo": "2026-09-02",
+          "evidenceId": "OWNER-TWO-5371-SUSPENDED-20260824",
+          "market": "TWO",
+          "reason": "Owner-supplied market event evidence: 5371 last traded on 2026-08-21 and was suspended from trading on 2026-08-24 for the announced share-conversion process.",
+          "source": "https://www.cmoney.tw/forum/stock/5371?utm_source=notes&utm_medium=article_stocklink",
+          "status": "SUSPENDED"
+        },
+        {
+          "effectiveFrom": "2026-09-03",
+          "evidenceId": "OWNER-TWO-5371-TERMINATED-20260903",
+          "market": "TWO",
+          "reason": "Owner-supplied market event evidence: the share-conversion base date and termination of the old 5371 OTC identity are announced for 2026-09-03.",
+          "source": "https://www.cmoney.tw/forum/stock/5371?utm_source=notes&utm_medium=article_stocklink",
+          "status": "TERMINATED"
+        }
+      ],
+      "market": "TWO"
+    },
     "6806": {
       "effectiveFrom": "2026-06-23",
       "evidenceId": "TWSE-DELISTED-6806-20260623",

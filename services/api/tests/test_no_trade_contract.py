@@ -8,11 +8,16 @@ import pytest
 from topicpilot_api.market_data.exchange import (
     TpexOfficialDailyProvider,
     TwseOfficialDailyProvider,
+    _result,
 )
 from topicpilot_api.market_data.history import (
     HistoricalBar,
     HistoricalFetchResult,
     HistoricalProviderError,
+)
+from topicpilot_api.market_data.ingestion import (
+    HistoricalIngestionError,
+    classify_authoritative_no_trade_result,
 )
 from topicpilot_api.normalizer import (
     HistoricalDailyBarNormalizer,
@@ -36,6 +41,23 @@ def test_official_empty_exchange_response_is_confirmed_no_data():
     assert result.instrument_status == "EXCHANGE_CONFIRMED_NO_DATA"
     assert result.status_explicit is True
     assert result.status_reason
+
+
+def test_exchange_none_bar_is_absence_not_attribute_error():
+    result = _result(
+        instrument_code="5371",
+        market_code="TWO",
+        source_code="TPEX_OFFICIAL_DAILY",
+        adapter_version="tpex-official-daily.v2",
+        bars=[None],
+        retrieved_at=datetime(2026, 8, 25, 7, tzinfo=UTC),
+        instrument_status="EXCHANGE_CONFIRMED_NO_DATA",
+        status_reason="official market payload has no row",
+        status_explicit=True,
+    )
+
+    assert result.bars == ()
+    assert result.instrument_status == "EXCHANGE_CONFIRMED_NO_DATA"
 
 
 def test_twse_market_batch_fetches_once_and_resolves_multiple_symbols():
@@ -216,3 +238,67 @@ def test_unknown_missing_bar_does_not_become_approved_no_trade():
 
     assert result.instrument_status == "AVAILABLE"
     assert result.covered_no_trade is False
+
+
+def _empty_result(status: str = "EXCHANGE_CONFIRMED_NO_DATA") -> HistoricalFetchResult:
+    return HistoricalFetchResult(
+        "5371",
+        "TWO",
+        "5371",
+        "TPEX_OFFICIAL_DAILY",
+        "tpex-official-daily.v2",
+        datetime(2026, 8, 25, tzinfo=UTC),
+        (),
+        0,
+        instrument_status=status,
+        status_reason="official response contained no row",
+        status_explicit=True,
+    )
+
+
+def test_active_missing_bar_is_mapped_to_unexplained_market_data():
+    result = classify_authoritative_no_trade_result(
+        _empty_result(), lifecycle_status=None, trading_date=date(2026, 8, 25)
+    )
+
+    assert result.instrument_status == "UNKNOWN"
+    assert result.status_explicit is True
+    assert result.status_reason.startswith("MISSING_MARKET_DATA:")
+    assert result.covered_no_trade is False
+
+
+def test_suspended_missing_bar_is_auditable_approved_no_trade():
+    result = classify_authoritative_no_trade_result(
+        _empty_result(), lifecycle_status="SUSPENDED", trading_date=date(2026, 8, 25)
+    )
+
+    assert result.instrument_status == "SUSPENDED"
+    assert result.covered_no_trade is True
+    assert result.status_explicit is True
+
+
+def test_suspended_instrument_with_observation_is_a_reference_provider_conflict():
+    observed = HistoricalFetchResult(
+        "5371",
+        "TWO",
+        "5371",
+        "TPEX_OFFICIAL_DAILY",
+        "tpex-official-daily.v2",
+        datetime(2026, 8, 25, tzinfo=UTC),
+        (
+            HistoricalBar(
+                date(2026, 8, 25),
+                Decimal("10"),
+                Decimal("10"),
+                Decimal("10"),
+                Decimal("10"),
+                Decimal("1"),
+            ),
+        ),
+        1,
+    )
+
+    with pytest.raises(HistoricalIngestionError, match="LIFECYCLE_PROVIDER_CONFLICT"):
+        classify_authoritative_no_trade_result(
+            observed, lifecycle_status="SUSPENDED", trading_date=date(2026, 8, 25)
+        )

@@ -408,7 +408,7 @@ def _breadth(session: Session, trading_date: date) -> tuple[list[dict[str, Any]]
                 count(o.instrument_id) FILTER (WHERE o.close IS NOT NULL AND o.previous_close IS NOT NULL AND o.close > o.previous_close)::integer AS advance,
                 count(o.instrument_id) FILTER (WHERE o.close IS NOT NULL AND o.previous_close IS NOT NULL AND o.close < o.previous_close)::integer AS decline,
                 count(o.instrument_id) FILTER (WHERE o.close IS NOT NULL AND o.previous_close IS NOT NULL AND o.close = o.previous_close)::integer AS flat,
-                count(o.instrument_id) FILTER (WHERE o.close IS NULL AND o.status_code IN ('NO_TRADE', 'SUSPENDED', 'EXCHANGE_CONFIRMED_NO_DATA'))::integer AS unavailable,
+                count(o.instrument_id) FILTER (WHERE o.close IS NULL AND o.status_code IN ('NO_TRADE', 'SUSPENDED', 'EXCHANGE_CONFIRMED_NO_DATA', 'DELISTED', 'TERMINATED'))::integer AS unavailable,
                 max(o.observed_at) AS as_of
             FROM universe u
             LEFT JOIN observations o ON o.instrument_id = u.id

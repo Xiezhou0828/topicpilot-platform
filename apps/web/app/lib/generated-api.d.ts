@@ -945,17 +945,23 @@ export interface components {
             headline: string;
             /** Mode */
             mode: string;
+            /** Reasoncode */
+            reasonCode?: string | null;
             /** Source */
             source: string;
-            reasonCode?: string | null;
             /** Temporary */
             temporary: boolean;
+            /** Usermessage */
             userMessage?: string | null;
         };
         /** HomeDataQuality */
         HomeDataQuality: {
             /** Classification */
             classification: string | null;
+            /** Diagnosticcodes */
+            diagnosticCodes?: {
+                [key: string]: string;
+            };
             /** Missingsections */
             missingSections?: string[];
             /** Notes */
@@ -966,9 +972,31 @@ export interface components {
             status: string;
             /** Temporarysections */
             temporarySections?: string[];
-            diagnosticCodes?: {
-                [key: string]: string;
+        };
+        /** HomeMarketBreadth */
+        HomeMarketBreadth: {
+            /** Advance */
+            advance: number | null;
+            /** Asof */
+            asOf: string | null;
+            /** Coverage */
+            coverage?: {
+                [key: string]: unknown;
             };
+            /** Decline */
+            decline: number | null;
+            /** Eligible */
+            eligible: number;
+            /** Flat */
+            flat: number | null;
+            /** Market */
+            market: string;
+            /** Observed */
+            observed: number;
+            /** Source */
+            source: string;
+            /** Unavailable */
+            unavailable: number;
         };
         /** HomeMarketHealth */
         HomeMarketHealth: {
@@ -987,8 +1015,51 @@ export interface components {
             /** Unavailable */
             unavailable: number | null;
         };
+        /** HomeMarketIndex */
+        HomeMarketIndex: {
+            /** Asof */
+            asOf: string | null;
+            /** Change */
+            change: number | null;
+            /** Changepct */
+            changePct: number | null;
+            /** Indexcode */
+            indexCode: string;
+            /** Indexname */
+            indexName: string;
+            /** Lineage */
+            lineage?: string | null;
+            /** Market */
+            market: string;
+            /** Previousclose */
+            previousClose: number | null;
+            /** Reasoncode */
+            reasonCode?: string | null;
+            /** Session */
+            session?: string | null;
+            /** Source */
+            source?: string | null;
+            /** Status */
+            status: string;
+            /** Tradingdate */
+            tradingDate: string | null;
+            /** Value */
+            value: number | null;
+        };
+        /** HomeMarketLimits */
+        HomeMarketLimits: {
+            /** Limitdown */
+            limitDown: number | null;
+            /** Limitup */
+            limitUp: number | null;
+            /** Reasoncode */
+            reasonCode?: string | null;
+            /** Source */
+            source?: string | null;
+        };
         /** HomeMarketOverview */
         HomeMarketOverview: {
+            /** Breadth */
             breadth?: components["schemas"]["HomeMarketBreadth"][];
             /** Datadate */
             dataDate: string | null;
@@ -997,18 +1068,20 @@ export interface components {
              * @enum {string}
              */
             dataStatus: "AVAILABLE" | "PARTIAL" | "UNAVAILABLE";
+            /** Indices */
             indices?: components["schemas"]["HomeMarketIndex"][];
             /** Latestsnapshottime */
             latestSnapshotTime: string | null;
-            marketHealth: components["schemas"]["HomeMarketHealth"] | null;
             limits?: components["schemas"]["HomeMarketLimits"] | null;
+            marketHealth: components["schemas"]["HomeMarketHealth"] | null;
             /** Source */
             source: string;
-            turnover?: components["schemas"]["HomeMarketTurnover"][];
             /** Trackedstockcount */
             trackedStockCount: number;
             /** Trackedtopiccount */
             trackedTopicCount: number;
+            /** Turnover */
+            turnover?: components["schemas"]["HomeMarketTurnover"][];
             /** Updatedat */
             updatedAt: string | null;
         };
@@ -1031,6 +1104,33 @@ export interface components {
             topic: string;
             /** Topicslug */
             topicSlug: string;
+        };
+        /** HomeMarketTurnover */
+        HomeMarketTurnover: {
+            /** Asof */
+            asOf: string | null;
+            /** Currency */
+            currency: string | null;
+            /** Lineage */
+            lineage?: string | null;
+            /** Market */
+            market: string;
+            /** Reasoncode */
+            reasonCode?: string | null;
+            /** Scale */
+            scale: number | null;
+            /** Session */
+            session?: string | null;
+            /** Source */
+            source?: string | null;
+            /** Status */
+            status: string;
+            /** Tradingdate */
+            tradingDate: string | null;
+            /** Unit */
+            unit: string | null;
+            /** Value */
+            value: number | null;
         };
         /** HomeOpportunityStock */
         HomeOpportunityStock: {
@@ -1066,6 +1166,40 @@ export interface components {
             /** Validatedstocks */
             validatedStocks?: components["schemas"]["HomeOpportunityStock"][];
         };
+        /** HomePublication */
+        HomePublication: {
+            /** Asof */
+            asOf: string | null;
+            /** Completeness */
+            completeness?: {
+                [key: string]: unknown;
+            };
+            /** Generatedat */
+            generatedAt: string | null;
+            lineage?: components["schemas"]["HomePublicationLineage"];
+            /** Publishedat */
+            publishedAt: string | null;
+            /** Sourcedatasetid */
+            sourceDatasetId?: string | null;
+            /** Sourcerunid */
+            sourceRunId?: string | null;
+            /**
+             * State
+             * @enum {string}
+             */
+            state: "COLLECTED" | "MATERIALIZED" | "VALIDATED" | "PUBLISHED" | "UNAVAILABLE" | "SUPERSEDED";
+            /** Tradingdate */
+            tradingDate: string | null;
+            /** Version */
+            version: string;
+        };
+        /** HomePublicationLineage */
+        HomePublicationLineage: {
+            /** Canonicaldailymarket */
+            canonicalDailyMarket?: string | null;
+            /** Formaltopics */
+            formalTopics?: string | null;
+        };
         /** HomeResponse */
         HomeResponse: {
             /** Asof */
@@ -1088,99 +1222,20 @@ export interface components {
             /** Opportunities */
             opportunities?: components["schemas"]["HomeOpportunityTopic"][];
             publication?: components["schemas"]["HomePublication"] | null;
+            /** Sectionstatuses */
             sectionStatuses?: {
                 [key: string]: components["schemas"]["HomeSectionStatus"];
             };
         };
-        /** HomeMarketBreadth */
-        HomeMarketBreadth: {
-            advance: number | null;
-            asOf: string | null;
-            coverage?: {
-                [key: string]: unknown;
-            };
-            decline: number | null;
-            eligible: number;
-            flat: number | null;
-            market: string;
-            observed: number;
-            source: string;
-            unavailable: number;
-        };
-        /** HomeMarketIndex */
-        HomeMarketIndex: {
-            asOf: string | null;
-            change: number | null;
-            changePct: number | null;
-            indexCode: string;
-            indexName: string;
-            lineage?: string | null;
-            market: string;
-            previousClose: number | null;
-            reasonCode?: string | null;
-            session?: string | null;
-            source?: string | null;
-            status: string;
-            tradingDate: string | null;
-            value: number | null;
-        };
-        /** HomeMarketLimits */
-        HomeMarketLimits: {
-            limitDown: number | null;
-            limitUp: number | null;
-            reasonCode?: string | null;
-            source?: string | null;
-        };
-        /** HomeMarketTurnover */
-        HomeMarketTurnover: {
-            asOf: string | null;
-            currency: string | null;
-            lineage?: string | null;
-            market: string;
-            reasonCode?: string | null;
-            scale: number | null;
-            session?: string | null;
-            source?: string | null;
-            status: string;
-            tradingDate: string | null;
-            unit: string | null;
-            value: number | null;
-        };
-        /** HomePublication */
-        HomePublication: {
-            asOf: string | null;
-            completeness?: {
-                [key: string]: unknown;
-            };
-            generatedAt: string | null;
-            lineage?: components["schemas"]["HomePublicationLineage"];
-            publishedAt: string | null;
-            sourceDatasetId?: string | null;
-            sourceRunId?: string | null;
-            state: "COLLECTED" | "MATERIALIZED" | "VALIDATED" | "PUBLISHED" | "UNAVAILABLE" | "SUPERSEDED";
-            tradingDate: string | null;
-            version: string;
-        };
-        /** HomePublicationLineage */
-        HomePublicationLineage: {
-            canonicalDailyMarket?: string | null;
-            formalTopics?: string | null;
-        };
-        /** HomeSectionStatus */
-        HomeSectionStatus: {
-            asOf: string | null;
-            dataDate: string | null;
-            reasonCode?: string | null;
-            source?: string | null;
-            status: "AVAILABLE" | "PARTIAL" | "UNAVAILABLE";
-            userMessage?: string | null;
-        };
         /** HomeRotationTopic */
         HomeRotationTopic: {
+            /** Asof */
+            asOf?: string | null;
             /** Currentgrade */
             currentGrade: string | null;
-            asOf?: string | null;
+            /** Datadate */
             dataDate?: string | null;
+            /** Rotationevidence */
             rotationEvidence?: {
                 [key: string]: unknown;
             };
@@ -1192,6 +1247,24 @@ export interface components {
             topic: string;
             /** Topicslug */
             topicSlug: string;
+        };
+        /** HomeSectionStatus */
+        HomeSectionStatus: {
+            /** Asof */
+            asOf: string | null;
+            /** Datadate */
+            dataDate: string | null;
+            /** Reasoncode */
+            reasonCode?: string | null;
+            /** Source */
+            source?: string | null;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "AVAILABLE" | "PARTIAL" | "UNAVAILABLE";
+            /** Usermessage */
+            userMessage?: string | null;
         };
         /** HomeTopicCard */
         HomeTopicCard: {
@@ -1205,6 +1278,7 @@ export interface components {
             grade: string | null;
             /** Name */
             name: string;
+            /** Rankingevidence */
             rankingEvidence?: {
                 [key: string]: unknown;
             };
@@ -2393,6 +2467,10 @@ export interface components {
              * @enum {string}
              */
             dataStatus: "AVAILABLE" | "FORMAL_AVAILABLE" | "SHADOW_AVAILABLE" | "INSUFFICIENT_DATA" | "PENDING" | "PREVIEW" | "NOT_AVAILABLE" | "WAITING_FOR_FORMAL_LINEAGE" | "FAIL_CLOSED";
+            /** Dayssincemeaningfulexpansion */
+            daysSinceMeaningfulExpansion?: number | null;
+            /** Drawdownfrompeakpct */
+            drawdownFromPeakPct?: number | null;
             /** Evaluationdate */
             evaluationDate?: string | null;
             /** Evidence */
@@ -2405,10 +2483,16 @@ export interface components {
             lineage?: {
                 [key: string]: unknown;
             };
+            /** Mainrisesegment */
+            mainRiseSegment?: number | null;
             /** Policyversion */
             policyVersion?: string | null;
             /** Previousstage */
             previousStage?: string | null;
+            /** Segmentanchordate */
+            segmentAnchorDate?: string | null;
+            /** Segmententrydate */
+            segmentEntryDate?: string | null;
             /** Transitiondecision */
             transitionDecision?: string | null;
             /** Transitionreason */

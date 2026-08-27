@@ -239,21 +239,60 @@ def _parse_evidence(path: Path) -> dict[str, Any]:
     if not isinstance(payload, dict) or not isinstance(payload.get("suspensions"), dict):
         raise BundleValidationError("suspension evidence must contain a suspensions object")
     normalized = dict(payload)
-    normalized["suspensions"] = {
-        str(code): {**item, "market": item.get("market", "TPE")}
-        for code, item in payload["suspensions"].items()
-        if isinstance(item, dict)
-    }
+    normalized_suspensions: dict[str, dict[str, Any]] = {}
+    for code, item in payload["suspensions"].items():
+        if not isinstance(item, dict):
+            continue
+        market = item.get("market", "TPE")
+        normalized_item = {**item, "market": market}
+        events = item.get("events")
+        if events is not None:
+            if not isinstance(events, list) or not all(isinstance(event, dict) for event in events):
+                raise BundleValidationError(
+                    f"status evidence events must be objects: {market}:{code}"
+                )
+            normalized_item["events"] = [
+                {**event, "market": event.get("market", market)} for event in events
+            ]
+        normalized_suspensions[str(code)] = normalized_item
+    normalized["suspensions"] = normalized_suspensions
     if len(normalized["suspensions"]) != len(payload["suspensions"]):
         raise BundleValidationError("status evidence entries must be objects")
     return normalized
+
+
+def _iter_status_evidence(
+    evidence: dict[str, Any],
+) -> tuple[tuple[str, dict[str, Any]], ...]:
+    """Flatten effective-dated events while preserving the legacy format."""
+
+    rows: list[tuple[str, dict[str, Any]]] = []
+    for instrument_code, item in evidence.get("suspensions", {}).items():
+        if not isinstance(item, dict):
+            continue
+        events = item.get("events")
+        if events is None:
+            rows.append((str(instrument_code), dict(item)))
+            continue
+        inherited = {key: value for key, value in item.items() if key != "events"}
+        for event in events:
+            if not isinstance(event, dict):
+                raise BundleValidationError(
+                    "status evidence event is not an object: "
+                    f"{item.get('market')}:{instrument_code}"
+                )
+            rows.append((str(instrument_code), {**inherited, **event}))
+    return tuple(rows)
 
 
 def _lifecycle_rows_from_evidence(
     evidence: dict[str, Any],
 ) -> tuple[dict[str, Any], ...]:
     rows: list[dict[str, Any]] = []
-    for instrument_code, item in sorted(evidence.get("suspensions", {}).items()):
+    for instrument_code, item in sorted(
+        _iter_status_evidence(evidence),
+        key=lambda pair: (pair[0], pair[1].get("effectiveFrom", "")),
+    ):
         if not isinstance(item, dict):
             raise BundleValidationError(
                 f"status evidence entry is not an object: {instrument_code}"
@@ -277,10 +316,11 @@ def _lifecycle_rows_from_evidence(
             "instrument_code": str(instrument_code),
             "status_code": status_code,
             "effective_from": effective_from,
-            "effective_to": item.get("effectiveTo"),
             "evidence_id": evidence_id,
             "source_url": source_url,
         }
+        if item.get("effectiveTo") is not None:
+            row["effective_to"] = item["effectiveTo"]
         if item.get("reason") is not None:
             row["reason"] = item["reason"]
         rows.append(row)
@@ -455,7 +495,8 @@ def validate_bundle(bundle: ReferenceBundle) -> None:
     suspension_map = bundle.evidence.get("suspensions", {})
     if not isinstance(suspension_map, dict):
         raise BundleValidationError("status evidence is missing suspensions")
-    for code, item in suspension_map.items():
+    status_evidence = _iter_status_evidence(bundle.evidence)
+    for code, item in status_evidence:
         if not isinstance(item, dict) or not item.get("status"):
             raise BundleValidationError(f"incomplete status evidence: {code}")
         evidence_key = (item.get("market"), str(code))
@@ -475,8 +516,7 @@ def validate_bundle(bundle: ReferenceBundle) -> None:
             item.get("effectiveFrom"),
             item.get("evidenceId"),
         )
-        for code, item in suspension_map.items()
-        if isinstance(item, dict)
+        for code, item in status_evidence
     }
     if lifecycle_keys != expected_lifecycle_keys:
         raise BundleValidationError("lifecycle events do not match status evidence")

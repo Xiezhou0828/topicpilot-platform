@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import replace
+from datetime import date
 from pathlib import Path
 
 import pytest
@@ -48,6 +49,16 @@ def _cleanup(engine, versions: tuple[str, ...]) -> None:
             )
         connection.execute(
             text(
+                "DELETE FROM topicpilot.reference_instrument_lifecycles "
+                "WHERE instrument_id IN ("
+                "SELECT id FROM topicpilot.instruments "
+                "WHERE market_id IN (SELECT id FROM topicpilot.markets "
+                "WHERE code IN ('TPE', 'TWO'))"
+                ")"
+            )
+        )
+        connection.execute(
+            text(
                 "DELETE FROM topicpilot.reference_registry_sets "
                 "WHERE reference_data_version = ANY(:versions)"
             ),
@@ -76,6 +87,9 @@ def test_empty_database_bootstrap_dry_run_rerun_activation_and_reference_check(p
         "topic_lifecycle_results",
     )
     can_cleanup = False
+    reference_version = "tw-reference-v1"
+    second_version = "tw-reference-v1-test-second"
+    bad_version = "tw-reference-v1-test-rollback"
     try:
         if any(_table_count(postgres_engine, table) for table in non_reference_tables):
             pytest.skip("reference bootstrap integration requires an empty isolated PostgreSQL DB")
@@ -84,6 +98,7 @@ def test_empty_database_bootstrap_dry_run_rerun_activation_and_reference_check(p
         can_cleanup = True
 
         bundle = load_bundle(BUNDLE_PATH)
+        reference_version = bundle.manifest["referenceDataVersion"]
         with Session(postgres_engine, expire_on_commit=False) as session:
             result = bootstrap_reference_bundle(session, bundle, activate=True)
         assert result.operation == "ACTIVATED"
@@ -91,7 +106,9 @@ def test_empty_database_bootstrap_dry_run_rerun_activation_and_reference_check(p
         assert _table_count(postgres_engine, "markets") == 2
         assert _table_count(postgres_engine, "instruments") == 507
         assert _table_count(postgres_engine, "reference_calendar_dates") == 24
-        assert _table_count(postgres_engine, "reference_instrument_lifecycles") == 1
+        assert _table_count(postgres_engine, "reference_instrument_lifecycles") == len(
+            bundle.instrument_lifecycles
+        )
 
         before_dry_run = {
             table: _table_count(postgres_engine, table)
@@ -112,7 +129,7 @@ def test_empty_database_bootstrap_dry_run_rerun_activation_and_reference_check(p
         with Session(postgres_engine, expire_on_commit=False) as session:
             ready = inspect_reference_preflight(
                 session,
-                requested_version="tw-reference-v1",
+                requested_version=reference_version,
                 expected_market_codes=("TPE", "TWO"),
                 required_session_code="REGULAR",
                 required_calendar_code="TW_MARKET",
@@ -121,8 +138,29 @@ def test_empty_database_bootstrap_dry_run_rerun_activation_and_reference_check(p
         assert ready["instrumentCount"] == 507
         assert ready["REFERENCE_CALENDAR_DATE_COUNT"] == 24
 
+        with postgres_engine.connect() as connection:
+            lifecycle_rows = connection.execute(
+                text(
+                    "SELECT rl.status_code, rl.effective_from, rl.effective_to "
+                    "FROM topicpilot.reference_instrument_lifecycles rl "
+                    "JOIN topicpilot.instruments i ON i.id = rl.instrument_id "
+                    "JOIN topicpilot.markets m ON m.id = i.market_id "
+                    "WHERE rl.registry_set_id = ("
+                    "SELECT id FROM topicpilot.reference_registry_sets "
+                    "WHERE reference_data_version = :reference_version"
+                    ") AND i.instrument_code = '5371' AND m.code = 'TWO' "
+                    "ORDER BY rl.effective_from"
+                ),
+                {"reference_version": reference_version},
+            ).all()
+        assert lifecycle_rows == [
+            ("SUSPENDED", date(2026, 8, 24), date(2026, 9, 2)),
+            ("TERMINATED", date(2026, 9, 3), None),
+        ]
+
         second_manifest = dict(bundle.manifest)
-        second_manifest["referenceDataVersion"] = "tw-reference-v1-test-second"
+        second_version = f"{reference_version}-test-second"
+        second_manifest["referenceDataVersion"] = second_version
         second = replace(bundle, manifest=second_manifest)
         with Session(postgres_engine, expire_on_commit=False) as session:
             second_result = bootstrap_reference_bundle(session, second, activate=True)
@@ -137,14 +175,16 @@ def test_empty_database_bootstrap_dry_run_rerun_activation_and_reference_check(p
             first_status = connection.execute(
                 text(
                     "SELECT status FROM topicpilot.reference_registry_sets "
-                    "WHERE reference_data_version = 'tw-reference-v1'"
-                )
+                    "WHERE reference_data_version = :reference_version"
+                ),
+                {"reference_version": reference_version},
             ).scalar_one()
         assert active_count == 1
         assert first_status == "RETIRED"
 
         bad_manifest = dict(bundle.manifest)
-        bad_manifest["referenceDataVersion"] = "tw-reference-v1-test-rollback"
+        bad_version = f"{reference_version}-test-rollback"
+        bad_manifest["referenceDataVersion"] = bad_version
         bad_markets = (dict(bundle.markets[0], name="conflicting market"), *bundle.markets[1:])
         bad_bundle = replace(bundle, manifest=bad_manifest, markets=bad_markets)
         with (
@@ -158,8 +198,8 @@ def test_empty_database_bootstrap_dry_run_rerun_activation_and_reference_check(p
             _cleanup(
                 postgres_engine,
                 (
-                    "tw-reference-v1",
-                    "tw-reference-v1-test-second",
-                    "tw-reference-v1-test-rollback",
+                    reference_version,
+                    second_version,
+                    bad_version,
                 ),
             )

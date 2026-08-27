@@ -7,5 +7,24 @@
     "reason": "臺灣證券交易所終止上市公司名單記載森崴能源（6806）於 2026-06-23 終止上市，7/30 無當日上市行情。",
     "source_url": "https://www.twse.com.tw/company/suspendListingCsvAndHtml?lang=zh&startYear=&type=html",
     "status_code": "DELISTED"
+  },
+  {
+    "effective_from": "2026-08-24",
+    "effective_to": "2026-09-02",
+    "evidence_id": "OWNER-TWO-5371-SUSPENDED-20260824",
+    "instrument_code": "5371",
+    "market_code": "TWO",
+    "reason": "Owner-supplied market event evidence: 5371 last traded on 2026-08-21 and was suspended from trading on 2026-08-24 for the announced share-conversion process.",
+    "source_url": "https://www.cmoney.tw/forum/stock/5371?utm_source=notes&utm_medium=article_stocklink",
+    "status_code": "SUSPENDED"
+  },
+  {
+    "effective_from": "2026-09-03",
+    "evidence_id": "OWNER-TWO-5371-TERMINATED-20260903",
+    "instrument_code": "5371",
+    "market_code": "TWO",
+    "reason": "Owner-supplied market event evidence: the share-conversion base date and termination of the old 5371 OTC identity are announced for 2026-09-03.",
+    "source_url": "https://www.cmoney.tw/forum/stock/5371?utm_source=notes&utm_medium=article_stocklink",
+    "status_code": "TERMINATED"
   }
 ]

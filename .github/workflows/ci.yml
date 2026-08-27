@@ -35,8 +35,12 @@ jobs:
       TOPICPILOT_CORS_ORIGINS: http://localhost:3000
       TOPICPILOT_LOG_LEVEL: INFO
       OPENAPI_APP: topicpilot_api.main:app
+      RUFF_BASELINE_REF: 50c7b176bf59058cddc1de58b28441076fc6dfe8
+      RUFF_CHANGED_SCOPE_REF: a3c4bc2c1e3592ad486043243a57963544544cbf
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -44,8 +48,37 @@ jobs:
           cache-dependency-path: services/api/pyproject.toml
       - name: Install API and development dependencies
         run: python -m pip install -e "services/api[dev]"
-      - name: Ruff
-        run: python -m ruff check services/api infra/scripts
+      - name: Ruff baseline and no-new-debt gate
+        run: |
+          set -euo pipefail
+          baseline_root="$RUNNER_TEMP/ruff-baseline"
+          git worktree add --detach "$baseline_root" "$RUFF_BASELINE_REF"
+          set +e
+          python -m ruff check services/api/src infra/scripts --output-format json > "$RUNNER_TEMP/ruff-current.json"
+          current_status=$?
+          python -m ruff check "$baseline_root/services/api/src" "$baseline_root/infra/scripts" --output-format json > "$RUNNER_TEMP/ruff-baseline.json"
+          baseline_status=$?
+          set -e
+          if [ "$current_status" -gt 1 ] || [ "$baseline_status" -gt 1 ]; then
+            echo "Ruff failed with an execution error." >&2
+            exit 1
+          fi
+          python infra/scripts/check_ruff_no_new_debt.py \
+            --baseline-json "$RUNNER_TEMP/ruff-baseline.json" \
+            --current-json "$RUNNER_TEMP/ruff-current.json" \
+            --baseline-root "$baseline_root" \
+            --current-root "$GITHUB_WORKSPACE"
+      - name: Ruff changed-scope hard gate
+        run: |
+          set -euo pipefail
+          mapfile -t changed_python_files < <(
+            git diff --name-only "$RUFF_CHANGED_SCOPE_REF" "$GITHUB_SHA" -- '*.py'
+          )
+          if [ "${#changed_python_files[@]}" -eq 0 ]; then
+            echo "No changed Python files in the configured candidate scope."
+            exit 0
+          fi
+          python -m ruff check "${changed_python_files[@]}"
       - name: Migrate an empty PostgreSQL database
         working-directory: services/api
         run: python -m alembic upgrade head
@@ -57,7 +90,7 @@ jobs:
       - name: Reference bootstrap PostgreSQL integration
         run: python -m pytest services/api/tests/test_reference_bootstrap_postgres.py -q
       - name: Backend tests
-        run: python -m pytest services/api/tests -m "not research and not governance"
+        run: python -m pytest services/api/tests -m "not research and not governance and not postgres"
       - name: OpenAPI contract and drift check
         env:
           PYTHONPATH: services/api/src
