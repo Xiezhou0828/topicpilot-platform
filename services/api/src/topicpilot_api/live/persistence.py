@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Collection
+from contextlib import suppress
 from datetime import UTC, datetime, timezone
 from decimal import Decimal
 from typing import Any
@@ -55,6 +56,26 @@ def _decimal_text(value: Decimal | None) -> str | None:
     return format(value.normalize(), "f")
 
 
+_TRACKING_MUTABLE_FIELDS = (
+    "market_code",
+    "instrument_code",
+    "moving_average_period",
+    "moving_average_state",
+    "update_mode",
+    "latest_close",
+    "moving_average",
+    "observation_count",
+    "reference_observed_at",
+    "as_of_date",
+    "classification_reason",
+    "source_id",
+)
+
+
+def _timeout_milliseconds(seconds: float) -> str:
+    return f"{max(1, int(seconds * 1000))}ms"
+
+
 class LivePersistenceError(RuntimeError):
     def __init__(self, code: str, message: str):
         self.code = code
@@ -67,6 +88,67 @@ class LiveRepository:
     def __init__(self, session: Session, config: LiveRuntimeConfig):
         self.session = session
         self.config = config
+
+    def _set_tracking_flush_timeouts(self) -> dict[str, str] | None:
+        """Bound PostgreSQL waits for a tracking-universe flush.
+
+        The refresh is also used by local SQLite-based callers and test doubles,
+        so PostgreSQL session settings are deliberately scoped to PostgreSQL.
+        Returning the prior values lets a successful refresh leave the caller's
+        transaction settings unchanged.
+        """
+
+        bind = self.session.get_bind()
+        if bind.dialect.name != "postgresql":
+            return None
+        previous = self.session.execute(
+            text(
+                """
+                SELECT current_setting('lock_timeout') AS lock_timeout,
+                       current_setting('statement_timeout') AS statement_timeout
+                """
+            )
+        ).mappings().one()
+        self.session.execute(
+            text(
+                """
+                SELECT set_config('lock_timeout', :lock_timeout, true),
+                       set_config('statement_timeout', :statement_timeout, true)
+                """
+            ),
+            {
+                "lock_timeout": _timeout_milliseconds(
+                    self.config.tracking_refresh_lock_timeout_seconds
+                ),
+                "statement_timeout": _timeout_milliseconds(
+                    self.config.tracking_refresh_statement_timeout_seconds
+                ),
+            },
+        )
+        return dict(previous)
+
+    def _restore_tracking_flush_timeouts(self, previous: dict[str, str] | None) -> None:
+        if previous is None:
+            return
+        self.session.execute(
+            text(
+                """
+                SELECT set_config('lock_timeout', :lock_timeout, true),
+                       set_config('statement_timeout', :statement_timeout, true)
+                """
+            ),
+            previous,
+        )
+
+    def _flush_tracking_batch(self) -> None:
+        if not self.session.new and not self.session.dirty:
+            return
+        previous = self._set_tracking_flush_timeouts()
+        try:
+            self.session.flush()
+        finally:
+            with suppress(Exception):
+                self._restore_tracking_flush_timeouts(previous)
 
     def refresh_tracking_universe(
         self,
@@ -158,6 +240,7 @@ class LiveRepository:
             item.instrument_id: item
             for item in self.session.scalars(select(LiveTrackingUniverse)).all()
         }
+        pending_count = 0
         for instrument_id, row in current.items():
             count = int(row["observation_count"] or 0)
             latest = row["latest_close"]
@@ -189,14 +272,26 @@ class LiveRepository:
                 else None,
                 "classification_reason": reason,
                 "source_id": row["source_id"],
-                "updated_at": now or _now(),
             }
             if item is None:
-                self.session.add(LiveTrackingUniverse(instrument_id=instrument_id, **values))
-            else:
-                for key, value in values.items():
+                self.session.add(
+                    LiveTrackingUniverse(
+                        instrument_id=instrument_id,
+                        updated_at=now or _now(),
+                        **values,
+                    )
+                )
+                pending_count += 1
+            elif any(getattr(item, key) != values[key] for key in _TRACKING_MUTABLE_FIELDS):
+                for key in _TRACKING_MUTABLE_FIELDS:
+                    value = values[key]
                     setattr(item, key, value)
-        self.session.flush()
+                item.updated_at = now or _now()
+                pending_count += 1
+            if pending_count >= self.config.tracking_refresh_batch_size:
+                self._flush_tracking_batch()
+                pending_count = 0
+        self._flush_tracking_batch()
         return len(current)
 
     def list_tracking(self, mode: str) -> list[TrackingInstrument]:
