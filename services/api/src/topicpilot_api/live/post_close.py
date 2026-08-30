@@ -7,8 +7,10 @@ from collections.abc import Callable, Collection, Mapping
 from dataclasses import dataclass
 from datetime import UTC, date, datetime, timedelta
 from datetime import time as clock_time
+from decimal import Decimal
 from typing import Any
 from urllib.request import Request, urlopen
+from uuid import UUID
 
 from sqlalchemy import and_, or_, select
 from sqlalchemy.exc import DBAPIError
@@ -38,6 +40,20 @@ def _official_transport(url: str, timeout: float) -> bytes:
     request = Request(url, headers={"User-Agent": "TopicPilot-V2/1.0"})
     with urlopen(request, timeout=timeout) as response:
         return response.read()
+
+
+def _json_safe(value: Any) -> Any:
+    """Convert finalization metadata into values accepted by JSONB."""
+
+    if isinstance(value, Mapping):
+        return {str(key): _json_safe(item) for key, item in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_json_safe(item) for item in value]
+    if isinstance(value, (datetime, date)):
+        return value.isoformat()
+    if isinstance(value, (Decimal, UUID)):
+        return str(value)
+    return value
 
 
 @dataclass(frozen=True)
@@ -887,7 +903,7 @@ class PostCloseUpdater:
                 "topicSnapshot": snapshot_result or {"status": "NOT_RUN"},
             }
         )
-        run.metadata_payload = metadata
+        run.metadata_payload = _json_safe(metadata)
         run.completed_at = now
         run.heartbeat_at = now
         run.updated_at = now

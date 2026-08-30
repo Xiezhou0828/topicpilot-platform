@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import UTC, datetime
+from datetime import UTC, date, datetime
 from pathlib import Path
 from types import SimpleNamespace
 from uuid import uuid4
@@ -10,6 +10,7 @@ import pytest
 from topicpilot_api.live.post_close import (
     PostClosePreconditionError,
     PostCloseUpdater,
+    _json_safe,
 )
 
 
@@ -89,6 +90,20 @@ def test_post_close_explicit_recovery_is_date_bound_and_auditable():
     assert '"recoveryOfRunId"' in post_close_source
     assert "if recovery_of_run_id is None:" in post_close_source
     assert 'metadata_payload["runDate"]' in post_close_source
+
+
+def test_post_close_finalization_metadata_is_json_safe():
+    value = _json_safe(
+        {
+            "tradeDate": date(2026, 8, 28),
+            "nested": [datetime(2026, 8, 30, 1, 2, tzinfo=UTC)],
+        }
+    )
+
+    assert value == {
+        "tradeDate": "2026-08-28",
+        "nested": ["2026-08-30T01:02:00+00:00"],
+    }
 
 
 def test_post_close_materializes_formal_pit_state_before_shadow_lifecycle():
