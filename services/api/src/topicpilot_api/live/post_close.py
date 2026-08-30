@@ -181,11 +181,12 @@ class PostCloseUpdater:
             raise PostClosePreconditionError("DATE_EFFECTIVE_UNIVERSE_MISMATCH")
 
     def _find_existing_run(self, run_date: date) -> LiveCollectorRun | None:
-        """Find the latest POST_CLOSE run for the local market date.
+        """Find the latest POST_CLOSE run for the requested market date.
 
-        The run table predates an explicit run-date column, so the existing
-        started-at timestamp is used as the compatibility key. New rows also
-        carry ``runDate`` in metadata for operator visibility.
+        The run table predates an explicit run-date column. Keep the
+        started-at timestamp as a compatibility key for legacy rows, while
+        preferring the explicit ``runDate`` metadata on historical recovery
+        rows whose process started on a later calendar date.
         """
 
         local_start = datetime.combine(
@@ -198,8 +199,14 @@ class PostCloseUpdater:
             select(LiveCollectorRun)
             .where(
                 LiveCollectorRun.run_type == "POST_CLOSE",
-                LiveCollectorRun.started_at >= local_start,
-                LiveCollectorRun.started_at < local_end,
+                or_(
+                    LiveCollectorRun.metadata_payload["runDate"].as_string()
+                    == run_date.isoformat(),
+                    and_(
+                        LiveCollectorRun.started_at >= local_start,
+                        LiveCollectorRun.started_at < local_end,
+                    ),
+                ),
             )
             .order_by(LiveCollectorRun.started_at.desc())
             .limit(1)
