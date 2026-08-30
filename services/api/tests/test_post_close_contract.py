@@ -74,6 +74,21 @@ def test_post_close_cli_defers_tracking_mutation_until_after_reference_precondit
     ).read_text(encoding="utf-8")
 
 
+def test_post_close_explicit_recovery_is_date_bound_and_auditable():
+    cli_source = (Path(__file__).parents[1] / "src/topicpilot_api/live/cli.py").read_text(
+        encoding="utf-8"
+    )
+    post_close_source = (
+        Path(__file__).parents[1] / "src/topicpilot_api/live/post_close.py"
+    ).read_text(encoding="utf-8")
+
+    assert '"--recover"' in cli_source
+    assert '"--recover requires --run-date YYYY-MM-DD"' in cli_source
+    assert "allow_terminal_recovery=args.recover" in cli_source
+    assert "allow_terminal_recovery: bool = False" in post_close_source
+    assert '"recoveryOfRunId"' in post_close_source
+
+
 def test_post_close_materializes_formal_pit_state_before_shadow_lifecycle():
     source = (
         Path(__file__).parents[1] / "src/topicpilot_api/live/post_close.py"

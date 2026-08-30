@@ -297,7 +297,17 @@ class PostCloseUpdater:
         started_at: datetime,
         *,
         run_date: date,
+        recovery_of_run_id: Any | None = None,
     ) -> LiveCollectorRun:
+        metadata = {
+            "runType": "POST_CLOSE",
+            "runDate": run_date.isoformat(),
+            "batchSize": self.config.history_batch_size,
+            "skippedCount": 0,
+            "sourceProviders": {"TPE": "TWSE_OFFICIAL_DAILY", "TWO": "TPEX_OFFICIAL_DAILY"},
+        }
+        if recovery_of_run_id is not None:
+            metadata["recoveryOfRunId"] = str(recovery_of_run_id)
         run = LiveCollectorRun(
             run_type="POST_CLOSE",
             status="RUNNING",
@@ -319,20 +329,21 @@ class PostCloseUpdater:
             requested_count=requested_count,
             freshness_state="UNKNOWN",
             provider_status="CONNECTING",
-            metadata_payload={
-                "runType": "POST_CLOSE",
-                "runDate": run_date.isoformat(),
-                "batchSize": self.config.history_batch_size,
-                "skippedCount": 0,
-                "sourceProviders": {"TPE": "TWSE_OFFICIAL_DAILY", "TWO": "TPEX_OFFICIAL_DAILY"},
-            },
+            metadata_payload=metadata,
         )
         self.session.add(run)
         self.session.flush()
         self.session.commit()
         return run
 
-    def run_once(self, *, run_date: date | None = None) -> PostCloseRunResult:
+    def run_once(
+        self,
+        *,
+        run_date: date | None = None,
+        allow_terminal_recovery: bool = False,
+    ) -> PostCloseRunResult:
+        if allow_terminal_recovery and run_date is None:
+            raise ValueError("POST_CLOSE_RECOVERY_REQUIRES_EXPLICIT_RUN_DATE")
         now = self._now()
         if run_date is None:
             local_date = now.astimezone(self.session_clock.timezone).date()
@@ -347,22 +358,31 @@ class PostCloseUpdater:
         self._validate_instruments(instruments, expected_by_market)
         eligible_instrument_ids = tuple(instrument.id for instrument, _market in instruments)
         existing_run = self._find_existing_run(local_date)
+        recovery_of_run_id = None
         if existing_run is not None:
-            if existing_run.status in {"SUCCESS", "PARTIAL", "FAILED", "MARKET_CLOSED"}:
+            if existing_run.status in {"SUCCESS", "MARKET_CLOSED"}:
                 return self._existing_result(existing_run, run_date=local_date)
+            if existing_run.status in {"PARTIAL", "FAILED"}:
+                if not allow_terminal_recovery:
+                    return self._existing_result(existing_run, run_date=local_date)
+                recovery_of_run_id = existing_run.id
             attempt_summary = self._completed_attempt_summary(
                 existing_run.id,
                 eligible_instrument_ids,
             )
-            if attempt_summary is not None and not self._is_recent_run(
-                existing_run,
-                now,
-                stale_after=max(
-                    self.config.poll_interval_seconds * 2,
-                    int(self.config.provider_timeout_seconds)
-                    * max(1, self.config.history_batch_size)
-                    * (self.config.history_max_retries + 1),
-                ),
+            if (
+                recovery_of_run_id is None
+                and attempt_summary is not None
+                and not self._is_recent_run(
+                    existing_run,
+                    now,
+                    stale_after=max(
+                        self.config.poll_interval_seconds * 2,
+                        int(self.config.provider_timeout_seconds)
+                        * max(1, self.config.history_batch_size)
+                        * (self.config.history_max_retries + 1),
+                    ),
+                )
             ):
                 return self._finalize_collected_run(
                     run_id=existing_run.id,
@@ -384,6 +404,7 @@ class PostCloseUpdater:
             len(instruments),
             now,
             run_date=local_date,
+            recovery_of_run_id=recovery_of_run_id,
         )
         run_id = run.id
         failure_codes: list[str] = []

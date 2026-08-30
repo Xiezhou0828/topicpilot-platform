@@ -32,6 +32,11 @@ def build_parser() -> argparse.ArgumentParser:
         help="override the official POST_CLOSE trading date (ISO date; recovery only)",
     )
     parser.add_argument(
+        "--recover",
+        action="store_true",
+        help="explicitly rerun a terminal FAILED/PARTIAL POST_CLOSE date",
+    )
+    parser.add_argument(
         "--dry-run",
         action="store_true",
         help="print scheduler decision without provider call",
@@ -41,6 +46,10 @@ def build_parser() -> argparse.ArgumentParser:
 
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
+    if args.recover and args.run_date is None:
+        raise SystemExit("--recover requires --run-date YYYY-MM-DD")
+    if args.recover and args.mode != "post-close":
+        raise SystemExit("--recover requires --mode post-close")
     logging.basicConfig(level=logging.INFO, format="%(message)s")
     config = LiveRuntimeConfig.from_environment()
     scheduler_clock = MarketSessionClock(
@@ -86,7 +95,10 @@ def main(argv: list[str] | None = None) -> int:
             collector,
             config,
             worker=worker,
-            post_close_runner=lambda: post_close.run_once(run_date=args.run_date),
+            post_close_runner=lambda: post_close.run_once(
+                run_date=args.run_date,
+                allow_terminal_recovery=args.recover,
+            ),
         )
         try:
             if args.once:
