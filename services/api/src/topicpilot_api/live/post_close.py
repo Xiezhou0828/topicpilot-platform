@@ -398,7 +398,8 @@ class PostCloseUpdater:
                     ),
                     failure_codes=attempt_summary["failure_codes"],
                 )
-            raise PostClosePreconditionError("POST_CLOSE_RUN_IN_PROGRESS")
+            if recovery_of_run_id is None:
+                raise PostClosePreconditionError("POST_CLOSE_RUN_IN_PROGRESS")
 
         run = self._create_run(
             len(instruments),
