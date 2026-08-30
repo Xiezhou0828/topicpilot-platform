@@ -87,6 +87,7 @@ def test_post_close_explicit_recovery_is_date_bound_and_auditable():
     assert "allow_terminal_recovery=args.recover" in cli_source
     assert "allow_terminal_recovery: bool = False" in post_close_source
     assert '"recoveryOfRunId"' in post_close_source
+    assert "if recovery_of_run_id is None:" in post_close_source
 
 
 def test_post_close_materializes_formal_pit_state_before_shadow_lifecycle():
