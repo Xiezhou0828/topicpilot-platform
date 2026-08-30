@@ -84,6 +84,9 @@ class LiveRuntimeConfig:
     history_min_request_interval_seconds: float = 0.5
     history_max_retries: int = 4
     history_retry_backoff_seconds: float = 2.0
+    tracking_refresh_batch_size: int = 50
+    tracking_refresh_lock_timeout_seconds: float = 30.0
+    tracking_refresh_statement_timeout_seconds: float = 120.0
     closed_dates: frozenset[date] = frozenset()
 
     def __post_init__(self) -> None:
@@ -115,6 +118,12 @@ class LiveRuntimeConfig:
             or self.history_retry_backoff_seconds < 0
         ):
             raise ValueError("historical provider configuration is invalid")
+        if (
+            self.tracking_refresh_batch_size < 1
+            or self.tracking_refresh_lock_timeout_seconds <= 0
+            or self.tracking_refresh_statement_timeout_seconds <= 0
+        ):
+            raise ValueError("tracking refresh timeout/batch configuration is invalid")
         if self.circuit_failure_threshold < 1 or self.circuit_open_seconds <= 0:
             raise ValueError("circuit breaker configuration is invalid")
         if (
@@ -221,6 +230,15 @@ class LiveRuntimeConfig:
             history_retry_backoff_seconds=_float(
                 "TOPICPILOT_HISTORY_RETRY_BACKOFF_SECONDS", 2.0, minimum=0.0
             ),
+            tracking_refresh_batch_size=_int(
+                "TOPICPILOT_LIVE_TRACKING_REFRESH_BATCH_SIZE", 50, minimum=1
+            ),
+            tracking_refresh_lock_timeout_seconds=_float(
+                "TOPICPILOT_LIVE_TRACKING_REFRESH_LOCK_TIMEOUT_SECONDS", 30.0, minimum=0.1
+            ),
+            tracking_refresh_statement_timeout_seconds=_float(
+                "TOPICPILOT_LIVE_TRACKING_REFRESH_STATEMENT_TIMEOUT_SECONDS", 120.0, minimum=0.1
+            ),
             closed_dates=_closed_dates("TOPICPILOT_LIVE_CLOSED_DATES"),
         )
 
@@ -259,6 +277,11 @@ class LiveRuntimeConfig:
             "historyMinRequestIntervalSeconds": self.history_min_request_interval_seconds,
             "historyMaxRetries": self.history_max_retries,
             "historyRetryBackoffSeconds": self.history_retry_backoff_seconds,
+            "trackingRefreshBatchSize": self.tracking_refresh_batch_size,
+            "trackingRefreshLockTimeoutSeconds": self.tracking_refresh_lock_timeout_seconds,
+            "trackingRefreshStatementTimeoutSeconds": (
+                self.tracking_refresh_statement_timeout_seconds
+            ),
             "closedDates": sorted(item.isoformat() for item in self.closed_dates),
         }
 
