@@ -90,6 +90,8 @@ def test_post_close_explicit_recovery_is_date_bound_and_auditable():
     assert '"recoveryOfRunId"' in post_close_source
     assert "if recovery_of_run_id is None:" in post_close_source
     assert 'metadata_payload["runDate"]' in post_close_source
+    assert 'existing_run.failure_code == "POST_CLOSE_FINALIZATION_FAILED"' in post_close_source
+    assert "_completed_attempt_summary" in post_close_source
 
 
 def test_post_close_finalization_metadata_is_json_safe():

@@ -394,6 +394,25 @@ class PostCloseUpdater:
                 eligible_instrument_ids,
             )
             if (
+                recovery_of_run_id is not None
+                and existing_run.failure_code == "POST_CLOSE_FINALIZATION_FAILED"
+                and attempt_summary is not None
+            ):
+                return self._finalize_collected_run(
+                    run_id=existing_run.id,
+                    local_date=local_date,
+                    eligible_instrument_ids=eligible_instrument_ids,
+                    success_count=attempt_summary["success_count"],
+                    failure_count=attempt_summary["failure_count"],
+                    skipped_count=attempt_summary["skipped_count"],
+                    retry_count=attempt_summary["retry_count"],
+                    point_count=int(
+                        (existing_run.metadata_payload or {}).get("providerPointCount", 0)
+                        or 0
+                    ),
+                    failure_codes=attempt_summary["failure_codes"],
+                )
+            if (
                 recovery_of_run_id is None
                 and attempt_summary is not None
                 and not self._is_recent_run(
