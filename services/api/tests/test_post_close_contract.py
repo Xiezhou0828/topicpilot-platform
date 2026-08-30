@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+from datetime import UTC, datetime
 from pathlib import Path
 from types import SimpleNamespace
+from uuid import uuid4
 
 import pytest
 
@@ -81,3 +83,54 @@ def test_post_close_materializes_formal_pit_state_before_shadow_lifecycle():
     assert 'dates=(snapshot_date,)' in source
     assert "TopicLifecycleEngine(self.session).run_once" in source
     assert 'result["formalTopicDailyState"]' in source
+
+
+def test_post_close_completed_attempt_summary_is_recovery_safe():
+    instrument_ids = [uuid4(), uuid4()]
+    attempts = [
+        SimpleNamespace(
+            instrument_id=instrument_ids[0],
+            updated_at=datetime(2026, 8, 30, 1, 0, tzinfo=UTC),
+            id=uuid4(),
+            status="SUCCESS",
+            retry_count=1,
+            error_code=None,
+        ),
+        SimpleNamespace(
+            instrument_id=instrument_ids[1],
+            updated_at=datetime(2026, 8, 30, 1, 1, tzinfo=UTC),
+            id=uuid4(),
+            status="SKIPPED",
+            retry_count=0,
+            error_code="MISSING_MARKET_DATA",
+        ),
+    ]
+
+    class ScalarResult:
+        def all(self):
+            return attempts
+
+    updater = PostCloseUpdater.__new__(PostCloseUpdater)
+    updater.session = SimpleNamespace(scalars=lambda _query: ScalarResult())
+
+    summary = updater._completed_attempt_summary("run-id", instrument_ids)
+
+    assert summary == {
+        "success_count": 1,
+        "failure_count": 0,
+        "skipped_count": 1,
+        "retry_count": 1,
+        "failure_codes": ("MISSING_MARKET_DATA",),
+    }
+
+
+def test_post_close_recent_run_is_not_considered_stale():
+    run = SimpleNamespace(
+        heartbeat_at=datetime(2026, 8, 30, 1, 0, 30, tzinfo=UTC),
+    )
+
+    assert PostCloseUpdater._is_recent_run(
+        run,
+        datetime(2026, 8, 30, 1, 1, tzinfo=UTC),
+        stale_after=60,
+    )
