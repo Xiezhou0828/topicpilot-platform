@@ -46,11 +46,12 @@ No \`TERMINATED\` row and no successor instrument were added.
 
 ## Production boundary
 
-Production has not been mutated, deployed, or patched by this task. The
-production active source remains:
+The production code has now been deployed at the validated task commit. The
+production reference registry has not been mutated by this task. The
+production active reference remains:
 
 \`\`\`text
-reference version: tw-reference-v1-rollover-daf19e9eb051255c
+reference version: tw-reference-v1-rollover-66edf7395785c4a1
 bundle SHA-256: 66edf7395785c4a19f36c39d22911b83843621f5cfdda49f90ea42099fa9a543
 \`\`\`
 
@@ -66,6 +67,12 @@ the dry-run transition command. Only then may an Owner separately authorize
 the \`--activate\` command. This transition changes reference-only tables and
 does not authorize Home materialization.
 
+Deployed code commit:
+
+\`\`\`text
+efb7ebe2daf68d99d6a7d78f2ca46153ad49a255
+\`\`\`
+
 ## Status
 
 \`\`\`text
@@ -75,7 +82,7 @@ LOCAL_REFERENCE_FIX=PASS
 1563_RESUMPTION_DATE=2026-09-07
 SUCCESSOR_INFERENCE=NO
 PRODUCTION_MUTATION=NO
-DEPLOY=NO
+DEPLOY=YES
 PUSH=NO
 HOME_PUBLICATION=NOT_TOUCHED
 \`\`\`

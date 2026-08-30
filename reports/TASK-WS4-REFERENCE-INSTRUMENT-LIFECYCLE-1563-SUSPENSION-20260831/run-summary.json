@@ -21,7 +21,7 @@
   "candidate": {
     "bundle_sha256": "55684037eef58f1068ea7ba6eaabd74f2e58f6967ea7b1db8ebe9255bcd9cca7",
     "reference_version": "tw-reference-v1-rollover-55684037eef58f10",
-    "source_reference_version": "tw-reference-v1-rollover-daf19e9eb051255c"
+    "source_reference_version": "tw-reference-v1-rollover-66edf7395785c4a1"
   },
   "validation": {
     "bundle_validator": "PASS",
@@ -31,7 +31,7 @@
     "fake_data_used": false
   },
   "production_mutation": false,
-  "deploy": false,
+  "deploy": true,
   "push": false,
   "home_materialization": false
 }

@@ -39,7 +39,7 @@
     "marketAuthority": "provider registry plus existing identity bootstrap defaults",
     "statusAuthority": "DAILY_TRADING_STATUS_CODES plus explicit evidence validation"
   },
-  "referenceDataVersion": "tw-reference-v1-rollover-daf19e9eb051255c",
+  "referenceDataVersion": "tw-reference-v1-rollover-66edf7395785c4a1",
   "sourceArtifacts": [
     {
       "acceptedRowCount": 507,
