@@ -241,3 +241,35 @@ def test_scheduler_starts_worker_at_open_and_stops_before_post_close():
 
     assert worker.events == ["start", "stop"]
     assert collector.modes == ["INTRADAY", "POST_CLOSE"]
+
+
+def test_scheduler_keeps_running_after_post_close_finalization_failure():
+    class Collector:
+        repository = object()
+
+    class TimelineEvent:
+        def __init__(self):
+            self.cycles = 0
+
+        def is_set(self):
+            return self.cycles >= 1
+
+        def wait(self, _seconds):
+            self.cycles += 1
+
+    calls = []
+
+    def failed_post_close():
+        calls.append("POST_CLOSE")
+        raise RuntimeError("finalization failed")
+
+    scheduler = LiveScheduler(
+        Collector(),
+        _config(),
+        clock=lambda: datetime(2026, 8, 10, 6, 0, tzinfo=UTC),
+        post_close_runner=failed_post_close,
+    )
+
+    scheduler.run_forever(TimelineEvent())
+
+    assert calls == ["POST_CLOSE"]

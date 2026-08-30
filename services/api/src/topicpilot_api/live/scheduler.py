@@ -83,9 +83,21 @@ class LiveScheduler:
                         worker_started = False
                     local_date = self.session_clock.status(self.clock()).local_time.date()
                     if completed_post_close_date != local_date:
-                        self.run_once("POST_CLOSE", enforce_session=False)
-                        self._refresh_tracking()
-                        completed_post_close_date = local_date
+                        try:
+                            self.run_once("POST_CLOSE", enforce_session=False)
+                        except Exception as exc:
+                            error_code = getattr(exc, "code", type(exc).__name__)
+                            log_event(
+                                self.logger,
+                                "post_close_run_failed",
+                                errorCode=error_code,
+                            )
+                            # Keep the worker alive after a run-level failure.
+                            # A restarted process must inspect the existing
+                            # date-keyed run before it can start another one.
+                        else:
+                            self._refresh_tracking()
+                            completed_post_close_date = local_date
                 elif mode == "INTRADAY":
                     if not worker_started and self.worker is not None:
                         self.worker.start()
