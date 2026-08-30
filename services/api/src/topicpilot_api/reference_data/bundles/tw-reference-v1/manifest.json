@@ -1,12 +1,29 @@
 {
   "bundleSchemaVersion": "reference-bundle.v1",
-  "bundleSha256": "66edf7395785c4a19f36c39d22911b83843621f5cfdda49f90ea42099fa9a543",
+  "bundleSha256": "55684037eef58f1068ea7ba6eaabd74f2e58f6967ea7b1db8ebe9255bcd9cca7",
+  "derivedSummary": {
+    "adjustmentCount": 3,
+    "calendarDateCount": 24,
+    "calendarHolidayCount": 23,
+    "calendarSuspendedCount": 1,
+    "currencyCount": 1,
+    "instrumentCount": 507,
+    "instrumentCountByMarket": {
+      "TPE": 314,
+      "TWO": 193
+    },
+    "lifecycleEventCount": 4,
+    "marketCount": 2,
+    "sessionCount": 1,
+    "timezoneCount": 1,
+    "tradingStatusCount": 8
+  },
   "files": {
     "adjustments.json": "1217e6f4722bb87afe5d2d033caabbfcd9cdc128e3e1067b6c79a5e5f669e558",
     "calendar_dates.json": "08f972307f5fef79e2154d3b96419c0206d0f5a60ae735f680492962143c7439",
     "currencies.json": "eb4b8c3d49b294f72d177fcb98f60d899325c856edce5e8272921290b17bce36",
-    "evidence.json": "4c5e25c4a0bb43ffd44ca264780a0e240602a34c62370035272d54482f5ed15a",
-    "instrument_lifecycles.json": "22f25d0dd1fb1e18d90843e146ed26c758f7c7342cb5513aafbe811033c6ac75",
+    "evidence.json": "5cd809cc5172f9be7e74179b634925d17a4a1e30000dfba08fde0c5a6c4abc22",
+    "instrument_lifecycles.json": "44ca8331e3782df9839800217687746efd5e058d34b9f7e1d6bc31130ba1cf07",
     "instruments.json": "dd5d538d85b6d04b7a69e90c365852ffe9412adfd8bff7885631a32f2b8bc58f",
     "markets.json": "816e0fd8bcd1c9d9597a4ef99a00fe2eed4c2756be1d9033a50a310c11c401bf",
     "sessions.json": "f8b2366c25dc79b16b610710ce510073d631827802aee78782b3cc7c6bbfcd28",
@@ -54,6 +71,14 @@
       "fileName": "adjustment_catalogue.json",
       "role": "ADJUSTMENT_GOVERNANCE_INPUT",
       "sha256": "45f5325da43348040b0714eb6c14195c66565d3fe99e62aea7c4533676bf30ed"
+    },
+    {
+      "documentDate": "2026-07-24",
+      "fileName": "tpe_1563_cash_reduction.json",
+      "role": "STATUS_EVIDENCE_ADDENDUM",
+      "sha256": "2f5a919e8b2372423dfd2cbda59d3985ecff688bb7eee2528caeb8410cefb3b6",
+      "sourceDescription": "MOPS official major announcement for 1563 cash-capital-reduction share exchange",
+      "sourceUrl": "https://mops.twse.com.tw/mops/web/t05st01"
     }
   ]
 }

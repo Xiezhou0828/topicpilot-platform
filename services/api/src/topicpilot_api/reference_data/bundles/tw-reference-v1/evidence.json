@@ -1,6 +1,22 @@
 {
   "description": "Per-symbol legal suspension or permanent delisting evidence. Intraday no-latest-trade evidence is fetched from official MIS at export time.",
   "suspensions": {
+    "1563": {
+      "events": [
+        {
+          "effectiveFrom": "2026-08-27",
+          "effectiveTo": "2026-09-04",
+          "evidenceId": "MOPS-TPE-1563-SUSPENDED-20260827",
+          "market": "TPE",
+          "reason": "MOPS formal announcement for 1563 巧新 cash-capital-reduction share exchange: old shares last traded on 2026-08-26 and trading was suspended from 2026-08-27 through 2026-09-04; new shares were scheduled to resume listing and trading on 2026-09-07. This is a temporary suspension of the old share identity, not a termination of the issuer or an inferred successor identity.",
+          "source": "https://mops.twse.com.tw/mops/web/t05st01",
+          "sourceDocument": "1563 巧新—本公司董事長訂定減資換發股票基準日及減資換股作業計畫等相關事宜",
+          "sourceNoticeDate": "2026-07-24",
+          "status": "SUSPENDED"
+        }
+      ],
+      "market": "TPE"
+    },
     "5371": {
       "events": [
         {

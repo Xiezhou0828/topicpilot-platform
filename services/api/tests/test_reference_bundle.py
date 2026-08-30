@@ -30,15 +30,19 @@ def test_committed_tw_reference_bundle_is_derived_and_contains_known_evidence():
         "calendarDateCount": 24,
         "calendarHolidayCount": 23,
         "calendarSuspendedCount": 1,
-        "lifecycleEventCount": 3,
+        "lifecycleEventCount": 4,
     }
     assert bundle.evidence["suspensions"]["6806"]["status"] == "DELISTED"
     assert bundle.evidence["suspensions"]["6806"]["evidenceId"] == "TWSE-DELISTED-6806-20260623"
+    assert bundle.evidence["suspensions"]["1563"]["events"][0]["status"] == "SUSPENDED"
+    assert bundle.evidence["suspensions"]["1563"]["events"][0]["sourceDocument"].startswith("1563 巧新")
     by_identity = {
         (row["market_code"], row["instrument_code"], row["status_code"]): row
         for row in bundle.instrument_lifecycles
     }
     assert by_identity[("TPE", "6806", "DELISTED")]["effective_from"] == "2026-06-23"
+    assert by_identity[("TPE", "1563", "SUSPENDED")]["effective_from"] == "2026-08-27"
+    assert by_identity[("TPE", "1563", "SUSPENDED")]["effective_to"] == "2026-09-04"
     assert by_identity[("TWO", "5371", "SUSPENDED")]["effective_from"] == "2026-08-24"
     assert by_identity[("TWO", "5371", "SUSPENDED")]["effective_to"] == "2026-09-02"
     assert by_identity[("TWO", "5371", "TERMINATED")]["effective_from"] == "2026-09-03"

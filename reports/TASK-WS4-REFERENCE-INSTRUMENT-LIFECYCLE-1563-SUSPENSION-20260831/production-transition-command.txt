@@ -1,0 +1,11 @@
+# Run only after this bundle is deployed and the read-only preflight is fresh.
+
+topicpilot-reference-transition --from-reference-version tw-reference-v1-rollover-daf19e9eb051255c --expected-from-bundle-sha256 66edf7395785c4a19f36c39d22911b83843621f5cfdda49f90ea42099fa9a543 --bundle-dir /app/src/topicpilot_api/reference_data/bundles/tw-reference-v1 --dry-run
+
+# Only after the dry-run is VALIDATED and separately authorized:
+
+topicpilot-reference-transition --from-reference-version tw-reference-v1-rollover-daf19e9eb051255c --expected-from-bundle-sha256 66edf7395785c4a19f36c39d22911b83843621f5cfdda49f90ea42099fa9a543 --bundle-dir /app/src/topicpilot_api/reference_data/bundles/tw-reference-v1 --activate
+
+# After activation, set this Render worker environment variable to the active
+# target before rerunning the collector:
+# TOPICPILOT_LIVE_REFERENCE_DATA_VERSION=tw-reference-v1-rollover-55684037eef58f10

@@ -1,5 +1,15 @@
 [
   {
+    "effective_from": "2026-08-27",
+    "effective_to": "2026-09-04",
+    "evidence_id": "MOPS-TPE-1563-SUSPENDED-20260827",
+    "instrument_code": "1563",
+    "market_code": "TPE",
+    "reason": "MOPS formal announcement for 1563 巧新 cash-capital-reduction share exchange: old shares last traded on 2026-08-26 and trading was suspended from 2026-08-27 through 2026-09-04; new shares were scheduled to resume listing and trading on 2026-09-07. This is a temporary suspension of the old share identity, not a termination of the issuer or an inferred successor identity.",
+    "source_url": "https://mops.twse.com.tw/mops/web/t05st01",
+    "status_code": "SUSPENDED"
+  },
+  {
     "effective_from": "2026-06-23",
     "evidence_id": "TWSE-DELISTED-6806-20260623",
     "instrument_code": "6806",

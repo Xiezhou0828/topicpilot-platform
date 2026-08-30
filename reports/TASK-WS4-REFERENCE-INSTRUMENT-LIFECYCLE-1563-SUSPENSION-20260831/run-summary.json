@@ -1,0 +1,37 @@
+{
+  "task": "TASK-WS4-REFERENCE-INSTRUMENT-LIFECYCLE-1563-SUSPENSION-20260831",
+  "scope": "WS4_REFERENCE_ONLY",
+  "instrument": {
+    "instrument_code": "1563",
+    "market_code": "TPE",
+    "name": "巧新",
+    "last_trading_date": "2026-08-26",
+    "suspended_from": "2026-08-27",
+    "suspended_to": "2026-09-04",
+    "resumption_date": "2026-09-07",
+    "status_code": "SUSPENDED",
+    "successor_inferred": false
+  },
+  "source": {
+    "authority": "MOPS_OFFICIAL_MAJOR_ANNOUNCEMENT",
+    "source_url": "https://mops.twse.com.tw/mops/web/t05st01",
+    "document_date": "2026-07-24",
+    "evidence_id": "MOPS-TPE-1563-SUSPENDED-20260827"
+  },
+  "candidate": {
+    "bundle_sha256": "55684037eef58f1068ea7ba6eaabd74f2e58f6967ea7b1db8ebe9255bcd9cca7",
+    "reference_version": "tw-reference-v1-rollover-55684037eef58f10",
+    "source_reference_version": "tw-reference-v1-rollover-daf19e9eb051255c"
+  },
+  "validation": {
+    "bundle_validator": "PASS",
+    "reference_bundle_tests": "3 passed",
+    "no_trade_contract_tests": "10 passed",
+    "reference_transition_tests": "5 passed; 2 skipped without PostgreSQL",
+    "fake_data_used": false
+  },
+  "production_mutation": false,
+  "deploy": false,
+  "push": false,
+  "home_materialization": false
+}
