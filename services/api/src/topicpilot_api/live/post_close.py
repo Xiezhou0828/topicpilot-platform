@@ -20,7 +20,11 @@ from topicpilot_api.daily_market import DailyMarketReconciliation, reconcile_dai
 from topicpilot_api.home_v2_publication import materialize_home_v2
 from topicpilot_api.market_data.aggregate_contract import fetch_official_market_aggregates
 from topicpilot_api.market_data.index_contract import fetch_official_market_indexes
-from topicpilot_api.market_data.ingestion import HistoricalSourceRegistration, ingest_historical
+from topicpilot_api.market_data.ingestion import (
+    HistoricalInstrumentResult,
+    HistoricalSourceRegistration,
+    ingest_historical,
+)
 from topicpilot_api.market_data.rate_limit import RateLimitedTransport
 from topicpilot_api.market_data.registry import build_historical_provider_registry
 from topicpilot_api.normalizer import HISTORICAL_MAPPING_POLICY_VERSION, MappingPolicy
@@ -430,6 +434,74 @@ class PostCloseUpdater:
             )
         return None
 
+    @staticmethod
+    def _history_attempt_outcome(
+        result: HistoricalInstrumentResult,
+    ) -> tuple[str, str | None, str | None]:
+        """Translate one batched-ingestion result into the audit vocabulary."""
+
+        if result.covered_count:
+            error_code = (
+                "APPROVED_NO_TRADE"
+                if result.instrument_status
+                in {
+                    "SUSPENDED",
+                    "NO_TRADE",
+                    "EXCHANGE_CONFIRMED_NO_DATA",
+                    "DELISTED",
+                    "TERMINATED",
+                }
+                and result.priced_count == 0
+                else None
+            )
+            return "SUCCESS", error_code, result.status_reason
+        return (
+            "SKIPPED",
+            "MISSING_MARKET_DATA",
+            result.status_reason
+            or (
+                "official provider returned no priced bar and no "
+                "lifecycle-authorized no-trade evidence"
+            ),
+        )
+
+    def _record_history_attempt(
+        self,
+        *,
+        run_id: Any,
+        instrument: Instrument,
+        market: Market,
+        started_at: datetime,
+        completed_at: datetime,
+        attempt_status: str,
+        retry_count: int,
+        error_code: str | None,
+        error_message: str | None,
+        provider_status: str,
+    ) -> None:
+        self.session.add(
+            LiveCollectorAttempt(
+                run_id=run_id,
+                instrument_id=instrument.id,
+                instrument_code=instrument.instrument_code,
+                market_code=market.code,
+                attempt_number=retry_count + 1,
+                status=attempt_status,
+                started_at=started_at,
+                retrieved_at=completed_at if attempt_status == "SUCCESS" else None,
+                updated_at=completed_at,
+                observed_at=None,
+                latency_ms=max(
+                    0, int((completed_at - started_at).total_seconds() * 1000)
+                ),
+                retry_count=retry_count,
+                provider_status=provider_status,
+                freshness_state="FRESH" if attempt_status == "SUCCESS" else "UNKNOWN",
+                error_code=error_code,
+                error_message=error_message,
+            )
+        )
+
     def run_once(
         self,
         *,
@@ -609,20 +681,42 @@ class PostCloseUpdater:
             calendar_code=self.config.calendar_code,
         )
 
-        for batch_start in range(0, len(instruments), self.config.history_batch_size):
-            batch = instruments[batch_start : batch_start + self.config.history_batch_size]
-            for instrument, market in batch:
-                registration = registry.for_market(market.code)[0]
-                item_started = self._now()
-                retries_before = transport.retry_count
-                attempt_status = "SUCCESS"
-                error_code = None
-                error_message = None
-                try:
+        market_batches: list[list[tuple[Instrument, Market]]] = []
+        for market_code in ("TPE", "TWO"):
+            market_instruments = [
+                item for item in instruments if item[1].code == market_code
+            ]
+            for batch_start in range(
+                0, len(market_instruments), self.config.history_batch_size
+            ):
+                market_batches.append(
+                    market_instruments[
+                        batch_start : batch_start + self.config.history_batch_size
+                    ]
+                )
+
+        for batch in market_batches:
+            market = batch[0][1]
+            registration = registry.for_market(market.code)[0]
+            batch_started = self._now()
+            retries_before = transport.retry_count
+            batch_retry_count = 0
+            batch_success_count = 0
+            batch_skipped_count = 0
+            batch_point_count = 0
+            try:
+                # One transaction covers the whole provider batch.  A single
+                # provider/normalizer failure falls back to savepoint-isolated
+                # single-instrument writes below, so one bad symbol cannot
+                # discard its neighbours' valid bars.
+                with self.session.begin():
                     result = ingest_historical(
                         self.session,
                         registration.adapter,
-                        [(instrument.instrument_code, market.code)],
+                        [
+                            (instrument.instrument_code, item_market.code)
+                            for instrument, item_market in batch
+                        ],
                         reference_data_version=self.config.reference_data_version,
                         requested_from=local_date,
                         requested_to=local_date,
@@ -633,68 +727,125 @@ class PostCloseUpdater:
                             licensing_classification="OFFICIAL_PUBLIC",
                         ),
                     )
-                    self.session.commit()
-                    point_count += result.provider_point_count
-                    if result.covered_count:
-                        success_count += 1
-                        attempt_status = "SUCCESS"
-                        error_code = (
-                            "APPROVED_NO_TRADE"
-                            if result.instrument_status
-                            in {
-                                "SUSPENDED",
-                                "NO_TRADE",
-                                "EXCHANGE_CONFIRMED_NO_DATA",
-                                "DELISTED",
-                                "TERMINATED",
-                            }
-                            and result.priced_count == 0
-                            else None
+                    summaries = {
+                        (item.instrument_code, item.market_code): item
+                        for item in result.instrument_results
+                    }
+                    expected_keys = {
+                        (instrument.instrument_code, item_market.code)
+                        for instrument, item_market in batch
+                    }
+                    if set(summaries) != expected_keys:
+                        raise RuntimeError("BATCH_RESULT_MISMATCH")
+                    batch_retry_count = transport.retry_count - retries_before
+                    completed = self._now()
+                    for index, (instrument, item_market) in enumerate(batch):
+                        summary = summaries[(instrument.instrument_code, item_market.code)]
+                        attempt_status, error_code, error_message = (
+                            self._history_attempt_outcome(summary)
                         )
-                        error_message = result.status_reason
-                    else:
-                        skipped_count += 1
-                        attempt_status = "SKIPPED"
-                        error_code = "MISSING_MARKET_DATA"
-                        error_message = result.status_reason or (
-                            "official provider returned no priced bar and no "
-                            "lifecycle-authorized no-trade evidence"
+                        self._record_history_attempt(
+                            run_id=run_id,
+                            instrument=instrument,
+                            market=item_market,
+                            started_at=batch_started,
+                            completed_at=completed,
+                            attempt_status=attempt_status,
+                            retry_count=batch_retry_count if index == 0 else 0,
+                            error_code=error_code,
+                            error_message=error_message,
+                            provider_status=summary.instrument_status,
                         )
-                except Exception as exc:
-                    self.session.rollback()
-                    failure_count += 1
-                    attempt_status = "FAILED"
-                    error_code = getattr(exc, "code", type(exc).__name__)
-                    error_message = str(exc)
-                    failure_codes.append(error_code)
-                completed = self._now()
-                item_retry_count = transport.retry_count - retries_before
-                retry_count += item_retry_count
-                self.session.add(
-                    LiveCollectorAttempt(
-                        run_id=run_id,
-                        instrument_id=instrument.id,
-                        instrument_code=instrument.instrument_code,
-                        market_code=market.code,
-                        attempt_number=item_retry_count + 1,
-                        status=attempt_status,
-                        started_at=item_started,
-                        retrieved_at=completed if attempt_status == "SUCCESS" else None,
-                        updated_at=completed,
-                        observed_at=None,
-                        latency_ms=max(0, int((completed - item_started).total_seconds() * 1000)),
-                        retry_count=item_retry_count,
-                        provider_status=(
-                            result.instrument_status
-                            if attempt_status != "FAILED"
-                            else "ERROR"
-                        ),
-                        freshness_state="FRESH" if attempt_status == "SUCCESS" else "UNKNOWN",
-                        error_code=error_code,
-                        error_message=error_message,
-                    )
-                )
-                self.session.commit()
+                        if attempt_status == "SUCCESS":
+                            batch_success_count += 1
+                        else:
+                            batch_skipped_count += 1
+                batch_point_count = result.provider_point_count
+                success_count += batch_success_count
+                skipped_count += batch_skipped_count
+                point_count += batch_point_count
+                retry_count += batch_retry_count
+            except Exception:
+                batch_retry_count = transport.retry_count - retries_before
+                retry_count += batch_retry_count
+                self.session.rollback()
+
+                # Preserve the old per-symbol failure isolation only for a
+                # batch that could not be committed as a unit.  In the normal
+                # case the path above performs one provider batch and one DB
+                # commit for up to ``history_batch_size`` symbols.
+                fallback_success_count = 0
+                fallback_skipped_count = 0
+                fallback_failure_count = 0
+                fallback_point_count = 0
+                with self.session.begin():
+                    for instrument, item_market in batch:
+                        item_started = self._now()
+                        item_retries_before = transport.retry_count
+                        attempt_status = "FAILED"
+                        error_code: str | None = None
+                        error_message: str | None = None
+                        provider_status = "ERROR"
+                        try:
+                            savepoint = self.session.begin_nested()
+                            try:
+                                single_result = ingest_historical(
+                                    self.session,
+                                    registration.adapter,
+                                    [(instrument.instrument_code, item_market.code)],
+                                    reference_data_version=self.config.reference_data_version,
+                                    requested_from=local_date,
+                                    requested_to=local_date,
+                                    policy=policy,
+                                    registration=HistoricalSourceRegistration(
+                                        registration.code,
+                                        registration.adapter.adapter_version,
+                                        licensing_classification="OFFICIAL_PUBLIC",
+                                    ),
+                                )
+                                if len(single_result.instrument_results) != 1:
+                                    raise RuntimeError("BATCH_RESULT_MISMATCH")
+                            except Exception:
+                                savepoint.rollback()
+                                raise
+                            else:
+                                savepoint.commit()
+                            summary = single_result.instrument_results[0]
+                            (
+                                attempt_status,
+                                error_code,
+                                error_message,
+                            ) = self._history_attempt_outcome(summary)
+                            provider_status = summary.instrument_status
+                            fallback_point_count += single_result.provider_point_count
+                            if attempt_status == "SUCCESS":
+                                fallback_success_count += 1
+                            else:
+                                fallback_skipped_count += 1
+                        except Exception as exc:
+                            fallback_failure_count += 1
+                            error_code = getattr(exc, "code", type(exc).__name__)
+                            error_message = str(exc)
+                            failure_codes.append(error_code)
+                        completed = self._now()
+                        item_retry_count = transport.retry_count - item_retries_before
+                        retry_count += item_retry_count
+                        self._record_history_attempt(
+                            run_id=run_id,
+                            instrument=instrument,
+                            market=item_market,
+                            started_at=item_started,
+                            completed_at=completed,
+                            attempt_status=attempt_status,
+                            retry_count=item_retry_count,
+                            error_code=error_code,
+                            error_message=error_message,
+                            provider_status=provider_status,
+                        )
+                success_count += fallback_success_count
+                skipped_count += fallback_skipped_count
+                failure_count += fallback_failure_count
+                point_count += fallback_point_count
             self._heartbeat(run_id, self._now())
 
         return self._finalize_collected_run(

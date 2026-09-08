@@ -33,6 +33,38 @@ class NormalizationService:
         entry = self.session.get(ObservationTimelineEntry, envelope.timeline_entry_id)
         prior = {}
         if entry and entry.supersedes_id:
+            candidate_idempotencies = {}
+            for candidate in result.candidates:
+                if (
+                    candidate.quality_state == "REJECTED"
+                    or candidate.quality_state not in PERSISTABLE
+                ):
+                    continue
+                content = stable_hash(
+                    {
+                        "family": candidate.family_code,
+                        "values": candidate.values,
+                        "paths": candidate.source_paths,
+                    }
+                )
+                candidate_idempotencies[candidate.family_code] = stable_hash(
+                    {
+                        "entry": envelope.timeline_entry_id,
+                        "family": candidate.family_code,
+                        "content": content,
+                        "contract": policy.normalization_contract_version,
+                        "mapping": policy.mapping_policy_version,
+                        "reference": reference.reference_data_version,
+                    }
+                )
+            current_idempotencies = {
+                row.family_code: row.idempotency_key
+                for row in self.session.scalars(
+                    select(CanonicalObservation).where(
+                        CanonicalObservation.timeline_entry_id == entry.id
+                    )
+                )
+            }
             successor = CanonicalObservation.__table__.alias("successor")
             all_prior = list(
                 self.session.scalars(
@@ -51,6 +83,8 @@ class NormalizationService:
                 row.family_code
                 for row in all_prior
                 if row.family_code in candidate_families
+                and current_idempotencies.get(row.family_code)
+                != candidate_idempotencies.get(row.family_code)
                 and self.session.scalar(
                     select(
                         exists(

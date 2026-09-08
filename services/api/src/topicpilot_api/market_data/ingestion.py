@@ -62,6 +62,21 @@ class HistoricalSourceRegistration:
 
 
 @dataclass(frozen=True)
+class HistoricalInstrumentResult:
+    """Per-instrument coverage emitted by a batched historical ingestion."""
+
+    instrument_code: str
+    market_code: str
+    provider_point_count: int
+    observed_count: int
+    priced_count: int
+    covered_count: int
+    unexplained_missing_count: int
+    instrument_status: str
+    status_reason: str | None = None
+
+
+@dataclass(frozen=True)
 class HistoricalIngestionResult:
     batch_id: UUID
     request_key: str
@@ -80,6 +95,7 @@ class HistoricalIngestionResult:
     priced_count: int = 0
     covered_count: int = 0
     unexplained_missing_count: int = 0
+    instrument_results: tuple[HistoricalInstrumentResult, ...] = ()
 
     @property
     def is_noop(self) -> bool:
@@ -470,6 +486,7 @@ def ingest_historical(
     all_covered = True
     result_statuses: list[str] = []
     result_reasons: list[str] = []
+    instrument_results: list[HistoricalInstrumentResult] = []
     for (code, market_code), result, bars in fetched:
         instrument, market = _load_instrument(session, code, market_code)
         status_date = requested_from if requested_from == requested_to else None
@@ -493,6 +510,10 @@ def ingest_historical(
             result_reasons.append(result.status_reason)
         if not observations:
             all_covered = False
+        instrument_observed = 0
+        instrument_priced = 0
+        instrument_covered_count = 0
+        instrument_unexplained = 0
         counts["provider"] += len(bars)
         for trading_date, _bar, payload in observations:
             observed_at = _observed_at(trading_date, market.timezone)
@@ -504,6 +525,10 @@ def ingest_historical(
             counts["covered"] += int(covered)
             counts["unexplained"] += int(not covered)
             all_covered = all_covered and covered
+            instrument_observed += 1
+            instrument_priced += int(close_present)
+            instrument_covered_count += int(covered)
+            instrument_unexplained += int(not covered)
             prior_entry = session.scalar(
                 select(ObservationTimelineEntry)
                 .where(
@@ -599,6 +624,20 @@ def ingest_historical(
                 if persisted.quality_state == "INCOMPLETE":
                     counts["incomplete"] += 1
 
+        instrument_results.append(
+            HistoricalInstrumentResult(
+                instrument_code=code,
+                market_code=market_code,
+                provider_point_count=len(bars),
+                observed_count=instrument_observed,
+                priced_count=instrument_priced,
+                covered_count=instrument_covered_count,
+                unexplained_missing_count=instrument_unexplained,
+                instrument_status=result_status,
+                status_reason=result.status_reason,
+            )
+        )
+
     batch.status = "COMPLETED"
     batch.coverage_status = "COMPLETE" if all_covered else "SPARSE"
     # Keep Python 3.10 compatibility for the private provider runtime.
@@ -630,4 +669,5 @@ def ingest_historical(
         priced_count=counts["priced"],
         covered_count=counts["covered"],
         unexplained_missing_count=counts["unexplained"],
+        instrument_results=tuple(instrument_results),
     )

@@ -12,6 +12,7 @@ from topicpilot_api.live.post_close import (
     PostCloseUpdater,
     _json_safe,
 )
+from topicpilot_api.market_data.ingestion import HistoricalInstrumentResult
 
 
 def _identity(market: str, code: str, identifier: int):
@@ -167,4 +168,39 @@ def test_post_close_recent_run_is_not_considered_stale():
         run,
         datetime(2026, 8, 30, 1, 1, tzinfo=UTC),
         stale_after=60,
+    )
+
+
+def test_post_close_batched_outcome_keeps_unknown_missing_data_uncovered():
+    missing = HistoricalInstrumentResult(
+        instrument_code="6752",
+        market_code="TWO",
+        provider_point_count=1,
+        observed_count=1,
+        priced_count=0,
+        covered_count=0,
+        unexplained_missing_count=1,
+        instrument_status="UNKNOWN",
+        status_reason="missing priced bar",
+    )
+    approved = HistoricalInstrumentResult(
+        instrument_code="6806",
+        market_code="TWO",
+        provider_point_count=0,
+        observed_count=1,
+        priced_count=0,
+        covered_count=1,
+        unexplained_missing_count=0,
+        instrument_status="EXCHANGE_CONFIRMED_NO_DATA",
+    )
+
+    assert PostCloseUpdater._history_attempt_outcome(missing) == (
+        "SKIPPED",
+        "MISSING_MARKET_DATA",
+        "missing priced bar",
+    )
+    assert PostCloseUpdater._history_attempt_outcome(approved) == (
+        "SUCCESS",
+        "APPROVED_NO_TRADE",
+        None,
     )
