@@ -92,6 +92,23 @@ For an authorized recovery or backfill, supply exactly one ISO trading date:
 topicpilot-live --mode post-close --once --run-date YYYY-MM-DD
 ```
 
+The same command can capture a bounded set of instruments instead of the full
+date-effective universe. Pass bare codes when they are unique, or qualify them
+with the market code when needed:
+
+```console
+topicpilot-live --mode post-close --once \
+  --run-date YYYY-MM-DD \
+  --symbols TWO:1584,TWO:6129 \
+  --recover
+```
+
+`--codes` is accepted as an alias for `--symbols`. Targeted runs use the same
+official adapters and canonical observation writes, but they do not refresh
+the full tracking universe or run Topic/Home snapshot promotion. The command
+records the targeted scope in the collector-run metadata. Omit `--symbols` to
+retain the normal full-universe behavior.
+
 The job uses official TWSE daily data for TPE and official TPEx daily data for
 TWO, writes through the existing canonical observation pipeline, then records
 separate priced/covered coverage and `downstreamReady` in the `POST_CLOSE`

@@ -23,6 +23,24 @@ from topicpilot_api.live.session import MarketSessionClock
 from topicpilot_api.market_data.registry import build_live_provider_router
 
 
+def _symbols_argument(value: str) -> tuple[str, ...]:
+    """Parse a comma-separated targeted symbol list for post-close recovery."""
+
+    symbols = tuple(item.strip() for item in value.split(",") if item.strip())
+    if not symbols:
+        raise argparse.ArgumentTypeError("at least one symbol is required")
+    for symbol in symbols:
+        if (
+            symbol.count(":") > 1
+            or symbol.startswith(":")
+            or symbol.endswith(":")
+        ):
+            raise argparse.ArgumentTypeError(
+                "symbols must be CODE or MARKET:CODE values"
+            )
+    return symbols
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -34,12 +52,26 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--run-date",
         type=date.fromisoformat,
-        help="override the official POST_CLOSE trading date (ISO date; recovery only)",
+        help=(
+            "override the official POST_CLOSE trading date (ISO date; "
+            "required for targeted symbols)"
+        ),
     )
     parser.add_argument(
         "--recover",
         action="store_true",
         help="explicitly rerun a terminal FAILED/PARTIAL POST_CLOSE date",
+    )
+    parser.add_argument(
+        "--symbols",
+        "--codes",
+        dest="symbols",
+        type=_symbols_argument,
+        metavar="CODE[,CODE...]",
+        help=(
+            "capture only selected post-close symbols; use CODE or MARKET:CODE "
+            "(for example TWO:1584,TWO:6129)"
+        ),
     )
     parser.add_argument(
         "--dry-run",
@@ -50,7 +82,14 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main(argv: list[str] | None = None) -> int:
-    args = build_parser().parse_args(argv)
+    parser = build_parser()
+    args = parser.parse_args(argv)
+    if args.symbols is not None and args.mode != "post-close":
+        parser.error("--symbols requires --mode post-close")
+    if args.symbols is not None and not args.once:
+        parser.error("--symbols requires --once")
+    if args.symbols is not None and args.run_date is None:
+        parser.error("--symbols requires --run-date YYYY-MM-DD")
     if args.recover and args.run_date is None:
         raise SystemExit("--recover requires --run-date YYYY-MM-DD")
     if args.recover and args.mode != "post-close":
@@ -99,21 +138,24 @@ def main(argv: list[str] | None = None) -> int:
         post_close = PostCloseUpdater(session, config)
         daily_forward = DailyForwardRunner(session, config, updater=post_close)
         worker = PersistentQuoteWorker(provider_router, config=config)
+        if args.recover or args.symbols is not None:
+            def post_close_runner() -> object:
+                return post_close.run_once(
+                    run_date=args.run_date,
+                    allow_terminal_recovery=args.recover,
+                    target_symbols=args.symbols,
+                )
+        else:
+            def post_close_runner() -> object:
+                return daily_forward.run_once(
+                    run_date=args.run_date,
+                    replay=args.run_date is not None,
+                )
         scheduler = LiveScheduler(
             collector,
             config,
             worker=worker,
-            post_close_runner=(
-                lambda: post_close.run_once(
-                    run_date=args.run_date,
-                    allow_terminal_recovery=args.recover,
-                )
-                if args.recover
-                else lambda: daily_forward.run_once(
-                    run_date=args.run_date,
-                    replay=args.run_date is not None,
-                )
-            ),
+            post_close_runner=post_close_runner,
         )
         try:
             if args.once:

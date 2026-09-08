@@ -1,4 +1,4 @@
-"""Official daily-data post-close runner for the full V2 instrument universe."""
+"""Official daily-data post-close runner for full or targeted instruments."""
 
 from __future__ import annotations
 
@@ -222,8 +222,75 @@ class PostCloseUpdater:
         if len(instruments) != len(actual) or actual != expected:
             raise PostClosePreconditionError("DATE_EFFECTIVE_UNIVERSE_MISMATCH")
 
-    def _find_existing_run(self, run_date: date) -> LiveCollectorRun | None:
-        """Find the latest POST_CLOSE run for the requested market date.
+    @staticmethod
+    def _resolve_target_symbols(
+        expected_by_market: Mapping[str, Collection[str]],
+        requested_symbols: Collection[str] | None,
+    ) -> tuple[Mapping[str, tuple[str, ...]] | None, tuple[str, ...]]:
+        """Resolve CODE or MARKET:CODE input against the date-effective universe."""
+
+        if requested_symbols is None:
+            return None, ()
+
+        expected = {
+            (market_code.upper(), str(instrument_code))
+            for market_code, codes in expected_by_market.items()
+            for instrument_code in codes
+        }
+        selected: list[tuple[str, str]] = []
+        for raw_symbol in requested_symbols:
+            token = str(raw_symbol).strip().upper()
+            if not token:
+                raise PostClosePreconditionError("TARGET_SYMBOL_INVALID")
+            if ":" in token:
+                market_code, instrument_code = (
+                    part.strip() for part in token.split(":", 1)
+                )
+                if not market_code or not instrument_code:
+                    raise PostClosePreconditionError("TARGET_SYMBOL_INVALID")
+                identity = (market_code, instrument_code)
+            else:
+                matches = [
+                    identity
+                    for identity in expected
+                    if identity[1] == token
+                ]
+                if not matches:
+                    raise PostClosePreconditionError(
+                        "TARGET_SYMBOL_NOT_IN_DATE_EFFECTIVE_UNIVERSE"
+                    )
+                if len(matches) > 1:
+                    raise PostClosePreconditionError("TARGET_SYMBOL_MARKET_REQUIRED")
+                identity = matches[0]
+            if identity not in expected:
+                raise PostClosePreconditionError(
+                    "TARGET_SYMBOL_NOT_IN_DATE_EFFECTIVE_UNIVERSE"
+                )
+            if identity not in selected:
+                selected.append(identity)
+
+        if not selected:
+            raise PostClosePreconditionError("TARGET_SYMBOLS_EMPTY")
+
+        selected_by_market: dict[str, list[str]] = {}
+        for market_code, instrument_code in selected:
+            selected_by_market.setdefault(market_code, []).append(instrument_code)
+        normalized = tuple(
+            sorted(
+                f"{market_code}:{instrument_code}"
+                for market_code, instrument_code in selected
+            )
+        )
+        return (
+            {
+                market_code: tuple(codes)
+                for market_code, codes in selected_by_market.items()
+            },
+            normalized,
+        )
+
+    def _runs_for_date(self, run_date: date) -> list[LiveCollectorRun]:
+        """Load POST_CLOSE runs for the requested market date.
 
         The run table predates an explicit run-date column. Keep the
         started-at timestamp as a compatibility key for legacy rows, while
@@ -237,22 +304,43 @@ class PostCloseUpdater:
             tzinfo=self.session_clock.timezone,
         ).astimezone(UTC)
         local_end = local_start + timedelta(days=1)
-        return self.session.scalar(
-            select(LiveCollectorRun)
-            .where(
-                LiveCollectorRun.run_type == "POST_CLOSE",
-                or_(
-                    LiveCollectorRun.metadata_payload["runDate"].as_string()
-                    == run_date.isoformat(),
-                    and_(
-                        LiveCollectorRun.started_at >= local_start,
-                        LiveCollectorRun.started_at < local_end,
+        return list(
+            self.session.scalars(
+                select(LiveCollectorRun)
+                .where(
+                    LiveCollectorRun.run_type == "POST_CLOSE",
+                    or_(
+                        LiveCollectorRun.metadata_payload["runDate"].as_string()
+                        == run_date.isoformat(),
+                        and_(
+                            LiveCollectorRun.started_at >= local_start,
+                            LiveCollectorRun.started_at < local_end,
+                        ),
                     ),
-                ),
-            )
-            .order_by(LiveCollectorRun.started_at.desc())
-            .limit(1)
+                )
+                .order_by(LiveCollectorRun.started_at.desc())
+            ).all()
         )
+
+    def _find_existing_run(
+        self,
+        run_date: date,
+        *,
+        target_symbols: Collection[str] | None = None,
+    ) -> LiveCollectorRun | None:
+        wanted_scope = "TARGETED" if target_symbols is not None else "FULL"
+        wanted_symbols = tuple(target_symbols or ())
+        for run in self._runs_for_date(run_date):
+            metadata = run.metadata_payload or {}
+            scope = str(metadata.get("scope", "FULL")).upper()
+            if scope != wanted_scope:
+                continue
+            if wanted_scope == "TARGETED":
+                recorded = tuple(str(item) for item in metadata.get("targetSymbols", ()))
+                if recorded != wanted_symbols:
+                    continue
+            return run
+        return None
 
     def _completed_attempt_summary(
         self,
@@ -348,11 +436,14 @@ class PostCloseUpdater:
         *,
         run_date: date,
         recovery_of_run_id: Any | None = None,
+        scope: str = "FULL",
+        target_symbols: Collection[str] = (),
     ) -> LiveCollectorRun:
         metadata = {
             "runType": "POST_CLOSE",
             "runDate": run_date.isoformat(),
             "targetDate": run_date.isoformat(),
+            "scope": scope,
             "forwardRunKey": (
                 f"post-close:{self.config.reference_data_version}:"
                 f"{self.config.calendar_code}:{run_date.isoformat()}"
@@ -367,6 +458,8 @@ class PostCloseUpdater:
             "skippedCount": 0,
             "sourceProviders": {"TPE": "TWSE_OFFICIAL_DAILY", "TWO": "TPEX_OFFICIAL_DAILY"},
         }
+        if scope == "TARGETED":
+            metadata["targetSymbols"] = list(target_symbols)
         if recovery_of_run_id is not None:
             metadata["recoveryOfRunId"] = str(recovery_of_run_id)
         run = LiveCollectorRun(
@@ -507,6 +600,7 @@ class PostCloseUpdater:
         *,
         run_date: date | None = None,
         allow_terminal_recovery: bool = False,
+        target_symbols: Collection[str] | None = None,
     ) -> PostCloseRunResult:
         if allow_terminal_recovery and run_date is None:
             raise ValueError("POST_CLOSE_RECOVERY_REQUIRES_EXPLICIT_RUN_DATE")
@@ -523,13 +617,33 @@ class PostCloseUpdater:
         expected_by_market = {
             market.market_code: tuple(market.instrument_codes) for market in context.markets
         }
-        instruments = self._instruments(expected_by_market)
-        self._validate_instruments(instruments, expected_by_market)
+        selected_by_market, normalized_target_symbols = self._resolve_target_symbols(
+            expected_by_market,
+            target_symbols,
+        )
+        is_targeted = selected_by_market is not None
+        requested_by_market = selected_by_market or expected_by_market
+        instruments = self._instruments(requested_by_market)
+        self._validate_instruments(instruments, requested_by_market)
         eligible_instrument_ids = tuple(instrument.id for instrument, _market in instruments)
-        idempotent = self._idempotent_result(local_date)
+        idempotent = None if is_targeted else self._idempotent_result(local_date)
         if idempotent is not None:
             return idempotent
-        existing_run = self._find_existing_run(local_date)
+        existing_run = self._find_existing_run(
+            local_date,
+            target_symbols=normalized_target_symbols if is_targeted else None,
+        )
+        active_other_scope = next(
+            (
+                run
+                for run in self._runs_for_date(local_date)
+                if run.status == "RUNNING"
+                and (existing_run is None or run.id != existing_run.id)
+            ),
+            None,
+        )
+        if active_other_scope is not None:
+            raise PostClosePreconditionError("POST_CLOSE_RUN_IN_PROGRESS")
         recovery_of_run_id = None
         if existing_run is not None:
             if existing_run.status in {"SUCCESS", "MARKET_CLOSED"}:
@@ -557,6 +671,23 @@ class PostCloseUpdater:
                 and existing_run.failure_code == "POST_CLOSE_FINALIZATION_FAILED"
                 and attempt_summary is not None
             ):
+                if is_targeted:
+                    return self._finalize_targeted_run(
+                        run_id=existing_run.id,
+                        local_date=local_date,
+                        requested_count=len(eligible_instrument_ids),
+                        success_count=attempt_summary["success_count"],
+                        failure_count=attempt_summary["failure_count"],
+                        skipped_count=attempt_summary["skipped_count"],
+                        retry_count=attempt_summary["retry_count"],
+                        point_count=int(
+                            (existing_run.metadata_payload or {}).get(
+                                "providerPointCount", 0
+                            )
+                            or 0
+                        ),
+                        failure_codes=attempt_summary["failure_codes"],
+                    )
                 return self._finalize_collected_run(
                     run_id=existing_run.id,
                     local_date=local_date,
@@ -585,6 +716,23 @@ class PostCloseUpdater:
                     ),
                 )
             ):
+                if is_targeted:
+                    return self._finalize_targeted_run(
+                        run_id=existing_run.id,
+                        local_date=local_date,
+                        requested_count=len(eligible_instrument_ids),
+                        success_count=attempt_summary["success_count"],
+                        failure_count=attempt_summary["failure_count"],
+                        skipped_count=attempt_summary["skipped_count"],
+                        retry_count=attempt_summary["retry_count"],
+                        point_count=int(
+                            (existing_run.metadata_payload or {}).get(
+                                "providerPointCount", 0
+                            )
+                            or 0
+                        ),
+                        failure_codes=attempt_summary["failure_codes"],
+                    )
                 return self._finalize_collected_run(
                     run_id=existing_run.id,
                     local_date=local_date,
@@ -607,6 +755,8 @@ class PostCloseUpdater:
             now,
             run_date=local_date,
             recovery_of_run_id=recovery_of_run_id,
+            scope="TARGETED" if is_targeted else "FULL",
+            target_symbols=normalized_target_symbols,
         )
         run_id = run.id
         failure_codes: list[str] = []
@@ -760,6 +910,8 @@ class PostCloseUpdater:
                             batch_success_count += 1
                         else:
                             batch_skipped_count += 1
+                            if is_targeted and error_code:
+                                failure_codes.append(error_code)
                 batch_point_count = result.provider_point_count
                 success_count += batch_success_count
                 skipped_count += batch_skipped_count
@@ -822,6 +974,8 @@ class PostCloseUpdater:
                                 fallback_success_count += 1
                             else:
                                 fallback_skipped_count += 1
+                                if is_targeted and error_code:
+                                    failure_codes.append(error_code)
                         except Exception as exc:
                             fallback_failure_count += 1
                             error_code = getattr(exc, "code", type(exc).__name__)
@@ -847,6 +1001,19 @@ class PostCloseUpdater:
                 failure_count += fallback_failure_count
                 point_count += fallback_point_count
             self._heartbeat(run_id, self._now())
+
+        if is_targeted:
+            return self._finalize_targeted_run(
+                run_id=run_id,
+                local_date=local_date,
+                requested_count=len(instruments),
+                success_count=success_count,
+                failure_count=failure_count,
+                skipped_count=skipped_count,
+                retry_count=retry_count,
+                point_count=point_count,
+                failure_codes=tuple(sorted(set(failure_codes))),
+            )
 
         return self._finalize_collected_run(
             run_id=run_id,
@@ -932,6 +1099,59 @@ class PostCloseUpdater:
             # If the database itself is unavailable, preserve the original
             # exception. The next process can recover from persisted attempts.
             return
+
+    def _finalize_targeted_run(
+        self,
+        *,
+        run_id: Any,
+        local_date: date,
+        requested_count: int,
+        success_count: int,
+        failure_count: int,
+        skipped_count: int,
+        retry_count: int,
+        point_count: int,
+        failure_codes: Collection[str],
+    ) -> PostCloseRunResult:
+        """Finalize a bounded symbol capture without full-market promotion."""
+
+        final_failure_codes = tuple(sorted(set(failure_codes)))
+        if not final_failure_codes and skipped_count:
+            final_failure_codes = ("MISSING_MARKET_DATA",)
+        status = "PARTIAL" if failure_count or skipped_count else "SUCCESS"
+        snapshot_result = {
+            "snapshotDate": local_date.isoformat(),
+            "topicCount": 0,
+            "status": "NOT_RUN_TARGETED",
+        }
+        self._finish_with_retry(
+            run_id,
+            status=status,
+            success_count=success_count,
+            failure_count=failure_count,
+            skipped_count=skipped_count,
+            retry_count=retry_count,
+            point_count=point_count,
+            failure_codes=final_failure_codes,
+            snapshot_result=snapshot_result,
+            reconciliation=None,
+            now=self._now(),
+        )
+        return PostCloseRunResult(
+            str(run_id),
+            status,
+            requested_count,
+            success_count,
+            failure_count,
+            skipped_count,
+            retry_count,
+            point_count,
+            0,
+            final_failure_codes,
+            snapshot_result["topicCount"],
+            snapshot_result["status"],
+            local_date.isoformat(),
+        )
 
     def _finalize_collected_run(
         self,
