@@ -7,6 +7,7 @@ import threading
 import time
 from collections.abc import Callable
 from datetime import datetime, timezone
+from datetime import time as clock_time
 
 from .collector import LiveCollector
 from .config import LiveRuntimeConfig
@@ -35,6 +36,7 @@ class LiveScheduler:
         self.logger = logger or logging.getLogger("topicpilot.live.scheduler")
         self.worker = worker
         self.post_close_runner = post_close_runner
+        self.post_close_start = clock_time.fromisoformat(config.post_close_start)
         self.session_clock = MarketSessionClock(
             config.timezone_name,
             config.session_open,
@@ -49,7 +51,7 @@ class LiveScheduler:
         if status.reason in {"WEEKEND", "CONFIGURED_CLOSED_DATE"}:
             return "WAIT"
         local = status.local_time
-        if local.time() >= self.session_clock.close_time and local.weekday() < 5:
+        if self.post_close_start <= local.time() and local.weekday() < 5:
             return "POST_CLOSE"
         return "WAIT"
 
@@ -84,7 +86,7 @@ class LiveScheduler:
                     local_date = self.session_clock.status(self.clock()).local_time.date()
                     if completed_post_close_date != local_date:
                         try:
-                            self.run_once("POST_CLOSE", enforce_session=False)
+                            result = self.run_once("POST_CLOSE", enforce_session=False)
                         except Exception as exc:
                             error_code = getattr(exc, "code", type(exc).__name__)
                             log_event(
@@ -96,8 +98,16 @@ class LiveScheduler:
                             # A restarted process must inspect the existing
                             # date-keyed run before it can start another one.
                         else:
-                            self._refresh_tracking()
-                            completed_post_close_date = local_date
+                            run_status = getattr(result, "status", None)
+                            if result is None or run_status in {None, "SUCCESS", "MARKET_CLOSED"}:
+                                self._refresh_tracking()
+                                completed_post_close_date = local_date
+                            else:
+                                log_event(
+                                    self.logger,
+                                    "post_close_retry_pending",
+                                    status=run_status,
+                                )
                 elif mode == "INTRADAY":
                     if not worker_started and self.worker is not None:
                         self.worker.start()

@@ -25,7 +25,13 @@ from topicpilot_api.market_data.rate_limit import RateLimitedTransport
 from topicpilot_api.market_data.registry import build_historical_provider_registry
 from topicpilot_api.normalizer import HISTORICAL_MAPPING_POLICY_VERSION, MappingPolicy
 from topicpilot_api.normalizer.contracts import stable_hash
-from topicpilot_api.orm import Instrument, LiveCollectorAttempt, LiveCollectorRun, Market
+from topicpilot_api.orm import (
+    Instrument,
+    LiveCollectorAttempt,
+    LiveCollectorRun,
+    Market,
+    TopicSnapshot,
+)
 from topicpilot_api.provider_preflight import load_g2_preflight_context
 from topicpilot_api.topic_daily_state import materialize_bounded_formal_dates
 from topicpilot_api.topic_lifecycle_engine import TopicLifecycleEngine
@@ -71,6 +77,7 @@ class PostCloseRunResult:
     snapshot_count: int = 0
     snapshot_status: str = "NOT_RUN"
     snapshot_date: str | None = None
+    idempotent_reuse: bool = False
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -88,6 +95,7 @@ class PostCloseRunResult:
             "snapshotCount": self.snapshot_count,
             "snapshotStatus": self.snapshot_status,
             "snapshotDate": self.snapshot_date,
+            "idempotentReuse": self.idempotent_reuse,
         }
 
 
@@ -99,14 +107,12 @@ class PostClosePreconditionError(RuntimeError):
         super().__init__(code)
 
 
-def expected_post_close_universe(
+def _validated_post_close_context(
     session: Session,
     *,
     run_date: date,
     reference_version: str,
-) -> Mapping[str, tuple[str, ...]]:
-    """Load the existing fail-closed date-effective reference universe."""
-
+):
     try:
         context = load_g2_preflight_context(
             session,
@@ -124,6 +130,22 @@ def expected_post_close_universe(
         raise PostClosePreconditionError("CANONICAL_MARKET_CONTEXT_INCOMPLETE")
     if not all(market.context_ready for market in context.markets):
         raise PostClosePreconditionError("MARKET_CONTEXT_NOT_READY")
+    return context
+
+
+def expected_post_close_universe(
+    session: Session,
+    *,
+    run_date: date,
+    reference_version: str,
+) -> Mapping[str, tuple[str, ...]]:
+    """Load the existing fail-closed date-effective reference universe."""
+
+    context = _validated_post_close_context(
+        session,
+        run_date=run_date,
+        reference_version=reference_version,
+    )
     return {
         market.market_code: tuple(market.instrument_codes) for market in context.markets
     }
@@ -312,6 +334,7 @@ class PostCloseUpdater:
             int(snapshot.get("topicCount", 0) or 0),
             str(snapshot.get("status", "ALREADY_COMPLETED")),
             str(snapshot.get("snapshotDate", run_date.isoformat())),
+            bool((metadata.get("forwardAutomation") or {}).get("status") == "SUCCESS"),
         )
 
     def _create_run(
@@ -325,6 +348,17 @@ class PostCloseUpdater:
         metadata = {
             "runType": "POST_CLOSE",
             "runDate": run_date.isoformat(),
+            "targetDate": run_date.isoformat(),
+            "forwardRunKey": (
+                f"post-close:{self.config.reference_data_version}:"
+                f"{self.config.calendar_code}:{run_date.isoformat()}"
+            ),
+            "timezone": self.config.timezone_name,
+            "sessionCode": self.config.session_code,
+            "calendarCode": self.config.calendar_code,
+            "postCloseStart": self.config.post_close_start,
+            "calendarAuthority": "ACTIVE_REFERENCE_PREFLIGHT",
+            "lifecycleAuthority": "ACTIVE_REFERENCE_PREFLIGHT",
             "batchSize": self.config.history_batch_size,
             "skippedCount": 0,
             "sourceProviders": {"TPE": "TWSE_OFFICIAL_DAILY", "TWO": "TPEX_OFFICIAL_DAILY"},
@@ -359,6 +393,43 @@ class PostCloseUpdater:
         self.session.commit()
         return run
 
+    def _idempotent_result(self, run_date: date) -> PostCloseRunResult | None:
+        run_key = (
+            f"post-close:{self.config.reference_data_version}:"
+            f"{self.config.calendar_code}:{run_date.isoformat()}"
+        )
+        runs = self.session.scalars(
+            select(LiveCollectorRun)
+            .where(
+                LiveCollectorRun.run_type == "POST_CLOSE",
+                LiveCollectorRun.status == "SUCCESS",
+            )
+            .order_by(LiveCollectorRun.started_at.desc())
+        ).all()
+        for run in runs:
+            metadata = run.metadata_payload or {}
+            forward = metadata.get("forwardAutomation") or {}
+            if metadata.get("forwardRunKey") != run_key or forward.get("status") != "SUCCESS":
+                continue
+            snapshot = metadata.get("topicSnapshot") or {}
+            return PostCloseRunResult(
+                str(run.id),
+                "SUCCESS",
+                int(run.requested_count or 0),
+                int(run.success_count or 0),
+                int(run.failure_count or 0),
+                int(metadata.get("skippedCount", 0)),
+                int(run.retry_count or 0),
+                int(metadata.get("providerPointCount", 0)),
+                0,
+                (),
+                int(snapshot.get("topicCount", 0)),
+                str(snapshot.get("status", "SUCCESS")),
+                run_date.isoformat(),
+                True,
+            )
+        return None
+
     def run_once(
         self,
         *,
@@ -372,19 +443,35 @@ class PostCloseUpdater:
             local_date = now.astimezone(self.session_clock.timezone).date()
         else:
             local_date = run_date
-        expected_by_market = expected_post_close_universe(
+        context = _validated_post_close_context(
             self.session,
             run_date=local_date,
             reference_version=self.config.reference_data_version,
         )
+        expected_by_market = {
+            market.market_code: tuple(market.instrument_codes) for market in context.markets
+        }
         instruments = self._instruments(expected_by_market)
         self._validate_instruments(instruments, expected_by_market)
         eligible_instrument_ids = tuple(instrument.id for instrument, _market in instruments)
+        idempotent = self._idempotent_result(local_date)
+        if idempotent is not None:
+            return idempotent
         existing_run = self._find_existing_run(local_date)
         recovery_of_run_id = None
         if existing_run is not None:
             if existing_run.status in {"SUCCESS", "MARKET_CLOSED"}:
-                return self._existing_result(existing_run, run_date=local_date)
+                metadata = existing_run.metadata_payload or {}
+                forward_status = (metadata.get("forwardAutomation") or {}).get("status")
+                safely_complete = (
+                    existing_run.status == "SUCCESS" and forward_status == "SUCCESS"
+                ) or (
+                    existing_run.status == "MARKET_CLOSED"
+                    and not context.target_date_is_session
+                )
+                if safely_complete or not allow_terminal_recovery:
+                    return self._existing_result(existing_run, run_date=local_date)
+                recovery_of_run_id = existing_run.id
             if existing_run.status in {"PARTIAL", "FAILED"}:
                 if not allow_terminal_recovery:
                     return self._existing_result(existing_run, run_date=local_date)
@@ -456,7 +543,10 @@ class PostCloseUpdater:
         session_status = self.session_clock.status(
             datetime.combine(local_date, clock_time(13, 30), tzinfo=self.session_clock.timezone)
         )
-        if session_status.reason in {"WEEKEND", "CONFIGURED_CLOSED_DATE"}:
+        if (
+            not context.target_date_is_session
+            or session_status.reason in {"WEEKEND", "CONFIGURED_CLOSED_DATE"}
+        ):
             skipped_count = len(instruments)
             status = "MARKET_CLOSED"
             reconciliation = reconcile_daily_market(
@@ -478,7 +568,7 @@ class PostCloseUpdater:
                 skipped_count=skipped_count,
                 retry_count=0,
                 point_count=0,
-                failure_codes=("MARKET_CLOSED",),
+                failure_codes=(context.target_date_reason or "MARKET_CLOSED",),
                 snapshot_result=snapshot_result,
                 reconciliation=reconciliation,
                 now=now,
@@ -493,7 +583,7 @@ class PostCloseUpdater:
                 0,
                 0,
                 0,
-                ("MARKET_CLOSED",),
+                (context.target_date_reason or "MARKET_CLOSED",),
                 snapshot_result.get("topicCount", 0),
                 snapshot_result.get("status", "FAILED"),
                 local_date.isoformat(),
@@ -747,7 +837,13 @@ class PostCloseUpdater:
                     "status": "BLOCKED_DAILY_MARKET_NOT_READY",
                 }
             )
-            final_failure_codes = tuple(sorted(set(failure_codes))) or reconciliation.reason_codes
+            final_failure_codes = tuple(sorted(set(failure_codes)))
+            if status == "SUCCESS" and not self._formal_snapshot_ready(snapshot_result):
+                status = "PARTIAL"
+                final_failure_codes = tuple(
+                    sorted({*final_failure_codes, "FORMAL_TOPIC_SNAPSHOT_NOT_READY"})
+                )
+            final_failure_codes = final_failure_codes or reconciliation.reason_codes
             if not final_failure_codes and skipped_count:
                 final_failure_codes = ("NO_TRADING_DAY_DATA",)
             self._finish_with_retry(
@@ -783,6 +879,49 @@ class PostCloseUpdater:
             local_date.isoformat(),
         )
 
+    @staticmethod
+    def _formal_snapshot_ready(snapshot_result: Mapping[str, Any]) -> bool:
+        formal_state = snapshot_result.get("formalTopicDailyState") or {}
+        formal_readback = snapshot_result.get("formalTopicSnapshotReadback") or {}
+        return (
+            snapshot_result.get("status") == "SUCCESS"
+            and formal_state.get("status") == "SUCCESS"
+            and formal_readback.get("status") == "PASS"
+        )
+
+    def _formal_snapshot_readback(self, snapshot_date: date) -> dict[str, Any]:
+        rows = self.session.scalars(
+            select(TopicSnapshot).where(
+                TopicSnapshot.snapshot_date == snapshot_date,
+                TopicSnapshot.publication_mode == "FORMAL",
+                TopicSnapshot.membership_mode == "PIT_FORMAL",
+                TopicSnapshot.trading_day_state == "TRADING",
+                TopicSnapshot.generated_state == "GENERATED",
+                TopicSnapshot.finality_state == "FINAL",
+                TopicSnapshot.publication_state == "PUBLISHED",
+                TopicSnapshot.superseded_by_snapshot_id.is_(None),
+            )
+        ).all()
+        topic_ids = [row.topic_id for row in rows]
+        valid = bool(rows) and len(topic_ids) == len(set(topic_ids)) and all(
+            row.membership_snapshot_id
+            and row.membership_snapshot_hash
+            and row.relation_version
+            and row.source_artifact_hash
+            and row.lineage_hash
+            for row in rows
+        )
+        return {
+            "status": "PASS" if valid else "FAIL",
+            "snapshotDate": snapshot_date.isoformat(),
+            "rowCount": len(rows),
+            "distinctTopicCount": len(set(topic_ids)),
+            "authority": "topicpilot.topic_snapshots",
+            "publicationMode": "FORMAL",
+            "publicationState": "PUBLISHED",
+            "membershipMode": "PIT_FORMAL",
+        }
+
     def _run_snapshot(
         self,
         snapshot_date: date,
@@ -812,6 +951,9 @@ class PostCloseUpdater:
                         "writes": formal_state["writes"],
                         "preBoundaryBackfill": formal_state["preBoundaryBackfill"],
                     }
+                    result["formalTopicSnapshotReadback"] = self._formal_snapshot_readback(
+                        snapshot_date
+                    )
                 except Exception as exc:
                     # Formal PIT materialization remains additive shadow work.
                     # A missing authority/migration or transient failure must
@@ -902,7 +1044,7 @@ class PostCloseUpdater:
             "AVAILABLE"
             if status in {"SUCCESS", "PARTIAL"}
             else "NOT_CALLED"
-            if status == "MARKET_CLOSED" and not failure_codes
+            if status == "MARKET_CLOSED"
             else "ERROR"
         )
         run.failure_code = failure_codes[0] if failure_codes else None
@@ -922,6 +1064,49 @@ class PostCloseUpdater:
                 "topicSnapshot": snapshot_result or {"status": "NOT_RUN"},
             }
         )
+        reconciliation_payload = metadata.get("dailyMarketReconciliation") or {}
+        snapshot_payload = metadata.get("topicSnapshot") or {}
+        formal_state = snapshot_payload.get("formalTopicDailyState") or {}
+        formal_readback = snapshot_payload.get("formalTopicSnapshotReadback") or {}
+        is_market_closed = status == "MARKET_CLOSED"
+        metadata["forwardAutomation"] = {
+            "status": (
+                "SUCCESS"
+                if status == "SUCCESS"
+                and reconciliation_payload.get("downstreamReady") is True
+                and self._formal_snapshot_ready(snapshot_payload)
+                else "MARKET_CLOSED"
+                if status == "MARKET_CLOSED"
+                else "BLOCKED"
+            ),
+            "targetDate": reconciliation_payload.get("tradeDate"),
+            "formalEodPublication": (
+                "NOT_RUN"
+                if is_market_closed
+                else "PASS"
+                if reconciliation_payload.get("downstreamReady") is True
+                else "NOT_RUN"
+            ),
+            "formalEodReadback": (
+                "NOT_RUN"
+                if is_market_closed
+                else "PASS"
+                if reconciliation_payload.get("downstreamReady") is True
+                else "FAIL"
+            ),
+            "formalTopicSnapshotPublication": (
+                "NOT_RUN"
+                if is_market_closed
+                else "PASS"
+                if formal_state.get("status") == "SUCCESS"
+                else "FAIL"
+            ),
+            "formalTopicSnapshotReadback": (
+                "NOT_RUN"
+                if is_market_closed
+                else formal_readback.get("status", "FAIL")
+            ),
+        }
         run.metadata_payload = _json_safe(metadata)
         run.completed_at = now
         run.heartbeat_at = now

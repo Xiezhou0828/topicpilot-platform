@@ -13,6 +13,7 @@ from sqlalchemy.orm import Session
 from topicpilot_api.config import get_settings
 from topicpilot_api.live.collector import LiveCollector
 from topicpilot_api.live.config import LiveRuntimeConfig
+from topicpilot_api.live.daily_forward import DailyForwardRunner
 from topicpilot_api.live.logging import log_event
 from topicpilot_api.live.orchestrator import PersistentQuoteWorker
 from topicpilot_api.live.persistence import LiveRepository
@@ -24,7 +25,11 @@ from topicpilot_api.market_data.registry import build_live_provider_router
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--mode", choices=("auto", "intraday", "post-close"), default="auto")
+    parser.add_argument(
+        "--mode",
+        choices=("auto", "intraday", "post-close", "daily-forward"),
+        default="auto",
+    )
     parser.add_argument("--once", action="store_true", help="execute one decision and exit")
     parser.add_argument(
         "--run-date",
@@ -59,6 +64,8 @@ def main(argv: list[str] | None = None) -> int:
         config.closed_dates,
     )
     decision = args.mode.upper().replace("-", "_")
+    if decision == "DAILY_FORWARD":
+        decision = "POST_CLOSE"
     if decision == "AUTO":
         state = scheduler_clock.status()
         decision = (
@@ -90,14 +97,22 @@ def main(argv: list[str] | None = None) -> int:
             repository.refresh_tracking_universe()
         collector = LiveCollector(repository, provider_router, config)
         post_close = PostCloseUpdater(session, config)
+        daily_forward = DailyForwardRunner(session, config, updater=post_close)
         worker = PersistentQuoteWorker(provider_router, config=config)
         scheduler = LiveScheduler(
             collector,
             config,
             worker=worker,
-            post_close_runner=lambda: post_close.run_once(
-                run_date=args.run_date,
-                allow_terminal_recovery=args.recover,
+            post_close_runner=(
+                lambda: post_close.run_once(
+                    run_date=args.run_date,
+                    allow_terminal_recovery=args.recover,
+                )
+                if args.recover
+                else lambda: daily_forward.run_once(
+                    run_date=args.run_date,
+                    replay=args.run_date is not None,
+                )
             ),
         )
         try:
@@ -105,10 +120,13 @@ def main(argv: list[str] | None = None) -> int:
                 if decision == "INTRADAY":
                     worker.start()
                 result = scheduler.run_once(decision, enforce_session=decision == "INTRADAY")
+                result_payload = (
+                    result.to_dict() if callable(getattr(result, "to_dict", None)) else result
+                )
                 log_event(
                     logging.getLogger("topicpilot.live.cli"),
                     "scheduler_complete",
-                    result=result,
+                    result=result_payload,
                     providerHealth=provider_router.health_snapshot(),
                 )
                 return (

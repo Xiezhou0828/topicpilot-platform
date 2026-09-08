@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import os
 from dataclasses import dataclass
-from datetime import date
+from datetime import date, time
 
 
 def _int(name: str, default: int, *, minimum: int = 0) -> int:
@@ -51,6 +51,7 @@ class LiveRuntimeConfig:
     retry_backoff_seconds: float = 2.0
     session_open: str = "09:00"
     session_close: str = "13:30"
+    post_close_start: str = "13:30"
     moving_average_period: int = 60
     reference_data_version: str = "tw-reference-v1"
     session_code: str = "REGULAR"
@@ -136,6 +137,7 @@ class LiveRuntimeConfig:
             "timezone_name",
             "session_open",
             "session_close",
+            "post_close_start",
             "reference_data_version",
             "session_code",
             "calendar_code",
@@ -147,6 +149,16 @@ class LiveRuntimeConfig:
         ):
             if not getattr(self, name).strip():
                 raise ValueError(f"{name} must be non-empty")
+        try:
+            open_time = time.fromisoformat(self.session_open)
+            close_time = time.fromisoformat(self.session_close)
+            post_close_time = time.fromisoformat(self.post_close_start)
+        except ValueError as exc:
+            raise ValueError("session times must be valid ISO times") from exc
+        if open_time >= close_time:
+            raise ValueError("session_open must precede session_close")
+        if post_close_time < close_time:
+            raise ValueError("post_close_start must not precede session_close")
 
     @classmethod
     def from_environment(cls) -> LiveRuntimeConfig:
@@ -160,6 +172,7 @@ class LiveRuntimeConfig:
             retry_backoff_seconds=_float("TOPICPILOT_LIVE_RETRY_BACKOFF_SECONDS", 2.0, minimum=0.0),
             session_open=os.getenv("TOPICPILOT_LIVE_SESSION_OPEN", "09:00").strip(),
             session_close=os.getenv("TOPICPILOT_LIVE_SESSION_CLOSE", "13:30").strip(),
+            post_close_start=os.getenv("TOPICPILOT_LIVE_POST_CLOSE_START", "13:30").strip(),
             moving_average_period=_int("TOPICPILOT_LIVE_60MA_PERIOD", 60, minimum=1),
             reference_data_version=os.getenv(
                 "TOPICPILOT_LIVE_REFERENCE_DATA_VERSION", "tw-reference-v1"
@@ -251,6 +264,7 @@ class LiveRuntimeConfig:
             "retryBackoffSeconds": self.retry_backoff_seconds,
             "sessionOpen": self.session_open,
             "sessionClose": self.session_close,
+            "postCloseStart": self.post_close_start,
             "movingAveragePeriod": self.moving_average_period,
             "referenceDataVersion": self.reference_data_version,
             "sessionCode": self.session_code,
