@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import UTC, date, datetime
 
 from topicpilot_api.orm import TopicLifecycleResult
 from topicpilot_api.production_read_model import _lifecycle_unavailable
@@ -42,6 +42,44 @@ def test_api_contract_keeps_lifecycle_evidence_backend_owned():
     dumped = value.model_dump(by_alias=True)
     assert dumped["currentStage"] == "MAIN_RISE"
     assert dumped["evidence"]["leadership"]["leaderSemanticAvailable"] is False
+
+
+def test_api_contract_exposes_optional_formal_publication_metadata():
+    as_of_at = datetime(2026, 8, 31, 13, 30, tzinfo=UTC)
+    value = TopicLifecycleRead(
+        currentStage=None,
+        currentStageEnteredAt=None,
+        currentStageTradingDays=None,
+        dataStatus="NOT_AVAILABLE",
+        asOfAt=as_of_at,
+        publicationStatus="UNAVAILABLE",
+        contractVersion="topic-lifecycle-v1.3-formal.v1",
+        calculationVersion="topic-lifecycle-v1.3-formal-evaluator.v1",
+        evaluationMode="FORMAL",
+    )
+
+    dumped = value.model_dump(by_alias=True)
+    assert dumped["asOfAt"] == as_of_at
+    assert dumped["publicationStatus"] == "UNAVAILABLE"
+    assert dumped["contractVersion"] == "topic-lifecycle-v1.3-formal.v1"
+    assert dumped["calculationVersion"] == "topic-lifecycle-v1.3-formal-evaluator.v1"
+    assert dumped["evaluationMode"] == "FORMAL"
+
+    schema = TopicLifecycleRead.model_json_schema(by_alias=True)
+    assert {
+        "asOfAt",
+        "publicationStatus",
+        "contractVersion",
+        "calculationVersion",
+        "evaluationMode",
+    } <= schema["properties"].keys()
+    assert not {
+        "asOfAt",
+        "publicationStatus",
+        "contractVersion",
+        "calculationVersion",
+        "evaluationMode",
+    } & set(schema["required"])
 
 
 def test_read_model_fails_closed_when_shadow_storage_is_missing():
