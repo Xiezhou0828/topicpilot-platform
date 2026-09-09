@@ -473,6 +473,7 @@ class PostCloseUpdater:
         recovery_of_run_id: Any | None = None,
         scope: str = "FULL",
         target_symbols: Collection[str] = (),
+        execution_mode: str = "MANUAL",
     ) -> LiveCollectorRun:
         metadata = {
             "runType": "POST_CLOSE",
@@ -487,6 +488,7 @@ class PostCloseUpdater:
             "sessionCode": self.config.session_code,
             "calendarCode": self.config.calendar_code,
             "postCloseStart": self.config.post_close_start,
+            "executionMode": execution_mode,
             "calendarAuthority": "ACTIVE_REFERENCE_PREFLIGHT",
             "lifecycleAuthority": "ACTIVE_REFERENCE_PREFLIGHT",
             "batchSize": self.config.history_batch_size,
@@ -636,10 +638,13 @@ class PostCloseUpdater:
         run_date: date | None = None,
         allow_terminal_recovery: bool = False,
         target_symbols: Collection[str] | None = None,
+        execution_mode: str = "MANUAL",
     ) -> PostCloseRunResult:
         if allow_terminal_recovery and run_date is None:
             raise ValueError("POST_CLOSE_RECOVERY_REQUIRES_EXPLICIT_RUN_DATE")
         now = self._now()
+        if execution_mode not in {"SCHEDULED", "MANUAL", "RECOVERY"}:
+            raise ValueError("invalid POST_CLOSE execution_mode")
         if run_date is None:
             local_date = now.astimezone(self.session_clock.timezone).date()
         else:
@@ -797,6 +802,7 @@ class PostCloseUpdater:
             recovery_of_run_id=recovery_of_run_id,
             scope="TARGETED" if is_targeted else "FULL",
             target_symbols=normalized_target_symbols,
+            execution_mode=execution_mode,
         )
         run_id = run.id
         failure_codes: list[str] = []

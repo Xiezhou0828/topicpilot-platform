@@ -30,10 +30,10 @@ class FakeUpdater:
             config.closed_dates,
         )
         self.result_status = result_status
-        self.calls: list[date] = []
+        self.calls: list[tuple[date, str]] = []
 
-    def run_once(self, *, run_date: date):
-        self.calls.append(run_date)
+    def run_once(self, *, run_date: date, execution_mode: str = "MANUAL"):
+        self.calls.append((run_date, execution_mode))
         return PostCloseRunResult(
             "run-1",
             self.result_status,
@@ -85,7 +85,7 @@ def test_daily_forward_marks_reference_calendar_holiday_closed_without_provider_
     assert result.status == "MARKET_CLOSED"
     assert result.target_date == date(2026, 9, 25)
     assert result.next_session_date == date(2026, 9, 29)
-    assert updater.calls == [date(2026, 9, 25)]
+    assert updater.calls == [(date(2026, 9, 25), "MANUAL")]
 
 
 def test_daily_forward_replay_is_bounded_and_uses_existing_post_close_chain():
@@ -96,7 +96,7 @@ def test_daily_forward_replay_is_bounded_and_uses_existing_post_close_chain():
     assert result.status == "SUCCESS"
     assert result.replay is True
     assert result.target_date == date(2026, 8, 28)
-    assert updater.calls == [date(2026, 8, 28)]
+    assert updater.calls == [(date(2026, 8, 28), "MANUAL")]
 
 
 def test_daily_forward_preserves_fail_closed_updater_failure():
@@ -108,7 +108,16 @@ def test_daily_forward_preserves_fail_closed_updater_failure():
 
     assert result.status == "PARTIAL"
     assert result.reason_codes == ("MARKET_CLOSED",)
-    assert updater.calls == [date(2026, 8, 31)]
+    assert updater.calls == [(date(2026, 8, 31), "MANUAL")]
+
+
+def test_daily_forward_marks_natural_worker_run_as_scheduled():
+    runner, updater = _runner(datetime(2026, 8, 31, 9, 0, tzinfo=UTC))
+
+    result = runner.run_once(execution_mode="SCHEDULED")
+
+    assert result.status == "SUCCESS"
+    assert updater.calls == [(date(2026, 8, 31), "SCHEDULED")]
 
 
 def test_daily_forward_result_is_deterministically_serializable():

@@ -96,6 +96,7 @@ class DailyForwardRunner:
         *,
         run_date: date | None = None,
         replay: bool = False,
+        execution_mode: str = "MANUAL",
     ) -> DailyForwardRunResult:
         now = self._now()
         local_date = now.astimezone(self.updater.session_clock.timezone).date()
@@ -131,7 +132,10 @@ class DailyForwardRunner:
 
         next_session = self._next_session(target_date)
         if not context.target_date_is_session:
-            result = self.updater.run_once(run_date=target_date)
+            result = self.updater.run_once(
+                run_date=target_date,
+                execution_mode=execution_mode,
+            )
             return DailyForwardRunResult(
                 result.status,
                 target_date,
@@ -151,7 +155,10 @@ class DailyForwardRunner:
                 ("POST_CLOSE_WINDOW_NOT_REACHED",),
             )
 
-        result = self.updater.run_once(run_date=target_date)
+        result = self.updater.run_once(
+            run_date=target_date,
+            execution_mode=execution_mode,
+        )
         return DailyForwardRunResult(
             result.status,
             target_date,

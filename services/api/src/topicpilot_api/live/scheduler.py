@@ -85,6 +85,14 @@ class LiveScheduler:
                         worker_started = False
                     local_date = self.session_clock.status(self.clock()).local_time.date()
                     if completed_post_close_date != local_date:
+                        log_event(
+                            self.logger,
+                            "post_close_scheduled_trigger",
+                            targetDate=local_date.isoformat(),
+                            timezone=self.config.timezone_name,
+                            postCloseStart=self.config.post_close_start,
+                            executionMode="SCHEDULED",
+                        )
                         try:
                             result = self.run_once("POST_CLOSE", enforce_session=False)
                         except Exception as exc:
@@ -99,6 +107,13 @@ class LiveScheduler:
                             # date-keyed run before it can start another one.
                         else:
                             run_status = getattr(result, "status", None)
+                            log_event(
+                                self.logger,
+                                "post_close_scheduled_complete",
+                                targetDate=local_date.isoformat(),
+                                status=run_status,
+                                executionMode="SCHEDULED",
+                            )
                             if result is None or run_status in {None, "SUCCESS", "MARKET_CLOSED"}:
                                 self._refresh_tracking()
                                 completed_post_close_date = local_date

@@ -144,12 +144,14 @@ def main(argv: list[str] | None = None) -> int:
                     run_date=args.run_date,
                     allow_terminal_recovery=args.recover,
                     target_symbols=args.symbols,
+                    execution_mode="RECOVERY" if args.recover else "MANUAL",
                 )
         else:
             def post_close_runner() -> object:
                 return daily_forward.run_once(
                     run_date=args.run_date,
                     replay=args.run_date is not None,
+                    execution_mode="MANUAL" if args.once else "SCHEDULED",
                 )
         scheduler = LiveScheduler(
             collector,
