@@ -1,0 +1,13 @@
+{
+  "authority": "MOPS_OFFICIAL_MAJOR_ANNOUNCEMENT",
+  "document_date": "2026-08-20",
+  "document_title": "6129 普誠—公告減資彌補虧損換發新股停止股東名簿記載變更、舊股票停止櫃檯買賣及新股票開始櫃檯買賣日期",
+  "instrument_code": "6129",
+  "market_code": "TWO",
+  "last_trading_date": "2026-09-02",
+  "suspended_from": "2026-09-03",
+  "suspended_to": "2026-09-11",
+  "resumption_date": "2026-09-14",
+  "source_url": "https://mops.twse.com.tw/mops/web/t05st01",
+  "source_note": "The announcement states that the old shares stop OTC trading from 2026-09-03 through 2026-09-11 and the new shares begin OTC trading on 2026-09-14. The same identity is retained; successor identity handling is not inferred."
+}
