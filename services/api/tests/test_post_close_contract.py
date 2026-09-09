@@ -8,6 +8,7 @@ from uuid import uuid4
 
 import pytest
 
+from topicpilot_api.instrument_universe import InstrumentLifecycle, InstrumentUniverseRow
 from topicpilot_api.live.cli import _symbols_argument, build_parser
 from topicpilot_api.live.post_close import (
     PostClosePreconditionError,
@@ -106,6 +107,40 @@ def test_targeted_symbols_fail_closed_when_not_in_date_effective_universe():
         )
 
     assert exc_info.value.code == "TARGET_SYMBOL_NOT_IN_DATE_EFFECTIVE_UNIVERSE"
+
+
+def test_targeted_symbols_can_reach_lifecycle_authorized_no_trade_identity():
+    context = SimpleNamespace(
+        universe_rows=(
+            InstrumentUniverseRow(
+                market_code="TWO",
+                instrument_code="6129",
+                instrument_type="EQUITY",
+                is_active=True,
+                lifecycle_events=(
+                    InstrumentLifecycle(
+                        status_code="SUSPENDED",
+                        effective_from=date(2026, 9, 3),
+                        effective_to=date(2026, 9, 11),
+                        evidence_id="MOPS-TWO-6129-SUSPENDED-20260903",
+                    ),
+                ),
+            ),
+        )
+    )
+
+    targetable = PostCloseUpdater._targetable_universe(
+        context,
+        date(2026, 9, 4),
+        {"TPE": ("2330",), "TWO": ()},
+    )
+    selected, normalized = PostCloseUpdater._resolve_target_symbols(
+        targetable,
+        ("TWO:6129",),
+    )
+
+    assert selected == {"TWO": ("6129",)}
+    assert normalized == ("TWO:6129",)
 
 
 def test_targeted_finalization_does_not_promote_full_snapshot():

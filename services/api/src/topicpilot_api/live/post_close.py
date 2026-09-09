@@ -18,6 +18,11 @@ from sqlalchemy.orm import Session
 
 from topicpilot_api.daily_market import DailyMarketReconciliation, reconcile_daily_market
 from topicpilot_api.home_v2_publication import materialize_home_v2
+from topicpilot_api.instrument_universe import (
+    INELIGIBLE_LIFECYCLE_STATUSES,
+    evaluate_instrument_eligibility,
+    resolve_lifecycle_status,
+)
 from topicpilot_api.market_data.aggregate_contract import fetch_official_market_aggregates
 from topicpilot_api.market_data.index_contract import fetch_official_market_indexes
 from topicpilot_api.market_data.ingestion import (
@@ -288,6 +293,36 @@ class PostCloseUpdater:
             },
             normalized,
         )
+
+    @staticmethod
+    def _targetable_universe(
+        context: Any,
+        run_date: date,
+        eligible_by_market: Mapping[str, Collection[str]],
+    ) -> Mapping[str, tuple[str, ...]]:
+        """Include lifecycle-authorized no-trade identities for targeted runs.
+
+        Full post-close collection deliberately uses only eligible identities.
+        An explicit targeted retry also needs to reach an active instrument that
+        is suspended, delisted, or terminated on the requested date so the
+        ingestion contract can persist its authoritative no-trade state.
+        """
+
+        grouped: dict[str, set[str]] = {
+            market_code: set(codes)
+            for market_code, codes in eligible_by_market.items()
+        }
+        for row in context.universe_rows:
+            if row.market_code not in grouped:
+                continue
+            eligibility = evaluate_instrument_eligibility(row, run_date)
+            lifecycle_status = resolve_lifecycle_status(row, run_date)
+            if eligibility.eligible or lifecycle_status in INELIGIBLE_LIFECYCLE_STATUSES:
+                grouped[row.market_code].add(row.instrument_code)
+        return {
+            market_code: tuple(sorted(codes))
+            for market_code, codes in grouped.items()
+        }
 
     def _runs_for_date(self, run_date: date) -> list[LiveCollectorRun]:
         """Load POST_CLOSE runs for the requested market date.
@@ -617,8 +652,13 @@ class PostCloseUpdater:
         expected_by_market = {
             market.market_code: tuple(market.instrument_codes) for market in context.markets
         }
+        target_universe = (
+            self._targetable_universe(context, local_date, expected_by_market)
+            if target_symbols is not None
+            else expected_by_market
+        )
         selected_by_market, normalized_target_symbols = self._resolve_target_symbols(
-            expected_by_market,
+            target_universe,
             target_symbols,
         )
         is_targeted = selected_by_market is not None

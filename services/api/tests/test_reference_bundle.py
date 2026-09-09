@@ -36,7 +36,9 @@ def test_committed_tw_reference_bundle_is_derived_and_contains_known_evidence():
     assert bundle.evidence["suspensions"]["6806"]["evidenceId"] == "TWSE-DELISTED-6806-20260623"
     assert bundle.evidence["suspensions"]["1563"]["events"][0]["status"] == "SUSPENDED"
     assert bundle.evidence["suspensions"]["6129"]["events"][0]["status"] == "SUSPENDED"
-    assert bundle.evidence["suspensions"]["6129"]["events"][0]["sourceDocument"].startswith("6129 普誠")
+    assert bundle.evidence["suspensions"]["6129"]["events"][0][
+        "sourceDocument"
+    ].startswith("6129 普誠")
     by_identity = {
         (row["market_code"], row["instrument_code"], row["status_code"]): row
         for row in bundle.instrument_lifecycles
