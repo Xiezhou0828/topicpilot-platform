@@ -91,6 +91,25 @@ class DailyForwardRunner:
                 return candidate
         return None
 
+    def _latest_closed_session(self, now: datetime) -> tuple[date | None, tuple[str, ...]]:
+        local_now = now.astimezone(self.updater.session_clock.timezone)
+        close_time = time.fromisoformat(self.config.session_close)
+        latest_possible = local_now.date()
+        if local_now.time() < close_time:
+            latest_possible -= timedelta(days=1)
+
+        for offset in range(0, 15):
+            candidate = latest_possible - timedelta(days=offset)
+            try:
+                context = self._context(candidate)
+            except Exception as exc:
+                return None, (f"REFERENCE_PREFLIGHT_{type(exc).__name__}",)
+            if not self._context_ready(context):
+                return None, ("REFERENCE_PREFLIGHT_FAILED",)
+            if context.target_date_is_session:
+                return candidate, ()
+        return None, ("NO_ELIGIBLE_CLOSED_SESSION",)
+
     def run_once(
         self,
         *,
@@ -100,7 +119,17 @@ class DailyForwardRunner:
     ) -> DailyForwardRunResult:
         now = self._now()
         local_date = now.astimezone(self.updater.session_clock.timezone).date()
-        target_date = run_date or local_date
+        if run_date is None:
+            target_date, resolution_reasons = self._latest_closed_session(now)
+            if target_date is None:
+                return DailyForwardRunResult(
+                    "BLOCKED",
+                    None,
+                    None,
+                    resolution_reasons,
+                )
+        else:
+            target_date = run_date
         is_replay = replay or (run_date is not None and target_date != local_date)
 
         try:
@@ -147,7 +176,7 @@ class DailyForwardRunner:
 
         local_time = now.astimezone(self.updater.session_clock.timezone).time()
         post_close_start = time.fromisoformat(self.config.post_close_start)
-        if not is_replay and (target_date != local_date or local_time < post_close_start):
+        if not is_replay and local_time < post_close_start:
             return DailyForwardRunResult(
                 "WAITING_FOR_POST_CLOSE",
                 target_date,

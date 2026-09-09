@@ -348,6 +348,9 @@ class PostCloseUpdater:
                         LiveCollectorRun.metadata_payload["runDate"].as_string()
                         == run_date.isoformat(),
                         and_(
+                            LiveCollectorRun.metadata_payload["runDate"]
+                            .as_string()
+                            .is_(None),
                             LiveCollectorRun.started_at >= local_start,
                             LiveCollectorRun.started_at < local_end,
                         ),

@@ -134,6 +134,20 @@ def test_scheduler_decides_wait_intraday_and_post_close():
     assert scheduler.decide(datetime(2026, 8, 9, 1, 0, tzinfo=UTC)) == "WAIT"
 
 
+def test_scheduler_allows_after_midnight_daily_schedule():
+    config = LiveRuntimeConfig(post_close_start="04:30")
+    collector = LiveCollector(
+        FakeRepository(_item()),
+        RetryProvider(),
+        config,
+        clock=lambda: datetime(2026, 9, 9, 20, 30, tzinfo=UTC),
+    )
+    scheduler = LiveScheduler(collector, config)
+
+    assert scheduler.decide(datetime(2026, 9, 9, 20, 29, tzinfo=UTC)) == "WAIT"
+    assert scheduler.decide(datetime(2026, 9, 9, 20, 30, tzinfo=UTC)) == "POST_CLOSE"
+
+
 def test_scheduler_routes_post_close_to_official_update_runner():
     repository = FakeRepository(_item())
     collector = LiveCollector(

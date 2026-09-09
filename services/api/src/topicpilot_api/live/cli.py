@@ -134,6 +134,7 @@ def main(argv: list[str] | None = None) -> int:
         # date-ineligible identity such as TPE:6806.
         if decision != "POST_CLOSE":
             repository.refresh_tracking_universe()
+            session.commit()
         collector = LiveCollector(repository, provider_router, config)
         post_close = PostCloseUpdater(session, config)
         daily_forward = DailyForwardRunner(session, config, updater=post_close)

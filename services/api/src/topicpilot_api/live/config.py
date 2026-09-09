@@ -152,13 +152,13 @@ class LiveRuntimeConfig:
         try:
             open_time = time.fromisoformat(self.session_open)
             close_time = time.fromisoformat(self.session_close)
-            post_close_time = time.fromisoformat(self.post_close_start)
+            time.fromisoformat(self.post_close_start)
         except ValueError as exc:
             raise ValueError("session times must be valid ISO times") from exc
         if open_time >= close_time:
             raise ValueError("session_open must precede session_close")
-        if post_close_time < close_time:
-            raise ValueError("post_close_start must not precede session_close")
+        # The daily automation may be scheduled after midnight to process the
+        # latest session whose canonical close has already elapsed.
 
     @classmethod
     def from_environment(cls) -> LiveRuntimeConfig:

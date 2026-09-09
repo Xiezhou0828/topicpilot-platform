@@ -48,10 +48,8 @@ class LiveScheduler:
         status = self.session_clock.status(now or self.clock())
         if status.state == SessionState.OPEN:
             return "INTRADAY"
-        if status.reason in {"WEEKEND", "CONFIGURED_CLOSED_DATE"}:
-            return "WAIT"
         local = status.local_time
-        if self.post_close_start <= local.time() and local.weekday() < 5:
+        if self.post_close_start <= local.time():
             return "POST_CLOSE"
         return "WAIT"
 
@@ -88,7 +86,7 @@ class LiveScheduler:
                         log_event(
                             self.logger,
                             "post_close_scheduled_trigger",
-                            targetDate=local_date.isoformat(),
+                            schedulerDate=local_date.isoformat(),
                             timezone=self.config.timezone_name,
                             postCloseStart=self.config.post_close_start,
                             executionMode="SCHEDULED",
@@ -110,8 +108,14 @@ class LiveScheduler:
                             log_event(
                                 self.logger,
                                 "post_close_scheduled_complete",
-                                targetDate=local_date.isoformat(),
+                                schedulerDate=local_date.isoformat(),
+                                targetDate=(
+                                    result.target_date.isoformat()
+                                    if getattr(result, "target_date", None)
+                                    else None
+                                ),
                                 status=run_status,
+                                reasonCodes=list(getattr(result, "reason_codes", ())),
                                 executionMode="SCHEDULED",
                             )
                             if result is None or run_status in {None, "SUCCESS", "MARKET_CLOSED"}:

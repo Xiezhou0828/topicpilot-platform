@@ -51,8 +51,13 @@ class FakeUpdater:
         )
 
 
-def _runner(clock_value: datetime, *, result_status: str = "SUCCESS"):
-    config = LiveRuntimeConfig()
+def _runner(
+    clock_value: datetime,
+    *,
+    result_status: str = "SUCCESS",
+    post_close_start: str = "13:30",
+):
+    config = LiveRuntimeConfig(post_close_start=post_close_start)
     updater = FakeUpdater(config, result_status=result_status)
     runner = DailyForwardRunner(
         None,
@@ -70,9 +75,36 @@ def test_daily_forward_waits_until_configured_post_close_start():
     result = runner.run_once()
 
     assert result.status == "WAITING_FOR_POST_CLOSE"
-    assert result.target_date == date(2026, 8, 31)
-    assert result.next_session_date == date(2026, 9, 1)
+    assert result.target_date == date(2026, 8, 28)
+    assert result.next_session_date == date(2026, 8, 31)
     assert updater.calls == []
+
+
+def test_daily_forward_after_midnight_targets_latest_closed_session():
+    runner, updater = _runner(
+        datetime(2026, 9, 9, 20, 30, tzinfo=UTC),
+        post_close_start="04:30",
+    )
+
+    result = runner.run_once()
+
+    assert result.status == "SUCCESS"
+    assert result.target_date == date(2026, 9, 9)
+    assert result.replay is False
+    assert updater.calls == [(date(2026, 9, 9), "MANUAL")]
+
+
+def test_daily_forward_restart_after_close_targets_same_day_idempotently():
+    runner, updater = _runner(datetime(2026, 9, 9, 9, 5, tzinfo=UTC))
+
+    first = runner.run_once()
+    second = runner.run_once()
+
+    assert first.target_date == second.target_date == date(2026, 9, 9)
+    assert updater.calls == [
+        (date(2026, 9, 9), "MANUAL"),
+        (date(2026, 9, 9), "MANUAL"),
+    ]
 
 
 def test_daily_forward_marks_reference_calendar_holiday_closed_without_provider_call():
@@ -83,9 +115,9 @@ def test_daily_forward_marks_reference_calendar_holiday_closed_without_provider_
     result = runner.run_once()
 
     assert result.status == "MARKET_CLOSED"
-    assert result.target_date == date(2026, 9, 25)
+    assert result.target_date == date(2026, 9, 24)
     assert result.next_session_date == date(2026, 9, 29)
-    assert updater.calls == [(date(2026, 9, 25), "MANUAL")]
+    assert updater.calls == [(date(2026, 9, 24), "MANUAL")]
 
 
 def test_daily_forward_replay_is_bounded_and_uses_existing_post_close_chain():
@@ -127,8 +159,8 @@ def test_daily_forward_result_is_deterministically_serializable():
     second = runner.run_once().to_dict()
 
     assert first == second
-    assert first["targetDate"] == "2026-08-31"
-    assert first["nextSessionDate"] == "2026-09-01"
+    assert first["targetDate"] == "2026-08-28"
+    assert first["nextSessionDate"] == "2026-08-31"
 
 
 def test_post_close_success_is_reused_by_the_forward_run_key():
