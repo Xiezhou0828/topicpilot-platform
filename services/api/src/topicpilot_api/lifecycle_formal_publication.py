@@ -116,10 +116,9 @@ def input_snapshot_hash(
 def _active_leaf_topics(session: Session, as_of_date: date) -> list[Topic]:
     """Return the versioned formal Leaf identity scope.
 
-    Formal scope follows effective hierarchy child identities, rather than the
-    current catalog availability filter.  A disabled, renamed, or temporarily
-    unavailable Leaf therefore remains accounted for and fails closed instead
-    of disappearing from the Lifecycle denominator.
+    Formal scope follows active effective hierarchy child identities.  Missing
+    observation data never removes an active Leaf, while disabled/retired
+    predecessor identities cannot be counted as their canonical replacement.
     """
     topics = list(session.scalars(select(Topic).order_by(Topic.slug)))
     child_ids = set(
@@ -131,7 +130,11 @@ def _active_leaf_topics(session: Session, as_of_date: date) -> list[Topic]:
             )
         )
     )
-    leaves = [topic for topic in topics if topic.id in child_ids]
+    leaves = [
+        topic
+        for topic in topics
+        if topic.id in child_ids and topic.status not in ("DISABLED", "RETIRED")
+    ]
     if len(leaves) != FORMAL_SCOPE_EXPECTED_LEAVES:
         raise ValueError(
             "FORMAL_LEAF_SCOPE_RECONCILIATION_REQUIRED:"

@@ -271,7 +271,7 @@ def test_formal_leaf_scope_uses_all_107_effective_hierarchy_children():
     leaf_ids = [uuid4() for _ in range(107)]
     topics = [SimpleNamespace(id=parent_id, slug="parent", status="ACTIVE")]
     topics.extend(
-        SimpleNamespace(id=item, slug=f"leaf-{index:03}", status="DISABLED")
+        SimpleNamespace(id=item, slug=f"leaf-{index:03}", status="ENABLED")
         for index, item in enumerate(leaf_ids)
     )
 
@@ -288,6 +288,31 @@ def test_formal_leaf_scope_uses_all_107_effective_hierarchy_children():
     )
 
     assert [topic.id for topic in leaves] == leaf_ids
+
+
+def test_formal_leaf_scope_never_counts_obsolete_child_as_107th_leaf():
+    active_ids = [uuid4() for _ in range(106)]
+    obsolete_id = uuid4()
+    topics = [
+        *(SimpleNamespace(id=item, slug=f"leaf-{index:03}", status="ENABLED")
+          for index, item in enumerate(active_ids)),
+        SimpleNamespace(id=obsolete_id, slug="obsolete", status="RETIRED"),
+    ]
+
+    class _TopicSession:
+        def __init__(self):
+            self.calls = 0
+
+        def scalars(self, _statement):
+            self.calls += 1
+            return topics if self.calls == 1 else [*active_ids, obsolete_id]
+
+    try:
+        formal_publication._active_leaf_topics(_TopicSession(), date(2026, 8, 24))
+    except ValueError as exc:
+        assert "expected=107:actual=106" in str(exc)
+    else:
+        raise AssertionError("obsolete hierarchy child was counted in formal scope")
 
 
 def test_publisher_bootstraps_first_eligible_formal_observation_from_base(
