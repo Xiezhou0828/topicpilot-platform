@@ -16,9 +16,7 @@ from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
-from topicpilot_api.instrument_lifecycle_authority import NO_TRADE_STATUSES
 from topicpilot_api.lifecycle_formal_publication import read_formal_lifecycle
-from topicpilot_api.market_data.history import COVERED_NO_TRADE_STATUS_CODES
 from topicpilot_api.problems import NotFoundProblem
 
 TAIPEI = ZoneInfo("Asia/Taipei")

@@ -1,6 +1,7 @@
-"""Frozen Topic Lifecycle V0 contract vocabulary and availability boundary.
+"""Frozen Topic Lifecycle V1.2 contract vocabulary and availability boundary.
 
-This module records the existing V2 contract recovered by the WS1 preflight.
+This module records the V1.2 upstream stage vocabulary recovered by the WS1
+preflight and BASE ontology correction.
 It does not approve the provisional numeric policy or production publication.
 """
 
@@ -8,8 +9,15 @@ from __future__ import annotations
 
 from typing import Literal
 
-OWNER_LIFECYCLE_STAGES = ("萌芽", "發酵", "主升", "成熟", "衰退")
-BACKEND_LIFECYCLE_STAGES = ("SPROUTING", "FERMENTING", "MAIN_RISE", "MATURE", "DECLINING")
+OWNER_LIFECYCLE_STAGES = ("築底", "萌芽", "發酵", "主升", "成熟", "衰退")
+BACKEND_LIFECYCLE_STAGES = (
+    "BASE",
+    "SPROUTING",
+    "FERMENTING",
+    "MAIN_RISE",
+    "MATURE",
+    "DECLINING",
+)
 BACKEND_TO_OWNER_LIFECYCLE_STAGE = dict(
     zip(BACKEND_LIFECYCLE_STAGES, OWNER_LIFECYCLE_STAGES, strict=True)
 )

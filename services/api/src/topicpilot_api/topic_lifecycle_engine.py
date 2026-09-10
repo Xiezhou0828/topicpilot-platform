@@ -29,7 +29,7 @@ from topicpilot_api.topic_lifecycle_contract import (
 )
 from topicpilot_api.topic_snapshot_engine import MemberPriceEvidence, read_price_evidence
 
-SPROUTING, FERMENTING, MAIN_RISE, MATURE, DECLINING = BACKEND_LIFECYCLE_STAGES
+BASE, SPROUTING, FERMENTING, MAIN_RISE, MATURE, DECLINING = BACKEND_LIFECYCLE_STAGES
 LIFECYCLE_STAGES = BACKEND_LIFECYCLE_STAGES
 LIFECYCLE_CALCULATION_VERSION = "topic-lifecycle-shadow.v1"
 LIFECYCLE_POLICY_VERSION = "topic-lifecycle-policy.provisional.1"
@@ -261,9 +261,7 @@ def evaluate_lifecycle(
         leadership={
             "leaderSemanticAvailable": leader_semantic_available,
             "leaderProxy": (
-                "maxObservedChange"
-                if not leader_semantic_available
-                else "roleAwareObservedChange"
+                "maxObservedChange" if not leader_semantic_available else "roleAwareObservedChange"
             ),
             "leaderId": metrics.leader_id,
             "leaderRole": metrics.leader_role,
@@ -416,6 +414,30 @@ def evaluate_lifecycle(
     )
 
 
+# WS1 V1 replaces the previous aggregate-only evaluator.  Keep the persistence
+# adapter in this module for compatibility with existing callers, but bind all
+# public pure-evaluation names to the single identity-aware implementation.
+from topicpilot_api.topic_lifecycle_v1 import (  # noqa: E402,I001
+    LIFECYCLE_CALCULATION_VERSION as V1_LIFECYCLE_CALCULATION_VERSION,
+    LIFECYCLE_POLICY_VERSION as V1_LIFECYCLE_POLICY_VERSION,
+    LifecycleEvidence as V1LifecycleEvidence,
+    LifecycleInput as V1LifecycleInput,
+    LifecycleObservation as V1LifecycleObservation,
+    LifecyclePolicy as V1LifecyclePolicy,
+    LifecycleResult as V1LifecycleResult,
+    evaluate_lifecycle as evaluate_lifecycle_v1,
+)
+
+LIFECYCLE_CALCULATION_VERSION = V1_LIFECYCLE_CALCULATION_VERSION
+LIFECYCLE_POLICY_VERSION = V1_LIFECYCLE_POLICY_VERSION
+LifecycleEvidence = V1LifecycleEvidence  # noqa: F811
+LifecycleInput = V1LifecycleInput  # noqa: F811
+LifecycleObservation = V1LifecycleObservation  # noqa: F811
+LifecyclePolicy = V1LifecyclePolicy  # noqa: F811
+LifecycleResult = V1LifecycleResult  # noqa: F811
+evaluate_lifecycle = evaluate_lifecycle_v1  # noqa: F811
+
+
 def _date_rows(session: Session, evaluation_date: date) -> list[TopicSnapshot]:
     return list(
         session.scalars(
@@ -500,10 +522,7 @@ def _formal_snapshot_lineage(
         "supersessionState": (
             "ACTIVE" if snapshot.superseded_by_snapshot_id is None else "SUPERSEDED"
         ),
-        "memberFactHashes": {
-            str(fact.instrument_id): fact.fact_hash
-            for fact in facts
-        },
+        "memberFactHashes": {str(fact.instrument_id): fact.fact_hash for fact in facts},
     }, None
 
 
@@ -534,7 +553,16 @@ def _formal_observations(
         if abs(float(fact.change_pct) - canonical_change) > 0.0001:
             return None, "MEMBER_FACT_CANONICAL_BAR_MISMATCH"
         observations.append(
-            LifecycleObservation(str(fact.instrument_id), float(fact.change_pct), None)
+            LifecycleObservation(
+                str(fact.instrument_id),
+                float(fact.change_pct),
+                getattr(fact, "structural_role", None),
+                getattr(fact, "role_source", None),
+                float(fact.close) if getattr(fact, "close", None) is not None else None,
+                float(fact.previous_close)
+                if getattr(fact, "previous_close", None) is not None
+                else None,
+            )
         )
     return tuple(observations), None
 
@@ -568,9 +596,7 @@ class TopicLifecycleEngine:
                 "policyVersion": self.policy.version,
             }
         evidence = read_price_evidence(self.session, evaluation_date)
-        eligible_ids = (
-            set(eligible_instrument_ids) if eligible_instrument_ids is not None else None
-        )
+        eligible_ids = set(eligible_instrument_ids) if eligible_instrument_ids is not None else None
         snapshot_facts = _snapshot_fact_rows(self.session, snapshots)
         previous = self._previous_states(evaluation_date)
         persisted = 0
@@ -580,9 +606,11 @@ class TopicLifecycleEngine:
         for snapshot in snapshots:
             facts = snapshot_facts.get(snapshot.id, [])
             lineage, lineage_reason = _formal_snapshot_lineage(snapshot, facts)
-            observations, observation_reason = _formal_observations(
-                snapshot, facts, evidence, eligible_ids, evaluation_date
-            ) if lineage is not None else (None, None)
+            observations, observation_reason = (
+                _formal_observations(snapshot, facts, evidence, eligible_ids, evaluation_date)
+                if lineage is not None
+                else (None, None)
+            )
             block_reason = lineage_reason or observation_reason
             if block_reason is not None:
                 blocked_topics += 1
@@ -618,6 +646,7 @@ class TopicLifecycleEngine:
                 state.get("stage_trading_days"),
                 state.get("candidate_stage"),
                 int(state.get("candidate_streak") or 0),
+                state.get("state_memory"),
             )
             result = evaluate_lifecycle(self._with_calculation(value), self.policy)
             self._persist(snapshot, result, lineage or {})
@@ -631,11 +660,21 @@ class TopicLifecycleEngine:
                     "candidateStage": result.candidate_stage,
                     "finalStage": result.final_stage,
                     "stageEnteredAt": (
-                        result.stage_entered_at.isoformat()
-                        if result.stage_entered_at
-                        else None
+                        result.stage_entered_at.isoformat() if result.stage_entered_at else None
                     ),
                     "stageTradingDays": result.stage_trading_days,
+                    "cycleNumber": result.cycle_number,
+                    "mainRiseSegment": result.main_rise_segment,
+                    "segmentEntryDate": (
+                        result.segment_entry_date.isoformat() if result.segment_entry_date else None
+                    ),
+                    "segmentAnchorDate": (
+                        result.segment_anchor_date.isoformat()
+                        if result.segment_anchor_date
+                        else None
+                    ),
+                    "daysSinceMeaningfulExpansion": result.days_since_meaningful_expansion,
+                    "drawdownFromPeakPct": result.drawdown_from_peak_pct,
                     "evaluationStatus": result.evaluation_status,
                     "dataStatus": result.data_status,
                     "transitionDecision": result.transition_decision,
@@ -654,6 +693,7 @@ class TopicLifecycleEngine:
                 "stage_trading_days": result.stage_trading_days,
                 "candidate_stage": result.candidate_stage,
                 "candidate_streak": result.confirmation_state.get("candidateStreak", 0),
+                "state_memory": result.state_memory,
             }
         self.session.commit()
         return {
@@ -691,6 +731,7 @@ class TopicLifecycleEngine:
                 "stage_trading_days": row.stage_trading_days,
                 "candidate_stage": row.candidate_stage,
                 "candidate_streak": (row.confirmation_state or {}).get("candidateStreak", 0),
+                "state_memory": row.state_memory or {},
             }
         return states
 
@@ -734,6 +775,12 @@ class TopicLifecycleEngine:
             "snapshot_date": snapshot.snapshot_date,
             "average_change": _decimal(result.average_change),
             "coverage_pct": _decimal(result.coverage_pct, places=3),
+            "main_rise_segment": result.main_rise_segment,
+            "segment_entry_date": result.segment_entry_date,
+            "segment_anchor_date": result.segment_anchor_date,
+            "days_since_meaningful_expansion": result.days_since_meaningful_expansion,
+            "drawdown_from_peak_pct": _decimal(result.drawdown_from_peak_pct),
+            "state_memory": result.state_memory,
             "snapshot_id": snapshot.id,
             "snapshot_identity": lineage["snapshotIdentity"],
             "membership_snapshot_id": lineage["membershipSnapshotId"],
@@ -779,6 +826,7 @@ def _decimal(value: float | None, *, places: int = 4) -> Decimal | None:
 
 
 __all__ = [
+    "BASE",
     "DECLINING",
     "FERMENTING",
     "LIFECYCLE_CALCULATION_VERSION",
