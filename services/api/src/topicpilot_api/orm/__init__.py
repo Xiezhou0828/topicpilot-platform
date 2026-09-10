@@ -13,6 +13,7 @@ from . import (
     observation_timeline,
     score_projections,
     snapshots,
+    topic_authority,
     topics,
 )
 from .base import Base
@@ -38,6 +39,7 @@ from .models import (
 from .observation_timeline import *  # noqa: F403
 from .score_projections import *  # noqa: F403
 from .snapshots import *  # noqa: F403
+from .topic_authority import TopicAuthorityActivation
 from .topics import *  # noqa: F403
 
 __all__ = [
@@ -59,6 +61,7 @@ __all__ = [
     "ReferenceTradingStatus",
     "TopicLifecycleFormalResult",
     "TopicLifecycleResult",
+    "TopicAuthorityActivation",
 ]
 for _module in (
     canonical_observations,
@@ -71,6 +74,7 @@ for _module in (
     observation_timeline,
     score_projections,
     snapshots,
+    topic_authority,
     topics,
 ):
     __all__ += list(getattr(_module, "__all__", ()))
