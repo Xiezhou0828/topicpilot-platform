@@ -30,6 +30,34 @@ export function createTopicPilotClient({ baseUrl, fetchImpl = globalThis.fetch }
   return Object.freeze({
     getDataStatus: (init) => request("/api/v1/meta/data-status", init),
     getHome: (init) => request("/api/v2/home", init),
+    getTopicCatalog: ({ asOf, limit = 200, offset = 0 } = {}, init) => {
+      const query = new URLSearchParams({ limit: String(limit), offset: String(offset) });
+      if (asOf) query.set("asOf", asOf);
+      return request(`/api/v2/topic-catalog?${query.toString()}`, init);
+    },
+    getTopicCatalogDetail: (slug, { asOf } = {}, init) => {
+      const query = new URLSearchParams();
+      if (asOf) query.set("asOf", asOf);
+      const suffix = query.size ? `?${query.toString()}` : "";
+      return request(`/api/v2/topic-catalog/${encodeURIComponent(slug)}${suffix}`, init);
+    },
+    getCurrentTopicSnapshot: (slug, { asOf } = {}, init) => {
+      const query = new URLSearchParams();
+      if (asOf) query.set("asOf", asOf);
+      const suffix = query.size ? `?${query.toString()}` : "";
+      return request(`/api/v2/topic-catalog/${encodeURIComponent(slug)}/snapshot${suffix}`, init);
+    },
+    getTopicSnapshotHistory: (
+      slug,
+      { asOf, from, to, limit = 100, offset = 0 } = {},
+      init,
+    ) => {
+      const query = new URLSearchParams({ limit: String(limit), offset: String(offset) });
+      if (asOf) query.set("asOf", asOf);
+      if (from) query.set("from", from);
+      if (to) query.set("to", to);
+      return request(`/api/v2/topic-catalog/${encodeURIComponent(slug)}/snapshots?${query.toString()}`, init);
+    },
     getStocks: ({ limit = 50, offset = 0 } = {}, init) =>
       request(`/api/v1/stocks?limit=${limit}&offset=${offset}`, init),
     getStock: (code, init) => request(`/api/v1/stocks/${encodeURIComponent(code)}`, init),
