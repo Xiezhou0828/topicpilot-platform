@@ -43,6 +43,8 @@ topicpilot-market-semantics-check = "topicpilot_api.market_semantics_cli:main"
 topicpilot-history-probe = "topicpilot_api.live.history_probe:main"
 topicpilot-bootstrap = "topicpilot_api.live.bootstrap:main"
 topicpilot-lifecycle = "topicpilot_api.topic_lifecycle_cli:main"
+topicpilot-lifecycle-formal = "topicpilot_api.topic_lifecycle_formal_cli:main"
+topicpilot-topic-master = "topicpilot_api.topic_master_v1:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/topicpilot_api"]

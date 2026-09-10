@@ -12,13 +12,14 @@ from decimal import ROUND_HALF_UP, Decimal
 from typing import Any
 from zoneinfo import ZoneInfo
 
-from sqlalchemy import select, text
+from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
-from topicpilot_api.orm import TopicLifecycleResult
+from topicpilot_api.instrument_lifecycle_authority import NO_TRADE_STATUSES
+from topicpilot_api.lifecycle_formal_publication import read_formal_lifecycle
+from topicpilot_api.market_data.history import COVERED_NO_TRADE_STATUS_CODES
 from topicpilot_api.problems import NotFoundProblem
-from topicpilot_api.topic_lifecycle_engine import LIFECYCLE_POLICY_VERSION
 
 TAIPEI = ZoneInfo("Asia/Taipei")
 VALID_MARKETS = {"TPE", "TWO"}
@@ -867,6 +868,11 @@ def _lifecycle_unavailable() -> dict[str, Any]:
         "candidateStage": None,
         "transitionDecision": None,
         "transitionReason": None,
+        "asOfAt": None,
+        "publicationStatus": "UNAVAILABLE",
+        "contractVersion": None,
+        "calculationVersion": None,
+        "evaluationMode": None,
         "policyVersion": None,
         "evidence": {},
         "confidence": {},
@@ -875,94 +881,19 @@ def _lifecycle_unavailable() -> dict[str, Any]:
 
 
 def _read_lifecycle(session: Session, topic_id: Any) -> dict[str, Any]:
+    # Formal rows are a separate publication authority.  When the additive
+    # B2 table exists, an explicit UNAVAILABLE formal decision must win over
+    # any older SHADOW evidence; shadow rows are never promoted by this read.
     try:
-        rows = list(
-            session.scalars(
-                select(TopicLifecycleResult)
-                .where(
-                    TopicLifecycleResult.topic_id == topic_id,
-                    TopicLifecycleResult.evaluation_mode == "SHADOW",
-                    TopicLifecycleResult.policy_version == LIFECYCLE_POLICY_VERSION,
-                )
-                .order_by(TopicLifecycleResult.evaluation_date)
-            )
-        )
+        formal = read_formal_lifecycle(session, topic_id)
     except SQLAlchemyError:
-        # During additive migration rollout, keep the formal catalog readable
-        # while lifecycle remains explicitly unavailable.
+        # During additive migration rollout, lifecycle remains unavailable.
+        # An absent formal table is not permission to expose SHADOW rows.
+        session.rollback()
         return _lifecycle_unavailable()
-    if not rows:
+    if formal is None:
         return _lifecycle_unavailable()
-    current = rows[-1]
-    segments: list[dict[str, Any]] = []
-    for row in rows:
-        if row.final_stage is None:
-            continue
-        if not segments or segments[-1]["stage"] != row.final_stage:
-            if segments:
-                segments[-1]["exitedAt"] = row.evaluation_date
-                segments[-1]["current"] = False
-            segments.append(
-                {
-                    "stage": row.final_stage,
-                    "enteredAt": row.stage_entered_at,
-                    "exitedAt": None,
-                    "tradingDays": row.stage_trading_days,
-                    "current": True,
-                }
-            )
-        else:
-            segments[-1]["tradingDays"] = row.stage_trading_days
-    data_status = (
-        "SHADOW_AVAILABLE"
-        if current.final_stage is not None and current.data_status == "SHADOW"
-        else current.data_status
-    )
-    latest_evidence = {
-        "leadership": current.leadership_evidence or {},
-        "diffusion": current.diffusion_evidence or {},
-        "groupStrength": current.group_strength_evidence or {},
-        "divergenceDecay": current.divergence_decay_evidence or {},
-        "persistence": current.persistence_evidence or {},
-    }
-    return {
-        "currentStage": current.final_stage,
-        "currentStageEnteredAt": current.stage_entered_at,
-        "currentStageTradingDays": current.stage_trading_days,
-        "history": segments,
-        "dataStatus": data_status,
-        "evaluationDate": current.evaluation_date,
-        "previousStage": current.previous_stage,
-        "candidateStage": current.candidate_stage,
-        "transitionDecision": current.transition_decision,
-        "transitionReason": current.transition_reason,
-        "policyVersion": current.policy_version,
-        "evidence": latest_evidence,
-        "confidence": current.sample_confidence or {},
-        "lineage": {
-            "snapshotId": str(current.snapshot_id) if current.snapshot_id else None,
-            "snapshotIdentity": current.snapshot_identity,
-            "membershipSnapshotId": current.membership_snapshot_id,
-            "membershipSnapshotHash": current.membership_snapshot_hash,
-            "relationVersion": current.relation_version,
-            "sourceArtifactId": current.source_artifact_id,
-            "sourceArtifactHash": current.source_artifact_hash,
-            "lineageHash": current.lineage_hash,
-            "memberFactHashes": current.member_fact_hashes or {},
-            "correctionSequence": current.correction_sequence,
-            "supersedesSnapshotId": (
-                str(current.supersedes_snapshot_id)
-                if current.supersedes_snapshot_id
-                else None
-            ),
-            "supersededBySnapshotId": (
-                str(current.superseded_by_snapshot_id)
-                if current.superseded_by_snapshot_id
-                else None
-            ),
-            "supersessionState": current.supersession_state,
-        },
-    }
+    return formal
 
 
 def _topic_constituents(session: Session, slug: str, as_of_date: date) -> list[dict[str, Any]]:

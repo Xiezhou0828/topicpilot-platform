@@ -2,6 +2,7 @@
 
 from . import (
     canonical_observations,
+    formal_lifecycle,
     home,
     identity,
     import_audit,  # noqa: F401
@@ -16,6 +17,7 @@ from . import (
 )
 from .base import Base
 from .canonical_observations import *  # noqa: F403
+from .formal_lifecycle import TopicLifecycleFormalResult
 from .home import HomeMarketFact, HomePublication, HomePublicationSection  # noqa: F401
 from .identity import *  # noqa: F403
 from .import_audit import LegacyImportArtifact, LegacyImportRecord, LegacyImportRun
@@ -55,10 +57,12 @@ __all__ = [
     "ReferenceSession",
     "ReferenceTimezone",
     "ReferenceTradingStatus",
+    "TopicLifecycleFormalResult",
     "TopicLifecycleResult",
 ]
 for _module in (
     canonical_observations,
+    formal_lifecycle,
     home,
     identity,
     live,
