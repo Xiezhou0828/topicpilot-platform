@@ -194,6 +194,8 @@ class TopicSnapshotMemberFact(Base, IdentityMixin):
     previous_close: Mapped[Decimal | None] = mapped_column(Numeric(38, 18))
     change_pct: Mapped[Decimal | None] = mapped_column(Numeric(18, 8))
     observed_classification: Mapped[str | None] = mapped_column(String(16))
+    structural_role: Mapped[str | None] = mapped_column(String(32))
+    role_source: Mapped[str | None] = mapped_column(String(64))
     strength_classification: Mapped[str | None] = mapped_column(String(32))
     classifier_version: Mapped[str | None] = mapped_column(String(96))
     observed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
