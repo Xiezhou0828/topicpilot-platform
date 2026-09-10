@@ -34,7 +34,9 @@ from topicpilot_api.topic_lifecycle_engine import (
 )
 from topicpilot_api.topic_lifecycle_v1 import LifecycleInput, LifecyclePolicy, LifecycleResult
 from topicpilot_api.topic_lifecycle_v1_3_formal import (
+    BASE,
     FORMAL_EVALUATION_MODE,
+    FORMAL_INITIALIZATION_CONTRACT_VERSION,
     LIFECYCLE_CALCULATION_VERSION,
     LIFECYCLE_CONTRACT_VERSION,
     evaluate_formal_lifecycle,
@@ -42,6 +44,8 @@ from topicpilot_api.topic_lifecycle_v1_3_formal import (
 from topicpilot_api.topic_snapshot_engine import read_price_evidence
 
 A9_FORMAL_TOPIC_SNAPSHOT_START = date(2026, 8, 24)
+FORMAL_SCOPE_CONTRACT_VERSION = "lifecycle-formal-leaf-scope.v1"
+FORMAL_SCOPE_EXPECTED_LEAVES = 107
 FORMAL_PUBLICATION_STATUS_PUBLISHED = "PUBLISHED"
 FORMAL_PUBLICATION_STATUS_UNAVAILABLE = "UNAVAILABLE"
 FORMAL_PUBLICATION_STATUS_SUPERSEDED = "SUPERSEDED"
@@ -110,23 +114,31 @@ def input_snapshot_hash(
 
 
 def _active_leaf_topics(session: Session, as_of_date: date) -> list[Topic]:
-    topics = list(
+    """Return the versioned formal Leaf identity scope.
+
+    Formal scope follows effective hierarchy child identities, rather than the
+    current catalog availability filter.  A disabled, renamed, or temporarily
+    unavailable Leaf therefore remains accounted for and fails closed instead
+    of disappearing from the Lifecycle denominator.
+    """
+    topics = list(session.scalars(select(Topic).order_by(Topic.slug)))
+    child_ids = set(
         session.scalars(
-            select(Topic)
-            .where(Topic.status.not_in(("DISABLED", "RETIRED")))
-            .order_by(Topic.slug)
-        )
-    )
-    parent_ids = set(
-        session.scalars(
-            select(TopicHierarchy.parent_topic_id).where(
+            select(TopicHierarchy.child_topic_id).where(
                 TopicHierarchy.valid_from <= as_of_date,
                 (TopicHierarchy.valid_to.is_(None))
                 | (TopicHierarchy.valid_to >= as_of_date),
             )
         )
     )
-    return [topic for topic in topics if topic.id not in parent_ids]
+    leaves = [topic for topic in topics if topic.id in child_ids]
+    if len(leaves) != FORMAL_SCOPE_EXPECTED_LEAVES:
+        raise ValueError(
+            "FORMAL_LEAF_SCOPE_RECONCILIATION_REQUIRED:"
+            f"{FORMAL_SCOPE_CONTRACT_VERSION}:"
+            f"expected={FORMAL_SCOPE_EXPECTED_LEAVES}:actual={len(leaves)}"
+        )
+    return leaves
 
 
 def _formal_snapshots_for_date(
@@ -280,6 +292,27 @@ def _previous_formal_states(
     return states
 
 
+def _prior_or_bootstrap(
+    previous: Mapping[UUID, dict[str, Any]], topic_id: UUID, evaluation_date: date
+) -> tuple[dict[str, Any], str | None]:
+    """Resolve only prior FORMAL state, or the first-eligible BASE bootstrap."""
+
+    prior = previous.get(topic_id)
+    if prior is not None:
+        return prior, None
+    return (
+        {
+            "final_stage": BASE,
+            "stage_entered_at": evaluation_date,
+            "stage_trading_days": 0,
+            "candidate_stage": None,
+            "candidate_streak": 0,
+            "state_memory": {},
+        },
+        FORMAL_INITIALIZATION_CONTRACT_VERSION,
+    )
+
+
 def _unavailable_values(
     *,
     topic: Topic,
@@ -355,7 +388,24 @@ def _result_values(
     result: LifecycleResult,
     lineage: dict[str, Any],
     input_hash: str,
+    initialization_mode: str | None = None,
 ) -> dict[str, Any]:
+    source_reference = _source_reference(snapshot)
+    source_reference["formalInitialization"] = {
+        "mode": initialization_mode or "PRIOR_FORMAL_STATE",
+        "version": (
+            FORMAL_INITIALIZATION_CONTRACT_VERSION if initialization_mode else None
+        ),
+        "firstEligibleFormalDate": (
+            result.trading_date.isoformat() if initialization_mode else None
+        ),
+        "logicalPriorState": BASE if initialization_mode else result.previous_stage,
+        "logicalPriorEntryDate": (
+            result.trading_date.isoformat() if initialization_mode else None
+        ),
+        "logicalPriorTradingDayCount": 0 if initialization_mode else None,
+        "confirmationMemory": "EMPTY_DEFAULT_ZERO" if initialization_mode else None,
+    }
     return {
         "evaluation_date": result.trading_date,
         "topic_id": snapshot.topic_id,
@@ -406,7 +456,7 @@ def _result_values(
         "calendar_code": snapshot.calendar_code,
         "source_artifact_id": lineage["sourceArtifactId"],
         "source_artifact_hash": lineage["sourceArtifactHash"],
-        "source_reference": _source_reference(snapshot),
+        "source_reference": source_reference,
         "lineage_hash": lineage["lineageHash"],
         "member_fact_hashes": lineage["memberFactHashes"],
         "correction_sequence": lineage["correctionSequence"],
@@ -557,10 +607,10 @@ class FormalLifecyclePublisher:
                 )
                 if observation_reason is not None or observations is None:
                     reason = observation_reason or "FORMAL_OBSERVATIONS_UNAVAILABLE"
-                elif topic.id not in previous:
-                    reason = "INSUFFICIENT_FORMAL_HISTORY:PREVIOUS_FORMAL_STATE_REQUIRED"
                 else:
-                    prior = previous[topic.id]
+                    prior, initialization_mode = _prior_or_bootstrap(
+                        previous, topic.id, evaluation_date
+                    )
                     result = evaluate_formal_lifecycle(
                         LifecycleInput(
                             str(topic.id),
@@ -583,6 +633,7 @@ class FormalLifecyclePublisher:
                         result=result,
                         lineage=lineage,
                         input_hash=input_hash,
+                        initialization_mode=initialization_mode,
                     )
                     values_to_persist.append(values)
                     payload = _topic_result_payload(values)
@@ -679,6 +730,9 @@ class FormalLifecyclePublisher:
             "policyVersion": self.policy.version,
             "calculationVersion": LIFECYCLE_CALCULATION_VERSION,
             "evaluationMode": FORMAL_EVALUATION_MODE,
+            "initializationContractVersion": FORMAL_INITIALIZATION_CONTRACT_VERSION,
+            "formalScopeContractVersion": FORMAL_SCOPE_CONTRACT_VERSION,
+            "formalScopeLeaves": FORMAL_SCOPE_EXPECTED_LEAVES,
         }
 
     def _persist(self, values: dict[str, Any]) -> None:

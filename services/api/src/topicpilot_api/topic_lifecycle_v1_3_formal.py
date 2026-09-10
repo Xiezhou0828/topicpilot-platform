@@ -25,9 +25,10 @@ from topicpilot_api.topic_lifecycle_v1 import (
     evaluate_lifecycle,
 )
 
-LIFECYCLE_CONTRACT_VERSION = "topic-lifecycle-v1.3-formal.v1"
+LIFECYCLE_CONTRACT_VERSION = "topic-lifecycle-v1.3-formal.v2"
 LIFECYCLE_CALCULATION_VERSION = "topic-lifecycle-v1.3-formal-evaluator.v1"
 FORMAL_EVALUATION_MODE = "FORMAL"
+FORMAL_INITIALIZATION_CONTRACT_VERSION = "FORMAL_BASE_BOOTSTRAP_V1"
 
 
 def _stage_index(stage: str | None) -> int | None:
@@ -179,6 +180,7 @@ __all__ = [
     "DECLINING",
     "FERMENTING",
     "FORMAL_EVALUATION_MODE",
+    "FORMAL_INITIALIZATION_CONTRACT_VERSION",
     "LIFECYCLE_CALCULATION_VERSION",
     "LIFECYCLE_CONTRACT_VERSION",
     "LIFECYCLE_STAGES",

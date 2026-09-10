@@ -8,6 +8,7 @@ from topicpilot_api.lifecycle_formal_publication import (
     FORMAL_PUBLICATION_STATUS_UNAVAILABLE,
     FormalLifecyclePublisher,
     _formal_gate,
+    _prior_or_bootstrap,
     input_snapshot_hash,
     read_formal_lifecycle,
 )
@@ -25,6 +26,7 @@ from topicpilot_api.topic_lifecycle_v1 import (
 )
 from topicpilot_api.topic_lifecycle_v1_3_formal import (
     FORMAL_EVALUATION_MODE,
+    FORMAL_INITIALIZATION_CONTRACT_VERSION,
     LIFECYCLE_CALCULATION_VERSION,
     LIFECYCLE_CONTRACT_VERSION,
     evaluate_formal_lifecycle,
@@ -234,13 +236,44 @@ def test_formal_publisher_rejects_pre_a9_snapshot_authority():
         raise AssertionError("pre-A9 formal lifecycle date was accepted")
 
 
-def test_active_leaf_boundary_excludes_parent_topics():
+def test_bootstrap_is_leaf_local_and_prior_formal_permanently_bypasses_it():
+    first_leaf = uuid4()
+    late_leaf = uuid4()
+    first_date = date(2026, 8, 28)
+    late_date = date(2026, 9, 4)
+
+    first_prior, first_mode = _prior_or_bootstrap({}, first_leaf, first_date)
+    late_prior, late_mode = _prior_or_bootstrap({}, late_leaf, late_date)
+    published = {
+        first_leaf: {
+            "final_stage": FERMENTING,
+            "stage_entered_at": first_date,
+            "stage_trading_days": 2,
+            "candidate_stage": FERMENTING,
+            "candidate_streak": 2,
+            "state_memory": {"formal": True},
+        }
+    }
+    next_prior, next_mode = _prior_or_bootstrap(published, first_leaf, late_date)
+
+    assert first_mode == late_mode == FORMAL_INITIALIZATION_CONTRACT_VERSION
+    assert first_prior["stage_entered_at"] == first_date
+    assert late_prior["stage_entered_at"] == late_date
+    assert first_prior["stage_trading_days"] == late_prior["stage_trading_days"] == 0
+    assert first_prior["candidate_streak"] == late_prior["candidate_streak"] == 0
+    assert first_prior["state_memory"] == late_prior["state_memory"] == {}
+    assert next_mode is None
+    assert next_prior is published[first_leaf]
+
+
+def test_formal_leaf_scope_uses_all_107_effective_hierarchy_children():
     parent_id = uuid4()
-    leaf_id = uuid4()
-    topics = [
-        SimpleNamespace(id=parent_id, slug="parent", status="ACTIVE"),
-        SimpleNamespace(id=leaf_id, slug="leaf", status="ACTIVE"),
-    ]
+    leaf_ids = [uuid4() for _ in range(107)]
+    topics = [SimpleNamespace(id=parent_id, slug="parent", status="ACTIVE")]
+    topics.extend(
+        SimpleNamespace(id=item, slug=f"leaf-{index:03}", status="DISABLED")
+        for index, item in enumerate(leaf_ids)
+    )
 
     class _TopicSession:
         def __init__(self):
@@ -248,16 +281,16 @@ def test_active_leaf_boundary_excludes_parent_topics():
 
         def scalars(self, _statement):
             self.calls += 1
-            return topics if self.calls == 1 else [parent_id]
+            return topics if self.calls == 1 else leaf_ids
 
     leaves = formal_publication._active_leaf_topics(
         _TopicSession(), date(2026, 8, 24)
     )
 
-    assert [topic.id for topic in leaves] == [leaf_id]
+    assert [topic.id for topic in leaves] == leaf_ids
 
 
-def test_publisher_records_fail_closed_history_reason_without_promoting_shadow(
+def test_publisher_bootstraps_first_eligible_formal_observation_from_base(
     monkeypatch,
 ):
     topic = SimpleNamespace(id=uuid4(), slug="leaf-topic")
@@ -271,11 +304,8 @@ def test_publisher_records_fail_closed_history_reason_without_promoting_shadow(
     )
     monkeypatch.setattr(formal_publication, "_facts_for_snapshot", lambda *_: facts)
     monkeypatch.setattr(formal_publication, "read_price_evidence", lambda *_: {})
-    monkeypatch.setattr(
-        formal_publication,
-        "_formal_observations",
-        lambda *_: (tuple(), None),
-    )
+    observations = _input([1, 1, 1]).observations
+    monkeypatch.setattr(formal_publication, "_formal_observations", lambda *_: (observations, None))
     monkeypatch.setattr(formal_publication, "_previous_formal_states", lambda *_: {})
 
     run = FormalLifecyclePublisher(object()).run_once(
@@ -283,12 +313,48 @@ def test_publisher_records_fail_closed_history_reason_without_promoting_shadow(
         persist=False,
     )
 
+    assert run.formal_rows == 1
+    assert run.unavailable_rows == 0
+    assert run.persisted_rows == 0
+    assert run.reason_breakdown == {}
+    result = run.topic_results[0]
+    assert result["previousStage"] == BASE
+    assert result["stageEnteredAt"] == A9_FORMAL_TOPIC_SNAPSHOT_START
+    assert result["stageTradingDays"] == 1
+    initialization = result["lineage"]["sourceReference"]["formalInitialization"]
+    assert initialization == {
+        "mode": FORMAL_INITIALIZATION_CONTRACT_VERSION,
+        "version": FORMAL_INITIALIZATION_CONTRACT_VERSION,
+        "firstEligibleFormalDate": A9_FORMAL_TOPIC_SNAPSHOT_START.isoformat(),
+        "logicalPriorState": BASE,
+        "logicalPriorEntryDate": A9_FORMAL_TOPIC_SNAPSHOT_START.isoformat(),
+        "logicalPriorTradingDayCount": 0,
+        "confirmationMemory": "EMPTY_DEFAULT_ZERO",
+    }
+
+
+def test_incomplete_first_observation_remains_unavailable_without_bootstrap(monkeypatch):
+    topic = SimpleNamespace(id=uuid4(), slug="leaf-topic")
+    snapshot = _snapshot(data_status="PARTIAL", topic_id=topic.id)
+    facts = _facts(snapshot)
+    monkeypatch.setattr(formal_publication, "_active_leaf_topics", lambda *_: [topic])
+    monkeypatch.setattr(
+        formal_publication,
+        "_formal_snapshots_for_date",
+        lambda *_: {topic.id: [snapshot]},
+    )
+    monkeypatch.setattr(formal_publication, "_facts_for_snapshot", lambda *_: facts)
+    monkeypatch.setattr(formal_publication, "read_price_evidence", lambda *_: {})
+    monkeypatch.setattr(formal_publication, "_previous_formal_states", lambda *_: {})
+
+    run = FormalLifecyclePublisher(object()).run_once(
+        evaluation_date=A9_FORMAL_TOPIC_SNAPSHOT_START, persist=False
+    )
+
     assert run.formal_rows == 0
     assert run.unavailable_rows == 1
-    assert run.persisted_rows == 0
-    assert run.reason_breakdown == {
-        "INSUFFICIENT_FORMAL_HISTORY:PREVIOUS_FORMAL_STATE_REQUIRED": 1
-    }
+    assert run.topic_results[0]["finalStage"] is None
+    assert "formalInitialization" not in run.topic_results[0]["lineage"]["sourceReference"]
 
 
 def test_formal_table_is_separate_and_constrained():
