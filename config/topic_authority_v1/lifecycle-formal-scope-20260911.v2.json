@@ -1,0 +1,2648 @@
+{
+  "activationVersion": "topic-authority-lifecycle-formal-scope.20260911.v2",
+  "approvalReference": "OWNER-AUTHORIZED-B2-PROTECTED-TOPIC-AUTHORITY-20260910",
+  "artifactSha256": "1100c8bb4f760f6edab6e2ed59f4ee1d3e4776777b63a494d2611990f8c31753",
+  "effectiveDate": "2026-08-24",
+  "expectedLeafCount": 107,
+  "expectedParentCount": 25,
+  "hierarchy": [
+    {
+      "childTopicId": "1ad4cd46-8464-4934-87b1-4b391e2fc331",
+      "parentTopicId": "021b0ca0-cb50-489a-b97b-d4b10ad1d08f"
+    },
+    {
+      "childTopicId": "46fd9411-e2ad-45c8-8b90-141ba317f4d6",
+      "parentTopicId": "021b0ca0-cb50-489a-b97b-d4b10ad1d08f"
+    },
+    {
+      "childTopicId": "513e58ef-6527-407d-aa1e-4396f56bd41f",
+      "parentTopicId": "021b0ca0-cb50-489a-b97b-d4b10ad1d08f"
+    },
+    {
+      "childTopicId": "0154d4be-8318-4115-9c8e-4b74bdd3bf86",
+      "parentTopicId": "2de6b3e1-1c53-4f84-bbd7-7b3b04745aa6"
+    },
+    {
+      "childTopicId": "2a46b249-7af2-41c7-8ea9-aea5a2a3f291",
+      "parentTopicId": "2de6b3e1-1c53-4f84-bbd7-7b3b04745aa6"
+    },
+    {
+      "childTopicId": "545b2b47-cb7e-4a0a-a247-8bcd7efe528f",
+      "parentTopicId": "2de6b3e1-1c53-4f84-bbd7-7b3b04745aa6"
+    },
+    {
+      "childTopicId": "6f45f958-26fe-435f-8dc3-ceb4976e702a",
+      "parentTopicId": "2de6b3e1-1c53-4f84-bbd7-7b3b04745aa6"
+    },
+    {
+      "childTopicId": "48fb298e-56bf-5c19-9329-dac53558ec9c",
+      "parentTopicId": "3155541d-614f-41b0-aeac-3f79c9efab65"
+    },
+    {
+      "childTopicId": "4b0c5906-f726-4588-ba01-e5fd32ea86c6",
+      "parentTopicId": "3155541d-614f-41b0-aeac-3f79c9efab65"
+    },
+    {
+      "childTopicId": "62ace0c4-980f-49c3-a3ed-955d07db4ff0",
+      "parentTopicId": "3155541d-614f-41b0-aeac-3f79c9efab65"
+    },
+    {
+      "childTopicId": "98c92dc1-dabd-427c-b3b8-5b98a47e1f97",
+      "parentTopicId": "3155541d-614f-41b0-aeac-3f79c9efab65"
+    },
+    {
+      "childTopicId": "01227ecd-8f9d-4aa2-ba04-063b7caa8f78",
+      "parentTopicId": "35edf59b-8f31-4fcc-a914-1c74584ad1da"
+    },
+    {
+      "childTopicId": "0b05426f-a83d-44da-a6a5-7fee21362c03",
+      "parentTopicId": "35edf59b-8f31-4fcc-a914-1c74584ad1da"
+    },
+    {
+      "childTopicId": "7f61260e-df11-4f65-a228-c84487a1187a",
+      "parentTopicId": "35edf59b-8f31-4fcc-a914-1c74584ad1da"
+    },
+    {
+      "childTopicId": "a6e3145d-13bf-41b7-a78e-3895879c7e65",
+      "parentTopicId": "35edf59b-8f31-4fcc-a914-1c74584ad1da"
+    },
+    {
+      "childTopicId": "e633b461-07a7-46fc-bef6-6a269e72a068",
+      "parentTopicId": "35edf59b-8f31-4fcc-a914-1c74584ad1da"
+    },
+    {
+      "childTopicId": "064a0217-bd52-4a11-a472-ec6e7bec0fe0",
+      "parentTopicId": "3736a2be-f5f7-437f-b5ae-5d24d6ecca30"
+    },
+    {
+      "childTopicId": "494d35ed-39fa-4523-b46a-f2b54d5ac37c",
+      "parentTopicId": "3736a2be-f5f7-437f-b5ae-5d24d6ecca30"
+    },
+    {
+      "childTopicId": "6077f9d0-bc37-412b-97af-8339c52cb89c",
+      "parentTopicId": "3736a2be-f5f7-437f-b5ae-5d24d6ecca30"
+    },
+    {
+      "childTopicId": "f3429995-0a10-4670-851d-71a4024cb6ed",
+      "parentTopicId": "3736a2be-f5f7-437f-b5ae-5d24d6ecca30"
+    },
+    {
+      "childTopicId": "1f0d1fd6-a41b-4baa-836b-d0461d30e11e",
+      "parentTopicId": "41cab158-24db-40b9-90cf-fa859870f165"
+    },
+    {
+      "childTopicId": "6c207421-365d-4c58-b6db-e06e5fcf55b8",
+      "parentTopicId": "41cab158-24db-40b9-90cf-fa859870f165"
+    },
+    {
+      "childTopicId": "8ab347f8-2ab4-4d68-bbf0-bc026d8bec8e",
+      "parentTopicId": "41cab158-24db-40b9-90cf-fa859870f165"
+    },
+    {
+      "childTopicId": "9828f439-2ced-4b49-9d9e-8016b5676e1c",
+      "parentTopicId": "41cab158-24db-40b9-90cf-fa859870f165"
+    },
+    {
+      "childTopicId": "99755095-e392-4f2d-94ac-976a6321ae87",
+      "parentTopicId": "41cab158-24db-40b9-90cf-fa859870f165"
+    },
+    {
+      "childTopicId": "01bb6fc0-0a91-4a22-a511-1070db1c1825",
+      "parentTopicId": "42130f0e-8be7-4f40-bfb0-5dd3f11980c6"
+    },
+    {
+      "childTopicId": "21c21155-96b1-4450-8615-e0a9690abc79",
+      "parentTopicId": "42130f0e-8be7-4f40-bfb0-5dd3f11980c6"
+    },
+    {
+      "childTopicId": "8cb24438-0a99-4dae-92c1-e309ed090e13",
+      "parentTopicId": "42130f0e-8be7-4f40-bfb0-5dd3f11980c6"
+    },
+    {
+      "childTopicId": "c9eb29e1-5b18-4857-b2bf-9af97265916b",
+      "parentTopicId": "42130f0e-8be7-4f40-bfb0-5dd3f11980c6"
+    },
+    {
+      "childTopicId": "fb0e479d-2c69-4fcc-99a5-cea563ec0042",
+      "parentTopicId": "42130f0e-8be7-4f40-bfb0-5dd3f11980c6"
+    },
+    {
+      "childTopicId": "5f7e2b93-13e0-4e39-a3f6-72420c687aae",
+      "parentTopicId": "71802589-42ed-49ed-a3db-d1d498177099"
+    },
+    {
+      "childTopicId": "64357392-2d25-41b2-ba1c-0711f82542b4",
+      "parentTopicId": "71802589-42ed-49ed-a3db-d1d498177099"
+    },
+    {
+      "childTopicId": "a5f2e9a5-b3c3-4b29-b606-2413f7c30f91",
+      "parentTopicId": "71802589-42ed-49ed-a3db-d1d498177099"
+    },
+    {
+      "childTopicId": "f3894dfc-4ebd-4bf2-8e36-fb5c78dcb046",
+      "parentTopicId": "71802589-42ed-49ed-a3db-d1d498177099"
+    },
+    {
+      "childTopicId": "2bec1566-6351-44ff-8074-c844ccf7dbee",
+      "parentTopicId": "7c5cc252-19b3-411f-8faf-a483664f24c0"
+    },
+    {
+      "childTopicId": "70ee7fd5-0572-4ff0-aba2-ee869ccc5c22",
+      "parentTopicId": "7c5cc252-19b3-411f-8faf-a483664f24c0"
+    },
+    {
+      "childTopicId": "9b368d0e-b073-4b24-9021-d5538144fde1",
+      "parentTopicId": "7c5cc252-19b3-411f-8faf-a483664f24c0"
+    },
+    {
+      "childTopicId": "9ecc2ebd-bfff-4ca0-91bd-10aeb002c807",
+      "parentTopicId": "7c5cc252-19b3-411f-8faf-a483664f24c0"
+    },
+    {
+      "childTopicId": "41a04db1-5dc2-4dce-904d-189a602f5461",
+      "parentTopicId": "81af7f8d-db2a-46cc-814b-18345e8e32bb"
+    },
+    {
+      "childTopicId": "69dcb1f2-c6ee-49f5-9aac-1e73d6436e0e",
+      "parentTopicId": "81af7f8d-db2a-46cc-814b-18345e8e32bb"
+    },
+    {
+      "childTopicId": "6fa2e314-d772-58a3-aff6-1ba51459b349",
+      "parentTopicId": "81af7f8d-db2a-46cc-814b-18345e8e32bb"
+    },
+    {
+      "childTopicId": "7f9e1c82-fc7e-4a6a-a768-526f3e8bb030",
+      "parentTopicId": "81af7f8d-db2a-46cc-814b-18345e8e32bb"
+    },
+    {
+      "childTopicId": "bdc0c3bf-529c-4e5a-a753-223ee0f86415",
+      "parentTopicId": "81af7f8d-db2a-46cc-814b-18345e8e32bb"
+    },
+    {
+      "childTopicId": "efae9f9b-0192-4e0e-a1b9-543e8ed4f573",
+      "parentTopicId": "81af7f8d-db2a-46cc-814b-18345e8e32bb"
+    },
+    {
+      "childTopicId": "1c807301-93cd-4e6a-9b0d-b3d9cc187e40",
+      "parentTopicId": "a48945bd-b12b-49e6-aecb-7a9acdb570ab"
+    },
+    {
+      "childTopicId": "4136333b-7960-47b7-ad10-7aac2cdd84e1",
+      "parentTopicId": "a48945bd-b12b-49e6-aecb-7a9acdb570ab"
+    },
+    {
+      "childTopicId": "42c9643e-d045-4beb-8582-474a4e47a136",
+      "parentTopicId": "a48945bd-b12b-49e6-aecb-7a9acdb570ab"
+    },
+    {
+      "childTopicId": "ac1c31d5-8daa-4f22-9aa1-beaee1291b06",
+      "parentTopicId": "a48945bd-b12b-49e6-aecb-7a9acdb570ab"
+    },
+    {
+      "childTopicId": "e8142235-9fca-410a-a5c7-d8cdeb932e94",
+      "parentTopicId": "a48945bd-b12b-49e6-aecb-7a9acdb570ab"
+    },
+    {
+      "childTopicId": "057481af-6c02-491c-8719-8e591903a814",
+      "parentTopicId": "a969261d-6206-45c9-9b8e-a8ae4cbdf49e"
+    },
+    {
+      "childTopicId": "0ada6c6f-2d32-48a1-af40-b23a69dd5204",
+      "parentTopicId": "a969261d-6206-45c9-9b8e-a8ae4cbdf49e"
+    },
+    {
+      "childTopicId": "040c159b-c196-4726-8baa-996f2e2ed558",
+      "parentTopicId": "aae91e68-1ace-4106-bd4f-2d2dca0f7af6"
+    },
+    {
+      "childTopicId": "7d602095-5f50-4883-b4e3-8002128f4408",
+      "parentTopicId": "aae91e68-1ace-4106-bd4f-2d2dca0f7af6"
+    },
+    {
+      "childTopicId": "beef79f4-38c3-4b77-8903-a52edf9aef7f",
+      "parentTopicId": "aae91e68-1ace-4106-bd4f-2d2dca0f7af6"
+    },
+    {
+      "childTopicId": "d97e2401-b3c0-4af3-8c09-fc4e8e7e0a68",
+      "parentTopicId": "aae91e68-1ace-4106-bd4f-2d2dca0f7af6"
+    },
+    {
+      "childTopicId": "ddca4b1d-55cf-4e03-9e8d-c6c4604c3591",
+      "parentTopicId": "aae91e68-1ace-4106-bd4f-2d2dca0f7af6"
+    },
+    {
+      "childTopicId": "e9f1dac4-14f7-4887-8910-6e5e21ed3069",
+      "parentTopicId": "aae91e68-1ace-4106-bd4f-2d2dca0f7af6"
+    },
+    {
+      "childTopicId": "59df62e0-c5ba-4b48-8929-0c0a62d70e74",
+      "parentTopicId": "b482ef24-3870-4ba0-915c-6ad6cf92c611"
+    },
+    {
+      "childTopicId": "6202c205-0304-4648-9079-e6689004cf90",
+      "parentTopicId": "b482ef24-3870-4ba0-915c-6ad6cf92c611"
+    },
+    {
+      "childTopicId": "caa90047-d807-4e29-a72c-d38c3f525a55",
+      "parentTopicId": "b482ef24-3870-4ba0-915c-6ad6cf92c611"
+    },
+    {
+      "childTopicId": "065171f4-cc98-4614-9cb9-e33729a6537b",
+      "parentTopicId": "b4b961e8-fea7-4963-a014-6699037525d4"
+    },
+    {
+      "childTopicId": "76a3554d-cc99-4330-8450-d803dc712eed",
+      "parentTopicId": "b4b961e8-fea7-4963-a014-6699037525d4"
+    },
+    {
+      "childTopicId": "89e23af7-21e0-4e7f-b5d6-add9129c5d57",
+      "parentTopicId": "b4b961e8-fea7-4963-a014-6699037525d4"
+    },
+    {
+      "childTopicId": "3968cd1a-cc65-4322-a218-2fe6e1905652",
+      "parentTopicId": "c117a64e-caec-4c8b-b120-20ca70f4f586"
+    },
+    {
+      "childTopicId": "a7de1ce0-94c2-4136-a74d-ed3dfa1b3651",
+      "parentTopicId": "c117a64e-caec-4c8b-b120-20ca70f4f586"
+    },
+    {
+      "childTopicId": "d23094e4-d040-44e1-aa62-4ee33673e05a",
+      "parentTopicId": "c117a64e-caec-4c8b-b120-20ca70f4f586"
+    },
+    {
+      "childTopicId": "610b70ab-d199-43db-a64c-13156c2ebcca",
+      "parentTopicId": "c63e8e8b-8b1b-4883-b1a5-fa8dc5ced0b3"
+    },
+    {
+      "childTopicId": "99edc359-dc9d-41e2-85d1-2d81d9a6c9d5",
+      "parentTopicId": "c63e8e8b-8b1b-4883-b1a5-fa8dc5ced0b3"
+    },
+    {
+      "childTopicId": "b5978f65-7a56-4491-83e7-06adc1ed3b7c",
+      "parentTopicId": "c63e8e8b-8b1b-4883-b1a5-fa8dc5ced0b3"
+    },
+    {
+      "childTopicId": "0e134dd2-44bf-41c9-a34b-15526913b9db",
+      "parentTopicId": "c95a0960-44a4-4312-b0e9-9fc5c2205bd4"
+    },
+    {
+      "childTopicId": "6132857f-470e-4823-8bf5-b017562102a0",
+      "parentTopicId": "c95a0960-44a4-4312-b0e9-9fc5c2205bd4"
+    },
+    {
+      "childTopicId": "805d6462-1150-4f81-9cd7-89dcba96b9eb",
+      "parentTopicId": "c95a0960-44a4-4312-b0e9-9fc5c2205bd4"
+    },
+    {
+      "childTopicId": "9a2dd721-46d8-4a04-934e-499d578beb11",
+      "parentTopicId": "c95a0960-44a4-4312-b0e9-9fc5c2205bd4"
+    },
+    {
+      "childTopicId": "628aef78-4f45-4b40-ab92-fdd17f6ac116",
+      "parentTopicId": "d1514075-c622-4d00-85d2-84162697daa2"
+    },
+    {
+      "childTopicId": "6575fad4-9875-45f0-9c72-ff868925f713",
+      "parentTopicId": "d1514075-c622-4d00-85d2-84162697daa2"
+    },
+    {
+      "childTopicId": "7bceb463-26d1-5810-8e9c-5e9359eaa45a",
+      "parentTopicId": "d1514075-c622-4d00-85d2-84162697daa2"
+    },
+    {
+      "childTopicId": "bcc8045a-82a1-4ad0-bb0f-e2e37b04c1d1",
+      "parentTopicId": "d1514075-c622-4d00-85d2-84162697daa2"
+    },
+    {
+      "childTopicId": "07557ba9-5c10-59b1-8291-00362064c5aa",
+      "parentTopicId": "ebcfa5ce-aa87-45cb-b2c7-fd6a12e65ef5"
+    },
+    {
+      "childTopicId": "6d1ef16c-6fea-439c-947b-648eb6ce2b16",
+      "parentTopicId": "ebcfa5ce-aa87-45cb-b2c7-fd6a12e65ef5"
+    },
+    {
+      "childTopicId": "9a7d14ea-5783-4131-ab8c-204c301658f9",
+      "parentTopicId": "ebcfa5ce-aa87-45cb-b2c7-fd6a12e65ef5"
+    },
+    {
+      "childTopicId": "b776d842-3b97-4b16-a461-5f726a732a37",
+      "parentTopicId": "ebcfa5ce-aa87-45cb-b2c7-fd6a12e65ef5"
+    },
+    {
+      "childTopicId": "c91d1ec5-574e-4e8a-9486-6c6741053cfd",
+      "parentTopicId": "ebcfa5ce-aa87-45cb-b2c7-fd6a12e65ef5"
+    },
+    {
+      "childTopicId": "0c31dc9f-8252-5465-a260-64e04f96435f",
+      "parentTopicId": "ef74f98d-8a9e-5af3-9195-f77ae6143041"
+    },
+    {
+      "childTopicId": "37bbfd4d-c030-5d58-8402-da22396f1b38",
+      "parentTopicId": "ef74f98d-8a9e-5af3-9195-f77ae6143041"
+    },
+    {
+      "childTopicId": "41c9d8a8-0c37-532d-80aa-407db57cfd60",
+      "parentTopicId": "ef74f98d-8a9e-5af3-9195-f77ae6143041"
+    },
+    {
+      "childTopicId": "d4eb3f1f-41b1-5fac-8df7-c18b9888d8c1",
+      "parentTopicId": "ef74f98d-8a9e-5af3-9195-f77ae6143041"
+    },
+    {
+      "childTopicId": "02920714-4615-4d8c-970f-60c86093e806",
+      "parentTopicId": "f2150da0-01ac-48e1-8179-3e61742ea2a5"
+    },
+    {
+      "childTopicId": "263771ca-90ec-4d7f-97f7-2ee826eea0e2",
+      "parentTopicId": "f2150da0-01ac-48e1-8179-3e61742ea2a5"
+    },
+    {
+      "childTopicId": "7ea456bc-9b1c-4134-a8b8-bc6f3f811d81",
+      "parentTopicId": "f2150da0-01ac-48e1-8179-3e61742ea2a5"
+    },
+    {
+      "childTopicId": "a7d1b94e-9dc9-49a0-9cab-89816fae6db3",
+      "parentTopicId": "f2150da0-01ac-48e1-8179-3e61742ea2a5"
+    },
+    {
+      "childTopicId": "fb6c5b4e-13ae-4f4f-91fe-54830ad58802",
+      "parentTopicId": "f2150da0-01ac-48e1-8179-3e61742ea2a5"
+    },
+    {
+      "childTopicId": "ac718902-0001-447c-8ff2-984635ad9953",
+      "parentTopicId": "f2f5fc2e-d926-4987-81ef-e00a7bbeb1cb"
+    },
+    {
+      "childTopicId": "bc6f668a-e0d7-4b58-95e9-0c4cf20add90",
+      "parentTopicId": "f2f5fc2e-d926-4987-81ef-e00a7bbeb1cb"
+    },
+    {
+      "childTopicId": "cb72fab9-92dc-4c66-b97b-d5b00be9bf48",
+      "parentTopicId": "f2f5fc2e-d926-4987-81ef-e00a7bbeb1cb"
+    },
+    {
+      "childTopicId": "d445a914-7c1c-49d1-9cee-2e815388a8cb",
+      "parentTopicId": "f2f5fc2e-d926-4987-81ef-e00a7bbeb1cb"
+    },
+    {
+      "childTopicId": "0023efd5-2842-4345-bf0b-3c6791da0664",
+      "parentTopicId": "f62b81df-1eeb-4218-863e-896244023e28"
+    },
+    {
+      "childTopicId": "0254ad93-bde9-4309-9ffc-1c9149ce2efc",
+      "parentTopicId": "f62b81df-1eeb-4218-863e-896244023e28"
+    },
+    {
+      "childTopicId": "080467ca-6de4-4841-b8d7-37fcb0faee0d",
+      "parentTopicId": "f62b81df-1eeb-4218-863e-896244023e28"
+    },
+    {
+      "childTopicId": "08a7e213-c639-4192-85ea-1f6959b631a1",
+      "parentTopicId": "f62b81df-1eeb-4218-863e-896244023e28"
+    },
+    {
+      "childTopicId": "0a593f05-32f4-479d-96ab-2d68e1df5762",
+      "parentTopicId": "f62b81df-1eeb-4218-863e-896244023e28"
+    },
+    {
+      "childTopicId": "375577eb-a013-4011-82f5-8e4e1f91b887",
+      "parentTopicId": "f62b81df-1eeb-4218-863e-896244023e28"
+    },
+    {
+      "childTopicId": "4fc2706f-63f8-5fcf-961d-4750111cb703",
+      "parentTopicId": "feb717be-0f98-4d14-beec-8e03a32ac267"
+    },
+    {
+      "childTopicId": "58434a1f-3982-4a55-b32c-76b9f98a714e",
+      "parentTopicId": "feb717be-0f98-4d14-beec-8e03a32ac267"
+    },
+    {
+      "childTopicId": "72007ae6-e8ef-4f72-a98a-e0df64191f1c",
+      "parentTopicId": "feb717be-0f98-4d14-beec-8e03a32ac267"
+    },
+    {
+      "childTopicId": "82783006-f7ce-4e3d-8711-ab897654aad4",
+      "parentTopicId": "feb717be-0f98-4d14-beec-8e03a32ac267"
+    },
+    {
+      "childTopicId": "d5969f88-e0b2-4df4-ba93-82313474a39b",
+      "parentTopicId": "feb717be-0f98-4d14-beec-8e03a32ac267"
+    },
+    {
+      "childTopicId": "ea492acf-2575-4d97-9fa8-d76d9e8d82c3",
+      "parentTopicId": "feb717be-0f98-4d14-beec-8e03a32ac267"
+    }
+  ],
+  "lifecycleScope": [
+    {
+      "canonicalIdentity": "12 吋矽晶圓",
+      "canonicalTopicId": "0e134dd2-44bf-41c9-a34b-15526913b9db",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "12 吋矽晶圓",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "8 吋矽晶圓",
+      "canonicalTopicId": "9a2dd721-46d8-4a04-934e-499d578beb11",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "8 吋矽晶圓",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "ABF載板",
+      "canonicalTopicId": "ea492acf-2575-4d97-9fa8-d76d9e8d82c3",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "ABF載板",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "ADAS",
+      "canonicalTopicId": "9828f439-2ced-4b49-9d9e-8016b5676e1c",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "ADAS",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "AI PCB",
+      "canonicalTopicId": "0b05426f-a83d-44da-a6a5-7fee21362c03",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "AI PCB",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "AI伺服器整機／ODM",
+      "canonicalTopicId": "01227ecd-8f9d-4aa2-ba04-063b7caa8f78",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "AI伺服器整機／ODM",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "AI影像辨識",
+      "canonicalTopicId": "6d1ef16c-6fea-439c-947b-648eb6ce2b16",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "AI影像辨識",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "AI電力基建",
+      "canonicalTopicId": "0a593f05-32f4-479d-96ab-2d68e1df5762",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "AI電力基建",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "ASIC",
+      "canonicalTopicId": "545b2b47-cb7e-4a0a-a247-8bcd7efe528f",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "ASIC",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "BBU",
+      "canonicalTopicId": "7f61260e-df11-4f65-a228-c84487a1187a",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "BBU",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "Chiplet",
+      "canonicalTopicId": "72007ae6-e8ef-4f72-a98a-e0df64191f1c",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "Chiplet",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "CoWoS",
+      "canonicalTopicId": "d5969f88-e0b2-4df4-ba93-82313474a39b",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "CoWoS",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "DRAM／DDR",
+      "canonicalTopicId": "064a0217-bd52-4a11-a472-ec6e7bec0fe0",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "DRAM／DDR",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "FOPLP",
+      "canonicalTopicId": "82783006-f7ce-4e3d-8711-ab897654aad4",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "FOPLP",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "GaN 晶圓／GaN-on-Si",
+      "canonicalTopicId": "6132857f-470e-4823-8bf5-b017562102a0",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "GaN 晶圓／GaN-on-Si",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "IGBT／功率模組",
+      "canonicalTopicId": "fb6c5b4e-13ae-4f4f-91fe-54830ad58802",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "IGBT／功率模組",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "MCU",
+      "canonicalTopicId": "6f45f958-26fe-435f-8dc3-ceb4976e702a",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "MCU",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "MLCC",
+      "canonicalTopicId": "040c159b-c196-4726-8baa-996f2e2ed558",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "MLCC",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "NAND Flash／SSD",
+      "canonicalTopicId": "6077f9d0-bc37-412b-97af-8339c52cb89c",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "NAND Flash／SSD",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "NOR Flash／利基型記憶體",
+      "canonicalTopicId": "f3429995-0a10-4670-851d-71a4024cb6ed",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "NOR Flash／利基型記憶體",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "RISC-V",
+      "canonicalTopicId": "0154d4be-8318-4115-9c8e-4b74bdd3bf86",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "RISC-V",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "Retimer／Redriver",
+      "canonicalTopicId": "a7de1ce0-94c2-4136-a74d-ed3dfa1b3651",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "Retimer／Redriver",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "SiC 晶圓／基板",
+      "canonicalTopicId": "805d6462-1150-4f81-9cd7-89dcba96b9eb",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "SiC 晶圓／基板",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "SiC／GaN 功率元件",
+      "canonicalTopicId": "a7d1b94e-9dc9-49a0-9cab-89816fae6db3",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "SiC／GaN 功率元件",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "一般封測",
+      "canonicalTopicId": "58434a1f-3982-4a55-b32c-76b9f98a714e",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "一般封測",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "一般連接器",
+      "canonicalTopicId": "1ad4cd46-8464-4934-87b1-4b391e2fc331",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "一般連接器",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "低軌衛星",
+      "canonicalTopicId": "fb0e479d-2c69-4fcc-99a5-cea563ec0042",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "低軌衛星",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "住宅營建",
+      "canonicalTopicId": "610b70ab-d199-43db-a64c-13156c2ebcca",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "住宅營建",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "保護元件",
+      "canonicalTopicId": "7ea456bc-9b1c-4134-a8b8-bc6f3f811d81",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "保護元件",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "傳統硬板與軟板",
+      "canonicalTopicId": "48fb298e-56bf-5c19-9329-dac53558ec9c",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "傳統硬板與軟板",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "儲能",
+      "canonicalTopicId": "375577eb-a013-4011-82f5-8e4e1f91b887",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "儲能",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "先進封裝設備",
+      "canonicalTopicId": "a5f2e9a5-b3c3-4b29-b606-2413f7c30f91",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "先進封裝設備",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "光通訊",
+      "canonicalTopicId": "01bb6fc0-0a91-4a22-a511-1070db1c1825",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "光通訊",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "其他 AI伺服器供應鏈",
+      "canonicalTopicId": "e633b461-07a7-46fc-bef6-6a269e72a068",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "其他 AI伺服器供應鏈",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "其他 AI視覺",
+      "canonicalTopicId": "b776d842-3b97-4b16-a461-5f726a732a37",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "其他 AI視覺",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "其他 IC設計",
+      "canonicalTopicId": "2a46b249-7af2-41c7-8ea9-aea5a2a3f291",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "其他 IC設計",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "其他半導體材料",
+      "canonicalTopicId": "628aef78-4f45-4b40-ab92-fdd17f6ac116",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "其他半導體材料",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "其他半導體設備",
+      "canonicalTopicId": "64357392-2d25-41b2-ba1c-0711f82542b4",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "其他半導體設備",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "其他原物料",
+      "canonicalTopicId": "7f9e1c82-fc7e-4a6a-a768-526f3e8bb030",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "其他原物料",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "其他國防",
+      "canonicalTopicId": "42c9643e-d045-4beb-8582-474a4e47a136",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "其他國防",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "其他大型權值",
+      "canonicalTopicId": "0ada6c6f-2d32-48a1-af40-b23a69dd5204",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "其他大型權值",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "其他熱管理",
+      "canonicalTopicId": "9b368d0e-b073-4b24-9021-d5538144fde1",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "其他熱管理",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "其他能源",
+      "canonicalTopicId": "0023efd5-2842-4345-bf0b-3c6791da0664",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "其他能源",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "其他被動元件",
+      "canonicalTopicId": "7d602095-5f50-4883-b4e3-8002128f4408",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "其他被動元件",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "其他車用電子",
+      "canonicalTopicId": "8ab347f8-2ab4-4d68-bbf0-bc026d8bec8e",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "其他車用電子",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "其他通訊光電",
+      "canonicalTopicId": "21c21155-96b1-4450-8615-e0a9690abc79",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "其他通訊光電",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "利基型光電磊晶",
+      "canonicalTopicId": "6575fad4-9875-45f0-9c72-ff868925f713",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "利基型光電磊晶",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "利基型特用化學 (Specialty Chemical Materials)",
+      "canonicalTopicId": "7bceb463-26d1-5810-8e9c-5e9359eaa45a",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "利基型特用化學 (Specialty Chemical Materials)",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "功率 MOSFET",
+      "canonicalTopicId": "02920714-4615-4d8c-970f-60c86093e806",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "功率 MOSFET",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "功率二極體／整流器",
+      "canonicalTopicId": "263771ca-90ec-4d7f-97f7-2ee826eea0e2",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "功率二極體／整流器",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "化工原料／塑化報價",
+      "canonicalTopicId": "41a04db1-5dc2-4dce-904d-189a602f5461",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "化工原料／塑化報價",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "半導體設備零組件",
+      "canonicalTopicId": "5f7e2b93-13e0-4e39-a3f6-72420c687aae",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "半導體設備零組件",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "商辦／都市更新",
+      "canonicalTopicId": "b5978f65-7a56-4491-83e7-06adc1ed3b7c",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "商辦／都市更新",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "固態電容",
+      "canonicalTopicId": "beef79f4-38c3-4b77-8903-a52edf9aef7f",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "固態電容",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "大型電子權值",
+      "canonicalTopicId": "057481af-6c02-491c-8719-8e591903a814",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "大型電子權值",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "太陽能",
+      "canonicalTopicId": "08a7e213-c639-4192-85ea-1f6959b631a1",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "太陽能",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "工業自動化",
+      "canonicalTopicId": "caa90047-d807-4e29-a72c-d38c3f525a55",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "工業自動化",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "成熟製程",
+      "canonicalTopicId": "bc6f668a-e0d7-4b58-95e9-0c4cf20add90",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "成熟製程",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "散熱零組件",
+      "canonicalTopicId": "70ee7fd5-0572-4ff0-aba2-ee869ccc5c22",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "散熱零組件",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "散裝航運",
+      "canonicalTopicId": "37bbfd4d-c030-5d58-8402-da22396f1b38",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "散裝航運",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "晶圓代工",
+      "canonicalTopicId": "d445a914-7c1c-49d1-9cee-2e815388a8cb",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "晶圓代工",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "機器人系統整合",
+      "canonicalTopicId": "59df62e0-c5ba-4b48-8929-0c0a62d70e74",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "機器人系統整合",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "機器人零組件",
+      "canonicalTopicId": "6202c205-0304-4648-9079-e6689004cf90",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "機器人零組件",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "機器視覺",
+      "canonicalTopicId": "c91d1ec5-574e-4e8a-9486-6c6741053cfd",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "機器視覺",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "液冷散熱",
+      "canonicalTopicId": "9ecc2ebd-bfff-4ca0-91bd-10aeb002c807",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "液冷散熱",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "無人機",
+      "canonicalTopicId": "1c807301-93cd-4e6a-9b0d-b3d9cc187e40",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "無人機",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "營建工程",
+      "canonicalTopicId": "99edc359-dc9d-41e2-85d1-2d81d9a6c9d5",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "營建工程",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "特殊製程",
+      "canonicalTopicId": "cb72fab9-92dc-4c66-b97b-d5b00be9bf48",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "特殊製程",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "特殊鋼／高性能合金",
+      "canonicalTopicId": "69dcb1f2-c6ee-49f5-9aac-1e73d6436e0e",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "特殊鋼／高性能合金",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "特用與精密線束",
+      "canonicalTopicId": "513e58ef-6527-407d-aa1e-4396f56bd41f",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "特用與精密線束",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "玻璃基板",
+      "canonicalTopicId": "f3894dfc-4ebd-4bf2-8e36-fb5c78dcb046",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "玻璃基板",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "玻纖布",
+      "canonicalTopicId": "98c92dc1-dabd-427c-b3b8-5b98a47e1f97",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "玻纖布",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "生技醫藥與CDMO (Biotech & CDMO)",
+      "canonicalTopicId": "6fa2e314-d772-58a3-aff6-1ba51459b349",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "生技醫藥與CDMO (Biotech & CDMO)",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "石英元件",
+      "canonicalTopicId": "e9f1dac4-14f7-4887-8910-6e5e21ed3069",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "石英元件",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "矽光子",
+      "canonicalTopicId": "8cb24438-0a99-4dae-92c1-e309ed090e13",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "矽光子",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "端點資安",
+      "canonicalTopicId": "065171f4-cc98-4614-9cb9-e33729a6537b",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "端點資安",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "紡織",
+      "canonicalTopicId": "bdc0c3bf-529c-4e5a-a753-223ee0f86415",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "紡織",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "網路資安",
+      "canonicalTopicId": "76a3554d-cc99-4330-8450-d803dc712eed",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "網路資安",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "網通",
+      "canonicalTopicId": "c9eb29e1-5b18-4857-b2bf-9af97265916b",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "網通",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "航太零組件",
+      "canonicalTopicId": "4136333b-7960-47b7-ad10-7aac2cdd84e1",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "航太零組件",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "航空客貨運",
+      "canonicalTopicId": "41c9d8a8-0c37-532d-80aa-407db57cfd60",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "航空客貨運",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "製程耗材與特料",
+      "canonicalTopicId": "4b0c5906-f726-4588-ba01-e5fd32ea86c6",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "製程耗材與特料",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "視覺檢測",
+      "canonicalTopicId": "9a7d14ea-5783-4131-ab8c-204c301658f9",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "視覺檢測",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "記憶體模組／通路",
+      "canonicalTopicId": "494d35ed-39fa-4523-b46a-f2b54d5ac37c",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "記憶體模組／通路",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "記憶體製程",
+      "canonicalTopicId": "ac718902-0001-447c-8ff2-984635ad9953",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "記憶體製程",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "貨代與物流",
+      "canonicalTopicId": "0c31dc9f-8252-5465-a260-64e04f96435f",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "貨代與物流",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "貨櫃海運",
+      "canonicalTopicId": "d4eb3f1f-41b1-5fac-8df7-c18b9888d8c1",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "貨櫃海運",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "車用功率半導體",
+      "canonicalTopicId": "99755095-e392-4f2d-94ac-976a6321ae87",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "車用功率半導體",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "車用連接器",
+      "canonicalTopicId": "6c207421-365d-4c58-b6db-e06e5fcf55b8",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "車用連接器",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "軍工船舶",
+      "canonicalTopicId": "e8142235-9fca-410a-a5c7-d8cdeb932e94",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "軍工船舶",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "邊緣運算與智慧影像 (Edge AI & Vision)",
+      "canonicalTopicId": "07557ba9-5c10-59b1-8291-00362064c5aa",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "邊緣運算與智慧影像 (Edge AI & Vision)",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "重電",
+      "canonicalTopicId": "080467ca-6de4-4841-b8d7-37fcb0faee0d",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "重電",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "銅箔基板CCL",
+      "canonicalTopicId": "62ace0c4-980f-49c3-a3ed-955d07db4ff0",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "銅箔基板CCL",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "鋁電容",
+      "canonicalTopicId": "ddca4b1d-55cf-4e03-9e8d-c6c4604c3591",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "鋁電容",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "鋼鐵／不鏽鋼材料",
+      "canonicalTopicId": "efae9f9b-0192-4e0e-a1b9-543e8ed4f573",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "鋼鐵／不鏽鋼材料",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "離岸風電／鋼構",
+      "canonicalTopicId": "0254ad93-bde9-4309-9ffc-1c9149ce2efc",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "離岸風電／鋼構",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "雲端資安",
+      "canonicalTopicId": "89e23af7-21e0-4e7f-b5d6-add9129c5d57",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "雲端資安",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "雷達與感測",
+      "canonicalTopicId": "ac1c31d5-8daa-4f22-9aa1-beaee1291b06",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "雷達與感測",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "電動車／EV",
+      "canonicalTopicId": "1f0d1fd6-a41b-4baa-836b-d0461d30e11e",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "電動車／EV",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "電子化學材料",
+      "canonicalTopicId": "bcc8045a-82a1-4ad0-bb0f-e2e37b04c1d1",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "電子化學材料",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "電感",
+      "canonicalTopicId": "d97e2401-b3c0-4af3-8c09-fc4e8e7e0a68",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "電感",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "顯卡",
+      "canonicalTopicId": "a6e3145d-13bf-41b7-a78e-3895879c7e65",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "顯卡",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "風冷散熱",
+      "canonicalTopicId": "2bec1566-6351-44ff-8074-c844ccf7dbee",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "風冷散熱",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "高速介面",
+      "canonicalTopicId": "3968cd1a-cc65-4322-a218-2fe6e1905652",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "高速介面",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "高速傳輸",
+      "canonicalTopicId": "d23094e4-d040-44e1-aa62-4ee33673e05a",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "高速傳輸",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "高速連接器",
+      "canonicalTopicId": "46fd9411-e2ad-45c8-8b90-141ba317f4d6",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "高速連接器",
+      "status": "RESOLVED"
+    },
+    {
+      "canonicalIdentity": "高階測試介面與探針 (Advanced Testing Interfaces)",
+      "canonicalTopicId": "4fc2706f-63f8-5fcf-961d-4750111cb703",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "researchIdentity": "高階測試介面與探針 (Advanced Testing Interfaces)",
+      "status": "RESOLVED"
+    }
+  ],
+  "schemaVersion": "topic-authority-activation.v1",
+  "sourceMasterSha256": "8f5646f4b9e5f00c9263bf7511911f4520ec2b940af1fc50c778b0d9e83ce2c4",
+  "sourceRevision": "60348ccc35d2f3e1f105edd42672177269ff9a7a",
+  "targetDatabase": "neondb",
+  "targetEnvironment": "production",
+  "topics": [
+    {
+      "action": "PRESERVE",
+      "description": "12 吋矽晶圓、12 吋磊晶片、再生晶圓及先進製程用晶圓材料。",
+      "expectedCurrentSlug": "12 吋矽晶圓",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "12 吋矽晶圓",
+      "slug": "12 吋矽晶圓",
+      "status": "ENABLED",
+      "topicId": "0e134dd2-44bf-41c9-a34b-15526913b9db"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "8 吋矽晶圓、8 吋磊晶片、再生晶圓及其製造服務。",
+      "expectedCurrentSlug": "8 吋矽晶圓",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "8 吋矽晶圓",
+      "slug": "8 吋矽晶圓",
+      "status": "ENABLED",
+      "topicId": "9a2dd721-46d8-4a04-934e-499d578beb11"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "ABF載板為高階封裝中承載與連接晶片的有機載板，涵蓋 ABF 載板設計、製造及材料供應；不含一般 PCB、封裝測試服務或非 ABF 基板。",
+      "expectedCurrentSlug": "ABF載板",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "ABF載板",
+      "slug": "ABF載板",
+      "status": "ENABLED",
+      "topicId": "ea492acf-2575-4d97-9fa8-d76d9e8d82c3"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "駕駛輔助、雷達／鏡頭感知、影像處理、車用域控制與自動駕駛系統。",
+      "expectedCurrentSlug": "ADAS",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "ADAS",
+      "slug": "ADAS",
+      "status": "ENABLED",
+      "topicId": "9828f439-2ced-4b49-9d9e-8016b5676e1c"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "AI 伺服器主板、HDI、高層數伺服器板、AI 高速板與伺服器用高頻高速 PCB；ABF 載板有獨立題材時不再以 AI PCB 作為唯一分類。",
+      "expectedCurrentSlug": "AI PCB",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "AI PCB",
+      "slug": "AI PCB",
+      "status": "ENABLED",
+      "topicId": "0b05426f-a83d-44da-a6a5-7fee21362c03"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "AI 伺服器整機、伺服器 ODM、機櫃整合、主板／機箱組裝與資料中心硬體整合。",
+      "expectedCurrentSlug": "AI伺服器整機／ODM",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "AI伺服器整機／ODM",
+      "slug": "AI伺服器整機／ODM",
+      "status": "ENABLED",
+      "topicId": "01227ecd-8f9d-4aa2-ba04-063b7caa8f78"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "AI 影像分析、辨識、醫療影像、影像理解與視覺 AI 軟體／平台。",
+      "expectedCurrentSlug": "AI影像辨識",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "AI影像辨識",
+      "slug": "AI影像辨識",
+      "status": "ENABLED",
+      "topicId": "6d1ef16c-6fea-439c-947b-648eb6ce2b16"
+    },
+    {
+      "action": "PRESERVE",
+      "description": null,
+      "expectedCurrentSlug": "AI視覺",
+      "level": "PARENT",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "AI視覺",
+      "slug": "AI視覺",
+      "status": "ENABLED",
+      "topicId": "ebcfa5ce-aa87-45cb-b2c7-fd6a12e65ef5"
+    },
+    {
+      "action": "PRESERVE",
+      "description": null,
+      "expectedCurrentSlug": "AI運算與伺服器",
+      "level": "PARENT",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "AI運算與伺服器",
+      "slug": "AI運算與伺服器",
+      "status": "ENABLED",
+      "topicId": "35edf59b-8f31-4fcc-a914-1c74584ad1da"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "AI 資料中心供電、UPS、HVDC、變壓、配電、電源與電力管理；一般重電不因 AI 新聞自動掛入。",
+      "expectedCurrentSlug": "AI電力基建",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "AI電力基建",
+      "slug": "AI電力基建",
+      "status": "ENABLED",
+      "topicId": "0a593f05-32f4-479d-96ab-2d68e1df5762"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "| 客製化 ASIC、AI／HPC 加速器、CSP 客製晶片、ASIC 設計服務、NRE／Turnkey 設計。僅代理晶片、一般 IC 或單純封裝不收錄。",
+      "expectedCurrentSlug": "ASIC",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "ASIC",
+      "slug": "ASIC",
+      "status": "ENABLED",
+      "topicId": "545b2b47-cb7e-4a0a-a247-8bcd7efe528f"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "AI 伺服器／資料中心電池備援模組、BBU、超級電容備援與 BBU 電源管理。一般 UPS 或儲能櫃改歸其他題材。",
+      "expectedCurrentSlug": "BBU",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "BBU",
+      "slug": "BBU",
+      "status": "ENABLED",
+      "topicId": "7f61260e-df11-4f65-a228-c84487a1187a"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "| 小晶片異質整合、Die-to-Die、UCIe、2.5D／3D Chiplet 封裝、Chiplet 測試或互連。僅做一般 ABF 載板，不自動掛 Chiplet。",
+      "expectedCurrentSlug": "Chiplet",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "Chiplet",
+      "slug": "Chiplet",
+      "status": "ENABLED",
+      "topicId": "72007ae6-e8ef-4f72-a98a-e0df64191f1c"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "明確參與台積電 CoWoS／2.5D 封裝的中介層、封裝、測試、設備、材料或服務。僅因 AI 或載板需求受惠，不足以掛 CoWoS。",
+      "expectedCurrentSlug": "CoWoS",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "CoWoS",
+      "slug": "CoWoS",
+      "status": "ENABLED",
+      "topicId": "d5969f88-e0b2-4df4-ba93-82313474a39b"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "DRAM、DDR、LPDDR、HBM 記憶體晶片或相關製造／封裝供應鏈；HBM 需求若只是設備或材料受惠，依實際供應鏈分類。",
+      "expectedCurrentSlug": "DRAM／DDR",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "DRAM／DDR",
+      "slug": "DRAM／DDR",
+      "status": "ENABLED",
+      "topicId": "064a0217-bd52-4a11-a472-ec6e7bec0fe0"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "扇出型面板級封裝、面板級封裝設備、材料、載板與封裝服務；不能把一般面板製造直接視為 FOPLP。",
+      "expectedCurrentSlug": "FOPLP",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "FOPLP",
+      "slug": "FOPLP",
+      "status": "ENABLED",
+      "topicId": "82783006-f7ce-4e3d-8711-ab897654aad4"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "GaN wafer、GaN-on-Si、GaN epi 及 GaN 射頻／功率元件用晶圓。",
+      "expectedCurrentSlug": "GaN 晶圓／GaN-on-Si",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "GaN 晶圓／GaN-on-Si",
+      "slug": "GaN 晶圓／GaN-on-Si",
+      "status": "ENABLED",
+      "topicId": "6132857f-470e-4823-8bf5-b017562102a0"
+    },
+    {
+      "action": "PRESERVE",
+      "description": null,
+      "expectedCurrentSlug": "IC設計",
+      "level": "PARENT",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "IC設計",
+      "slug": "IC設計",
+      "status": "ENABLED",
+      "topicId": "2de6b3e1-1c53-4f84-bbd7-7b3b04745aa6"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "IGBT、IGBT 模組、功率模組、逆變器模組與模組封裝。",
+      "expectedCurrentSlug": "IGBT／功率模組",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "IGBT／功率模組",
+      "slug": "IGBT／功率模組",
+      "status": "ENABLED",
+      "topicId": "fb6c5b4e-13ae-4f4f-91fe-54830ad58802"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "微控制器、車用 MCU、工控 MCU、嵌入式控制器及其韌體／開發生態。一般 CPU、PMIC、功率元件不收錄。",
+      "expectedCurrentSlug": "MCU",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "MCU",
+      "slug": "MCU",
+      "status": "ENABLED",
+      "topicId": "6f45f958-26fe-435f-8dc3-ceb4976e702a"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "積層陶瓷電容，包含車用、高壓、高容、AI 伺服器與消費電子 MLCC。",
+      "expectedCurrentSlug": "MLCC",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "MLCC",
+      "slug": "MLCC",
+      "status": "ENABLED",
+      "topicId": "040c159b-c196-4726-8baa-996f2e2ed558"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "| NAND Flash、SSD 控制器、SSD 模組、企業級 SSD、儲存解決方案。單純記憶體通路不收錄。",
+      "expectedCurrentSlug": "NAND Flash／SSD",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "NAND Flash／SSD",
+      "slug": "NAND Flash／SSD",
+      "status": "ENABLED",
+      "topicId": "6077f9d0-bc37-412b-97af-8339c52cb89c"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "NOR、SLC、利基型記憶體、特殊嵌入式記憶體與非主流容量／規格產品。",
+      "expectedCurrentSlug": "NOR Flash／利基型記憶體",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "NOR Flash／利基型記憶體",
+      "slug": "NOR Flash／利基型記憶體",
+      "status": "ENABLED",
+      "topicId": "f3429995-0a10-4670-851d-71a4024cb6ed"
+    },
+    {
+      "action": "PRESERVE",
+      "description": null,
+      "expectedCurrentSlug": "PCB供應鏈",
+      "level": "PARENT",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "PCB供應鏈",
+      "slug": "PCB供應鏈",
+      "status": "ENABLED",
+      "topicId": "3155541d-614f-41b0-aeac-3f79c9efab65"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "以 RISC-V ISA、CPU core、SoC、開發板或相關 IP／軟體生態為核心。僅使用 RISC-V 元件但非公司主力不收錄。",
+      "expectedCurrentSlug": "RISC-V",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "RISC-V",
+      "slug": "RISC-V",
+      "status": "ENABLED",
+      "topicId": "0154d4be-8318-4115-9c8e-4b74bdd3bf86"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "Retimer、Redriver、訊號重整與高速訊號完整性晶片。",
+      "expectedCurrentSlug": "Retimer／Redriver",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "Retimer／Redriver",
+      "slug": "Retimer／Redriver",
+      "status": "ENABLED",
+      "topicId": "a7de1ce0-94c2-4136-a74d-ed3dfa1b3651"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "SiC wafer、SiC substrate、SiC epi、SiC 磊晶與功率元件用 SiC 基板。",
+      "expectedCurrentSlug": "SiC 晶圓／基板",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "SiC 晶圓／基板",
+      "slug": "SiC 晶圓／基板",
+      "status": "ENABLED",
+      "topicId": "805d6462-1150-4f81-9cd7-89dcba96b9eb"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "已量產或商業化的 SiC／GaN MOSFET、二極體、HEMT、功率模組；材料與晶圓改歸晶圓材料。",
+      "expectedCurrentSlug": "SiC／GaN 功率元件",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "SiC／GaN 功率元件",
+      "slug": "SiC／GaN 功率元件",
+      "status": "ENABLED",
+      "topicId": "a7d1b94e-9dc9-49a0-9cab-89816fae6db3"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "晶圓測試、成品測試、封裝代工、測試服務、封裝材料／介面服務，但不以先進封裝特殊技術為主要識別。",
+      "expectedCurrentSlug": "一般封測",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "一般封測",
+      "slug": "一般封測",
+      "status": "ENABLED",
+      "topicId": "58434a1f-3982-4a55-b32c-76b9f98a714e"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "一般電子、工業、消費、車用連接器、端子與線束。",
+      "expectedCurrentSlug": "一般連接器",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "一般連接器",
+      "slug": "一般連接器",
+      "status": "ENABLED",
+      "topicId": "1ad4cd46-8464-4934-87b1-4b391e2fc331"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "衛星通訊、地面站、天線、衛星終端、通訊模組與太空通訊供應鏈。",
+      "expectedCurrentSlug": "低軌衛星",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "低軌衛星",
+      "slug": "低軌衛星",
+      "status": "ENABLED",
+      "topicId": "fb0e479d-2c69-4fcc-99a5-cea563ec0042"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "住宅建案、建商、餘屋、交屋與住宅代銷。",
+      "expectedCurrentSlug": "住宅營建",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "住宅營建",
+      "slug": "住宅營建",
+      "status": "ENABLED",
+      "topicId": "610b70ab-d199-43db-a64c-13156c2ebcca"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "| TVS、ESD、保險絲、壓敏電阻與電路保護元件；一般電阻／電容不收錄。",
+      "expectedCurrentSlug": "保護元件",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "保護元件",
+      "slug": "保護元件",
+      "status": "ENABLED",
+      "topicId": "7ea456bc-9b1c-4134-a8b8-bc6f3f811d81"
+    },
+    {
+      "action": "PRESERVE",
+      "description": null,
+      "expectedCurrentSlug": "傳統產業材料",
+      "level": "PARENT",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "傳統產業材料",
+      "slug": "傳統產業材料",
+      "status": "ENABLED",
+      "topicId": "81af7f8d-db2a-46cc-814b-18345e8e32bb"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "一般 PCB、高層數板、HDI、軟板、載板製造；若明確為 AI 伺服器板，優先 AI PCB；若明確為 ABF 載板，優先 ABF載板候選。",
+      "expectedCurrentSlug": "傳統硬板與軟板",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "傳統硬板與軟板",
+      "slug": "傳統硬板與軟板",
+      "status": "ENABLED",
+      "topicId": "48fb298e-56bf-5c19-9329-dac53558ec9c"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "電池模組、儲能櫃、BMS、PCS、EMS、工商儲能與電網儲能。",
+      "expectedCurrentSlug": "儲能",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "儲能",
+      "slug": "儲能",
+      "status": "ENABLED",
+      "topicId": "375577eb-a013-4011-82f5-8e4e1f91b887"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "直接服務 CoWoS、SoIC、Chiplet、混合鍵合、RDL、先進封裝組裝／檢測的設備。只做一般封裝或設備零件者分到其他細題材。",
+      "expectedCurrentSlug": "先進封裝設備",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "先進封裝設備",
+      "slug": "先進封裝設備",
+      "status": "ENABLED",
+      "topicId": "a5f2e9a5-b3c3-4b29-b606-2413f7c30f91"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "光模組、雷射、光收發器、光纖元件與光通訊設備；若核心是矽光子，優先矽光子。",
+      "expectedCurrentSlug": "光通訊",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "光通訊",
+      "slug": "光通訊",
+      "status": "ENABLED",
+      "topicId": "01bb6fc0-0a91-4a22-a511-1070db1c1825"
+    },
+    {
+      "action": "PRESERVE",
+      "description": null,
+      "expectedCurrentSlug": "全球物流與運輸基建",
+      "level": "PARENT",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "全球物流與運輸基建",
+      "slug": "全球物流與運輸基建",
+      "status": "ENABLED",
+      "topicId": "ef74f98d-8a9e-5af3-9195-f77ae6143041"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "AI 伺服器零組件、機櫃、滑軌、電源、線材、網通或工業電腦等，具有 AI 伺服器實際訂單／產品，但沒有更精確細題材。",
+      "expectedCurrentSlug": "其他 AI伺服器供應鏈",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "其他 AI伺服器供應鏈",
+      "slug": "其他 AI伺服器供應鏈",
+      "status": "ENABLED",
+      "topicId": "e633b461-07a7-46fc-bef6-6a269e72a068"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "有 AI 視覺產品或服務，但無法歸入機器視覺、視覺檢測或 AI 影像辨識。",
+      "expectedCurrentSlug": "其他 AI視覺",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "其他 AI視覺",
+      "slug": "其他 AI視覺",
+      "status": "ENABLED",
+      "topicId": "b776d842-3b97-4b16-a461-5f726a732a37"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "有實際 IC 設計產品，但不符合 ASIC、MCU、RISC-V 或其他已命名細題材；例如驅動 IC、網通 IC、音訊 IC、一般邏輯 IC。",
+      "expectedCurrentSlug": "其他 IC設計",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "其他 IC設計",
+      "slug": "其他 IC設計",
+      "status": "ENABLED",
+      "topicId": "2a46b249-7af2-41c7-8ea9-aea5a2a3f291"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "半導體材料供應鏈中，無法歸入利基型光電磊晶、電子化學材料或其他已命名細題材的材料與整合服務；保留供 Owner review。",
+      "expectedCurrentSlug": "其他半導體材料",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "其他半導體材料",
+      "slug": "其他半導體材料",
+      "status": "ENABLED",
+      "topicId": "628aef78-4f45-4b40-ab92-fdd17f6ac116"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "晶圓製造、封裝測試、清洗、檢測、再生晶圓、量測等設備，但無法歸入先進封裝設備或設備零組件。",
+      "expectedCurrentSlug": "其他半導體設備",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "其他半導體設備",
+      "slug": "其他半導體設備",
+      "status": "ENABLED",
+      "topicId": "64357392-2d25-41b2-ba1c-0711f82542b4"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "有明確原物料、金屬、紙漿、玻璃或能源報價關聯，但不屬上述細題材。",
+      "expectedCurrentSlug": "其他原物料",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "其他原物料",
+      "slug": "其他原物料",
+      "status": "ENABLED",
+      "topicId": "7f9e1c82-fc7e-4a6a-a768-526f3e8bb030"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "國防訂單或軍工產品，但無法歸入無人機、雷達感測、船舶或航太零組件。",
+      "expectedCurrentSlug": "其他國防",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "其他國防",
+      "slug": "其他國防",
+      "status": "ENABLED",
+      "topicId": "42c9643e-d045-4beb-8582-474a4e47a136"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "大型市值權值股，但不屬大型電子或大型金融。",
+      "expectedCurrentSlug": "其他大型權值",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "其他大型權值",
+      "slug": "其他大型權值",
+      "status": "ENABLED",
+      "topicId": "0ada6c6f-2d32-48a1-af40-b23a69dd5204"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "熱管理中，無法歸入液冷散熱、風冷散熱或散熱零組件等既有細題材的產品／服務；保留供 Owner review。",
+      "expectedCurrentSlug": "其他熱管理",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "其他熱管理",
+      "slug": "其他熱管理",
+      "status": "ENABLED",
+      "topicId": "9b368d0e-b073-4b24-9021-d5538144fde1"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "有能源產品或服務，但無法歸入重電、儲能、太陽能、AI 電力或離岸風電。",
+      "expectedCurrentSlug": "其他能源",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "其他能源",
+      "slug": "其他能源",
+      "status": "ENABLED",
+      "topicId": "0023efd5-2842-4345-bf0b-3c6791da0664"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "有明確被動元件產品，但不屬 MLCC、鋁電容、固態電容、電感或石英元件。",
+      "expectedCurrentSlug": "其他被動元件",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "其他被動元件",
+      "slug": "其他被動元件",
+      "status": "ENABLED",
+      "topicId": "7d602095-5f50-4883-b4e3-8002128f4408"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "車用電子產品，但無法歸入 EV、ADAS、車用功率或車用連接器。",
+      "expectedCurrentSlug": "其他車用電子",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "其他車用電子",
+      "slug": "其他車用電子",
+      "status": "ENABLED",
+      "topicId": "8ab347f8-2ab4-4d68-bbf0-bc026d8bec8e"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "通訊或光電產品，但不屬網通、低軌衛星、矽光子或一般光通訊。",
+      "expectedCurrentSlug": "其他通訊光電",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "其他通訊光電",
+      "slug": "其他通訊光電",
+      "status": "ENABLED",
+      "topicId": "21c21155-96b1-4450-8615-e0a9690abc79"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "製程化學品、特殊氣體、石英耗材、光阻、靶材、清洗／蝕刻材料與晶圓製程耗材；矽晶圓應優先分到晶圓材料。",
+      "expectedCurrentSlug": "利基型光電磊晶",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "利基型光電磊晶",
+      "slug": "利基型光電磊晶",
+      "status": "ENABLED",
+      "topicId": "6575fad4-9875-45f0-9c72-ff868925f713"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "半導體與電子製程用特用化學品、先進封裝製程材料、去阻劑、清洗／蝕刻／表面處理與其他高附加價值化學材料；不含一般化工原料。",
+      "expectedCurrentSlug": "利基型特用化學 (Specialty Chemical Materials)",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "利基型特用化學 (Specialty Chemical Materials)",
+      "slug": "利基型特用化學 (Specialty Chemical Materials)",
+      "status": "ENABLED",
+      "topicId": "7bceb463-26d1-5810-8e9c-5e9359eaa45a"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "MOSFET、Super Junction、低壓／高壓功率 MOSFET 及其製造商。",
+      "expectedCurrentSlug": "功率 MOSFET",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "功率 MOSFET",
+      "slug": "功率 MOSFET",
+      "status": "ENABLED",
+      "topicId": "02920714-4615-4d8c-970f-60c86093e806"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "整流二極體、蕭特基、TVS 以外的功率二極體與整流器。",
+      "expectedCurrentSlug": "功率二極體／整流器",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "功率二極體／整流器",
+      "slug": "功率二極體／整流器",
+      "status": "ENABLED",
+      "topicId": "263771ca-90ec-4d7f-97f7-2ee826eea0e2"
+    },
+    {
+      "action": "PRESERVE",
+      "description": null,
+      "expectedCurrentSlug": "功率半導體",
+      "level": "PARENT",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "功率半導體",
+      "slug": "功率半導體",
+      "status": "ENABLED",
+      "topicId": "f2150da0-01ac-48e1-8179-3e61742ea2a5"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "塑化、石化、化工原料與報價循環；不可只因使用化學品就歸入。",
+      "expectedCurrentSlug": "化工原料／塑化報價",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "化工原料／塑化報價",
+      "slug": "化工原料／塑化報價",
+      "status": "ENABLED",
+      "topicId": "41a04db1-5dc2-4dce-904d-189a602f5461"
+    },
+    {
+      "action": "PRESERVE",
+      "description": null,
+      "expectedCurrentSlug": "半導體材料",
+      "level": "PARENT",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "半導體材料",
+      "slug": "半導體材料",
+      "status": "ENABLED",
+      "topicId": "d1514075-c622-4d00-85d2-84162697daa2"
+    },
+    {
+      "action": "PRESERVE",
+      "description": null,
+      "expectedCurrentSlug": "半導體製造",
+      "level": "PARENT",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "半導體製造",
+      "slug": "半導體製造",
+      "status": "ENABLED",
+      "topicId": "f2f5fc2e-d926-4987-81ef-e00a7bbeb1cb"
+    },
+    {
+      "action": "PRESERVE",
+      "description": null,
+      "expectedCurrentSlug": "半導體設備與權值",
+      "level": "PARENT",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "半導體設備與權值",
+      "slug": "半導體設備與權值",
+      "status": "ENABLED",
+      "topicId": "71802589-42ed-49ed-a3db-d1d498177099"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "真空、腔體、石英、陶瓷、精密機構、閥件、濕製程零件、耗材等設備關鍵零組件；不是整機設備商。",
+      "expectedCurrentSlug": "半導體設備零組件",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "半導體設備零組件",
+      "slug": "半導體設備零組件",
+      "status": "ENABLED",
+      "topicId": "5f7e2b93-13e0-4e39-a3f6-72420c687aae"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "商辦、都更、危老、開發權與商用不動產。",
+      "expectedCurrentSlug": "商辦／都市更新",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "商辦／都市更新",
+      "slug": "商辦／都市更新",
+      "status": "ENABLED",
+      "topicId": "b5978f65-7a56-4491-83e7-06adc1ed3b7c"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "導電高分子、固態電容與高可靠度電容；若產品主體是鋁電解，優先歸鋁電容。",
+      "expectedCurrentSlug": "固態電容",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "固態電容",
+      "slug": "固態電容",
+      "status": "ENABLED",
+      "topicId": "beef79f4-38c3-4b77-8903-a52edf9aef7f"
+    },
+    {
+      "action": "PRESERVE",
+      "description": null,
+      "expectedCurrentSlug": "大型權值",
+      "level": "PARENT",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "大型權值",
+      "slug": "大型權值",
+      "status": "ENABLED",
+      "topicId": "a969261d-6206-45c9-9b8e-a8ae4cbdf49e"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "大型電子市值權值股標記；只作市場權重與觀察用途，不取代產業細題材。",
+      "expectedCurrentSlug": "大型電子權值",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "大型電子權值",
+      "slug": "大型電子權值",
+      "status": "ENABLED",
+      "topicId": "057481af-6c02-491c-8719-8e591903a814"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "太陽能電池、模組、矽晶圓、導電漿、網版、案場與 EPC。",
+      "expectedCurrentSlug": "太陽能",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "太陽能",
+      "slug": "太陽能",
+      "status": "ENABLED",
+      "topicId": "08a7e213-c639-4192-85ea-1f6959b631a1"
+    },
+    {
+      "action": "PRESERVE",
+      "description": null,
+      "expectedCurrentSlug": "封裝測試",
+      "level": "PARENT",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "封裝測試",
+      "slug": "封裝測試",
+      "status": "ENABLED",
+      "topicId": "feb717be-0f98-4d14-beec-8e03a32ac267"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "PLC、工控、機器控制、運動控制、工業電腦與智慧工廠自動化設備。",
+      "expectedCurrentSlug": "工業自動化",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "工業自動化",
+      "slug": "工業自動化",
+      "status": "ENABLED",
+      "topicId": "caa90047-d807-4e29-a72c-d38c3f525a55"
+    },
+    {
+      "action": "PRESERVE",
+      "description": null,
+      "expectedCurrentSlug": "建設開發",
+      "level": "PARENT",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "建設開發",
+      "slug": "建設開發",
+      "status": "ENABLED",
+      "topicId": "c63e8e8b-8b1b-4883-b1a5-fa8dc5ced0b3"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "28nm 以上或市場定義的成熟節點、特殊成熟製程與成熟製程代工。MCU／功率元件若已有更精確題材，優先使用產品題材。",
+      "expectedCurrentSlug": "成熟製程",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "成熟製程",
+      "slug": "成熟製程",
+      "status": "ENABLED",
+      "topicId": "bc6f668a-e0d7-4b58-95e9-0c4cf20add90"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "散熱器、扣件、風扇零件、熱介面材料等零組件，但非完整風冷／液冷系統。",
+      "expectedCurrentSlug": "散熱零組件",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "散熱零組件",
+      "slug": "散熱零組件",
+      "status": "ENABLED",
+      "topicId": "70ee7fd5-0572-4ff0-aba2-ee869ccc5c22"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "乾散貨、散裝貨物船隊、海岬型／巴拿馬型／輕便型散裝船與相關運價；不含貨櫃航運與油輪航運。",
+      "expectedCurrentSlug": "散裝航運",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "散裝航運",
+      "slug": "散裝航運",
+      "status": "ENABLED",
+      "topicId": "37bbfd4d-c030-5d58-8402-da22396f1b38"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "受託晶圓製造、純晶圓代工與晶圓製造服務；不因公司設有自有晶圓廠就自動收錄。",
+      "expectedCurrentSlug": "晶圓代工",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "晶圓代工",
+      "slug": "晶圓代工",
+      "status": "ENABLED",
+      "topicId": "d445a914-7c1c-49d1-9cee-2e815388a8cb"
+    },
+    {
+      "action": "PRESERVE",
+      "description": null,
+      "expectedCurrentSlug": "晶圓材料",
+      "level": "PARENT",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "晶圓材料",
+      "slug": "晶圓材料",
+      "status": "ENABLED",
+      "topicId": "c95a0960-44a4-4312-b0e9-9fc5c2205bd4"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "機器人本體、AMR／AGV、機器人整合、智慧工廠與自動化專案服務。",
+      "expectedCurrentSlug": "機器人系統整合",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "機器人系統整合",
+      "slug": "機器人系統整合",
+      "status": "ENABLED",
+      "topicId": "59df62e0-c5ba-4b48-8929-0c0a62d70e74"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "馬達、伺服、減速機、線性滑軌、滾珠螺桿、控制器、致動器與精密定位。",
+      "expectedCurrentSlug": "機器人零組件",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "機器人零組件",
+      "slug": "機器人零組件",
+      "status": "ENABLED",
+      "topicId": "6202c205-0304-4648-9079-e6689004cf90"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "工業相機、鏡頭、3D 視覺、視覺感測與機器視覺系統。",
+      "expectedCurrentSlug": "機器視覺",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "機器視覺",
+      "slug": "機器視覺",
+      "status": "ENABLED",
+      "topicId": "c91d1ec5-574e-4e8a-9486-6c6741053cfd"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "冷板、泵浦、管路、快接頭、CDU、冷卻液與液冷系統整合。",
+      "expectedCurrentSlug": "液冷散熱",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "液冷散熱",
+      "slug": "液冷散熱",
+      "status": "ENABLED",
+      "topicId": "9ecc2ebd-bfff-4ca0-91bd-10aeb002c807"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "無人機、無人載具、飛控、任務系統與軍用／商用無人系統。",
+      "expectedCurrentSlug": "無人機",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "無人機",
+      "slug": "無人機",
+      "status": "ENABLED",
+      "topicId": "1c807301-93cd-4e6a-9b0d-b3d9cc187e40"
+    },
+    {
+      "action": "PRESERVE",
+      "description": null,
+      "expectedCurrentSlug": "熱管理",
+      "level": "PARENT",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "熱管理",
+      "slug": "熱管理",
+      "status": "ENABLED",
+      "topicId": "7c5cc252-19b3-411f-8faf-a483664f24c0"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "營造、工程承攬、公共工程、機電工程與基礎建設施工。",
+      "expectedCurrentSlug": "營建工程",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "營建工程",
+      "slug": "營建工程",
+      "status": "ENABLED",
+      "topicId": "99edc359-dc9d-41e2-85d1-2d81d9a6c9d5"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "RF、BCD、CIS、MEMS、嵌入式非揮發記憶體等特殊製程平台。",
+      "expectedCurrentSlug": "特殊製程",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "特殊製程",
+      "slug": "特殊製程",
+      "status": "ENABLED",
+      "topicId": "cb72fab9-92dc-4c66-b97b-d5b00be9bf48"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "高性能鋼、鎳基／鈦合金、航太與能源用特殊合金。",
+      "expectedCurrentSlug": "特殊鋼／高性能合金",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "特殊鋼／高性能合金",
+      "slug": "特殊鋼／高性能合金",
+      "status": "ENABLED",
+      "topicId": "69dcb1f2-c6ee-49f5-9aac-1e73d6436e0e"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "明確為連接元件但無法歸高速或一般連接器的特殊連接方案。",
+      "expectedCurrentSlug": "特用與精密線束",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "特用與精密線束",
+      "slug": "特用與精密線束",
+      "status": "ENABLED",
+      "topicId": "513e58ef-6527-407d-aa1e-4396f56bd41f"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "半導體封裝用玻璃基板、玻璃載板、TGV、玻璃加工／檢測；顯示器玻璃若非半導體或封裝用途，應改看顯示相關題材。",
+      "expectedCurrentSlug": "玻璃基板",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "玻璃基板",
+      "slug": "玻璃基板",
+      "status": "ENABLED",
+      "topicId": "f3894dfc-4ebd-4bf2-8e36-fb5c78dcb046"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "電子級玻纖布、低介電／低損耗玻纖布與 CCL 用玻璃纖維材料。一般紡織玻纖不收錄。",
+      "expectedCurrentSlug": "玻纖布",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "玻纖布",
+      "slug": "玻纖布",
+      "status": "ENABLED",
+      "topicId": "98c92dc1-dabd-427c-b3b8-5b98a47e1f97"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "生物製劑、製藥、醫療生技、原料藥、製劑與委託開發暨製造服務；依 Owner 定義歸入傳統產業材料大族群，不代表其為一般原材料公司。",
+      "expectedCurrentSlug": "生技醫藥與CDMO (Biotech & CDMO)",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "生技醫藥與CDMO (Biotech & CDMO)",
+      "slug": "生技醫藥與CDMO (Biotech & CDMO)",
+      "status": "ENABLED",
+      "topicId": "6fa2e314-d772-58a3-aff6-1ba51459b349"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "石英晶體、振盪器、TCXO、頻率控制與時脈元件。",
+      "expectedCurrentSlug": "石英元件",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "石英元件",
+      "slug": "石英元件",
+      "status": "ENABLED",
+      "topicId": "e9f1dac4-14f7-4887-8910-6e5e21ed3069"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "矽光子晶片、光引擎、CPO／LPO、光電整合與資料中心高速光傳輸。",
+      "expectedCurrentSlug": "矽光子",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "矽光子",
+      "slug": "矽光子",
+      "status": "ENABLED",
+      "topicId": "8cb24438-0a99-4dae-92c1-e309ed090e13"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "EDR、端點防護、行動／PC／伺服器端資安軟體。",
+      "expectedCurrentSlug": "端點資安",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "端點資安",
+      "slug": "端點資安",
+      "status": "ENABLED",
+      "topicId": "065171f4-cc98-4614-9cb9-e33729a6537b"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "紡紗、織布、成衣、機能布與紡織材料。",
+      "expectedCurrentSlug": "紡織",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "紡織",
+      "slug": "紡織",
+      "status": "ENABLED",
+      "topicId": "bdc0c3bf-529c-4e5a-a753-223ee0f86415"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "網路防火牆、SOC、零信任、網路監控、入侵偵測與企業網路防護。",
+      "expectedCurrentSlug": "網路資安",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "網路資安",
+      "slug": "網路資安",
+      "status": "ENABLED",
+      "topicId": "76a3554d-cc99-4330-8450-d803dc712eed"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "交換器、路由器、Wi-Fi、企業網路、資料中心網路與網通設備。",
+      "expectedCurrentSlug": "網通",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "網通",
+      "slug": "網通",
+      "status": "ENABLED",
+      "topicId": "c9eb29e1-5b18-4857-b2bf-9af97265916b"
+    },
+    {
+      "action": "PRESERVE",
+      "description": null,
+      "expectedCurrentSlug": "自動化與機器人",
+      "level": "PARENT",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "自動化與機器人",
+      "slug": "自動化與機器人",
+      "status": "ENABLED",
+      "topicId": "b482ef24-3870-4ba0-915c-6ad6cf92c611"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "航太結構件、引擎零件、航電、飛機零件與太空設備零件。",
+      "expectedCurrentSlug": "航太零組件",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "航太零組件",
+      "slug": "航太零組件",
+      "status": "ENABLED",
+      "topicId": "4136333b-7960-47b7-ad10-7aac2cdd84e1"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "航空公司、客運航線、航空貨運、機隊與機場航運服務；以航空運輸營運為主。",
+      "expectedCurrentSlug": "航空客貨運",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "航空客貨運",
+      "slug": "航空客貨運",
+      "status": "ENABLED",
+      "topicId": "41c9d8a8-0c37-532d-80aa-407db57cfd60"
+    },
+    {
+      "action": "PRESERVE",
+      "description": null,
+      "expectedCurrentSlug": "被動元件",
+      "level": "PARENT",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "被動元件",
+      "slug": "被動元件",
+      "status": "ENABLED",
+      "topicId": "aae91e68-1ace-4106-bd4f-2d2dca0f7af6"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "PCB供應鏈中，無法歸入銅箔基板CCL、傳統硬板與軟板、玻纖布或其他已命名細題材的材料／基材產品；保留供 Owner review。",
+      "expectedCurrentSlug": "製程耗材與特料",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "製程耗材與特料",
+      "slug": "製程耗材與特料",
+      "status": "ENABLED",
+      "topicId": "4b0c5906-f726-4588-ba01-e5fd32ea86c6"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "AOI、瑕疵檢測、品質檢測、量測與製程視覺檢測。",
+      "expectedCurrentSlug": "視覺檢測",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "視覺檢測",
+      "slug": "視覺檢測",
+      "status": "ENABLED",
+      "topicId": "9a7d14ea-5783-4131-ab8c-204c301658f9"
+    },
+    {
+      "action": "PRESERVE",
+      "description": null,
+      "expectedCurrentSlug": "記憶體",
+      "level": "PARENT",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "記憶體",
+      "slug": "記憶體",
+      "status": "ENABLED",
+      "topicId": "3736a2be-f5f7-437f-b5ae-5d24d6ecca30"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "記憶體模組、模組品牌、記憶體代理與通路；不含晶圓製造商。",
+      "expectedCurrentSlug": "記憶體模組／通路",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "記憶體模組／通路",
+      "slug": "記憶體模組／通路",
+      "status": "ENABLED",
+      "topicId": "494d35ed-39fa-4523-b46a-f2b54d5ac37c"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "記憶體晶圓製造流程或記憶體專用製程服務；一般記憶體產品公司不必然掛此題材。",
+      "expectedCurrentSlug": "記憶體製程",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "記憶體製程",
+      "slug": "記憶體製程",
+      "status": "ENABLED",
+      "topicId": "ac718902-0001-447c-8ff2-984635ad9953"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "貨運代理、國際物流、倉儲、報關、供應鏈管理、第三方物流與綜合物流服務；不含以船隊或機隊營運為主的運輸公司。",
+      "expectedCurrentSlug": "貨代與物流",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "貨代與物流",
+      "slug": "貨代與物流",
+      "status": "ENABLED",
+      "topicId": "0c31dc9f-8252-5465-a260-64e04f96435f"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "貨櫃航運公司、貨櫃船隊、航線與港口運能、運價與貨櫃物流服務；不含散裝航運與油輪航運。",
+      "expectedCurrentSlug": "貨櫃海運",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "貨櫃海運",
+      "slug": "貨櫃海運",
+      "status": "ENABLED",
+      "topicId": "d4eb3f1f-41b1-5fac-8df7-c18b9888d8c1"
+    },
+    {
+      "action": "PRESERVE",
+      "description": null,
+      "expectedCurrentSlug": "資安服務",
+      "level": "PARENT",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "資安服務",
+      "slug": "資安服務",
+      "status": "ENABLED",
+      "topicId": "b4b961e8-fea7-4963-a014-6699037525d4"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "| 車用 MOSFET、IGBT、SiC／GaN 與車用電源元件。",
+      "expectedCurrentSlug": "車用功率半導體",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "車用功率半導體",
+      "slug": "車用功率半導體",
+      "status": "ENABLED",
+      "topicId": "99755095-e392-4f2d-94ac-976a6321ae87"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "車用高速、高壓、充電與車內連接器。",
+      "expectedCurrentSlug": "車用連接器",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "車用連接器",
+      "slug": "車用連接器",
+      "status": "ENABLED",
+      "topicId": "6c207421-365d-4c58-b6db-e06e5fcf55b8"
+    },
+    {
+      "action": "PRESERVE",
+      "description": null,
+      "expectedCurrentSlug": "車用電子",
+      "level": "PARENT",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "車用電子",
+      "slug": "車用電子",
+      "status": "ENABLED",
+      "topicId": "41cab158-24db-40b9-90cf-fa859870f165"
+    },
+    {
+      "action": "PRESERVE",
+      "description": null,
+      "expectedCurrentSlug": "軍工國防",
+      "level": "PARENT",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "軍工國防",
+      "slug": "軍工國防",
+      "status": "ENABLED",
+      "topicId": "a48945bd-b12b-49e6-aecb-7a9acdb570ab"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "軍艦、軍用船艇、海事防衛與軍工造船。",
+      "expectedCurrentSlug": "軍工船舶",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "軍工船舶",
+      "slug": "軍工船舶",
+      "status": "ENABLED",
+      "topicId": "e8142235-9fca-410a-a5c7-d8cdeb932e94"
+    },
+    {
+      "action": "PRESERVE",
+      "description": null,
+      "expectedCurrentSlug": "通訊與光電",
+      "level": "PARENT",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "通訊與光電",
+      "slug": "通訊與光電",
+      "status": "ENABLED",
+      "topicId": "42130f0e-8be7-4f40-bfb0-5dd3f11980c6"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "邊緣 AI 晶片、終端 AI 運算、智慧攝影機、視覺感知、影像分析與裝置端推論；聚焦終端設備部署，不含純雲端 AI 軟體。",
+      "expectedCurrentSlug": "邊緣運算與智慧影像 (Edge AI & Vision)",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "邊緣運算與智慧影像 (Edge AI & Vision)",
+      "slug": "邊緣運算與智慧影像 (Edge AI & Vision)",
+      "status": "ENABLED",
+      "topicId": "07557ba9-5c10-59b1-8291-00362064c5aa"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "變壓器、配電盤、開關設備、電網工程與輸配電設備。",
+      "expectedCurrentSlug": "重電",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "重電",
+      "slug": "重電",
+      "status": "ENABLED",
+      "topicId": "080467ca-6de4-4841-b8d7-37fcb0faee0d"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "| 銅箔基板、覆銅板、低損耗／高頻高速 CCL、BT／ABF 上游樹脂與載板上游基材。完成的 ABF 載板不歸 CCL。",
+      "expectedCurrentSlug": "銅箔基板CCL",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "銅箔基板CCL",
+      "slug": "銅箔基板CCL",
+      "status": "ENABLED",
+      "topicId": "62ace0c4-980f-49c3-a3ed-955d07db4ff0"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "鋁質電解電容、鋁固態電容及其電解液／箔材供應鏈。",
+      "expectedCurrentSlug": "鋁電容",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "鋁電容",
+      "slug": "鋁電容",
+      "status": "ENABLED",
+      "topicId": "ddca4b1d-55cf-4e03-9e8d-c6c4604c3591"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "鋼鐵、不鏽鋼、鋼胚、特殊加工與金屬材料報價。",
+      "expectedCurrentSlug": "鋼鐵／不鏽鋼材料",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "鋼鐵／不鏽鋼材料",
+      "slug": "鋼鐵／不鏽鋼材料",
+      "status": "ENABLED",
+      "topicId": "efae9f9b-0192-4e0e-a1b9-543e8ed4f573"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "離岸風電水下基礎、風機鋼構、塔架與海事能源工程。",
+      "expectedCurrentSlug": "離岸風電／鋼構",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "離岸風電／鋼構",
+      "slug": "離岸風電／鋼構",
+      "status": "ENABLED",
+      "topicId": "0254ad93-bde9-4309-9ffc-1c9149ce2efc"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "雲端工作負載防護、SASE、雲端 IAM、雲端監控與雲端資安服務。",
+      "expectedCurrentSlug": "雲端資安",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "雲端資安",
+      "slug": "雲端資安",
+      "status": "ENABLED",
+      "topicId": "89e23af7-21e0-4e7f-b5d6-add9129c5d57"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "軍工雷達、電子偵察、軍用感測、警戒與目標追蹤系統。",
+      "expectedCurrentSlug": "雷達與感測",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "雷達與感測",
+      "slug": "雷達與感測",
+      "status": "ENABLED",
+      "topicId": "ac1c31d5-8daa-4f22-9aa1-beaee1291b06"
+    },
+    {
+      "action": "PRESERVE",
+      "description": null,
+      "expectedCurrentSlug": "電力與能源",
+      "level": "PARENT",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "電力與能源",
+      "slug": "電力與能源",
+      "status": "ENABLED",
+      "topicId": "f62b81df-1eeb-4218-863e-896244023e28"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "電動車動力、充電、電池、車用電子與 EV 專用零組件。",
+      "expectedCurrentSlug": "電動車／EV",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "電動車／EV",
+      "slug": "電動車／EV",
+      "status": "ENABLED",
+      "topicId": "1f0d1fd6-a41b-4baa-836b-d0461d30e11e"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "| ABF／BT 樹脂、封裝膠材、電子級化學配方、感光材料與電子材料化學品。若是完成的 ABF 載板，改歸 ABF載板候選。",
+      "expectedCurrentSlug": "電子化學材料",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "電子化學材料",
+      "slug": "電子化學材料",
+      "status": "ENABLED",
+      "topicId": "bcc8045a-82a1-4ad0-bb0f-e2e37b04c1d1"
+    },
+    {
+      "action": "PRESERVE",
+      "description": null,
+      "expectedCurrentSlug": "電子連接",
+      "level": "PARENT",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "電子連接",
+      "slug": "電子連接",
+      "status": "ENABLED",
+      "topicId": "021b0ca0-cb50-489a-b97b-d4b10ad1d08f"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "電感、功率電感、磁珠、磁性元件與高頻電感。",
+      "expectedCurrentSlug": "電感",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "電感",
+      "slug": "電感",
+      "status": "ENABLED",
+      "topicId": "d97e2401-b3c0-4af3-8c09-fc4e8e7e0a68"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "GPU 板卡、AI 加速卡、繪圖卡、板卡代工與顯示卡供應鏈。",
+      "expectedCurrentSlug": "顯卡",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "顯卡",
+      "slug": "顯卡",
+      "status": "ENABLED",
+      "topicId": "a6e3145d-13bf-41b7-a78e-3895879c7e65"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "風扇、散熱器、熱管、均熱板與風冷模組；若主要產品是液冷系統，不收錄。",
+      "expectedCurrentSlug": "風冷散熱",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "風冷散熱",
+      "slug": "風冷散熱",
+      "status": "ENABLED",
+      "topicId": "2bec1566-6351-44ff-8074-c844ccf7dbee"
+    },
+    {
+      "action": "PRESERVE",
+      "description": null,
+      "expectedCurrentSlug": "高速互連",
+      "level": "PARENT",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "高速互連",
+      "slug": "高速互連",
+      "status": "ENABLED",
+      "topicId": "c117a64e-caec-4c8b-b120-20ca70f4f586"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "高速 SerDes、介面控制 IC、PHY、USB／PCIe／Ethernet 介面產品。",
+      "expectedCurrentSlug": "高速介面",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "高速介面",
+      "slug": "高速介面",
+      "status": "ENABLED",
+      "topicId": "3968cd1a-cc65-4322-a218-2fe6e1905652"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "USB4、Thunderbolt、PCIe、Retimer、Redriver、高速介面IC、線材與高速連接器。",
+      "expectedCurrentSlug": "高速傳輸",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "高速傳輸",
+      "slug": "高速傳輸",
+      "status": "ENABLED",
+      "topicId": "d23094e4-d040-44e1-aa62-4ee33673e05a"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "112G／224G、PCIe、伺服器、資料中心、車用高速連接器與端子。",
+      "expectedCurrentSlug": "高速連接器",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "高速連接器",
+      "slug": "高速連接器",
+      "status": "ENABLED",
+      "topicId": "46fd9411-e2ad-45c8-8b90-141ba317f4d6"
+    },
+    {
+      "action": "PRESERVE",
+      "description": "探針卡、測試探針、測試座、測試介面、晶圓級量測與高階封裝／Chiplet／CoWoS 測試硬體；不含一般封裝代工或單純測試服務。",
+      "expectedCurrentSlug": "高階測試介面與探針 (Advanced Testing Interfaces)",
+      "level": "LEAF",
+      "mappingReason": "EXACT_CURRENT_CANONICAL_IDENTITY",
+      "name": "高階測試介面與探針 (Advanced Testing Interfaces)",
+      "slug": "高階測試介面與探針 (Advanced Testing Interfaces)",
+      "status": "ENABLED",
+      "topicId": "4fc2706f-63f8-5fcf-961d-4750111cb703"
+    }
+  ]
+}

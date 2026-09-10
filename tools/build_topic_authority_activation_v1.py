@@ -19,7 +19,7 @@ from topicpilot_api.topic_authority_activation import artifact_hash
 from topicpilot_api.topic_master_v1 import load_master, validate_master
 
 SCHEMA_VERSION = "topic-authority-activation.v1"
-ACTIVATION_VERSION = "topic-authority-lifecycle-formal-scope.20260911.v1"
+ACTIVATION_VERSION = "topic-authority-lifecycle-formal-scope.20260911.v2"
 APPROVAL_REFERENCE = "OWNER-AUTHORIZED-B2-PROTECTED-TOPIC-AUTHORITY-20260910"
 CREATE_NAMESPACE = uuid.UUID("da995966-4275-5fe0-9c45-8dc84ad2c3c1")
 
@@ -166,7 +166,7 @@ def build_artifact(
         "targetEnvironment": "production",
         "targetDatabase": target_database,
         "approvalReference": APPROVAL_REFERENCE,
-        "effectiveDate": "2026-09-11",
+        "effectiveDate": "2026-08-24",
         "expectedParentCount": 25,
         "expectedLeafCount": 107,
         "topics": sorted(active_rows + retired_rows, key=lambda row: row["slug"]),

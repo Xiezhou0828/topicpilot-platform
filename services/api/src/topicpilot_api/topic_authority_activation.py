@@ -372,6 +372,9 @@ def _apply_hierarchy(session: Session, artifact: ActivationArtifact) -> None:
     )
     existing = {(row.parent_topic_id, row.child_topic_id): row for row in active_rows}
     for edge, row in existing.items():
+        if edge in desired and row.valid_from > artifact.effective_date:
+            row.valid_from = artifact.effective_date
+    for edge, row in existing.items():
         if edge not in desired:
             row.valid_to = artifact.effective_date - timedelta(days=1)
     session.flush()
