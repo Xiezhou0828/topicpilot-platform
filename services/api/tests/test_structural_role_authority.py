@@ -72,12 +72,25 @@ def test_reference_exclusions_are_versioned_and_keep_existing_relations_immutabl
     payload = json.loads(REFERENCE_CORRECTED_ARTIFACT.read_text(encoding="utf-8"))
     artifact = parse_artifact(payload)
     assert artifact.authority_version == "structural-role-authority-20260912.v4"
-    assert len(artifact.rows) == 1162
+    assert len(artifact.rows) == 1160
     assert payload["expectedExistingProductionCount"] == 440
-    assert payload["expectedMissingProductionCount"] == 722
+    assert payload["expectedMissingProductionCount"] == 720
+    assert payload["instrumentReferenceAuthority"][
+        "dateEffectiveExcludedInstrumentIdentities"
+    ] == 1
+    excluded = payload["exclusionLineage"]["excludedRows"]
+    assert len(excluded) == 58
+    assert len([
+        row for row in excluded
+        if row["exclusionReason"]
+        == "DATE_EFFECTIVE_RELATION_OUTSIDE_INSTRUMENT_VALIDITY"
+    ]) == 2
     assert payload["instrumentReferenceAuthority"]["canonicalApproved"] == 49
     assert payload["instrumentReferenceAuthority"]["formallyExcludedInstrumentIdentities"] == 30
-    assert len(payload["exclusionLineage"]["excludedRows"]) == 56
+    assert all(
+        not (row["marketCode"] == "TWO" and row["instrumentCode"] == "6457")
+        for row in artifact.rows
+    )
 
 
 @pytest.mark.parametrize("field", ["artifactSha256", "targetEnvironment"])

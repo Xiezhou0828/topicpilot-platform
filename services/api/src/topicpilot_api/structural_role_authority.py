@@ -146,6 +146,10 @@ def _resolve(
                 Topic.id == UUID(str(item["topicId"])),
                 Market.code == item["marketCode"],
                 Instrument.instrument_code == item["instrumentCode"],
+                (Instrument.valid_from.is_(None))
+                | (Instrument.valid_from <= artifact.effective_date),
+                (Instrument.valid_to.is_(None))
+                | (Instrument.valid_to >= artifact.effective_date),
                 InstrumentTopicRelation.valid_from <= artifact.effective_date,
                 (InstrumentTopicRelation.valid_to.is_(None))
                 | (InstrumentTopicRelation.valid_to >= artifact.effective_date),
@@ -275,6 +279,16 @@ def materialize_missing_relations(
                     "ambiguous canonical Instrument or Topic identity"
                 )
             instrument, topic = instrument_rows[0], topic_rows[0]
+            if (
+                instrument.valid_from is not None
+                and instrument.valid_from > artifact.effective_date
+            ) or (
+                instrument.valid_to is not None
+                and instrument.valid_to < artifact.effective_date
+            ):
+                raise StructuralRoleAuthorityError(
+                    "relation effective date is outside canonical Instrument validity"
+                )
             existing = list(session.scalars(
                 select(InstrumentTopicRelation).where(
                     InstrumentTopicRelation.instrument_id == instrument.id,

@@ -14,7 +14,7 @@
     "correctionReason": "OWNER_APPROVED_EXISTING_PRODUCTION_ROLE_PRESERVATION"
   },
   "effectiveDate": "2026-08-24",
-  "expectedRelationCount": 1162,
+  "expectedRelationCount": 1160,
   "expectedLeafCount": 107,
   "rows": [
     {
@@ -4216,18 +4216,6 @@
         "previousArtifactRelationType": "PRIMARY",
         "topicId": "2a46b249-7af2-41c7-8ea9-aea5a2a3f291"
       }
-    },
-    {
-      "relationId": "2e5041be-e3dc-58a6-94c6-73b5b0e50e05",
-      "relationVersion": "owner-topic-membership-20260824.v1",
-      "marketCode": "TWO",
-      "instrumentCode": "6457",
-      "topicId": "2a46b249-7af2-41c7-8ea9-aea5a2a3f291",
-      "topicKey": "其他 IC設計",
-      "relationType": "PRIMARY",
-      "structuralRole": "CORE",
-      "approvalState": "APPROVED",
-      "sourceReference": "2026_NEW_TOPIC_ADDITION"
     },
     {
       "relationId": "969e54ad-4562-5252-8c0a-e8223592de2c",
@@ -8672,18 +8660,6 @@
         "previousArtifactRelationType": "PRIMARY",
         "topicId": "6f45f958-26fe-435f-8dc3-ceb4976e702a"
       }
-    },
-    {
-      "relationId": "06901c35-5e3d-5725-816b-f0864e532476",
-      "relationVersion": "owner-topic-membership-20260824.v1",
-      "marketCode": "TWO",
-      "instrumentCode": "6457",
-      "topicId": "6f45f958-26fe-435f-8dc3-ceb4976e702a",
-      "topicKey": "MCU",
-      "relationType": "PRIMARY",
-      "structuralRole": "CORE",
-      "approvalState": "APPROVED",
-      "sourceReference": "2026_NEW_TOPIC_ADDITION"
     },
     {
       "relationId": "c0693a52-fc02-51d9-95f9-bafed821ebee",
@@ -16963,25 +16939,27 @@
     }
   ],
   "expectedExistingProductionCount": 440,
-  "expectedMissingProductionCount": 722,
+  "expectedMissingProductionCount": 720,
   "instrumentReferenceAuthority": {
     "sourceReferenceVersion": "tw-reference-v1-rollover-57247b5a861c0ae3",
     "expansionBundleSha256": "dd2c70fbfea8e400c1b08f76449a07c4ecfc972c68474c9cceb2cb6c401db47d",
     "reconciliationSha256": "20ff6c45e4efe98fa2d21b76c15e0e3293260184e3dc6a82127b63315eac377d",
     "canonicalApproved": 49,
     "formallyExcludedInstrumentIdentities": 30,
-    "formallyExcludedRelationRows": 56
+    "dateEffectiveExcludedInstrumentIdentities": 1,
+    "formallyExcludedRelationRows": 58
   },
   "exclusionLineage": {
     "previousAuthorityVersion": "structural-role-authority-20260911.v3",
     "previousArtifactSha256": "8b7493199fd30ae2572b1ffde669204b40a48623ef15e93181117fcb086201a3",
-    "reason": "OFFICIAL_MARKET_IDENTITY_MISMATCH_OR_NON_LISTED_MARKET_STATUS",
+    "reason": "IDENTITY_AUTHORITY_OR_DATE_EFFECTIVE_RELATION_EXCLUSION",
     "excludedRows": [
       {
         "marketCode": "TWO",
         "instrumentCode": "6533",
         "topicId": "0154d4be-8318-4115-9c8e-4b74bdd3bf86",
         "relationId": "4ba2ca04-652a-5119-b794-0ad378bac260",
+        "exclusionReason": "OFFICIAL_MARKET_IDENTITY_MISMATCH_OR_NON_LISTED_MARKET_STATUS",
         "evidence": {
           "marketCode": "TWO",
           "instrumentCode": "6533",
@@ -17001,6 +16979,7 @@
         "instrumentCode": "4903",
         "topicId": "01bb6fc0-0a91-4a22-a511-1070db1c1825",
         "relationId": "c08a92aa-4a13-5e83-8aeb-682ef0a0346d",
+        "exclusionReason": "OFFICIAL_MARKET_IDENTITY_MISMATCH_OR_NON_LISTED_MARKET_STATUS",
         "evidence": {
           "marketCode": "TPE",
           "instrumentCode": "4903",
@@ -17020,6 +16999,7 @@
         "instrumentCode": "4908",
         "topicId": "01bb6fc0-0a91-4a22-a511-1070db1c1825",
         "relationId": "726825af-065b-5ca8-9000-040761448b27",
+        "exclusionReason": "OFFICIAL_MARKET_IDENTITY_MISMATCH_OR_NON_LISTED_MARKET_STATUS",
         "evidence": {
           "marketCode": "TPE",
           "instrumentCode": "4908",
@@ -17039,6 +17019,7 @@
         "instrumentCode": "4971",
         "topicId": "01bb6fc0-0a91-4a22-a511-1070db1c1825",
         "relationId": "59a0c1ac-99a9-56ae-995d-0f3c69b7a1ea",
+        "exclusionReason": "OFFICIAL_MARKET_IDENTITY_MISMATCH_OR_NON_LISTED_MARKET_STATUS",
         "evidence": {
           "marketCode": "TPE",
           "instrumentCode": "4971",
@@ -17058,6 +17039,7 @@
         "instrumentCode": "4979",
         "topicId": "01bb6fc0-0a91-4a22-a511-1070db1c1825",
         "relationId": "a0975e21-ab83-5ff2-b1e4-58f47018bf96",
+        "exclusionReason": "OFFICIAL_MARKET_IDENTITY_MISMATCH_OR_NON_LISTED_MARKET_STATUS",
         "evidence": {
           "marketCode": "TPE",
           "instrumentCode": "4979",
@@ -17077,6 +17059,7 @@
         "instrumentCode": "4923",
         "topicId": "02920714-4615-4d8c-970f-60c86093e806",
         "relationId": "26eaa367-4681-5b3e-9b10-e3baecb94e4f",
+        "exclusionReason": "OFFICIAL_MARKET_IDENTITY_MISMATCH_OR_NON_LISTED_MARKET_STATUS",
         "evidence": {
           "marketCode": "TPE",
           "instrumentCode": "4923",
@@ -17096,6 +17079,7 @@
         "instrumentCode": "4760",
         "topicId": "040c159b-c196-4726-8baa-996f2e2ed558",
         "relationId": "978c8adf-7b3b-56f9-bce5-b4d4439afd1c",
+        "exclusionReason": "OFFICIAL_MARKET_IDENTITY_MISMATCH_OR_NON_LISTED_MARKET_STATUS",
         "evidence": {
           "marketCode": "TPE",
           "instrumentCode": "4760",
@@ -17115,6 +17099,7 @@
         "instrumentCode": "5274",
         "topicId": "057481af-6c02-491c-8719-8e591903a814",
         "relationId": "44a585ea-9cd5-5231-ab3e-9d94729f8799",
+        "exclusionReason": "OFFICIAL_MARKET_IDENTITY_MISMATCH_OR_NON_LISTED_MARKET_STATUS",
         "evidence": {
           "marketCode": "TPE",
           "instrumentCode": "5274",
@@ -17134,6 +17119,7 @@
         "instrumentCode": "6533",
         "topicId": "057481af-6c02-491c-8719-8e591903a814",
         "relationId": "373141b0-281f-501a-bdff-83eefef06e80",
+        "exclusionReason": "OFFICIAL_MARKET_IDENTITY_MISMATCH_OR_NON_LISTED_MARKET_STATUS",
         "evidence": {
           "marketCode": "TWO",
           "instrumentCode": "6533",
@@ -17153,6 +17139,7 @@
         "instrumentCode": "5227",
         "topicId": "1f0d1fd6-a41b-4baa-836b-d0461d30e11e",
         "relationId": "1e0a3231-24e5-5065-844f-c890049c1280",
+        "exclusionReason": "OFFICIAL_MARKET_IDENTITY_MISMATCH_OR_NON_LISTED_MARKET_STATUS",
         "evidence": {
           "marketCode": "TPE",
           "instrumentCode": "5227",
@@ -17172,6 +17159,7 @@
         "instrumentCode": "4966",
         "topicId": "2a46b249-7af2-41c7-8ea9-aea5a2a3f291",
         "relationId": "cdd7718c-5dbd-5b24-a32e-d001ebfddcb5",
+        "exclusionReason": "OFFICIAL_MARKET_IDENTITY_MISMATCH_OR_NON_LISTED_MARKET_STATUS",
         "evidence": {
           "marketCode": "TPE",
           "instrumentCode": "4966",
@@ -17191,6 +17179,7 @@
         "instrumentCode": "5274",
         "topicId": "2a46b249-7af2-41c7-8ea9-aea5a2a3f291",
         "relationId": "89a82760-fd9c-5262-9758-c1995803aab8",
+        "exclusionReason": "OFFICIAL_MARKET_IDENTITY_MISMATCH_OR_NON_LISTED_MARKET_STATUS",
         "evidence": {
           "marketCode": "TPE",
           "instrumentCode": "5274",
@@ -17206,10 +17195,31 @@
         }
       },
       {
+        "marketCode": "TWO",
+        "instrumentCode": "6457",
+        "topicId": "2a46b249-7af2-41c7-8ea9-aea5a2a3f291",
+        "relationId": "2e5041be-e3dc-58a6-94c6-73b5b0e50e05",
+        "exclusionReason": "DATE_EFFECTIVE_RELATION_OUTSIDE_INSTRUMENT_VALIDITY",
+        "evidence": {
+          "marketCode": "TWO",
+          "instrumentCode": "6457",
+          "name": "紘康",
+          "resolution": "CANONICAL_APPROVED",
+          "reason": "OFFICIAL_TPEX_HISTORICAL_LISTING_AND_DELISTING_NOTICES",
+          "sourceReference": "https://www.tpex.org.tw/storage/eb_data/10406/10400146681.htm",
+          "listingEffectiveFrom": "2015-06-12",
+          "effectiveTo": "2025-01-01",
+          "canonicalUuidInput": "topicpilot.instrument.v1:TWO:6457",
+          "canonicalUuid": "66940382-650b-5a44-8243-ba57ed7d8c94",
+          "affectedRelationCount": 2
+        }
+      },
+      {
         "marketCode": "TPE",
         "instrumentCode": "4931",
         "topicId": "375577eb-a013-4011-82f5-8e4e1f91b887",
         "relationId": "ec8f842c-aeec-599f-bc13-ee00db521d70",
+        "exclusionReason": "OFFICIAL_MARKET_IDENTITY_MISMATCH_OR_NON_LISTED_MARKET_STATUS",
         "evidence": {
           "marketCode": "TPE",
           "instrumentCode": "4931",
@@ -17229,6 +17239,7 @@
         "instrumentCode": "5227",
         "topicId": "375577eb-a013-4011-82f5-8e4e1f91b887",
         "relationId": "8c10533a-f84c-50ce-84c7-c0e6378796c2",
+        "exclusionReason": "OFFICIAL_MARKET_IDENTITY_MISMATCH_OR_NON_LISTED_MARKET_STATUS",
         "evidence": {
           "marketCode": "TPE",
           "instrumentCode": "5227",
@@ -17248,6 +17259,7 @@
         "instrumentCode": "2637",
         "topicId": "37bbfd4d-c030-5d58-8402-da22396f1b38",
         "relationId": "6f72ca8e-8cae-546c-bfff-640b1af5b072",
+        "exclusionReason": "OFFICIAL_MARKET_IDENTITY_MISMATCH_OR_NON_LISTED_MARKET_STATUS",
         "evidence": {
           "marketCode": "TWO",
           "instrumentCode": "2637",
@@ -17267,6 +17279,7 @@
         "instrumentCode": "4966",
         "topicId": "3968cd1a-cc65-4322-a218-2fe6e1905652",
         "relationId": "968ba15d-04c4-5c2e-9f3f-8efa336dd0b6",
+        "exclusionReason": "OFFICIAL_MARKET_IDENTITY_MISMATCH_OR_NON_LISTED_MARKET_STATUS",
         "evidence": {
           "marketCode": "TPE",
           "instrumentCode": "4966",
@@ -17286,6 +17299,7 @@
         "instrumentCode": "6104",
         "topicId": "3968cd1a-cc65-4322-a218-2fe6e1905652",
         "relationId": "f4e8951d-fa6a-5571-9d69-391573a65112",
+        "exclusionReason": "OFFICIAL_MARKET_IDENTITY_MISMATCH_OR_NON_LISTED_MARKET_STATUS",
         "evidence": {
           "marketCode": "TPE",
           "instrumentCode": "6104",
@@ -17305,6 +17319,7 @@
         "instrumentCode": "5009",
         "topicId": "4136333b-7960-47b7-ad10-7aac2cdd84e1",
         "relationId": "de9083ab-821b-56c8-b62e-815985529404",
+        "exclusionReason": "OFFICIAL_MARKET_IDENTITY_MISMATCH_OR_NON_LISTED_MARKET_STATUS",
         "evidence": {
           "marketCode": "TPE",
           "instrumentCode": "5009",
@@ -17324,6 +17339,7 @@
         "instrumentCode": "4729",
         "topicId": "42c9643e-d045-4beb-8582-474a4e47a136",
         "relationId": "735b853c-6110-5b63-8107-5c18c93565cc",
+        "exclusionReason": "OFFICIAL_MARKET_IDENTITY_MISMATCH_OR_NON_LISTED_MARKET_STATUS",
         "evidence": {
           "marketCode": "TPE",
           "instrumentCode": "4729",
@@ -17343,6 +17359,7 @@
         "instrumentCode": "4927",
         "topicId": "48fb298e-56bf-5c19-9329-dac53558ec9c",
         "relationId": "581753d5-8f73-58c3-9fe2-36ac8ade90eb",
+        "exclusionReason": "OFFICIAL_MARKET_IDENTITY_MISMATCH_OR_NON_LISTED_MARKET_STATUS",
         "evidence": {
           "marketCode": "TWO",
           "instrumentCode": "4927",
@@ -17362,6 +17379,7 @@
         "instrumentCode": "4973",
         "topicId": "494d35ed-39fa-4523-b46a-f2b54d5ac37c",
         "relationId": "dbacb326-c42c-5916-8bc3-734360c34db7",
+        "exclusionReason": "OFFICIAL_MARKET_IDENTITY_MISMATCH_OR_NON_LISTED_MARKET_STATUS",
         "evidence": {
           "marketCode": "TPE",
           "instrumentCode": "4973",
@@ -17381,6 +17399,7 @@
         "instrumentCode": "6290",
         "topicId": "513e58ef-6527-407d-aa1e-4396f56bd41f",
         "relationId": "71f0052f-692b-5fbc-ad2a-ba999e835d39",
+        "exclusionReason": "OFFICIAL_MARKET_IDENTITY_MISMATCH_OR_NON_LISTED_MARKET_STATUS",
         "evidence": {
           "marketCode": "TPE",
           "instrumentCode": "6290",
@@ -17400,6 +17419,7 @@
         "instrumentCode": "5274",
         "topicId": "545b2b47-cb7e-4a0a-a247-8bcd7efe528f",
         "relationId": "215731c4-d388-5de3-8eba-f52d71f2f3b5",
+        "exclusionReason": "OFFICIAL_MARKET_IDENTITY_MISMATCH_OR_NON_LISTED_MARKET_STATUS",
         "evidence": {
           "marketCode": "TPE",
           "instrumentCode": "5274",
@@ -17419,6 +17439,7 @@
         "instrumentCode": "6533",
         "topicId": "545b2b47-cb7e-4a0a-a247-8bcd7efe528f",
         "relationId": "814cc12b-692c-5395-93b0-d227e14f9df6",
+        "exclusionReason": "OFFICIAL_MARKET_IDENTITY_MISMATCH_OR_NON_LISTED_MARKET_STATUS",
         "evidence": {
           "marketCode": "TWO",
           "instrumentCode": "6533",
@@ -17438,6 +17459,7 @@
         "instrumentCode": "4973",
         "topicId": "6077f9d0-bc37-412b-97af-8339c52cb89c",
         "relationId": "5b06e42c-361e-5914-a1a0-5c3e6d42c1e8",
+        "exclusionReason": "OFFICIAL_MARKET_IDENTITY_MISMATCH_OR_NON_LISTED_MARKET_STATUS",
         "evidence": {
           "marketCode": "TPE",
           "instrumentCode": "4973",
@@ -17457,6 +17479,7 @@
         "instrumentCode": "3680",
         "topicId": "628aef78-4f45-4b40-ab92-fdd17f6ac116",
         "relationId": "7264e78f-db1e-584c-a407-f23fb77376ae",
+        "exclusionReason": "OFFICIAL_MARKET_IDENTITY_MISMATCH_OR_NON_LISTED_MARKET_STATUS",
         "evidence": {
           "marketCode": "TPE",
           "instrumentCode": "3680",
@@ -17476,6 +17499,7 @@
         "instrumentCode": "4939",
         "topicId": "62ace0c4-980f-49c3-a3ed-955d07db4ff0",
         "relationId": "84d25629-6126-5b80-8da6-c68819f59dbd",
+        "exclusionReason": "OFFICIAL_MARKET_IDENTITY_MISMATCH_OR_NON_LISTED_MARKET_STATUS",
         "evidence": {
           "marketCode": "TPE",
           "instrumentCode": "4939",
@@ -17492,9 +17516,30 @@
       },
       {
         "marketCode": "TWO",
+        "instrumentCode": "6457",
+        "topicId": "6f45f958-26fe-435f-8dc3-ceb4976e702a",
+        "relationId": "06901c35-5e3d-5725-816b-f0864e532476",
+        "exclusionReason": "DATE_EFFECTIVE_RELATION_OUTSIDE_INSTRUMENT_VALIDITY",
+        "evidence": {
+          "marketCode": "TWO",
+          "instrumentCode": "6457",
+          "name": "紘康",
+          "resolution": "CANONICAL_APPROVED",
+          "reason": "OFFICIAL_TPEX_HISTORICAL_LISTING_AND_DELISTING_NOTICES",
+          "sourceReference": "https://www.tpex.org.tw/storage/eb_data/10406/10400146681.htm",
+          "listingEffectiveFrom": "2015-06-12",
+          "effectiveTo": "2025-01-01",
+          "canonicalUuidInput": "topicpilot.instrument.v1:TWO:6457",
+          "canonicalUuid": "66940382-650b-5a44-8243-ba57ed7d8c94",
+          "affectedRelationCount": 2
+        }
+      },
+      {
+        "marketCode": "TWO",
         "instrumentCode": "6472",
         "topicId": "6fa2e314-d772-58a3-aff6-1ba51459b349",
         "relationId": "57cc9aa7-1d8e-51d6-8b31-4485387e4047",
+        "exclusionReason": "OFFICIAL_MARKET_IDENTITY_MISMATCH_OR_NON_LISTED_MARKET_STATUS",
         "evidence": {
           "marketCode": "TWO",
           "instrumentCode": "6472",
@@ -17514,6 +17559,7 @@
         "instrumentCode": "6585",
         "topicId": "7bceb463-26d1-5810-8e9c-5e9359eaa45a",
         "relationId": "17957074-8b3b-573e-ac9e-9af306a773b3",
+        "exclusionReason": "OFFICIAL_MARKET_IDENTITY_MISMATCH_OR_NON_LISTED_MARKET_STATUS",
         "evidence": {
           "marketCode": "TWO",
           "instrumentCode": "6585",
@@ -17533,6 +17579,7 @@
         "instrumentCode": "5228",
         "topicId": "7d602095-5f50-4883-b4e3-8002128f4408",
         "relationId": "5fa34706-4b9d-5f3e-bc5f-fc856052a3a3",
+        "exclusionReason": "OFFICIAL_MARKET_IDENTITY_MISMATCH_OR_NON_LISTED_MARKET_STATUS",
         "evidence": {
           "marketCode": "TPE",
           "instrumentCode": "5228",
@@ -17552,6 +17599,7 @@
         "instrumentCode": "4931",
         "topicId": "7f61260e-df11-4f65-a228-c84487a1187a",
         "relationId": "69e0906b-3806-5664-8c31-9e77885463f0",
+        "exclusionReason": "OFFICIAL_MARKET_IDENTITY_MISMATCH_OR_NON_LISTED_MARKET_STATUS",
         "evidence": {
           "marketCode": "TPE",
           "instrumentCode": "4931",
@@ -17571,6 +17619,7 @@
         "instrumentCode": "4721",
         "topicId": "8ab347f8-2ab4-4d68-bbf0-bc026d8bec8e",
         "relationId": "a8c89e66-f7c0-5b88-896f-7aa270c509ed",
+        "exclusionReason": "OFFICIAL_MARKET_IDENTITY_MISMATCH_OR_NON_LISTED_MARKET_STATUS",
         "evidence": {
           "marketCode": "TPE",
           "instrumentCode": "4721",
@@ -17590,6 +17639,7 @@
         "instrumentCode": "5228",
         "topicId": "8ab347f8-2ab4-4d68-bbf0-bc026d8bec8e",
         "relationId": "bccc6b2d-0f96-5c37-955c-ed56496a86f3",
+        "exclusionReason": "OFFICIAL_MARKET_IDENTITY_MISMATCH_OR_NON_LISTED_MARKET_STATUS",
         "evidence": {
           "marketCode": "TPE",
           "instrumentCode": "5228",
@@ -17609,6 +17659,7 @@
         "instrumentCode": "4908",
         "topicId": "8cb24438-0a99-4dae-92c1-e309ed090e13",
         "relationId": "a029c058-61de-5093-b23e-60278a349138",
+        "exclusionReason": "OFFICIAL_MARKET_IDENTITY_MISMATCH_OR_NON_LISTED_MARKET_STATUS",
         "evidence": {
           "marketCode": "TPE",
           "instrumentCode": "4908",
@@ -17628,6 +17679,7 @@
         "instrumentCode": "4979",
         "topicId": "8cb24438-0a99-4dae-92c1-e309ed090e13",
         "relationId": "ad52b13c-3028-5d96-9cad-406b7cbda1b4",
+        "exclusionReason": "OFFICIAL_MARKET_IDENTITY_MISMATCH_OR_NON_LISTED_MARKET_STATUS",
         "evidence": {
           "marketCode": "TPE",
           "instrumentCode": "4979",
@@ -17647,6 +17699,7 @@
         "instrumentCode": "4991",
         "topicId": "8cb24438-0a99-4dae-92c1-e309ed090e13",
         "relationId": "90b4e0f9-6d7c-5939-bed6-455c543ace5d",
+        "exclusionReason": "OFFICIAL_MARKET_IDENTITY_MISMATCH_OR_NON_LISTED_MARKET_STATUS",
         "evidence": {
           "marketCode": "TPE",
           "instrumentCode": "4991",
@@ -17666,6 +17719,7 @@
         "instrumentCode": "6104",
         "topicId": "a7de1ce0-94c2-4136-a74d-ed3dfa1b3651",
         "relationId": "ddebc018-4a8f-5978-92c2-7bc67f0b2fcb",
+        "exclusionReason": "OFFICIAL_MARKET_IDENTITY_MISMATCH_OR_NON_LISTED_MARKET_STATUS",
         "evidence": {
           "marketCode": "TPE",
           "instrumentCode": "6104",
@@ -17685,6 +17739,7 @@
         "instrumentCode": "5489",
         "topicId": "b776d842-3b97-4b16-a461-5f726a732a37",
         "relationId": "2c75c8f6-5570-5b4b-a6be-63045d2fdadb",
+        "exclusionReason": "OFFICIAL_MARKET_IDENTITY_MISMATCH_OR_NON_LISTED_MARKET_STATUS",
         "evidence": {
           "marketCode": "TPE",
           "instrumentCode": "5489",
@@ -17704,6 +17759,7 @@
         "instrumentCode": "4721",
         "topicId": "bcc8045a-82a1-4ad0-bb0f-e2e37b04c1d1",
         "relationId": "4efd803c-f89c-5bba-a8fe-52ecce40a8c2",
+        "exclusionReason": "OFFICIAL_MARKET_IDENTITY_MISMATCH_OR_NON_LISTED_MARKET_STATUS",
         "evidence": {
           "marketCode": "TPE",
           "instrumentCode": "4721",
@@ -17723,6 +17779,7 @@
         "instrumentCode": "4760",
         "topicId": "bcc8045a-82a1-4ad0-bb0f-e2e37b04c1d1",
         "relationId": "7a120b6c-bc82-54a9-82a4-db3e5a306407",
+        "exclusionReason": "OFFICIAL_MARKET_IDENTITY_MISMATCH_OR_NON_LISTED_MARKET_STATUS",
         "evidence": {
           "marketCode": "TPE",
           "instrumentCode": "4760",
@@ -17742,6 +17799,7 @@
         "instrumentCode": "4908",
         "topicId": "c9eb29e1-5b18-4857-b2bf-9af97265916b",
         "relationId": "57f04e90-5fa0-592c-abde-1c4062300a94",
+        "exclusionReason": "OFFICIAL_MARKET_IDENTITY_MISMATCH_OR_NON_LISTED_MARKET_STATUS",
         "evidence": {
           "marketCode": "TPE",
           "instrumentCode": "4908",
@@ -17761,6 +17819,7 @@
         "instrumentCode": "4991",
         "topicId": "c9eb29e1-5b18-4857-b2bf-9af97265916b",
         "relationId": "c32d485b-2e08-50f1-b823-2bfd4b348aa0",
+        "exclusionReason": "OFFICIAL_MARKET_IDENTITY_MISMATCH_OR_NON_LISTED_MARKET_STATUS",
         "evidence": {
           "marketCode": "TPE",
           "instrumentCode": "4991",
@@ -17780,6 +17839,7 @@
         "instrumentCode": "5228",
         "topicId": "c9eb29e1-5b18-4857-b2bf-9af97265916b",
         "relationId": "4806fa6a-e97a-5b05-83b6-80f688b10946",
+        "exclusionReason": "OFFICIAL_MARKET_IDENTITY_MISMATCH_OR_NON_LISTED_MARKET_STATUS",
         "evidence": {
           "marketCode": "TPE",
           "instrumentCode": "5228",
@@ -17799,6 +17859,7 @@
         "instrumentCode": "3707",
         "topicId": "cb72fab9-92dc-4c66-b97b-d5b00be9bf48",
         "relationId": "418ac1f6-7f48-53de-ad46-79242dc59983",
+        "exclusionReason": "OFFICIAL_MARKET_IDENTITY_MISMATCH_OR_NON_LISTED_MARKET_STATUS",
         "evidence": {
           "marketCode": "TPE",
           "instrumentCode": "3707",
@@ -17818,6 +17879,7 @@
         "instrumentCode": "4966",
         "topicId": "d23094e4-d040-44e1-aa62-4ee33673e05a",
         "relationId": "6024088b-f6a3-568b-be87-3dd5341c47f8",
+        "exclusionReason": "OFFICIAL_MARKET_IDENTITY_MISMATCH_OR_NON_LISTED_MARKET_STATUS",
         "evidence": {
           "marketCode": "TPE",
           "instrumentCode": "4966",
@@ -17837,6 +17899,7 @@
         "instrumentCode": "4991",
         "topicId": "d445a914-7c1c-49d1-9cee-2e815388a8cb",
         "relationId": "5644e09d-5e65-5331-9624-0d78f18e0d55",
+        "exclusionReason": "OFFICIAL_MARKET_IDENTITY_MISMATCH_OR_NON_LISTED_MARKET_STATUS",
         "evidence": {
           "marketCode": "TPE",
           "instrumentCode": "4991",
@@ -17856,6 +17919,7 @@
         "instrumentCode": "5228",
         "topicId": "d97e2401-b3c0-4af3-8c09-fc4e8e7e0a68",
         "relationId": "03c82a63-78c5-564c-bbaf-fbe9620a7b27",
+        "exclusionReason": "OFFICIAL_MARKET_IDENTITY_MISMATCH_OR_NON_LISTED_MARKET_STATUS",
         "evidence": {
           "marketCode": "TPE",
           "instrumentCode": "5228",
@@ -17875,6 +17939,7 @@
         "instrumentCode": "4966",
         "topicId": "e633b461-07a7-46fc-bef6-6a269e72a068",
         "relationId": "d117d5d9-f440-57dd-8035-852d04906682",
+        "exclusionReason": "OFFICIAL_MARKET_IDENTITY_MISMATCH_OR_NON_LISTED_MARKET_STATUS",
         "evidence": {
           "marketCode": "TPE",
           "instrumentCode": "4966",
@@ -17894,6 +17959,7 @@
         "instrumentCode": "4979",
         "topicId": "e633b461-07a7-46fc-bef6-6a269e72a068",
         "relationId": "e31c5525-2889-5b91-a754-e18234b594a0",
+        "exclusionReason": "OFFICIAL_MARKET_IDENTITY_MISMATCH_OR_NON_LISTED_MARKET_STATUS",
         "evidence": {
           "marketCode": "TPE",
           "instrumentCode": "4979",
@@ -17913,6 +17979,7 @@
         "instrumentCode": "5274",
         "topicId": "e633b461-07a7-46fc-bef6-6a269e72a068",
         "relationId": "4b7c4075-45e2-5f1d-a2f4-f6900e88ad4f",
+        "exclusionReason": "OFFICIAL_MARKET_IDENTITY_MISMATCH_OR_NON_LISTED_MARKET_STATUS",
         "evidence": {
           "marketCode": "TPE",
           "instrumentCode": "5274",
@@ -17932,6 +17999,7 @@
         "instrumentCode": "5426",
         "topicId": "e633b461-07a7-46fc-bef6-6a269e72a068",
         "relationId": "df8a36d7-e286-58ef-963b-bedd484cced1",
+        "exclusionReason": "OFFICIAL_MARKET_IDENTITY_MISMATCH_OR_NON_LISTED_MARKET_STATUS",
         "evidence": {
           "marketCode": "TPE",
           "instrumentCode": "5426",
@@ -17951,6 +18019,7 @@
         "instrumentCode": "6290",
         "topicId": "e633b461-07a7-46fc-bef6-6a269e72a068",
         "relationId": "54bde8b1-9c14-5d8b-b8e6-565ff0ee90cb",
+        "exclusionReason": "OFFICIAL_MARKET_IDENTITY_MISMATCH_OR_NON_LISTED_MARKET_STATUS",
         "evidence": {
           "marketCode": "TPE",
           "instrumentCode": "6290",
@@ -17970,6 +18039,7 @@
         "instrumentCode": "2644",
         "topicId": "e8142235-9fca-410a-a5c7-d8cdeb932e94",
         "relationId": "6c612ea9-280e-593f-9a5c-0b05760228b9",
+        "exclusionReason": "OFFICIAL_MARKET_IDENTITY_MISMATCH_OR_NON_LISTED_MARKET_STATUS",
         "evidence": {
           "marketCode": "TPE",
           "instrumentCode": "2644",
@@ -17989,6 +18059,7 @@
         "instrumentCode": "5009",
         "topicId": "e8142235-9fca-410a-a5c7-d8cdeb932e94",
         "relationId": "63d22ddf-3169-57c4-ad2d-3da8faced3d7",
+        "exclusionReason": "OFFICIAL_MARKET_IDENTITY_MISMATCH_OR_NON_LISTED_MARKET_STATUS",
         "evidence": {
           "marketCode": "TPE",
           "instrumentCode": "5009",
@@ -18008,6 +18079,7 @@
         "instrumentCode": "5009",
         "topicId": "efae9f9b-0192-4e0e-a1b9-543e8ed4f573",
         "relationId": "4f4c0154-f066-58a1-850f-ece55b1d9c6c",
+        "exclusionReason": "OFFICIAL_MARKET_IDENTITY_MISMATCH_OR_NON_LISTED_MARKET_STATUS",
         "evidence": {
           "marketCode": "TPE",
           "instrumentCode": "5009",
@@ -18027,6 +18099,7 @@
         "instrumentCode": "5011",
         "topicId": "efae9f9b-0192-4e0e-a1b9-543e8ed4f573",
         "relationId": "ee64046e-94e6-5bf4-81ab-83ad621a8073",
+        "exclusionReason": "OFFICIAL_MARKET_IDENTITY_MISMATCH_OR_NON_LISTED_MARKET_STATUS",
         "evidence": {
           "marketCode": "TPE",
           "instrumentCode": "5011",
@@ -18043,5 +18116,5 @@
       }
     ]
   },
-  "artifactSha256": "750f8c0ebae13a6a4e2f7b4ab27e35d3eb72e092a4be3f0ee38c019bf77d476a"
+  "artifactSha256": "c35c15911c355766dbaa53e76629ae17c84f8d1bbc98e2053b7e87592c0274bc"
 }

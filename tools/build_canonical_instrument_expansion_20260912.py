@@ -232,20 +232,29 @@ def main() -> None:
         json.dumps(result_payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
     )
     relation = json.loads(args.relation_artifact.read_text(encoding="utf-8"))
-    exclusions = {
+    identity_exclusions = {
         (row["marketCode"], row["instrumentCode"]): row
         for row in results
         if row["resolution"] == "FORMALLY_EXCLUDED"
     }
+    relation_effective_date = date.fromisoformat(relation["effectiveDate"])
+    date_effective_exclusions = {
+        (row["marketCode"], row["instrumentCode"]): row
+        for row in results
+        if row["resolution"] == "CANONICAL_APPROVED"
+        and row.get("effectiveTo") is not None
+        and date.fromisoformat(row["effectiveTo"]) < relation_effective_date
+    }
+    relation_exclusions = {**identity_exclusions, **date_effective_exclusions}
     excluded_rows = [
         row for row in relation["rows"]
-        if (row["marketCode"], row["instrumentCode"]) in exclusions
+        if (row["marketCode"], row["instrumentCode"]) in relation_exclusions
     ]
     relation["rows"] = [
         row for row in relation["rows"]
-        if (row["marketCode"], row["instrumentCode"]) not in exclusions
+        if (row["marketCode"], row["instrumentCode"]) not in relation_exclusions
     ]
-    if len(excluded_rows) != 56:
+    if len(excluded_rows) != 58:
         raise SystemExit("formal relation exclusion count is not exact")
     previous_sha = relation["artifactSha256"]
     relation["authorityVersion"] = "structural-role-authority-20260912.v4"
@@ -259,19 +268,28 @@ def main() -> None:
         "reconciliationSha256": result_payload["artifactSha256"],
         "canonicalApproved": counts["CANONICAL_APPROVED"],
         "formallyExcludedInstrumentIdentities": counts["FORMALLY_EXCLUDED"],
+        "dateEffectiveExcludedInstrumentIdentities": len(date_effective_exclusions),
         "formallyExcludedRelationRows": len(excluded_rows),
     }
     relation["exclusionLineage"] = {
         "previousAuthorityVersion": "structural-role-authority-20260911.v3",
         "previousArtifactSha256": previous_sha,
-        "reason": "OFFICIAL_MARKET_IDENTITY_MISMATCH_OR_NON_LISTED_MARKET_STATUS",
+        "reason": "IDENTITY_AUTHORITY_OR_DATE_EFFECTIVE_RELATION_EXCLUSION",
         "excludedRows": [
             {
                 "marketCode": row["marketCode"],
                 "instrumentCode": row["instrumentCode"],
                 "topicId": row["topicId"],
                 "relationId": row["relationId"],
-                "evidence": exclusions[(row["marketCode"], row["instrumentCode"])],
+                "exclusionReason": (
+                    "DATE_EFFECTIVE_RELATION_OUTSIDE_INSTRUMENT_VALIDITY"
+                    if (row["marketCode"], row["instrumentCode"])
+                    in date_effective_exclusions
+                    else "OFFICIAL_MARKET_IDENTITY_MISMATCH_OR_NON_LISTED_MARKET_STATUS"
+                ),
+                "evidence": relation_exclusions[
+                    (row["marketCode"], row["instrumentCode"])
+                ],
             }
             for row in excluded_rows
         ],
