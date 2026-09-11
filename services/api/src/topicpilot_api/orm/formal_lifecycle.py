@@ -58,13 +58,13 @@ class TopicLifecycleFormalResult(Base, IdentityMixin, UpdatedAtMixin):
             "topic_slug",
             "publication_status",
         ),
-        # One immutable formal decision per topic/date/contract.  A corrected
-        # upstream input requires an explicit new contract/reconciliation; a
-        # retry must never silently rewrite the published fact.
+        # Corrections append a new immutable revision and point back to the
+        # prior decision.  Current is derived from the absence of a successor.
         UniqueConstraint(
             "topic_id",
             "evaluation_date",
             "contract_version",
+            "decision_revision",
             name="uq_topic_lifecycle_formal_identity",
         ),
     )
@@ -124,6 +124,13 @@ class TopicLifecycleFormalResult(Base, IdentityMixin, UpdatedAtMixin):
     lineage_hash: Mapped[str | None] = mapped_column(String(128))
     member_fact_hashes: Mapped[dict[str, str] | None] = mapped_column(JSONB)
     correction_sequence: Mapped[int | None] = mapped_column(Integer)
+    decision_revision: Mapped[int] = mapped_column(
+        Integer, nullable=False, default=0, server_default="0"
+    )
+    supersedes_decision_id: Mapped[UUID | None] = mapped_column(
+        ForeignKey("topicpilot.topic_lifecycle_formal_results.id", ondelete="RESTRICT")
+    )
+    supersession_reason: Mapped[str | None] = mapped_column(String(128))
     supersession_state: Mapped[str] = mapped_column(
         String(32), nullable=False, default="ACTIVE", server_default="ACTIVE"
     )

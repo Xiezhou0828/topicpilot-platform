@@ -7,7 +7,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy import and_, func, select
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, aliased
 
 from topicpilot_api.database import get_db
 from topicpilot_api.orm import TopicSnapshot
@@ -23,10 +23,13 @@ Offset = Annotated[int, Query(ge=0)]
 
 
 def _formal_published_filter():
+    successor = aliased(TopicSnapshot)
     return and_(
         TopicSnapshot.publication_mode == "FORMAL",
         TopicSnapshot.publication_state == "PUBLISHED",
-        TopicSnapshot.superseded_by_snapshot_id.is_(None),
+        ~select(successor.id)
+        .where(successor.supersedes_snapshot_id == TopicSnapshot.id)
+        .exists(),
     )
 
 

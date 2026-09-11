@@ -437,6 +437,39 @@ def test_formal_persistence_retry_is_idempotent():
     assert len(session.added) == 1
 
 
+def test_corrected_formal_decision_appends_superseding_revision():
+    session = _PersistSession()
+    publisher = FormalLifecyclePublisher(session)
+    values = {
+        "evaluation_date": date(2026, 8, 24),
+        "topic_id": uuid4(),
+        "topic_slug": "leaf-topic",
+        "final_stage": None,
+        "candidate_stage": None,
+        "transition_reason": "OLD_UNAVAILABLE",
+        "publication_status": FORMAL_PUBLICATION_STATUS_UNAVAILABLE,
+        "input_snapshot_hash": "old-input",
+        "lineage_hash": "old-lineage",
+        "evaluation_mode": FORMAL_EVALUATION_MODE,
+        "contract_version": LIFECYCLE_CONTRACT_VERSION,
+    }
+    publisher._persist(values)
+    old = session.row
+    corrected = dict(values)
+    corrected.update(
+        transition_reason="CORRECTED",
+        input_snapshot_hash="corrected-input",
+        lineage_hash="corrected-lineage",
+    )
+    publisher._persist(corrected)
+
+    assert len(session.added) == 2
+    assert session.row.supersedes_decision_id == old.id
+    assert session.row.decision_revision == 1
+    assert session.row.supersession_reason == "CORRECTED_A9_STRUCTURAL_ROLE_AUTHORITY"
+    assert old.transition_reason == "OLD_UNAVAILABLE"
+
+
 class _ReadSession:
     def __init__(self, rows):
         self.rows = rows

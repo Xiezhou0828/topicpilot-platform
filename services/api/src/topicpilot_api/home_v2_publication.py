@@ -438,7 +438,10 @@ def _formal_topic_rows(session: Session, trading_date: date) -> list[dict[str, A
                 WHERE snapshot_date = :trading_date
                   AND publication_mode = 'FORMAL'
                   AND publication_state = 'PUBLISHED'
-                  AND superseded_by_snapshot_id IS NULL
+                  AND NOT EXISTS (
+                      SELECT 1 FROM topicpilot.topic_snapshots successor
+                      WHERE successor.supersedes_snapshot_id = topic_snapshots.id
+                  )
                 ORDER BY topic_id, correction_sequence DESC, published_at DESC NULLS LAST, id DESC
                 """
             ),
@@ -460,7 +463,10 @@ def _formal_topic_history(session: Session, trading_date: date) -> list[dict[str
                 WHERE snapshot_date <= :trading_date
                   AND publication_mode = 'FORMAL'
                   AND publication_state = 'PUBLISHED'
-                  AND superseded_by_snapshot_id IS NULL
+                  AND NOT EXISTS (
+                      SELECT 1 FROM topicpilot.topic_snapshots successor
+                      WHERE successor.supersedes_snapshot_id = topic_snapshots.id
+                  )
                   AND average_change IS NOT NULL
                   AND observed_stock_count > 0
                 ORDER BY snapshot_date, topic_slug, correction_sequence DESC, id DESC

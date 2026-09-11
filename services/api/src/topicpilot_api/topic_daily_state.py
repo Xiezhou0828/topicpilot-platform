@@ -19,7 +19,7 @@ from typing import Any
 from uuid import UUID
 
 from sqlalchemy import bindparam, func, or_, select, text
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, aliased
 
 from topicpilot_api.orm import (
     Instrument,
@@ -57,6 +57,11 @@ class MembershipMember:
     relation_type: str
     relation_version: str
     identity_continuity: str
+    structural_role: str = "RELATED"
+    role_source: str = "TEST_OR_LEGACY_UNAPPROVED"
+    role_authority_version: str = "UNAPPROVED"
+    role_authority_hash: str = "UNAPPROVED"
+    role_lineage_hash: str = "UNAPPROVED"
 
 
 @dataclass(frozen=True)
@@ -95,6 +100,8 @@ class SelectedMemberFact:
     raw_fact_payload: dict[str, Any]
     fact_identity: str
     fact_hash: str
+    structural_role: str = "RELATED"
+    role_source: str = "TEST_OR_LEGACY_UNAPPROVED"
 
 
 @dataclass(frozen=True)
@@ -243,6 +250,11 @@ def resolve_formal_membership(
                 Market.valid_to.label("market_valid_to"),
                 Topic.valid_from.label("topic_valid_from"),
                 Topic.valid_to.label("topic_valid_to"),
+                InstrumentTopicRelation.structural_role,
+                InstrumentTopicRelation.approval_state,
+                InstrumentTopicRelation.authority_version,
+                InstrumentTopicRelation.source_artifact_hash.label("role_authority_hash"),
+                InstrumentTopicRelation.lineage_hash.label("role_lineage_hash"),
             )
             .join(Instrument, Instrument.id == InstrumentTopicRelation.instrument_id)
             .join(Market, Market.id == Instrument.market_id)
@@ -275,6 +287,16 @@ def resolve_formal_membership(
 
     by_member: dict[tuple[UUID, UUID], list[Any]] = defaultdict(list)
     for row in candidates:
+        if (
+            row.structural_role not in {"REPRESENTATIVE", "CORE", "RELATED"}
+            or row.approval_state != "APPROVED"
+            or not row.authority_version
+            or not row.role_authority_hash
+            or not row.role_lineage_hash
+        ):
+            raise FormalAuthorityUnavailable(
+                "STRUCTURAL_ROLE_AUTHORITY_INCOMPLETE"
+            )
         by_member[(row.instrument_id, row.topic_id)].append(row)
     duplicate_keys = [key for key, rows in by_member.items() if len(rows) != 1]
     if duplicate_keys:
@@ -346,6 +368,11 @@ def resolve_formal_membership(
                     if row.instrument_id in identity_instruments
                     else "BOUNDED_IMMUTABLE_INSTRUMENT_ID_ONLY"
                 ),
+                structural_role=row.structural_role,
+                role_source=f"FORMAL_ROLE_AUTHORITY:{row.authority_version}",
+                role_authority_version=row.authority_version,
+                role_authority_hash=row.role_authority_hash,
+                role_lineage_hash=row.role_lineage_hash,
             )
         )
 
@@ -372,6 +399,11 @@ def resolve_formal_membership(
                 "relationType": member.relation_type,
                 "relationVersion": member.relation_version,
                 "identityContinuity": member.identity_continuity,
+                "structuralRole": member.structural_role,
+                "roleSource": member.role_source,
+                "roleAuthorityVersion": member.role_authority_version,
+                "roleAuthorityHash": member.role_authority_hash,
+                "roleLineageHash": member.role_lineage_hash,
             }
             for member in member_order
         ],
@@ -571,6 +603,11 @@ def read_canonical_member_facts(
             "volumeContentHash": volume["content_hash"] if volume is not None else None,
             "statusContentHash": status["content_hash"] if status is not None else None,
             "identityAuthority": member.identity_continuity,
+            "structuralRole": member.structural_role,
+            "roleSource": member.role_source,
+            "roleAuthorityVersion": member.role_authority_version,
+            "roleAuthorityHash": member.role_authority_hash,
+            "roleLineageHash": member.role_lineage_hash,
         }
         fact_hash = _hash_payload(raw)
         facts.append(
@@ -590,6 +627,8 @@ def read_canonical_member_facts(
                 raw_fact_payload=raw,
                 fact_identity=f"fact:{fact_hash}",
                 fact_hash=fact_hash,
+                structural_role=member.structural_role,
+                role_source=member.role_source,
             )
         )
     return tuple(facts)
@@ -853,6 +892,7 @@ def materialize_formal_plan(session: Session, plan: DateMaterializationPlan) -> 
         if existing_identity is not None:
             idempotent_rows += 1
             continue
+        successor = aliased(TopicSnapshot)
         current_rows = list(
             session.scalars(
                 select(TopicSnapshot)
@@ -861,7 +901,9 @@ def materialize_formal_plan(session: Session, plan: DateMaterializationPlan) -> 
                     TopicSnapshot.snapshot_date == item.trading_date,
                     TopicSnapshot.publication_mode == FORMAL_PUBLICATION_MODE,
                     TopicSnapshot.publication_state == "PUBLISHED",
-                    TopicSnapshot.superseded_by_snapshot_id.is_(None),
+                    ~select(successor.id)
+                    .where(successor.supersedes_snapshot_id == TopicSnapshot.id)
+                    .exists(),
                 )
                 .order_by(TopicSnapshot.correction_sequence.desc(), TopicSnapshot.updated_at.desc())
             )
@@ -899,6 +941,8 @@ def materialize_formal_plan(session: Session, plan: DateMaterializationPlan) -> 
                     previous_close=fact.previous_close,
                     change_pct=fact.change_pct,
                     observed_classification=fact.observed_classification,
+                    structural_role=fact.structural_role,
+                    role_source=fact.role_source,
                     strength_classification=None,
                     classifier_version=None,
                     observed_at=fact.observed_at,
@@ -908,11 +952,6 @@ def materialize_formal_plan(session: Session, plan: DateMaterializationPlan) -> 
                     source_artifact_hash=fact.fact_hash,
                 )
             )
-        if previous is not None:
-            previous.publication_state = "SUPERSEDED"
-            previous.superseded_by_snapshot_id = row.id
-            previous.superseded_at = now
-            previous.supersession_reason = "CORRECTION"
         rows_written += 1
     session.commit()
     return {

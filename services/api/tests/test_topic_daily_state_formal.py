@@ -81,7 +81,7 @@ def test_formal_topic_read_model_filters_to_published_rows():
     sql = TOPIC_ROWS_SQL.text
     assert "publication_mode = 'FORMAL'" in sql
     assert "publication_state = 'PUBLISHED'" in sql
-    assert "superseded_by_snapshot_id IS NULL" in sql
+    assert "successor.supersedes_snapshot_id = topic_snapshots.id" in sql
 
 
 def test_correction_values_are_immutable_and_explicitly_superseding():

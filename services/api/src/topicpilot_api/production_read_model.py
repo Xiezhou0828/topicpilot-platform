@@ -395,7 +395,10 @@ TOPIC_ROWS_SQL = text(
         FROM topicpilot.topic_snapshots
         WHERE publication_mode = 'FORMAL'
           AND publication_state = 'PUBLISHED'
-          AND superseded_by_snapshot_id IS NULL
+          AND NOT EXISTS (
+              SELECT 1 FROM topicpilot.topic_snapshots successor
+              WHERE successor.supersedes_snapshot_id = topic_snapshots.id
+          )
         ORDER BY topic_id, snapshot_date DESC, updated_at DESC
     )
     SELECT t.id AS topic_id, t.slug, t.name, t.description, t.status, t.display_metadata,
@@ -936,7 +939,10 @@ FORMAL_TOPIC_CONSTITUENTS_SQL = text(
         WHERE topic.slug = :slug
           AND snapshot.publication_mode = 'FORMAL'
           AND snapshot.publication_state = 'PUBLISHED'
-          AND snapshot.superseded_by_snapshot_id IS NULL
+          AND NOT EXISTS (
+              SELECT 1 FROM topicpilot.topic_snapshots successor
+              WHERE successor.supersedes_snapshot_id = snapshot.id
+          )
         ORDER BY snapshot.topic_id, snapshot.snapshot_date DESC, snapshot.updated_at DESC
     )
     SELECT fact.instrument_id, instrument.instrument_code, instrument.name,

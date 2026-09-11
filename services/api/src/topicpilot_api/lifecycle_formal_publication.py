@@ -19,7 +19,7 @@ from typing import Any
 from uuid import UUID
 
 from sqlalchemy import select
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, aliased
 
 from topicpilot_api.orm import (
     Topic,
@@ -147,6 +147,7 @@ def _active_leaf_topics(session: Session, as_of_date: date) -> list[Topic]:
 def _formal_snapshots_for_date(
     session: Session, evaluation_date: date
 ) -> dict[UUID, list[TopicSnapshot]]:
+    successor = aliased(TopicSnapshot)
     rows = list(
         session.scalars(
             select(TopicSnapshot)
@@ -156,7 +157,9 @@ def _formal_snapshots_for_date(
                 TopicSnapshot.membership_mode == "PIT_FORMAL",
                 TopicSnapshot.publication_state == "PUBLISHED",
                 TopicSnapshot.finality_state == "FINAL",
-                TopicSnapshot.superseded_by_snapshot_id.is_(None),
+                ~select(successor.id)
+                .where(successor.supersedes_snapshot_id == TopicSnapshot.id)
+                .exists(),
             )
             .order_by(TopicSnapshot.topic_slug, TopicSnapshot.id)
         )
@@ -272,6 +275,7 @@ def _state_from_row(row: TopicLifecycleFormalResult) -> dict[str, Any]:
 def _previous_formal_states(
     session: Session, evaluation_date: date
 ) -> dict[UUID, dict[str, Any]]:
+    successor = aliased(TopicLifecycleFormalResult)
     rows = list(
         session.scalars(
             select(TopicLifecycleFormalResult)
@@ -280,7 +284,9 @@ def _previous_formal_states(
                 TopicLifecycleFormalResult.contract_version == LIFECYCLE_CONTRACT_VERSION,
                 TopicLifecycleFormalResult.publication_status
                 == FORMAL_PUBLICATION_STATUS_PUBLISHED,
-                TopicLifecycleFormalResult.supersession_state == "ACTIVE",
+                ~select(successor.id)
+                .where(successor.supersedes_decision_id == TopicLifecycleFormalResult.id)
+                .exists(),
                 TopicLifecycleFormalResult.final_stage.is_not(None),
             )
             .order_by(
@@ -696,6 +702,7 @@ class FormalLifecyclePublisher:
         from_date: date = A9_FORMAL_TOPIC_SNAPSHOT_START,
         to_date: date | None = None,
     ) -> dict[str, Any]:
+        successor = aliased(TopicSnapshot)
         dates = list(
             self.session.scalars(
                 select(TopicSnapshot.snapshot_date)
@@ -705,7 +712,9 @@ class FormalLifecyclePublisher:
                     TopicSnapshot.membership_mode == "PIT_FORMAL",
                     TopicSnapshot.publication_state == "PUBLISHED",
                     TopicSnapshot.finality_state == "FINAL",
-                    TopicSnapshot.superseded_by_snapshot_id.is_(None),
+                    ~select(successor.id)
+                    .where(successor.supersedes_snapshot_id == TopicSnapshot.id)
+                    .exists(),
                 )
                 .distinct()
                 .order_by(TopicSnapshot.snapshot_date)
@@ -739,14 +748,19 @@ class FormalLifecyclePublisher:
         }
 
     def _persist(self, values: dict[str, Any]) -> None:
+        successor = aliased(TopicLifecycleFormalResult)
         existing = self.session.scalar(
             select(TopicLifecycleFormalResult).where(
                 TopicLifecycleFormalResult.topic_id == values["topic_id"],
                 TopicLifecycleFormalResult.evaluation_date == values["evaluation_date"],
                 TopicLifecycleFormalResult.contract_version == LIFECYCLE_CONTRACT_VERSION,
+                ~select(successor.id)
+                .where(successor.supersedes_decision_id == TopicLifecycleFormalResult.id)
+                .exists(),
             )
         )
         if existing is None:
+            values["decision_revision"] = 0
             self.session.add(TopicLifecycleFormalResult(**values))
             return
 
@@ -758,17 +772,18 @@ class FormalLifecyclePublisher:
             "input_snapshot_hash",
             "lineage_hash",
         )
-        if any(getattr(existing, field) != values[field] for field in immutable_fields):
-            raise ValueError(
-                "formal lifecycle result conflict for "
-                f"{values['topic_slug']} {values['evaluation_date']}; "
-                "the immutable formal input requires explicit reconciliation"
-            )
+        if all(getattr(existing, field) == values[field] for field in immutable_fields):
+            return
+        values["decision_revision"] = getattr(existing, "decision_revision", 0) + 1
+        values["supersedes_decision_id"] = existing.id
+        values["supersession_reason"] = "CORRECTED_A9_STRUCTURAL_ROLE_AUTHORITY"
+        self.session.add(TopicLifecycleFormalResult(**values))
 
 
 def read_formal_lifecycle(session: Session, topic_id: UUID) -> dict[str, Any] | None:
     """Read the active formal result; raise if the additive table is absent."""
 
+    successor = aliased(TopicLifecycleFormalResult)
     rows = list(
         session.scalars(
             select(TopicLifecycleFormalResult)
@@ -777,7 +792,9 @@ def read_formal_lifecycle(session: Session, topic_id: UUID) -> dict[str, Any] | 
                 TopicLifecycleFormalResult.contract_version == LIFECYCLE_CONTRACT_VERSION,
                 TopicLifecycleFormalResult.publication_status
                 != FORMAL_PUBLICATION_STATUS_SUPERSEDED,
-                TopicLifecycleFormalResult.supersession_state == "ACTIVE",
+                ~select(successor.id)
+                .where(successor.supersedes_decision_id == TopicLifecycleFormalResult.id)
+                .exists(),
             )
             .order_by(TopicLifecycleFormalResult.evaluation_date)
         )
@@ -863,6 +880,12 @@ def read_formal_lifecycle(session: Session, topic_id: UUID) -> dict[str, Any] | 
             "memberFactHashes": current.member_fact_hashes or {},
             "correctionSequence": current.correction_sequence,
             "supersessionState": current.supersession_state,
+            "decisionRevision": getattr(current, "decision_revision", 0),
+            "supersedesDecisionId": (
+                str(getattr(current, "supersedes_decision_id", None))
+                if getattr(current, "supersedes_decision_id", None) else None
+            ),
+            "supersessionReason": getattr(current, "supersession_reason", None),
         },
     }
 
