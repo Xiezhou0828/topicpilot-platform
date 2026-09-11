@@ -26,6 +26,8 @@ def main(argv: list[str] | None = None) -> int:
     mode.add_argument("--validate-only", action="store_true")
     mode.add_argument("--dry-run", action="store_true")
     mode.add_argument("--activate", action="store_true")
+    mode.add_argument("--relation-dry-run", action="store_true")
+    mode.add_argument("--materialize-relations", action="store_true")
     parser.add_argument("--environment", required=True)
     parser.add_argument("--expected-database", required=True)
     parser.add_argument("--expected-runtime-revision", required=True)
@@ -50,7 +52,23 @@ def main(argv: list[str] | None = None) -> int:
         engine = create_engine(get_settings().database_url, pool_pre_ping=True)
         try:
             with Session(engine, expire_on_commit=False, autoflush=False) as session:
-                result = activate(
+                if args.relation_dry_run or args.materialize_relations:
+                    from topicpilot_api.structural_role_authority import (
+                        materialize_missing_relations,
+                    )
+                    result = materialize_missing_relations(
+                        session,
+                        artifact,
+                        dry_run=args.relation_dry_run,
+                        environment=args.environment,
+                        expected_database=args.expected_database,
+                        operator=args.operator,
+                        confirmation=(
+                            args.confirm or os.getenv("TOPICPILOT_ROLE_AUTHORITY_CONFIRM")
+                        ),
+                    )
+                else:
+                    result = activate(
                     session,
                     artifact,
                     dry_run=args.dry_run,
@@ -58,7 +76,7 @@ def main(argv: list[str] | None = None) -> int:
                     expected_database=args.expected_database,
                     operator=args.operator,
                     confirmation=args.confirm or os.getenv("TOPICPILOT_ROLE_AUTHORITY_CONFIRM"),
-                )
+                    )
             print(json.dumps(result, sort_keys=True))
             return 0
         finally:

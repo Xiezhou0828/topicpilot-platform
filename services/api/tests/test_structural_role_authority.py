@@ -12,7 +12,7 @@ from topicpilot_api.structural_role_authority import (
 ROOT = Path(__file__).resolve().parents[3]
 ARTIFACT = (
     ROOT
-    / "config/topic_structural_role_authority/structural-role-authority-20260911.v1.json"
+    / "config/topic_structural_role_authority/structural-role-authority-20260911.v2.json"
 )
 
 
@@ -22,9 +22,9 @@ def _payload():
 
 def test_owner_approved_artifact_is_exact_and_complete():
     artifact = parse_artifact(_payload())
-    assert artifact.authority_version == "structural-role-authority-20260911.v1"
+    assert artifact.authority_version == "structural-role-authority-20260911.v2"
     assert artifact.artifact_sha256 == (
-        "a168dc51b722da04fe86e151820e7ec49d77f2a015f4a426b8da288ed14b069d"
+        "cd6b15f0ac7ac747731a2cc1e3ee38bca9a7bed5dc69be60efeb760b11752c39"
     )
     assert len(artifact.rows) == 1218
     assert len({row["topicId"] for row in artifact.rows}) == 107

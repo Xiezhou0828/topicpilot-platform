@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import uuid
 from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
@@ -17,6 +18,7 @@ from topicpilot_api.orm.models import Instrument, InstrumentTopicRelation, Marke
 
 SCHEMA_VERSION = "topic-structural-role-authority.v1"
 ALLOWED_ROLES = frozenset({"REPRESENTATIVE", "CORE", "RELATED"})
+RELATION_NAMESPACE = uuid.UUID("da995966-4275-5fe0-9c45-8dc84ad2c3c1")
 
 
 class StructuralRoleAuthorityError(RuntimeError):
@@ -64,6 +66,7 @@ def parse_artifact(payload: dict[str, Any]) -> StructuralRoleArtifact:
     for row in rows:
         try:
             topic_id = UUID(str(row["topicId"]))
+            relation_id = UUID(str(row["relationId"]))
         except (KeyError, ValueError) as exc:
             raise StructuralRoleAuthorityError("row has invalid topicId") from exc
         identity = (
@@ -77,6 +80,18 @@ def parse_artifact(payload: dict[str, Any]) -> StructuralRoleArtifact:
             raise StructuralRoleAuthorityError("invalid structural role")
         if row.get("approvalState") != "APPROVED":
             raise StructuralRoleAuthorityError("every role must be explicitly APPROVED")
+        relation_version = str(row.get("relationVersion", ""))
+        deterministic_name = (
+            f"{payload['sourceMasterSha256']}:{identity[0]}:{identity[1]}:"
+            f"{topic_id}:{row.get('relationType')}:{payload['effectiveDate']}"
+        )
+        if (
+            not relation_version
+            or relation_id != uuid.uuid5(RELATION_NAMESPACE, deterministic_name)
+        ):
+            raise StructuralRoleAuthorityError(
+                "relation UUID/version is not deterministic canonical authority"
+            )
         identities.add(identity)
         topics.add(topic_id)
     if len(rows) != int(payload.get("expectedRelationCount", -1)):
@@ -216,5 +231,112 @@ def activate(
         "relationCount": len(artifact.rows),
         "leafCount": 107,
         "rowsChanged": changed,
+        "transactional": True,
+    }
+
+
+def materialize_missing_relations(
+    session: Session,
+    artifact: StructuralRoleArtifact,
+    *,
+    dry_run: bool,
+    environment: str,
+    expected_database: str,
+    operator: str,
+    confirmation: str | None,
+) -> dict[str, Any]:
+    """Append only the explicitly authorized missing canonical relations."""
+
+    _target_guard(session, artifact, environment, expected_database)
+    if not operator.strip():
+        raise StructuralRoleAuthorityError("operator identity is required")
+    required = f"MATERIALIZE:{artifact.authority_version}:{artifact.artifact_sha256}"
+    if not dry_run and confirmation != required:
+        raise StructuralRoleAuthorityError("exact materialization confirmation is required")
+    if session.in_transaction():
+        session.rollback()
+    with session.begin():
+        inserts: list[tuple[dict[str, Any], Instrument, Topic]] = []
+        existing_count = 0
+        for item in artifact.rows:
+            instrument_rows = list(session.scalars(
+                select(Instrument)
+                .join(Market, Market.id == Instrument.market_id)
+                .where(
+                    Market.code == item["marketCode"],
+                    Instrument.instrument_code == item["instrumentCode"],
+                )
+            ))
+            topic_rows = list(session.scalars(
+                select(Topic).where(Topic.id == UUID(str(item["topicId"])))
+            ))
+            if len(instrument_rows) != 1 or len(topic_rows) != 1:
+                raise StructuralRoleAuthorityError(
+                    "ambiguous canonical Instrument or Topic identity"
+                )
+            instrument, topic = instrument_rows[0], topic_rows[0]
+            existing = list(session.scalars(
+                select(InstrumentTopicRelation).where(
+                    InstrumentTopicRelation.instrument_id == instrument.id,
+                    InstrumentTopicRelation.topic_id == topic.id,
+                )
+            ))
+            if len(existing) > 1:
+                raise StructuralRoleAuthorityError("duplicate Production relation authority")
+            if existing:
+                current = existing[0]
+                if current.relation_type != item["relationType"]:
+                    raise StructuralRoleAuthorityError(
+                        "existing relation conflicts with approved relation type"
+                    )
+                existing_count += 1
+                continue
+            if session.get(InstrumentTopicRelation, UUID(str(item["relationId"]))) is not None:
+                raise StructuralRoleAuthorityError("deterministic relation UUID collision")
+            inserts.append((item, instrument, topic))
+        if existing_count != 440 or len(inserts) != 778:
+            raise StructuralRoleAuthorityError(
+                "relation reconciliation is not exact 440 existing plus 778 inserts"
+            )
+        if not dry_run:
+            for item, instrument, topic in inserts:
+                lineage = {
+                    "authorityVersion": artifact.authority_version,
+                    "artifactSha256": artifact.artifact_sha256,
+                    "sourceMasterSha256": artifact.source_master_sha256,
+                    "sourceReference": item["sourceReference"],
+                    "operator": operator,
+                }
+                session.add(InstrumentTopicRelation(
+                    id=UUID(str(item["relationId"])),
+                    instrument_id=instrument.id,
+                    topic_id=topic.id,
+                    relation_type=item["relationType"],
+                    relation_version=item["relationVersion"],
+                    valid_from=artifact.effective_date,
+                    valid_to=None,
+                    relationship_metadata={"canonicalAuthority": lineage},
+                    structural_role=item["structuralRole"],
+                    approval_state="APPROVED",
+                    authority_version=artifact.authority_version,
+                    source_artifact_id=(
+                        f"structural-role-authority:{artifact.authority_version}"
+                    ),
+                    source_artifact_hash=artifact.artifact_sha256,
+                    approval_reference=artifact.approval_reference,
+                    lineage_hash=_hash({**lineage, "relationId": item["relationId"]}),
+                ))
+            session.flush()
+        else:
+            session.rollback()
+    return {
+        "operation": "RELATION_DRY_RUN_PASS" if dry_run else "RELATIONS_MATERIALIZED",
+        "existingRelationsPreserved": existing_count,
+        "newRelationsCreated": 0 if dry_run else len(inserts),
+        "expectedInserts": len(inserts),
+        "expectedUpdates": 0,
+        "expectedDeletes": 0,
+        "expectedDuplicates": 0,
+        "ambiguousRelations": 0,
         "transactional": True,
     }
