@@ -14,6 +14,10 @@ ARTIFACT = (
     ROOT
     / "config/topic_structural_role_authority/structural-role-authority-20260911.v2.json"
 )
+CORRECTED_ARTIFACT = (
+    ROOT
+    / "config/topic_structural_role_authority/structural-role-authority-20260911.v3.json"
+)
 
 
 def _payload():
@@ -31,6 +35,33 @@ def test_owner_approved_artifact_is_exact_and_complete():
     assert {row["structuralRole"] for row in artifact.rows} <= {
         "REPRESENTATIVE", "CORE", "RELATED"
     }
+
+
+def test_owner_secondary_preservation_correction_is_versioned_and_exact():
+    payload = json.loads(CORRECTED_ARTIFACT.read_text(encoding="utf-8"))
+    artifact = parse_artifact(payload)
+    assert artifact.authority_version == "structural-role-authority-20260911.v3"
+    assert artifact.artifact_sha256 == (
+        "8b7493199fd30ae2572b1ffde669204b40a48623ef15e93181117fcb086201a3"
+    )
+    assert payload["correctionLineage"] == {
+        "correctionVersion": "production-secondary-preservation-20260911.v1",
+        "previousAuthorityVersion": "structural-role-authority-20260911.v2",
+        "previousArtifactSha256": (
+            "cd6b15f0ac7ac747731a2cc1e3ee38bca9a7bed5dc69be60efeb760b11752c39"
+        ),
+        "ownerDecision": "KEEP_PRODUCTION_SECONDARY",
+        "correctedRelationCount": 375,
+        "correctionReason": "OWNER_APPROVED_EXISTING_PRODUCTION_ROLE_PRESERVATION",
+    }
+    corrections = [row for row in artifact.rows if "relationTypeCorrection" in row]
+    assert len(corrections) == 375
+    assert all(row["relationType"] == "SECONDARY" for row in corrections)
+    assert all(
+        row["relationTypeCorrection"]["previousArtifactRelationType"] == "PRIMARY"
+        and row["relationTypeCorrection"]["correctedRelationType"] == "SECONDARY"
+        for row in corrections
+    )
 
 
 @pytest.mark.parametrize("field", ["artifactSha256", "targetEnvironment"])
