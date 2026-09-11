@@ -15,6 +15,7 @@ RUN addgroup --system topicpilot \
 COPY services/api/ /app/
 COPY fixtures/ /fixtures/
 COPY config/topic_authority_v1/ /app/config/topic_authority_v1/
+COPY config/topic_structural_role_authority/ /app/config/topic_structural_role_authority/
 
 RUN if [ -f pyproject.toml ]; then \
       python -m pip install .; \

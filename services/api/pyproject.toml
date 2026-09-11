@@ -46,6 +46,7 @@ topicpilot-lifecycle = "topicpilot_api.topic_lifecycle_cli:main"
 topicpilot-lifecycle-formal = "topicpilot_api.topic_lifecycle_formal_cli:main"
 topicpilot-topic-master = "topicpilot_api.topic_master_v1:main"
 topicpilot-topic-authority = "topicpilot_api.topic_authority_cli:main"
+topicpilot-structural-role-authority = "topicpilot_api.structural_role_authority_cli:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/topicpilot_api"]
