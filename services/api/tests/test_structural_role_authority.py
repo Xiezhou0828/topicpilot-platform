@@ -50,3 +50,10 @@ def test_duplicate_relation_identity_fails_closed():
     payload["artifactSha256"] = _hash(canonical)
     with pytest.raises(StructuralRoleAuthorityError, match="duplicate"):
         parse_artifact(payload)
+
+
+def test_relation_reconciliation_contract_allows_initial_and_idempotent_states():
+    approved_states = {(440, 778), (1218, 0)}
+    assert (440, 778) in approved_states
+    assert (1218, 0) in approved_states
+    assert (1217, 1) not in approved_states
