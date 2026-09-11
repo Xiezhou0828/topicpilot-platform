@@ -1,0 +1,126 @@
+{
+  "bundleSchemaVersion": "reference-bundle.v1",
+  "bundleSha256": "dd2c70fbfea8e400c1b08f76449a07c4ecfc972c68474c9cceb2cb6c401db47d",
+  "derivedSummary": {
+    "adjustmentCount": 3,
+    "calendarDateCount": 24,
+    "calendarHolidayCount": 23,
+    "calendarSuspendedCount": 1,
+    "currencyCount": 1,
+    "instrumentCount": 556,
+    "instrumentCountByMarket": {
+      "TPE": 348,
+      "TWO": 208
+    },
+    "lifecycleEventCount": 6,
+    "marketCount": 2,
+    "sessionCount": 1,
+    "timezoneCount": 1,
+    "tradingStatusCount": 8
+  },
+  "files": {
+    "adjustments.json": "1217e6f4722bb87afe5d2d033caabbfcd9cdc128e3e1067b6c79a5e5f669e558",
+    "calendar_dates.json": "08f972307f5fef79e2154d3b96419c0206d0f5a60ae735f680492962143c7439",
+    "currencies.json": "eb4b8c3d49b294f72d177fcb98f60d899325c856edce5e8272921290b17bce36",
+    "evidence.json": "3398332ae90ae38d24d32d9e7af99aa41898bf6d8ac5439a5bf126c83c938556",
+    "instrument_lifecycles.json": "cfffb6711c872a900a6ecfa5554623c43f2767baebce3479e43c660dfef8b66e",
+    "instruments.json": "a0f1da139042b4b9590e405de038b0eba33fd7caa91c2ef09e1c34b58118c160",
+    "markets.json": "816e0fd8bcd1c9d9597a4ef99a00fe2eed4c2756be1d9033a50a310c11c401bf",
+    "sessions.json": "f8b2366c25dc79b16b610710ce510073d631827802aee78782b3cc7c6bbfcd28",
+    "timezones.json": "d68a0d38253a8fcc3719427db19e92f4c09dc91a6c785d37bff414a28cfccf3c",
+    "trading_statuses.json": "1eb693d2ba1e94438559c5dc637da6110d7edeef62b66a0221a9d9437a227ad2"
+  },
+  "generatedOrCurated": "GENERATED_WITH_CURATED_GOVERNANCE_INPUTS",
+  "governance": {
+    "activation": "operator must explicitly pass --activate",
+    "adjustmentAuthority": "curated repository governance input; no implicit defaults",
+    "calendarAuthority": "TWSE 2026 market holiday schedule plus exceptional closure notice",
+    "currencyAuthority": "existing live runtime/reference context contract",
+    "dateEffectiveAuthority": "official TWSE/TPEx company profile or historical listing notice",
+    "instrumentExpansion": "OWNER_APPROVED_CANONICAL_REFERENCE_EXPANSION_REVIEW_20260912",
+    "instrumentIdentityUuid": "UUIDv5(topicpilot.instrument.v1:{marketCode}:{instrumentCode})",
+    "marketAuthority": "provider registry plus existing identity bootstrap defaults",
+    "statusAuthority": "DAILY_TRADING_STATUS_CODES plus explicit evidence validation"
+  },
+  "previousReferenceVersion": "tw-reference-v1-rollover-57247b5a861c0ae3",
+  "referenceDataVersion": "tw-reference-v1-rollover-57247b5a861c0ae3",
+  "sourceArtifacts": [
+    {
+      "acceptedRowCount": 507,
+      "delimiter": "\\t",
+      "encoding": "utf-8-sig",
+      "fileName": "股票總覽.tsv",
+      "inputRowCount": 539,
+      "role": "INSTRUMENT_SOURCE",
+      "sha256": "25d0b40cc2d5ff58112456c4a307e28309e83c8fcaa266750c7169221031b28f",
+      "skippedRowCount": 32
+    },
+    {
+      "calendarCode": "TW_MARKET",
+      "fileName": "twse_market_calendar.json",
+      "holidayCount": 23,
+      "role": "CALENDAR_AUTHORITY",
+      "sha256": "9905d6f27506381990a4b5364016e6cdaa69db8678a3d50eb61752e8a941d8d1",
+      "sourceDescription": "TWSE 2026 market holiday schedule plus exceptional closure notice",
+      "sourceVersion": "2026-twse-calendar-20260714",
+      "suspendedCount": 1,
+      "timezone": "Asia/Taipei"
+    },
+    {
+      "fileName": "quote_suspension_evidence.json",
+      "role": "STATUS_EVIDENCE",
+      "sha256": "ff09d5ae48f75a0a825ee6f10fb617689f31ce39eb542c2403fff613cc01d4e1"
+    },
+    {
+      "fileName": "adjustment_catalogue.json",
+      "role": "ADJUSTMENT_GOVERNANCE_INPUT",
+      "sha256": "45f5325da43348040b0714eb6c14195c66565d3fe99e62aea7c4533676bf30ed"
+    },
+    {
+      "documentDate": "2026-07-24",
+      "fileName": "tpe_1563_cash_reduction.json",
+      "role": "STATUS_EVIDENCE_ADDENDUM",
+      "sha256": "2f5a919e8b2372423dfd2cbda59d3985ecff688bb7eee2528caeb8410cefb3b6",
+      "sourceDescription": "MOPS official major announcement for 1563 cash-capital-reduction share exchange",
+      "sourceUrl": "https://mops.twse.com.tw/mops/web/t05st01"
+    },
+    {
+      "documentDate": "2026-08-20",
+      "fileName": "two_6129_cash_reduction.json",
+      "role": "STATUS_EVIDENCE_ADDENDUM",
+      "sha256": "c56de8e519675d103fea056beb871bb55c031fc54d6dc3d4c6b3934d62c7fe34",
+      "sourceDescription": "MOPS official major announcement for 6129 capital-reduction share exchange",
+      "sourceUrl": "https://mops.twse.com.tw/mops/web/t05st01"
+    },
+    {
+      "fileName": "twse-listed-company-profile-20260912.json",
+      "role": "INSTRUMENT_EXPANSION_AUTHORITY",
+      "sha256": "f9937db0e1c75e87fc12636b8da7fa38753db9ca79b0d90b67475116bd447034",
+      "sourceUrl": "https://openapi.twse.com.tw/v1/opendata/t187ap03_L"
+    },
+    {
+      "fileName": "tpex-otc-company-profile-20260912.json",
+      "role": "INSTRUMENT_EXPANSION_AUTHORITY",
+      "sha256": "f64bdf4901031c93d5666fa835765c66bfc7557c2916e124df7e612f770933a8",
+      "sourceUrl": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap03_O"
+    },
+    {
+      "fileName": "tpex-emerging-company-profile-20260912.json",
+      "role": "FORMAL_EXCLUSION_AUTHORITY",
+      "sha256": "f64ce5b8cb79cb920ac91f7c56d0acfc594a6def1e6305ba3911b2416538bf5f",
+      "sourceUrl": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap03_R"
+    },
+    {
+      "fileName": "tpex-6457-listing-20150612.html",
+      "role": "HISTORICAL_LISTING_AUTHORITY",
+      "sha256": "479f3e58314d9597fa569c118ae27a3fed2e9b321f9c018c12573b42b736775f",
+      "sourceUrl": "https://www.tpex.org.tw/storage/eb_data/10406/10400146681.htm"
+    },
+    {
+      "fileName": "tpex-6457-delisting-20250101.html",
+      "role": "HISTORICAL_DELISTING_AUTHORITY",
+      "sha256": "baecbd3d7322a7ce081e67de631566fd6e259d0640f51615ca2420c27423ed3b",
+      "sourceUrl": "https://dsp.tpex.org.tw/web/announcement/announcement_detail.php?content_file=MTEzMDAxMTA4NDEuaHRtbA%3D%3D&content_number=MTEzMDAxMTA4NDE%3D"
+    }
+  ]
+}

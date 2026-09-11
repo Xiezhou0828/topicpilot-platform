@@ -1,0 +1,26 @@
+[
+  {
+    "code": "AVAILABLE"
+  },
+  {
+    "code": "DELISTED"
+  },
+  {
+    "code": "EXCHANGE_CONFIRMED_NO_DATA"
+  },
+  {
+    "code": "NO_TRADE"
+  },
+  {
+    "code": "OPEN"
+  },
+  {
+    "code": "SUSPENDED"
+  },
+  {
+    "code": "UNKNOWN"
+  },
+  {
+    "code": "TERMINATED"
+  }
+]

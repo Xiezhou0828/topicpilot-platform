@@ -18,6 +18,10 @@ CORRECTED_ARTIFACT = (
     ROOT
     / "config/topic_structural_role_authority/structural-role-authority-20260911.v3.json"
 )
+REFERENCE_CORRECTED_ARTIFACT = (
+    ROOT
+    / "config/topic_structural_role_authority/structural-role-authority-20260912.v4.json"
+)
 
 
 def _payload():
@@ -62,6 +66,18 @@ def test_owner_secondary_preservation_correction_is_versioned_and_exact():
         and row["relationTypeCorrection"]["correctedRelationType"] == "SECONDARY"
         for row in corrections
     )
+
+
+def test_reference_exclusions_are_versioned_and_keep_existing_relations_immutable():
+    payload = json.loads(REFERENCE_CORRECTED_ARTIFACT.read_text(encoding="utf-8"))
+    artifact = parse_artifact(payload)
+    assert artifact.authority_version == "structural-role-authority-20260912.v4"
+    assert len(artifact.rows) == 1162
+    assert payload["expectedExistingProductionCount"] == 440
+    assert payload["expectedMissingProductionCount"] == 722
+    assert payload["instrumentReferenceAuthority"]["canonicalApproved"] == 49
+    assert payload["instrumentReferenceAuthority"]["formallyExcludedInstrumentIdentities"] == 30
+    assert len(payload["exclusionLineage"]["excludedRows"]) == 56
 
 
 @pytest.mark.parametrize("field", ["artifactSha256", "targetEnvironment"])

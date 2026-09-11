@@ -1,0 +1,81 @@
+{
+  "description": "Per-symbol legal suspension or permanent delisting evidence. Intraday no-latest-trade evidence is fetched from official MIS at export time.",
+  "suspensions": {
+    "1563": {
+      "events": [
+        {
+          "effectiveFrom": "2026-08-27",
+          "effectiveTo": "2026-09-04",
+          "evidenceId": "MOPS-TPE-1563-SUSPENDED-20260827",
+          "market": "TPE",
+          "reason": "MOPS formal announcement for 1563 巧新 cash-capital-reduction share exchange: old shares last traded on 2026-08-26 and trading was suspended from 2026-08-27 through 2026-09-04; new shares were scheduled to resume listing and trading on 2026-09-07. This is a temporary suspension of the old share identity, not a termination of the issuer or an inferred successor identity.",
+          "source": "https://mops.twse.com.tw/mops/web/t05st01",
+          "sourceDocument": "1563 巧新—本公司董事長訂定減資換發股票基準日及減資換股作業計畫等相關事宜",
+          "sourceNoticeDate": "2026-07-24",
+          "status": "SUSPENDED"
+        }
+      ],
+      "market": "TPE"
+    },
+    "5371": {
+      "events": [
+        {
+          "effectiveFrom": "2026-08-24",
+          "effectiveTo": "2026-09-02",
+          "evidenceId": "OWNER-TWO-5371-SUSPENDED-20260824",
+          "market": "TWO",
+          "reason": "Owner-supplied market event evidence: 5371 last traded on 2026-08-21 and was suspended from trading on 2026-08-24 for the announced share-conversion process.",
+          "source": "https://www.cmoney.tw/forum/stock/5371?utm_source=notes&utm_medium=article_stocklink",
+          "status": "SUSPENDED"
+        },
+        {
+          "effectiveFrom": "2026-09-03",
+          "evidenceId": "OWNER-TWO-5371-TERMINATED-20260903",
+          "market": "TWO",
+          "reason": "Owner-supplied market event evidence: the share-conversion base date and termination of the old 5371 OTC identity are announced for 2026-09-03.",
+          "source": "https://www.cmoney.tw/forum/stock/5371?utm_source=notes&utm_medium=article_stocklink",
+          "status": "TERMINATED"
+        }
+      ],
+      "market": "TWO"
+    },
+    "6129": {
+      "events": [
+        {
+          "effectiveFrom": "2026-09-03",
+          "effectiveTo": "2026-09-11",
+          "evidenceId": "MOPS-TWO-6129-SUSPENDED-20260903",
+          "market": "TWO",
+          "reason": "MOPS formal announcement for 6129 普誠 capital-reduction share exchange: old shares last traded on 2026-09-02 and trading was suspended from 2026-09-03 through 2026-09-11; new shares were scheduled to resume OTC trading on 2026-09-14. This is a temporary suspension of the old share identity, not a termination of the issuer or an inferred successor identity.",
+          "source": "https://mops.twse.com.tw/mops/web/t05st01",
+          "sourceDocument": "6129 普誠—公告減資彌補虧損換發新股停止股東名簿記載變更、舊股票停止櫃檯買賣及新股票開始櫃檯買賣日期",
+          "sourceNoticeDate": "2026-08-20",
+          "status": "SUSPENDED"
+        }
+      ],
+      "market": "TWO"
+    },
+    "6457": {
+      "events": [
+        {
+          "effectiveFrom": "2025-01-01",
+          "evidenceId": "TPEX-TWO-6457-DELISTED-20250101",
+          "market": "TWO",
+          "reason": "TPEx official termination notice",
+          "source": "https://dsp.tpex.org.tw/web/announcement/announcement_detail.php?content_file=MTEzMDAxMTA4NDEuaHRtbA%3D%3D&content_number=MTEzMDAxMTA4NDE%3D",
+          "status": "DELISTED"
+        }
+      ],
+      "market": "TWO"
+    },
+    "6806": {
+      "effectiveFrom": "2026-06-23",
+      "evidenceId": "TWSE-DELISTED-6806-20260623",
+      "market": "TPE",
+      "reason": "臺灣證券交易所終止上市公司名單記載森崴能源（6806）於 2026-06-23 終止上市，7/30 無當日上市行情。",
+      "source": "https://www.twse.com.tw/company/suspendListingCsvAndHtml?lang=zh&startYear=&type=html",
+      "status": "DELISTED"
+    }
+  },
+  "version": 1
+}

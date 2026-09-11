@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import uuid
 from contextlib import nullcontext
 from dataclasses import dataclass
 from datetime import date
@@ -26,6 +27,19 @@ from topicpilot_api.orm.models import (
 )
 
 from .bundle import ReferenceBundle, validate_bundle
+
+CANONICAL_INSTRUMENT_NAMESPACE = uuid.UUID("3ba18e7f-1a22-5a44-9d74-e4fe5f15de10")
+
+
+def canonical_instrument_id(market_code: str, instrument_code: str) -> uuid.UUID:
+    """Return the stable canonical UUID for a market-aware Instrument identity."""
+
+    if not market_code or not instrument_code:
+        raise ValueError("canonical Instrument identity is incomplete")
+    return uuid.uuid5(
+        CANONICAL_INSTRUMENT_NAMESPACE,
+        f"topicpilot.instrument.v1:{market_code}:{instrument_code}",
+    )
 
 REFERENCE_WRITE_SET = frozenset(
     {
@@ -149,12 +163,23 @@ def _ensure_instrument(
     )
     if instrument is None:
         instrument = Instrument(
+            id=canonical_instrument_id(market.code, row["instrument_code"]),
             market_id=market.id,
             instrument_code=row["instrument_code"],
             name=row["name"],
             instrument_type=row["instrument_type"],
             currency=row["currency"],
-            is_active=True,
+            valid_from=(
+                date.fromisoformat(row["valid_from"])
+                if row.get("valid_from") is not None
+                else None
+            ),
+            valid_to=(
+                date.fromisoformat(row["valid_to"])
+                if row.get("valid_to") is not None
+                else None
+            ),
+            is_active=bool(row.get("is_active", True)),
         )
         session.add(instrument)
         session.flush()
@@ -170,8 +195,28 @@ def _ensure_instrument(
         instrument.currency,
         f"instrument {row['instrument_code']} currency",
     )
-    if not instrument.is_active:
-        instrument.is_active = True
+    if "valid_from" in row:
+        _check_same(
+            date.fromisoformat(row["valid_from"]),
+            instrument.valid_from,
+            f"instrument {row['instrument_code']} valid_from",
+        )
+    if "valid_to" in row:
+        expected_valid_to = (
+            date.fromisoformat(row["valid_to"])
+            if row["valid_to"] is not None
+            else None
+        )
+        _check_same(
+            expected_valid_to,
+            instrument.valid_to,
+            f"instrument {row['instrument_code']} valid_to",
+        )
+    _check_same(
+        bool(row.get("is_active", True)),
+        instrument.is_active,
+        f"instrument {row['instrument_code']} active state",
+    )
     return instrument, False
 
 
@@ -556,10 +601,12 @@ def bootstrap_reference_bundle(
 
 
 __all__ = [
+    "CANONICAL_INSTRUMENT_NAMESPACE",
     "NON_REFERENCE_WRITE_SET",
     "REFERENCE_WRITE_SET",
     "ReferenceBootstrapConflict",
     "ReferenceBootstrapResult",
     "bootstrap_reference_bundle",
+    "canonical_instrument_id",
     "validate_market_context",
 ]

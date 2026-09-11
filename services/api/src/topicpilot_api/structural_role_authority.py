@@ -294,11 +294,17 @@ def materialize_missing_relations(
             if session.get(InstrumentTopicRelation, UUID(str(item["relationId"]))) is not None:
                 raise StructuralRoleAuthorityError("deterministic relation UUID collision")
             inserts.append((item, instrument, topic))
+        expected_existing = int(artifact.payload.get("expectedExistingProductionCount", 440))
+        expected_inserts = int(artifact.payload.get("expectedMissingProductionCount", 778))
+        expected_total = int(artifact.payload["expectedRelationCount"])
         reconciliation = (existing_count, len(inserts))
-        if reconciliation not in {(440, 778), (1218, 0)}:
+        if reconciliation not in {
+            (expected_existing, expected_inserts),
+            (expected_total, 0),
+        }:
             raise StructuralRoleAuthorityError(
-                "relation reconciliation is neither the approved 440 existing plus "
-                "778 inserts nor the idempotent 1218 existing plus 0 inserts state"
+                "relation reconciliation does not match the artifact's approved initial "
+                "or idempotent state"
             )
         if not dry_run:
             for item, instrument, topic in inserts:

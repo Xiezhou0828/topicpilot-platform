@@ -4,10 +4,11 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 from pathlib import Path
 
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 from sqlalchemy.orm import Session
 
 from topicpilot_api.config import get_settings
@@ -21,6 +22,11 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--from-reference-version", required=True)
     parser.add_argument("--expected-from-bundle-sha256", required=True)
     parser.add_argument("--bundle-dir", required=True)
+    parser.add_argument("--environment", required=True)
+    parser.add_argument("--expected-database", required=True)
+    parser.add_argument("--expected-runtime-revision", required=True)
+    parser.add_argument("--operator", required=True)
+    parser.add_argument("--confirm")
     mode = parser.add_mutually_exclusive_group(required=True)
     mode.add_argument("--dry-run", action="store_true")
     mode.add_argument("--activate", action="store_true")
@@ -31,9 +37,26 @@ def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     try:
         bundle = load_bundle(Path(args.bundle_dir))
+        runtime_revision = os.getenv("RENDER_GIT_COMMIT") or os.getenv("GIT_SHA")
+        if runtime_revision != args.expected_runtime_revision:
+            raise ReferenceBootstrapConflict("deployed runtime revision mismatch")
+        if args.environment != "production" or not args.operator.strip():
+            raise ReferenceBootstrapConflict("exact Production environment and operator required")
+        required_confirmation = (
+            f"ACTIVATE_REFERENCE:{args.from_reference_version}:{bundle.digest()}"
+        )
+        if args.activate and args.confirm != required_confirmation:
+            raise ReferenceBootstrapConflict("exact reference activation confirmation required")
         engine = create_engine(get_settings().database_url, pool_pre_ping=True)
         try:
             with Session(engine, expire_on_commit=False) as session:
+                if session.bind is None or session.bind.dialect.name != "postgresql":
+                    raise ReferenceBootstrapConflict("reference activation requires PostgreSQL")
+                database = session.execute(text("select current_database()")) .scalar_one()
+                if database != args.expected_database:
+                    raise ReferenceBootstrapConflict("database identity mismatch")
+                if args.activate:
+                    session.rollback()
                 result = transition_reference_registry(
                     session,
                     bundle,
