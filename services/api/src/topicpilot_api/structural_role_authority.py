@@ -262,18 +262,34 @@ def materialize_missing_relations(
     with session.begin():
         inserts: list[tuple[dict[str, Any], Instrument, Topic]] = []
         existing_count = 0
+        market_by_id = {
+            market.id: market.code for market in session.scalars(select(Market)).all()
+        }
+        instruments_by_identity: dict[tuple[str, str], list[Instrument]] = {}
+        for instrument in session.scalars(select(Instrument)).all():
+            identity = (
+                market_by_id.get(instrument.market_id, ""),
+                instrument.instrument_code,
+            )
+            instruments_by_identity.setdefault(identity, []).append(instrument)
+        topics_by_id = {
+            topic.id: topic for topic in session.scalars(select(Topic)).all()
+        }
+        relations_by_identity: dict[tuple[UUID, UUID], list[InstrumentTopicRelation]] = {}
+        relations_by_id: dict[UUID, InstrumentTopicRelation] = {}
+        for relation in session.scalars(
+            select(InstrumentTopicRelation).with_for_update()
+        ).all():
+            relations_by_identity.setdefault(
+                (relation.instrument_id, relation.topic_id), []
+            ).append(relation)
+            relations_by_id[relation.id] = relation
         for item in artifact.rows:
-            instrument_rows = list(session.scalars(
-                select(Instrument)
-                .join(Market, Market.id == Instrument.market_id)
-                .where(
-                    Market.code == item["marketCode"],
-                    Instrument.instrument_code == item["instrumentCode"],
-                )
-            ))
-            topic_rows = list(session.scalars(
-                select(Topic).where(Topic.id == UUID(str(item["topicId"])))
-            ))
+            instrument_rows = instruments_by_identity.get(
+                (item["marketCode"], item["instrumentCode"]), []
+            )
+            topic = topics_by_id.get(UUID(str(item["topicId"])))
+            topic_rows = [] if topic is None else [topic]
             if len(instrument_rows) != 1 or len(topic_rows) != 1:
                 raise StructuralRoleAuthorityError(
                     "ambiguous canonical Instrument or Topic identity"
@@ -289,12 +305,7 @@ def materialize_missing_relations(
                 raise StructuralRoleAuthorityError(
                     "relation effective date is outside canonical Instrument validity"
                 )
-            existing = list(session.scalars(
-                select(InstrumentTopicRelation).where(
-                    InstrumentTopicRelation.instrument_id == instrument.id,
-                    InstrumentTopicRelation.topic_id == topic.id,
-                )
-            ))
+            existing = relations_by_identity.get((instrument.id, topic.id), [])
             if len(existing) > 1:
                 raise StructuralRoleAuthorityError("duplicate Production relation authority")
             if existing:
@@ -305,7 +316,7 @@ def materialize_missing_relations(
                     )
                 existing_count += 1
                 continue
-            if session.get(InstrumentTopicRelation, UUID(str(item["relationId"]))) is not None:
+            if UUID(str(item["relationId"])) in relations_by_id:
                 raise StructuralRoleAuthorityError("deterministic relation UUID collision")
             inserts.append((item, instrument, topic))
         expected_existing = int(artifact.payload.get("expectedExistingProductionCount", 440))
