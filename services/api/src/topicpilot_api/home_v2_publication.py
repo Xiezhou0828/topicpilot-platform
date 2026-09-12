@@ -355,11 +355,28 @@ def normalize_home_publication_for_read(payload: Mapping[str, Any]) -> dict[str,
     """
 
     result = dict(payload)
-    existing_focus = result.get("dailyFocus")
-    if not isinstance(existing_focus, Mapping):
-        return result
     market_overview = result.get("marketOverview")
     if not isinstance(market_overview, Mapping):
+        return result
+
+    market_overview_copy = dict(market_overview)
+    health = market_overview_copy.get("marketHealth")
+    if isinstance(health, Mapping):
+        advance = health.get("advance")
+        decline = health.get("decline")
+        if isinstance(advance, (int, float)) and not isinstance(advance, bool) and isinstance(decline, (int, float)) and not isinstance(decline, bool):
+            health_copy = dict(health)
+            health_copy["net"] = advance - decline
+            market_overview_copy["marketHealth"] = health_copy
+    turnover = market_overview_copy.get("turnover")
+    if isinstance(turnover, list) and not any(isinstance(item, Mapping) and item.get("market") == "TOTAL" for item in turnover):
+        total_turnover = _derived_total_turnover([item for item in turnover if isinstance(item, Mapping)])
+        if total_turnover is not None:
+            market_overview_copy["turnover"] = [*turnover, total_turnover]
+    result["marketOverview"] = market_overview_copy
+    market_overview = market_overview_copy
+    existing_focus = result.get("dailyFocus")
+    if not isinstance(existing_focus, Mapping):
         return result
 
     def _as_date(value: Any) -> date | None:
@@ -748,6 +765,45 @@ def _turnover_payload(item: MarketTurnoverFact | Mapping[str, Any]) -> dict[str,
     }
 
 
+def _derived_total_turnover(
+    turnover: Sequence[Mapping[str, Any]],
+) -> dict[str, Any] | None:
+    """Derive one total only from two matching formal TWD close facts."""
+
+    by_market = {str(item.get("market")): item for item in turnover}
+    records = [by_market.get("TPE"), by_market.get("TWO")]
+    if any(item is None for item in records):
+        return None
+    if any(str(item.get("status") or "").upper() not in {"AVAILABLE", "PUBLISHED", "FORMAL"} for item in records):
+        return None
+    currencies = {str(item.get("currency") or "").strip().upper() for item in records}
+    units = {str(item.get("unit") or "").strip().upper() for item in records}
+    scales = {item.get("scale") for item in records}
+    if currencies != {"TWD"} or units != {"TWD"} or scales != {0}:
+        return None
+    try:
+        values = [Decimal(str(item["value"])) for item in records]
+    except (KeyError, InvalidOperation, TypeError, ValueError):
+        return None
+    if any(not value.is_finite() for value in values):
+        return None
+    first = records[0]
+    return {
+        "market": "TOTAL",
+        "tradingDate": first.get("tradingDate"),
+        "session": first.get("session", "CLOSE"),
+        "value": float(values[0] + values[1]),
+        "currency": "TWD",
+        "unit": "TWD",
+        "scale": 0,
+        "asOf": max((item.get("asOf") for item in records if item.get("asOf")), default=None),
+        "source": "HOME_V2_FORMAL_TURNOVER_TOTAL",
+        "lineage": "deterministic sum of matching TPE/TWO formal close facts",
+        "status": "AVAILABLE",
+        "reasonCode": None,
+    }
+
+
 def materialize_home_v2(
     session: Session,
     *,
@@ -870,6 +926,9 @@ def materialize_home_v2(
             },
         )
     turnover = [turnover_by_market[market] for market in ("TPE", "TWO")]
+    total_turnover = _derived_total_turnover(turnover)
+    if total_turnover is not None:
+        turnover.append(total_turnover)
     market_overview_payload = {
         "dataDate": trading_date,
         "updatedAt": breadth_as_of,
@@ -1189,7 +1248,34 @@ def read_latest_home_publication(session: Session) -> dict[str, Any] | None:
         ).mappings().one_or_none()
     except SQLAlchemyError:
         return None
-    return normalize_home_publication_for_read(row["payload"]) if row else None
+    if not row:
+        return None
+    payload = normalize_home_publication_for_read(row["payload"])
+    market_overview = payload.get("marketOverview")
+    if not isinstance(market_overview, Mapping) or market_overview.get("distribution"):
+        return payload
+    raw_date = market_overview.get("dataDate")
+    trading_date: date | None = raw_date if isinstance(raw_date, date) and not isinstance(raw_date, datetime) else None
+    if trading_date is None and isinstance(raw_date, str):
+        try:
+            trading_date = date.fromisoformat(raw_date[:10])
+        except ValueError:
+            trading_date = None
+    if trading_date is None:
+        return payload
+    try:
+        breadth_rows, breadth_as_of, observations = _breadth(session, trading_date)
+        eligible_count = sum(int(row.get("eligible") or 0) for row in breadth_rows)
+        enriched_overview = dict(market_overview)
+        enriched_overview["distribution"] = build_market_distribution(
+            observations,
+            eligible_count=eligible_count,
+            as_of=breadth_as_of,
+        )
+        payload["marketOverview"] = enriched_overview
+    except SQLAlchemyError:
+        session.rollback()
+    return payload
 
 
 def empty_home_v2(now: datetime, *, tracked_stock_count: int = 0) -> dict[str, Any]:

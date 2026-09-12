@@ -4,6 +4,7 @@ from datetime import UTC, date, datetime, timedelta
 
 from topicpilot_api.home_v2_publication import (
     SectionResult,
+    _derived_total_turnover,
     build_daily_focus,
     build_market_distribution,
     calculate_rotation_14d,
@@ -306,6 +307,55 @@ def test_read_normalization_replaces_legacy_daily_focus_with_deterministic_facts
     assert result["dailyFocus"]["source"] == "HOME_V2_DAILY_FOCUS_RULE_V1"
     assert "目前主線為" not in " ".join(result["dailyFocus"]["bullets"])
     assert result["sectionStatuses"]["dailyFocus"]["source"] == "HOME_V2_DAILY_FOCUS_RULE_V1"
+
+
+def test_derived_turnover_total_requires_two_matching_formal_twd_close_facts():
+    facts = [
+        {
+            "market": "TPE", "tradingDate": date(2026, 9, 9), "session": "CLOSE",
+            "value": 300_000_000_000, "currency": "TWD", "unit": "TWD", "scale": 0,
+            "asOf": "2026-09-09T13:35:00+08:00", "status": "AVAILABLE",
+        },
+        {
+            "market": "TWO", "tradingDate": date(2026, 9, 9), "session": "CLOSE",
+            "value": 80_000_000_000, "currency": "TWD", "unit": "TWD", "scale": 0,
+            "asOf": "2026-09-09T13:35:00+08:00", "status": "AVAILABLE",
+        },
+    ]
+
+    total = _derived_total_turnover(facts)
+
+    assert total is not None
+    assert total["market"] == "TOTAL"
+    assert total["value"] == 380_000_000_000
+    assert total["source"] == "HOME_V2_FORMAL_TURNOVER_TOTAL"
+    assert _derived_total_turnover([{**facts[0], "unit": "UNKNOWN"}, facts[1]]) is None
+    assert _derived_total_turnover([{**facts[0], "status": "UNAVAILABLE"}, facts[1]]) is None
+
+
+def test_read_normalization_derives_breadth_net_and_total_without_changing_source_facts():
+    payload = {
+        "marketOverview": {
+            "dataDate": "2026-09-09",
+            "marketHealth": {"advance": 999, "decline": 742, "flat": 196},
+            "turnover": [
+                {
+                    "market": "TPE", "tradingDate": "2026-09-09", "value": 300_000_000_000,
+                    "currency": "TWD", "unit": "TWD", "scale": 0, "status": "AVAILABLE",
+                },
+                {
+                    "market": "TWO", "tradingDate": "2026-09-09", "value": 80_000_000_000,
+                    "currency": "TWD", "unit": "TWD", "scale": 0, "status": "AVAILABLE",
+                },
+            ],
+        }
+    }
+
+    result = normalize_home_publication_for_read(payload)
+
+    assert result["marketOverview"]["marketHealth"]["net"] == 257
+    assert result["marketOverview"]["turnover"][-1]["market"] == "TOTAL"
+    assert result["marketOverview"]["turnover"][0]["value"] == 300_000_000_000
 
 
 def test_official_index_fetch_transport_failure_is_typed_unavailable():

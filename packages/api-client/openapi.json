@@ -241,6 +241,11 @@
       },
       "HealthResponse": {
         "properties": {
+          "gitSha": {
+            "default": "UNKNOWN",
+            "title": "Gitsha",
+            "type": "string"
+          },
           "status": {
             "title": "Status",
             "type": "string"

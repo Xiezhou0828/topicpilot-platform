@@ -11,7 +11,7 @@ test("Today commercial surface is EOD-first and excludes mockup values", async (
   for (const marker of ["市場概況", "今日市場重點", "今日主線", "今日題材動態", "快速升溫", "快速退潮", "今日機會"]) {
     assert.match(page, new RegExp(marker));
   }
-  assert.match(page, /收盤後 EOD/);
+  assert.match(page, /收盤後/);
   assert.doesNotMatch(page, /24,612\.38|4,382|8 檔|網通 \+3\.82%|sparkline|盤中重要事件/);
   assert.doesNotMatch(page, /追蹤股票|追蹤題材|不可用家數|provider|generatedAt.*顯示/);
 });

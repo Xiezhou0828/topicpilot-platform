@@ -62,6 +62,27 @@ export function marketTurnover(overview: HomeMarketOverview | null): HomeMarketT
     : [];
 }
 
+export function marketIndexDisplayName(index: HomeMarketIndex): string {
+  if (index.market === "TPE") return "加權指數";
+  if (index.market === "TWO") return "櫃買指數";
+  return index.indexName;
+}
+
+export function formatTurnoverHundredMillion(fact: HomeMarketTurnover): string {
+  if (!marketFactIsAvailable(fact.status, fact.value) || !finiteNumber(fact.value)) return "尚未提供";
+  const currency = fact.currency?.trim().toUpperCase();
+  const unit = fact.unit?.trim().toUpperCase();
+  if (currency !== "TWD" || unit !== "TWD") return "單位尚未確認";
+  return `${formatMarketNumber(fact.value / 100_000_000)} 億`;
+}
+
+export function marketBreadthNet(
+  health: HomeMarketOverview["marketHealth"],
+): number | null {
+  if (!health || !finiteNumber(health.advance) || !finiteNumber(health.decline)) return null;
+  return health.advance - health.decline;
+}
+
 export function marketDistribution(overview: HomeMarketOverview | null): HomeMarketDistribution | null {
   const value = overview?.distribution;
   if (!value

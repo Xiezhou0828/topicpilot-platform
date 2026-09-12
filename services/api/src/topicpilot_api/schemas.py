@@ -24,6 +24,7 @@ class ProblemDetails(ApiModel):
 
 class HealthResponse(ApiModel):
     status: str
+    git_sha: str = Field(default="UNKNOWN", alias="gitSha")
 
 
 class DataStatus(ApiModel):

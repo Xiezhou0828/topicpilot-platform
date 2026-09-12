@@ -844,6 +844,11 @@ export interface components {
         };
         /** HealthResponse */
         HealthResponse: {
+            /**
+             * Gitsha
+             * @default UNKNOWN
+             */
+            gitSha: string;
             /** Status */
             status: string;
         };

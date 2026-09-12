@@ -23,10 +23,8 @@ test("Today official market consumer keeps EOD, trading-date and as-of semantics
     read("lib/today-market-fields.ts"),
     read("components/v2/TodayMarketPage.tsx"),
   ]);
-  assert.match(page, /收盤後 EOD/);
-  assert.match(page, /不代表盤中即時/);
-  assert.match(page, /交易日/);
-  assert.match(page, /截至/);
+  assert.match(page, /收盤後/);
+  assert.match(page, /資料日/);
   assert.match(fields, /Asia\/Taipei/);
   assert.match(fields, /formatMarketDate/);
   assert.match(fields, /formatMarketAsOf/);
@@ -44,7 +42,7 @@ test("Today official market consumer has truthful normal, weekend, null, partial
     weekendAsOf: ["tradingDate", "formatMarketDate", "formatMarketAsOf"],
     nullValue: ["尚未提供", "value: number | null", "value === null"],
     partial: ["PARTIAL", "部分資料", "marketFactState"],
-    unavailable: ["UNAVAILABLE", "尚未提供", "正式成交金額尚未提供"],
+    unavailable: ["UNAVAILABLE", "尚未提供", "正式成交金額合計尚未提供"],
     error: ["ERROR", "讀取失敗", "state: \"ERROR\""],
   };
   for (const [name, markers] of Object.entries(cases)) {

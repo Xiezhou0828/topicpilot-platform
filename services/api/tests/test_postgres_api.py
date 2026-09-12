@@ -92,8 +92,8 @@ def test_read_api_contract_pagination_nulls_and_problem_json(clean_database: Eng
 
     app.dependency_overrides[get_db] = override_db
     with TestClient(app) as client:
-        assert client.get("/healthz").json() == {"status": "ok"}
-        assert client.get("/readyz").json() == {"status": "ready"}
+        assert client.get("/healthz").json()["status"] == "ok"
+        assert client.get("/readyz").json()["status"] == "ready"
 
         status = client.get("/api/v1/meta/data-status")
         assert status.status_code == 200
