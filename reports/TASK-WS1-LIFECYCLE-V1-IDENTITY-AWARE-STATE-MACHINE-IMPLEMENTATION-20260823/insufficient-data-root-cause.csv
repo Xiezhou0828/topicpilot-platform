@@ -1,0 +1,8 @@
+scope,classification,status,explanation
+production_api_read_model,INSUFFICIENT_DATA,OBSERVED,130/130 topics returned with currentStage=null
+formal_materializer,INPUT_NOT_PROVEN,UNKNOWN,No direct production snapshot/materializer evidence
+lifecycle_runner,RUNNER_NOT_PROVEN,UNKNOWN,No scheduler/job last-run evidence
+identity_authority,FAIL_CLOSED_POSSIBLE,NOT_PROVEN,Role-bearing production facts and migration state not verified
+price_evidence,INPUT_NOT_PROVEN,UNKNOWN,Exact production canonical daily bar/change evidence not verified
+persistence,READ_MODEL_NOT_PROVEN,UNKNOWN,No direct production lifecycle result rows available
+deployment,WS4_RELEASE_BLOCKER,SEPARATE,Runtime SHA/image provenance and promotion chain remain separate from this WS1 audit

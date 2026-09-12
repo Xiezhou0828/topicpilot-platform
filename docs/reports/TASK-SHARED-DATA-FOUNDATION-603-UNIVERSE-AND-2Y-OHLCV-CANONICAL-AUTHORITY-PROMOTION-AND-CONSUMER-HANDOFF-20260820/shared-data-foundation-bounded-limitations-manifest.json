@@ -1,0 +1,52 @@
+{
+  "task_id": "TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-CANONICAL-AUTHORITY-PROMOTION-AND-CONSUMER-HANDOFF-20260820",
+  "status": "DISCLOSED_AND_PRESERVED",
+  "limitations": [
+    {
+      "code": "QUARANTINE",
+      "count": 144,
+      "handling": "explicit quarantine retained; no synthetic fill"
+    },
+    {
+      "code": "PROVIDER_NO_DATA",
+      "count": 142,
+      "handling": "provider-returned NO_DATA retained; not reclassified as holiday/no-event/not-listed/suspended/no-trade"
+    },
+    {
+      "code": "LIFECYCLE_SKIP",
+      "count": 41,
+      "handling": "listing/lifecycle authority controls retained; no provider request required"
+    },
+    {
+      "code": "LISTING_TRUNCATION",
+      "count": 3,
+      "handling": "coverage begins at listing-effective date where later than requested start"
+    },
+    {
+      "code": "PROVIDER_OR_UNRESOLVED_GAP",
+      "count": 13,
+      "handling": "gap disclosed; no synthetic session/value created"
+    },
+    {
+      "code": "PIT_LIMITED",
+      "count": 16,
+      "handling": "PIT lineages exist but bounded coverage caveat applies"
+    },
+    {
+      "code": "ADJUSTMENT_UNKNOWN",
+      "count": 603,
+      "handling": "no corporate-action adjustment or total-return inference"
+    },
+    {
+      "code": "LEGACY_LINEAGE",
+      "count": 63826,
+      "handling": "old 507-row source remains immutable provenance/staging, not active publication authority"
+    }
+  ],
+  "prohibited_inferences": [
+    "missing OHLCV is not a holiday/no-event proof",
+    "absence of corporate-action evidence is not NO_ACTION",
+    "instrument membership is not topic membership",
+    "daily OHLCV is not order flow"
+  ]
+}

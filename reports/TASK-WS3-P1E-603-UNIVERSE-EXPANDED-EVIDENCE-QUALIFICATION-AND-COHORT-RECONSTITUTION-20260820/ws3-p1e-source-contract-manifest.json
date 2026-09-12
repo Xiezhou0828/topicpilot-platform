@@ -1,0 +1,135 @@
+{
+  "a1_prior_confirmatory_disposition": {
+    "confirmed": 0,
+    "failed": 0,
+    "inconclusive": 7,
+    "supported": 0
+  },
+  "a1_status": "FROZEN_AWAITING_FORWARD_EVIDENCE",
+  "a2_origin_prior_disposition": "EVIDENCE_ONLY_NOT_PROMOTED",
+  "definition_uniqueness": "PASS",
+  "definitions": {
+    "a1": {
+      "candidate_id": "CORE_V0_A1_PRE_BREAKOUT",
+      "policy_hash": "b63d23e9494d6b0247c88ed01c3dd7050e7c10e83944eac538eadd84669a5850",
+      "quality_candidate_count": 7,
+      "quality_freeze_hash": "321eee383b3aa0fd5e006a43ddaa1c61229a1f7e29f3738e78d7e3abed44d1b4",
+      "version": "core-v0-a1-pre-breakout.v1"
+    },
+    "a2": {
+      "candidate_id": "CORE_V0_A2_CONFIRMED_BREAKOUT",
+      "entry_freeze_hash": "5a039ee8e7f9e27750d5df84d40864166ea88d3f481bc54f1083871114fb60f8",
+      "formation_hash": "12f9ac91dfc75199569effe2237fcd7f0aa4e6939df715ecd5e9e43c4f4b73b9",
+      "invalidation_freeze_hash": "0d474ca2512ed97456037e8b28ec73f0e2e93fa1a7ccf064fb2df396b5878fa2",
+      "version": "core-v0-a2-confirmed-breakout.v1"
+    },
+    "a2_origin": {
+      "classification": "a1_origin_date present => A1_ORIGIN_A2; otherwise DIRECT_ENTRY_A2",
+      "definition_source": "services/api/src/topicpilot_api/research/ws3_core_v0_a2_entry_breakout_invalidation.py::_build_events",
+      "prior_diagnostic_hash": "0f8788a51949e17df6e5a96a044724ff45f246ae9bc6d396efb9174acd441a29"
+    }
+  },
+  "frozen_protocol": {
+    "candidate_inputs_cutoff": "<=T",
+    "development": [
+      "2026-02-02",
+      "2026-06-30"
+    ],
+    "evaluation_horizons": [
+      1,
+      3,
+      5,
+      10
+    ],
+    "forward_outcomes": "evaluation-only",
+    "holdout": [
+      "2026-08-01",
+      "2026-08-13"
+    ],
+    "id": "core-v0-walk-forward.v1",
+    "minimum_prior_canonical_sessions": 60,
+    "validation": [
+      "2026-07-01",
+      "2026-07-31"
+    ]
+  },
+  "historical_evidence": {
+    "accepted_surface_rows": 288881,
+    "accepted_surface_sha256": "e803733e796d8f4d8cf00575cd4045f28c9364572fc61b31ef490e8a65ff47a4",
+    "observed_surface_rows": 288881,
+    "quality": {
+      "accepted_rows": 288881,
+      "duplicate_session_count": 0,
+      "invalid_ohlcv_count": 0,
+      "pit_instrument_status": {
+        "ELIGIBLE": 587,
+        "INELIGIBLE": 0,
+        "LIMITED": 16
+      },
+      "pit_limited_instrument_count": 16,
+      "pit_reconstructable_instruments": 603,
+      "pit_status_authority": "Shared Data Foundation PIT reconstructability audit",
+      "pit_unusable_instrument_count": 0
+    },
+    "window": [
+      "2024-08-13",
+      "2026-08-13"
+    ]
+  },
+  "instrument_set": {
+    "count": 603,
+    "identity_fields": [
+      "instrument_id",
+      "code",
+      "market",
+      "name"
+    ],
+    "sha256": "cfd49d0465d9b374e0fa2e40329305d267e7edf4f81ac502864740492d95fbc4"
+  },
+  "lineage_policy": {
+    "accepted_price": "PRICE + ACCEPTED + DAILY_BAR",
+    "adjustment_state": "UNKNOWN; raw OHLCV is not adjusted truth",
+    "lifecycle": "DELISTED/SUSPENDED/TERMINATED interval excluded",
+    "source_lineage_required": [
+      "source_code",
+      "adapter_version",
+      "observation_semantics",
+      "reference_data_version",
+      "normalization_contract_version",
+      "mapping_policy_version",
+      "observation_id"
+    ],
+    "supersession": "accepted PRICE successor excluded",
+    "synthetic_fill": false
+  },
+  "metadata": {
+    "as_of": "2026-08-13",
+    "generated_at": "2026-08-20T04:59:29.250441+00:00"
+  },
+  "pit_instrument_classification": {
+    "authority": "Shared Data Foundation PIT reconstructability audit; instrument-level bounded coverage classification, not per-session eligibility row counts",
+    "eligible": 587,
+    "ineligible": 0,
+    "limited": 16
+  },
+  "pit_policy": {
+    "event_outcomes_only": true,
+    "horizon": "T+1/T+3/T+5/T+10 canonical accepted sessions strictly after T",
+    "ma60": "last 60 accepted closes inclusive of T",
+    "reference": "prior 20 accepted sessions strictly before T",
+    "session_identity": "instrument + accepted canonical session_date + observation_id",
+    "unknown_preserved": true
+  },
+  "schema_version": "ws3-p1e-source-contract-manifest.v1",
+  "shared_data_foundation": {
+    "accepted_ohlcv_rows": 288881,
+    "formal_instrument_count": 603,
+    "normalized_aggregate_sha256": "e803733e796d8f4d8cf00575cd4045f28c9364572fc61b31ef490e8a65ff47a4",
+    "observed_instrument_count": 603,
+    "observed_query_rows": 288881,
+    "status": "COMPLETED_PASS_WITH_BOUNDED_LIMITATIONS",
+    "task_id": "TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-BOOTSTRAP-EXECUTION-20260819"
+  },
+  "source_canonical_head": "c40aa42e7cac665386009f29c94a8dafce896427",
+  "task_id": "TASK-WS3-P1E-603-UNIVERSE-EXPANDED-EVIDENCE-QUALIFICATION-AND-COHORT-RECONSTITUTION-20260820"
+}

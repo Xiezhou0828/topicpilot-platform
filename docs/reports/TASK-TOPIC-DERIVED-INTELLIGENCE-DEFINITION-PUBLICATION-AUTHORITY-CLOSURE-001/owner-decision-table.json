@@ -1,0 +1,103 @@
+{
+  "taskId": "TASK-TOPIC-DERIVED-INTELLIGENCE-DEFINITION-PUBLICATION-AUTHORITY-CLOSURE-001",
+  "status": "OWNER_POLICY_DECISION_REQUIRED",
+  "decisions": [
+    {
+      "decisionId": "WS1-P2A-D001",
+      "capability": "Leader Set",
+      "question": "Which approved members, version, effective dates, and source artifact form the governed Leader Set?",
+      "existingCanonicalEvidence": "PM semantics require a semi-static versionable set primarily from CORE; runtime requires an explicit versioned artifact and does not infer members.",
+      "candidateChoices": ["Approve an explicit versioned artifact with member identities and policy-required importance"],
+      "unsupportedSubstitutes": ["daily top movers", "Top-N Score", "relation order", "maxObservedChange proxy"],
+      "architecturalConsequence": "Supplies shared authority for Score and any formal Leadership projection.",
+      "blocks": ["Leader Set authority", "Score publication", "Leadership"],
+      "doesNotBlock": ["Breadth semantic closure", "Ranking decision", "Concentration decision", "Lifecycle product meaning"],
+      "recommendedDefault": "Approve the artifact shape first; do not infer members.",
+      "ownerApprovalRequired": true
+    },
+    {
+      "decisionId": "WS1-P2A-D002",
+      "capability": "Leader Set / Leadership",
+      "question": "Should Score and Leadership share one governed artifact?",
+      "existingCanonicalEvidence": "Score consumes member identity/importance/version; Leadership needs stable identity and approved role semantics.",
+      "candidateChoices": ["One base artifact with consumer-specific projections", "Separate explicitly linked artifacts"],
+      "architecturalConsequence": "Defines identity sharing and correction/supersession lineage.",
+      "blocks": ["Leadership", "Score publication if binding is not defined"],
+      "doesNotBlock": ["Breadth", "Ranking", "Concentration"],
+      "recommendedDefault": "Shared identity with explicit consumer projections, subject to approval.",
+      "ownerApprovalRequired": true
+    },
+    {
+      "decisionId": "WS1-P2A-D003",
+      "capability": "Score / Grade",
+      "question": "Where is the committed PM approval artifact and exact digest/identity for the already implemented mechanics?",
+      "existingCanonicalEvidence": "Committed work-order/status ledgers say PM Approved; the navigated 003F brief is absent from SOURCE_HEAD; policy_approval.py requires a strict artifact.",
+      "candidateChoices": ["Commit/reconcile the referenced approval artifact and bind its digest", "Remain fail-closed until the artifact exists in canonical evidence"],
+      "architecturalConsequence": "Enables PolicyApprovalRecord and ProductionV1PolicyBundle identity binding.",
+      "blocks": ["Score publication", "Grade publication"],
+      "doesNotBlock": ["Breadth semantic", "Ranking", "Concentration", "Lifecycle independence"],
+      "recommendedDefault": "Restore the referenced artifact as committed canonical evidence; do not copy an owner-untracked draft automatically.",
+      "ownerApprovalRequired": true
+    },
+    {
+      "decisionId": "WS1-P2A-D004",
+      "capability": "Breadth",
+      "question": "Which committed policy artifact is the formal identity for CORE Market Participation and its null/coverage rules?",
+      "existingCanonicalEvidence": "PM-001 freezes meaning/population; production_policy.py contains non-activating mechanics; the exact approval artifact is absent at SOURCE_HEAD.",
+      "candidateChoices": ["Reconcile the approved artifact identity and code references"],
+      "architecturalConsequence": "Defines formal Breadth publication and lineage without selecting a new formula.",
+      "blocks": ["Breadth publication"],
+      "doesNotBlock": ["Score publication contract", "Topic Map Score", "Ranking decision", "Concentration", "Lifecycle"],
+      "recommendedDefault": "Reconcile artifact identity before publishing Breadth.",
+      "ownerApprovalRequired": true
+    },
+    {
+      "decisionId": "WS1-P2A-D005",
+      "capability": "Ranking",
+      "question": "What is the Topic-level global ranking universe and metric?",
+      "existingCanonicalEvidence": "Opportunity ranking is strategy-local; no global Topic ranking authority is committed.",
+      "candidateChoices": [],
+      "architecturalConsequence": "Defines rank-set/read model, tie-break, null, replay, and historical contract.",
+      "blocks": ["Ranking", "Historical Ranking"],
+      "doesNotBlock": ["Score", "Grade", "Breadth", "Concentration", "Lifecycle"],
+      "recommendedDefault": "Keep deferred; do not equate ranking with Score descending.",
+      "ownerApprovalRequired": true
+    },
+    {
+      "decisionId": "WS1-P2A-D006",
+      "capability": "Concentration",
+      "question": "What product semantic and contribution/weight definition is formal?",
+      "existingCanonicalEvidence": "No committed Topic concentration authority; relation metadata alone is insufficient.",
+      "candidateChoices": [],
+      "architecturalConsequence": "Defines contribution, denominator, small-sample, null, version, and correction contract.",
+      "blocks": ["Concentration"],
+      "doesNotBlock": ["Score", "Grade", "Breadth", "Ranking", "Lifecycle"],
+      "recommendedDefault": "Keep deferred pending product decision.",
+      "ownerApprovalRequired": true
+    },
+    {
+      "decisionId": "WS1-P2A-D007",
+      "capability": "Lifecycle",
+      "question": "Which numeric transition policy version is approved for formal activation?",
+      "existingCanonicalEvidence": "Five stage meanings are frozen; numeric values are explicitly provisional/tunable and calibration has blank PM judgement fields.",
+      "candidateChoices": ["Approve a new version after PM calibration"],
+      "architecturalConsequence": "Defines formal transition, confirmation, guardrail, and hysteresis behavior without rewriting old shadow rows.",
+      "blocks": ["Formal Lifecycle activation"],
+      "doesNotBlock": ["Score", "Grade", "Ranking", "Breadth", "Concentration"],
+      "recommendedDefault": "Use a new version; never mutate provisional rows.",
+      "ownerApprovalRequired": true
+    },
+    {
+      "decisionId": "WS1-P2A-D008",
+      "capability": "Lifecycle",
+      "question": "Does formal Lifecycle use approved role semantics, and what correction/replay state identity is required?",
+      "existingCanonicalEvidence": "The evaluator has a role-aware path plus a labelled proxy; the result lacks exact PIT snapshot/correction binding.",
+      "candidateChoices": ["Approve role-aware input authority", "Approve a role-independent transition contract"],
+      "architecturalConsequence": "Defines formal role input and versioned downstream replay/supersession.",
+      "blocks": ["Formal Lifecycle", "Correction propagation"],
+      "doesNotBlock": ["Score", "Grade", "Ranking", "Breadth", "Concentration"],
+      "recommendedDefault": "Require exact upstream lineage either way; never promote the proxy.",
+      "ownerApprovalRequired": true
+    }
+  ]
+}

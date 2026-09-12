@@ -2,6 +2,8 @@
 
 from . import (
     canonical_observations,
+    formal_lifecycle,
+    home,
     identity,
     import_audit,  # noqa: F401
     lifecycle,
@@ -9,11 +11,15 @@ from . import (
     market_data,
     models,  # noqa: F401
     observation_timeline,
+    score_projections,
     snapshots,
+    topic_authority,
     topics,
 )
 from .base import Base
 from .canonical_observations import *  # noqa: F403
+from .formal_lifecycle import TopicLifecycleFormalResult
+from .home import HomeMarketFact, HomePublication, HomePublicationSection  # noqa: F401
 from .identity import *  # noqa: F403
 from .import_audit import LegacyImportArtifact, LegacyImportRecord, LegacyImportRun
 from .lifecycle import TopicLifecycleResult
@@ -31,7 +37,9 @@ from .models import (
     ReferenceTradingStatus,
 )
 from .observation_timeline import *  # noqa: F403
+from .score_projections import *  # noqa: F403
 from .snapshots import *  # noqa: F403
+from .topic_authority import TopicAuthorityActivation
 from .topics import *  # noqa: F403
 
 __all__ = [
@@ -51,16 +59,22 @@ __all__ = [
     "ReferenceSession",
     "ReferenceTimezone",
     "ReferenceTradingStatus",
+    "TopicLifecycleFormalResult",
     "TopicLifecycleResult",
+    "TopicAuthorityActivation",
 ]
 for _module in (
     canonical_observations,
+    formal_lifecycle,
+    home,
     identity,
     live,
     lifecycle,
     market_data,
     observation_timeline,
+    score_projections,
     snapshots,
+    topic_authority,
     topics,
 ):
     __all__ += list(getattr(_module, "__all__", ()))

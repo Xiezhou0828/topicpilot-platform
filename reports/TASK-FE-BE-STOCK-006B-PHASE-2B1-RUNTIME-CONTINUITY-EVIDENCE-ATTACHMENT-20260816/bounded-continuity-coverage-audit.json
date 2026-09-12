@@ -1,0 +1,47 @@
+{
+  "task_id": "TASK-FE-BE-STOCK-006B-PHASE-2B1-RUNTIME-CONTINUITY-EVIDENCE-ATTACHMENT-20260816",
+  "artifact_type": "BOUNDED_CONTINUITY_COVERAGE_AUDIT_V1",
+  "authority_audit_scope": "REC-A1 committed identity x event-family coverage matrix; not a general corporate-action completeness claim",
+  "reference_version": "tw-reference-v1",
+  "research_window": {
+    "start": "2026-02-02",
+    "end": "2026-08-13"
+  },
+  "total_identities_considered": 507,
+  "total_event_families_considered": 8,
+  "total_authority_cells_considered": 4056,
+  "coverage_counts": {
+    "COVERED_EVENT": 368,
+    "COVERED_NO_EVENT": 0,
+    "UNKNOWN": 3688,
+    "OUTSIDE_SCOPE": 0
+  },
+  "identity_counts": {
+    "event_identities": 353,
+    "authoritative_no_event_identities": 0,
+    "unknown_identities": 154
+  },
+  "runtime_indicator_window_audit": {
+    "state": "NOT_RUN_ENVIRONMENT_NOT_PROVIDED",
+    "sample_definition": "No PostgreSQL runtime was available; therefore no canonical historical bars were read and no technical indicator windows were counted or classified.",
+    "sample_identity": null,
+    "sample_date": null,
+    "sample_window": null,
+    "selection_method": "Not selected because TEST_DATABASE_URL, DATABASE_URL, and TOPICPILOT_INGEST_TEST_DATABASE_URL were absent.",
+    "total_indicator_windows_sampled_evaluated": "NOT_RUN",
+    "PASS_BOUNDED": "NOT_RUN",
+    "FAIL": "NOT_RUN",
+    "UNKNOWN": "NOT_RUN",
+    "MA60_FORMAL": "NOT_RUN",
+    "MA60_FAIL": "NOT_RUN",
+    "MA60_UNKNOWN": "NOT_RUN",
+    "REAL_FORMAL_WINDOW_COUNT": 0
+  },
+  "exact_bounded_blocker": "The committed corporate-action matrix has no authoritative empty-set identities and 3688 UNKNOWN identity-family cells; the runtime carrier implemented in this task covers lifecycle discontinuities only. Real technical-window validation additionally requires a PostgreSQL read-only environment.",
+  "source_artifacts": [
+    "reports/TASK-REC-A1-COMPLETE-RESEARCH-WINDOW-COVERAGE-AND-FREEZE-REASSESSMENT/REC-A1-COVERAGE-MATRIX-V0.json",
+    "reports/TASK-REC-A1-CORPORATE-ACTION-TPEX-BOUNDED-ARTIFACT-COVERAGE-CLOSURE/owner-artifact/TWSE-OWNER-BOUNDED-EXPORT-ENVELOPE-V0.json",
+    "reports/TASK-REC-A1-CORPORATE-ACTION-TPEX-BOUNDED-ARTIFACT-COVERAGE-CLOSURE/owner-artifact/TPEX-OWNER-BOUNDED-EXPORT-ENVELOPE-V0.json"
+  ],
+  "no_fake_pass": true
+}

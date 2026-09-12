@@ -1,0 +1,290 @@
+{
+  "A1_A2_STATE_SIGNAL": "DISCOVERY_ONLY",
+  "A1_RETUNED": "NO",
+  "A2_RETUNED": "NO",
+  "BENCHMARK_STATUS": "UNAVAILABLE_NO_CANONICAL_BENCHMARK",
+  "CONTROL_CONTAMINATION_COUNT": 0,
+  "DATABASE_MUTATION": "NO",
+  "DISTINCT_SWING_EPISODE_COUNT": 35285,
+  "EARLIEST_USEFUL_LEAD_TIME": [
+    {
+      "earliest_useful_label": "D-20",
+      "earliest_useful_lead_time": "-20",
+      "feature_family": "TREND_STRUCTURE",
+      "promising_feature_count": "11",
+      "robust_feature_count": "6",
+      "status": "DISCOVERY_ONLY"
+    },
+    {
+      "earliest_useful_label": "NONE",
+      "earliest_useful_lead_time": "",
+      "feature_family": "MOMENTUM",
+      "promising_feature_count": "0",
+      "robust_feature_count": "0",
+      "status": "DISCOVERY_ONLY"
+    },
+    {
+      "earliest_useful_label": "D-5",
+      "earliest_useful_lead_time": "-5",
+      "feature_family": "VOLUME_PARTICIPATION",
+      "promising_feature_count": "12",
+      "robust_feature_count": "4",
+      "status": "DISCOVERY_ONLY"
+    },
+    {
+      "earliest_useful_label": "D-20",
+      "earliest_useful_lead_time": "-20",
+      "feature_family": "VOLATILITY_COMPRESSION",
+      "promising_feature_count": "65",
+      "robust_feature_count": "1",
+      "status": "DISCOVERY_ONLY"
+    },
+    {
+      "earliest_useful_label": "NONE",
+      "earliest_useful_lead_time": "",
+      "feature_family": "RELATIVE_STRENGTH",
+      "promising_feature_count": "0",
+      "robust_feature_count": "0",
+      "status": "DISCOVERY_ONLY"
+    },
+    {
+      "earliest_useful_label": "NONE",
+      "earliest_useful_lead_time": "",
+      "feature_family": "A_STATE_CONTEXT",
+      "promising_feature_count": "0",
+      "robust_feature_count": "0",
+      "status": "DISCOVERY_ONLY"
+    }
+  ],
+  "FEATURE_FAMILY_COUNT": 6,
+  "FINAL_CANONICAL_HEAD": "6a4e982bf581ff03127410e96ccb7eade6d784c5",
+  "INTRADAY_EVIDENCE_PILOT_JUSTIFIED": "YES_WITH_BOUNDED_LIMITATIONS",
+  "KNOWN_EVENT_OVERLAP_COUNT": 3498,
+  "LOOK_AHEAD_LEAKAGE_DETECTED": "NO",
+  "MATCHED_CONTROL_COUNT": 35285,
+  "MATCH_SUMMARY": {
+    "T10_GE_10": {
+      "control_contamination_count": 0,
+      "control_reuse_count": 0,
+      "fallback_tier_counts": {
+        "1": 4727
+      },
+      "matched": 4727,
+      "requested": 4727,
+      "unmatched": 0
+    },
+    "T10_GE_3": {
+      "control_contamination_count": 0,
+      "control_reuse_count": 0,
+      "fallback_tier_counts": {
+        "1": 6306
+      },
+      "matched": 6306,
+      "requested": 6306,
+      "unmatched": 0
+    },
+    "T10_GE_5": {
+      "control_contamination_count": 0,
+      "control_reuse_count": 0,
+      "fallback_tier_counts": {
+        "1": 6083
+      },
+      "matched": 6083,
+      "requested": 6083,
+      "unmatched": 0
+    },
+    "T5_GE_10": {
+      "control_contamination_count": 0,
+      "control_reuse_count": 0,
+      "fallback_tier_counts": {
+        "1": 4815
+      },
+      "matched": 4815,
+      "requested": 4815,
+      "unmatched": 0
+    },
+    "T5_GE_3": {
+      "control_contamination_count": 0,
+      "control_reuse_count": 0,
+      "fallback_tier_counts": {
+        "1": 6785
+      },
+      "matched": 6785,
+      "requested": 6785,
+      "unmatched": 0
+    },
+    "T5_GE_5": {
+      "control_contamination_count": 0,
+      "control_reuse_count": 0,
+      "fallback_tier_counts": {
+        "1": 6569
+      },
+      "matched": 6569,
+      "requested": 6569,
+      "unmatched": 0
+    }
+  },
+  "MODIFIED_FILES": [
+    "reports/TASK-WS3-SUCCESSFUL-SWING-OUTCOME-MINING-AND-LEADING-EVIDENCE-DISCOVERY-20260821",
+    "docs/reports/TASK-WS3-SUCCESSFUL-SWING-OUTCOME-MINING-AND-LEADING-EVIDENCE-DISCOVERY-20260821/formal-closure-report.md",
+    "services/api/src/topicpilot_api/research/ws3_successful_swing_discovery.py"
+  ],
+  "MULTIVARIATE_DIAGNOSTIC_EXECUTED": "NO",
+  "MULTIVARIATE_PRODUCTION_CLAIM": "NO",
+  "NEW_STRATEGY_RULE_CREATED": "NO",
+  "NEXT_TASK_CHANGED": "NO",
+  "NORMALIZED_AGGREGATE_SHA256": "601a18fe2f5ea3496194a40ee39ec07e71b7f11d92ae7cf09ed55443d4e118d1",
+  "NO_CLEAR_SIGNAL_COUNT": 526,
+  "OUTCOME_DERIVED_FEATURE_USED": "NO",
+  "OWNER_REFERENCE_CASES_NOT_MATCHING_OBJECTIVE_PROTOCOL": 0,
+  "OWNER_REFERENCE_CASES_OBJECTIVELY_RECONSTRUCTED": 7,
+  "OWNER_REFERENCE_CASE_COUNT": 7,
+  "POST_EVENT_FEATURE_LEAKAGE": 0,
+  "PRODUCTION_MUTATION": "NO",
+  "PRODUCTION_RULE_CREATED": "NO",
+  "PROMISING_DISCOVERY_SIGNAL_COUNT": 88,
+  "RAW_ELIGIBLE_ANCHOR_COUNT": 246689,
+  "READY_FOR_SUCCESSFUL_SWING_CONFIRMATORY_FEATURE_RESEARCH": "YES_WITH_BOUNDED_LIMITATIONS",
+  "REGIME_CONFOUNDED_COUNT": 743,
+  "RELATIVE_STRENGTH_SIGNAL": "UNAVAILABLE_NO_CANONICAL_BENCHMARK",
+  "REPRODUCIBLE": "YES",
+  "ROBUST_DISCOVERY_SIGNAL_COUNT": 11,
+  "SOURCE_CANONICAL_HEAD": "371d47a9d461a4dcc8eb42b7e1fcb7e0396367b0",
+  "SOURCE_END": "2026-08-13",
+  "SOURCE_INSTRUMENT_COUNT": 603,
+  "SOURCE_OHLCV_ROW_COUNT": 288881,
+  "SOURCE_SHA256": "e803733e796d8f4d8cf00575cd4045f28c9364572fc61b31ef490e8a65ff47a4",
+  "SOURCE_START": "2024-08-13",
+  "STRATA": [
+    {
+      "distinct_swing_episode_count": "6785",
+      "episode_spacing_sessions": "10",
+      "forward_return": "{'n': 6785, 'mean': 0.05854297809866446, 'median': 0.047945205479452024, 'p05': 0.03130269629036313, 'p95': 0.11867309519075704, 'win_rate': 1.0, 'min': 0.030000000000000027, 'max': 1.278606965174129}",
+      "horizon": "5",
+      "known_event_overlap_count": "64",
+      "mae": "{'n': 6785, 'mean': -0.02749029266998854, 'median': -0.017000000000000015, 'p05': -0.09986243148029494, 'p95': 0.006825007333460495, 'win_rate': 0.1288135593220339, 'min': -0.2685589519650654, 'max': 0.06425702811244993}",
+      "max_close_drawdown": "{'n': 6785, 'mean': -0.02764383872968676, 'median': -0.017804154302670683, 'p05': -0.09891988847946036, 'p95': 0.0, 'win_rate': 0.0, 'min': -0.189795918367347, 'max': 0.0}",
+      "mfe": "{'n': 6785, 'mean': 0.07486358006190662, 'median': 0.06648199445983383, 'p05': 0.03761936950219815, 'p95': 0.13888888888888884, 'win_rate': 1.0, 'min': 0.030095759233926156, 'max': 1.6467661691542288}",
+      "one_day_spike_rate": "{'n': 6785, 'mean': 0.2675018422991894, 'median': 0.0, 'p05': 0.0, 'p95': 1.0, 'win_rate': 0.2675018422991894, 'min': 0.0, 'max': 1.0}",
+      "raw_qualifying_anchor_count": "69372",
+      "representative_count": "6785",
+      "stratum": "T5_GE_3",
+      "sustained_expansion_rate": "{'n': 6785, 'mean': 0.47943994104642595, 'median': 0.0, 'p05': 0.0, 'p95': 1.0, 'win_rate': 0.47943994104642595, 'min': 0.0, 'max': 1.0}",
+      "threshold": "0.03",
+      "time_to_10pct_rate": "{'n': 6785, 'mean': 0.10523212969786293, 'median': 0.0, 'p05': 0.0, 'p95': 1.0, 'win_rate': 0.10523212969786293, 'min': 0.0, 'max': 1.0}",
+      "time_to_3pct_rate": "{'n': 6785, 'mean': 0.999852616064849, 'median': 1.0, 'p05': 1.0, 'p95': 1.0, 'win_rate': 0.999852616064849, 'min': 0.0, 'max': 1.0}",
+      "time_to_5pct_rate": "{'n': 6785, 'mean': 0.5093588798820928, 'median': 1.0, 'p05': 0.0, 'p95': 1.0, 'win_rate': 0.5093588798820928, 'min': 0.0, 'max': 1.0}"
+    },
+    {
+      "distinct_swing_episode_count": "6569",
+      "episode_spacing_sessions": "10",
+      "forward_return": "{'n': 6569, 'mean': 0.0809244622042589, 'median': 0.0710382513661203, 'p05': 0.051369863013698724, 'p95': 0.140625, 'win_rate': 1.0, 'min': 0.050000000000000044, 'max': 1.278606965174129}",
+      "horizon": "5",
+      "known_event_overlap_count": "73",
+      "mae": "{'n': 6569, 'mean': -0.024967212167780445, 'median': -0.01449275362318847, 'p05': -0.09957079430763642, 'p95': 0.010799270214665625, 'win_rate': 0.1676054193941239, 'min': -0.2685589519650654, 'max': 0.08423326133909304}",
+      "max_close_drawdown": "{'n': 6569, 'mean': -0.026731698321432483, 'median': -0.017492711370262204, 'p05': -0.09867340351504754, 'p95': 0.0, 'win_rate': 0.0, 'min': -0.189795918367347, 'max': 0.0}",
+      "mfe": "{'n': 6569, 'mean': 0.09760662463135138, 'median': 0.08982035928143706, 'p05': 0.05780346820809257, 'p95': 0.1617621023513139, 'win_rate': 1.0, 'min': 0.050000000000000044, 'max': 1.6467661691542288}",
+      "one_day_spike_rate": "{'n': 6569, 'mean': 0.1595372202770589, 'median': 0.0, 'p05': 0.0, 'p95': 1.0, 'win_rate': 0.1595372202770589, 'min': 0.0, 'max': 1.0}",
+      "raw_qualifying_anchor_count": "49192",
+      "representative_count": "6569",
+      "stratum": "T5_GE_5",
+      "sustained_expansion_rate": "{'n': 6569, 'mean': 0.6801644085857818, 'median': 1.0, 'p05': 0.0, 'p95': 1.0, 'win_rate': 0.6801644085857818, 'min': 0.0, 'max': 1.0}",
+      "threshold": "0.05",
+      "time_to_10pct_rate": "{'n': 6569, 'mean': 0.2198203683970163, 'median': 0.0, 'p05': 0.0, 'p95': 1.0, 'win_rate': 0.2198203683970163, 'min': 0.0, 'max': 1.0}",
+      "time_to_3pct_rate": "{'n': 6569, 'mean': 1.0, 'median': 1.0, 'p05': 1.0, 'p95': 1.0, 'win_rate': 1.0, 'min': 1.0, 'max': 1.0}",
+      "time_to_5pct_rate": "{'n': 6569, 'mean': 1.0, 'median': 1.0, 'p05': 1.0, 'p95': 1.0, 'win_rate': 1.0, 'min': 1.0, 'max': 1.0}"
+    },
+    {
+      "distinct_swing_episode_count": "4815",
+      "episode_spacing_sessions": "10",
+      "forward_return": "{'n': 4815, 'mean': 0.13795431323367977, 'median': 0.12772585669781922, 'p05': 0.1019595727065286, 'p95': 0.20509778357235983, 'win_rate': 1.0, 'min': 0.10000000000000009, 'max': 1.278606965174129}",
+      "horizon": "5",
+      "known_event_overlap_count": "70",
+      "mae": "{'n': 4815, 'mean': -0.019067328542450513, 'median': -0.011826544021024898, 'p05': -0.09870255957634597, 'p95': 0.027717948717948696, 'win_rate': 0.2533748701973001, 'min': -0.18918918918918914, 'max': 0.09900990099009888}",
+      "max_close_drawdown": "{'n': 4815, 'mean': -0.02528058550187776, 'median': -0.018181818181818188, 'p05': -0.08700592885375498, 'p95': 0.0, 'win_rate': 0.0, 'min': -0.16358463726884775, 'max': 0.0}",
+      "mfe": "{'n': 4815, 'mean': 0.15703189978249252, 'median': 0.14868421052631575, 'p05': 0.10820895522388052, 'p95': 0.22795882352941182, 'win_rate': 1.0, 'min': 0.10000000000000009, 'max': 1.6467661691542288}",
+      "one_day_spike_rate": "{'n': 4815, 'mean': 0.039044652128764276, 'median': 0.0, 'p05': 0.0, 'p95': 0.0, 'win_rate': 0.039044652128764276, 'min': 0.0, 'max': 1.0}",
+      "raw_qualifying_anchor_count": "23716",
+      "representative_count": "4815",
+      "stratum": "T5_GE_10",
+      "sustained_expansion_rate": "{'n': 4815, 'mean': 0.9009345794392524, 'median': 1.0, 'p05': 0.0, 'p95': 1.0, 'win_rate': 0.9009345794392524, 'min': 0.0, 'max': 1.0}",
+      "threshold": "0.1",
+      "time_to_10pct_rate": "{'n': 4815, 'mean': 0.998546209761163, 'median': 1.0, 'p05': 1.0, 'p95': 1.0, 'win_rate': 0.998546209761163, 'min': 0.0, 'max': 1.0}",
+      "time_to_3pct_rate": "{'n': 4815, 'mean': 1.0, 'median': 1.0, 'p05': 1.0, 'p95': 1.0, 'win_rate': 1.0, 'min': 1.0, 'max': 1.0}",
+      "time_to_5pct_rate": "{'n': 4815, 'mean': 1.0, 'median': 1.0, 'p05': 1.0, 'p95': 1.0, 'win_rate': 1.0, 'min': 1.0, 'max': 1.0}"
+    },
+    {
+      "distinct_swing_episode_count": "6306",
+      "episode_spacing_sessions": "10",
+      "forward_return": "{'n': 6306, 'mean': 0.0624803802250302, 'median': 0.04974871833724781, 'p05': 0.03149606299212593, 'p95': 0.13465674505329156, 'win_rate': 1.0, 'min': 0.030000000000000027, 'max': 1.21256038647343}",
+      "horizon": "10",
+      "known_event_overlap_count": "55",
+      "mae": "{'n': 6306, 'mean': -0.04359089007482355, 'median': -0.03237410071942448, 'p05': -0.1341246897935477, 'p95': 0.006040486006905432, 'win_rate': 0.0818268315889629, 'min': -0.3882352941176471, 'max': 0.0847457627118644}",
+      "max_close_drawdown": "{'n': 6306, 'mean': -0.05456621438303853, 'median': -0.04323168501481123, 'p05': -0.13589644213626856, 'p95': -0.01122544761691277, 'win_rate': 0.0, 'min': -0.3427762039660056, 'max': 0.0}",
+      "mfe": "{'n': 6306, 'mean': 0.09041544935681446, 'median': 0.0772986587846427, 'p05': 0.03961150688239562, 'p95': 0.18995513266805902, 'win_rate': 1.0, 'min': 0.030303030303030276, 'max': 1.5700483091787443}",
+      "one_day_spike_rate": "{'n': 6306, 'mean': 0.16476371709483031, 'median': 0.0, 'p05': 0.0, 'p95': 1.0, 'win_rate': 0.16476371709483031, 'min': 0.0, 'max': 1.0}",
+      "raw_qualifying_anchor_count": "84657",
+      "representative_count": "6306",
+      "stratum": "T10_GE_3",
+      "sustained_expansion_rate": "{'n': 6306, 'mean': 0.6568347605455123, 'median': 1.0, 'p05': 0.0, 'p95': 1.0, 'win_rate': 0.6568347605455123, 'min': 0.0, 'max': 1.0}",
+      "threshold": "0.03",
+      "time_to_10pct_rate": "{'n': 6306, 'mean': 0.18680621630193467, 'median': 0.0, 'p05': 0.0, 'p95': 1.0, 'win_rate': 0.18680621630193467, 'min': 0.0, 'max': 1.0}",
+      "time_to_3pct_rate": "{'n': 6306, 'mean': 0.9998414208690136, 'median': 1.0, 'p05': 1.0, 'p95': 1.0, 'win_rate': 0.9998414208690136, 'min': 0.0, 'max': 1.0}",
+      "time_to_5pct_rate": "{'n': 6306, 'mean': 0.6159213447510308, 'median': 1.0, 'p05': 0.0, 'p95': 1.0, 'win_rate': 0.6159213447510308, 'min': 0.0, 'max': 1.0}"
+    },
+    {
+      "distinct_swing_episode_count": "6083",
+      "episode_spacing_sessions": "10",
+      "forward_return": "{'n': 6083, 'mean': 0.08445226920869583, 'median': 0.07142857142857162, 'p05': 0.051507537688442406, 'p95': 0.15856859069416074, 'win_rate': 1.0, 'min': 0.050000000000000044, 'max': 1.21256038647343}",
+      "horizon": "10",
+      "known_event_overlap_count": "59",
+      "mae": "{'n': 6083, 'mean': -0.040600592086495566, 'median': -0.029475982532751077, 'p05': -0.13270531400966176, 'p95': 0.010523859239697866, 'win_rate': 0.1080059181325004, 'min': -0.3882352941176471, 'max': 0.0847457627118644}",
+      "max_close_drawdown": "{'n': 6083, 'mean': -0.05358237556638772, 'median': -0.04252577319587625, 'p05': -0.13133722209993393, 'p95': -0.010854836881808867, 'win_rate': 0.0, 'min': -0.3427762039660056, 'max': 0.0}",
+      "mfe": "{'n': 6083, 'mean': 0.1115094617874494, 'median': 0.098901098901099, 'p05': 0.059806065017612785, 'p95': 0.20575930362023007, 'win_rate': 1.0, 'min': 0.050000000000000044, 'max': 1.5700483091787443}",
+      "one_day_spike_rate": "{'n': 6083, 'mean': 0.0914022686174585, 'median': 0.0, 'p05': 0.0, 'p95': 1.0, 'win_rate': 0.0914022686174585, 'min': 0.0, 'max': 1.0}",
+      "raw_qualifying_anchor_count": "65928",
+      "representative_count": "6083",
+      "stratum": "T10_GE_5",
+      "sustained_expansion_rate": "{'n': 6083, 'mean': 0.8079894788755548, 'median': 1.0, 'p05': 0.0, 'p95': 1.0, 'win_rate': 0.8079894788755548, 'min': 0.0, 'max': 1.0}",
+      "threshold": "0.05",
+      "time_to_10pct_rate": "{'n': 6083, 'mean': 0.30215354265987177, 'median': 0.0, 'p05': 0.0, 'p95': 1.0, 'win_rate': 0.30215354265987177, 'min': 0.0, 'max': 1.0}",
+      "time_to_3pct_rate": "{'n': 6083, 'mean': 1.0, 'median': 1.0, 'p05': 1.0, 'p95': 1.0, 'win_rate': 1.0, 'min': 1.0, 'max': 1.0}",
+      "time_to_5pct_rate": "{'n': 6083, 'mean': 0.9996712148610882, 'median': 1.0, 'p05': 1.0, 'p95': 1.0, 'win_rate': 0.9996712148610882, 'min': 0.0, 'max': 1.0}"
+    },
+    {
+      "distinct_swing_episode_count": "4727",
+      "episode_spacing_sessions": "10",
+      "forward_return": "{'n': 4727, 'mean': 0.13897905206367053, 'median': 0.12755102040816335, 'p05': 0.10177179886801739, 'p95': 0.20989299345692472, 'win_rate': 1.0, 'min': 0.10000000000000009, 'max': 1.21256038647343}",
+      "horizon": "10",
+      "known_event_overlap_count": "54",
+      "mae": "{'n': 4727, 'mean': -0.034918251405821096, 'median': -0.02488687782805432, 'p05': -0.12697388720644537, 'p95': 0.027516880128379714, 'win_rate': 0.16204781045060293, 'min': -0.34036144578313254, 'max': 0.09012875536480691}",
+      "max_close_drawdown": "{'n': 4727, 'mean': -0.05362986039927984, 'median': -0.044421487603305776, 'p05': -0.12499999999999997, 'p95': -0.010579352158535886, 'win_rate': 0.0, 'min': -0.34036144578313254, 'max': 0.0}",
+      "mfe": "{'n': 4727, 'mean': 0.16618684163650432, 'median': 0.15668202764976957, 'p05': 0.11032770976410874, 'p95': 0.2538704170576464, 'win_rate': 1.0, 'min': 0.10000000000000009, 'max': 1.5700483091787443}",
+      "one_day_spike_rate": "{'n': 4727, 'mean': 0.017770255976306326, 'median': 0.0, 'p05': 0.0, 'p95': 0.0, 'win_rate': 0.017770255976306326, 'min': 0.0, 'max': 1.0}",
+      "raw_qualifying_anchor_count": "37704",
+      "representative_count": "4727",
+      "stratum": "T10_GE_10",
+      "sustained_expansion_rate": "{'n': 4727, 'mean': 0.9449968267400042, 'median': 1.0, 'p05': 0.0, 'p95': 1.0, 'win_rate': 0.9449968267400042, 'min': 0.0, 'max': 1.0}",
+      "threshold": "0.1",
+      "time_to_10pct_rate": "{'n': 4727, 'mean': 0.9974613920033848, 'median': 1.0, 'p05': 1.0, 'p95': 1.0, 'win_rate': 0.9974613920033848, 'min': 0.0, 'max': 1.0}",
+      "time_to_3pct_rate": "{'n': 4727, 'mean': 1.0, 'median': 1.0, 'p05': 1.0, 'p95': 1.0, 'win_rate': 1.0, 'min': 1.0, 'max': 1.0}",
+      "time_to_5pct_rate": "{'n': 4727, 'mean': 1.0, 'median': 1.0, 'p05': 1.0, 'p95': 1.0, 'win_rate': 1.0, 'min': 1.0, 'max': 1.0}"
+    }
+  ],
+  "SUCCESSFUL_SWING_PRECEDED_BY_A1_RATE": 0.17277634039749218,
+  "SUCCESSFUL_SWING_PRECEDED_BY_A1_TO_A2_RATE": 0.23577235772357724,
+  "SUCCESSFUL_SWING_PRECEDED_BY_A2_RATE": 0.3604755952207913,
+  "SUCCESSFUL_SWING_WITH_NO_A_STATE_RATE": 0.4667480643817165,
+  "TASK_FINAL_STATUS": "COMPLETE_PASS",
+  "TASK_ID": "TASK-WS3-SUCCESSFUL-SWING-OUTCOME-MINING-AND-LEADING-EVIDENCE-DISCOVERY-20260821",
+  "TECHNICAL_V0_MOMENTUM_SIGNAL": "DISCOVERY_ONLY",
+  "TOP_DISCOVERY_FEATURE_FAMILY_1": "TREND_STRUCTURE",
+  "TOP_DISCOVERY_FEATURE_FAMILY_2": "VOLUME_PARTICIPATION",
+  "TOP_DISCOVERY_FEATURE_FAMILY_3": "VOLATILITY_COMPRESSION",
+  "UNSTABLE_COUNT": 0,
+  "VOLATILITY_COMPRESSION_SIGNAL": "DISCOVERY_ONLY",
+  "VOLUME_PARTICIPATION_SIGNAL": "DISCOVERY_ONLY",
+  "WS1_CHANGED": "NO",
+  "WS2_CHANGED": "NO",
+  "WS4_CHANGED": "NO"
+}

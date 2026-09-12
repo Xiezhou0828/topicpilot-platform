@@ -1,0 +1,41 @@
+{
+  "task_id": "TASK-WS2-E2-TECHNICAL-V0-FORMAL-EVIDENCE-PROVIDER-CONSUMER-CONTRACT-AND-603-MAINLINE-CLOSURE-20260820",
+  "contract_type": "TECHNICAL_V0_FORMAL_EVIDENCE_PROVIDER",
+  "provider_contract_version": "stock-technical-v0-formal-evidence-provider.v1",
+  "upstream_contract_version": "stock-technical-publication.v3",
+  "upstream_policy_version": "stock-technical-v0-policy.v4",
+  "source_foundation_version": "sdf-603-ohlcv-2y.v1",
+  "source_foundation_sha256": "e803733e796d8f4d8cf00575cd4045f28c9364572fc61b31ef490e8a65ff47a4",
+  "formal_indicator_count": 14,
+  "request_operations": [
+    "get_evidence(indicator_id, session_date, as_of)",
+    "get_batch(indicator_ids, session_date, as_of)",
+    "get_historical(indicator_ids, from_session, to_session, as_of, limit)"
+  ],
+  "required_output_groups": [
+    "evidence_logical_identity",
+    "evidence_version_identity",
+    "value_or_availability_reason",
+    "session_and_as_of",
+    "required_and_actual_observation_window",
+    "source_identity_and_lineage_reference",
+    "continuity_and_event_evidence",
+    "pit",
+    "availability_and_publication"
+  ],
+  "authority_constraints": {
+    "input_authority": "V2_CANONICAL_OBSERVATION_CHAIN",
+    "series_semantics": "RAW_OBSERVED_DAILY_BAR",
+    "adjustment_state": "UNKNOWN_RAW_ONLY",
+    "browser_calculation": "NO",
+    "full_e1_csv_runtime_dependency": "NO"
+  },
+  "reference_implementation": {
+    "module": "services/api/src/topicpilot_api/technical_v0_evidence_contract.py",
+    "class": "TechnicalV0EvidenceProvider",
+    "storage": "BOUNDED_IN_MEMORY_CANONICAL_HISTORY_ENVELOPE",
+    "http_route_created": "NO",
+    "database_mutation": "NO"
+  },
+  "status": "DEFINED_AND_VALIDATED"
+}

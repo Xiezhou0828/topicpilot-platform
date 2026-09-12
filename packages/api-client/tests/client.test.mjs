@@ -44,6 +44,36 @@ test("typed client returns the generated HomeResponse contract", async () => {
   assert.equal(home.mainTopics[0].slug, "ai-server");
 });
 
+test("typed client exposes all WS-B Topic catalog read routes", async () => {
+  const requests = [];
+  const fetchImpl = async (url) => {
+    requests.push(url);
+    return new Response(JSON.stringify({ items: [], total: 0, limit: 200, offset: 0, asOf: "2026-08-31" }), {
+      status: 200,
+      headers: { "content-type": "application/json" },
+    });
+  };
+  const client = createTopicPilotClient({ baseUrl: "https://api.example", fetchImpl });
+
+  await client.getTopicCatalog({ asOf: "2026-08-31", limit: 20, offset: 5 });
+  await client.getTopicCatalogDetail("ai/server", { asOf: "2026-08-31" });
+  await client.getCurrentTopicSnapshot("ai/server", { asOf: "2026-08-31" });
+  await client.getTopicSnapshotHistory("ai/server", {
+    asOf: "2026-08-31",
+    from: "2026-08-07",
+    to: "2026-08-31",
+    limit: 10,
+    offset: 2,
+  });
+
+  assert.deepEqual(requests, [
+    "https://api.example/api/v2/topic-catalog?limit=20&offset=5&asOf=2026-08-31",
+    "https://api.example/api/v2/topic-catalog/ai%2Fserver?asOf=2026-08-31",
+    "https://api.example/api/v2/topic-catalog/ai%2Fserver/snapshot?asOf=2026-08-31",
+    "https://api.example/api/v2/topic-catalog/ai%2Fserver/snapshots?limit=10&offset=2&asOf=2026-08-31&from=2026-08-07&to=2026-08-31",
+  ]);
+});
+
 test("typed client raises the normalized problem response", async () => {
   const fetchImpl = async () => new Response(
     JSON.stringify({

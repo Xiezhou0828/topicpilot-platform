@@ -1,0 +1,84 @@
+{
+  "proposalOnly": true,
+  "implementationAuthorized": false,
+  "contractVersion": "topic-strength-evidence.v0",
+  "readModelShape": {
+    "lifecycle": {
+      "authority": "existing_backend_lifecycle_contract",
+      "currentStage": {"status": "current_if_backend_provides", "source": "existing TopicLifecycleRead"},
+      "stageEnteredAt": {"status": "current_if_backend_provides", "source": "existing TopicLifecycleRead"},
+      "stageTradingDays": {"status": "current_if_backend_provides", "source": "existing TopicLifecycleRead"},
+      "previousStage": {"status": "current_if_backend_provides", "source": "existing TopicLifecycleRead"},
+      "candidateStage": {"status": "current_if_backend_provides", "source": "existing TopicLifecycleRead"},
+      "transitionDecision": {"status": "current_if_backend_provides", "source": "existing TopicLifecycleRead"},
+      "transitionReason": {"status": "current_if_backend_provides", "source": "existing TopicLifecycleRead"},
+      "dataStatus": {"status": "current", "source": "existing TopicLifecycleRead"},
+      "evaluationMode": {"status": "current_in_evidence_or_lineage", "source": "existing lifecycle shadow result"},
+      "note": "Do not change five-stage semantics, thresholds, persistence/hysteresis, or confidence."
+    },
+    "strength": {
+      "contractVersion": "topic-strength-evidence.v0",
+      "mode": "EVIDENCE_VECTOR",
+      "overallLevel": null,
+      "score": null,
+      "dimensions": {
+        "participation": {
+          "status": "PARTIAL_UNTIL_PUBLISHED_READ_MODEL",
+          "positiveBreadth": {"availability": "current_in_shadow_evidence", "source": "lifecycle.evidence.diffusion.positiveBreadth"},
+          "strongBreadth": {"availability": "current_in_shadow_evidence", "source": "lifecycle.evidence.groupStrength.strongBreadth", "classifierLineageRequired": true},
+          "weakRatio": {"availability": "current_in_shadow_evidence", "source": "lifecycle.evidence.groupStrength.weakRatio", "classifierLineageRequired": true},
+          "basis": "valid_observed_members"
+        },
+        "intensity": {
+          "status": "PARTIAL_UNTIL_PUBLISHED_READ_MODEL",
+          "averageChangePct": {"availability": "current_in_shadow_evidence", "source": "lifecycle.evidence.groupStrength.averageChangePct"},
+          "leaderProxy": {
+            "changePct": {"availability": "current_in_shadow_evidence", "source": "lifecycle.evidence.leadership.leaderChangePct"},
+            "memberId": {"availability": "current_in_shadow_evidence", "source": "lifecycle.evidence.leadership.leaderId", "displayRule": "context_only"},
+            "method": {"availability": "current_in_shadow_evidence", "source": "lifecycle.evidence.leadership.leaderProxy"},
+            "semanticAvailable": {"availability": "current_in_shadow_evidence", "source": "lifecycle.evidence.leadership.leaderSemanticAvailable"},
+            "formalLeader": null
+          }
+        },
+        "persistence": {
+          "status": "CONTEXT_ONLY",
+          "stageTradingDays": {"availability": "current_lifecycle_context", "displayRule": "Lifecycle Day N, not strength label"},
+          "candidateStreak": {"availability": "current_lifecycle_context", "displayRule": "Lifecycle confirmation context only"},
+          "recentBreadthPersistence": {"availability": "unavailable", "value": null, "reason": "no PIT-safe rolling strength window"}
+        }
+      }
+    },
+    "evidence": {
+      "role": "raw evidence and lineage envelope",
+      "currentFields": ["lifecycle.evidence", "lifecycle.confidence", "lifecycle.policyVersion", "lifecycle.evaluationDate"],
+      "derivedFields": ["strength.dimensions grouping", "strength availability statuses"],
+      "provisionalFields": ["future dimension labels", "future overallLevel"],
+      "unavailableFields": ["recentBreadthPersistence", "formalLeader", "volume", "news", "institutionalFlow", "benchmark", "intraday"]
+    },
+    "quality": {
+      "role": "evidence quality and publication metadata, never market Strength",
+      "fields": ["coveragePct", "expectedMemberCount", "observedMemberCount", "validChangeCount", "coverageConfidence", "sampleConfidence", "confidence", "smallSample", "dataStatus", "evaluationStatus", "evaluationMode", "policyVersion", "calculationVersion", "lineage", "finality"],
+      "displayRule": "Show quality/disclosure separately from Strength; never include as Strength component."
+    }
+  },
+  "frontendSafePresentationNow": [
+    "Existing backend-owned Lifecycle stage/status under current SHADOW/FORMAL_NOT_WIRED guard.",
+    "Existing raw participation/intensity evidence when present in the backend payload, with source and data status.",
+    "Leader proxy as labelled supplemental evidence only when semanticAvailable is false.",
+    "Stage Day N and candidate streak as Lifecycle context, not Strength labels.",
+    "Coverage/confidence/sample status as quality disclosure.",
+    "Explicit unavailable state for Persistence strength and all excluded inputs."
+  ],
+  "frontendUnsafePresentation": [
+    "Any new WEAK/NORMAL/STRONG/VERY_STRONG badge without a new approved contract.",
+    "Any 0-100 score or hidden weighted composite.",
+    "Browser-derived breadth, persistence, strength, or Leader identity.",
+    "Calling the max-observed-change proxy a formal Leader Set.",
+    "Using coverage or confidence as market Strength."
+  ],
+  "filesNotModifiedByThisTask": [
+    "apps/web/app/components/v2/TopicListPage.tsx",
+    "apps/web/app/lib/topic-api.ts",
+    "services/api/src/topicpilot_api/topic_lifecycle_engine.py"
+  ]
+}

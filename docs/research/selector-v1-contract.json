@@ -1,0 +1,105 @@
+{
+  "contract_id": "topicpilot.selector.v1",
+  "version": "1.0",
+  "status": "FROZEN_RESEARCH_CONTRACT",
+  "owner_decision": "FREEZE_SELECTOR_V1_RESEARCH_CONTRACT",
+  "research_status": "FROZEN_WITH_LIMITATIONS",
+  "production_status": "NOT_PRODUCTION",
+  "architecture": [
+    "LIFECYCLE_V1_3_TOPIC_CONTEXT",
+    "C5_CANDIDATE_SCREEN",
+    "S2_WITHIN_TOPIC_RANKING",
+    "TOP2_RESEARCH_SELECTION_OUTPUT"
+  ],
+  "lifecycle_authority": {
+    "version": "V1.3",
+    "role": "TOPIC_CONTEXT",
+    "information_value": "PARTIALLY_SUPPORTED",
+    "semantics": {
+      "SPROUTING": "PRE_CONFIRMATION_OBSERVATION_STATE",
+      "SPROUTING_MANDATORY_STAGE": false,
+      "BASE_TO_FERMENTING": "LEGAL",
+      "FERMENTING": "FIRST_FORMALLY_CONFIRMED_TOPIC_STATE",
+      "FORWARD_PERSISTENT_SEMANTICS": true,
+      "BACKWARD_REGRESSION": "REJECTED",
+      "FERMENTING_FAILURE": "RETURN_TO_BASE"
+    }
+  },
+  "screen": {
+    "id": "C5",
+    "definition": "BREAKOUT_20D_T == TRUE AND CLOSE_T >= MA60_T",
+    "breakout_definition_authority": "PREVIOUS_CANONICAL_IMPLEMENTATION",
+    "status": "WORKING_BASELINE_PARTIALLY_SUPPORTED",
+    "frozen_for_selector_v1": true,
+    "universal_authority": false,
+    "ma60_role": "MEMBER_LEVEL_ONLY",
+    "empty_pool": "NO_CANDIDATE_AFTER_SCREEN",
+    "source_evidence": "reports/TASK-WS3-CORE-V0-SELECTOR-V1-TWO-LAYER-CANDIDATE-SCREEN-AND-WITHIN-TOPIC-RANKING-DESIGN-VALIDATION-20260830/selector-v1-screen-assessment.md"
+  },
+  "ranking": {
+    "contract_id": "S2_DISTANCE_PRIMARY_VOLATILITY_EXACT_TIEBREAK",
+    "status": "FROZEN_FOR_SELECTOR_V1",
+    "ordering_type": "LEXICOGRAPHIC_PRIMARY_SECONDARY",
+    "primary": {
+      "feature": "distance_to_ma60",
+      "role": "STRUCTURAL_RANKING",
+      "screen_dependency": "SCREEN_ENHANCED",
+      "formula": "(Close_T - MA60_T) / MA60_T",
+      "direction": "HIGHER_IS_BETTER",
+      "ordering": "DESCENDING_RAW_VALUE"
+    },
+    "secondary": {
+      "feature": "volatility_20d",
+      "role": "RETURN_AND_RISK_AMPLIFIER",
+      "screen_dependency": "SCREEN_INDEPENDENT",
+      "decision_authority": "EXACT_STRUCTURAL_TIE_BREAK_ONLY",
+      "direction": "HIGHER_IS_BETTER_WITH_DOWNSIDE_AUDIT",
+      "ordering": "DESCENDING_RAW_VALUE"
+    }
+  },
+  "tie_policy": {
+    "structural_tie": "Use volatility_20d only when distance_to_ma60 raw values are exactly equal",
+    "final_tie": "Use canonical instrument identity in ascending order: instrument_id, market_code, instrument_code",
+    "no_equivalence_threshold": true,
+    "no_continuous_weighted_score": true
+  },
+  "top_n": {
+    "value": 2,
+    "status": "FROZEN_FOR_SELECTOR_V1",
+    "top1_status": "SECONDARY_PRODUCT_OPTION",
+    "top3_status": "NOT_PREFERRED",
+    "empty_pool": "NO_CANDIDATE_AFTER_SCREEN",
+    "single_candidate": "OUTPUT_UNIQUE_CANDIDATE",
+    "multiple_candidates": "OUTPUT_TOP2_AFTER_S2",
+    "no_fill_or_fallback": true,
+    "semantics": "Primary Selector V1 research shortlist; not a portfolio, buy list, equal-weight, or production recommendation"
+  },
+  "missing_data_policy": {
+    "price": "FAIL_CLOSED",
+    "ma60": "FAIL_CLOSED",
+    "breakout_authority": "FAIL_CLOSED",
+    "distance_to_ma60": "FAIL_CLOSED",
+    "volatility_20d": "FAIL_CLOSED_FOR_RANKING",
+    "synthetic_fill": "PROHIBITED",
+    "fallback": "PROHIBITED"
+  },
+  "price_contract": "PRICE_OPTION_A_RAW_CLOSE_BASELINE",
+  "membership_convention": "USE_CURRENT_CANONICAL_MEMBERSHIP_AS_FROZEN_HISTORICAL_RESEARCH_MAPPING",
+  "historical_pit_membership_authority": "UNAVAILABLE",
+  "limitations": [
+    "C5 is a working baseline for Selector V1 and is not universal screen authority",
+    "Current canonical membership is not point-in-time historical truth",
+    "Raw close is not adjusted-price or executable-performance authority",
+    "Benchmark, execution, transaction-cost, entry-timing, position-sizing, and risk-regime contracts are not defined",
+    "Selector V1 is research-only and does not authorize production activation"
+  ],
+  "source_evidence": [
+    "reports/TASK-WS3-CORE-V0-SELECTOR-V1-SCORING-CONTRACT-RISK-GUARDRAIL-AND-TOPN-FREEZE-READINESS-VALIDATION-20260830/formal-closure-report.md",
+    "reports/TASK-WS3-CORE-V0-SELECTOR-V1-SCORING-CONTRACT-RISK-GUARDRAIL-AND-TOPN-FREEZE-READINESS-VALIDATION-20260830/scoring-contract-downside.csv",
+    "reports/TASK-WS3-CORE-V0-SELECTOR-V1-SCORING-CONTRACT-RISK-GUARDRAIL-AND-TOPN-FREEZE-READINESS-VALIDATION-20260830/scoring-contract-performance.csv",
+    "reports/TASK-WS3-CORE-V0-SELECTOR-V1-SCORING-CONTRACT-RISK-GUARDRAIL-AND-TOPN-FREEZE-READINESS-VALIDATION-20260830/scoring-contract-winner-capture.csv",
+    "reports/TASK-WS3-CORE-V0-SELECTOR-V1-SCORING-CONTRACT-RISK-GUARDRAIL-AND-TOPN-FREEZE-READINESS-VALIDATION-20260830/topn-product-comparison.csv",
+    "reports/TASK-WS3-CORE-V0-SELECTOR-V1-TWO-LAYER-CANDIDATE-SCREEN-AND-WITHIN-TOPIC-RANKING-DESIGN-VALIDATION-20260830/ranking-feature-direction-contract.md",
+    "reports/TASK-WS3-CORE-V0-INDIVIDUAL-STOCK-SELECTION-FEATURE-ATTRIBUTION-AND-CANDIDATE-FILTER-DISCOVERY-20260829/individual-stock-feature-snapshot.csv"
+  ]
+}

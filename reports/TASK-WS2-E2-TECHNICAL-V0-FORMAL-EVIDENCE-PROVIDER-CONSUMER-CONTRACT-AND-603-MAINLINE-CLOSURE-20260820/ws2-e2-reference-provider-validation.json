@@ -1,0 +1,30 @@
+{
+  "task_id": "TASK-WS2-E2-TECHNICAL-V0-FORMAL-EVIDENCE-PROVIDER-CONSUMER-CONTRACT-AND-603-MAINLINE-CLOSURE-20260820",
+  "provider_module": "services/api/src/topicpilot_api/technical_v0_evidence_contract.py",
+  "reference_provider_implemented": "YES",
+  "reference_provider_validated": "YES",
+  "bounded_only": "YES",
+  "full_e1_reconstruction_rerun": "NO",
+  "full_4m_evidence_regeneration": "NO",
+  "schema_checks": {
+    "provider_output_schema": "PASS",
+    "identity_version": "PASS",
+    "availability": "PASS",
+    "pit_asof": "PASS",
+    "lineage": "PASS",
+    "continuity": "PASS",
+    "warmup": "PASS"
+  },
+  "operations": {
+    "single_lookup": "PASS",
+    "batch_lookup": "PASS",
+    "bounded_historical_lookup": "PASS",
+    "unavailable_state": "PASS",
+    "limited_state": "PASS",
+    "pit_asof_enforcement": "PASS",
+    "version_lineage_exposure": "PASS"
+  },
+  "focused_test_command": "PYTHONPATH=services/api/src py -3.12 -m pytest -q services/api/tests/test_technical_v0_evidence_contract.py services/api/tests/test_technical_publication.py",
+  "focused_test_result": "33 passed",
+  "status": "PASS"
+}

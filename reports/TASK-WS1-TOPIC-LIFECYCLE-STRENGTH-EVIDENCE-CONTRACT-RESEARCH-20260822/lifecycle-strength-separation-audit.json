@@ -1,0 +1,80 @@
+{
+  "taskId": "WS1-L3-TOPIC-LIFECYCLE-STRENGTH-EVIDENCE-CONTRACT-RESEARCH-20260822",
+  "auditVersion": "lifecycle-strength-separation-audit.v0",
+  "lifecycleAuthority": {
+    "stages": ["SPROUTING", "FERMENTING", "MAIN_RISE", "MATURE", "DECLINING"],
+    "semanticsChanged": false,
+    "policyVersionChanged": false,
+    "thresholdsChanged": false,
+    "persistenceHysteresisChanged": false,
+    "confidenceChanged": false,
+    "stageSelectionByStrength": false,
+    "currentPublicationBoundary": "SHADOW_ONLY_OR_UNAVAILABLE_AS_EXISTING_BACKEND_STATUS"
+  },
+  "strengthAuthority": {
+    "v0Mode": "EVIDENCE_VECTOR",
+    "productionRuleCreated": false,
+    "overallLevelCreated": false,
+    "totalScoreCreated": false,
+    "dimensionLabelsCreated": false,
+    "rawEvidenceReuseAllowedForResearch": true,
+    "qualityAsStrengthComponent": false
+  },
+  "dimensionAudit": {
+    "participation": {
+      "primaryEvidence": ["positiveBreadth"],
+      "relatedEvidence": ["strongBreadth", "weakRatio"],
+      "qualityMetadata": ["coveragePct", "expectedMemberCount", "observedMemberCount", "validChangeCount"],
+      "stageDecisionAuthority": false,
+      "labelStatus": "UNDEFINED_IN_V0"
+    },
+    "intensity": {
+      "primaryEvidence": ["averageChangePct"],
+      "supplementalEvidence": ["leaderChangePct", "positiveContributionShare"],
+      "proxyGuard": "leaderChangePct and leaderId are proxy/context unless leaderSemanticAvailable=true under an approved authority; current formal Leader Set remains unavailable",
+      "stageDecisionAuthority": false,
+      "labelStatus": "UNDEFINED_IN_V0"
+    },
+    "persistence": {
+      "contextEvidence": ["stageTradingDays", "stageEnteredAt", "previousCandidateStage", "candidateStreak"],
+      "missingDirectEvidence": ["recentBreadthPersistence"],
+      "stageDecisionAuthority": false,
+      "labelStatus": "CONTEXT_ONLY_OR_UNAVAILABLE"
+    }
+  },
+  "qualityBoundary": {
+    "qualityFields": ["coveragePct", "confidence", "sampleConfidence", "coverageConfidence", "smallSample", "dataStatus", "evaluationStatus", "evaluationMode", "policyVersion", "calculationVersion", "lineage", "finality"],
+    "isStrengthComponent": false,
+    "highCoverageMeansStrong": false,
+    "lowCoverageMeansWeak": false,
+    "missingValuesCoercedToZero": false
+  },
+  "excludedInputs": ["volume", "news", "Radar", "formalLeaderSet", "institutionalFlow", "benchmark", "intraday"],
+  "consumerBoundary": {
+    "frontendMayRenderBackendEvidence": true,
+    "frontendMayInferStrength": false,
+    "frontendMayInferLifecycle": false,
+    "ws3MayResearchConditionOnVector": true,
+    "ws3MayModifyA2Legacy5BothDefinitions": false,
+    "formalPublicationAuthorized": false
+  },
+  "ownerDecisionRequired": true,
+  "ownerDecisionItems": [
+    "Accept raw evidence vector A as V0.",
+    "Confirm persistence context is not a market-strength label.",
+    "Approve future denominator/classifier lineage and read-model implementation boundary.",
+    "Approve pre-registered historical validation before any ordinal label."
+  ],
+  "governance": {
+    "WS1_ONLY": "YES",
+    "LIFECYCLE_POLICY_CHANGED": "NO",
+    "STRENGTH_PRODUCTION_RULE": "NO",
+    "TOTAL_SCORE_CREATED": "NO",
+    "HISTORICAL_RECONSTRUCTION": "NO",
+    "DB_MUTATION": "NO",
+    "PRODUCTION_PUBLICATION": "NO",
+    "DEPLOY": "NO",
+    "PUSH": "NO",
+    "NEXT_TASK_CHANGED": "NO"
+  }
+}

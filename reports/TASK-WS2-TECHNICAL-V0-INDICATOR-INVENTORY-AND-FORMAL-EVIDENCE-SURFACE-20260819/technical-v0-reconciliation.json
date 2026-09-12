@@ -1,0 +1,477 @@
+{
+  "checks": [
+    {
+      "as_of": "2026-08-13",
+      "case": "above_ma60",
+      "checks": {
+        "DISTANCE_TO_MA20": {
+          "actual": "0.006176305446378439079169006176",
+          "expected": "0.006176305446378439079169006176",
+          "status": "PASS"
+        },
+        "MA10": {
+          "actual": "22.595000000000000000",
+          "expected": "22.595000000000000000",
+          "status": "PASS"
+        },
+        "MA20": {
+          "actual": "22.262500000000000000",
+          "expected": "22.262500000000000000",
+          "status": "PASS"
+        },
+        "MA5": {
+          "actual": "22.410000000000000000",
+          "expected": "22.410000000000000000",
+          "status": "PASS"
+        },
+        "MA60": {
+          "actual": "21.820000000000000000",
+          "expected": "21.820000000000000000",
+          "status": "PASS"
+        },
+        "MACD_12_26_9": {
+          "actual": "0.1168466020653607283251968058",
+          "expected": "0.1168466020653607283251968058",
+          "status": "PASS"
+        },
+        "MACD_HISTOGRAM_12_26_9": {
+          "actual": "-0.01281671734267210173696940948",
+          "expected": "-0.01281671734267210173696940948",
+          "status": "PASS"
+        },
+        "MACD_SIGNAL_12_26_9": {
+          "actual": "0.12966331940803283006216621528175649726363759135486",
+          "expected": "0.12966331940803283006216621528175649726363759135486",
+          "status": "PASS"
+        },
+        "RAW_CLOSE_RETURN_20D": {
+          "actual": "0.0467289719626168224299065420560747663551401869159",
+          "expected": "0.0467289719626168224299065420560747663551401869159",
+          "status": "PASS"
+        },
+        "RAW_CLOSE_RETURN_5D": {
+          "actual": "-0.00222717149220489977728285077951002227171492204900",
+          "expected": "-0.00222717149220489977728285077951002227171492204900",
+          "status": "PASS"
+        },
+        "RSI14": {
+          "actual": "51.498347185467465941409430632559441612197569683975",
+          "expected": "51.498347185467465941409430632559441612197569683975",
+          "status": "PASS"
+        },
+        "VOLUME_MA20": {
+          "actual": "56522.750000000000000000",
+          "expected": "56522.750000000000000000",
+          "status": "PASS"
+        },
+        "VOLUME_MA5": {
+          "actual": "24960.200000000000000000",
+          "expected": "24960.200000000000000000",
+          "status": "PASS"
+        },
+        "VOLUME_RATIO_20": {
+          "actual": "0.4637247833836817918448766205",
+          "expected": "0.4637247833836817918448766205",
+          "status": "PASS"
+        }
+      },
+      "instrument_identity": "TPE:1438",
+      "observation_count": 126
+    },
+    {
+      "as_of": "2026-08-13",
+      "case": "below_ma60",
+      "checks": {
+        "DISTANCE_TO_MA20": {
+          "actual": "-0.03282828282828282828282828283",
+          "expected": "-0.03282828282828282828282828283",
+          "status": "PASS"
+        },
+        "MA10": {
+          "actual": "7.721000000000000000",
+          "expected": "7.721000000000000000",
+          "status": "PASS"
+        },
+        "MA20": {
+          "actual": "7.920000000000000000",
+          "expected": "7.920000000000000000",
+          "status": "PASS"
+        },
+        "MA5": {
+          "actual": "7.736000000000000000",
+          "expected": "7.736000000000000000",
+          "status": "PASS"
+        },
+        "MA60": {
+          "actual": "8.0278333333333333333333333333333333333333333333333",
+          "expected": "8.0278333333333333333333333333333333333333333333333",
+          "status": "PASS"
+        },
+        "MACD_12_26_9": {
+          "actual": "-0.1848423185794973862487010355",
+          "expected": "-0.1848423185794973862487010355",
+          "status": "PASS"
+        },
+        "MACD_HISTOGRAM_12_26_9": {
+          "actual": "-0.01444034985418013774244658035",
+          "expected": "-0.01444034985418013774244658035",
+          "status": "PASS"
+        },
+        "MACD_SIGNAL_12_26_9": {
+          "actual": "-0.17040196872531724850625445515499553471749916997089",
+          "expected": "-0.17040196872531724850625445515499553471749916997089",
+          "status": "PASS"
+        },
+        "RAW_CLOSE_RETURN_20D": {
+          "actual": "-0.15452538631346578366445916114790286975717439293598",
+          "expected": "-0.15452538631346578366445916114790286975717439293598",
+          "status": "PASS"
+        },
+        "RAW_CLOSE_RETURN_5D": {
+          "actual": "-0.01920614596670934699103713188220230473751600512164",
+          "expected": "-0.01920614596670934699103713188220230473751600512164",
+          "status": "PASS"
+        },
+        "RSI14": {
+          "actual": "41.265403421495905414953553311933036229208447083589",
+          "expected": "41.265403421495905414953553311933036229208447083589",
+          "status": "PASS"
+        },
+        "VOLUME_MA20": {
+          "actual": "32825859.350000000000000000",
+          "expected": "32825859.350000000000000000",
+          "status": "PASS"
+        },
+        "VOLUME_MA5": {
+          "actual": "26038524.000000000000000000",
+          "expected": "26038524.000000000000000000",
+          "status": "PASS"
+        },
+        "VOLUME_RATIO_20": {
+          "actual": "0.8653318012830637440722477232",
+          "expected": "0.8653318012830637440722477232",
+          "status": "PASS"
+        }
+      },
+      "instrument_identity": "TPE:1314",
+      "observation_count": 125
+    },
+    {
+      "as_of": "2026-03-11",
+      "case": "insufficient_history",
+      "checks": {
+        "DISTANCE_TO_MA20": {
+          "actual": "0.02455801605020213600434441562",
+          "expected": "0.02455801605020213600434441562",
+          "status": "PASS"
+        },
+        "MA10": {
+          "actual": "8.572000000000000000",
+          "expected": "8.572000000000000000",
+          "status": "PASS"
+        },
+        "MA20": {
+          "actual": "8.286500000000000000",
+          "expected": "8.286500000000000000",
+          "status": "PASS"
+        },
+        "MA5": {
+          "actual": "8.858000000000000000",
+          "expected": "8.858000000000000000",
+          "status": "PASS"
+        },
+        "MA60": {
+          "availability_reason": "UNAVAILABLE_INSUFFICIENT_HISTORY",
+          "publication_state": "UNAVAILABLE",
+          "status": "NOT_COMPARED_UNAVAILABLE"
+        },
+        "MACD_12_26_9": {
+          "availability_reason": "UNAVAILABLE_INSUFFICIENT_HISTORY",
+          "publication_state": "UNAVAILABLE",
+          "status": "NOT_COMPARED_UNAVAILABLE"
+        },
+        "MACD_HISTOGRAM_12_26_9": {
+          "availability_reason": "UNAVAILABLE_INSUFFICIENT_HISTORY",
+          "publication_state": "UNAVAILABLE",
+          "status": "NOT_COMPARED_UNAVAILABLE"
+        },
+        "MACD_SIGNAL_12_26_9": {
+          "availability_reason": "UNAVAILABLE_INSUFFICIENT_HISTORY",
+          "publication_state": "UNAVAILABLE",
+          "status": "NOT_COMPARED_UNAVAILABLE"
+        },
+        "RAW_CLOSE_RETURN_20D": {
+          "availability_reason": "UNAVAILABLE_INSUFFICIENT_HISTORY",
+          "publication_state": "UNAVAILABLE",
+          "status": "NOT_COMPARED_UNAVAILABLE"
+        },
+        "RAW_CLOSE_RETURN_5D": {
+          "actual": "0.0429975429975429975429975429975429975429975429975",
+          "expected": "0.0429975429975429975429975429975429975429975429975",
+          "status": "PASS"
+        },
+        "RSI14": {
+          "actual": "54.366956295079861163377960247295105188555112485995",
+          "expected": "54.366956295079861163377960247295105188555112485995",
+          "status": "PASS"
+        },
+        "VOLUME_MA20": {
+          "actual": "48650880.100000000000000000",
+          "expected": "48650880.100000000000000000",
+          "status": "PASS"
+        },
+        "VOLUME_MA5": {
+          "actual": "119036899.200000000000000000",
+          "expected": "119036899.200000000000000000",
+          "status": "PASS"
+        },
+        "VOLUME_RATIO_20": {
+          "actual": "2.100963369828123623194228710",
+          "expected": "2.100963369828123623194228710",
+          "status": "PASS"
+        }
+      },
+      "instrument_identity": "TPE:1314",
+      "observation_count": 20
+    },
+    {
+      "as_of": "2026-08-13",
+      "case": "known_event",
+      "checks": {
+        "DISTANCE_TO_MA20": {
+          "actual": "0.05808257522743177046885934220",
+          "expected": "0.05808257522743177046885934220",
+          "status": "PASS"
+        },
+        "MA10": {
+          "actual": "179.150000000000000000",
+          "expected": "179.150000000000000000",
+          "status": "PASS"
+        },
+        "MA20": {
+          "actual": "178.625000000000000000",
+          "expected": "178.625000000000000000",
+          "status": "PASS"
+        },
+        "MA5": {
+          "actual": "188.200000000000000000",
+          "expected": "188.200000000000000000",
+          "status": "PASS"
+        },
+        "MA60": {
+          "availability_reason": "KNOWN_VERIFIED_EVENT_REQUIRES_EVENT_AWARE_HANDLING",
+          "publication_state": "UNAVAILABLE",
+          "status": "NOT_COMPARED_UNAVAILABLE"
+        },
+        "MACD_12_26_9": {
+          "availability_reason": "KNOWN_VERIFIED_EVENT_REQUIRES_EVENT_AWARE_HANDLING",
+          "publication_state": "UNAVAILABLE",
+          "status": "NOT_COMPARED_UNAVAILABLE"
+        },
+        "MACD_HISTOGRAM_12_26_9": {
+          "availability_reason": "KNOWN_VERIFIED_EVENT_REQUIRES_EVENT_AWARE_HANDLING",
+          "publication_state": "UNAVAILABLE",
+          "status": "NOT_COMPARED_UNAVAILABLE"
+        },
+        "MACD_SIGNAL_12_26_9": {
+          "availability_reason": "KNOWN_VERIFIED_EVENT_REQUIRES_EVENT_AWARE_HANDLING",
+          "publication_state": "UNAVAILABLE",
+          "status": "NOT_COMPARED_UNAVAILABLE"
+        },
+        "RAW_CLOSE_RETURN_20D": {
+          "actual": "-0.14479638009049773755656108597285067873303167420814",
+          "expected": "-0.14479638009049773755656108597285067873303167420814",
+          "status": "PASS"
+        },
+        "RAW_CLOSE_RETURN_5D": {
+          "actual": "0.0588235294117647058823529411764705882352941176471",
+          "expected": "0.0588235294117647058823529411764705882352941176471",
+          "status": "PASS"
+        },
+        "RSI14": {
+          "availability_reason": "KNOWN_VERIFIED_EVENT_REQUIRES_EVENT_AWARE_HANDLING",
+          "publication_state": "UNAVAILABLE",
+          "status": "NOT_COMPARED_UNAVAILABLE"
+        },
+        "VOLUME_MA20": {
+          "actual": "96196249.650000000000000000",
+          "expected": "96196249.650000000000000000",
+          "status": "PASS"
+        },
+        "VOLUME_MA5": {
+          "actual": "102440006.000000000000000000",
+          "expected": "102440006.000000000000000000",
+          "status": "PASS"
+        },
+        "VOLUME_RATIO_20": {
+          "actual": "1.000638999443571343012331250",
+          "expected": "1.000638999443571343012331250",
+          "status": "PASS"
+        }
+      },
+      "instrument_identity": "TPE:1303",
+      "observation_count": 126
+    },
+    {
+      "as_of": "2026-08-13",
+      "case": "lookup_unavailable",
+      "checks": {
+        "DISTANCE_TO_MA20": {
+          "actual": "-0.03282828282828282828282828283",
+          "expected": "-0.03282828282828282828282828283",
+          "status": "PASS"
+        },
+        "MA10": {
+          "actual": "7.721000000000000000",
+          "expected": "7.721000000000000000",
+          "status": "PASS"
+        },
+        "MA20": {
+          "actual": "7.920000000000000000",
+          "expected": "7.920000000000000000",
+          "status": "PASS"
+        },
+        "MA5": {
+          "actual": "7.736000000000000000",
+          "expected": "7.736000000000000000",
+          "status": "PASS"
+        },
+        "MA60": {
+          "actual": "8.0278333333333333333333333333333333333333333333333",
+          "expected": "8.0278333333333333333333333333333333333333333333333",
+          "status": "PASS"
+        },
+        "MACD_12_26_9": {
+          "actual": "-0.1848423185794973862487010355",
+          "expected": "-0.1848423185794973862487010355",
+          "status": "PASS"
+        },
+        "MACD_HISTOGRAM_12_26_9": {
+          "actual": "-0.01444034985418013774244658035",
+          "expected": "-0.01444034985418013774244658035",
+          "status": "PASS"
+        },
+        "MACD_SIGNAL_12_26_9": {
+          "actual": "-0.17040196872531724850625445515499553471749916997089",
+          "expected": "-0.17040196872531724850625445515499553471749916997089",
+          "status": "PASS"
+        },
+        "RAW_CLOSE_RETURN_20D": {
+          "actual": "-0.15452538631346578366445916114790286975717439293598",
+          "expected": "-0.15452538631346578366445916114790286975717439293598",
+          "status": "PASS"
+        },
+        "RAW_CLOSE_RETURN_5D": {
+          "actual": "-0.01920614596670934699103713188220230473751600512164",
+          "expected": "-0.01920614596670934699103713188220230473751600512164",
+          "status": "PASS"
+        },
+        "RSI14": {
+          "actual": "41.265403421495905414953553311933036229208447083589",
+          "expected": "41.265403421495905414953553311933036229208447083589",
+          "status": "PASS"
+        },
+        "VOLUME_MA20": {
+          "actual": "32825859.350000000000000000",
+          "expected": "32825859.350000000000000000",
+          "status": "PASS"
+        },
+        "VOLUME_MA5": {
+          "actual": "26038524.000000000000000000",
+          "expected": "26038524.000000000000000000",
+          "status": "PASS"
+        },
+        "VOLUME_RATIO_20": {
+          "actual": "0.8653318012830637440722477232",
+          "expected": "0.8653318012830637440722477232",
+          "status": "PASS"
+        }
+      },
+      "instrument_identity": "TPE:1314",
+      "observation_count": 125
+    },
+    {
+      "as_of": "2026-06-22",
+      "case": "successful_no_match",
+      "checks": {
+        "DISTANCE_TO_MA20": {
+          "actual": "-0.3694988324052451948985090713",
+          "expected": "-0.3694988324052451948985090713",
+          "status": "PASS"
+        },
+        "MA10": {
+          "actual": "4.194000000000000000",
+          "expected": "4.194000000000000000",
+          "status": "PASS"
+        },
+        "MA20": {
+          "actual": "5.567000000000000000",
+          "expected": "5.567000000000000000",
+          "status": "PASS"
+        },
+        "MA5": {
+          "actual": "3.526000000000000000",
+          "expected": "3.526000000000000000",
+          "status": "PASS"
+        },
+        "MA60": {
+          "actual": "18.084333333333333333333333333333333333333333333333",
+          "expected": "18.084333333333333333333333333333333333333333333333",
+          "status": "PASS"
+        },
+        "MACD_12_26_9": {
+          "actual": "-3.392040979991516193781270119",
+          "expected": "-3.392040979991516193781270119",
+          "status": "PASS"
+        },
+        "MACD_HISTOGRAM_12_26_9": {
+          "actual": "0.4469304464716882271424958104",
+          "expected": "0.4469304464716882271424958104",
+          "status": "PASS"
+        },
+        "MACD_SIGNAL_12_26_9": {
+          "actual": "-3.8389714264632044209237659294357016875471816367018",
+          "expected": "-3.8389714264632044209237659294357016875471816367018",
+          "status": "PASS"
+        },
+        "RAW_CLOSE_RETURN_20D": {
+          "actual": "-0.62135922330097087378640776699029126213592233009709",
+          "expected": "-0.62135922330097087378640776699029126213592233009709",
+          "status": "PASS"
+        },
+        "RAW_CLOSE_RETURN_5D": {
+          "actual": "-0.13118811881188118811881188118811881188118811881188",
+          "expected": "-0.13118811881188118811881188118811881188118811881188",
+          "status": "PASS"
+        },
+        "RSI14": {
+          "actual": "20.594488125416013989529191294051932933309490202586",
+          "expected": "20.594488125416013989529191294051932933309490202586",
+          "status": "PASS"
+        },
+        "VOLUME_MA20": {
+          "actual": "3323329.250000000000000000",
+          "expected": "3323329.250000000000000000",
+          "status": "PASS"
+        },
+        "VOLUME_MA5": {
+          "actual": "4093948.400000000000000000",
+          "expected": "4093948.400000000000000000",
+          "status": "PASS"
+        },
+        "VOLUME_RATIO_20": {
+          "actual": "2.013053626871306837864469793",
+          "expected": "2.013053626871306837864469793",
+          "status": "PASS"
+        }
+      },
+      "instrument_identity": "TPE:6806",
+      "observation_count": 88
+    }
+  ],
+  "compared_value_count": 74,
+  "mismatch_count": 0,
+  "pass": true,
+  "sample_count": 6,
+  "task_id": "TASK-WS2-TECHNICAL-V0-INDICATOR-INVENTORY-AND-FORMAL-EVIDENCE-SURFACE-20260819"
+}

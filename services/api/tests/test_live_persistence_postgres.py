@@ -5,6 +5,10 @@ from decimal import Decimal
 from uuid import uuid4
 
 import pytest
+from db_fixture_support import (
+    restore_active_reference_registries,
+    suspend_active_reference_registries,
+)
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
@@ -29,6 +33,7 @@ def _seed_live_fixture(engine):
         }
     )
     with engine.begin() as cx:
+        ids["previous_active"] = suspend_active_reference_registries(cx)
         cx.execute(
             text(
                 """
@@ -165,6 +170,7 @@ def _cleanup_live_fixture(engine, ids):
             ("markets", "market"),
         ):
             cx.execute(text(f"DELETE FROM topicpilot.{table} WHERE id=:id"), {"id": ids[key]})
+        restore_active_reference_registries(cx, ids["previous_active"])
 
 
 def test_live_repository_persists_intraday_raw_timeline_canonical_and_read_status(

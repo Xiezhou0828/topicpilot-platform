@@ -1,0 +1,73 @@
+{
+  "task_id": "TASK-WS2-TECHNICAL-V0-REAL-PUBLICATION-COVERAGE-VALIDATION-AND-MAINLINE-RESUME-20260818",
+  "coverage_mode": "DETERMINISTIC_FOUR_CASE_REAL_READER_BOUND_PLUS_EXTERNAL_POSITIVE_CONTROLS",
+  "synthetic_data_used": false,
+  "dataset": {
+    "total_instrument_count": 507,
+    "total_instrument_date_count": 63826,
+    "date_range": ["2026-02-02", "2026-08-13"],
+    "source_authority": ["TWSE_OFFICIAL_DAILY", "TPEX_OFFICIAL_DAILY"],
+    "migration_head": "0031_task_topic_structural_role_score_projection",
+    "canonical_lifecycle_rows": 1,
+    "canonical_corporate_action_table_count": 0
+  },
+  "probe_scope": {
+    "probe_case_count": 4,
+    "distinct_local_instrument_count": 3,
+    "instrument_date_rows_used": 396,
+    "cases": [
+      "TPE:1314 ordinary successful lookup with no known match",
+      "TPE:2330 successful lookup with intersecting verified event",
+      "TPE:1314 event lookup failure",
+      "TPE:1314 real rows bounded to 20 for insufficient-history control"
+    ],
+    "external_controls_not_in_local_universe": ["TPE:2380", "TWO:5904"]
+  },
+  "metrics": {
+    "ma60_calculable_count": 3,
+    "ma60_insufficient_history_count": 1,
+    "technical_v0_eligible_count": 1,
+    "technical_v0_ineligible_count": 3,
+    "known_event_handled_count": 3,
+    "known_event_blocked_count": 3,
+    "event_lookup_failure_count": 1,
+    "publication_available_count": 1,
+    "publication_blocked_count": 3,
+    "publication_unknown_count": 0,
+    "publication_error_count": 0,
+    "overall_technical_payload_formal_count": 3,
+    "continuity_unknown_but_successful_no_match_count": 1
+  },
+  "metric_semantics": {
+    "technical_v0_eligible": "strict MA60 gate is FORMAL; MA60 remains the Owner-confirmed all-strategy eligibility filter",
+    "publication_available": "strict MA60 publication is FORMAL",
+    "known_event_handled": "one local TPE:2330 event-aware exclusion plus preserved external TPE:2380 and TWO:5904 controls",
+    "known_event_blocked": "each of those three known-event windows is unavailable under EXCLUDE handling",
+    "publication_unknown": "no probe emitted an unclassified publication state; successful no-match remains explicit while continuity remains UNKNOWN",
+    "overall_payload_formal": "builder status is FORMAL when any Technical V0 output is formal; this is reported separately from the MA60 gate"
+  },
+  "representative_outputs": {
+    "TPE:1314": {
+      "rows": 125,
+      "ma60_session": "2026-08-13",
+      "ma60_value": "8.0278333333333333333333333333333333333333333333333",
+      "ma60_state": "FORMAL",
+      "continuity_state": "CONTINUITY_UNKNOWN",
+      "event_lookup_state": "NO_KNOWN_VERIFIED_BREAKING_EVENT_FOUND",
+      "source_code": "TWSE_OFFICIAL_DAILY"
+    },
+    "TPE:2330": {
+      "rows": 126,
+      "ma60_session": "2026-08-13",
+      "ma60_state": "UNAVAILABLE",
+      "reason": "KNOWN_VERIFIED_EVENT_REQUIRES_EVENT_AWARE_HANDLING",
+      "event_lookup_state": "KNOWN_VERIFIED_BREAKING_EVENT_FOUND",
+      "shorter_windows_remained_formal": true
+    }
+  },
+  "reproducibility": {
+    "run_1_sha256": "c6ae5b3fed22a5912c3f4c0513a33c1fd7477840f1e2466b88c4ab5bb6fc9784",
+    "run_2_sha256": "c6ae5b3fed22a5912c3f4c0513a33c1fd7477840f1e2466b88c4ab5bb6fc9784",
+    "identical": true
+  }
+}

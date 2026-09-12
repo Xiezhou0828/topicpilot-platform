@@ -7,6 +7,20 @@ models the read side of the private TopicPilot workflow while keeping the
 existing Google Sheets, Apps Script, Python engines, R2 publication, and website
 unchanged.
 
+## Generation labels
+
+### Current Production (`LEGACY / V1`)
+
+Google Sheets remains the formal source of truth. Apps Script, private Python
+engines, R2 publication, and the existing daily workflow continue to operate.
+
+### Next Architecture (`NEXT / V2`)
+
+This repository develops a rebuildable PostgreSQL read model, FastAPI read API,
+and the original TopicPilot React UI connected through a new data adapter. It is
+not a second product dashboard and it does not replace the production Sheet
+before parity and an explicit cutover decision.
+
 ## Components
 
 | Component | Responsibility | May write formal data? |

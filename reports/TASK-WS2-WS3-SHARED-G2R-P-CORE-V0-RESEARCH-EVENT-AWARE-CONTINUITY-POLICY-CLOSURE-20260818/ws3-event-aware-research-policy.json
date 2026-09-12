@@ -1,0 +1,54 @@
+{
+  "schemaVersion": "task-ws2-ws3-shared-g2r-p-core-v0-event-aware-research-policy.v1",
+  "taskId": "TASK-WS2-WS3-SHARED-G2R-P-CORE-V0-RESEARCH-EVENT-AWARE-CONTINUITY-POLICY-CLOSURE-20260818",
+  "policy": "EVENT_AWARE_RESEARCH",
+  "policyVersion": "ws3-event-aware-research.v1",
+  "ownerDecision": "Core V0 WS3 historical research uses real observed OHLCV; known verified continuity-breaking events are excluded, corrected, or annotated where available; no affirmative no-event proof is required for research eligibility.",
+  "scope": {
+    "included": ["WS3 Core V0 historical research", "WS3 walk-forward research input admissibility", "research-only candidate panel path"],
+    "excluded": ["WS2 formal technical publication", "production continuity authority", "Shared-G3", "G2R-C", "OHLCV rewrite", "strategy and MA60 definition changes"]
+  },
+  "minimumResearchInput": [
+    "real observed OHLCV available",
+    "valid instrument identity",
+    "valid source lineage",
+    "sufficient observations for the requested technical calculation"
+  ],
+  "continuitySemantics": {
+    "CONTINUITY_PASS_BOUNDED": "Research may proceed; state is preserved.",
+    "CONTINUITY_UNKNOWN": "Research may proceed when minimum real-input requirements pass; UNKNOWN remains UNKNOWN.",
+    "CONTINUITY_FAIL": "Research remains unavailable unless an existing verified event overlay supplies an explicit correction/annotation path; it is never converted to PASS."
+  },
+  "eventOverlaySemantics": {
+    "EXCLUDE": "Exclude the affected research window/candidate and retain the verified event identity.",
+    "CORRECT": "Use existing upstream verified correction handling; this adapter does not rewrite OHLCV.",
+    "ANNOTATE": "Allow research with the verified event annotation attached to the research evidence.",
+    "NO_KNOWN_VERIFIED_BREAKING_EVENT": "Research may proceed; this is not a claim that no event occurred."
+  },
+  "forbiddenConversions": [
+    "CONTINUITY_UNKNOWN -> CONTINUITY_PASS_BOUNDED",
+    "UNKNOWN -> COVERED_NO_EVENT",
+    "NO_KNOWN_VERIFIED_BREAKING_EVENT -> NO_BREAKING_EVENT_OCCURRED",
+    "research eligible -> production-authority continuity verified"
+  ],
+  "ma60Boundary": {
+    "policyChanged": false,
+    "formalWs2Method": "MA60Evidence.is_formal_consumable remains unchanged and requires CONTINUITY_PASS_BOUNDED plus FORMAL_AVAILABLE.",
+    "researchMethod": "MA60Evidence.is_research_consumable is an additive WS3-only method; it preserves period, as-of, raw basis, observation count, value, and lineage requirements, and permits CONTINUITY_UNKNOWN with RESEARCH_AVAILABLE.",
+    "numericEligibility": "Close(T) >= MA60(T) is unchanged."
+  },
+  "implementation": {
+    "policyModule": "services/api/src/topicpilot_api/research/ws3_research_policy.py",
+    "candidatePanel": "services/api/src/topicpilot_api/research/core_v0_candidate_panel.py",
+    "researchModeOptIn": "CandidatePanelInput.research_eligibility must be explicitly supplied; absent context retains the old formal-only behavior."
+  },
+  "stateExamples": [
+    {"input": "real OHLCV + valid identity/lineage + sufficient observations + UNKNOWN + no verified event", "output": "RESEARCH_ELIGIBLE_NO_KNOWN_VERIFIED_BREAKING_EVENT"},
+    {"input": "same inputs + verified EXCLUDE event", "output": "RESEARCH_EXCLUDED_BY_VERIFIED_EVENT"},
+    {"input": "same inputs + verified CORRECT event", "output": "RESEARCH_ELIGIBLE_WITH_CORRECTION"},
+    {"input": "same inputs + verified ANNOTATE event", "output": "RESEARCH_ELIGIBLE_WITH_ANNOTATION"},
+    {"input": "insufficient technical observations", "output": "RESEARCH_UNAVAILABLE / INSUFFICIENT_TECHNICAL_OBSERVATIONS"}
+  ],
+  "unknownToPassConversionCount": 0,
+  "coveredNoEventFabricationCount": 0
+}

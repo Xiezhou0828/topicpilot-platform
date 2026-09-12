@@ -1,0 +1,25 @@
+{
+  "candidate_base": "9637a67",
+  "integration_commit": "cc23bf9",
+  "backend": {
+    "full_pytest": "598 passed, 59 skipped",
+    "targeted_lifecycle_migration_contract": "30 passed",
+    "openapi_schema_contract": "17 passed",
+    "compileall": "PASS",
+    "ruff_changed_python_scope": "PASS",
+    "diff_check": "PASS"
+  },
+  "frontend": {
+    "build": "PASS",
+    "tests": "156 passed",
+    "lint": "PASS: 0 errors, 1 pre-existing warning"
+  },
+  "replay": {
+    "reconstructed_rows": 16250,
+    "replay": "PASS",
+    "sha256": "a2941dddb640812858261a96942728213271e80b73699622f3bb17ca15af2886"
+  },
+  "production_db_mutation": "NO",
+  "push": "NO",
+  "deploy": "NO"
+}

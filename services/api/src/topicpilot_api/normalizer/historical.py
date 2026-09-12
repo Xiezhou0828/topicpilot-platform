@@ -135,7 +135,13 @@ class HistoricalDailyBarNormalizer:
                                 "PRICED"
                                 if values["close"] is not None
                                 else "APPROVED_NO_TRADE"
-                                if status in {"SUSPENDED", "NO_TRADE", "EXCHANGE_CONFIRMED_NO_DATA"}
+                                if status in {
+                                    "SUSPENDED",
+                                    "NO_TRADE",
+                                    "EXCHANGE_CONFIRMED_NO_DATA",
+                                    "DELISTED",
+                                    "TERMINATED",
+                                }
                                 else "UNEXPLAINED_MISSING"
                             ),
                         },

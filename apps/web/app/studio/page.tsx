@@ -2,6 +2,7 @@
 
 import { useMemo, useState, type CSSProperties, type FormEvent } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { AppNav } from "../components/AppNav";
 import { characters, demoScenarios, models, portfolioSnapshots, strategies } from "./studio-fixture";
 import { demoOrchestration, fetchDiscussion, requestForScenario } from "./studio-client";
@@ -98,6 +99,7 @@ export default function StudioPage() {
     <main className="studioPage">
       <AppNav />
       <div className="pixelStudioShell">
+        <aside className="adminError" role="status">Legacy DEMO：此頁不是正式商用 AI 研究功能。請查看 <Link href="/ai-studio">目前發布狀態</Link>。</aside>
         <header className="pixelStudioHeader">
           <div><p className="eyebrow">After-market AI studio</p><h1>AI投資工作室</h1></div>
           <div className="demoSafety"><strong>{orchestration.source ?? "DEMO"}</strong><span>{orchestration.source === "LIVE" ? "後端事件／非真實投資績效" : "非模型即時生成／非真實投資績效"}</span></div>

@@ -15,7 +15,7 @@ type Tab = "topics" | "stocks";
 type SavedStock = StockDrawerItem & { mainTopicRole: string | null; updateMode: string; source: "api" | "preview" | "missing" };
 
 const changeLabel = (value: number | null) => value === null ? "—" : `${value >= 0 ? "+" : ""}${value.toFixed(2)}%`;
-const freshnessLabel = (mode: string, freshness: string | null) => mode === "INTRADAY" || /LIVE|CURRENT|INTRADAY/i.test(freshness ?? "") ? "LIVE" : mode === "POST_CLOSE" || /EOD|POST/i.test(freshness ?? "") ? "EOD" : "資料待更新";
+const freshnessLabel = (mode: string, freshness: string | null) => mode === "UNKNOWN" ? "資料目前不可用" : mode === "INTRADAY" || /LIVE|CURRENT|INTRADAY/i.test(freshness ?? "") ? "LIVE" : mode === "POST_CLOSE" || /EOD|POST/i.test(freshness ?? "") ? "EOD" : "資料待更新";
 const directionLabel = (value: string | null) => value === "up" ? "持續轉強" : value === "down" ? "今日轉弱" : value === "flat" ? "維持原狀" : "今日變化尚未提供";
 
 function formalStock(item: StockApiItem): SavedStock {
@@ -43,15 +43,15 @@ export default function FavoritesWorkspacePage() {
   useEffect(() => { const close = (event: KeyboardEvent) => { if (event.key === "Escape") setSelectedStock(null); }; document.addEventListener("keydown", close); return () => document.removeEventListener("keydown", close); }, []);
 
   const topics = useMemo(() => { const bySlug = new Map((topicResource?.data ?? []).map((item) => [item.slug, item])); return slugs.map((slug) => ({ slug, summary: bySlug.get(slug) ?? null, detail: topicDetails[slug] ?? null })); }, [slugs, topicDetails, topicResource]);
-  const stocks = useMemo(() => { const formal = new Map((stockResource?.data ?? []).map((item) => [item.code, formalStock(item)])); const preview = new Map(bundle.stockUniverse.map((item) => [item.code, previewStock(item)])); return codes.map((code) => formal.get(code) ?? (stockResource?.source === "api" ? null : preview.get(code)) ?? { code, name: code, price: null, changePct: null, dataFreshness: null, topics: [], mainTopic: null, mainTopicRole: null, updateMode: "UNKNOWN", source: "missing" as const }); }, [bundle.stockUniverse, codes, stockResource]);
+  const stocks = useMemo(() => { const formal = new Map((stockResource?.data ?? []).map((item) => [item.code, formalStock(item)])); const preview = new Map(bundle.stockUniverse.map((item) => [item.code, previewStock(item)])); return codes.map((code) => formal.get(code) ?? (stockResource?.source === "synthetic-snapshot" ? preview.get(code) : null) ?? { code, name: code, price: null, changePct: null, dataFreshness: null, topics: [], mainTopic: null, mainTopicRole: null, updateMode: "UNKNOWN", source: "missing" as const }); }, [bundle.stockUniverse, codes, stockResource]);
   const preview = topicResource?.source === "synthetic-snapshot" || stockResource?.source === "synthetic-snapshot";
   const changes = useMemo(() => [
     ...topics.filter((item) => item.summary?.direction).map((item) => ({ key: `t-${item.slug}`, name: item.summary?.name ?? item.slug, value: directionLabel(item.summary?.direction ?? null), kind: "題材" })),
     ...stocks.filter((item): item is SavedStock => item !== null && item.changePct !== null).map((item) => ({ key: `s-${item.code}`, name: item.name, value: `今日 ${changeLabel(item.changePct)}`, kind: "股票" })),
   ].slice(0, 5), [stocks, topics]);
-  const ready = stocksReady && topicsReady && topicResource !== null && stockResource !== null;
+  const ready = stocksReady && topicsReady;
 
-  return <AppShell currentPath="/favorites"><PageContainer title="我的收藏" description="Watchlist + Market Context：快速查看已收藏題材與股票目前的正式狀態。" className="tp-favorites-page">
+  return <AppShell currentPath="/favorites"><PageContainer title="我的收藏" description="Watchlist + Market Context：收藏是此裝置上的使用者偏好；市場資料仍依正式 API 狀態獨立顯示。" className="tp-favorites-page">
     {preview && <p className="tp-favorites-disclosure"><b>Preview</b> · 未設定正式 API origin 的資料區域使用既有公開 snapshot；正式欄位為空時不以 Preview 覆蓋。</p>}
     <section className="tp-favorites-changes" aria-labelledby="favorite-changes-title"><div className="tp-favorites-section-heading"><div><p className="tp-overline">Market Context</p><h2 id="favorite-changes-title">今日有變化</h2></div><span>僅列收藏項目的客觀狀態</span></div>{changes.length ? <div className="tp-favorites-change-list">{changes.map((item) => <div key={item.key}><span className="tp-favorites-change-kind">{item.kind}</span><strong>{item.name}</strong><b>{item.value}</b></div>)}</div> : <p className="tp-favorites-quiet">目前沒有可確認的今日狀態變化。</p>}</section>
     <div className="tp-favorites-tabs" role="tablist" aria-label="收藏類型"><button type="button" role="tab" aria-selected={tab === "topics"} className={tab === "topics" ? "is-active" : ""} onClick={() => setTab("topics")}>題材 <span>{slugs.length}</span></button><button type="button" role="tab" aria-selected={tab === "stocks"} className={tab === "stocks" ? "is-active" : ""} onClick={() => setTab("stocks")}>股票 <span>{codes.length}</span></button></div>

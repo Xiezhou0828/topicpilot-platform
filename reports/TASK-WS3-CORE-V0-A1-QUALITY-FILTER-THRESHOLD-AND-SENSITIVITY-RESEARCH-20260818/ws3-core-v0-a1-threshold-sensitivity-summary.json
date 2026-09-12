@@ -1,0 +1,701 @@
+{
+  "candidate_cards": {
+    "production_filter_created": false,
+    "top_single_feature_candidates": [
+      {
+        "candidate_id": "true_range_pct__LOWER_LE_Q70",
+        "candidate_type": "SINGLE_FEATURE",
+        "date_concentration": "LOW",
+        "defensible_threshold_region": "true_range_pct__LOWER_LE_Q70",
+        "failed_breakout_reduction": 0.050730593607305974,
+        "feature_or_combination": "true_range_pct",
+        "forward_return_diagnostics": {
+          "T+1": {
+            "N": 435,
+            "mean": 0.0077525281697734425,
+            "median": 0.001694915254237288,
+            "win_rate": 0.5241379310344828
+          },
+          "T+10": {
+            "N": 367,
+            "mean": 0.04928950951866369,
+            "median": 0.014492753623188406,
+            "win_rate": 0.6021798365122616
+          },
+          "T+3": {
+            "N": 425,
+            "mean": 0.01551082934298088,
+            "median": 0.00398406374501992,
+            "win_rate": 0.5576470588235294
+          },
+          "T+5": {
+            "N": 410,
+            "mean": 0.02232264852419146,
+            "median": 0.00705872594558726,
+            "win_rate": 0.5707317073170731
+          }
+        },
+        "full_sample_success_rate_delta": 0.05073059360730592,
+        "instrument_concentration": "MEDIUM",
+        "july_behavior": "YES",
+        "major_caveat": "Research candidate only; no production filter authority and no exact optimal cutoff claimed.",
+        "market_interpretation": "Prior top robust VOLATILITY evidence, stable direction, and the strongest prior stock-level effect among the selected families.",
+        "research_classification": "STRONG_RESEARCH_CANDIDATE",
+        "retention_rate": 0.7357142857142858,
+        "threshold_plateau": "YES",
+        "threshold_value_not_a_production_cut": 0.06408819993349192,
+        "validation_success_rate_delta": 0.0811962170912498
+      },
+      {
+        "candidate_id": "recent_20_high_proximity__UPPER_GE_Q30",
+        "candidate_type": "SINGLE_FEATURE",
+        "date_concentration": "LOW",
+        "defensible_threshold_region": "recent_20_high_proximity__UPPER_GE_Q30",
+        "failed_breakout_reduction": 0.05111111111111111,
+        "feature_or_combination": "recent_20_high_proximity",
+        "forward_return_diagnostics": {
+          "T+1": {
+            "N": 430,
+            "mean": 0.009913430790356993,
+            "median": 0.0017376312658892866,
+            "win_rate": 0.5279069767441861
+          },
+          "T+10": {
+            "N": 362,
+            "mean": 0.054664284903288965,
+            "median": 0.018424439477071057,
+            "win_rate": 0.6270718232044199
+          },
+          "T+3": {
+            "N": 420,
+            "mean": 0.01835955606368501,
+            "median": 0.005363189952040706,
+            "win_rate": 0.5714285714285714
+          },
+          "T+5": {
+            "N": 407,
+            "mean": 0.02895989112443591,
+            "median": 0.008032128514056224,
+            "win_rate": 0.5847665847665847
+          }
+        },
+        "full_sample_success_rate_delta": 0.05111111111111111,
+        "instrument_concentration": "MEDIUM",
+        "july_behavior": "YES",
+        "major_caveat": "Research candidate only; no production filter authority and no exact optimal cutoff claimed.",
+        "market_interpretation": "Prior robust BREAKOUT_PROXIMITY evidence, directionally consistent in Development/Validation/Holdout, and prior date-centered stock-level signal.",
+        "research_classification": "STRONG_RESEARCH_CANDIDATE",
+        "retention_rate": 0.7185714285714285,
+        "threshold_plateau": "YES",
+        "threshold_value_not_a_production_cut": -0.02684279376635195,
+        "validation_success_rate_delta": 0.07247298156389059
+      },
+      {
+        "candidate_id": "return_5d__LOWER_LE_Q60",
+        "candidate_type": "SINGLE_FEATURE",
+        "date_concentration": "LOW",
+        "defensible_threshold_region": "return_5d__LOWER_LE_Q60",
+        "failed_breakout_reduction": 0.05103663985701523,
+        "feature_or_combination": "return_5d",
+        "forward_return_diagnostics": {
+          "T+1": {
+            "N": 370,
+            "mean": 0.005347736730367911,
+            "median": 0.001039024126949857,
+            "win_rate": 0.5027027027027027
+          },
+          "T+10": {
+            "N": 318,
+            "mean": 0.06241285334527426,
+            "median": 0.019687785821693768,
+            "win_rate": 0.6477987421383647
+          },
+          "T+3": {
+            "N": 360,
+            "mean": 0.016956119237363298,
+            "median": 0.004179463911768812,
+            "win_rate": 0.575
+          },
+          "T+5": {
+            "N": 352,
+            "mean": 0.028247490880906802,
+            "median": 0.008021404710966698,
+            "win_rate": 0.5965909090909091
+          }
+        },
+        "full_sample_success_rate_delta": 0.05103663985701523,
+        "instrument_concentration": "MEDIUM",
+        "july_behavior": "YES",
+        "major_caveat": "Research candidate only; no production filter authority and no exact optimal cutoff claimed.",
+        "market_interpretation": "Prior robust MOMENTUM evidence, stable lower-in-success direction, and no prior date-regime flag.",
+        "research_classification": "STRONG_RESEARCH_CANDIDATE",
+        "retention_rate": 0.6185714285714285,
+        "threshold_plateau": "YES",
+        "threshold_value_not_a_production_cut": 0.07389330024813896,
+        "validation_success_rate_delta": 0.13920143383451156
+      }
+    ],
+    "top_two_feature_combination_candidates": [
+      {
+        "candidate_id": "recent_20_high_proximity__AND__true_range_pct",
+        "candidate_type": "TWO_FEATURE_COMBINATION",
+        "date_concentration": "LOW",
+        "defensible_threshold_region": "recent_20_high_proximity__UPPER_GE_Q30 AND true_range_pct__LOWER_LE_Q70",
+        "failed_breakout_reduction": 0.08687194525904207,
+        "feature_or_combination": "recent_20_high_proximity AND true_range_pct",
+        "forward_return_diagnostics": {
+          "T+1": {
+            "N": 340,
+            "mean": 0.008774656819116152,
+            "median": 0.0015305177364082615,
+            "win_rate": 0.5294117647058824
+          },
+          "T+10": {
+            "N": 285,
+            "mean": 0.04625299236327662,
+            "median": 0.013245033112582781,
+            "win_rate": 0.6210526315789474
+          },
+          "T+3": {
+            "N": 332,
+            "mean": 0.01706955102953291,
+            "median": 0.004179463911768812,
+            "win_rate": 0.572289156626506
+          },
+          "T+5": {
+            "N": 320,
+            "mean": 0.021592760367210827,
+            "median": 0.007458881121474531,
+            "win_rate": 0.58125
+          }
+        },
+        "full_sample_success_rate_delta": 0.08687194525904207,
+        "instrument_concentration": "MEDIUM",
+        "july_behavior": "YES",
+        "major_caveat": "Bounded two-feature diagnostic only; complexity must be confirmed out of sample.",
+        "research_classification": "PROMISING_RESEARCH_CANDIDATE",
+        "retention_rate": 0.5757142857142857,
+        "threshold_plateau": "INHERITED_FROM_SINGLE_REGIONS",
+        "validation_success_rate_delta": 0.11434250444607175
+      }
+    ]
+  },
+  "cohort_reconciliation": {
+    "expected": {
+      "A1_TOTAL_COUNT": 700,
+      "CONTINUED_CONSOLIDATION_COUNT": 30,
+      "FAILED_BREAKOUT_A1_COUNT": 214,
+      "STRUCTURE_LOSS_COUNT": 37,
+      "SUCCESSFUL_A1_COUNT": 386,
+      "UNCLASSIFIED_COUNT": 33
+    },
+    "failure_taxonomy_reused": true,
+    "missing_taxonomy_keys": [],
+    "observed": {
+      "A1_TOTAL_COUNT": 700,
+      "CONTINUED_CONSOLIDATION_COUNT": 30,
+      "FAILED_BREAKOUT_A1_COUNT": 214,
+      "STRUCTURE_LOSS_COUNT": 37,
+      "SUCCESSFUL_A1_COUNT": 386,
+      "UNCLASSIFIED_COUNT": 33
+    },
+    "outcome_labels_are_not_features": true,
+    "pass": true,
+    "transition_definition_reused": true,
+    "unexpected_taxonomy_labels": []
+  },
+  "collection_quality": {
+    "data_gap_fail_closed_signal_count": 309,
+    "duplicate_count": 0,
+    "event_metadata": {
+      "authority_state_counts": {
+        "AUTHORITATIVE": 353,
+        "PARTIAL": 19
+      },
+      "dataset_content_hash": "4d9b4912bd1c4613510e60c5cf4b5a629c367e1c94dd733d3b1dc3f935e0eb5d",
+      "dataset_file_sha256_normalized": "78f684d5b014f43f3b34393be1bc644805e67f05e18b21e7ab98d075a1cd60b2",
+      "dataset_version": "REC-A1-CA-EVENTS-V0",
+      "event_count": 372
+    },
+    "invalid_lineage_count": 0,
+    "known_event_formation_windows": 9731,
+    "malformed_or_invalid_lineage": 0,
+    "partial_authority_windows": 279,
+    "source_reconciliation": {
+      "expected_date_range": "2026-02-02..2026-08-13",
+      "expected_distinct_instruments": 507,
+      "expected_real_rows": 63826,
+      "observed_date_range": "2026-02-02..2026-08-13",
+      "observed_distinct_instruments": 507,
+      "observed_real_rows": 63826,
+      "pass": true
+    }
+  },
+  "combination_rows": [
+    {
+      "TPE_TWO_DIRECTIONALLY_CONSISTENT": "YES",
+      "combination_id": "recent_20_high_proximity__AND__true_range_pct",
+      "date_concentration_risk": "LOW",
+      "failed_breakout_count": 92,
+      "failed_breakout_rate": 0.2697947214076246,
+      "failed_breakout_rate_delta": -0.08687194525904207,
+      "feature_left": "recent_20_high_proximity",
+      "feature_right": "true_range_pct",
+      "forward_outcomes_used_for_selection": "NO",
+      "incremental_success_rate_vs_better_single": 0.035760834147930964,
+      "instrument_concentration_risk": "MEDIUM",
+      "july_validation_improvement": "YES",
+      "left_region_id": "recent_20_high_proximity__UPPER_GE_Q30",
+      "observation_count": 403,
+      "retention_rate": 0.5757142857142857,
+      "retention_rate_change_vs_better_single": -0.16000000000000003,
+      "right_region_id": "true_range_pct__LOWER_LE_Q70",
+      "status": "PROMISING_COMBINATION_DIAGNOSTIC",
+      "success_count": 249,
+      "success_rate": 0.7302052785923754,
+      "success_rate_delta": 0.08687194525904207,
+      "tested": true,
+      "validation_failed_breakout_rate": 0.26582278481012656,
+      "validation_failed_breakout_rate_delta": -0.1143425044460718,
+      "validation_success_rate": 0.7341772151898734,
+      "validation_success_rate_delta": 0.11434250444607175
+    },
+    {
+      "TPE_TWO_DIRECTIONALLY_CONSISTENT": "YES",
+      "combination_id": "recent_20_high_age_sessions__AND__volume_ratio_5",
+      "date_concentration_risk": "LOW",
+      "failed_breakout_count": 48,
+      "failed_breakout_rate": 0.2,
+      "failed_breakout_rate_delta": -0.15666666666666668,
+      "feature_left": "recent_20_high_age_sessions",
+      "feature_right": "volume_ratio_5",
+      "forward_outcomes_used_for_selection": "NO",
+      "incremental_success_rate_vs_better_single": 0.03780487804878052,
+      "instrument_concentration_risk": "HIGH",
+      "july_validation_improvement": "INCONCLUSIVE",
+      "left_region_id": "recent_20_high_age_sessions__UPPER_GE_Q50",
+      "observation_count": 287,
+      "retention_rate": 0.41,
+      "retention_rate_change_vs_better_single": -0.32142857142857145,
+      "right_region_id": "volume_ratio_5__LOWER_LE_Q70",
+      "status": "COMPLEXITY_NOT_JUSTIFIED",
+      "success_count": 192,
+      "success_rate": 0.8,
+      "success_rate_delta": 0.15666666666666673,
+      "tested": true,
+      "validation_failed_breakout_rate": 0.11475409836065574,
+      "validation_failed_breakout_rate_delta": -0.2654111908955426,
+      "validation_success_rate": 0.8852459016393442,
+      "validation_success_rate_delta": 0.26541119089554255
+    },
+    {
+      "TPE_TWO_DIRECTIONALLY_CONSISTENT": "NO",
+      "combination_id": "return_5d__AND__close_ma20_distance",
+      "date_concentration_risk": "LOW",
+      "failed_breakout_count": 89,
+      "failed_breakout_rate": 0.288961038961039,
+      "failed_breakout_rate_delta": -0.06770562770562771,
+      "feature_left": "return_5d",
+      "feature_right": "close_ma20_distance",
+      "forward_outcomes_used_for_selection": "NO",
+      "incremental_success_rate_vs_better_single": 0.016668987848612482,
+      "instrument_concentration_risk": "MEDIUM",
+      "july_validation_improvement": "INCONCLUSIVE",
+      "left_region_id": "return_5d__LOWER_LE_Q60",
+      "observation_count": 361,
+      "retention_rate": 0.5157142857142857,
+      "retention_rate_change_vs_better_single": -0.12142857142857144,
+      "right_region_id": "close_ma20_distance__LOWER_LE_Q60",
+      "status": "COMPLEXITY_NOT_JUSTIFIED",
+      "success_count": 219,
+      "success_rate": 0.711038961038961,
+      "success_rate_delta": 0.06770562770562771,
+      "tested": true,
+      "validation_failed_breakout_rate": 0.2054794520547945,
+      "validation_failed_breakout_rate_delta": -0.17468583720140385,
+      "validation_success_rate": 0.7945205479452054,
+      "validation_success_rate_delta": 0.17468583720140374
+    }
+  ],
+  "dataset_authority": "canonical Postgres historical read model via read_historical_bars; REC-A1 event-aware research dataset preserved",
+  "frozen_spec_hash": "6e4cc504f969098e263cfa8e7c43240e9575a3f72f0641ba39da22794ea9870d",
+  "no_production_filter": true,
+  "primary_robust_feature_count": 20,
+  "primary_selected_feature_count": 7,
+  "primary_selected_features": [
+    {
+      "category": "BREAKOUT_PROXIMITY",
+      "feature_name": "recent_20_high_proximity",
+      "prior_classification": "ROBUST_CANDIDATE",
+      "prior_date_regime_confounding": "NO",
+      "prior_direction": "HIGHER_IN_SUCCESS",
+      "prior_evidence_source": "FEATURE_FAMILY_ASSESSMENT_TOP_FINDINGS",
+      "prior_standardized_effect_size": 0.4176730398758115,
+      "prior_validation_consistent": "YES",
+      "selection_rationale": "Prior robust BREAKOUT_PROXIMITY evidence, directionally consistent in Development/Validation/Holdout, and prior date-centered stock-level signal."
+    },
+    {
+      "category": "CONSOLIDATION_STRUCTURE",
+      "feature_name": "recent_20_high_age_sessions",
+      "prior_classification": "ROBUST_CANDIDATE",
+      "prior_date_regime_confounding": "NO",
+      "prior_direction": "HIGHER_IN_SUCCESS",
+      "prior_evidence_source": "FEATURE_FAMILY_ASSESSMENT_TOP_FINDINGS",
+      "prior_standardized_effect_size": 0.5020920293309611,
+      "prior_validation_consistent": "YES",
+      "selection_rationale": "Prior robust CONSOLIDATION_STRUCTURE evidence with a large stable effect and no prior date-regime flag."
+    },
+    {
+      "category": "MOMENTUM",
+      "feature_name": "return_5d",
+      "prior_classification": "ROBUST_CANDIDATE",
+      "prior_date_regime_confounding": "NO",
+      "prior_direction": "LOWER_IN_SUCCESS",
+      "prior_evidence_source": "FEATURE_FAMILY_ASSESSMENT_TOP_FINDINGS",
+      "prior_standardized_effect_size": -0.40980491472298386,
+      "prior_validation_consistent": "YES",
+      "selection_rationale": "Prior robust MOMENTUM evidence, stable lower-in-success direction, and no prior date-regime flag."
+    },
+    {
+      "category": "MA_STRUCTURE",
+      "feature_name": "close_ma20_distance",
+      "prior_classification": "ROBUST_CANDIDATE",
+      "prior_date_regime_confounding": "NO",
+      "prior_direction": "LOWER_IN_SUCCESS",
+      "prior_evidence_source": "FEATURE_FAMILY_ASSESSMENT_TOP_FINDINGS",
+      "prior_standardized_effect_size": -0.369109699342304,
+      "prior_validation_consistent": "YES",
+      "selection_rationale": "Prior robust MA_STRUCTURE evidence, stable lower-in-success direction, and stock-level date-centered signal."
+    },
+    {
+      "category": "VOLUME_CONFIRMATION",
+      "feature_name": "volume_ratio_5",
+      "prior_classification": "ROBUST_CANDIDATE",
+      "prior_date_regime_confounding": "NO",
+      "prior_direction": "LOWER_IN_SUCCESS",
+      "prior_evidence_source": "SUCCESS_VS_FAILED_COMPARISON+FEATURE_TIME_STABILITY+FEATURE_DATE_REGIME_CONFOUNDING",
+      "prior_standardized_effect_size": -0.330467405611416,
+      "prior_validation_consistent": "YES",
+      "selection_rationale": "Prior robust VOLUME_CONFIRMATION evidence with stable direction and no prior date-regime flag."
+    },
+    {
+      "category": "VOLATILITY",
+      "feature_name": "true_range_pct",
+      "prior_classification": "ROBUST_CANDIDATE",
+      "prior_date_regime_confounding": "NO",
+      "prior_direction": "LOWER_IN_SUCCESS",
+      "prior_evidence_source": "FEATURE_FAMILY_ASSESSMENT_TOP_FINDINGS",
+      "prior_standardized_effect_size": -0.5322531897909484,
+      "prior_validation_consistent": "YES",
+      "selection_rationale": "Prior top robust VOLATILITY evidence, stable direction, and the strongest prior stock-level effect among the selected families."
+    },
+    {
+      "category": "RELATIVE_CONTEXT",
+      "feature_name": "same_day_volume_ratio_20_percentile",
+      "prior_classification": "ROBUST_CANDIDATE",
+      "prior_date_regime_confounding": "NO",
+      "prior_direction": "LOWER_IN_SUCCESS",
+      "prior_evidence_source": "FEATURE_FAMILY_ASSESSMENT_TOP_FINDINGS",
+      "prior_standardized_effect_size": -0.3398040338924812,
+      "prior_validation_consistent": "YES",
+      "selection_rationale": "Prior robust RELATIVE_CONTEXT evidence, stable direction, and a distinct cross-sectional participation interpretation."
+    }
+  ],
+  "prior_research_source_head": "3ab70b612cbb30335b43a5650d145488f9e8b2c1",
+  "prior_task_id": "TASK-WS3-CORE-V0-A1-EX-ANTE-SUCCESS-VS-FAILED-BREAKOUT-DISCRIMINATION-RESEARCH-20260818",
+  "quantile_grid": [
+    0.2,
+    0.3,
+    0.4,
+    0.5,
+    0.6,
+    0.7,
+    0.8
+  ],
+  "redundancy": {
+    "high_redundancy_pair_count": 0,
+    "high_redundancy_threshold_abs_spearman": 0.8,
+    "method": "pairwise Spearman rank correlation on all A1 PIT feature rows; no outcomes used",
+    "pairs": [
+      {
+        "HIGH_REDUNDANCY": false,
+        "N_complete": 700,
+        "feature_left": "recent_20_high_proximity",
+        "feature_right": "recent_20_high_age_sessions",
+        "spearman_rho": 0.24882088294169408
+      },
+      {
+        "HIGH_REDUNDANCY": false,
+        "N_complete": 700,
+        "feature_left": "recent_20_high_proximity",
+        "feature_right": "return_5d",
+        "spearman_rho": -0.08982210160976245
+      },
+      {
+        "HIGH_REDUNDANCY": false,
+        "N_complete": 700,
+        "feature_left": "recent_20_high_proximity",
+        "feature_right": "close_ma20_distance",
+        "spearman_rho": -0.11149927830438185
+      },
+      {
+        "HIGH_REDUNDANCY": false,
+        "N_complete": 700,
+        "feature_left": "recent_20_high_proximity",
+        "feature_right": "volume_ratio_5",
+        "spearman_rho": -0.12831631670265262
+      },
+      {
+        "HIGH_REDUNDANCY": false,
+        "N_complete": 700,
+        "feature_left": "recent_20_high_proximity",
+        "feature_right": "true_range_pct",
+        "spearman_rho": -0.2920165131856952
+      },
+      {
+        "HIGH_REDUNDANCY": false,
+        "N_complete": 700,
+        "feature_left": "recent_20_high_proximity",
+        "feature_right": "same_day_volume_ratio_20_percentile",
+        "spearman_rho": -0.14046690098107156
+      },
+      {
+        "HIGH_REDUNDANCY": false,
+        "N_complete": 700,
+        "feature_left": "recent_20_high_age_sessions",
+        "feature_right": "return_5d",
+        "spearman_rho": -0.20716268758358267
+      },
+      {
+        "HIGH_REDUNDANCY": false,
+        "N_complete": 700,
+        "feature_left": "recent_20_high_age_sessions",
+        "feature_right": "close_ma20_distance",
+        "spearman_rho": -0.3109739219683175
+      },
+      {
+        "HIGH_REDUNDANCY": false,
+        "N_complete": 700,
+        "feature_left": "recent_20_high_age_sessions",
+        "feature_right": "volume_ratio_5",
+        "spearman_rho": -0.13823519929369402
+      },
+      {
+        "HIGH_REDUNDANCY": false,
+        "N_complete": 700,
+        "feature_left": "recent_20_high_age_sessions",
+        "feature_right": "true_range_pct",
+        "spearman_rho": -0.33695843150196375
+      },
+      {
+        "HIGH_REDUNDANCY": false,
+        "N_complete": 700,
+        "feature_left": "recent_20_high_age_sessions",
+        "feature_right": "same_day_volume_ratio_20_percentile",
+        "spearman_rho": -0.21211806637265793
+      },
+      {
+        "HIGH_REDUNDANCY": false,
+        "N_complete": 700,
+        "feature_left": "return_5d",
+        "feature_right": "close_ma20_distance",
+        "spearman_rho": 0.7083501203222765
+      },
+      {
+        "HIGH_REDUNDANCY": false,
+        "N_complete": 700,
+        "feature_left": "return_5d",
+        "feature_right": "volume_ratio_5",
+        "spearman_rho": 0.3623406343085321
+      },
+      {
+        "HIGH_REDUNDANCY": false,
+        "N_complete": 700,
+        "feature_left": "return_5d",
+        "feature_right": "true_range_pct",
+        "spearman_rho": 0.6116544886058458
+      },
+      {
+        "HIGH_REDUNDANCY": false,
+        "N_complete": 700,
+        "feature_left": "return_5d",
+        "feature_right": "same_day_volume_ratio_20_percentile",
+        "spearman_rho": 0.3163591010228213
+      },
+      {
+        "HIGH_REDUNDANCY": false,
+        "N_complete": 700,
+        "feature_left": "close_ma20_distance",
+        "feature_right": "volume_ratio_5",
+        "spearman_rho": 0.32344166248138134
+      },
+      {
+        "HIGH_REDUNDANCY": false,
+        "N_complete": 700,
+        "feature_left": "close_ma20_distance",
+        "feature_right": "true_range_pct",
+        "spearman_rho": 0.7328805295861467
+      },
+      {
+        "HIGH_REDUNDANCY": false,
+        "N_complete": 700,
+        "feature_left": "close_ma20_distance",
+        "feature_right": "same_day_volume_ratio_20_percentile",
+        "spearman_rho": 0.24646197427275676
+      },
+      {
+        "HIGH_REDUNDANCY": false,
+        "N_complete": 700,
+        "feature_left": "volume_ratio_5",
+        "feature_right": "true_range_pct",
+        "spearman_rho": 0.5612805935564086
+      },
+      {
+        "HIGH_REDUNDANCY": false,
+        "N_complete": 700,
+        "feature_left": "volume_ratio_5",
+        "feature_right": "same_day_volume_ratio_20_percentile",
+        "spearman_rho": 0.7253314528839466
+      },
+      {
+        "HIGH_REDUNDANCY": false,
+        "N_complete": 700,
+        "feature_left": "true_range_pct",
+        "feature_right": "same_day_volume_ratio_20_percentile",
+        "spearman_rho": 0.5121383394178467
+      }
+    ]
+  },
+  "reverse_dependencies": {
+    "candidate_type": "A1_PRE_BREAKOUT",
+    "minimum_panel": {
+      "canonical_ohlcv_fields": [
+        "close",
+        "high",
+        "low",
+        "volume"
+      ],
+      "evaluation_context": [
+        "evaluation_session",
+        "signal_date",
+        "instrument_id",
+        "market (TPE/TWO)",
+        "as_of_timestamp <= signal_date"
+      ],
+      "formation_boundary": "Candidate formation consumes only information effective/observable <= T; candidate state is frozen at T. Forward outcomes cannot alter eligibility.",
+      "forward_outcomes_evaluation_only": [
+        "T+1",
+        "T+3",
+        "T+5",
+        "T+10",
+        "REC-A1 event-aware outcome exclusion metadata"
+      ],
+      "pit_membership_and_candidate_context": [
+        "A1_PRE_BREAKOUT membership/context at T",
+        "candidate_inputs.reference_value as observed at T",
+        "canonical cohort/source lineage"
+      ],
+      "selected_feature_dependencies": [
+        {
+          "category": "BREAKOUT_PROXIMITY",
+          "feature_name": "recent_20_high_proximity",
+          "lookback": "20 sessions including T",
+          "point_in_time_available": true,
+          "required_input_columns": [
+            "high",
+            "close"
+          ],
+          "source_lineage": "canonical Postgres historical read model via read_historical_bars; REC-A1 event dataset preserved",
+          "timestamp_rule": "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP"
+        },
+        {
+          "category": "CONSOLIDATION_STRUCTURE",
+          "feature_name": "recent_20_high_age_sessions",
+          "lookback": "20 sessions including T",
+          "point_in_time_available": true,
+          "required_input_columns": [
+            "high"
+          ],
+          "source_lineage": "canonical Postgres historical read model via read_historical_bars; REC-A1 event dataset preserved",
+          "timestamp_rule": "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP"
+        },
+        {
+          "category": "MOMENTUM",
+          "feature_name": "return_5d",
+          "lookback": "6 sessions",
+          "point_in_time_available": true,
+          "required_input_columns": [
+            "close"
+          ],
+          "source_lineage": "canonical Postgres historical read model via read_historical_bars; REC-A1 event dataset preserved",
+          "timestamp_rule": "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP"
+        },
+        {
+          "category": "MA_STRUCTURE",
+          "feature_name": "close_ma20_distance",
+          "lookback": "20 sessions",
+          "point_in_time_available": true,
+          "required_input_columns": [
+            "close"
+          ],
+          "source_lineage": "canonical Postgres historical read model via read_historical_bars; REC-A1 event dataset preserved",
+          "timestamp_rule": "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP"
+        },
+        {
+          "category": "VOLUME_CONFIRMATION",
+          "feature_name": "volume_ratio_5",
+          "lookback": "5 sessions",
+          "point_in_time_available": true,
+          "required_input_columns": [
+            "volume"
+          ],
+          "source_lineage": "canonical Postgres historical read model via read_historical_bars; REC-A1 event dataset preserved",
+          "timestamp_rule": "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP"
+        },
+        {
+          "category": "VOLATILITY",
+          "feature_name": "true_range_pct",
+          "lookback": "1 session",
+          "point_in_time_available": true,
+          "required_input_columns": [
+            "high",
+            "low",
+            "close"
+          ],
+          "source_lineage": "canonical Postgres historical read model via read_historical_bars; REC-A1 event dataset preserved",
+          "timestamp_rule": "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP"
+        },
+        {
+          "category": "RELATIVE_CONTEXT",
+          "feature_name": "same_day_volume_ratio_20_percentile",
+          "lookback": "20 sessions per instrument and date cross-section",
+          "point_in_time_available": true,
+          "required_input_columns": [
+            "volume"
+          ],
+          "source_lineage": "canonical Postgres historical read model via read_historical_bars; REC-A1 event dataset preserved",
+          "timestamp_rule": "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP"
+        }
+      ],
+      "technical_evidence_fields": []
+    },
+    "scope": "A1 quality-filter threshold research only; no global WS3 readiness gate",
+    "source_lineage": {
+      "event_dataset_is_evaluation_integrity_only": true,
+      "frozen_spec_hash": "6e4cc504f969098e263cfa8e7c43240e9575a3f72f0641ba39da22794ea9870d",
+      "prior_research_source_head": "3ab70b612cbb30335b43a5650d145488f9e8b2c1",
+      "research_read_model": "canonical Postgres historical read model via read_historical_bars; REC-A1 event-aware research dataset preserved"
+    },
+    "ws1_ws2_implication": "No complete Historical Topic/System State or WS2 technical publication is required for this A1 panel; only the listed candidate-specific fields are a dependency for this research lane."
+  },
+  "single_feature_threshold_region_count": 49,
+  "source_baseline_head": "9ca9ba4f15359aa5ea96ba4c3d6bed9439d0346e",
+  "source_canonical_head": "035587e4f263447e778f9384971885e03a53ecc2",
+  "task_id": "TASK-WS3-CORE-V0-A1-QUALITY-FILTER-THRESHOLD-AND-SENSITIVITY-RESEARCH-20260818",
+  "threshold_classification_counts": {
+    "NO_DEFENSIBLE_THRESHOLD_REGION": 43,
+    "ROBUST_THRESHOLD_REGION": 6
+  },
+  "threshold_grid_source": "TRAIN A1 feature distribution only; labels/outcomes not used",
+  "threshold_plateau_candidate_count": 48
+}

@@ -1,0 +1,38 @@
+{
+  "aggregate_input": {
+    "event_count": 5277,
+    "source_sha256": "e803733e796d8f4d8cf00575cd4045f28c9364572fc61b31ef490e8a65ff47a4"
+  },
+  "evidence_rows_not_normalized_away": true,
+  "normalized_aggregate_sha256": "5beaece78916c11ec5fafb6f0aa08c2151ff28abfa741fab5522f67b10181bea",
+  "normalized_artifact_hashes": {
+    "ws3-p2e-a2-base-advantage-revalidation.csv": "c8220805981b23aa41e92fc36e9ceaba51b7bd70160fae033ac155bcc7dcf60a",
+    "ws3-p2e-a2-base-advantage-revalidation.json": "500669099dff0fd4cda4880194f1c9bf3c8684dec97b0dc0e1c56933ef0e4ac4",
+    "ws3-p2e-a2-concentration-outlier-audit.json": "0c3302ba6b02c5ed237f56924ba60aba94fc55fa1b2f7dd41a6fd8446487f101",
+    "ws3-p2e-a2-confirmatory-protocol-freeze.json": "864bff2bf9d723a6c4968083da56afe77d4bd5b5c51a6c363fd9a5904f77b86d",
+    "ws3-p2e-a2-development-validation-holdout.csv": "e7a99040f57f81d388c1d7d65d4624ed3cf536d351e89e544d9c1a5c50f2c65b",
+    "ws3-p2e-a2-expanded-event-panel.csv": "97b131479b90ce64a821f72a6c6cceb58d102aeb49c64eac60ba19dfca71bc52",
+    "ws3-p2e-a2-extension-2-3-confirmatory.csv": "eb2347ddba15f4d6341874c3cce6b83f8dd2fe00415f58810fc378cbe0b79080",
+    "ws3-p2e-a2-extension-2-3-confirmatory.json": "e5eac338406af69d7390127601940a1dafd0b131b5856ded9a6ab2b5706a15e7",
+    "ws3-p2e-a2-frozen-contract-manifest.json": "5e2b6ce12f8e3e9dc9bda26df8fc19fa15a8903a9aec1ff95c84e8e14662280e",
+    "ws3-p2e-a2-immediate-vs-confirmation.csv": "3699055691d6f44406469d655c6363ed53bba3fb805bd81aed83680f6b93597a",
+    "ws3-p2e-a2-immediate-vs-confirmation.json": "49118e4b9a661326a94d8d25fca96e2f0598a7b34f4b280bc2c37fb6e26608be",
+    "ws3-p2e-a2-invalidation-confirmatory.csv": "ee49508309b45d3cb387e4e1e1122232b3781eba4eb576eebf6cfcba47c9c096",
+    "ws3-p2e-a2-invalidation-confirmatory.json": "8bf2fd1245e5c8a90ddc48cb3ccdc28589f14a1332c1112e17906d57fbf4a284",
+    "ws3-p2e-a2-market-stability.csv": "427cc56baae854074fdd0674fc85b5646bbd70704c35b738f1b9f550a400f0c3",
+    "ws3-p2e-a2-origin-confirmatory.csv": "e6e1cd8c436b32e53c77ae0f1e0afaeebc815d40b25c26142933ce8d28629def",
+    "ws3-p2e-a2-origin-confirmatory.json": "1a4e4db203f76a7e37c53eb517cc58bcb5db1d12507648eeb93d212eda66b70d",
+    "ws3-p2e-a2-quality-audit.json": "c520a5948ca40444c7865bc8fcad37fdc59a6d56d961822ce017478119826acb",
+    "ws3-p2e-a2-strategy-review-readiness.json": "94554f49f4f75cae8c535469b424dbf76fbc54f2762424850115b0dd8a8a871c",
+    "ws3-p2e-a2-temporal-stability.csv": "34c74bdbe87f07361ba2fc67f3fff2277a301fb5df689a998aa45bb126cfec04",
+    "ws3-p2e-a2-transition-research-readiness.json": "d7201c7e90924ddffa9eb4864f912af490af3f60686562804e980396d27f3953"
+  },
+  "prior_replay_aggregate_sha256": "5beaece78916c11ec5fafb6f0aa08c2151ff28abfa741fab5522f67b10181bea",
+  "quality_gate_pass": true,
+  "reconstruction_runs": 2,
+  "reproducible": "YES",
+  "run_mode": "FULL_RECONSTRUCTION",
+  "schema_version": "ws3-p2e-a2-reproducibility-manifest.v1",
+  "task_id": "TASK-WS3-P2E-A2-EXPANDED-CONFIRMATORY-VALIDATION-AND-ADVANTAGE-REVALIDATION-20260820",
+  "timestamp_normalized": true
+}

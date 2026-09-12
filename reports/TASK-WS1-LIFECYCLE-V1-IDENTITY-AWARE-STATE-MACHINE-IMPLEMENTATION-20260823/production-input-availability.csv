@@ -1,0 +1,8 @@
+layer,latest_date,count,status,evidence_or_reason
+formal_pit_materializer,UNKNOWN,UNKNOWN,NOT_PROVEN,Production materializer lineage was not directly readable in this task
+topic_snapshots,UNKNOWN,UNKNOWN,NOT_PROVEN,Production snapshot identity/count not directly readable
+member_facts,UNKNOWN,UNKNOWN,NOT_PROVEN,Production role-bearing fact count not directly readable
+canonical_daily_price_evidence,UNKNOWN,UNKNOWN,NOT_PROVEN,Production API exposed no exact change evidence
+lifecycle_runner_scheduler,UNKNOWN,UNKNOWN,NOT_PROVEN,No scheduler last-run evidence available
+lifecycle_persistence,UNKNOWN,UNKNOWN,NOT_PROVEN,Stage-bearing shadow rows not directly readable
+api_topics_read_model,UNKNOWN,130,OBSERVED,130 topics returned and 130 were INSUFFICIENT_DATA/currentStage=null

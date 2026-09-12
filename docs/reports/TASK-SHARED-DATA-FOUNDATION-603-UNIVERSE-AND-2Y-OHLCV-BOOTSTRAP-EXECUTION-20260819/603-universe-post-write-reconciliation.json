@@ -1,0 +1,23 @@
+{
+  "task_id": "TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-BOOTSTRAP-EXECUTION-20260819",
+  "source_final_canonical_head": "c40aa42e7cac665386009f29c94a8dafce896427",
+  "observed_query_output": [
+    "FORMAL_COUNTS|370|233|603|3",
+    "SECURITY|96",
+    "LIFECYCLE|97"
+  ],
+  "formal_target": 603,
+  "new_instrument_count": 96,
+  "new_security_identity_count": 96,
+  "new_lifecycle_count": 96,
+  "new_topic_relation_count": 0,
+  "new_structural_role_count": 0,
+  "new_score_projection_count": 0,
+  "reference_registry_version": "sdf-reference-603-v1",
+  "reference_registry_status": "ACTIVE",
+  "reference_catalogue_copy": "1 currency, 1 timezone, 1 session, 7 statuses, 3 adjustments, 24 calendar dates",
+  "universe_reconciliation": "PASS",
+  "zero_topic_new_instruments": true,
+  "zero_structural_role_new_instruments": true,
+  "zero_score_projection_new_instruments": true
+}

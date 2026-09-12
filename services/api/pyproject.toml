@@ -35,6 +35,7 @@ topicpilot-provider-preflight = "topicpilot_api.provider_preflight_cli:main"
 topicpilot-reference-check = "topicpilot_api.reference_cli:main"
 topicpilot-reference-bundle = "topicpilot_api.reference_bundle_cli:main"
 topicpilot-reference-bootstrap = "topicpilot_api.reference_bootstrap_cli:main"
+topicpilot-hist-002b-promotion = "topicpilot_api.market_data.historical_promotion:main"
 topicpilot-reference-transition = "topicpilot_api.reference_transition_cli:main"
 topicpilot-market-identity-remediation = "topicpilot_api.market_identity_remediation_cli:main"
 topicpilot-market-calendar-remediation = "topicpilot_api.market_calendar_remediation_cli:main"
@@ -42,6 +43,9 @@ topicpilot-market-semantics-check = "topicpilot_api.market_semantics_cli:main"
 topicpilot-history-probe = "topicpilot_api.live.history_probe:main"
 topicpilot-bootstrap = "topicpilot_api.live.bootstrap:main"
 topicpilot-lifecycle = "topicpilot_api.topic_lifecycle_cli:main"
+topicpilot-lifecycle-formal = "topicpilot_api.topic_lifecycle_formal_cli:main"
+topicpilot-topic-master = "topicpilot_api.topic_master_v1:main"
+topicpilot-topic-authority = "topicpilot_api.topic_authority_cli:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/topicpilot_api"]

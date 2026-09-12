@@ -1,6 +1,93 @@
 export const FAVORITES_STORAGE_KEY = "topic-pilot-favorites";
 export const TOPIC_FAVORITES_STORAGE_KEY = "topic-pilot-topic-favorites";
 export const FAVORITES_CHANGED_EVENT = "topic-pilot-favorites-changed";
+export const FAVORITES_SCHEMA_VERSION = 1;
+export const FAVORITE_ENTITY_TYPES = Object.freeze({ STOCK: "STOCK", TOPIC: "TOPIC" });
+
+const ENTITY_TYPES = new Set(Object.values(FAVORITE_ENTITY_TYPES));
+
+function normalizeEntityType(value, fallback = FAVORITE_ENTITY_TYPES.STOCK) {
+  const entityType = String(value ?? "").trim().toUpperCase();
+  if (!entityType) return fallback;
+  return ENTITY_TYPES.has(entityType) ? entityType : null;
+}
+
+export function stableStockId(code, market = null) {
+  const normalizedCode = String(code ?? "").trim();
+  const normalizedMarket = String(market ?? "").trim().toUpperCase();
+  return normalizedMarket && normalizedCode ? `${normalizedMarket}:${normalizedCode}` : normalizedCode;
+}
+
+export function stockCodeFromStableId(stableId) {
+  const value = String(stableId ?? "").trim();
+  const separator = value.indexOf(":");
+  return separator >= 0 ? value.slice(separator + 1) : value;
+}
+
+export function stockMarketFromStableId(stableId) {
+  const value = String(stableId ?? "").trim();
+  const separator = value.indexOf(":");
+  return separator > 0 ? value.slice(0, separator).toUpperCase() : null;
+}
+
+export function createFavoriteIdentity({ entityType, stableId, displayLabel, market } = {}) {
+  const normalizedEntityType = normalizeEntityType(entityType);
+  if (!normalizedEntityType) return null;
+  const normalizedStableId = normalizedEntityType === FAVORITE_ENTITY_TYPES.STOCK
+    ? stableStockId(stableId, market)
+    : String(stableId ?? "").trim();
+  if (!normalizedStableId) return null;
+  const identity = {
+    version: FAVORITES_SCHEMA_VERSION,
+    entityType: normalizedEntityType,
+    stableId: normalizedStableId,
+  };
+  const label = String(displayLabel ?? "").trim();
+  if (label) identity.displayLabel = label;
+  return identity;
+}
+
+/** @param {unknown} value @param {"STOCK"|"TOPIC"} [entityType] */
+export function normalizeFavoriteIdentities(value, entityType = FAVORITE_ENTITY_TYPES.STOCK) {
+  const normalizedEntityType = normalizeEntityType(entityType);
+  const items = Array.isArray(value) ? value : value && Array.isArray(value.items) ? value.items : [];
+  const seen = new Set();
+  const identities = [];
+  for (const item of items) {
+    const identity = typeof item === "string"
+      ? createFavoriteIdentity({ entityType: normalizedEntityType, stableId: item })
+      : createFavoriteIdentity({ ...item, entityType: item?.entityType ?? normalizedEntityType });
+    if (!identity) continue;
+    const key = favoriteIdentityKey(identity);
+    if (seen.has(key)) continue;
+    seen.add(key);
+    identities.push(identity);
+  }
+  return identities;
+}
+
+/** @param {unknown} identities @param {"STOCK"|"TOPIC"} [entityType] */
+export function serializeFavoriteIdentities(identities, entityType = FAVORITE_ENTITY_TYPES.STOCK) {
+  return JSON.stringify({
+    version: FAVORITES_SCHEMA_VERSION,
+    items: normalizeFavoriteIdentities(identities, entityType),
+  });
+}
+
+export function favoriteIdentityKey(identity) {
+  return `${normalizeEntityType(identity?.entityType)}:${String(identity?.stableId ?? "").trim()}`;
+}
+
+export function favoriteIdentityMatches(left, right) {
+  if (!left || !right || normalizeEntityType(left.entityType) !== normalizeEntityType(right.entityType)) return false;
+  if (String(left.stableId ?? "").trim() === String(right.stableId ?? "").trim()) return true;
+  if (normalizeEntityType(left.entityType) !== FAVORITE_ENTITY_TYPES.STOCK) return false;
+  const leftMarket = stockMarketFromStableId(left.stableId);
+  const rightMarket = stockMarketFromStableId(right.stableId);
+  return !leftMarket || !rightMarket
+    ? stockCodeFromStableId(left.stableId) === stockCodeFromStableId(right.stableId)
+    : false;
+}
 
 export function normalizeFavoriteCodes(value) {
   if (!Array.isArray(value)) return [];

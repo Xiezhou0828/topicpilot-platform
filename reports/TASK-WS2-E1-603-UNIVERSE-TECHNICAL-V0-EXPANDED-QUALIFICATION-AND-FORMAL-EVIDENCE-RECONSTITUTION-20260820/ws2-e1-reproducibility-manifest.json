@@ -1,0 +1,16 @@
+{
+  "task_id": "TASK-WS2-E1-603-UNIVERSE-TECHNICAL-V0-EXPANDED-QUALIFICATION-AND-FORMAL-EVIDENCE-RECONSTITUTION-20260820",
+  "reproducible": "NOT_RUN",
+  "normalized_aggregate_sha256": null,
+  "two_run_replay": "NOT_RUN",
+  "normalization_exclusions": [
+    "generated_at",
+    "wall_clock_runtime",
+    "deterministic ordering noise"
+  ],
+  "prior_canonical_reproducibility_preserved": {
+    "reproducible": true,
+    "normalized_surface_sha256": "c0c804dacf173f50f2980fc530b4e1c40888c33f3323e562f29883e1c38b6d9c"
+  },
+  "reason": "No canonical 603 input surface exists to replay."
+}

@@ -1,0 +1,20 @@
+{
+  "task_id": "TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-BOOTSTRAP-EXECUTION-20260819",
+  "requested_window": [
+    "2024-08-13",
+    "2026-08-13"
+  ],
+  "provider_no_data_work_items": 142,
+  "provider_gap_instrument_count": 13,
+  "unresolved_gap_instrument_count": 13,
+  "listing_truncated_instrument_count": 3,
+  "end_of_window_gap_instrument_count": 1,
+  "lifecycle_skipped_work_items": 41,
+  "lifecycle_skipped_instruments": [
+    "TPE:2646",
+    "TWO:6125",
+    "TWO:7792"
+  ],
+  "classification_rule": "NO_DATA is retained as provider-returned NO_DATA; it is not inferred as holiday, no-event, not-listed, suspended, or no-trade without authority evidence.",
+  "corporate_action_rule": "adjustment_state remains UNKNOWN; no adjusted/unadjusted continuity assumption."
+}

@@ -1,6 +1,20 @@
 [
   {
     "currency": "TWD",
+    "instrument_code": "1101",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "台泥"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "1301",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "台塑"
+  },
+  {
+    "currency": "TWD",
     "instrument_code": "1303",
     "instrument_type": "EQUITY",
     "market_code": "TPE",
@@ -43,6 +57,13 @@
   },
   {
     "currency": "TWD",
+    "instrument_code": "1402",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "遠東新"
+  },
+  {
+    "currency": "TWD",
     "instrument_code": "1438",
     "instrument_type": "EQUITY",
     "market_code": "TPE",
@@ -71,6 +92,13 @@
   },
   {
     "currency": "TWD",
+    "instrument_code": "1477",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "聚陽"
+  },
+  {
+    "currency": "TWD",
     "instrument_code": "1503",
     "instrument_type": "EQUITY",
     "market_code": "TPE",
@@ -96,6 +124,13 @@
     "instrument_type": "EQUITY",
     "market_code": "TPE",
     "name": "亞力"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "1515",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "力山"
   },
   {
     "currency": "TWD",
@@ -131,13 +166,6 @@
     "instrument_type": "EQUITY",
     "market_code": "TPE",
     "name": "倉佑"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "1584",
-    "instrument_type": "EQUITY",
-    "market_code": "TWO",
-    "name": "精剛"
   },
   {
     "currency": "TWD",
@@ -190,6 +218,13 @@
   },
   {
     "currency": "TWD",
+    "instrument_code": "1709",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "和益"
+  },
+  {
+    "currency": "TWD",
     "instrument_code": "1711",
     "instrument_type": "EQUITY",
     "market_code": "TPE",
@@ -201,6 +236,20 @@
     "instrument_type": "EQUITY",
     "market_code": "TPE",
     "name": "和桐"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "1717",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "長興"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "1718",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "中纖"
   },
   {
     "currency": "TWD",
@@ -225,6 +274,13 @@
   },
   {
     "currency": "TWD",
+    "instrument_code": "1736",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "喬山"
+  },
+  {
+    "currency": "TWD",
     "instrument_code": "1773",
     "instrument_type": "EQUITY",
     "market_code": "TPE",
@@ -232,10 +288,10 @@
   },
   {
     "currency": "TWD",
-    "instrument_code": "1785",
+    "instrument_code": "1795",
     "instrument_type": "EQUITY",
-    "market_code": "TWO",
-    "name": "光洋科"
+    "market_code": "TPE",
+    "name": "美時"
   },
   {
     "currency": "TWD",
@@ -246,6 +302,13 @@
   },
   {
     "currency": "TWD",
+    "instrument_code": "1809",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "中釉"
+  },
+  {
+    "currency": "TWD",
     "instrument_code": "1810",
     "instrument_type": "EQUITY",
     "market_code": "TPE",
@@ -253,10 +316,10 @@
   },
   {
     "currency": "TWD",
-    "instrument_code": "1815",
+    "instrument_code": "1909",
     "instrument_type": "EQUITY",
-    "market_code": "TWO",
-    "name": "富喬"
+    "market_code": "TPE",
+    "name": "榮成"
   },
   {
     "currency": "TWD",
@@ -323,10 +386,10 @@
   },
   {
     "currency": "TWD",
-    "instrument_code": "2061",
+    "instrument_code": "2101",
     "instrument_type": "EQUITY",
-    "market_code": "TWO",
-    "name": "風青"
+    "market_code": "TPE",
+    "name": "南港"
   },
   {
     "currency": "TWD",
@@ -351,10 +414,17 @@
   },
   {
     "currency": "TWD",
-    "instrument_code": "2221",
+    "instrument_code": "2208",
     "instrument_type": "EQUITY",
-    "market_code": "TWO",
-    "name": "大甲"
+    "market_code": "TPE",
+    "name": "台船"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "2231",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "為升"
   },
   {
     "currency": "TWD",
@@ -456,10 +526,31 @@
   },
   {
     "currency": "TWD",
+    "instrument_code": "2328",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "廣宇"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "2329",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "華泰"
+  },
+  {
+    "currency": "TWD",
     "instrument_code": "2330",
     "instrument_type": "EQUITY",
     "market_code": "TPE",
     "name": "台積電"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "2331",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "精英"
   },
   {
     "currency": "TWD",
@@ -505,6 +596,13 @@
   },
   {
     "currency": "TWD",
+    "instrument_code": "2349",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "錸德"
+  },
+  {
+    "currency": "TWD",
     "instrument_code": "2351",
     "instrument_type": "EQUITY",
     "market_code": "TPE",
@@ -523,6 +621,13 @@
     "instrument_type": "EQUITY",
     "market_code": "TPE",
     "name": "宏碁"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "2354",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "鴻準"
   },
   {
     "currency": "TWD",
@@ -579,6 +684,13 @@
     "instrument_type": "EQUITY",
     "market_code": "TPE",
     "name": "菱生"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "2371",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "大同"
   },
   {
     "currency": "TWD",
@@ -729,6 +841,13 @@
   },
   {
     "currency": "TWD",
+    "instrument_code": "2436",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "偉詮電"
+  },
+  {
+    "currency": "TWD",
     "instrument_code": "2441",
     "instrument_type": "EQUITY",
     "market_code": "TPE",
@@ -768,6 +887,13 @@
     "instrument_type": "EQUITY",
     "market_code": "TPE",
     "name": "飛宏"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "2458",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "義隆"
   },
   {
     "currency": "TWD",
@@ -960,6 +1086,83 @@
   },
   {
     "currency": "TWD",
+    "instrument_code": "2601",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "益航"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "2603",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "長榮"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "2605",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "新興"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "2606",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "裕民"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "2609",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "陽明"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "2610",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "華航"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "2611",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "志信"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "2613",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "中櫃"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "2615",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "萬海"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "2617",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "台航"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "2618",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "長榮航"
+  },
+  {
+    "currency": "TWD",
     "instrument_code": "2630",
     "instrument_type": "EQUITY",
     "market_code": "TPE",
@@ -974,10 +1177,31 @@
   },
   {
     "currency": "TWD",
+    "instrument_code": "2636",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "台驊控股"
+  },
+  {
+    "currency": "TWD",
     "instrument_code": "2645",
     "instrument_type": "EQUITY",
     "market_code": "TPE",
     "name": "長榮航太"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "2646",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "星宇航空"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "2851",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "中再保"
   },
   {
     "currency": "TWD",
@@ -1093,6 +1317,13 @@
   },
   {
     "currency": "TWD",
+    "instrument_code": "3036",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "文曄"
+  },
+  {
+    "currency": "TWD",
     "instrument_code": "3037",
     "instrument_type": "EQUITY",
     "market_code": "TPE",
@@ -1142,6 +1373,1490 @@
   },
   {
     "currency": "TWD",
+    "instrument_code": "3090",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "日電貿"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "3094",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "聯傑"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "3149",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "正達"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "3167",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "大量"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "3189",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "景碩"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "3231",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "緯創"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "3257",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "虹冠電"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "3296",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "勝德"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "3308",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "聯德"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "3312",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "弘憶股"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "3321",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "同泰"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "3338",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "泰碩"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "3346",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "麗清"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "3406",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "玉晶光"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "3413",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "京鼎"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "3443",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "創意"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "3450",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "聯鈞"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "3481",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "群創"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "3504",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "揚明光"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "3528",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "安馳"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "3532",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "台勝科"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "3533",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "嘉澤"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "3535",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "晶彩科"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "3543",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "州巧"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "3545",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "敦泰"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "3550",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "聯穎"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "3576",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "聯合再生"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "3583",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "辛耘"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "3588",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "通嘉"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "3596",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "智易"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "3605",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "宏致"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "3617",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "碩天"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "3622",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "洋華"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "3652",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "精聯"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "3653",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "健策"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "3661",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "世芯-KY"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "3665",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "貿聯-KY"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "3694",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "海華"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "3702",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "大聯大"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "3704",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "合勤控"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "3706",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "神達"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "3708",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "上緯投控"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "3711",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "日月光投控"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "3715",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "定穎投控"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "4540",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "全球傳動"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "4551",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "智伸科"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "4562",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "穎漢"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "4564",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "元翎"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "4566",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "時碩工業"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "4572",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "駐龍"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "4576",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "大銀微系統"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "4585",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "達明"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "4721",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "美琪瑪"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "4722",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "國精化"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "4729",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "熒茂"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "4739",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "康普"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "4760",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "勤凱"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "4764",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "雙鍵"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "4807",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "日成-KY"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "4903",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "聯光通"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "4906",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "正文"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "4908",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "前鼎"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "4916",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "事欣科"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "4919",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "新唐"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "4923",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "力士"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "4931",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "新盛力"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "4934",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "太極"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "4938",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "和碩"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "4939",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "亞電"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "4952",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "凌通"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "4958",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "臻鼎-KY"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "4960",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "誠美材"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "4961",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "天鈺"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "4966",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "譜瑞-KY"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "4967",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "十銓"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "4968",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "立積"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "4971",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "IET-KY"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "4973",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "廣穎"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "4976",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "佳凌"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "4977",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "眾達-KY"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "4979",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "華星光"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "4991",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "環宇-KY"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "5009",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "榮剛"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "5011",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "久陽"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "5222",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "全訊"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "5227",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "立凱-KY"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "5228",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "鈺鎧"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "5243",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "乙盛-KY"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "5269",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "祥碩"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "5274",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "信驊"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "5285",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "界霖"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "5288",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "豐祥-KY"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "5388",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "中磊"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "5426",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "振發"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "5434",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "崇越"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "5471",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "松翰"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "5489",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "彩富"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "5515",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "建國"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "5519",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "隆大"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "5534",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "長虹"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "5607",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "遠雄港"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "5608",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "四維航"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6108",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "競國"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6112",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "邁達特"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6116",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "彩晶"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6141",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "柏承"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6142",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "友勁"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6153",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "嘉聯益"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6155",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "鈞寶"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6166",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "凌華"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6168",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "宏齊"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6177",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "達麗"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6191",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "精成科"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6196",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "帆宣"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6197",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "佳必琪"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6202",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "盛群"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6205",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "詮欣"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6209",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "今國光"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6213",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "聯茂"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6214",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "精誠"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6215",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "和椿"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6226",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "光鼎"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6239",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "力成"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6243",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "迅杰"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6257",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "矽格"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6269",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "台郡"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6271",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "同欣電"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6278",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "台表科"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6282",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "康舒"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6285",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "啟碁"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6290",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "良維"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6405",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "悅城"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6409",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "旭隼"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6414",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "樺漢"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6415",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "矽力-KY"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6416",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "瑞祺電通"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6426",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "統新"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6442",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "光聖"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6443",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "元晶"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6449",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "鈺邦"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6451",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "訊芯-KY"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6477",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "安集"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6505",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "台塑化"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6515",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "穎崴"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6525",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "捷敏-KY"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6526",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "達發"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6531",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "愛普*"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6573",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "虹揚-KY"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6585",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "鼎基"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6591",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "動力-KY"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6605",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "帝寶"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6668",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "中揚光"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6669",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "緯穎"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6672",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "騰輝電子-KY"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6691",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "洋基工程"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6695",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "芯鼎"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6715",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "嘉基"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6719",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "力智"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6742",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "澤米"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6753",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "龍德造船"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6756",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "威鋒電子"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6757",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "台灣虎航-創"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6770",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "力積電"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6781",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "AES-KY"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6789",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "采鈺"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6799",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "來頡"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6805",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "富世達"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6806",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "森崴能源"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6830",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "汎銓"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6831",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "邁科"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6834",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "天二科技"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6861",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "睿生光學"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6906",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "現觀科"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6909",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "藏寶灣科技"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "6937",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "天虹"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "7610",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "聯友金屬"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "7750",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "新代"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "7769",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "鴻勁"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "7786",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "東方風能"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "7788",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "松川精密"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "8016",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "矽創"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "8021",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "尖點"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "8028",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "昇陽半導體"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "8033",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "雷虎"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "8039",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "台虹"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "8046",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "南電"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "8103",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "瀚荃"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "8104",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "錸寶"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "8110",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "華東"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "8112",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "至上"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "8131",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "福懋科"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "8150",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "南茂"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "8210",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "藍天"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "8222",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "寶一"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "8261",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "富鼎"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "8271",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "宇瞻"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "8374",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "羅昇"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "8996",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "高力"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "9904",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "寶成"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "9921",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "巨大"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "9945",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "潤泰新"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "9958",
+    "instrument_type": "EQUITY",
+    "market_code": "TPE",
+    "name": "世紀鋼"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "1569",
+    "instrument_type": "EQUITY",
+    "market_code": "TWO",
+    "name": "濱川"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "1584",
+    "instrument_type": "EQUITY",
+    "market_code": "TWO",
+    "name": "精剛"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "1586",
+    "instrument_type": "EQUITY",
+    "market_code": "TWO",
+    "name": "和勤"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "1785",
+    "instrument_type": "EQUITY",
+    "market_code": "TWO",
+    "name": "光洋科"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "1815",
+    "instrument_type": "EQUITY",
+    "market_code": "TWO",
+    "name": "富喬"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "2061",
+    "instrument_type": "EQUITY",
+    "market_code": "TWO",
+    "name": "風青"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "2070",
+    "instrument_type": "EQUITY",
+    "market_code": "TWO",
+    "name": "精湛"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "2221",
+    "instrument_type": "EQUITY",
+    "market_code": "TWO",
+    "name": "大甲"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "2637",
+    "instrument_type": "EQUITY",
+    "market_code": "TWO",
+    "name": "慧洋-KY"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "2641",
+    "instrument_type": "EQUITY",
+    "market_code": "TWO",
+    "name": "正德"
+  },
+  {
+    "currency": "TWD",
     "instrument_code": "3071",
     "instrument_type": "EQUITY",
     "market_code": "TWO",
@@ -1156,17 +2871,10 @@
   },
   {
     "currency": "TWD",
-    "instrument_code": "3090",
+    "instrument_code": "3088",
     "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "日電貿"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "3094",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "聯傑"
+    "market_code": "TWO",
+    "name": "艾訊"
   },
   {
     "currency": "TWD",
@@ -1198,13 +2906,6 @@
   },
   {
     "currency": "TWD",
-    "instrument_code": "3149",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "正達"
-  },
-  {
-    "currency": "TWD",
     "instrument_code": "3152",
     "instrument_type": "EQUITY",
     "market_code": "TWO",
@@ -1216,20 +2917,6 @@
     "instrument_type": "EQUITY",
     "market_code": "TWO",
     "name": "波若威"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "3167",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "大量"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "3189",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "景碩"
   },
   {
     "currency": "TWD",
@@ -1261,10 +2948,17 @@
   },
   {
     "currency": "TWD",
-    "instrument_code": "3231",
+    "instrument_code": "3227",
     "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "緯創"
+    "market_code": "TWO",
+    "name": "原相"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "3230",
+    "instrument_type": "EQUITY",
+    "market_code": "TWO",
+    "name": "錦明"
   },
   {
     "currency": "TWD",
@@ -1279,13 +2973,6 @@
     "instrument_type": "EQUITY",
     "market_code": "TWO",
     "name": "千如"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "3257",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "虹冠電"
   },
   {
     "currency": "TWD",
@@ -1338,31 +3025,10 @@
   },
   {
     "currency": "TWD",
-    "instrument_code": "3296",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "勝德"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "3308",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "聯德"
-  },
-  {
-    "currency": "TWD",
     "instrument_code": "3317",
     "instrument_type": "EQUITY",
     "market_code": "TWO",
     "name": "尼克森"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "3321",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "同泰"
   },
   {
     "currency": "TWD",
@@ -1380,24 +3046,10 @@
   },
   {
     "currency": "TWD",
-    "instrument_code": "3338",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "泰碩"
-  },
-  {
-    "currency": "TWD",
     "instrument_code": "3339",
     "instrument_type": "EQUITY",
     "market_code": "TWO",
     "name": "泰谷"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "3346",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "麗清"
   },
   {
     "currency": "TWD",
@@ -1436,17 +3088,17 @@
   },
   {
     "currency": "TWD",
+    "instrument_code": "3388",
+    "instrument_type": "EQUITY",
+    "market_code": "TWO",
+    "name": "崇越電"
+  },
+  {
+    "currency": "TWD",
     "instrument_code": "3390",
     "instrument_type": "EQUITY",
     "market_code": "TWO",
     "name": "旭軟"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "3413",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "京鼎"
   },
   {
     "currency": "TWD",
@@ -1457,17 +3109,10 @@
   },
   {
     "currency": "TWD",
-    "instrument_code": "3443",
+    "instrument_code": "3455",
     "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "創意"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "3450",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "聯鈞"
+    "market_code": "TWO",
+    "name": "由田"
   },
   {
     "currency": "TWD",
@@ -1475,13 +3120,6 @@
     "instrument_type": "EQUITY",
     "market_code": "TWO",
     "name": "安勤"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "3481",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "群創"
   },
   {
     "currency": "TWD",
@@ -1499,6 +3137,13 @@
   },
   {
     "currency": "TWD",
+    "instrument_code": "3490",
+    "instrument_type": "EQUITY",
+    "market_code": "TWO",
+    "name": "單井"
+  },
+  {
+    "currency": "TWD",
     "instrument_code": "3491",
     "instrument_type": "EQUITY",
     "market_code": "TWO",
@@ -1513,10 +3158,10 @@
   },
   {
     "currency": "TWD",
-    "instrument_code": "3504",
+    "instrument_code": "3508",
     "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "揚明光"
+    "market_code": "TWO",
+    "name": "位速"
   },
   {
     "currency": "TWD",
@@ -1534,13 +3179,6 @@
   },
   {
     "currency": "TWD",
-    "instrument_code": "3528",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "安馳"
-  },
-  {
-    "currency": "TWD",
     "instrument_code": "3529",
     "instrument_type": "EQUITY",
     "market_code": "TWO",
@@ -1548,38 +3186,10 @@
   },
   {
     "currency": "TWD",
-    "instrument_code": "3532",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "台勝科"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "3535",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "晶彩科"
-  },
-  {
-    "currency": "TWD",
     "instrument_code": "3537",
     "instrument_type": "EQUITY",
     "market_code": "TWO",
     "name": "堡達"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "3543",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "州巧"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "3550",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "聯穎"
   },
   {
     "currency": "TWD",
@@ -1604,13 +3214,6 @@
   },
   {
     "currency": "TWD",
-    "instrument_code": "3576",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "聯合再生"
-  },
-  {
-    "currency": "TWD",
     "instrument_code": "3577",
     "instrument_type": "EQUITY",
     "market_code": "TWO",
@@ -1618,24 +3221,10 @@
   },
   {
     "currency": "TWD",
-    "instrument_code": "3583",
+    "instrument_code": "3587",
     "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "辛耘"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "3588",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "通嘉"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "3596",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "智易"
+    "market_code": "TWO",
+    "name": "閎康"
   },
   {
     "currency": "TWD",
@@ -1646,31 +3235,10 @@
   },
   {
     "currency": "TWD",
-    "instrument_code": "3605",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "宏致"
-  },
-  {
-    "currency": "TWD",
     "instrument_code": "3615",
     "instrument_type": "EQUITY",
     "market_code": "TWO",
     "name": "安可"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "3617",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "碩天"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "3622",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "洋華"
   },
   {
     "currency": "TWD",
@@ -1688,38 +3256,17 @@
   },
   {
     "currency": "TWD",
-    "instrument_code": "3652",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "精聯"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "3653",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "健策"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "3661",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "世芯-KY"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "3665",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "貿聯-KY"
-  },
-  {
-    "currency": "TWD",
     "instrument_code": "3675",
     "instrument_type": "EQUITY",
     "market_code": "TWO",
     "name": "德微"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "3689",
+    "instrument_type": "EQUITY",
+    "market_code": "TWO",
+    "name": "湧德"
   },
   {
     "currency": "TWD",
@@ -1737,31 +3284,10 @@
   },
   {
     "currency": "TWD",
-    "instrument_code": "3694",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "海華"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "3706",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "神達"
-  },
-  {
-    "currency": "TWD",
     "instrument_code": "3707",
     "instrument_type": "EQUITY",
     "market_code": "TWO",
     "name": "漢磊"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "3708",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "上緯投控"
   },
   {
     "currency": "TWD",
@@ -1772,17 +3298,17 @@
   },
   {
     "currency": "TWD",
-    "instrument_code": "3711",
+    "instrument_code": "4114",
     "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "日月光投控"
+    "market_code": "TWO",
+    "name": "健喬"
   },
   {
     "currency": "TWD",
-    "instrument_code": "3715",
+    "instrument_code": "4123",
     "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "定穎投控"
+    "market_code": "TWO",
+    "name": "晟德"
   },
   {
     "currency": "TWD",
@@ -1793,6 +3319,13 @@
   },
   {
     "currency": "TWD",
+    "instrument_code": "4416",
+    "instrument_type": "EQUITY",
+    "market_code": "TWO",
+    "name": "三圓"
+  },
+  {
+    "currency": "TWD",
     "instrument_code": "4513",
     "instrument_type": "EQUITY",
     "market_code": "TWO",
@@ -1800,10 +3333,10 @@
   },
   {
     "currency": "TWD",
-    "instrument_code": "4540",
+    "instrument_code": "4533",
     "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "全球傳動"
+    "market_code": "TWO",
+    "name": "協易機"
   },
   {
     "currency": "TWD",
@@ -1821,13 +3354,6 @@
   },
   {
     "currency": "TWD",
-    "instrument_code": "4551",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "智伸科"
-  },
-  {
-    "currency": "TWD",
     "instrument_code": "4556",
     "instrument_type": "EQUITY",
     "market_code": "TWO",
@@ -1835,31 +3361,10 @@
   },
   {
     "currency": "TWD",
-    "instrument_code": "4562",
+    "instrument_code": "4561",
     "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "穎漢"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "4564",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "元翎"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "4572",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "駐龍"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "4576",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "大銀微系統"
+    "market_code": "TWO",
+    "name": "健椿"
   },
   {
     "currency": "TWD",
@@ -1867,13 +3372,6 @@
     "instrument_type": "EQUITY",
     "market_code": "TWO",
     "name": "達航科技"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "4585",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "達明"
   },
   {
     "currency": "TWD",
@@ -1898,13 +3396,6 @@
   },
   {
     "currency": "TWD",
-    "instrument_code": "4722",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "國精化"
-  },
-  {
-    "currency": "TWD",
     "instrument_code": "4729",
     "instrument_type": "EQUITY",
     "market_code": "TWO",
@@ -1919,17 +3410,10 @@
   },
   {
     "currency": "TWD",
-    "instrument_code": "4764",
+    "instrument_code": "4903",
     "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "雙鍵"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "4807",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "日成-KY"
+    "market_code": "TWO",
+    "name": "聯光通"
   },
   {
     "currency": "TWD",
@@ -1937,20 +3421,6 @@
     "instrument_type": "EQUITY",
     "market_code": "TWO",
     "name": "前鼎"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "4916",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "事欣科"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "4919",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "新唐"
   },
   {
     "currency": "TWD",
@@ -1968,20 +3438,6 @@
   },
   {
     "currency": "TWD",
-    "instrument_code": "4934",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "太極"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "4938",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "和碩"
-  },
-  {
-    "currency": "TWD",
     "instrument_code": "4939",
     "instrument_type": "EQUITY",
     "market_code": "TWO",
@@ -1989,10 +3445,10 @@
   },
   {
     "currency": "TWD",
-    "instrument_code": "4958",
+    "instrument_code": "4946",
     "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "臻鼎-KY"
+    "market_code": "TWO",
+    "name": "辣椒"
   },
   {
     "currency": "TWD",
@@ -2000,13 +3456,6 @@
     "instrument_type": "EQUITY",
     "market_code": "TWO",
     "name": "譜瑞-KY"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "4967",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "十銓"
   },
   {
     "currency": "TWD",
@@ -2021,20 +3470,6 @@
     "instrument_type": "EQUITY",
     "market_code": "TWO",
     "name": "廣穎"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "4976",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "佳凌"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "4977",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "眾達-KY"
   },
   {
     "currency": "TWD",
@@ -2066,13 +3501,6 @@
   },
   {
     "currency": "TWD",
-    "instrument_code": "5222",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "全訊"
-  },
-  {
-    "currency": "TWD",
     "instrument_code": "5227",
     "instrument_type": "EQUITY",
     "market_code": "TWO",
@@ -2087,20 +3515,6 @@
   },
   {
     "currency": "TWD",
-    "instrument_code": "5243",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "乙盛-KY"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "5269",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "祥碩"
-  },
-  {
-    "currency": "TWD",
     "instrument_code": "5274",
     "instrument_type": "EQUITY",
     "market_code": "TWO",
@@ -2108,24 +3522,17 @@
   },
   {
     "currency": "TWD",
-    "instrument_code": "5285",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "界霖"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "5288",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "豐祥-KY"
-  },
-  {
-    "currency": "TWD",
     "instrument_code": "5289",
     "instrument_type": "EQUITY",
     "market_code": "TWO",
     "name": "宜鼎"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "5291",
+    "instrument_type": "EQUITY",
+    "market_code": "TWO",
+    "name": "邑昇"
   },
   {
     "currency": "TWD",
@@ -2140,6 +3547,20 @@
     "instrument_type": "EQUITY",
     "market_code": "TWO",
     "name": "太欣"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "5309",
+    "instrument_type": "EQUITY",
+    "market_code": "TWO",
+    "name": "系統電"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "5321",
+    "instrument_type": "EQUITY",
+    "market_code": "TWO",
+    "name": "美而快"
   },
   {
     "currency": "TWD",
@@ -2185,13 +3606,6 @@
   },
   {
     "currency": "TWD",
-    "instrument_code": "5388",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "中磊"
-  },
-  {
-    "currency": "TWD",
     "instrument_code": "5410",
     "instrument_type": "EQUITY",
     "market_code": "TWO",
@@ -2210,13 +3624,6 @@
     "instrument_type": "EQUITY",
     "market_code": "TWO",
     "name": "振發"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "5434",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "崇越"
   },
   {
     "currency": "TWD",
@@ -2248,10 +3655,17 @@
   },
   {
     "currency": "TWD",
-    "instrument_code": "5471",
+    "instrument_code": "5468",
     "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "松翰"
+    "market_code": "TWO",
+    "name": "凱鈺"
+  },
+  {
+    "currency": "TWD",
+    "instrument_code": "5474",
+    "instrument_type": "EQUITY",
+    "market_code": "TWO",
+    "name": "聰泰"
   },
   {
     "currency": "TWD",
@@ -2290,20 +3704,6 @@
   },
   {
     "currency": "TWD",
-    "instrument_code": "5519",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "隆大"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "5534",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "長虹"
-  },
-  {
-    "currency": "TWD",
     "instrument_code": "5536",
     "instrument_type": "EQUITY",
     "market_code": "TWO",
@@ -2311,17 +3711,17 @@
   },
   {
     "currency": "TWD",
-    "instrument_code": "6112",
+    "instrument_code": "6016",
     "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "邁達特"
+    "market_code": "TWO",
+    "name": "康和證"
   },
   {
     "currency": "TWD",
-    "instrument_code": "6116",
+    "instrument_code": "6125",
     "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "彩晶"
+    "market_code": "TWO",
+    "name": "廣運"
   },
   {
     "currency": "TWD",
@@ -2346,20 +3746,6 @@
   },
   {
     "currency": "TWD",
-    "instrument_code": "6141",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "柏承"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "6142",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "友勁"
-  },
-  {
-    "currency": "TWD",
     "instrument_code": "6147",
     "instrument_type": "EQUITY",
     "market_code": "TWO",
@@ -2374,38 +3760,10 @@
   },
   {
     "currency": "TWD",
-    "instrument_code": "6153",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "嘉聯益"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "6155",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "鈞寶"
-  },
-  {
-    "currency": "TWD",
     "instrument_code": "6156",
     "instrument_type": "EQUITY",
     "market_code": "TWO",
     "name": "松上"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "6166",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "凌華"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "6168",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "宏齊"
   },
   {
     "currency": "TWD",
@@ -2427,13 +3785,6 @@
     "instrument_type": "EQUITY",
     "market_code": "TWO",
     "name": "立敦"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "6177",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "達麗"
   },
   {
     "currency": "TWD",
@@ -2465,31 +3816,17 @@
   },
   {
     "currency": "TWD",
-    "instrument_code": "6191",
+    "instrument_code": "6190",
     "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "精成科"
+    "market_code": "TWO",
+    "name": "萬泰科"
   },
   {
     "currency": "TWD",
-    "instrument_code": "6196",
+    "instrument_code": "6199",
     "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "帆宣"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "6197",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "佳必琪"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "6202",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "盛群"
+    "market_code": "TWO",
+    "name": "天品"
   },
   {
     "currency": "TWD",
@@ -2500,13 +3837,6 @@
   },
   {
     "currency": "TWD",
-    "instrument_code": "6205",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "詮欣"
-  },
-  {
-    "currency": "TWD",
     "instrument_code": "6207",
     "instrument_type": "EQUITY",
     "market_code": "TWO",
@@ -2514,31 +3844,17 @@
   },
   {
     "currency": "TWD",
-    "instrument_code": "6209",
+    "instrument_code": "6217",
     "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "今國光"
+    "market_code": "TWO",
+    "name": "中探針"
   },
   {
     "currency": "TWD",
-    "instrument_code": "6213",
+    "instrument_code": "6218",
     "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "聯茂"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "6214",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "精誠"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "6215",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "和椿"
+    "market_code": "TWO",
+    "name": "豪勉"
   },
   {
     "currency": "TWD",
@@ -2549,20 +3865,6 @@
   },
   {
     "currency": "TWD",
-    "instrument_code": "6226",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "光鼎"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "6239",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "力成"
-  },
-  {
-    "currency": "TWD",
     "instrument_code": "6241",
     "instrument_type": "EQUITY",
     "market_code": "TWO",
@@ -2570,24 +3872,10 @@
   },
   {
     "currency": "TWD",
-    "instrument_code": "6243",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "迅杰"
-  },
-  {
-    "currency": "TWD",
     "instrument_code": "6244",
     "instrument_type": "EQUITY",
     "market_code": "TWO",
     "name": "茂迪"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "6257",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "矽格"
   },
   {
     "currency": "TWD",
@@ -2605,24 +3893,10 @@
   },
   {
     "currency": "TWD",
-    "instrument_code": "6269",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "台郡"
-  },
-  {
-    "currency": "TWD",
     "instrument_code": "6270",
     "instrument_type": "EQUITY",
     "market_code": "TWO",
     "name": "倍微"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "6271",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "同欣電"
   },
   {
     "currency": "TWD",
@@ -2647,17 +3921,17 @@
   },
   {
     "currency": "TWD",
-    "instrument_code": "6282",
+    "instrument_code": "6284",
     "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "康舒"
+    "market_code": "TWO",
+    "name": "佳邦"
   },
   {
     "currency": "TWD",
-    "instrument_code": "6285",
+    "instrument_code": "6290",
     "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "啟碁"
+    "market_code": "TWO",
+    "name": "良維"
   },
   {
     "currency": "TWD",
@@ -2665,41 +3939,6 @@
     "instrument_type": "EQUITY",
     "market_code": "TWO",
     "name": "沛亨"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "6405",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "悅城"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "6409",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "旭隼"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "6414",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "樺漢"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "6415",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "矽力-KY"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "6416",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "瑞祺電通"
   },
   {
     "currency": "TWD",
@@ -2724,31 +3963,10 @@
   },
   {
     "currency": "TWD",
-    "instrument_code": "6442",
+    "instrument_code": "6457",
     "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "光聖"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "6443",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "元晶"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "6449",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "鈺邦"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "6451",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "訊芯-KY"
+    "market_code": "TWO",
+    "name": "紘康"
   },
   {
     "currency": "TWD",
@@ -2759,10 +3977,10 @@
   },
   {
     "currency": "TWD",
-    "instrument_code": "6477",
+    "instrument_code": "6472",
     "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "安集"
+    "market_code": "TWO",
+    "name": "保瑞"
   },
   {
     "currency": "TWD",
@@ -2773,10 +3991,10 @@
   },
   {
     "currency": "TWD",
-    "instrument_code": "6505",
+    "instrument_code": "6494",
     "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "台塑化"
+    "market_code": "TWO",
+    "name": "九齊"
   },
   {
     "currency": "TWD",
@@ -2787,13 +4005,6 @@
   },
   {
     "currency": "TWD",
-    "instrument_code": "6515",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "穎崴"
-  },
-  {
-    "currency": "TWD",
     "instrument_code": "6517",
     "instrument_type": "EQUITY",
     "market_code": "TWO",
@@ -2801,24 +4012,24 @@
   },
   {
     "currency": "TWD",
-    "instrument_code": "6525",
+    "instrument_code": "6530",
     "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "捷敏-KY"
+    "market_code": "TWO",
+    "name": "創威"
   },
   {
     "currency": "TWD",
-    "instrument_code": "6526",
+    "instrument_code": "6532",
     "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "達發"
+    "market_code": "TWO",
+    "name": "瑞耘"
   },
   {
     "currency": "TWD",
-    "instrument_code": "6531",
+    "instrument_code": "6533",
     "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "愛普*"
+    "market_code": "TWO",
+    "name": "晶心科"
   },
   {
     "currency": "TWD",
@@ -2843,24 +4054,24 @@
   },
   {
     "currency": "TWD",
-    "instrument_code": "6573",
+    "instrument_code": "6584",
     "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "虹揚-KY"
+    "market_code": "TWO",
+    "name": "南俊國際"
   },
   {
     "currency": "TWD",
     "instrument_code": "6585",
     "instrument_type": "EQUITY",
-    "market_code": "TPE",
+    "market_code": "TWO",
     "name": "鼎基"
   },
   {
     "currency": "TWD",
-    "instrument_code": "6591",
+    "instrument_code": "6588",
     "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "動力-KY"
+    "market_code": "TWO",
+    "name": "東典"
   },
   {
     "currency": "TWD",
@@ -2868,13 +4079,6 @@
     "instrument_type": "EQUITY",
     "market_code": "TWO",
     "name": "富強鑫"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "6605",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "帝寶"
   },
   {
     "currency": "TWD",
@@ -2927,27 +4131,6 @@
   },
   {
     "currency": "TWD",
-    "instrument_code": "6668",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "中揚光"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "6669",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "緯穎"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "6672",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "騰輝電子-KY"
-  },
-  {
-    "currency": "TWD",
     "instrument_code": "6683",
     "instrument_type": "EQUITY",
     "market_code": "TWO",
@@ -2969,13 +4152,6 @@
   },
   {
     "currency": "TWD",
-    "instrument_code": "6691",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "洋基工程"
-  },
-  {
-    "currency": "TWD",
     "instrument_code": "6693",
     "instrument_type": "EQUITY",
     "market_code": "TWO",
@@ -2983,24 +4159,10 @@
   },
   {
     "currency": "TWD",
-    "instrument_code": "6695",
+    "instrument_code": "6716",
     "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "芯鼎"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "6715",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "嘉基"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "6719",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "力智"
+    "market_code": "TWO",
+    "name": "應廣"
   },
   {
     "currency": "TWD",
@@ -3011,13 +4173,6 @@
   },
   {
     "currency": "TWD",
-    "instrument_code": "6742",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "澤米"
-  },
-  {
-    "currency": "TWD",
     "instrument_code": "6752",
     "instrument_type": "EQUITY",
     "market_code": "TWO",
@@ -3025,66 +4180,10 @@
   },
   {
     "currency": "TWD",
-    "instrument_code": "6753",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "龍德造船"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "6756",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "威鋒電子"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "6770",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "力積電"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "6781",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "AES-KY"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "6789",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "采鈺"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "6799",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "來頡"
-  },
-  {
-    "currency": "TWD",
     "instrument_code": "6803",
     "instrument_type": "EQUITY",
     "market_code": "TWO",
     "name": "崑鼎"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "6805",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "富世達"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "6806",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "森崴能源"
   },
   {
     "currency": "TWD",
@@ -3102,34 +4201,6 @@
   },
   {
     "currency": "TWD",
-    "instrument_code": "6830",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "汎銓"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "6831",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "邁科"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "6834",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "天二科技"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "6861",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "睿生光學"
-  },
-  {
-    "currency": "TWD",
     "instrument_code": "6870",
     "instrument_type": "EQUITY",
     "market_code": "TWO",
@@ -3144,38 +4215,10 @@
   },
   {
     "currency": "TWD",
-    "instrument_code": "6906",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "現觀科"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "6909",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "藏寶灣科技"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "6937",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "天虹"
-  },
-  {
-    "currency": "TWD",
     "instrument_code": "7402",
     "instrument_type": "EQUITY",
     "market_code": "TWO",
     "name": "邑錡"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "7610",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "聯友金屬"
   },
   {
     "currency": "TWD",
@@ -3200,20 +4243,6 @@
   },
   {
     "currency": "TWD",
-    "instrument_code": "7750",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "新代"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "7769",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "鴻勁"
-  },
-  {
-    "currency": "TWD",
     "instrument_code": "7777",
     "instrument_type": "EQUITY",
     "market_code": "TWO",
@@ -3221,31 +4250,10 @@
   },
   {
     "currency": "TWD",
-    "instrument_code": "7786",
+    "instrument_code": "7792",
     "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "東方風能"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "7788",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "松川精密"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "8016",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "矽創"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "8021",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "尖點"
+    "market_code": "TWO",
+    "name": "安葆"
   },
   {
     "currency": "TWD",
@@ -3263,31 +4271,10 @@
   },
   {
     "currency": "TWD",
-    "instrument_code": "8028",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "昇陽半導體"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "8033",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "雷虎"
-  },
-  {
-    "currency": "TWD",
     "instrument_code": "8038",
     "instrument_type": "EQUITY",
     "market_code": "TWO",
     "name": "長園科"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "8039",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "台虹"
   },
   {
     "currency": "TWD",
@@ -3309,13 +4296,6 @@
     "instrument_type": "EQUITY",
     "market_code": "TWO",
     "name": "蜜望實"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "8046",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "南電"
   },
   {
     "currency": "TWD",
@@ -3368,6 +4348,13 @@
   },
   {
     "currency": "TWD",
+    "instrument_code": "8086",
+    "instrument_type": "EQUITY",
+    "market_code": "TWO",
+    "name": "宏捷科"
+  },
+  {
+    "currency": "TWD",
     "instrument_code": "8088",
     "instrument_type": "EQUITY",
     "market_code": "TWO",
@@ -3396,24 +4383,24 @@
   },
   {
     "currency": "TWD",
-    "instrument_code": "8104",
+    "instrument_code": "8109",
     "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "錸寶"
+    "market_code": "TWO",
+    "name": "博大"
   },
   {
     "currency": "TWD",
-    "instrument_code": "8112",
+    "instrument_code": "8111",
     "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "至上"
+    "market_code": "TWO",
+    "name": "立碁"
   },
   {
     "currency": "TWD",
-    "instrument_code": "8150",
+    "instrument_code": "8121",
     "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "南茂"
+    "market_code": "TWO",
+    "name": "越峰"
   },
   {
     "currency": "TWD",
@@ -3424,17 +4411,17 @@
   },
   {
     "currency": "TWD",
-    "instrument_code": "8210",
+    "instrument_code": "8227",
     "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "藍天"
+    "market_code": "TWO",
+    "name": "巨有科技"
   },
   {
     "currency": "TWD",
-    "instrument_code": "8222",
+    "instrument_code": "8234",
     "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "寶一"
+    "market_code": "TWO",
+    "name": "新漢"
   },
   {
     "currency": "TWD",
@@ -3449,20 +4436,6 @@
     "instrument_type": "EQUITY",
     "market_code": "TWO",
     "name": "朋程"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "8261",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "富鼎"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "8271",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "宇瞻"
   },
   {
     "currency": "TWD",
@@ -3487,13 +4460,6 @@
   },
   {
     "currency": "TWD",
-    "instrument_code": "8374",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "羅昇"
-  },
-  {
-    "currency": "TWD",
     "instrument_code": "8383",
     "instrument_type": "EQUITY",
     "market_code": "TWO",
@@ -3501,51 +4467,9 @@
   },
   {
     "currency": "TWD",
-    "instrument_code": "8996",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "高力"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "9958",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "世紀鋼"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "6426",
-    "instrument_type": "EQUITY",
-    "market_code": "TPE",
-    "name": "統新"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "6588",
+    "instrument_code": "8932",
     "instrument_type": "EQUITY",
     "market_code": "TWO",
-    "name": "東典"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "8111",
-    "instrument_type": "EQUITY",
-    "market_code": "TWO",
-    "name": "立碁"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "4903",
-    "instrument_type": "EQUITY",
-    "market_code": "TWO",
-    "name": "聯光通"
-  },
-  {
-    "currency": "TWD",
-    "instrument_code": "6530",
-    "instrument_type": "EQUITY",
-    "market_code": "TWO",
-    "name": "創威"
+    "name": "智通*"
   }
 ]

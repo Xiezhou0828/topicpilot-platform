@@ -18,6 +18,9 @@
     "code": "SUSPENDED"
   },
   {
+    "code": "TERMINATED"
+  },
+  {
     "code": "UNKNOWN"
   }
 ]

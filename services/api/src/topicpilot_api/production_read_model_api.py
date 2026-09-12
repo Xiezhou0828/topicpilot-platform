@@ -2,20 +2,25 @@
 
 from __future__ import annotations
 
+from datetime import date
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
 from topicpilot_api.database import get_db
+from topicpilot_api.historical_read_model import read_historical_bars
 from topicpilot_api.problems import ApiProblem
 from topicpilot_api.production_read_model import read_stock, read_stocks, read_topic, read_topics
 from topicpilot_api.schemas import (
+    HistoricalPriceHistoryResponse,
     StockReadModel,
     StockReadModelPage,
+    StockTechnicalPublicationRead,
     TopicReadModel,
     TopicReadModelPage,
 )
+from topicpilot_api.technical_publication import build_technical_publication
 
 router = APIRouter(prefix="/api/v2", tags=["production-read-model"])
 DbSession = Annotated[Session, Depends(get_db)]
@@ -48,6 +53,83 @@ def stocks(
             limit=limit,
             offset=offset,
         )
+    except ValueError as exc:
+        raise ApiProblem(
+            422,
+            "Request validation failed",
+            str(exc),
+            "https://topicpilot.example/problems/validation",
+        ) from exc
+
+
+@router.get(
+    "/stocks/{symbol}/price-history",
+    response_model=HistoricalPriceHistoryResponse,
+    summary="Read bounded canonical daily price history",
+)
+def stock_price_history(
+    symbol: str,
+    session: DbSession,
+    from_date: Annotated[date, Query(alias="from")],
+    to_date: Annotated[date, Query(alias="to")],
+    market_code: Annotated[str | None, Query(alias="market")] = None,
+    limit: int = Query(default=200, ge=1, le=200),
+) -> dict:
+    if to_date < from_date:
+        raise ApiProblem(
+            422,
+            "Request validation failed",
+            "to must be on or after from",
+            "https://topicpilot.example/problems/validation",
+        )
+    try:
+        return read_historical_bars(
+            session,
+            symbol,
+            from_date,
+            to_date,
+            market_code,
+            limit,
+        )
+    except ValueError as exc:
+        raise ApiProblem(
+            422,
+            "Request validation failed",
+            str(exc),
+            "https://topicpilot.example/problems/validation",
+        ) from exc
+
+
+@router.get(
+    "/stocks/{symbol}/technical",
+    response_model=StockTechnicalPublicationRead,
+    summary="Read Stock Technical V0 evidence and bounded publication status",
+)
+def stock_technical(
+    symbol: str,
+    session: DbSession,
+    from_date: Annotated[date, Query(alias="from")],
+    to_date: Annotated[date, Query(alias="to")],
+    market_code: Annotated[str | None, Query(alias="market")] = None,
+    limit: int = Query(default=200, ge=1, le=200),
+) -> dict:
+    if to_date < from_date:
+        raise ApiProblem(
+            422,
+            "Request validation failed",
+            "to must be on or after from",
+            "https://topicpilot.example/problems/validation",
+        )
+    try:
+        history = read_historical_bars(
+            session,
+            symbol,
+            from_date,
+            to_date,
+            market_code,
+            limit,
+        )
+        return build_technical_publication(history)
     except ValueError as exc:
         raise ApiProblem(
             422,

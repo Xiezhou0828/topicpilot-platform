@@ -24,14 +24,14 @@ export default function GuidePage() {
           <ol className="guideSteps">
             <li><strong>今日工作台</strong><span>先看市場狀態、今日動作與下一步，確認資料能不能使用。</span><Link href="/">前往今日</Link></li>
             <li><strong>題材總覽</strong><span>確認資金集中在哪些大族群與細題材，再看廣度與相關股票。</span><Link href="/topics">前往題材</Link></li>
-            <li><strong>股票一覽</strong><span>用快速篩選縮小範圍；需要技術細節時再展開進階篩選。</span><Link href="/watchlist">前往股票一覽</Link></li>
-            <li><strong>個股明細</strong><span>最後確認觸發、支撐、失效、觀察資格與完整判讀原因。</span></li>
+            <li><strong>股票一覽</strong><span>依市場與正式 read model 瀏覽股票，並查看後端發布的技術證據。</span><Link href="/stocks">前往股票一覽</Link></li>
+            <li><strong>個股明細</strong><span>最後確認市場身份、正式 EOD、原始歷史與已發布的 Technical evidence；未發布能力不自行推導。</span></li>
           </ol>
         </section>
 
         <section className="guideSection" id="pages">
           <div className="guideSectionTitle"><span>02</span><div><p className="eyebrow">Page roles</p><h2>題材頁與股票一覽的差別</h2></div></div>
-          <div className="guideCompare"><article><h3>題材總覽</h3><p>回答「資金往哪個方向集中」。先比較大族群，再進細題材查看強度、廣度與相關股票。</p><Link href="/topics">依題材找方向</Link></article><article><h3>股票一覽</h3><p>回答「完整股票宇宙中，哪些股票符合目前條件」。列表保留價格、成交量與簡潔燈號，交易判讀集中在個股明細。</p><Link href="/watchlist">依條件找股票</Link></article></div>
+          <div className="guideCompare"><article><h3>題材總覽</h3><p>回答「資金往哪個方向集中」。先比較大族群，再進細題材查看強度、廣度與相關股票。</p><Link href="/topics">依題材找方向</Link></article><article><h3>股票一覽</h3><p>依市場身份查看正式 EOD、題材關係、原始歷史與 Technical evidence；未發布欄位保持不可用。</p><Link href="/stocks">查看正式股票</Link></article></div>
         </section>
 
         <section className="guideSection" id="prices">

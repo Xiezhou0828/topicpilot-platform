@@ -1,0 +1,42 @@
+{
+  "changed_state_rows": 12714,
+  "core_without_strong_lead_rows": 176,
+  "d1_main_rise_context_rows": 147,
+  "leader_only_main_rise_rows": 0,
+  "main_rise_to_mature_5_session_events": 88,
+  "main_rise_transitions": 136,
+  "mature_to_declining_events": 4,
+  "mature_to_main_rise_events": 68,
+  "old_l5_hash": "17faa9be1189d6fab1bdfe518a1faf9e90d9be1ec994008ed59beef8bf6ecb95",
+  "old_one_day_flips": 28,
+  "old_rows": 16250,
+  "old_stage_distribution": {
+    "DECLINING": 2811,
+    "FAIL_CLOSED": 4750,
+    "FERMENTING": 1642,
+    "INSUFFICIENT_DATA": 1250,
+    "MAIN_RISE": 3057,
+    "MATURE": 1094,
+    "PENDING": 1204,
+    "SPROUTING": 442
+  },
+  "old_transition_count": 642,
+  "related_only_main_rise_rows": 0,
+  "segment_2_plus_rows": 744,
+  "segment_2_plus_transitions": 82,
+  "segment_3_plus_rows": 385,
+  "segment_3_plus_transitions": 44,
+  "unchanged_state_rows": 3536,
+  "v1_one_day_flips": 0,
+  "v1_rows": 16250,
+  "v1_stage_distribution": {
+    "DECLINING": 75,
+    "FERMENTING": 3238,
+    "INSUFFICIENT_DATA": 7750,
+    "MAIN_RISE": 1306,
+    "MATURE": 1321,
+    "PENDING": 680,
+    "SPROUTING": 1880
+  },
+  "v1_transition_count": 338
+}

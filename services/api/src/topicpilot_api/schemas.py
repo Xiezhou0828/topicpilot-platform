@@ -1,9 +1,12 @@
 from __future__ import annotations
 
 from datetime import date, datetime
-from typing import Any
+from decimal import Decimal
+from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
+
+from topicpilot_api.topic_lifecycle_contract import LifecycleAvailability
 
 
 class ApiModel(BaseModel):
@@ -78,9 +81,19 @@ class StockSummary(ApiModel):
     data_freshness: str | None = Field(alias="dataFreshness")
 
 
+class HistoricalPriceSource(ApiModel):
+    source_code: str = Field(alias="sourceCode")
+    adapter_version: str = Field(alias="adapterVersion")
+    observation_semantics: str = Field(alias="observationSemantics")
+    reference_data_version: str = Field(alias="referenceDataVersion")
+    normalization_contract_version: str = Field(alias="normalizationContractVersion")
+    mapping_policy_version: str = Field(alias="mappingPolicyVersion")
+
+
 class HistoricalPricePoint(ApiModel):
     trading_date: date = Field(alias="tradingDate")
     observed_at: datetime = Field(alias="observedAt")
+    retrieved_at: datetime | None = Field(default=None, alias="retrievedAt")
     open: float | None
     high: float | None
     low: float | None
@@ -88,17 +101,172 @@ class HistoricalPricePoint(ApiModel):
     volume: float | None
     source_code: str = Field(alias="sourceCode")
     quality_state: str = Field(alias="qualityState")
+    adjustment_state: str = Field(default="UNKNOWN", alias="adjustmentState")
+    source: HistoricalPriceSource | None = None
+    adapter_version: str | None = Field(default=None, alias="adapterVersion")
+    normalization_contract_version: str | None = Field(
+        default=None, alias="normalizationContractVersion"
+    )
+    mapping_policy_version: str | None = Field(default=None, alias="mappingPolicyVersion")
+    reference_data_version: str | None = Field(default=None, alias="referenceDataVersion")
+    volume_unit_code: str | None = Field(default=None, alias="volumeUnitCode")
+    volume_scale: int | None = Field(default=None, alias="volumeScale")
+    volume_aggregation: str | None = Field(default=None, alias="volumeAggregation")
+
+
+class HistoricalLifecycle(ApiModel):
+    status_code: str = Field(alias="statusCode")
+    effective_from: date = Field(alias="effectiveFrom")
+    effective_to: date | None = Field(default=None, alias="effectiveTo")
+    evidence_id: str = Field(alias="evidenceId")
 
 
 class HistoricalPriceHistoryResponse(ApiModel):
     code: str
     market: str
+    as_of: datetime | None = Field(default=None, alias="asOf")
     requested_from: date = Field(alias="requestedFrom")
     requested_to: date = Field(alias="requestedTo")
+    returned_from: date | None = Field(default=None, alias="returnedFrom")
+    returned_to: date | None = Field(default=None, alias="returnedTo")
+    latest_trading_date: date | None = Field(default=None, alias="latestTradingDate")
+    latest_observed_at: datetime | None = Field(default=None, alias="latestObservedAt")
+    latest_retrieved_at: datetime | None = Field(default=None, alias="latestRetrievedAt")
     status: str
+    coverage_state: str = Field(default="UNKNOWN", alias="coverageState")
+    freshness_state: str = Field(default="UNKNOWN", alias="freshnessState")
     availability_reason: str | None = Field(alias="availabilityReason")
     point_count: int = Field(alias="pointCount")
+    has_more: bool = Field(default=False, alias="hasMore")
+    lifecycle: HistoricalLifecycle | None = None
     items: list[HistoricalPricePoint]
+
+
+class StockTechnicalInputProvenance(ApiModel):
+    authority: Literal["V2_CANONICAL_OBSERVATION_CHAIN"]
+    series_semantics: Literal["RAW_OBSERVED_DAILY_BAR"] = Field(alias="seriesSemantics")
+    adjustment_state: Literal["ADJUSTED", "UNADJUSTED", "UNKNOWN", "CONFLICT"] = Field(
+        alias="adjustmentState"
+    )
+    quality_states: list[str] = Field(alias="qualityStates")
+    observation_semantics: list[str] = Field(alias="observationSemantics")
+    source_codes: list[str] = Field(alias="sourceCodes")
+    adapter_versions: list[str] = Field(alias="adapterVersions")
+    normalization_contract_versions: list[str] = Field(alias="normalizationContractVersions")
+    mapping_policy_versions: list[str] = Field(alias="mappingPolicyVersions")
+    reference_data_versions: list[str] = Field(alias="referenceDataVersions")
+    lineage_state: Literal["VERSIONED", "MIXED", "INCOMPLETE"] = Field(alias="lineageState")
+    observation_count: int = Field(alias="observationCount")
+    returned_from: date | None = Field(alias="returnedFrom")
+    returned_to: date | None = Field(alias="returnedTo")
+    latest_trading_date: date | None = Field(alias="latestTradingDate")
+    latest_observed_at: datetime | None = Field(alias="latestObservedAt")
+    latest_retrieved_at: datetime | None = Field(alias="latestRetrievedAt")
+
+
+class TechnicalObservationWindow(ApiModel):
+    start_session: date | None = Field(default=None, alias="startSession")
+    end_session: date | None = Field(default=None, alias="endSession")
+    observation_count: int = Field(alias="observationCount")
+
+
+class TechnicalEvidence(ApiModel):
+    instrument_identity: str = Field(alias="instrumentIdentity")
+    symbol: str
+    market: str
+    indicator_id: str = Field(alias="indicatorId")
+    indicator_family: str = Field(alias="indicatorFamily")
+    indicator_version: str = Field(alias="indicatorVersion")
+    value: Decimal | None
+    session_date: date = Field(alias="sessionDate")
+    as_of: datetime | None = Field(default=None, alias="asOf")
+    required_observation_count: int = Field(alias="requiredObservationCount")
+    actual_observation_count: int = Field(alias="actualObservationCount")
+    required_observation_window: TechnicalObservationWindow | None = Field(
+        default=None, alias="requiredObservationWindow"
+    )
+    actual_observation_window: TechnicalObservationWindow | None = Field(
+        default=None, alias="actualObservationWindow"
+    )
+    algorithm_id: str = Field(alias="algorithmId")
+    algorithm_version: str = Field(alias="algorithmVersion")
+    parameter_set: dict[str, Any] = Field(alias="parameterSet")
+    price_basis: Literal["RAW_OBSERVED", "NOT_PRICE_BASED"] = Field(alias="priceBasis")
+    continuity_state: Literal[
+        "CONTINUITY_PASS_BOUNDED", "CONTINUITY_FAIL", "CONTINUITY_UNKNOWN"
+    ] = Field(alias="continuityState")
+    continuity_evidence: dict[str, Any] = Field(alias="continuityEvidence")
+    event_authority_status: Literal[
+        "KNOWN_EVENT",
+        "NO_KNOWN_EVENT_EVIDENCE",
+        "LOOKUP_UNAVAILABLE",
+        "NOT_APPLICABLE",
+        "ERROR",
+    ] = Field(alias="eventAuthorityStatus")
+    event_lookup_state: str = Field(alias="eventLookupState")
+    event_lookup_evidence: dict[str, Any] = Field(alias="eventLookupEvidence")
+    known_event_handling: list[dict[str, Any]] = Field(alias="knownEventHandling")
+    source_authority: str = Field(alias="sourceAuthority")
+    source_lineage: dict[str, Any] = Field(alias="sourceLineage")
+    publication_state: Literal[
+        "FORMAL", "FORMAL_WITH_LIMITATION", "UNAVAILABLE", "DEFERRED", "UNKNOWN"
+    ] = Field(alias="publicationState")
+    availability_reason: str | None = Field(default=None, alias="availabilityReason")
+    limitation_reasons: list[str] = Field(alias="limitationReasons", default_factory=list)
+
+
+class StockTechnicalPublicationRead(ApiModel):
+    code: str
+    market: str
+    technical_contract_version: str = Field(alias="technicalContractVersion")
+    requested_from: date = Field(alias="requestedFrom")
+    requested_to: date = Field(alias="requestedTo")
+    as_of: datetime | None = Field(default=None, alias="asOf")
+    technical_policy_version: str = Field(alias="technicalPolicyVersion")
+    status: Literal["FORMAL", "DEFERRED", "UNAVAILABLE"]
+    publication_state: Literal[
+        "FORMAL",
+        "FORMAL_WITH_LIMITATION",
+        "DEFERRED",
+        "UNAVAILABLE",
+        "NOT_PUBLISHED",
+    ] = Field(alias="publicationState")
+    input_state: Literal["RAW_OBSERVED", "UNAVAILABLE"] = Field(alias="inputState")
+    calculation_owner: Literal["BACKEND_ONLY"] = Field(alias="calculationOwner")
+    browser_calculation_allowed: Literal["NO"] = Field(alias="browserCalculationAllowed")
+    availability_reasons: list[str] = Field(alias="availabilityReasons")
+    reason_codes: list[str] = Field(alias="reasonCodes")
+    limitation_reasons: list[str] = Field(alias="limitationReasons")
+    technical_result_status: Literal["VALID", "INELIGIBLE", "UNAVAILABLE", "ERROR"] = Field(
+        alias="technicalResultStatus"
+    )
+    technical_eligibility: Literal["ELIGIBLE", "INELIGIBLE", "UNAVAILABLE", "ERROR"] = Field(
+        alias="technicalEligibility"
+    )
+    event_authority_status: Literal[
+        "KNOWN_EVENT",
+        "NO_KNOWN_EVENT_EVIDENCE",
+        "LOOKUP_UNAVAILABLE",
+        "NOT_APPLICABLE",
+        "ERROR",
+    ] = Field(alias="eventAuthorityStatus")
+    publication_status: Literal[
+        "AVAILABLE",
+        "AVAILABLE_WITH_LIMITATION",
+        "BLOCKED",
+        "UNAVAILABLE",
+        "ERROR",
+    ] = Field(alias="publicationStatus")
+    deferred_indicator_families: list[str] = Field(alias="deferredIndicatorFamilies")
+    published_indicators: list[str] = Field(alias="publishedIndicators")
+    algorithm_id: str | None = Field(alias="algorithmId")
+    algorithm_version: str | None = Field(alias="algorithmVersion")
+    parameter_set_id: str | None = Field(alias="parameterSetId")
+    adjustment_policy_id: str | None = Field(alias="adjustmentPolicyId")
+    price_basis: Literal["RAW_OBSERVED"] = Field(alias="priceBasis")
+    continuity_policy: str = Field(alias="continuityPolicy")
+    technical_evidence: list[TechnicalEvidence] = Field(alias="technicalEvidence")
+    provenance: StockTechnicalInputProvenance | None
 
 
 class LiveRunSummary(ApiModel):
@@ -259,14 +427,51 @@ class TopicSnapshotResponse(ApiModel):
     topic_score: float | None = Field(alias="topicScore")
     topic_direction: str = Field(alias="topicDirection")
     stock_count: int = Field(alias="stockCount")
-    strong_stock_count: int = Field(alias="strongStockCount")
-    weak_stock_count: int = Field(alias="weakStockCount")
+    strong_stock_count: int | None = Field(alias="strongStockCount")
+    weak_stock_count: int | None = Field(alias="weakStockCount")
     average_change: float | None = Field(alias="averageChange")
     observed_stock_count: int = Field(alias="observedStockCount")
     coverage_pct: float | None = Field(alias="coveragePct")
     data_status: str = Field(alias="dataStatus")
     score_status: str = Field(alias="scoreStatus")
     calculation_version: str = Field(alias="calculationVersion")
+    publication_mode: str | None = Field(default=None, alias="publicationMode")
+    membership_mode: str | None = Field(default=None, alias="membershipMode")
+    relation_version: str | None = Field(default=None, alias="relationVersion")
+    mapping_effective_from: date | None = Field(default=None, alias="mappingEffectiveFrom")
+    membership_snapshot_id: str | None = Field(default=None, alias="membershipSnapshotId")
+    membership_snapshot_hash: str | None = Field(default=None, alias="membershipSnapshotHash")
+    session_code: str | None = Field(default=None, alias="sessionCode")
+    calendar_code: str | None = Field(default=None, alias="calendarCode")
+    trading_day_state: str | None = Field(default=None, alias="tradingDayState")
+    generated_state: str | None = Field(default=None, alias="generatedState")
+    finality_state: str | None = Field(default=None, alias="finalityState")
+    publication_state: str | None = Field(default=None, alias="publicationState")
+    generated_at: datetime | None = Field(default=None, alias="generatedAt")
+    as_of_at: datetime | None = Field(default=None, alias="asOfAt")
+    finalized_at: datetime | None = Field(default=None, alias="finalizedAt")
+    published_at: datetime | None = Field(default=None, alias="publishedAt")
+    expected_count: int | None = Field(default=None, alias="expectedCount")
+    eligible_count: int | None = Field(default=None, alias="eligibleCount")
+    no_trade_count: int | None = Field(default=None, alias="noTradeCount")
+    unknown_count: int | None = Field(default=None, alias="unknownCount")
+    excluded_count: int | None = Field(default=None, alias="excludedCount")
+    positive_count: int | None = Field(default=None, alias="positiveCount")
+    flat_count: int | None = Field(default=None, alias="flatCount")
+    negative_count: int | None = Field(default=None, alias="negativeCount")
+    freshness_state: str | None = Field(default=None, alias="freshnessState")
+    unavailable_reason: str | None = Field(default=None, alias="unavailableReason")
+    quality_flags: dict[str, Any] | None = Field(default=None, alias="qualityFlags")
+    reference_registry_version: str | None = Field(default=None, alias="referenceRegistryVersion")
+    mapping_policy_version: str | None = Field(default=None, alias="mappingPolicyVersion")
+    source_run_id: str | None = Field(default=None, alias="sourceRunId")
+    source_artifact_id: str | None = Field(default=None, alias="sourceArtifactId")
+    source_artifact_hash: str | None = Field(default=None, alias="sourceArtifactHash")
+    lineage_hash: str | None = Field(default=None, alias="lineageHash")
+    snapshot_identity: str | None = Field(default=None, alias="snapshotIdentity")
+    correction_sequence: int | None = Field(default=None, alias="correctionSequence")
+    supersedes_snapshot_id: str | None = Field(default=None, alias="supersedesSnapshotId")
+    supersession_reason: str | None = Field(default=None, alias="supersessionReason")
     updated_at: datetime = Field(alias="updatedAt")
 
 
@@ -296,6 +501,46 @@ class StockTechnicalEvidence(ApiModel):
     technical_state: str | None = Field(alias="technicalState")
 
 
+class StockEodSource(ApiModel):
+    source_code: str = Field(alias="sourceCode")
+    adapter_version: str = Field(alias="adapterVersion")
+    observation_semantics: str = Field(alias="observationSemantics")
+    quality_state: str = Field(alias="qualityState")
+    observed_at: datetime | None = Field(alias="observedAt")
+    retrieved_at: datetime | None = Field(alias="retrievedAt")
+    reference_data_version: str = Field(alias="referenceDataVersion")
+    normalization_contract_version: str = Field(alias="normalizationContractVersion")
+    mapping_policy_version: str = Field(alias="mappingPolicyVersion")
+    adjustment_state: str | None = Field(default=None, alias="adjustmentState")
+
+
+class StockEodRead(ApiModel):
+    trading_date: date = Field(alias="tradingDate")
+    open: float | None
+    high: float | None
+    low: float | None
+    close: float | None
+    previous_close: float | None = Field(alias="previousClose")
+    change: float | None
+    change_pct: float | None = Field(alias="changePct")
+    volume: float | None
+    turnover: float | None
+    adjustment_state: Literal["ADJUSTED", "UNADJUSTED", "UNKNOWN"] = Field(alias="adjustmentState")
+    price_source: StockEodSource | None = Field(alias="priceSource")
+    volume_source: StockEodSource | None = Field(alias="volumeSource")
+    observed_at: datetime | None = Field(alias="observedAt")
+    retrieved_at: datetime | None = Field(alias="retrievedAt")
+    data_status: Literal[
+        "AVAILABLE",
+        "PARTIAL",
+        "UNAVAILABLE",
+        "NO_TRADE",
+        "SUSPENDED",
+        "ADJUSTMENT_UNKNOWN",
+        "SOURCE_CONFLICT",
+    ] = Field(alias="dataStatus")
+
+
 class StockReadModel(ApiModel):
     instrument_id: str = Field(alias="instrumentId")
     symbol: str
@@ -309,6 +554,7 @@ class StockReadModel(ApiModel):
     price: float | None
     change_pct: float | None = Field(alias="changePct")
     volume: float | None
+    eod: StockEodRead | None
     observed_at: datetime | None = Field(alias="observedAt")
     retrieved_at: datetime | None = Field(alias="retrievedAt")
     data_freshness: str = Field(alias="dataFreshness")
@@ -357,16 +603,29 @@ class TopicLifecycleRead(ApiModel):
     current_stage: str | None = Field(alias="currentStage")
     current_stage_entered_at: date | None = Field(alias="currentStageEnteredAt")
     current_stage_trading_days: int | None = Field(alias="currentStageTradingDays")
+    main_rise_segment: int | None = Field(default=None, alias="mainRiseSegment")
+    segment_entry_date: date | None = Field(default=None, alias="segmentEntryDate")
+    segment_anchor_date: date | None = Field(default=None, alias="segmentAnchorDate")
+    days_since_meaningful_expansion: int | None = Field(
+        default=None, alias="daysSinceMeaningfulExpansion"
+    )
+    drawdown_from_peak_pct: float | None = Field(default=None, alias="drawdownFromPeakPct")
     history: list[TopicLifecycleSegmentRead] = Field(default_factory=list)
-    data_status: str = Field(alias="dataStatus")
+    data_status: LifecycleAvailability = Field(alias="dataStatus")
     evaluation_date: date | None = Field(default=None, alias="evaluationDate")
     previous_stage: str | None = Field(default=None, alias="previousStage")
     candidate_stage: str | None = Field(default=None, alias="candidateStage")
     transition_decision: str | None = Field(default=None, alias="transitionDecision")
     transition_reason: str | None = Field(default=None, alias="transitionReason")
+    as_of_at: datetime | None = Field(default=None, alias="asOfAt")
+    publication_status: str | None = Field(default=None, alias="publicationStatus")
+    contract_version: str | None = Field(default=None, alias="contractVersion")
+    calculation_version: str | None = Field(default=None, alias="calculationVersion")
+    evaluation_mode: str | None = Field(default=None, alias="evaluationMode")
     policy_version: str | None = Field(default=None, alias="policyVersion")
     evidence: dict[str, Any] = Field(default_factory=dict)
     confidence: dict[str, Any] = Field(default_factory=dict)
+    lineage: dict[str, Any] = Field(default_factory=dict)
 
 
 class TopicConstituentRead(ApiModel):
@@ -383,6 +642,10 @@ class TopicConstituentRead(ApiModel):
     freshness: str
     technical_state: str | None = Field(alias="technicalState")
     relative_topic_state: str | None = Field(alias="relativeTopicState")
+    fact_state: str | None = Field(default=None, alias="factState")
+    observation_date: date | None = Field(default=None, alias="observationDate")
+    observed_classification: str | None = Field(default=None, alias="observedClassification")
+    fact_hash: str | None = Field(default=None, alias="factHash")
 
 
 class TopicReadModel(ApiModel):
@@ -403,6 +666,9 @@ class TopicReadModel(ApiModel):
     status: list[TopicStatusRead] = Field(default_factory=list)
     lifecycle: TopicLifecycleRead
     constituents: list[TopicConstituentRead] = Field(default_factory=list)
+    publication: dict[str, Any] = Field(default_factory=dict)
+    quality: dict[str, Any] = Field(default_factory=dict)
+    lineage: dict[str, Any] = Field(default_factory=dict)
 
 
 class TopicReadModelPage(ApiModel):
@@ -627,24 +893,139 @@ class OpportunityShadowResponse(ApiModel):
     opportunity: OpportunityShadowCard | None = None
 
 
+class HomeSectionStatus(ApiModel):
+    status: Literal["AVAILABLE", "PARTIAL", "UNAVAILABLE"]
+    data_date: date | None = Field(alias="dataDate")
+    as_of: datetime | None = Field(alias="asOf")
+    source: str | None = None
+    reason_code: str | None = Field(alias="reasonCode", default=None)
+    user_message: str | None = Field(alias="userMessage", default=None)
+
+
+class HomePublicationLineage(ApiModel):
+    canonical_daily_market: str | None = Field(alias="canonicalDailyMarket", default=None)
+    formal_topics: str | None = Field(alias="formalTopics", default=None)
+
+
+class HomePublication(ApiModel):
+    trading_date: date | None = Field(alias="tradingDate")
+    as_of: datetime | None = Field(alias="asOf")
+    generated_at: datetime | None = Field(alias="generatedAt")
+    published_at: datetime | None = Field(alias="publishedAt")
+    state: Literal[
+        "COLLECTED",
+        "MATERIALIZED",
+        "VALIDATED",
+        "PUBLISHED",
+        "UNAVAILABLE",
+        "SUPERSEDED",
+    ]
+    version: str
+    source_run_id: str | None = Field(alias="sourceRunId", default=None)
+    source_dataset_id: str | None = Field(alias="sourceDatasetId", default=None)
+    lineage: HomePublicationLineage = Field(default_factory=HomePublicationLineage)
+    completeness: dict[str, Any] = Field(default_factory=dict)
+
+
+class HomeMarketIndex(ApiModel):
+    market: str
+    index_code: str = Field(alias="indexCode")
+    index_name: str = Field(alias="indexName")
+    trading_date: date | None = Field(alias="tradingDate")
+    session: str | None = None
+    value: float | None
+    previous_close: float | None = Field(alias="previousClose")
+    change: float | None
+    change_pct: float | None = Field(alias="changePct")
+    as_of: datetime | None = Field(alias="asOf")
+    source: str | None = None
+    lineage: str | None = None
+    status: str
+    reason_code: str | None = Field(alias="reasonCode", default=None)
+
+
+class HomeMarketTurnover(ApiModel):
+    market: str
+    trading_date: date | None = Field(alias="tradingDate")
+    session: str | None = None
+    value: float | None
+    currency: str | None
+    unit: str | None
+    scale: int | None
+    as_of: datetime | None = Field(alias="asOf")
+    source: str | None = None
+    lineage: str | None = None
+    status: str
+    reason_code: str | None = Field(alias="reasonCode", default=None)
+
+
+class HomeMarketBreadth(ApiModel):
+    market: str
+    eligible: int
+    observed: int
+    advance: int | None
+    decline: int | None
+    flat: int | None
+    unavailable: int
+    coverage: dict[str, Any] = Field(default_factory=dict)
+    as_of: datetime | None = Field(alias="asOf")
+    source: str
+
+
+class HomeMarketDistributionBucket(ApiModel):
+    key: str
+    label: str
+    count: int
+
+
+class HomeMarketDistribution(ApiModel):
+    market: str
+    status: str
+    eligible: int
+    excluded: int
+    buckets: list[HomeMarketDistributionBucket] = Field(default_factory=list)
+    coverage: dict[str, Any] = Field(default_factory=dict)
+    as_of: datetime | None = Field(alias="asOf")
+    source: str
+    reason_code: str | None = Field(alias="reasonCode", default=None)
+
+
+class HomeMarketLimits(ApiModel):
+    limit_up: int | None = Field(alias="limitUp")
+    limit_down: int | None = Field(alias="limitDown")
+    reason_code: str | None = Field(alias="reasonCode", default=None)
+    source: str | None = None
+
+
 class HomeMarketHealth(ApiModel):
     market: str
     status: str
     total_stocks: int | None = Field(alias="totalStocks")
+    observed: int | None = None
+    breadth_eligible: int | None = Field(alias="breadthEligible", default=None)
     advance: int | None
     decline: int | None
     flat: int | None
+    net: int | None = None
+    advance_pct: float | None = Field(alias="advancePct", default=None)
+    decline_pct: float | None = Field(alias="declinePct", default=None)
+    flat_pct: float | None = Field(alias="flatPct", default=None)
     unavailable: int | None
 
 
 class HomeMarketOverview(ApiModel):
     data_date: date | None = Field(alias="dataDate")
     updated_at: datetime | None = Field(alias="updatedAt")
-    data_status: str = Field(alias="dataStatus")
+    data_status: Literal["AVAILABLE", "PARTIAL", "UNAVAILABLE"] = Field(alias="dataStatus")
     tracked_stock_count: int = Field(alias="trackedStockCount")
     tracked_topic_count: int = Field(alias="trackedTopicCount")
     latest_snapshot_time: datetime | None = Field(alias="latestSnapshotTime")
     market_health: HomeMarketHealth | None = Field(alias="marketHealth")
+    breadth: list[HomeMarketBreadth] = Field(default_factory=list)
+    distribution: HomeMarketDistribution | None = None
+    indices: list[HomeMarketIndex] = Field(default_factory=list)
+    turnover: list[HomeMarketTurnover] = Field(default_factory=list)
+    limits: HomeMarketLimits | None = None
     source: str
 
 
@@ -655,6 +1036,8 @@ class HomeDailyFocus(ApiModel):
     bullets: list[str] = Field(default_factory=list)
     data_date: date | None = Field(alias="dataDate")
     source: str
+    reason_code: str | None = Field(alias="reasonCode", default=None)
+    user_message: str | None = Field(alias="userMessage", default=None)
 
 
 class HomeTopicCard(ApiModel):
@@ -667,6 +1050,7 @@ class HomeTopicCard(ApiModel):
     summary: str
     favorite: bool
     data_date: date | None = Field(alias="dataDate")
+    ranking_evidence: dict[str, Any] = Field(alias="rankingEvidence", default_factory=dict)
 
 
 class HomeMarketPulseEvent(ApiModel):
@@ -683,8 +1067,11 @@ class HomeRotationTopic(ApiModel):
     topic: str
     topic_slug: str = Field(alias="topicSlug")
     strength_delta: float = Field(alias="strengthDelta")
-    current_grade: str = Field(alias="currentGrade")
+    current_grade: str | None = Field(alias="currentGrade")
     summary: str
+    data_date: date | None = Field(alias="dataDate", default=None)
+    as_of: datetime | None = Field(alias="asOf", default=None)
+    rotation_evidence: dict[str, Any] = Field(alias="rotationEvidence", default_factory=dict)
 
 
 class HomeOpportunityStock(ApiModel):
@@ -716,6 +1103,7 @@ class HomeDataQuality(ApiModel):
     temporary_sections: list[str] = Field(alias="temporarySections", default_factory=list)
     missing_sections: list[str] = Field(alias="missingSections", default_factory=list)
     notes: list[str] = Field(default_factory=list)
+    diagnostic_codes: dict[str, str] = Field(alias="diagnosticCodes", default_factory=dict)
 
 
 class HomeResponse(ApiModel):
@@ -730,3 +1118,7 @@ class HomeResponse(ApiModel):
     cooling_topics: list[HomeRotationTopic] = Field(alias="coolingTopics", default_factory=list)
     opportunities: list[HomeOpportunityTopic] = Field(default_factory=list)
     data_quality: HomeDataQuality = Field(alias="dataQuality")
+    publication: HomePublication | None = None
+    section_statuses: dict[str, HomeSectionStatus] = Field(
+        alias="sectionStatuses", default_factory=dict
+    )

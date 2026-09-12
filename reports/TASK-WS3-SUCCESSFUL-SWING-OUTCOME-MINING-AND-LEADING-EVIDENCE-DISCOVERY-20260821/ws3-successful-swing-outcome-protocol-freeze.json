@@ -1,0 +1,133 @@
+{
+  "a_state_context": {
+    "causality_claim": false,
+    "definitions_reused_without_change": true,
+    "lookback_sessions": 20
+  },
+  "allowed_feature_families": [
+    "TREND_STRUCTURE",
+    "MOMENTUM",
+    "VOLUME_PARTICIPATION",
+    "VOLATILITY_COMPRESSION",
+    "RELATIVE_STRENGTH",
+    "A_STATE_CONTEXT"
+  ],
+  "discovery_classification": {
+    "market_temporal_consistency_floor": 0.5,
+    "promising_abs_smd": 0.1,
+    "robust_abs_smd": 0.2,
+    "robust_minimum": 40,
+    "sample_floor": 20,
+    "thresholds_are_descriptive_not_optimized": true
+  },
+  "event_anchor": {
+    "anchor_is_frozen_before_outcomes": true,
+    "anchor_price": "raw accepted Close(T)",
+    "candidate_input_cutoff": "<=T",
+    "source_lineage_required": true,
+    "unit": "one accepted canonical daily session with >=60 prior accepted sessions and >=10 future accepted sessions"
+  },
+  "feature_windows": [
+    -20,
+    -10,
+    -5,
+    -3,
+    -1,
+    0
+  ],
+  "holdout": {
+    "peeking": false,
+    "period": [
+      "2026-08-01",
+      "2026-08-13"
+    ]
+  },
+  "matched_control_protocol": {
+    "date_distance_first_tier_days": 45,
+    "deterministic_fallback_tiers": [
+      "same_market+ma60+quarter+pre_event_bins+date<=45d",
+      "same_market+ma60+quarter+date<=45d",
+      "same_market+ma60+date<=90d"
+    ],
+    "future_returns_not_used_in_distance": true,
+    "one_to_one_without_reuse": true,
+    "same_calendar_quarter_first_tier": true,
+    "same_ma60_eligibility": true,
+    "same_market": true,
+    "same_pre_event_liquidity_quintile_within_1": true,
+    "same_pre_event_volatility_quintile_within_1": true,
+    "same_price_scale_bucket_within_1": true
+  },
+  "outcome_strata": {
+    "close_persistence": "fraction of future horizon closes at or above threshold",
+    "forward_return": "Close(T+h)/Close(T)-1",
+    "horizons": [
+      5,
+      10
+    ],
+    "labels": [
+      "T5_GE_3",
+      "T5_GE_5",
+      "T5_GE_10",
+      "T10_GE_3",
+      "T10_GE_5",
+      "T10_GE_10"
+    ],
+    "mae": "min(Low(T+1..T+h)/Close(T)-1)",
+    "max_close_drawdown": "minimum close-to-running-peak drawdown over T+1..T+h",
+    "mfe": "max(High(T+1..T+h)/Close(T)-1)",
+    "outcome_variables_evaluation_only": true,
+    "thresholds": [
+      0.03,
+      0.05,
+      0.1
+    ],
+    "time_to_threshold": "first future accepted session close at or above threshold"
+  },
+  "overlap_and_episodes": {
+    "cluster_gap_sessions": 10,
+    "distinct_episode_count": true,
+    "episode_representative": "first qualifying anchor",
+    "no_profitability_based_deduplication": true,
+    "non_overlapping_control_reuse": true,
+    "raw_qualifying_anchor_count": true
+  },
+  "prohibitions": [
+    "A1 retuning",
+    "A2 retuning",
+    "production rule",
+    "recommendation",
+    "BUY/SELL",
+    "intraday/VWAP/Volume Profile",
+    "DB mutation",
+    "API/UI",
+    "NEXT_TASK mutation"
+  ],
+  "relative_strength": {
+    "predeclared_windows": [
+      5,
+      20
+    ],
+    "status": "UNAVAILABLE_NO_CANONICAL_BENCHMARK",
+    "topic_peer_history_used": false
+  },
+  "research_only": true,
+  "schema_version": "ws3-successful-swing-outcome-protocol-freeze.v1",
+  "task_id": "TASK-WS3-SUCCESSFUL-SWING-OUTCOME-MINING-AND-LEADING-EVIDENCE-DISCOVERY-20260821",
+  "technical_v0_consumption": {
+    "definitions_reused_without_change": true,
+    "indicator_set_closed_at_14": true,
+    "technical_v1_intraday_features": false
+  },
+  "universe": {
+    "accepted_ohlcv_rows": 288881,
+    "adjustment_state": "UNKNOWN_RAW_ONLY",
+    "dataset_sha256": "e803733e796d8f4d8cf00575cd4045f28c9364572fc61b31ef490e8a65ff47a4",
+    "instrument_count": 603,
+    "synthetic_fill": false,
+    "window": [
+      "2024-08-13",
+      "2026-08-13"
+    ]
+  }
+}

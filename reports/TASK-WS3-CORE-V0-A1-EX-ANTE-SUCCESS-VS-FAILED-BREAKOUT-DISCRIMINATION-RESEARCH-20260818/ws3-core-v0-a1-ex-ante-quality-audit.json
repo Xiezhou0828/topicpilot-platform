@@ -1,0 +1,92 @@
+{
+  "task_id": "TASK-WS3-CORE-V0-A1-EX-ANTE-SUCCESS-VS-FAILED-BREAKOUT-DISCRIMINATION-RESEARCH-20260818",
+  "source_canonical_head": "3ab70b612cbb30335b43a5650d145488f9e8b2c1",
+  "source_baseline_head": "9ca9ba4f15359aa5ea96ba4c3d6bed9439d0346e",
+  "frozen_spec_hash": "6e4cc504f969098e263cfa8e7c43240e9575a3f72f0641ba39da22794ea9870d",
+  "dataset_authority": "canonical Postgres historical read model via read_historical_bars; REC-A1 event dataset preserved",
+  "frozen_spec_unchanged": true,
+  "cohort_definitions_unchanged": true,
+  "cohort_reconciliation": {
+    "expected": {
+      "A1_TOTAL_COUNT": 700,
+      "SUCCESSFUL_A1_COUNT": 386,
+      "FAILED_BREAKOUT_A1_COUNT": 214,
+      "CONTINUED_CONSOLIDATION_COUNT": 30,
+      "STRUCTURE_LOSS_COUNT": 37,
+      "UNCLASSIFIED_COUNT": 33
+    },
+    "observed": {
+      "A1_TOTAL_COUNT": 700,
+      "SUCCESSFUL_A1_COUNT": 386,
+      "FAILED_BREAKOUT_A1_COUNT": 214,
+      "CONTINUED_CONSOLIDATION_COUNT": 30,
+      "STRUCTURE_LOSS_COUNT": 37,
+      "UNCLASSIFIED_COUNT": 33
+    },
+    "pass": true,
+    "missing_taxonomy_keys": [],
+    "unexpected_taxonomy_labels": [],
+    "transition_definition_reused": true,
+    "failure_taxonomy_reused": true,
+    "outcome_labels_are_not_features": true
+  },
+  "feature_manifest_frozen": true,
+  "feature_manifest_frozen_before_outcome_comparison": true,
+  "feature_timestamp_violations": 0,
+  "outcome_derived_features": false,
+  "lookahead_violations": 0,
+  "threshold_optimization_executed": false,
+  "parameter_search_executed": false,
+  "feature_hunting_executed": false,
+  "deterministic_cohort_generation": true,
+  "deterministic_feature_generation": true,
+  "reproducibility": "PASS",
+  "source_reconciliation": {
+    "expected_real_rows": 63826,
+    "observed_real_rows": 63826,
+    "expected_distinct_instruments": 507,
+    "observed_distinct_instruments": 507,
+    "expected_date_range": "2026-02-02..2026-08-13",
+    "observed_date_range": "2026-02-02..2026-08-13",
+    "pass": true
+  },
+  "accepted_baseline_state_reconciliation": {
+    "A1": true,
+    "A2": true,
+    "TOTAL": true
+  },
+  "event_aware_policy_preserved": true,
+  "database_writes": false,
+  "migration_executed": false,
+  "production_mutation": false,
+  "multivariate_diagnostic_only": true,
+  "technical_indicator_source": "existing deterministic technical_publication algorithms where derivable; no production publication mutation",
+  "analytical_artifact_hashes": {
+    "algorithm": "SHA-256",
+    "byte_normalization": "CRLF_TO_LF_BEFORE_HASH",
+    "artifacts": {
+      "ws3-core-v0-a1-ex-ante-feature-manifest.json": "38aedb6e6f3e50e0e32e269a367224dd16fae398a6dd410db78212fc5e005e19",
+      "ws3-core-v0-a1-success-vs-failed-feature-comparison.csv": "5396e001be99d85c76403f975e2d0ad6e3390973bd52ba910f330d299f7c3489",
+      "ws3-core-v0-a1-feature-quantile-monotonicity.csv": "716629a3f75f5df1892090738837082b93c90d810d765881da513b10263ce806",
+      "ws3-core-v0-a1-feature-time-stability.csv": "6e520dd322baab8831676956053dc336df4d6dcbda018b484be78ec06950cd9b",
+      "ws3-core-v0-a1-feature-date-regime-confounding.csv": "7bc677845b244dab405ce2261519698884484b193942b4338f6c327f0d623bab",
+      "ws3-core-v0-a1-feature-family-assessment.json": "6c7cbafbc7374b53b0fbdf2292868661a6b8143bfa17a0faede7a6c552b361e2",
+      "ws3-core-v0-a1-multivariate-diagnostic.json": "e44e5b28fb0ff0502888c4bbec0b0db5ba4564a9b7c20214f068dc4fbed221d0"
+    },
+    "aggregate_sha256": "788e5f05769dabde10da461b694fbfaa189e13408c39229eb29783144cc67df6"
+  },
+  "classification_counts": {
+    "PROMISING_BUT_INSUFFICIENT": 12,
+    "ROBUST_CANDIDATE": 20,
+    "REGIME_CONFOUNDED": 2,
+    "UNSTABLE": 6
+  },
+  "cohort_counts": {
+    "A1_TOTAL_COUNT": 700,
+    "SUCCESSFUL_A1_COUNT": 386,
+    "FAILED_BREAKOUT_A1_COUNT": 214,
+    "CONTINUED_CONSOLIDATION_COUNT": 30,
+    "STRUCTURE_LOSS_COUNT": 37,
+    "UNCLASSIFIED_COUNT": 33
+  }
+}

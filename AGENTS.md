@@ -69,6 +69,147 @@ or `docs/handoffs/TOPICPILOT_CURRENT_HANDOFF.md`; do not create duplicate
 authority files merely to satisfy an old task prompt. The 2026-08-13 chat
 handoff and the old task-doc-001 documentation set are historical inputs only.
 
+## SDLC lifecycle and canonicalization authority
+
+Use this ordered lifecycle for every capability and release claim:
+
+`IMPLEMENTED` -> `VALIDATED` -> `CANONICALIZED` -> `RELEASE_CANDIDATE` -> `PRODUCTION_RELEASED` -> `POST_DEPLOY_VERIFIED`
+
+- `IMPLEMENTED` means the scoped source change exists; `VALIDATED` means the
+  relevant checks passed for that source and scope.
+- `CANONICALIZED` means the approved content is in the canonical repository at
+  a committed SHA with source-to-canonical provenance. `RELEASE_CANDIDATE`
+  means that exact committed SHA was checked out cleanly and passed the
+  release-candidate gates. `PRODUCTION_RELEASED` requires owner-authorized
+  promotion and exact API/Web, migration/data, and revision evidence.
+  `POST_DEPLOY_VERIFIED` requires public/runtime verification after promotion.
+- `FINAL_STATUS=COMPLETE`, `CAPABILITY_STATUS=COMPLETE`, and `tests PASS` are
+  evidence about a task or check only; none of them implies canonicalization,
+  release-candidate status, Production release, or public visibility.
+
+Canonical repository state is the single authority. An isolated worktree PASS
+is source evidence until its exact source SHA, canonical SHA, and accepted file
+mapping are recorded. A committed consumer must never depend on a provider,
+fixture, generated artifact, or document that is only dirty or untracked.
+Clean-candidate evidence must come from the committed exact SHA in a clean
+checkout; a dirty-worktree PASS is diagnostic only. An implementation closure
+must report `CANONICAL_STATUS`, `RELEASE_STATUS`, and
+`PRODUCTION_VERIFICATION`. If the result is not canonical, it must also report
+exactly one `CANONICAL_RECONCILIATION_DISPOSITION`:
+`READY_FOR_CANONICAL_RECONCILIATION`, `CANONICALIZED`, `BLOCKED_COLLISION`, or
+`OWNER_DECISION_REQUIRED`.
+
+Orphaned worktrees are forbidden: every isolated result must be reconciled,
+explicitly retained under an owner decision, or closed with its evidence and
+provenance preserved. Local migration, data, or materialization validation is
+never Production-ready or Production-visible evidence. Exact-SHA API/Web
+provenance, fail-closed behavior, migration/data state, rollback readiness,
+and deployed revision verification are release-readiness requirements;
+`PUSH_REMOTE=NO` and `DEPLOY=NO` are safety boundaries, not completion states.
+
+Only explicit paths and hunks may be staged or cleaned. Blanket stage, clean,
+reset, and stash operations are prohibited. `NEXT_TASK` changes require Owner
+authorization; an agent may recommend a next task but may not set or advance it.
+
+### Reproducible dependency environment
+
+`RELEASE_CANDIDATE` and canonical validation require both
+`CLEAN_SOURCE_STATE=PASS` and `REPRODUCIBLE_DEPENDENCY_STATE=PASS`. The
+dependency environment must derive from the repository lockfile/declared
+constraints through `npm ci`, `pnpm --frozen-lockfile`, an equivalent Python
+locked/declared environment, or an approved container/CI environment selected
+for the repository stack. A dirty worktree's `node_modules`, a temporary
+junction, a partial install, or an unconstrained global package is not final
+release proof. A borrowed dependency directory is
+`DIAGNOSTIC_FALLBACK_ONLY`; it requires lockfile equivalence, dependency digest,
+and approved reproducibility proof before it can support a clean-candidate
+claim.
+
+### Commit-based promotion preference
+
+Canonical promotion SHOULD prefer a validated commit, cherry-pick, or
+commit-preserving merge/rebase with deterministic reconciliation. Index-only or
+manual hunk surgery is an exception only for a shared dirty file with proven
+owner overlap and no complete source commit that can be promoted directly. An
+exception must report `HUNK_LEVEL_RECONCILIATION_USED=YES`, `REASON`,
+`HEAD_INDEX_WORKTREE_AUDIT=PASS`, and
+`POST_RECONCILIATION_CLEAN_CANDIDATE=PASS`; it must verify HEAD, index, and
+working tree alignment and leave no task-owned residual diff. They must not be
+left permanently split.
+
+### Repository/worktree/remote hygiene gate
+
+Release readiness, canonical reconciliation, and fixed Owner review include
+canonical versus `origin/main` divergence, local-only and remote-only commits,
+completed branches not canonicalized, stale/superseded/orphaned worktrees or
+commits, completion states whose `CANONICAL_STATUS` is not `CANONICALIZED`,
+ownerless active branches/worktrees, dirty tracked-file aging and ownership,
+untracked artifact aging/provenance, committed consumers relying on
+uncommitted state, missing local-commit provenance mappings, and candidate
+ancestor/descendant relationships. Report
+`REPOSITORY_HYGIENE_STATUS=PASS`, `ACTION_REQUIRED`, or `BLOCKED`, together with
+`LOCAL_ONLY_COMMIT_COUNT`, `STALE_WORKTREE_COUNT`,
+`ORPHANED_WORKSTREAM_COUNT`, and `UNATTRIBUTED_DIRTY_COUNT`. An unhealthy gate
+requires `OWNER_DECISION_REQUIRED` or
+`CANONICAL_RECONCILIATION_REQUIRED`; it never authorizes `git clean`, branch
+deletion, force reset, or force push.
+
+### Parallel-workstream governance boundary (established 2026-08-19)
+
+The two release-hygiene closure workstreams remain closed. Workstream A closed
+the Stock-004 canonical reconciliation; workstream B closed the documentation
+provider, DB integration fixture, and owner/branch disposition blockers. The
+authoritative evidence is in the [Stock-004 closure report](docs/reports/TASK-OPS-STOCK-004-CANONICAL-RECONCILIATION-001.md)
+and the [documentation/fixture/disposition closure report](docs/reports/TASK-OPS-DOCUMENTATION-PROVIDERS-OWNER-DISPOSITION-AND-DB-INTEGRATION-FIXTURE-CLOSURE-001.md).
+
+The current Parallel Plan has four isolated workstreams:
+
+- `WS1` — Topic Derived Intelligence / Structural Role and Score Projection;
+- `WS2` — Stock Technical V0 policy, publication, and formal evidence surface;
+- `WS3` — Core V0 research and forward-evidence qualification; and
+- `WS4` — Release-chain Closure / Release Candidate Qualification.
+
+WS1, WS2, and WS3 may continue through their bounded authority or evidence
+routes when their contracts and write sets do not conflict. WS4 remains an
+independent release lane. Completion or readiness in one workstream does not
+establish overall release readiness, and WS4 must not globally block unrelated
+WS1-WS3 work. No workstream may silently change another workstream's semantic
+authority, strategy meaning, taxonomy, MA60 policy, or production boundary.
+
+`READY_FOR_RELEASE_CHAIN_CLOSURE=YES` and `READY_FOR_PRODUCTION_RELEASE=NO`
+remain the WS4 release-hygiene disposition. Owner dirty/untracked state remains
+preserved and classified; this does not authorize cleanup, branch deletion,
+push, merge, deployment, scheduler activation, or Production mutation. `NEXT_TASK`
+remains Owner-controlled and unchanged by this checkpoint.
+
+### Canonical boundary reconciliation checkpoint (2026-08-22)
+
+The current local integration lane has separately committed the Today surface
+(`495619e`), Topic Lifecycle contract/UI/tests (`c5b2239`), research tooling
+(`c92dbc0`), research-only Leader Set evidence (`e8bdca4`), L2/L5 and Lifecycle
+Strength evidence (`6ba9dc9`), and the subordinate documentation navigation
+layer (`a6b10bd`). These commits preserve the authority hierarchy: research
+artifacts remain evidence-only, Lifecycle remains fail-closed until canonical
+stage-bearing data exists, and the navigation layer does not replace existing
+authority documents.
+
+Historical evidence and cleanup candidates remain untouched. This checkpoint
+does not authorize worktree/branch cleanup, C: → E: migration, push, merge,
+deployment, or `NEXT_TASK` modification.
+
+### Test-count delta attribution
+
+Backend, frontend, integration, migration, contract, and governance full-suite
+validation must compare the applicable last canonical baseline, release
+candidate, or predecessor closure and report
+`TEST_COUNT_PRE`, `TEST_COUNT_POST`, `TEST_COUNT_DELTA`, and
+`TEST_COUNT_DELTA_REASON`. An unexplained reduction is
+`TEST_COUNT_DELTA_STATUS=BLOCKED_UNEXPLAINED_REDUCTION`. Report
+`PASSED`, `FAILED`, `SKIPPED`, `XFAILED`, and `DESELECTED` separately; skipped
+or deselected tests are not PASS. `116/116 PASS` alone is not a
+regression-free claim. Consolidation, duplicate removal, scope change, rename,
+or framework discovery change requires explicit provenance.
+
 ## Worktree lifecycle policy
 
 Use the following lifecycle for every isolated task:

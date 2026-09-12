@@ -1,0 +1,130 @@
+{
+  "artifact_content_hash": "6b2e2ba4d84295eaabc13f3a6bdfe642c1e9823dd23160b44340ce59c88c36f4",
+  "artifact_type": "REC_A1_DATASET_PROTOCOL_FREEZE_RISK_ACCEPTANCE_METADATA_V0",
+  "canonical_post_sha": "a69b1ec7b861e6163bf63e4a5dac10ce92e52a73",
+  "canonical_pre_sha": "a69b1ec7b861e6163bf63e4a5dac10ce92e52a73",
+  "core_v0_walk_forward": {
+    "backtest_executed": false,
+    "executed": false,
+    "parameter_search_executed": false,
+    "ready_for_owner_authorization": true,
+    "strategy_optimization_executed": false,
+    "threshold_tuning_executed": false
+  },
+  "coverage": {
+    "authoritative_no_event_identities": 0,
+    "canonical_identities": 507,
+    "coverage_state_for_unknowns": "UNKNOWN",
+    "coverage_states_changed": false,
+    "event_identities": 353,
+    "review_state_for_unknowns": "REVIEWED_UNKNOWN_NO_EVENT_FOUND",
+    "reviewed_unknown_identities": 154,
+    "unreviewed_unknown_identities": 0
+  },
+  "database_mutation": false,
+  "dataset": {
+    "adjusted_ohlc_created": false,
+    "dataset_version": "REC-A1-CA-EVENTS-V0",
+    "historical_ohlcv_changed": false,
+    "recommendation_engine_changed": false,
+    "rows_after": 372,
+    "rows_before": 372,
+    "total_return_created": false
+  },
+  "deploy": false,
+  "freeze_assessment": {
+    "authoritative_empty_set_complete": false,
+    "dataset_protocol_freeze_authorized": true,
+    "exchange_grade_completeness": false,
+    "gate_reasons": [],
+    "known_events_captured_with_bounded_review": true,
+    "research_dataset_frozen": true,
+    "residual_unknown_disclosed": true
+  },
+  "freeze_policy": "BEST_EFFORT_RESEARCH_INTEGRITY_WITH_REVIEWED_RESIDUAL_UNCERTAINTY",
+  "merge_main": false,
+  "next_task_changed": false,
+  "origin_main": "26f635b95d8d88fd7ed7e43949583347f3ab5feb",
+  "outcome_integrity": {
+    "anomaly_can_classify_event": false,
+    "continuity_anomaly_review_trigger": "RESEARCH_INTEGRITY_REVIEW_OR_FAIL_CLOSED_OUTCOME_EXCLUSION",
+    "event_excluded_raw_policy": "READY",
+    "post_hoc_outcome_integrity_exclusion": "ALLOWED",
+    "trading_decision_use": "FORBIDDEN"
+  },
+  "owner_decision": "RESEARCH_ONLY_OUTCOME_INTEGRITY_SUPPORT_DATASET",
+  "owner_risk_acceptance": true,
+  "production_mutation": false,
+  "push_remote": false,
+  "residual_risk_classification": "BOUNDED_RESEARCH_DATA_UNCERTAINTY",
+  "reviewed_at": "2026-08-15",
+  "reviewed_residual_metadata": {
+    "authoritative_no_event_identities": 0,
+    "confirmed_additional_event_identities": 0,
+    "coverage_summary": {
+      "authoritative_no_event_identities": 0,
+      "canonical_identities": 507,
+      "coverage_states_preserved": true,
+      "event_identities": 353,
+      "unknown_identities": 154
+    },
+    "dataset_rows_after": 372,
+    "dataset_rows_before": 372,
+    "fail_closed_outcome_policy_present": true,
+    "freeze_policy": "BEST_EFFORT_RESEARCH_INTEGRITY_WITH_REVIEWED_RESIDUAL_UNCERTAINTY",
+    "lineage_complete": true,
+    "no_event_found_in_bounded_review": true,
+    "outcome_integrity": {
+      "event_excluded_raw_policy": "READY",
+      "post_hoc_outcome_integrity_exclusion": "ALLOWED",
+      "trading_decision_use": "FORBIDDEN"
+    },
+    "owner_risk_acceptance": true,
+    "residual_risk_classification": "BOUNDED_RESEARCH_DATA_UNCERTAINTY",
+    "residual_unknown_accepted": true,
+    "review_state": "REVIEWED_UNKNOWN_NO_EVENT_FOUND",
+    "reviewed_unknown_identities": 154,
+    "unresolved_confirmed_continuity_events": 0,
+    "unreviewed_unknown_identities": 0
+  },
+  "scheduler": false,
+  "source_artifacts": {
+    "automation_feasibility": {
+      "path": "reports/TASK-REC-A1-UNKNOWN-154-IDENTITY-EVENT-GAP-REVIEW/automation-feasibility-matrix.json",
+      "sha256": "18ed2e5574c6a0d6840a8c4245c58f34cf366d8bfd5f1c172018f3acfec3d6d4"
+    },
+    "coverage_matrix": {
+      "path": "reports/TASK-REC-A1-COMPLETE-RESEARCH-WINDOW-COVERAGE-AND-FREEZE-REASSESSMENT/REC-A1-COVERAGE-MATRIX-V0.json",
+      "sha256": "97d12273d1ffd9b733d3c0956af20f48c0fb6bab4158037eadcebc009ea59ba8"
+    },
+    "dataset": {
+      "path": "reports/TASK-REC-A1-CORPORATE-ACTION-RESEARCH-DATASET-IMPLEMENTATION/REC-A1-CA-EVENTS-V0.json",
+      "sha256": "1091f97268ac01342a1803bc511780b9948c06c50176e367588b829af0d530e0"
+    },
+    "review_ledger": {
+      "path": "reports/TASK-REC-A1-UNKNOWN-154-IDENTITY-EVENT-GAP-REVIEW/identity-review-ledger.json",
+      "sha256": "a22fde2f7fd75eb11708a25ebc4642bb66ecd6283243ea807ed99ee01b4984a5"
+    }
+  },
+  "task_id": "TASK-REC-A1-DATASET-PROTOCOL-FREEZE-RISK-ACCEPTANCE-REASSESSMENT",
+  "validation": {
+    "checkpoint": true,
+    "coverage_matrix": true,
+    "dataset_determinism": true,
+    "duplicates": 0,
+    "existing_rec_a1_focused_regression": true,
+    "idempotent": true,
+    "invalid_effective_dates": 0,
+    "invalid_identities": 0,
+    "known_integrity_failure_blocking": true,
+    "manifest": true,
+    "missing_lineage": 0,
+    "raw_reproduction": false,
+    "residual_risk_disclosure": true,
+    "review_ledger_exact_linkage": true,
+    "semantic_hash": true,
+    "semantic_hash_collisions": 0,
+    "stable_event_key": true,
+    "unreviewed_unknown_blocking": true
+  }
+}

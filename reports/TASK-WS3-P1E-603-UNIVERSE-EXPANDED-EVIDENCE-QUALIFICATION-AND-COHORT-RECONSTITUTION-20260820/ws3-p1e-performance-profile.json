@@ -1,0 +1,20 @@
+{
+  "a1_event_rows_generated": 14557,
+  "a2_distinct_event_rows_generated": 5277,
+  "a2_raw_observation_rows_generated": 6306,
+  "full_reconstruction_runtime_seconds": 184.96947959100362,
+  "generated_at": "2026-08-20T05:00:52.673490+00:00",
+  "instrument_count": 603,
+  "mode": "FULL_RECONSTRUCTION",
+  "phase_seconds": {
+    "a2_event_and_outcome_seconds": 0.46696130800410174,
+    "eligibility_and_formation_seconds": 52.48409171702224
+  },
+  "sampled": false,
+  "source_rows_consumed": 288881,
+  "task_id": "TASK-WS3-P1E-603-UNIVERSE-EXPANDED-EVIDENCE-QUALIFICATION-AND-COHORT-RECONSTITUTION-20260820",
+  "window": [
+    "2024-08-13",
+    "2026-08-13"
+  ]
+}

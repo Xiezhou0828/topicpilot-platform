@@ -20,7 +20,13 @@ def build_parser() -> argparse.ArgumentParser:
     generate = commands.add_parser(
         "generate", help="generate a canonical bundle from approved inputs"
     )
-    generate.add_argument("--stock-source", type=Path, required=True)
+    instrument_group = generate.add_mutually_exclusive_group(required=True)
+    instrument_group.add_argument("--instrument-master", type=Path)
+    instrument_group.add_argument(
+        "--stock-source",
+        type=Path,
+        help="legacy TSV compatibility input; prefer --instrument-master",
+    )
     generate.add_argument("--calendar-source", type=Path, required=True)
     generate.add_argument("--evidence-source", type=Path, required=True)
     generate.add_argument(
@@ -42,11 +48,12 @@ def main(argv: list[str] | None = None) -> int:
     try:
         if args.command == "generate":
             bundle = build_bundle_from_sources(
-                stock_source=args.stock_source,
                 calendar_source=args.calendar_source,
                 evidence_source=args.evidence_source,
                 adjustment_source=args.adjustment_source,
                 version=args.reference_version,
+                stock_source=args.stock_source,
+                instrument_master_source=args.instrument_master,
             )
             output_dir = write_bundle(bundle, args.output_dir)
             output = {"operation": "GENERATED", "bundleDir": str(output_dir), **bundle.summary()}

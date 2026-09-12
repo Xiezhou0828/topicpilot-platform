@@ -1,0 +1,34 @@
+{
+  "task_id": "TASK-WS2-E2-TECHNICAL-V0-FORMAL-EVIDENCE-PROVIDER-CONSUMER-CONTRACT-AND-603-MAINLINE-CLOSURE-20260820",
+  "evidence_schema_version": "stock-technical-v0-formal-evidence.v1",
+  "logical_identity": {
+    "fields": ["instrument_identity", "market", "session_date", "indicator_id"],
+    "stable_key_format": "instrument_identity|session_date|indicator_id",
+    "version_fields_excluded_from_logical_key": true
+  },
+  "version_identity": {
+    "fields": [
+      "technical_contract_version",
+      "technical_policy_version",
+      "indicator_id",
+      "indicator_version",
+      "algorithm_id",
+      "algorithm_version",
+      "parameter_set"
+    ],
+    "technical_contract_version": "stock-technical-publication.v3",
+    "technical_policy_version": "stock-technical-v0-policy.v4",
+    "indicator_count": 14
+  },
+  "source_identity": {
+    "source_foundation_version": "sdf-603-ohlcv-2y.v1",
+    "source_foundation_sha256": "e803733e796d8f4d8cf00575cd4045f28c9364572fc61b31ef490e8a65ff47a4",
+    "source_authority_content_sha256": "fe1a51015d48d64b28007d36e291bed59085e7beacf5599ee5d5a35569747fcf",
+    "price_authority": "V2_CANONICAL_OBSERVATION_CHAIN",
+    "series_semantics": "RAW_OBSERVED_DAILY_BAR",
+    "adjustment_state": "UNKNOWN"
+  },
+  "identity_contract_defined": "YES",
+  "version_contract_defined": "YES",
+  "status": "PASS"
+}

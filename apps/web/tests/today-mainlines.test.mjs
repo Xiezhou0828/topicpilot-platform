@@ -46,16 +46,16 @@ test("Today mainlines fail closed and only expose Preview explicitly", async () 
   assert.match(home, /state: "PREVIEW"/);
   assert.match(home, /return errorTodayHomeResource\(error instanceof Error/);
   assert.doesNotMatch(`${adapter}\n${home}`, /mock|fallback/i);
-  assert.match(page, /mainlines\.resource\.state === "UNAVAILABLE"/);
-  assert.match(page, /mainlines\.resource\.state === "PREVIEW"/);
+  assert.match(page, /resource\.state === "UNAVAILABLE"/);
+  assert.match(page, /resource\.state !== "FORMAL"/);
   assert.doesNotMatch(page, /mainlines\s*=\s*\[/);
 });
 
 test("Today mainline cards navigate with the backend topic slug and preserve null semantics", async () => {
   const page = await read("components/v2/TodayMarketPage.tsx");
   assert.match(page, /key=\{topic\.slug\}/);
-  assert.match(page, /GradeChip grade=\{topic\.grade \?\? "—"\}/);
-  assert.match(page, /topic\.currentState \?\?/);
+  assert.match(page, /topic\.grade && <GradeChip grade=\{topic\.grade\}/);
+  assert.doesNotMatch(page, /topic\.currentState/);
   assert.match(page, /href=\{`\/topics\/\$\{topic\.slug\}`\}/);
 });
 
@@ -85,6 +85,6 @@ test("Today heating and cooling fail closed and only expose Preview explicitly",
   assert.match(adapter, /state: "UNAVAILABLE"/);
   assert.match(adapter, /data\.length === 0/);
   assert.match(adapter, /data\.every\(isHomeRotationTopic\)/);
-  assert.match(adapter, /Formal Today rotation data is not ready/);
+  assert.match(adapter, /目前沒有足夠的 14 日資料/);
   assert.doesNotMatch(adapter, /fallback|rank|ranking|direction inference|strength calculation/i);
 });

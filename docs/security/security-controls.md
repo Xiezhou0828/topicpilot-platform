@@ -66,9 +66,10 @@ model and work order.
 
 - Neon pooled TLS connection URL stored in Render.
 - Exact production web origin in `TOPICPILOT_CORS_ORIGINS`.
-- GitHub environments `production-api` and `production-web` with required
-  reviewers and deployment branch limited to `main`.
+- GitHub environments `production-api`, `production-worker`, and `production-web`
+  with required reviewers and deployment branch limited to `main`.
 - `RENDER_DEPLOY_HOOK_URL` only in `production-api`.
+- `RENDER_WORKER_DEPLOY_HOOK_URL` only in `production-worker`.
 - `PUBLIC_API_BASE_URL` as a non-secret environment variable in
   `production-web`.
 

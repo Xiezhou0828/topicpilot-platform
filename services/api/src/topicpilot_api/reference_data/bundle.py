@@ -1,8 +1,9 @@
 """Deterministic ``tw-reference-v1`` bundle generation and validation.
 
-The bundle is an offline artifact.  It is generated from an approved V1 stock
-export plus explicit calendar, status-evidence, and adjustment-governance
-inputs.  Database mutation is deliberately implemented in
+The bundle is an offline artifact.  It is generated from the Owner Instrument
+Master V1 plus explicit calendar, status-evidence, and adjustment-governance
+inputs.  A legacy TSV stock export remains supported only for compatibility.
+Database mutation is deliberately implemented in
 ``reference_data.bootstrap`` rather than in this module.
 """
 
@@ -17,7 +18,24 @@ from datetime import date
 from pathlib import Path
 from typing import Any
 
-from topicpilot_api.market_data.history import DAILY_TRADING_STATUS_CODES
+try:
+    from topicpilot_api.market_data.history import DAILY_TRADING_STATUS_CODES
+except ImportError:  # pragma: no cover - keeps offline bundle tooling dependency-light
+    # The bundle generator only needs the stable status vocabulary.  The
+    # market_data package also imports optional persistence adapters, so keep
+    # this offline reference-data path usable when those adapters are absent.
+    DAILY_TRADING_STATUS_CODES = frozenset(
+        {
+            "AVAILABLE",
+            "SUSPENDED",
+            "NO_TRADE",
+            "EXCHANGE_CONFIRMED_NO_DATA",
+            "DELISTED",
+            "TERMINATED",
+            "UNKNOWN",
+            "OPEN",
+        }
+    )
 
 BUNDLE_SCHEMA_VERSION = "reference-bundle.v1"
 BUNDLE_FILE_NAMES = (
@@ -34,6 +52,15 @@ BUNDLE_FILE_NAMES = (
 )
 _SYMBOL_RE = re.compile(r"^[A-Za-z0-9_-]{1,64}$")
 _REQUIRED_STOCK_HEADERS = ("股號", "名稱", "市場代碼")
+_REQUIRED_INSTRUMENT_HEADERS = (
+    "market_code",
+    "instrument_code",
+    "instrument_name",
+    "instrument_type",
+    "currency",
+    "enabled",
+    "listing_status",
+)
 _MARKET_DEFINITIONS = {
     "TPE": {
         "code": "TPE",
@@ -206,6 +233,75 @@ def _parse_stock_export(path: Path) -> tuple[tuple[dict[str, Any], ...], dict[st
     }
 
 
+def _parse_instrument_master(path: Path) -> tuple[tuple[dict[str, Any], ...], dict[str, Any]]:
+    """Read the Owner Instrument Master and project it into bundle identity rows."""
+
+    if not path.is_file():
+        raise BundleValidationError(f"instrument master source does not exist: {path}")
+    try:
+        with path.open("r", encoding="utf-8-sig", newline="") as handle:
+            reader = csv.DictReader(handle)
+            headers = tuple(reader.fieldnames or ())
+            missing = [name for name in _REQUIRED_INSTRUMENT_HEADERS if name not in headers]
+            if missing:
+                raise BundleValidationError(
+                    f"instrument master is missing required headers: {', '.join(missing)}"
+                )
+            rows = list(reader)
+    except (OSError, UnicodeError, csv.Error) as exc:
+        raise BundleValidationError(f"cannot read instrument master: {path.name}") from exc
+
+    instruments: list[dict[str, Any]] = []
+    seen: set[tuple[str, str]] = set()
+    skipped = 0
+    for row_number, row in enumerate(rows, start=2):
+        market_code = _first(row, ("market_code",)).upper()
+        code = _first(row, ("instrument_code",))
+        name = _first(row, ("instrument_name",))
+        enabled = _first(row, ("enabled",)).upper()
+        if not market_code and not code and not name:
+            skipped += 1
+            continue
+        if enabled != "TRUE":
+            skipped += 1
+            continue
+        if market_code not in _MARKET_DEFINITIONS:
+            raise BundleValidationError(
+                f"instrument master row {row_number} has unsupported market {market_code!r}"
+            )
+        if not _SYMBOL_RE.fullmatch(code) or not name:
+            raise BundleValidationError(
+                f"instrument master row {row_number} has invalid identity"
+            )
+        if _first(row, ("instrument_type",)) != "EQUITY" or _first(row, ("currency",)) != "TWD":
+            raise BundleValidationError(
+                f"instrument master row {row_number} has unsupported type/currency"
+            )
+        identity = (market_code, code)
+        if identity in seen:
+            raise BundleValidationError(
+                f"duplicate instrument identity at row {row_number}: {identity}"
+            )
+        seen.add(identity)
+        instruments.append(
+            {
+                "market_code": market_code,
+                "instrument_code": code,
+                "name": name,
+                "instrument_type": "EQUITY",
+                "currency": "TWD",
+            }
+        )
+    return tuple(instruments), {
+        "inputRowCount": len(rows),
+        "acceptedRowCount": len(instruments),
+        "skippedRowCount": skipped,
+        "encoding": "utf-8-sig",
+        "delimiter": ",",
+        "sourceSchema": "instrument-master.v1",
+    }
+
+
 def _parse_calendar(path: Path) -> tuple[tuple[dict[str, Any], ...], dict[str, Any]]:
     payload = _read_json(path)
     if not isinstance(payload, dict) or not isinstance(payload.get("holidays"), dict):
@@ -239,21 +335,70 @@ def _parse_evidence(path: Path) -> dict[str, Any]:
     if not isinstance(payload, dict) or not isinstance(payload.get("suspensions"), dict):
         raise BundleValidationError("suspension evidence must contain a suspensions object")
     normalized = dict(payload)
-    normalized["suspensions"] = {
-        str(code): {**item, "market": item.get("market", "TPE")}
-        for code, item in payload["suspensions"].items()
-        if isinstance(item, dict)
-    }
+    normalized_suspensions: dict[str, dict[str, Any]] = {}
+    for code, item in payload["suspensions"].items():
+        if not isinstance(item, dict):
+            continue
+        market = item.get("market", "TPE")
+        normalized_item = {**item, "market": market}
+        events = item.get("events")
+        if events is not None:
+            if not isinstance(events, list) or not all(isinstance(event, dict) for event in events):
+                raise BundleValidationError(
+                    f"status evidence events must be objects: {market}:{code}"
+                )
+            normalized_item["events"] = [
+                {**event, "market": event.get("market", market)} for event in events
+            ]
+        normalized_suspensions[str(code)] = normalized_item
+    normalized["suspensions"] = normalized_suspensions
     if len(normalized["suspensions"]) != len(payload["suspensions"]):
         raise BundleValidationError("status evidence entries must be objects")
     return normalized
+
+
+def _iter_status_evidence(
+    evidence: dict[str, Any],
+) -> tuple[tuple[str, dict[str, Any]], ...]:
+    """Flatten one or more effective-dated events for each instrument.
+
+    Existing evidence files use one object per instrument.  The optional
+    ``events`` list keeps that format backward compatible while allowing a
+    suspension followed by a terminal transition to remain separately
+    auditable.
+    """
+
+    rows: list[tuple[str, dict[str, Any]]] = []
+    for instrument_code, item in evidence.get("suspensions", {}).items():
+        if not isinstance(item, dict):
+            continue
+        events = item.get("events")
+        if events is None:
+            rows.append((str(instrument_code), dict(item)))
+            continue
+        if not isinstance(events, list):
+            raise BundleValidationError(
+                f"status evidence events must be a list: {item.get('market')}:{instrument_code}"
+            )
+        inherited = {key: value for key, value in item.items() if key != "events"}
+        for event in events:
+            if not isinstance(event, dict):
+                raise BundleValidationError(
+                    "status evidence event is not an object: "
+                    f"{item.get('market')}:{instrument_code}"
+                )
+            rows.append((str(instrument_code), {**inherited, **event}))
+    return tuple(rows)
 
 
 def _lifecycle_rows_from_evidence(
     evidence: dict[str, Any],
 ) -> tuple[dict[str, Any], ...]:
     rows: list[dict[str, Any]] = []
-    for instrument_code, item in sorted(evidence.get("suspensions", {}).items()):
+    for instrument_code, item in sorted(
+        _iter_status_evidence(evidence),
+        key=lambda pair: (pair[0], pair[1].get("effectiveFrom", "")),
+    ):
         if not isinstance(item, dict):
             raise BundleValidationError(
                 f"status evidence entry is not an object: {instrument_code}"
@@ -277,10 +422,11 @@ def _lifecycle_rows_from_evidence(
             "instrument_code": str(instrument_code),
             "status_code": status_code,
             "effective_from": effective_from,
-            "effective_to": item.get("effectiveTo"),
             "evidence_id": evidence_id,
             "source_url": source_url,
         }
+        if item.get("effectiveTo") is not None:
+            row["effective_to"] = item["effectiveTo"]
         if item.get("reason") is not None:
             row["reason"] = item["reason"]
         rows.append(row)
@@ -305,13 +451,26 @@ def _parse_adjustments(path: Path) -> tuple[dict[str, Any], ...]:
 
 def build_bundle_from_sources(
     *,
-    stock_source: Path,
     calendar_source: Path,
     evidence_source: Path,
     adjustment_source: Path,
     version: str = "tw-reference-v1",
+    stock_source: Path | None = None,
+    instrument_master_source: Path | None = None,
 ) -> ReferenceBundle:
-    instruments, stock_meta = _parse_stock_export(stock_source)
+    if (stock_source is None) == (instrument_master_source is None):
+        raise BundleValidationError(
+            "provide exactly one of stock_source or instrument_master_source"
+        )
+    if instrument_master_source is not None:
+        instruments, instrument_meta = _parse_instrument_master(instrument_master_source)
+        instrument_role = "INSTRUMENT_MASTER_SOURCE"
+        instrument_source = instrument_master_source
+    else:
+        assert stock_source is not None
+        instruments, instrument_meta = _parse_stock_export(stock_source)
+        instrument_role = "LEGACY_STOCK_EXPORT_COMPATIBILITY"
+        instrument_source = stock_source
     calendar_dates, calendar_meta = _parse_calendar(calendar_source)
     evidence = _parse_evidence(evidence_source)
     instrument_lifecycles = _lifecycle_rows_from_evidence(evidence)
@@ -335,7 +494,7 @@ def build_bundle_from_sources(
             "referenceDataVersion": version,
             "generatedOrCurated": "GENERATED_WITH_CURATED_GOVERNANCE_INPUTS",
             "sourceArtifacts": [
-                _source_artifact(stock_source, role="INSTRUMENT_SOURCE", **stock_meta),
+                _source_artifact(instrument_source, role=instrument_role, **instrument_meta),
                 _source_artifact(calendar_source, role="CALENDAR_AUTHORITY", **calendar_meta),
                 _source_artifact(evidence_source, role="STATUS_EVIDENCE"),
                 _source_artifact(adjustment_source, role="ADJUSTMENT_GOVERNANCE_INPUT"),
@@ -455,7 +614,8 @@ def validate_bundle(bundle: ReferenceBundle) -> None:
     suspension_map = bundle.evidence.get("suspensions", {})
     if not isinstance(suspension_map, dict):
         raise BundleValidationError("status evidence is missing suspensions")
-    for code, item in suspension_map.items():
+    status_evidence = _iter_status_evidence(bundle.evidence)
+    for code, item in status_evidence:
         if not isinstance(item, dict) or not item.get("status"):
             raise BundleValidationError(f"incomplete status evidence: {code}")
         evidence_key = (item.get("market"), str(code))
@@ -475,8 +635,7 @@ def validate_bundle(bundle: ReferenceBundle) -> None:
             item.get("effectiveFrom"),
             item.get("evidenceId"),
         )
-        for code, item in suspension_map.items()
-        if isinstance(item, dict)
+        for code, item in status_evidence
     }
     if lifecycle_keys != expected_lifecycle_keys:
         raise BundleValidationError("lifecycle events do not match status evidence")

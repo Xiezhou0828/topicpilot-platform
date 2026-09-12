@@ -1,0 +1,30 @@
+{
+  "feature_search_after_results": false,
+  "normalized_aggregate_sha256": "601a18fe2f5ea3496194a40ee39ec07e71b7f11d92ae7cf09ed55443d4e118d1",
+  "normalized_artifact_hashes": {
+    "ws3-successful-swing-a-state-relationship.csv": "12302765d234e21c4c8cb82b88dbb22b83565673df7d6ade40b1e9107098a77a",
+    "ws3-successful-swing-concentration-outlier-audit.json": "c35d3c8eb60073b13b5da0f6a550b2a3e1d7f69d3c94c179a5a6b85c23e88e13",
+    "ws3-successful-swing-distinct-episode-panel.csv": "6c9d5b12aaabc60833a8f4f60bb0eda238825621413ae263f68d2d98d18aa496",
+    "ws3-successful-swing-feature-manifest.json": "e5392cd142554616b621b5ff69b681ab3d44fd63d1877b29e8e07ba1d3873f14",
+    "ws3-successful-swing-lead-time-analysis.csv": "ce9a4e59cec8dc44cd6aca5aec105a1a90e500b3c6b69c2d08aba27f1c7ccf62",
+    "ws3-successful-swing-lookahead-hindsight-audit.json": "3ec542e17864c6005ce4aefef1eacc4985dc6fc293d4363a77f958a9b182abb0",
+    "ws3-successful-swing-market-temporal-stability.csv": "60b1153331c5f5fe6b454fe917e47b6acc450796262fad2035e981578047e327",
+    "ws3-successful-swing-matched-control-panel.csv": "b451c47937a19b781957cb6a2ad55fc35454564299095a994962eac0392d5521",
+    "ws3-successful-swing-next-research-readiness.json": "e6cc007e196aa9d7bafea20938df5ba752f91f3ecd73f6e6f064a21d40f9be99",
+    "ws3-successful-swing-outcome-protocol-freeze.json": "936d6a8fa77eaa1f292ee073295a727812ae5ede59d783ef594f6ee6dd991e8e",
+    "ws3-successful-swing-outcome-strata-summary.csv": "b624a3cd4557f107916d356860f0829107b0b187dab26e18dcc2d9ae688543bb",
+    "ws3-successful-swing-outcome-strength-gradient.csv": "6259d5363f59f7f6d68b7239d1ab619575ad3d5865de9637ff771c3cb2ff11fa",
+    "ws3-successful-swing-pre-event-feature-panel.csv": "0867421384fff9b2123a48217855c95214b5da5266a7889561b06d18ee05c6c5",
+    "ws3-successful-swing-raw-anchor-panel.csv": "2a393ad083230dd81a5cb73c8456ad3a20ff705aeef96f2cba68fc0c7257da38",
+    "ws3-successful-swing-reference-case-cards.json": "6634d74237fef88acb0458f9fc85148e0b845f97dd72ec04a6efe361aa646b9a",
+    "ws3-successful-swing-univariate-discrimination.csv": "098db14b5ecbcbae25b111a1b96cabb9a6378123915a018d9126beb0ee97614d"
+  },
+  "prior_replay_aggregate_sha256": "601a18fe2f5ea3496194a40ee39ec07e71b7f11d92ae7cf09ed55443d4e118d1",
+  "quality_gate_pass": true,
+  "reconstruction_runs": 2,
+  "reproducible": "YES",
+  "run_mode": "FULL_DISCOVERY_REPLAY",
+  "schema_version": "ws3-successful-swing-reproducibility-manifest.v1",
+  "source_dataset_sha256": "e803733e796d8f4d8cf00575cd4045f28c9364572fc61b31ef490e8a65ff47a4",
+  "task_id": "TASK-WS3-SUCCESSFUL-SWING-OUTCOME-MINING-AND-LEADING-EVIDENCE-DISCOVERY-20260821"
+}

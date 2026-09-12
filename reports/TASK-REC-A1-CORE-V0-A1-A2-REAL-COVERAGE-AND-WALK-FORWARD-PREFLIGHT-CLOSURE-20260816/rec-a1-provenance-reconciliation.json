@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "ws3-rec-a1-provenance-reconciliation.v1",
+  "taskId": "TASK-REC-A1-CORE-V0-A1-A2-REAL-COVERAGE-AND-WALK-FORWARD-PREFLIGHT-CLOSURE-20260816",
+  "authority": {
+    "datasetPath": "reports/TASK-REC-A1-CORPORATE-ACTION-RESEARCH-DATASET-IMPLEMENTATION/REC-A1-CA-EVENTS-V0.json",
+    "cleanCanonicalDatasetSha256": "78F684D5B014F43F3B34393BE1BC644805E67F05E18B21E7AB98D075A1CD60B2",
+    "logicalContentHash": "4d9b4912bd1c4613510e60c5cf4b5a629c367e1c94dd733d3b1dc3f935e0eb5d",
+    "freezeMetadataPath": "reports/TASK-REC-A1-DATASET-PROTOCOL-FREEZE-RISK-ACCEPTANCE-REASSESSMENT/freeze-risk-acceptance-metadata.json",
+    "freezeMetadataSha256": "1281A8379CCAA9F56E65CADB98DC5BCD35BE5D06761AB73B2370B54C5634A2E8",
+    "reviewLedgerPath": "reports/TASK-REC-A1-UNKNOWN-154-IDENTITY-EVENT-GAP-REVIEW/identity-review-ledger.json",
+    "reviewLedgerInCleanHead": false
+  },
+  "ownerArtifactComparison": {
+    "phase1OwnerArtifactSha256": "1091F97268AC01342A1803BC511780B9948C06C50176E367588B829AF0D530E0",
+    "phase1CleanCanonicalArtifactSha256": "78F684D5B014F43F3B34393BE1BC644805E67F05E18B21E7AB98D075A1CD60B2",
+    "ownerArtifactUsedAsAuthority": false,
+    "datasetChangedByThisTask": false
+  },
+  "freezeBoundary": {
+    "freezeReopened": false,
+    "reviewedUnknownsReopened": false,
+    "researchOnly": true,
+    "bestEffortResidualUncertaintyAccepted": true,
+    "exchangeGradeCompletenessClaimed": false
+  },
+  "reconciliation": {
+    "datasetIdentityBound": true,
+    "freezeMetadataBound": true,
+    "provenanceReconciled": false,
+    "remainingGap": "BLOCKED_BY_REC_A1_PROVENANCE_LEDGER_ARCHIVE_GAP",
+    "executionConsumable": "NO_PENDING_LEDGER_ARCHIVE_BINDING",
+    "disposition": "BLOCKED_BY_REC_A1_PROVENANCE_LEDGER_ARCHIVE_GAP"
+  },
+  "nextTask": {
+    "rawSha256": "FF640C735A2CDD4D8238157B287D293D0385B67F673150249A90F49661FFEB70",
+    "lfNormalizedSha256": "0E52696AAF6809DDFB7AEE7298F532FEDBD79E16F9B2E584EC6919F15CA417DE",
+    "semanticChange": false,
+    "changedByThisTask": false
+  }
+}

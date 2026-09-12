@@ -1,0 +1,79 @@
+{
+  "input_hashes": {
+    "a2_panel": {
+      "bytes": 81888767,
+      "path": "E:\\topicpilot-platform-canonical\\reports\\TASK-WS3-P2E-A2-EXPANDED-CONFIRMATORY-VALIDATION-AND-ADVANTAGE-REVALIDATION-20260820\\ws3-p2e-a2-expanded-event-panel.csv",
+      "sha256": "97b131479b90ce64a821f72a6c6cceb58d102aeb49c64eac60ba19dfca71bc52"
+    },
+    "current_coverage": {
+      "bytes": 472,
+      "path": "E:\\topicpilot-platform-canonical\\reports\\TASK-WS3-TECHNICAL-SIGNAL-LIFECYCLE-STRENGTH-CONDITIONAL-EXPECTANCY-STUDY-20260822\\signal-lifecycle-join-coverage.csv",
+      "sha256": "071bc2eab8f703d286e065aec3220dce8168f1a97cf1cda766e5da9e0f0aafb4"
+    },
+    "l5_dataset": {
+      "bytes": 15460715,
+      "path": "E:\\topicpilot-platform-canonical\\reports\\TASK-WS1-L5-CURRENT-TAXONOMY-HISTORICAL-LIFECYCLE-STRENGTH-RECONSTRUCTION-20260822\\historical-lifecycle-strength-dataset.csv",
+      "sha256": "4e2567025c85c1de51c4ebfe198eae1f39a7e0580d1a019d7a5c981b3c5945bd"
+    },
+    "l5_manifest": {
+      "bytes": 3244,
+      "path": "E:\\topicpilot-platform-canonical\\reports\\TASK-WS1-L5-CURRENT-TAXONOMY-HISTORICAL-LIFECYCLE-STRENGTH-RECONSTRUCTION-20260822\\reconstruction-manifest.json",
+      "sha256": "d4757cf178f174de013f622da13b911f3e305adf1782e5c6ff2d96b997321a14"
+    },
+    "legacy_episodes": {
+      "bytes": 2493112,
+      "path": "E:\\topicpilot-platform-canonical\\reports\\TASK-WS3-LEGACY-5-STRATEGY-BENCHMARK-20260822\\legacy5-distinct-episodes.csv",
+      "sha256": "404fccde5f4b4ba723131374c93474ca195891f6384da509e1a81f895c168d3a"
+    },
+    "transition_coverage": {
+      "bytes": 6818,
+      "path": "E:\\topicpilot-platform-canonical\\reports\\TASK-WS3-LIFECYCLE-TRANSITION-PRE-MAIN-RISE-CONDITIONAL-EXPECTANCY-STUDY-20260823\\pre-main-rise-signal-join-coverage.csv",
+      "sha256": "adc5277d67cef164d312b6f7649ec7810b24430c301822b0f87a85d84953ecd1"
+    },
+    "transition_inventory": {
+      "bytes": 136689,
+      "path": "E:\\topicpilot-platform-canonical\\reports\\TASK-WS3-LIFECYCLE-TRANSITION-PRE-MAIN-RISE-CONDITIONAL-EXPECTANCY-STUDY-20260823\\main-rise-transition-event-inventory.csv",
+      "sha256": "f2c1ad1850fc7fdc7dbe9de3bf81b8d904737765882ba74c7410f5ca9b066449"
+    }
+  },
+  "outputs": {
+    "OWNER-DECISION-MEMO.md": {
+      "bytes": 2891,
+      "sha256": "2cd11215ee95a3401c5663bce8fdbd9f485e109fcb777042ec44aaedde780658"
+    },
+    "ambiguous-join-root-cause.csv": {
+      "bytes": 1783190,
+      "sha256": "f304cc94df35d86fc41070a37e063795c80cc4c7697530f9c492ccd65fb7fae2"
+    },
+    "current-vs-exposure-join-coverage.csv": {
+      "bytes": 2645,
+      "sha256": "0f173b53b66048a16ad3af644d0735ad0efcb8a55461aec891add1e9751e4ee2"
+    },
+    "formal-closure-report.md": {
+      "bytes": 4487,
+      "sha256": "725e2dfe78d0aa358cc5864f30bebe8c1950d999e19f942c20653e3927cf6f25"
+    },
+    "leakage-and-deduplication-audit.md": {
+      "bytes": 3402,
+      "sha256": "a4b29a46595a4dd4309cff2f4870c0fa2097540abb1d1326d07a3030c47e7390"
+    },
+    "multi-topic-exposure-semantics-review.md": {
+      "bytes": 4281,
+      "sha256": "0f3b804b53ba52c24824c9fa7f5fa6ed509ee4a35fabef789dbc0dc98661842f"
+    },
+    "pre-main-rise-sample-impact-preview.csv": {
+      "bytes": 9549,
+      "sha256": "73a7ba19f36fa9c4cdeab9b5f5ee87d8129d85b8e3463ff6c61ba8919fe5d11c"
+    },
+    "run-summary.json": {
+      "bytes": 17949,
+      "sha256": "ca95f686d954232af0621dfe41802b6dbf6e7c4edae974e2be8ce892494dce7c"
+    }
+  },
+  "relation_hash": "6f376241f8f6ee4f548ce54b628695bf3ff6563c0e06a8bbbf228c77c657a8a2",
+  "replay_contract": "read-only source replay must reproduce all output hashes; no outcomes are consumed",
+  "runner": "tools/ws3_multi_topic_join_semantics_audit.py",
+  "runner_sha256": "eb0dcdc76fe3d400068f05816452a831a2af43d569c0838c418fed2082fd831a",
+  "schema_version": "ws3-multi-topic-join-semantics-audit-reproducibility.v1",
+  "task_id": "TASK-WS3-MULTI-TOPIC-JOIN-SEMANTICS-AUDIT-20260823"
+}

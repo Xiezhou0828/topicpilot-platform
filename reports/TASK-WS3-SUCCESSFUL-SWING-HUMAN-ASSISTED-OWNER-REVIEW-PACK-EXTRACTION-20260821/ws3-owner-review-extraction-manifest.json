@@ -1,0 +1,15 @@
+{
+  "control_side_feature_panel": "NOT_AVAILABLE_FROM_EXISTING_ARTIFACTS",
+  "false_friend_extraction": "NOT_AVAILABLE_FROM_EXISTING_ARTIFACTS",
+  "feature_manifest_schema_version": "ws3-successful-swing-feature-manifest.v2",
+  "full_replay_executed": false,
+  "selected_extreme_t10_count": 10,
+  "selected_extreme_t5_count": 10,
+  "selected_pair_count": 20,
+  "selected_reference_anchor_count": 42,
+  "source_artifacts_found": 18,
+  "source_quality_gate": true,
+  "source_reproducible": "YES",
+  "source_task": "TASK-WS3-SUCCESSFUL-SWING-OUTCOME-MINING-AND-LEADING-EVIDENCE-DISCOVERY-20260821",
+  "task_id": "TASK-WS3-SUCCESSFUL-SWING-HUMAN-ASSISTED-OWNER-REVIEW-PACK-EXTRACTION-20260821"
+}

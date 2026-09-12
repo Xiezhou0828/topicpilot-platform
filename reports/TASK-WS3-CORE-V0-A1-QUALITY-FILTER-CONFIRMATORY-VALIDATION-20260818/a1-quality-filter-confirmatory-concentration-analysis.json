@@ -1,0 +1,545 @@
+{
+  "candidates": {
+    "recent_20_high_proximity__AND__true_range_pct": {
+      "active_filtered_dates": 63,
+      "date_concentration_classification": "LOW",
+      "instrument_concentration_classification": "LOW",
+      "resolved_primary_count": 341,
+      "top_10_instrument_contribution": 0.3519061583577713,
+      "top_1_date_contribution": 0.06158357771260997,
+      "top_3_date_contribution": 0.15542521994134897,
+      "top_5_date_contribution": 0.22580645161290322,
+      "top_5_instrument_contribution": 0.2375366568914956,
+      "top_dates": [
+        [
+          "2026-05-25",
+          21
+        ],
+        [
+          "2026-05-22",
+          19
+        ],
+        [
+          "2026-05-21",
+          13
+        ],
+        [
+          "2026-06-04",
+          12
+        ],
+        [
+          "2026-05-26",
+          12
+        ]
+      ],
+      "top_instrument_contribution": 0.07624633431085044,
+      "top_instruments": [
+        [
+          "ef2d53b2-693e-4fc7-8ada-1001935278ad",
+          26
+        ],
+        [
+          "83af1068-0909-4a49-b47b-43b4030c15c3",
+          15
+        ],
+        [
+          "ff20b9a7-4700-4ca9-9b32-5ec583733f80",
+          15
+        ],
+        [
+          "5e4a6cc0-e547-46d2-a22d-b638c5182c0c",
+          14
+        ],
+        [
+          "8ce484a7-d355-44b5-8e0d-d54248e73005",
+          11
+        ],
+        [
+          "985eae41-8557-4398-87ae-f270a98aae8a",
+          10
+        ],
+        [
+          "f5a328c7-4dfc-45da-befb-bab6c3af3f22",
+          8
+        ],
+        [
+          "2b803a4d-05ca-476d-8370-1866d9ff5f98",
+          8
+        ],
+        [
+          "cdff5218-4d69-4ef6-b80a-eb0e277231f2",
+          7
+        ],
+        [
+          "94963279-9320-4b23-8929-da4c0e502a52",
+          6
+        ]
+      ],
+      "unique_filtered_instruments": 165
+    },
+    "recent_20_high_proximity__UPPER_GE_Q30": {
+      "active_filtered_dates": 64,
+      "date_concentration_classification": "LOW",
+      "instrument_concentration_classification": "LOW",
+      "resolved_primary_count": 432,
+      "top_10_instrument_contribution": 0.2777777777777778,
+      "top_1_date_contribution": 0.05324074074074074,
+      "top_3_date_contribution": 0.14583333333333334,
+      "top_5_date_contribution": 0.21296296296296297,
+      "top_5_instrument_contribution": 0.1875,
+      "top_dates": [
+        [
+          "2026-05-25",
+          23
+        ],
+        [
+          "2026-05-22",
+          23
+        ],
+        [
+          "2026-05-21",
+          17
+        ],
+        [
+          "2026-05-26",
+          15
+        ],
+        [
+          "2026-06-15",
+          14
+        ]
+      ],
+      "top_instrument_contribution": 0.06018518518518518,
+      "top_instruments": [
+        [
+          "ef2d53b2-693e-4fc7-8ada-1001935278ad",
+          26
+        ],
+        [
+          "83af1068-0909-4a49-b47b-43b4030c15c3",
+          15
+        ],
+        [
+          "ff20b9a7-4700-4ca9-9b32-5ec583733f80",
+          15
+        ],
+        [
+          "5e4a6cc0-e547-46d2-a22d-b638c5182c0c",
+          14
+        ],
+        [
+          "8ce484a7-d355-44b5-8e0d-d54248e73005",
+          11
+        ],
+        [
+          "985eae41-8557-4398-87ae-f270a98aae8a",
+          10
+        ],
+        [
+          "f5a328c7-4dfc-45da-befb-bab6c3af3f22",
+          8
+        ],
+        [
+          "2b803a4d-05ca-476d-8370-1866d9ff5f98",
+          8
+        ],
+        [
+          "cdff5218-4d69-4ef6-b80a-eb0e277231f2",
+          7
+        ],
+        [
+          "b37722f3-572d-4324-976e-860e6b602c59",
+          6
+        ]
+      ],
+      "unique_filtered_instruments": 220
+    },
+    "recent_20_high_proximity__UPPER_GE_Q40": {
+      "active_filtered_dates": 64,
+      "date_concentration_classification": "LOW",
+      "instrument_concentration_classification": "LOW",
+      "resolved_primary_count": 371,
+      "top_10_instrument_contribution": 0.2830188679245283,
+      "top_1_date_contribution": 0.05660377358490566,
+      "top_3_date_contribution": 0.14824797843665768,
+      "top_5_date_contribution": 0.2183288409703504,
+      "top_5_instrument_contribution": 0.20485175202156333,
+      "top_dates": [
+        [
+          "2026-05-25",
+          21
+        ],
+        [
+          "2026-05-22",
+          20
+        ],
+        [
+          "2026-06-04",
+          14
+        ],
+        [
+          "2026-06-15",
+          13
+        ],
+        [
+          "2026-05-21",
+          13
+        ]
+      ],
+      "top_instrument_contribution": 0.07008086253369272,
+      "top_instruments": [
+        [
+          "ef2d53b2-693e-4fc7-8ada-1001935278ad",
+          26
+        ],
+        [
+          "83af1068-0909-4a49-b47b-43b4030c15c3",
+          15
+        ],
+        [
+          "ff20b9a7-4700-4ca9-9b32-5ec583733f80",
+          13
+        ],
+        [
+          "5e4a6cc0-e547-46d2-a22d-b638c5182c0c",
+          13
+        ],
+        [
+          "8ce484a7-d355-44b5-8e0d-d54248e73005",
+          9
+        ],
+        [
+          "b37722f3-572d-4324-976e-860e6b602c59",
+          6
+        ],
+        [
+          "2b803a4d-05ca-476d-8370-1866d9ff5f98",
+          6
+        ],
+        [
+          "985eae41-8557-4398-87ae-f270a98aae8a",
+          6
+        ],
+        [
+          "94963279-9320-4b23-8929-da4c0e502a52",
+          6
+        ],
+        [
+          "cdff5218-4d69-4ef6-b80a-eb0e277231f2",
+          5
+        ]
+      ],
+      "unique_filtered_instruments": 199
+    },
+    "recent_20_high_proximity__UPPER_GE_Q50": {
+      "active_filtered_dates": 64,
+      "date_concentration_classification": "LOW",
+      "instrument_concentration_classification": "LOW",
+      "resolved_primary_count": 316,
+      "top_10_instrument_contribution": 0.30063291139240506,
+      "top_1_date_contribution": 0.060126582278481014,
+      "top_3_date_contribution": 0.1550632911392405,
+      "top_5_date_contribution": 0.21835443037974683,
+      "top_5_instrument_contribution": 0.21518987341772153,
+      "top_dates": [
+        [
+          "2026-05-22",
+          19
+        ],
+        [
+          "2026-05-25",
+          17
+        ],
+        [
+          "2026-06-04",
+          13
+        ],
+        [
+          "2026-06-15",
+          10
+        ],
+        [
+          "2026-06-03",
+          10
+        ]
+      ],
+      "top_instrument_contribution": 0.07278481012658228,
+      "top_instruments": [
+        [
+          "ef2d53b2-693e-4fc7-8ada-1001935278ad",
+          23
+        ],
+        [
+          "83af1068-0909-4a49-b47b-43b4030c15c3",
+          15
+        ],
+        [
+          "5e4a6cc0-e547-46d2-a22d-b638c5182c0c",
+          12
+        ],
+        [
+          "ff20b9a7-4700-4ca9-9b32-5ec583733f80",
+          10
+        ],
+        [
+          "8ce484a7-d355-44b5-8e0d-d54248e73005",
+          8
+        ],
+        [
+          "b37722f3-572d-4324-976e-860e6b602c59",
+          6
+        ],
+        [
+          "2b803a4d-05ca-476d-8370-1866d9ff5f98",
+          6
+        ],
+        [
+          "f5a328c7-4dfc-45da-befb-bab6c3af3f22",
+          5
+        ],
+        [
+          "985eae41-8557-4398-87ae-f270a98aae8a",
+          5
+        ],
+        [
+          "505a4215-6b32-4a08-a344-b6daf9890376",
+          5
+        ]
+      ],
+      "unique_filtered_instruments": 180
+    },
+    "return_5d__LOWER_LE_Q60": {
+      "active_filtered_dates": 65,
+      "date_concentration_classification": "LOW",
+      "instrument_concentration_classification": "LOW",
+      "resolved_primary_count": 373,
+      "top_10_instrument_contribution": 0.34316353887399464,
+      "top_1_date_contribution": 0.04825737265415549,
+      "top_3_date_contribution": 0.13672922252010725,
+      "top_5_date_contribution": 0.21179624664879357,
+      "top_5_instrument_contribution": 0.23056300268096513,
+      "top_dates": [
+        [
+          "2026-05-25",
+          18
+        ],
+        [
+          "2026-05-21",
+          17
+        ],
+        [
+          "2026-05-22",
+          16
+        ],
+        [
+          "2026-05-29",
+          14
+        ],
+        [
+          "2026-05-26",
+          14
+        ]
+      ],
+      "top_instrument_contribution": 0.0777479892761394,
+      "top_instruments": [
+        [
+          "ef2d53b2-693e-4fc7-8ada-1001935278ad",
+          29
+        ],
+        [
+          "ff20b9a7-4700-4ca9-9b32-5ec583733f80",
+          16
+        ],
+        [
+          "83af1068-0909-4a49-b47b-43b4030c15c3",
+          15
+        ],
+        [
+          "5e4a6cc0-e547-46d2-a22d-b638c5182c0c",
+          14
+        ],
+        [
+          "8ce484a7-d355-44b5-8e0d-d54248e73005",
+          12
+        ],
+        [
+          "2b803a4d-05ca-476d-8370-1866d9ff5f98",
+          10
+        ],
+        [
+          "985eae41-8557-4398-87ae-f270a98aae8a",
+          10
+        ],
+        [
+          "f5a328c7-4dfc-45da-befb-bab6c3af3f22",
+          8
+        ],
+        [
+          "cdff5218-4d69-4ef6-b80a-eb0e277231f2",
+          7
+        ],
+        [
+          "d8bd3e94-8b29-4d95-844d-729ffb8692a1",
+          7
+        ]
+      ],
+      "unique_filtered_instruments": 155
+    },
+    "true_range_pct__LOWER_LE_Q60": {
+      "active_filtered_dates": 65,
+      "date_concentration_classification": "LOW",
+      "instrument_concentration_classification": "LOW",
+      "resolved_primary_count": 384,
+      "top_10_instrument_contribution": 0.3307291666666667,
+      "top_1_date_contribution": 0.06510416666666667,
+      "top_3_date_contribution": 0.16145833333333334,
+      "top_5_date_contribution": 0.22916666666666666,
+      "top_5_instrument_contribution": 0.22395833333333334,
+      "top_dates": [
+        [
+          "2026-05-25",
+          25
+        ],
+        [
+          "2026-05-22",
+          22
+        ],
+        [
+          "2026-05-21",
+          15
+        ],
+        [
+          "2026-05-26",
+          14
+        ],
+        [
+          "2026-06-04",
+          12
+        ]
+      ],
+      "top_instrument_contribution": 0.07552083333333333,
+      "top_instruments": [
+        [
+          "ef2d53b2-693e-4fc7-8ada-1001935278ad",
+          29
+        ],
+        [
+          "ff20b9a7-4700-4ca9-9b32-5ec583733f80",
+          16
+        ],
+        [
+          "83af1068-0909-4a49-b47b-43b4030c15c3",
+          15
+        ],
+        [
+          "5e4a6cc0-e547-46d2-a22d-b638c5182c0c",
+          14
+        ],
+        [
+          "8ce484a7-d355-44b5-8e0d-d54248e73005",
+          12
+        ],
+        [
+          "2b803a4d-05ca-476d-8370-1866d9ff5f98",
+          10
+        ],
+        [
+          "985eae41-8557-4398-87ae-f270a98aae8a",
+          10
+        ],
+        [
+          "cdff5218-4d69-4ef6-b80a-eb0e277231f2",
+          7
+        ],
+        [
+          "f5a328c7-4dfc-45da-befb-bab6c3af3f22",
+          7
+        ],
+        [
+          "94963279-9320-4b23-8929-da4c0e502a52",
+          7
+        ]
+      ],
+      "unique_filtered_instruments": 166
+    },
+    "true_range_pct__LOWER_LE_Q70": {
+      "active_filtered_dates": 65,
+      "date_concentration_classification": "LOW",
+      "instrument_concentration_classification": "LOW",
+      "resolved_primary_count": 438,
+      "top_10_instrument_contribution": 0.2922374429223744,
+      "top_1_date_contribution": 0.0684931506849315,
+      "top_3_date_contribution": 0.16666666666666666,
+      "top_5_date_contribution": 0.2374429223744292,
+      "top_5_instrument_contribution": 0.1963470319634703,
+      "top_dates": [
+        [
+          "2026-05-25",
+          30
+        ],
+        [
+          "2026-05-22",
+          23
+        ],
+        [
+          "2026-05-26",
+          20
+        ],
+        [
+          "2026-05-21",
+          16
+        ],
+        [
+          "2026-06-01",
+          15
+        ]
+      ],
+      "top_instrument_contribution": 0.06621004566210045,
+      "top_instruments": [
+        [
+          "ef2d53b2-693e-4fc7-8ada-1001935278ad",
+          29
+        ],
+        [
+          "ff20b9a7-4700-4ca9-9b32-5ec583733f80",
+          16
+        ],
+        [
+          "83af1068-0909-4a49-b47b-43b4030c15c3",
+          15
+        ],
+        [
+          "5e4a6cc0-e547-46d2-a22d-b638c5182c0c",
+          14
+        ],
+        [
+          "8ce484a7-d355-44b5-8e0d-d54248e73005",
+          12
+        ],
+        [
+          "2b803a4d-05ca-476d-8370-1866d9ff5f98",
+          10
+        ],
+        [
+          "985eae41-8557-4398-87ae-f270a98aae8a",
+          10
+        ],
+        [
+          "f5a328c7-4dfc-45da-befb-bab6c3af3f22",
+          8
+        ],
+        [
+          "b37722f3-572d-4324-976e-860e6b602c59",
+          7
+        ],
+        [
+          "cdff5218-4d69-4ef6-b80a-eb0e277231f2",
+          7
+        ]
+      ],
+      "unique_filtered_instruments": 195
+    }
+  },
+  "method": "resolved-primary filtered rows; predeclared top-date and top-instrument shares",
+  "task_id": "TASK-WS3-CORE-V0-A1-QUALITY-FILTER-CONFIRMATORY-VALIDATION-20260818"
+}

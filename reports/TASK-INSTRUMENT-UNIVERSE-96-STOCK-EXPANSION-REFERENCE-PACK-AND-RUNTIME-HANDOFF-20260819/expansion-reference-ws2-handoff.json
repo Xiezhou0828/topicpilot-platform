@@ -1,0 +1,20 @@
+{
+  "algorithm_or_parameter_change_authorized": false,
+  "future_measurements": [
+    "EXPANDED_FORMAL_INSTRUMENT_COUNT",
+    "MA60_CALCULABLE_COUNT",
+    "TECHNICAL_V0_INPUT_READY_COUNT",
+    "TECHNICAL_V0_ELIGIBLE_COUNT",
+    "FORMAL_EVIDENCE_STATE"
+  ],
+  "required_before_qualification": [
+    "canonical instrument ingestion",
+    "canonical OHLCV bootstrap",
+    "expanded formal instrument count",
+    "MA60 readiness",
+    "Technical V0 input readiness",
+    "existing continuity/publication policy readback"
+  ],
+  "staging_pack_is_technical_v0_authority": false,
+  "task_id": "TASK-INSTRUMENT-UNIVERSE-96-STOCK-EXPANSION-REFERENCE-PACK-AND-RUNTIME-HANDOFF-20260819"
+}

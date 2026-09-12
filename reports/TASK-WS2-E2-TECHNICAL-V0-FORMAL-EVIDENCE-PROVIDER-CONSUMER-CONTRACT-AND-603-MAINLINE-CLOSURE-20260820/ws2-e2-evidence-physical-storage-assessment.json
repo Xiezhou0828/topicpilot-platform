@@ -1,0 +1,26 @@
+{
+  "task_id": "TASK-WS2-E2-TECHNICAL-V0-FORMAL-EVIDENCE-PROVIDER-CONSUMER-CONTRACT-AND-603-MAINLINE-CLOSURE-20260820",
+  "e1_artifact": {
+    "role": "REPRODUCIBILITY_VALIDATION_ARTIFACT",
+    "runtime_provider": "NO",
+    "mandatory_consumer_dependency": "NO",
+    "api_backing_store": "NO",
+    "ui_dependency": "NO",
+    "row_count": 4044334,
+    "size_bytes": 6726285286,
+    "sha256": "48bdc38b9da4e2ba7e298f5341d04ad5dd11475c6019df1ac80593c9858ec254",
+    "git_storage": "GIT_LFS",
+    "delete_or_migrate_in_this_task": "NO"
+  },
+  "risks_audited": {
+    "checkout_burden": "PRESENT",
+    "ci_burden": "PRESENT_IF_CHECKED_OUT",
+    "storage_duplication": "POSSIBLE",
+    "consumer_coupling": "AVOIDED_BY_CONTRACT",
+    "repository_maintenance": "PRESENT"
+  },
+  "future_physical_persistence_disposition": "OPTIONAL_OPTIMIZATION",
+  "disposition_reason": "The bounded provider contract is safe without the large CSV; a future physical evidence projection may improve scale or checkout ergonomics but is not required before WS2 closure.",
+  "followup_scope": "independent future storage/scale task; not a Technical V0 mainline gap",
+  "status": "PASS_WITH_BOUNDED_LIMITATIONS"
+}

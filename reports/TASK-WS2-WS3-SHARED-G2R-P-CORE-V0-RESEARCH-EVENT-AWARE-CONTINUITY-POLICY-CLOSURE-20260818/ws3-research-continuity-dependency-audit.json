@@ -1,0 +1,89 @@
+{
+  "schemaVersion": "task-ws2-ws3-shared-g2r-p-core-v0-research-continuity-dependency-audit.v1",
+  "taskId": "TASK-WS2-WS3-SHARED-G2R-P-CORE-V0-RESEARCH-EVENT-AWARE-CONTINUITY-POLICY-CLOSURE-20260818",
+  "taskStartHead": "397ea52e911f5003d34b563620cbcf6a65d65e17",
+  "taskStartBranch": "codex/task-shared-g2r-a-g2r-b-runtime-identity-remediation-and-official-corporate-action-authority-v0-20260817",
+  "taskStartWorktree": "C:\\Users\\acer\\Documents\\Codex\\g2r",
+  "taskStartWorktreeStatus": "CLEAN",
+  "ownerPolicySource": "TASK-WS2-WS3-SHARED-G2R-P-CORE-V0-RESEARCH-EVENT-AWARE-CONTINUITY-POLICY-CLOSURE-20260818",
+  "baselineEvidence": {
+    "g2rB3Closure": "docs/reports/TASK-WS2-WS3-SHARED-G2R-B3-OFFICIAL-SOURCE-EXHAUSTIVENESS-AND-COMPLETE-NO-EVENT-AUTHORITY-CLOSURE-20260817.md",
+    "g2rB3Readiness": "reports/TASK-WS2-WS3-SHARED-G2R-B3-OFFICIAL-SOURCE-EXHAUSTIVENESS-AND-COMPLETE-NO-EVENT-AUTHORITY-CLOSURE-20260817/g2r-b3-readiness.json",
+    "coveredEventCells": 368,
+    "coveredNoEventCells": 0,
+    "unknownCells": 3688,
+    "realHistoricalRows": 63826,
+    "realHistoricalDistinctInstruments": 507,
+    "realHistoricalWindow": ["2026-02-02", "2026-08-13"]
+  },
+  "dependencyLocations": [
+    {
+      "path": "services/api/src/topicpilot_api/technical_publication.py",
+      "symbols": ["evaluate_bounded_continuity", "_availability_reason", "build_technical_publication"],
+      "locations": ["221", "303-306", "530-536", "580-625"],
+      "workstream": "WS2 formal technical publication",
+      "oldDependency": "Formal indicator evidence requires CONTINUITY_PASS_BOUNDED; UNKNOWN remains unavailable.",
+      "policyAction": "PRESERVE_UNCHANGED",
+      "reason": "Owner policy is WS3-only; WS2 publication authority remains formal and fail-closed."
+    },
+    {
+      "path": "services/api/src/topicpilot_api/research/core_v0_candidate_panel.py",
+      "symbols": ["MA60Evidence.is_formal_consumable", "build_candidate_panel", "CandidatePanelInput"],
+      "locations": ["208-222", "264", "718-747"],
+      "workstream": "WS3 Core V0 research-only candidate panel",
+      "oldDependency": "MA60 evidence was consumable only when continuity_state=CONTINUITY_PASS_BOUNDED and publication_state=FORMAL_AVAILABLE.",
+      "policyAction": "MINIMAL_RESEARCH_ONLY_ADAPTER",
+      "reason": "Add optional ResearchEligibility context; retain formal method, permit a separate research MA60 path for PASS/UNKNOWN only, and surface verified-event exclusions/overlays."
+    },
+    {
+      "path": "services/api/src/topicpilot_api/research/ws3_research_policy.py",
+      "symbols": ["evaluate_ws3_research_eligibility", "ResearchInputEvidence", "VerifiedBreakingEvent"],
+      "locations": ["1-247"],
+      "workstream": "WS3 research policy adapter",
+      "oldDependency": "No prior WS3-only event-aware research admissibility contract existed.",
+      "policyAction": "ADDED_BOUNDED",
+      "reason": "Centralizes the Owner policy without creating authority, no-event, or production continuity states."
+    },
+    {
+      "path": "docs/architecture/CORE_V0_CANDIDATE_DEFINITION_AUTHORITY_CONTRACT.md",
+      "symbols": ["L1_PASS", "continuity(T, MA60 window)"],
+      "locations": ["77-108"],
+      "workstream": "WS3 research contract",
+      "oldDependency": "Existing contract describes formal continuity PASS as an L1 prerequisite.",
+      "policyAction": "OWNER_SCOPED_OVERRIDE_RECORDED_IN_P_CORE_ARTIFACTS",
+      "reason": "The new adapter applies only to WS3 research admissibility; it does not rewrite the formal WS2 contract or frozen strategy."
+    },
+    {
+      "path": "docs/architecture/CORE_V0_REAL_COVERAGE_AND_WALK_FORWARD_PREFLIGHT_CONTRACT.md",
+      "symbols": ["continuity", "stock.sma.close.v1"],
+      "locations": ["74-92", "164-172"],
+      "workstream": "WS3 preflight",
+      "oldDependency": "Preflight documents formal MA60/continuity joins.",
+      "policyAction": "RESEARCH_RERUN_BOUNDARY_MOVED_TO_EVENT_AWARE_POLICY",
+      "reason": "Real data, identity, lineage, and observation sufficiency remain required; affirmative no-event proof is removed only for research."
+    }
+  ],
+  "dependencyResults": {
+    "CONTINUITY_PASS_BOUNDED": {
+      "WS3Research": "No longer required when an explicit WS3 ResearchEligibility is eligible and continuity is UNKNOWN; still valid and preferred when present.",
+      "WS2FormalPublication": "Still required; unchanged."
+    },
+    "COVERED_NO_EVENT": {
+      "WS3Research": "Not required and never fabricated.",
+      "WS2FormalPublication": "No change to existing formal continuity authority."
+    },
+    "AFFIRMATIVE_NO_EVENT_EVIDENCE_READY": {
+      "WS3Research": "Not a prerequisite under Owner policy.",
+      "WS2FormalPublication": "No change; formal authority gap remains separate."
+    },
+    "CONTINUITY_UNKNOWN": {
+      "WS3Research": "Preserved and research may proceed if real input prerequisites pass and no verified breaking event requires exclusion.",
+      "WS2FormalPublication": "Remains unavailable/fail-closed."
+    }
+  },
+  "ownerWorkingTreeTouched": false,
+  "productionOrDatabaseMutation": false,
+  "g2rB3Reopened": false,
+  "g2rCStarted": false,
+  "sharedG3Started": false
+}

@@ -7,8 +7,9 @@ from zoneinfo import ZoneInfo
 from sqlalchemy import func, select, text
 from sqlalchemy.orm import Session
 
+from topicpilot_api.historical_read_model import project_v1_history, read_historical_bars
 from topicpilot_api.models import IngestionRun
-from topicpilot_api.problems import ApiProblem, NotFoundProblem
+from topicpilot_api.problems import NotFoundProblem
 
 TPE = ZoneInfo("Asia/Taipei")
 
@@ -73,126 +74,16 @@ def list_price_history(
     market_code: str | None,
     limit: int,
 ) -> dict[str, Any]:
-    """Read an explicit date-bound canonical PRICE history from PostgreSQL.
-
-    This query is intentionally separate from the legacy ``stock_snapshots``
-    read model. It never asks a provider for data, infers a latest row, or
-    turns an empty result into a zero-valued observation.
-    """
-
-    identity_rows = list(
-        session.execute(
-            text(
-                """
-                SELECT i.id, i.instrument_code, m.code AS market_code
-                FROM topicpilot.instruments i
-                JOIN topicpilot.markets m ON m.id = i.market_id
-                WHERE i.instrument_code = :code
-                  AND i.is_active = true
-                  AND m.is_active = true
-                  AND (
-                      CAST(:market_code AS varchar) IS NULL
-                      OR m.code = CAST(:market_code AS varchar)
-                  )
-                ORDER BY m.code
-                """
-            ),
-            {"code": code, "market_code": market_code},
+    return project_v1_history(
+        read_historical_bars(
+            session,
+            code,
+            from_date,
+            to_date,
+            market_code,
+            limit,
         )
-        .mappings()
-        .all()
     )
-    if not identity_rows:
-        raise NotFoundProblem(f"Stock {code!r} was not found")
-    if len(identity_rows) > 1:
-        raise ApiProblem(
-            409,
-            "Ambiguous instrument",
-            "The stock code exists in more than one market; specify market.",
-            "https://topicpilot.example/problems/ambiguous-instrument",
-        )
-
-    identity = identity_rows[0]
-    rows = list(
-        session.execute(
-            text(
-                """
-                SELECT
-                    (co.observed_at AT TIME ZONE market.timezone)::date AS trading_date,
-                    co.observed_at,
-                    cp.open,
-                    cp.high,
-                    cp.low,
-                    cp.close,
-                    cv.volume_quantity AS volume,
-                    mds.source_code,
-                    co.quality_state
-                FROM topicpilot.canonical_observations co
-                JOIN topicpilot.canonical_price_observations cp
-                  ON cp.canonical_observation_id = co.id
-                JOIN topicpilot.instruments i
-                  ON i.id = co.instrument_id
-                JOIN topicpilot.markets market
-                  ON market.id = i.market_id
-                LEFT JOIN topicpilot.canonical_observations volume_observation
-                  ON volume_observation.instrument_id = co.instrument_id
-                 AND volume_observation.observed_at = co.observed_at
-                 AND volume_observation.family_code = 'VOLUME'
-                 AND volume_observation.quality_state = 'ACCEPTED'
-                LEFT JOIN topicpilot.canonical_volume_observations cv
-                  ON cv.canonical_observation_id = volume_observation.id
-                JOIN topicpilot.market_data_sources mds ON mds.id = co.source_id
-                WHERE co.instrument_id = :instrument_id
-                  AND co.family_code = 'PRICE'
-                  AND co.quality_state = 'ACCEPTED'
-                  AND (co.observed_at AT TIME ZONE market.timezone)::date
-                      >= CAST(:from_date AS date)
-                  AND (co.observed_at AT TIME ZONE market.timezone)::date
-                      <= CAST(:to_date AS date)
-                  AND NOT EXISTS (
-                      SELECT 1
-                      FROM topicpilot.canonical_observations successor
-                      WHERE successor.supersedes_id = co.id
-                        AND successor.family_code = 'PRICE'
-                        AND successor.quality_state = 'ACCEPTED'
-                  )
-                ORDER BY co.observed_at, co.ordering_key, co.id
-                LIMIT :limit
-                """
-            ),
-            {
-                "instrument_id": identity["id"],
-                "from_date": from_date,
-                "to_date": to_date,
-                "limit": limit,
-            },
-        )
-        .mappings()
-        .all()
-    )
-    return {
-        "code": identity["instrument_code"],
-        "market": identity["market_code"],
-        "requested_from": from_date,
-        "requested_to": to_date,
-        "status": "AVAILABLE" if rows else "UNAVAILABLE",
-        "availability_reason": None if rows else "NO_ACCEPTED_CANONICAL_PRICE_OBSERVATIONS",
-        "point_count": len(rows),
-        "items": [
-            {
-                "trading_date": row["trading_date"],
-                "observed_at": row["observed_at"],
-                "open": row["open"],
-                "high": row["high"],
-                "low": row["low"],
-                "close": row["close"],
-                "volume": row["volume"],
-                "source_code": row["source_code"],
-                "quality_state": row["quality_state"],
-            }
-            for row in rows
-        ],
-    }
 
 
 def get_stock(session: Session, code: str) -> dict[str, Any]:

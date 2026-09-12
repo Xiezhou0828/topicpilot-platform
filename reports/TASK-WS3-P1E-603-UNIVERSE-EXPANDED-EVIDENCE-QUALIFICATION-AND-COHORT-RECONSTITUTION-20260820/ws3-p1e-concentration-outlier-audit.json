@@ -1,0 +1,51 @@
+{
+  "a1": {
+    "recent_20_high_proximity__AND__true_range_pct": {
+      "top_5_instrument_share": 0.04934618688555884,
+      "top_date_share": 0.010308294359072254
+    },
+    "recent_20_high_proximity__UPPER_GE_Q30": {
+      "top_5_instrument_share": 0.04607432492647714,
+      "top_date_share": 0.009624810622939132
+    },
+    "recent_20_high_proximity__UPPER_GE_Q40": {
+      "top_5_instrument_share": 0.05010395010395011,
+      "top_date_share": 0.00997920997920998
+    },
+    "recent_20_high_proximity__UPPER_GE_Q50": {
+      "top_5_instrument_share": 0.05498753117206982,
+      "top_date_share": 0.010473815461346634
+    },
+    "return_5d__LOWER_LE_Q60": {
+      "top_5_instrument_share": 0.04582095884599067,
+      "top_date_share": 0.009249045396690709
+    },
+    "true_range_pct__LOWER_LE_Q60": {
+      "top_5_instrument_share": 0.04372332715999678,
+      "top_date_share": 0.009582091955874063
+    },
+    "true_range_pct__LOWER_LE_Q70": {
+      "top_5_instrument_share": 0.04180434949665719,
+      "top_date_share": 0.009298393913778529
+    }
+  },
+  "a2": {
+    "top_5_instrument_share": 0.015918135304150087,
+    "top_date_share": 0.010422588592003032
+  },
+  "a2_entry": {
+    "top_5_instrument_share": 0.0351123595505618,
+    "top_date_share": 0.014044943820224719
+  },
+  "origin": {
+    "A1_ORIGIN_A2": {
+      "event_count": 4957,
+      "top_date_share": 0.011095420617308857
+    },
+    "DIRECT_ENTRY_A2": {
+      "event_count": 320,
+      "top_date_share": 0.05
+    }
+  },
+  "outlier_policy": "descriptive concentration audit; no cohort deletion"
+}

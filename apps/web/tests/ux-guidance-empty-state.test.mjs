@@ -13,14 +13,15 @@ test("guide remains a fixed navigation destination with a defined workflow", asy
   }
 });
 
-test("V2 Home exposes guided freshness states without recommendation language", async () => {
+test("V2 Home exposes guided publication states without recommendation language", async () => {
   const [home, foundation] = await Promise.all([
     read("components/v2/TodayMarketPage.tsx"),
     read("components/v2/V2Foundation.tsx"),
   ]);
-  for (const marker of ["freshnessLabel", "isSyntheticPreview", "canUseBackendData", "market-overview-title", "tp-home-live-status"]) {
+  for (const marker of ["useTodayMainlines", "resource.marketOverview", "market-overview-title", "tp-home-mainlines-state"]) {
     assert.match(home, new RegExp(marker));
   }
+  assert.doesNotMatch(home, /freshnessLabel|isSyntheticPreview|canUseBackendData|useSnapshot/);
   assert.match(foundation, /DataState/);
   assert.match(foundation, /state === "UNAVAILABLE"/);
   assert.match(foundation, /tp-state-\$\{/);
@@ -37,7 +38,7 @@ test("legacy watchlist preserves its eight-column scan hierarchy", async () => {
   assert.doesNotMatch(page, /<th>Entry|<th>Gate|<th>Target/);
 });
 
-test("signal lamps retain positive, negative, neutral and missing states", async () => {
+test("legacy signal lamps remain available but standalone stock uses the shared formal view", async () => {
   const [lamps, css, detail] = await Promise.all([
     read("components/StockSignalLamps.tsx"),
     read("globals.css"),
@@ -47,10 +48,10 @@ test("signal lamps retain positive, negative, neutral and missing states", async
     assert.match(lamps, new RegExp(`"${state}"`));
     assert.match(css, new RegExp(`\\.signalLamp\\.${state}`));
   }
-  assert.match(detail, /stockDetailGrid/);
-  assert.match(detail, /Evidence summary/);
-  assert.match(detail, /trigger-/);
-  assert.match(detail, /dataGapText/);
+  assert.match(detail, /StockEncyclopediaDrawer/);
+  assert.match(detail, /get\("market"\)/);
+  assert.match(detail, /router\.back\(\)/);
+  assert.doesNotMatch(detail, /StockSignalLamps|trigger-|dataGapText|useSnapshot/);
 });
 
 test("V2 Topic Overview has explicit unavailable and Preview recovery states", async () => {

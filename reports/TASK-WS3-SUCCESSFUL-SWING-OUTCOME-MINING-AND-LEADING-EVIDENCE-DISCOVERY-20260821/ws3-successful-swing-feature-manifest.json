@@ -1,0 +1,124 @@
+{
+  "feature_families": {
+    "A_STATE_CONTEXT": {
+      "allowed_before_outcomes": true,
+      "feature_ids": [
+        "a1_preceded_20",
+        "a2_preceded_20",
+        "a1_to_a2_preceded_20",
+        "a2_without_prior_a1_20",
+        "a_state_bucket"
+      ],
+      "source": "frozen P1E A1/A2 event panels",
+      "status": "PREDECLARED",
+      "threshold_search": false
+    },
+    "MOMENTUM": {
+      "allowed_before_outcomes": true,
+      "feature_ids": [
+        "RAW_CLOSE_RETURN_5D",
+        "RAW_CLOSE_RETURN_20D",
+        "RSI14",
+        "MACD_12_26_9",
+        "MACD_SIGNAL_12_26_9",
+        "MACD_HISTOGRAM_12_26_9",
+        "rsi_change_5",
+        "macd_hist_change_5"
+      ],
+      "source": "canonical accepted daily OHLCV",
+      "status": "PREDECLARED",
+      "threshold_search": false
+    },
+    "RELATIVE_STRENGTH": {
+      "allowed_before_outcomes": true,
+      "feature_ids": [
+        "benchmark_relative_return_5D",
+        "benchmark_relative_return_20D"
+      ],
+      "source": "canonical accepted daily OHLCV",
+      "status": "PREDECLARED",
+      "threshold_search": false
+    },
+    "TREND_STRUCTURE": {
+      "allowed_before_outcomes": true,
+      "feature_ids": [
+        "close_vs_ma5",
+        "close_vs_ma10",
+        "close_vs_ma20",
+        "close_vs_ma60",
+        "distance_to_ma20",
+        "ma5_slope_5",
+        "ma20_slope_5",
+        "ma60_slope_5",
+        "ma_alignment_bullish",
+        "ma_alignment_bearish"
+      ],
+      "source": "canonical accepted daily OHLCV",
+      "status": "PREDECLARED",
+      "threshold_search": false
+    },
+    "VOLATILITY_COMPRESSION": {
+      "allowed_before_outcomes": true,
+      "feature_ids": [
+        "true_range_pct",
+        "rolling_range_pct_5",
+        "rolling_range_pct_20",
+        "range_compression_5_to_20",
+        "realized_vol_5",
+        "realized_vol_20",
+        "volatility_contraction_5_to_20"
+      ],
+      "source": "canonical accepted daily OHLCV",
+      "status": "PREDECLARED",
+      "threshold_search": false
+    },
+    "VOLUME_PARTICIPATION": {
+      "allowed_before_outcomes": true,
+      "feature_ids": [
+        "VOLUME_MA5",
+        "VOLUME_MA20",
+        "VOLUME_RATIO_20",
+        "volume_ratio_5_to_20",
+        "volume_expansion_state",
+        "volume_contraction_state"
+      ],
+      "source": "canonical accepted daily OHLCV",
+      "status": "PREDECLARED",
+      "threshold_search": false
+    }
+  },
+  "fixed_windows": {
+    "compression": [
+      5,
+      20
+    ],
+    "ma": [
+      5,
+      10,
+      20,
+      60
+    ],
+    "macd": [
+      12,
+      26,
+      9
+    ],
+    "returns": [
+      5,
+      20
+    ],
+    "rsi": 14,
+    "state_lookback_sessions": 20
+  },
+  "full_feature_row_expansion": false,
+  "panel_layout": "one_row_per_event_and_relative_day_with_feature_columns",
+  "relative_strength": {
+    "feature_ids": [
+      "benchmark_relative_return_5D",
+      "benchmark_relative_return_20D"
+    ],
+    "status": "UNAVAILABLE_NO_CANONICAL_BENCHMARK",
+    "topic_peer_proxy_used": false
+  },
+  "schema_version": "ws3-successful-swing-feature-manifest.v2"
+}

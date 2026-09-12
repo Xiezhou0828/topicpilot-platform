@@ -1,0 +1,34 @@
+{
+  "taskId": "TASK-WS1-LIFECYCLE-CANONICAL-COLLISION-RECONCILIATION-AND-PROMOTION-READINESS-20260822",
+  "backend": {
+    "targetedPytest": "31 passed",
+    "alembicCurrent": "0032_task_ws1_topic_lifecycle_contract_gap_closure (head)",
+    "ruff": "passed"
+  },
+  "frontend": {
+    "lifecycleAndPublicationContractTests": "7 passed",
+    "changedFilesTypeScript": "passed",
+    "fullProjectTypeScript": "baseline failure outside WS1: today-home.ts dataStatus mismatch against canonical untracked api-client contract"
+  },
+  "runtime": {
+    "forwardDate20260812": "passed",
+    "readOnlyAvailabilityDate20260813": "passed",
+    "schedulerHook": "passed",
+    "materializerBeforeLifecycle": "passed",
+    "persistence": "passed",
+    "idempotency": "passed",
+    "observability": "passed",
+    "failClosedLineage": "passed",
+    "noFormalPublication": "passed"
+  },
+  "scope": {
+    "gitDiffCheck": "passed",
+    "semanticFreeze": "passed",
+    "WS2Changed": false,
+    "WS3Changed": false,
+    "WS4Changed": false,
+    "NEXT_TASKChanged": false,
+    "deployment": false,
+    "push": false
+  }
+}

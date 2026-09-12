@@ -1,0 +1,32 @@
+{
+  "task_id": "TASK-WS1-LIFECYCLE-V1-IDENTITY-AWARE-STATE-MACHINE-IMPLEMENTATION-20260823",
+  "status": "IMPLEMENTATION_COMPLETE_HISTORICAL_RECONSTRUCTION_BLOCKED",
+  "worktree": "E:/topicpilot-ws1-lifecycle-v1-20260823",
+  "branch": "codex/ws1-lifecycle-v1-identity-state-machine-20260823",
+  "canonical_base_head": "baa59cffc7aa73849b7906ed7bfa64cd51a782ee",
+  "policy_version": "topic-lifecycle-policy.v1",
+  "calculation_version": "topic-lifecycle-v1-shadow.v1",
+  "stages": ["SPROUTING", "FERMENTING", "MAIN_RISE", "MATURE", "DECLINING"],
+  "validation": {
+    "lifecycle_v1_unit_tests": "PASS (11)",
+    "formal_daily_state_tests": "PASS (6)",
+    "lifecycle_contract_tests": "PASS (2)",
+    "combined_tests": "19 passed",
+    "ruff_targeted": "PASS",
+    "python_compile": "PASS",
+    "deterministic_pure_replay": "PASS",
+    "historical_database_replay": "NOT_RUN_DB_UNAVAILABLE_LOCAL_5432_NO_LISTENER"
+  },
+  "production_evidence": {
+    "topics": 130,
+    "insufficient_data_topics": 130,
+    "current_stage_null_topics": 130,
+    "latest_legal_stage_date": "UNKNOWN",
+    "stage_bearing_shadow_row": "NOT_PROVEN",
+    "runtime_provenance": "NOT_PROVEN"
+  },
+  "database_mutation": "NO",
+  "deployment": "NO",
+  "push": "NO",
+  "next_task_changed": "NO"
+}

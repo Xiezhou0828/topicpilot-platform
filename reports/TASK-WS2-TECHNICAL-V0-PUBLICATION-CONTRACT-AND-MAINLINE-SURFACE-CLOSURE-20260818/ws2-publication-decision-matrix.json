@@ -1,0 +1,65 @@
+[
+  {
+    "event_status": "NO_KNOWN_EVENT_EVIDENCE",
+    "meaning": "Technical V0 result is eligible; configured lookup found no known verified match without claiming universal absence.",
+    "publication_status": "AVAILABLE",
+    "reason_code": "NONE",
+    "technical_status": "VALID"
+  },
+  {
+    "event_status": "KNOWN_EVENT",
+    "meaning": "A known event is outside the MA60 gate or only constrains another indicator window; affected evidence stays disclosed.",
+    "publication_status": "AVAILABLE_WITH_LIMITATION",
+    "reason_code": "KNOWN_EVENT_HANDLED",
+    "technical_status": "VALID"
+  },
+  {
+    "event_status": "LOOKUP_UNAVAILABLE",
+    "meaning": "Raw Technical V0 state is visible with explicit incomplete corporate-action verification; no no-event claim is made.",
+    "publication_status": "AVAILABLE_WITH_LIMITATION",
+    "reason_code": "EVENT_LOOKUP_UNAVAILABLE",
+    "technical_status": "VALID"
+  },
+  {
+    "event_status": "KNOWN_EVENT",
+    "meaning": "A verified unresolved continuity-breaking event intersects the required MA60/indicator window.",
+    "publication_status": "BLOCKED",
+    "reason_code": "KNOWN_CONTINUITY_EVENT",
+    "technical_status": "UNAVAILABLE"
+  },
+  {
+    "event_status": "KNOWN_EVENT",
+    "meaning": "The frozen Close(T) < MA60(T) Technical V0 eligibility rule fails; this is an expected analytical state.",
+    "publication_status": "BLOCKED",
+    "reason_code": "BELOW_MA60",
+    "technical_status": "INELIGIBLE"
+  },
+  {
+    "event_status": "LOOKUP_UNAVAILABLE",
+    "meaning": "MA60 eligibility fails independently; lookup uncertainty is retained as a separate event-authority state.",
+    "publication_status": "BLOCKED",
+    "reason_code": "TECHNICAL_V0_INELIGIBLE",
+    "technical_status": "INELIGIBLE"
+  },
+  {
+    "event_status": "NOT_APPLICABLE",
+    "meaning": "The required MA60 history or other hard input is unavailable.",
+    "publication_status": "UNAVAILABLE",
+    "reason_code": "INSUFFICIENT_HISTORY",
+    "technical_status": "UNAVAILABLE"
+  },
+  {
+    "event_status": "ERROR",
+    "meaning": "Identity, lineage, or contract input cannot be safely bound.",
+    "publication_status": "ERROR",
+    "reason_code": "IDENTITY_FAILURE",
+    "technical_status": "UNAVAILABLE"
+  },
+  {
+    "event_status": "ERROR",
+    "meaning": "A genuine calculation/runtime defect occurred; policy outcomes are not relabeled as errors.",
+    "publication_status": "ERROR",
+    "reason_code": "TECHNICAL_CALCULATION_ERROR",
+    "technical_status": "ERROR"
+  }
+]

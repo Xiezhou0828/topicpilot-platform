@@ -15,6 +15,12 @@ from typing import Any
 from sqlalchemy import bindparam, text
 from sqlalchemy.orm import Session
 
+from topicpilot_api.market_data.history import COVERED_NO_TRADE_STATUS_CODES
+
+_COVERED_NO_TRADE_STATUS_SQL = ", ".join(
+    f"'{status}'" for status in sorted(COVERED_NO_TRADE_STATUS_CODES)
+)
+
 
 @dataclass(frozen=True)
 class DailyMarketReconciliation:
@@ -176,7 +182,9 @@ def reconcile_daily_market(
                 count(d.instrument_id) FILTER (WHERE d.close IS NOT NULL) AS priced_count
                 ,count(d.instrument_id) FILTER (
                     WHERE d.close IS NOT NULL
-                       OR d.status_code IN ('SUSPENDED', 'NO_TRADE', 'EXCHANGE_CONFIRMED_NO_DATA')
+                       OR d.status_code IN (
+                           {_COVERED_NO_TRADE_STATUS_SQL}
+                       )
                 ) AS covered_count
             FROM topicpilot.markets m
             JOIN topicpilot.instruments i ON i.market_id = m.id

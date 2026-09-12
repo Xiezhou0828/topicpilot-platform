@@ -14,7 +14,9 @@
     "leadershipFeatureName": "synthetic_leadership_participation_counts",
     "leadershipFeatureVersion": "v1"
   },
-  "sourceReferences": ["synthetic-fixture-only"],
+  "sourceReferences": [
+    "synthetic-fixture-only"
+  ],
   "cases": [
     {
       "caseId": "explicit-core-and-leaders",
@@ -25,7 +27,10 @@
       "leaderSetVersion": "synthetic-leaders.v1",
       "classificationPolicyId": "externally-preclassified-synthetic-state",
       "classificationPolicyVersion": "v1",
-      "labels": ["point-in-time", "synthetic"],
+      "labels": [
+        "point-in-time",
+        "synthetic"
+      ],
       "topics": [
         {
           "topicId": "synthetic-topic-alpha",
@@ -59,7 +64,10 @@
               "observationDate": null
             }
           ],
-          "leaderInstrumentIds": ["SYN-A1", "SYN-A3"]
+          "leaderInstrumentIds": [
+            "SYN-A1",
+            "SYN-A3"
+          ]
         }
       ]
     },
@@ -72,7 +80,10 @@
       "leaderSetVersion": "synthetic-leaders-missing.v1",
       "classificationPolicyId": "externally-preclassified-synthetic-state",
       "classificationPolicyVersion": "v1",
-      "labels": ["point-in-time", "synthetic"],
+      "labels": [
+        "point-in-time",
+        "synthetic"
+      ],
       "topics": [
         {
           "topicId": "synthetic-topic-beta",

@@ -20,31 +20,76 @@ def test_committed_tw_reference_bundle_is_derived_and_contains_known_evidence():
     assert bundle.manifest["generatedOrCurated"] == "GENERATED_WITH_CURATED_GOVERNANCE_INPUTS"
     assert bundle.summary() == {
         "marketCount": 2,
-        "instrumentCount": 507,
-        "instrumentCountByMarket": {"TPE": 314, "TWO": 193},
+        "instrumentCount": 639,
+        "instrumentCountByMarket": {"TPE": 398, "TWO": 241},
         "currencyCount": 1,
         "timezoneCount": 1,
         "sessionCount": 1,
-        "tradingStatusCount": 7,
+        "tradingStatusCount": 8,
         "adjustmentCount": 3,
         "calendarDateCount": 24,
         "calendarHolidayCount": 23,
         "calendarSuspendedCount": 1,
-        "lifecycleEventCount": 1,
+        "lifecycleEventCount": 5,
     }
     assert bundle.evidence["suspensions"]["6806"]["status"] == "DELISTED"
     assert bundle.evidence["suspensions"]["6806"]["evidenceId"] == "TWSE-DELISTED-6806-20260623"
-    assert bundle.instrument_lifecycles == (
-        {
-            "effective_from": "2026-06-23",
-            "evidence_id": "TWSE-DELISTED-6806-20260623",
-            "instrument_code": "6806",
-            "market_code": "TPE",
-            "reason": bundle.evidence["suspensions"]["6806"]["reason"],
-            "source_url": "https://www.twse.com.tw/company/suspendListingCsvAndHtml?lang=zh&startYear=&type=html",
-            "status_code": "DELISTED",
-        },
+    by_identity = {
+        (row["market_code"], row["instrument_code"], row["status_code"]): row
+        for row in bundle.instrument_lifecycles
+    }
+    assert by_identity[("TPE", "6806", "DELISTED")]["effective_from"] == "2026-06-23"
+    assert by_identity[("TWO", "5371", "SUSPENDED")]["effective_from"] == "2026-08-24"
+    assert by_identity[("TWO", "5371", "SUSPENDED")]["effective_to"] == "2026-09-02"
+    assert by_identity[("TWO", "5371", "TERMINATED")]["effective_from"] == "2026-09-03"
+    assert by_identity[("TWO", "6241", "SUSPENDED")]["effective_from"] == "2026-08-18"
+    assert by_identity[("TWO", "6241", "SUSPENDED")]["effective_to"] == "2026-08-24"
+    assert (
+        by_identity[("TWO", "6241", "SUSPENDED")]["event_type"]
+        == "CAPITAL_REDUCTION_SHARE_EXCHANGE"
     )
+    assert by_identity[("TPE", "1563", "SUSPENDED")]["effective_from"] == "2026-08-27"
+    assert by_identity[("TPE", "1563", "SUSPENDED")]["effective_to"] == "2026-09-04"
+    assert (
+        by_identity[("TPE", "1563", "SUSPENDED")]["event_type"]
+        == "CAPITAL_REDUCTION_SHARE_EXCHANGE"
+    )
+
+
+def test_owner_instrument_master_generates_current_bundle(tmp_path: Path):
+    master = tmp_path / "instruments.csv"
+    master.write_text(
+        "market_code,instrument_code,instrument_name,instrument_type,currency,enabled,listing_status\n"
+        "TPE,2330,TSMC,EQUITY,TWD,TRUE,ACTIVE\n",
+        encoding="utf-8",
+    )
+    calendar = tmp_path / "calendar.json"
+    calendar.write_text(
+        json.dumps(
+            {
+                "timezone": "Asia/Taipei",
+                "version": "test",
+                "source": "test",
+                "holidays": {"2026-01-01": "holiday"},
+                "suspended": {},
+            }
+        ),
+        encoding="utf-8",
+    )
+    evidence = tmp_path / "evidence.json"
+    evidence.write_text(json.dumps({"suspensions": {}}), encoding="utf-8")
+    adjustments = tmp_path / "adjustments.json"
+    adjustments.write_text(json.dumps({"codes": ["UNKNOWN"]}), encoding="utf-8")
+
+    bundle = build_bundle_from_sources(
+        instrument_master_source=master,
+        calendar_source=calendar,
+        evidence_source=evidence,
+        adjustment_source=adjustments,
+        version="test-owner-master-v1",
+    )
+    assert bundle.summary()["instrumentCount"] == 1
+    assert bundle.manifest["sourceArtifacts"][0]["role"] == "INSTRUMENT_MASTER_SOURCE"
 
 
 def test_bundle_generation_derives_instruments_without_a_count_business_rule(tmp_path: Path):

@@ -1,6 +1,7 @@
-import TopicDetailPage from "../../components/v2/TopicDetailPage";
+import TopicCatalogPage from "../../components/v2/TopicCatalogPage";
 
-export default async function TopicDetailRoute({ params }: { params: Promise<{ slug: string }> }) {
+export default async function TopicDetailRoute({ params, searchParams }: { params: Promise<{ slug: string }>; searchParams: Promise<{ asOf?: string }> }) {
   const { slug } = await params;
-  return <TopicDetailPage slug={slug} />;
+  const { asOf } = await searchParams;
+  return <TopicCatalogPage key={`${slug}:${asOf ?? "current"}`} slug={slug} asOf={asOf} />;
 }

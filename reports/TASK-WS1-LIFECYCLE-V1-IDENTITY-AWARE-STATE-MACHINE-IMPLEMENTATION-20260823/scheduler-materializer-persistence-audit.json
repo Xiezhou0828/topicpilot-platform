@@ -1,0 +1,12 @@
+{
+  "formal_pit_materializer": {"status": "NOT_PROVEN", "latest_date": "UNKNOWN", "count": "UNKNOWN"},
+  "topic_snapshots_and_member_facts": {"status": "NOT_PROVEN", "latest_date": "UNKNOWN", "count": "UNKNOWN"},
+  "canonical_daily_price_evidence": {"status": "NOT_PROVEN", "latest_date": "UNKNOWN", "sample_count": "UNKNOWN"},
+  "lifecycle_runner_scheduler": {"status": "NOT_PROVEN", "last_run": "UNKNOWN"},
+  "lifecycle_persistence": {"status": "NOT_PROVEN", "stage_bearing_rows": "UNKNOWN"},
+  "api_read_model": {"status": "OBSERVED", "topics": 130, "insufficient_data": 130, "current_stage_null": 130},
+  "isolated_2026_08_12_evidence": {"snapshots": 92, "member_facts": 848, "exact_price_matches": 847, "production_equivalence": "NO"},
+  "root_cause_classification": "FAIL_CLOSED_INPUT_AND_PROVENANCE_CHAIN_NOT_PROVEN",
+  "policy_change": "NO",
+  "production_mutation": "NO"
+}

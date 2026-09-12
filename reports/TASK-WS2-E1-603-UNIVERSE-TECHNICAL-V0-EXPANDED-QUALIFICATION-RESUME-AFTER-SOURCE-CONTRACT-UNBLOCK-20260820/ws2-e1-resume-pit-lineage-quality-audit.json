@@ -1,0 +1,61 @@
+{
+  "continuity_mismatch_count": 0,
+  "duplicate_evidence_key_count": 0,
+  "future_session_leakage_count": 0,
+  "invalid_technical_value_count": 0,
+  "lifecycle_leakage_count": 0,
+  "look_ahead_leakage_detected": false,
+  "no_data_synthetic_fill_count": 0,
+  "pit_behavior": {
+    "audit_version": "technical-v0-pit-quality.v1",
+    "checks": [
+      {
+        "as_of": "2026-08-12",
+        "case": "above_ma60",
+        "future_observation_invariance": true
+      },
+      {
+        "as_of": "2026-08-12",
+        "case": "below_ma60",
+        "future_observation_invariance": true
+      },
+      {
+        "as_of": "2026-08-12",
+        "case": "known_event",
+        "future_observation_invariance": true
+      },
+      {
+        "as_of": "2026-08-12",
+        "case": "lookup_unavailable",
+        "future_observation_invariance": true
+      },
+      {
+        "as_of": "2026-06-18",
+        "case": "successful_no_match",
+        "future_observation_invariance": true
+      }
+    ],
+    "formal_indicator_count": 14,
+    "future_event_invariance_pass": false,
+    "future_event_knowledge_consumed": true,
+    "future_observation_invariance_pass": true,
+    "future_observations_consumed": false,
+    "future_revision_silently_backfilled": false,
+    "future_topic_or_system_state_consumed": false,
+    "method": "prefix-vs-full real-history evidence comparison plus source/contract audit; no strategy optimization",
+    "pit_safe_formal_indicator_count": 14,
+    "pit_unsafe_formal_indicator_count": 0,
+    "task_id": "TASK-WS2-E1-603-UNIVERSE-TECHNICAL-V0-EXPANDED-QUALIFICATION-RESUME-AFTER-SOURCE-CONTRACT-UNBLOCK-20260820"
+  },
+  "quarantine_leakage_count": 0,
+  "source_lineage_mismatch_count": 0,
+  "status": "PASS_WITH_BOUNDED_LIMITATIONS",
+  "task_id": "TASK-WS2-E1-603-UNIVERSE-TECHNICAL-V0-EXPANDED-QUALIFICATION-RESUME-AFTER-SOURCE-CONTRACT-UNBLOCK-20260820",
+  "upstream_bounded_states": {
+    "lifecycle_skip": 41,
+    "no_data": 142,
+    "quarantine": 144
+  },
+  "upstream_states_not_coerced": true,
+  "warmup_violation_count": 0
+}

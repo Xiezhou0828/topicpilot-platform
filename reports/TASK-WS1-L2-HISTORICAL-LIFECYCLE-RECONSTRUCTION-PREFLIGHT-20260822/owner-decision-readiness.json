@@ -1,0 +1,132 @@
+{
+  "task": "WS1/L2 2026 Historical Lifecycle Reconstruction Preflight",
+  "disposition": "OWNER_DECISION_REASSESSMENT",
+  "as_of": "2026-08-22",
+  "canonical_head_observed": "b569430d2a358cab6a5915aeaacff2810df4913c",
+  "policy_version": "topic-lifecycle-policy.provisional.1",
+  "calculation_version": "topic-lifecycle-shadow.v1",
+  "authority": "CURRENT_TAXONOMY_HISTORICAL_RECONSTRUCTION",
+  "research_mode": "RETROSPECTIVE_RESEARCH",
+  "historical_pit_truth": false,
+  "forward_shadow": false,
+  "prior_strict_authority": "HISTORICAL_RECONSTRUCTED_SHADOW",
+  "readiness": "PARTIAL",
+  "readiness_label": "CURRENT_TAXONOMY_HISTORICAL_RECONSTRUCTION_READY",
+  "requested_window": {
+    "start": "2026-01-01",
+    "end": "2026-08-13",
+    "end_basis": "observed_canonical_forward_boundary"
+  },
+  "safe_retrospective_research_window": {
+    "start": "2026-02-03",
+    "end": "2026-08-13",
+    "qualification": "raw observed close-to-close evidence only where current and previous accepted canonical closes exist and no affected instrument/date fail-closed condition is present"
+  },
+  "price_boundaries": {
+    "canonical_daily_bar_start": "2026-02-02",
+    "close_only_warmup_date": "2026-02-02",
+    "unavailable_or_fail_closed_window": {
+      "start": "2026-01-01",
+      "end": "2026-02-01"
+    },
+    "synthetic_fill_permitted": false
+  },
+  "source_coverage": {
+    "canonical_ohlcv_rows": 63826,
+    "canonical_ohlcv_symbols": 507,
+    "canonical_ohlcv_date_start": "2026-02-02",
+    "canonical_ohlcv_date_end": "2026-08-13",
+    "formal_snapshot_rows": 460,
+    "formal_snapshot_dates": 5,
+    "formal_materialized_member_facts": 4235,
+    "runtime_observed_member_aggregate": 4236,
+    "exact_topic_date_price_coverage": "NOT_COMPUTED_IN_PREFLIGHT"
+  },
+  "blocker_disposition": [
+    {
+      "item": "historical_topic_relations_and_taxonomy",
+      "status": "RESOLVED_BY_OWNER_DECISION_FOR_RETROSPECTIVE_RESEARCH",
+      "hard_blocker": false,
+      "condition": "freeze current canonical taxonomy and instrument-topic relations and apply consistently backward from 2026-01-01",
+      "remaining_limit": "not PIT truth, not survivorship-safe history, not FORWARD_SHADOW"
+    },
+    {
+      "item": "LiveTrackingUniverse",
+      "status": "ADAPTER_BLOCKER_RESOLVABLE",
+      "hard_blocker": false,
+      "condition": "future deterministic retrospective adapter uses frozen canonical instrument IDs and relations instead of current-state LiveTrackingUniverse",
+      "remaining_limit": "current TopicLifecycleEngine cannot be run unchanged as the historical adapter"
+    },
+    {
+      "item": "corporate_action_and_adjustment",
+      "status": "PARTIAL_RESEARCH_LIMITATION",
+      "hard_blocker": false,
+      "condition": "use accepted observed closes only; preserve UNKNOWN adjustment state; fail closed on discontinuity or lineage ambiguity",
+      "remaining_limit": "no adjustment-corrected economic return or continuity-complete claim"
+    },
+    {
+      "item": "security_identity",
+      "status": "INSTRUMENT_ID_RESEARCH_LIMITATION",
+      "hard_blocker": false,
+      "condition": "aggregate with frozen instrument_id joins",
+      "remaining_limit": "no alias-complete, symbol-complete, or survivorship-safe identity claim"
+    },
+    {
+      "item": "daily_price_evidence",
+      "status": "HARD_BOUNDED_WINDOW_BLOCKER",
+      "hard_blocker": true,
+      "condition": "no canonical evidence before 2026-02-02 and no normal close-to-close pair on 2026-02-02",
+      "remaining_limit": "full daily lifecycle evidence cannot start on 2026-01-01; per-member gaps remain fail closed"
+    },
+    {
+      "item": "4235_4236_discrepancy",
+      "status": "FORMAL_EXACTNESS_RECONCILIATION_BLOCKER",
+      "hard_blocker": false,
+      "condition": "carry unresolved and cross-check; do not silently repair or choose a side",
+      "remaining_limit": "no exact parity or formal closure claim for the existing member-fact artifact"
+    },
+    {
+      "item": "migration_0032_and_forward_shadow_artifacts",
+      "status": "NOT_REQUIRED_FOR_THIS_RETROSPECTIVE_AUTHORITY",
+      "hard_blocker": false,
+      "condition": "route remains separate research reconstruction",
+      "remaining_limit": "cannot support formal promotion or FORWARD_SHADOW claims"
+    }
+  ],
+  "bootstrap": {
+    "requested_first_date": "2026-01-01",
+    "requested_first_date_disposition": "NO_PRICE_FAIL_CLOSED_BOUNDARY",
+    "first_normal_evaluable_date": "2026-02-03",
+    "prior_close_date": "2026-02-02",
+    "previous_stage_state": "explicit_null_or_initial_state_at_first_evaluable_date",
+    "future_information_used": false,
+    "pre_window_stage_inferred": false
+  },
+  "coverage_disposition": {
+    "taxonomy_membership": "AVAILABLE_BY_OWNER_DECISION_AS_RETROSPECTIVE_CURRENT_TAXONOMY",
+    "daily_price_input": "BOUNDED_AND_PARTIAL",
+    "strict_full_window_lifecycle_coverage": "NO",
+    "safe_raw_evidence_coverage": "2026-02-03_THROUGH_2026-08-13_WHERE_PAIRS_EXIST",
+    "formal_member_fact_exactness": "UNRESOLVED_4235_VS_4236"
+  },
+  "required_markers": {
+    "authority": "CURRENT_TAXONOMY_HISTORICAL_RECONSTRUCTION",
+    "description": "retrospective research",
+    "forbidden_descriptions": [
+      "historical PIT truth",
+      "FORWARD_SHADOW"
+    ]
+  },
+  "execution_attestation": {
+    "reconstruction_executed": false,
+    "backfill_executed": false,
+    "database_mutation": false,
+    "lifecycle_engine_modified": false,
+    "lifecycle_policy_modified": false,
+    "deploy": false,
+    "push": false,
+    "next_task_modified": false,
+    "owner_dirty_or_untracked_state_preserved": true
+  },
+  "next_minimum_bounded_route": "read-only deterministic retrospective adapter/harness design and review, then separately authorized bounded execution stopping at 2026-08-13"
+}

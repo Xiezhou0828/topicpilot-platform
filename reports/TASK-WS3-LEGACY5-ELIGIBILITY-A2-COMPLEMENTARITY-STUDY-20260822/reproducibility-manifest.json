@@ -1,0 +1,21 @@
+{
+  "database_access": "read_only",
+  "normalized_aggregate_sha256": "f869ad0dad6f1be97455d68f299acdb2eebe650169454cb41f2e9d5ed23b1aef",
+  "normalized_artifact_hashes": {
+    "a2-legacy5-complementarity-path-metrics.csv": "fa6c2af3ee9f5e0e793ca44cd7390650e1384cb8587bb669c5819c2d9f01b89f",
+    "a2-legacy5-overlap-summary.csv": "c7b6ab8c766d02f00d2d4e24d652f61a6dbcbfffa85137de7504caf0a33fa088",
+    "eligibility-anchor-panel.csv": "3bace0135b967d3aadc34a161b134a4951f3230a2566030303731e254e76d2d8",
+    "eligibility-distinct-episodes.csv": "6dff77ea092488b06f601712e4cd00788adfd0b65e3bab5f94632c992ddece3c",
+    "eligibility-path-metrics.csv": "671bdb83d39a6d5c788d93a1819bc97ec70ac6a9dfd1e78821c0f28a23863380",
+    "legacy5-ma20-ma60-variant-comparison.csv": "d76bd156aaf21f7e98ff7b3f3b278ff9ee173df38d528f4cc73988e168017bf7",
+    "signal-lead-lag-summary.csv": "d8b1a8df06e7dea98f4d3e7a534980eb4ac2bcdf850de1d6d8bdb35fcdacb3c5",
+    "source-semantics-reconciliation-manifest.json": "4f3499766a0fb6cd3e89e9f84fd33113ff166ccd7aea22a496bac66b76a45c88"
+  },
+  "prior_replay_aggregate_sha256": "f869ad0dad6f1be97455d68f299acdb2eebe650169454cb41f2e9d5ed23b1aef",
+  "reconstruction_runs": 5,
+  "reproducible": "YES",
+  "schema_version": "ws3-legacy5-eligibility-a2-reproducibility.v1",
+  "source_surface_sha256": "e803733e796d8f4d8cf00575cd4045f28c9364572fc61b31ef490e8a65ff47a4",
+  "strategy_acceptance": "NO",
+  "task_id": "TASK-WS3-LEGACY5-ELIGIBILITY-A2-COMPLEMENTARITY-STUDY-20260822"
+}

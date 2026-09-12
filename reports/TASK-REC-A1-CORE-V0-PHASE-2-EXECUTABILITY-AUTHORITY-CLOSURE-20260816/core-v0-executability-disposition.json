@@ -1,0 +1,272 @@
+{
+  "taskId": "TASK-REC-A1-CORE-V0-PHASE-2-EXECUTABILITY-AUTHORITY-CLOSURE-20260816",
+  "workstream": "WS3",
+  "phase": "CORE_V0_EXECUTABILITY_AUTHORITY_CLOSURE",
+  "mode": "EXECUTABILITY_AUTHORITY_DEPENDENCY_AUDIT_ONLY",
+  "status": "CLOSED_WITH_CANDIDATE_LEVEL_BLOCKERS",
+  "canonicalBaseline": {
+    "repository": "C:/Users/acer/Desktop/????/topicpilot-platform",
+    "branch": "codex/task-ops-023a-p3c-runtime-sha-audit-20260813",
+    "head": "7e28284161d172cc5aa4c967e0306050c748cebf",
+    "ownerDirtyLinesObserved": 185,
+    "ownerDirtyStatePreserved": true,
+    "sourceWorktree": "C:/Users/acer/Documents/Codex/ws3p2-20260816",
+    "sourceBranch": "codex/task-rec-a1-core-v0-phase2-20260816"
+  },
+  "protocol": {
+    "version": "core-v0-walk-forward.v1",
+    "changed": false,
+    "development": "2026-02-02..2026-06-30",
+    "validation": "2026-07-01..2026-07-31",
+    "holdout": "2026-08-01..2026-08-13",
+    "minimumPriorCanonicalTradingSessions": 60,
+    "forwardOutcomeHorizons": ["T+1", "T+3", "T+5", "T+10"],
+    "asOfFormationRule": "all candidate formation inputs effective_or_observable_on_or_before_T",
+    "parameterSearch": "FORBIDDEN",
+    "thresholdTuning": "FORBIDDEN",
+    "strategyOptimization": "FORBIDDEN"
+  },
+  "r1RecA1Provenance": {
+    "freezeDecision": "OWNER_ACCEPTED_FROZEN_RESEARCH_ONLY_PRESERVED",
+    "canonicalDatasetPath": "reports/TASK-REC-A1-CORPORATE-ACTION-RESEARCH-DATASET-IMPLEMENTATION/REC-A1-CA-EVENTS-V0.json",
+    "canonicalDatasetSha256": "78f684d5b014f43f3b34393be1bc644805e67f05e18b21e7ab98d075a1cd60b2",
+    "canonicalDatasetLogicalContentHash": "4d9b4912bd1c4613510e60c5cf4b5a629c367e1c94dd733d3b1dc3f935e0eb5d",
+    "canonicalFreezeMetadataPath": "reports/TASK-REC-A1-DATASET-PROTOCOL-FREEZE-RISK-ACCEPTANCE-REASSESSMENT/freeze-risk-acceptance-metadata.json",
+    "canonicalFreezeMetadataSha256": "1281a8379ccaa9f56e65cadb98dc5bcd35be5d06761ab73b2370b54c5634a2e8",
+    "phase1FrozenOwnerArtifactSha256": "1091f97268ac01342a1803bc511780b9948c06c50176e367588b829af0d530e0",
+    "phase1CleanCanonicalArtifactSha256": "78f684d5b014f43f3b34393be1bc644805e67f05e18b21e7ab98d075a1cd60b2",
+    "phase1FrozenOwnerMetadataSha256": "019d41046198f3ee66d39429188dc6ae6d54de3e43a5e24767d7a7fbb918cfff",
+    "phase1CleanCanonicalMetadataSha256": "1281a8379ccaa9f56e65cadb98dc5bcd35be5d06761ab73b2370b54c5634a2e8",
+    "reviewLedgerPath": "reports/TASK-REC-A1-UNKNOWN-154-IDENTITY-EVENT-GAP-REVIEW/identity-review-ledger.json",
+    "reviewLedgerInCleanHead": false,
+    "unknownsReassessed": false,
+    "unauthorizedIdentityConflictEstablished": false,
+    "disposition": "BLOCKED_BY_REC_A1_PROVENANCE_LEDGER_ARCHIVE_GAP",
+    "candidateConsumptionState": "READY_AFTER_REC_A1_PROVENANCE_RECONCILIATION"
+  },
+  "r2MinimumPanel": {
+    "contractStatus": "DEFINED_CANDIDATE_SPECIFIC",
+    "globalHistoricalTopicStateRequired": false,
+    "candidatePanelAvailable": false,
+    "commonFormationFields": [
+      "evaluation_date_T",
+      "market_local_session_and_calendar",
+      "as_of",
+      "immutable_instrument_id",
+      "symbol",
+      "name",
+      "market",
+      "lifecycle_and_eligibility_state",
+      "topic_id_and_name",
+      "effective_dated_topic_membership_and_role",
+      "membership_validity_and_publication_mode",
+      "canonical_ohlcv_through_T",
+      "observation_identity_and_lineage",
+      "candidate_definition_version",
+      "policy_and_parameter_versions"
+    ],
+    "outcomeFieldsAreFormationInputs": false,
+    "outcomeFields": [
+      "formation_date_T_reference",
+      "subsequent_canonical_session_for_horizon",
+      "T+1",
+      "T+3",
+      "T+5",
+      "T+10",
+      "outcome_source_lineage",
+      "corporate_action_integrity_exclusion_state"
+    ]
+  },
+  "r3DefinitionAuthority": {
+    "A1_PRE_BREAKOUT": {
+      "runtimeDefinition": null,
+      "status": "BLOCKED_BY_CANDIDATE_DEFINITION_AUTHORITY"
+    },
+    "A2_CONFIRMED_BREAKOUT": {
+      "runtimeDefinition": null,
+      "status": "BLOCKED_BY_CANDIDATE_DEFINITION_AUTHORITY"
+    },
+    "A3_STRONG_PULLBACK_RETEST": {
+      "runtimeDefinition": "PULLBACK_ACCEPTANCE",
+      "runtimeStatus": "FUTURE_NOT_IMPLEMENTED",
+      "status": "BLOCKED_BY_PULLBACK_ACCEPTANCE_AUTHORITY"
+    },
+    "CATCH_UP_ROTATION": {
+      "runtimeDefinition": "CATCH_UP",
+      "runtimeStatus": "PROVISIONAL_SHADOW_ONLY",
+      "status": "BLOCKED_BY_CATCH_UP_DEFINITION_AUTHORITY"
+    }
+  },
+  "r4TemporalEligibility": {
+    "auditMode": "STATIC_CONTRACT_AND_EVIDENCE_AUDIT",
+    "candidateDatesAudited": [],
+    "dateLevelEligibilityCertified": false,
+    "hardProtocolRequirement": "at least 60 prior canonical trading sessions per signal",
+    "symbolLevelOhlcvIsSufficientForEligibility": false,
+    "ws2Contract": "stock-technical-v0-policy.v1",
+    "requiredWs2Binding": [
+      "indicator_id",
+      "value_or_availability_reason",
+      "session_date_and_as_of",
+      "required_and_actual_observation_window",
+      "algorithm_version_parameter_set",
+      "source_lineage",
+      "continuity_status_and_evidence",
+      "publication_state"
+    ],
+    "reasonNoDateCertification": "no canonical candidate/outcome panel and incomplete candidate definitions",
+    "status": "CANDIDATE_DATE_ELIGIBILITY_NOT_DEMONSTRABLE"
+  },
+  "candidateDispositionMatrix": [
+    {
+      "candidateId": "A1_PRE_BREAKOUT",
+      "displayName": "A1 Pre-Breakout",
+      "recA1": "READY_AFTER_REC_A1_PROVENANCE_RECONCILIATION",
+      "minimumPanel": "BLOCKED_BY_CANDIDATE_DEFINITION_AUTHORITY",
+      "definitionAuthority": "BLOCKED_BY_CANDIDATE_DEFINITION_AUTHORITY",
+      "temporalEligibility": "BLOCKED_BY_CANDIDATE_DATE_PANEL",
+      "outcomeCoverage": "BLOCKED_BY_FORWARD_OUTCOME_PANEL",
+      "finalDisposition": "BLOCKED_BY_CANDIDATE_DEFINITION_AUTHORITY",
+      "candidateFormationInformation": "PIT and canonical inputs only; no future outcomes",
+      "outcomes": "evaluation-only T+1/T+3/T+5/T+10; unavailable in current panel"
+    },
+    {
+      "candidateId": "A2_CONFIRMED_BREAKOUT",
+      "displayName": "A2 Confirmed Breakout",
+      "recA1": "READY_AFTER_REC_A1_PROVENANCE_RECONCILIATION",
+      "minimumPanel": "BLOCKED_BY_CANDIDATE_DEFINITION_AUTHORITY",
+      "definitionAuthority": "BLOCKED_BY_CANDIDATE_DEFINITION_AUTHORITY",
+      "temporalEligibility": "BLOCKED_BY_CANDIDATE_DATE_PANEL",
+      "outcomeCoverage": "BLOCKED_BY_FORWARD_OUTCOME_PANEL",
+      "finalDisposition": "BLOCKED_BY_CANDIDATE_DEFINITION_AUTHORITY",
+      "candidateFormationInformation": "PIT and canonical inputs only; no future outcomes",
+      "outcomes": "evaluation-only T+1/T+3/T+5/T+10; unavailable in current panel"
+    },
+    {
+      "candidateId": "A3_STRONG_PULLBACK_RETEST",
+      "displayName": "A3 Pullback/Retest",
+      "recA1": "READY_AFTER_REC_A1_PROVENANCE_RECONCILIATION",
+      "minimumPanel": "BLOCKED_BY_PULLBACK_ACCEPTANCE_AUTHORITY",
+      "definitionAuthority": "BLOCKED_BY_PULLBACK_ACCEPTANCE_AUTHORITY",
+      "temporalEligibility": "BLOCKED_BY_CANDIDATE_DATE_PANEL",
+      "outcomeCoverage": "BLOCKED_BY_FORWARD_OUTCOME_PANEL",
+      "finalDisposition": "BLOCKED_BY_PULLBACK_ACCEPTANCE_AUTHORITY",
+      "candidateFormationInformation": "PIT and canonical inputs only; no future outcomes",
+      "outcomes": "evaluation-only T+1/T+3/T+5/T+10; unavailable in current panel"
+    },
+    {
+      "candidateId": "CATCH_UP_ROTATION",
+      "displayName": "Catch-up/rotation",
+      "recA1": "READY_AFTER_REC_A1_PROVENANCE_RECONCILIATION",
+      "minimumPanel": "BLOCKED_BY_PIT_TOPIC_CONTEXT_AND_CANDIDATE_PANEL",
+      "definitionAuthority": "BLOCKED_BY_CATCH_UP_DEFINITION_AUTHORITY",
+      "temporalEligibility": "BLOCKED_BY_CANDIDATE_SPECIFIC_WARMUP_LINEAGE",
+      "outcomeCoverage": "BLOCKED_BY_FORWARD_OUTCOME_PANEL",
+      "finalDisposition": "BLOCKED_BY_CATCH_UP_DEFINITION_AUTHORITY",
+      "candidateFormationInformation": "PIT context, canonical bars, relative-gap and policy inputs only; no future outcomes",
+      "outcomes": "evaluation-only T+1/T+3/T+5/T+10; unavailable in current panel"
+    }
+  ],
+  "reverseDependencies": {
+    "common": [
+      "evaluation_date_T",
+      "market_local_session_and_calendar",
+      "as_of",
+      "immutable_instrument_identity",
+      "topic_identity_and_effective_membership",
+      "canonical_ohlcv_through_T",
+      "source_lineage",
+      "candidate_definition_version",
+      "policy_and_parameter_versions"
+    ],
+    "A1_PRE_BREAKOUT": {
+      "topicPIT": ["evaluation-date membership and context only as future definition names them"],
+      "technical": ["canonical OHLCV through T", "future-definition-selected WS2 indicators with exact windows/as-of/continuity/lineage"],
+      "authorityGap": "no frozen A1 runtime definition"
+    },
+    "A2_CONFIRMED_BREAKOUT": {
+      "topicPIT": ["evaluation-date membership and context only as future definition names them"],
+      "technical": ["canonical OHLCV through T", "future-definition-selected WS2 indicators with exact windows/as-of/continuity/lineage"],
+      "authorityGap": "no frozen A2 runtime definition"
+    },
+    "A3_STRONG_PULLBACK_RETEST": {
+      "topicPIT": ["evaluation-date membership and context", "future pullback/retest context named by authority"],
+      "technical": ["canonical OHLCV through T", "WS2 formal indicator records where consumed"],
+      "authorityGap": "PULLBACK_ACCEPTANCE is future/not implemented"
+    },
+    "CATCH_UP_ROTATION": {
+      "topicPIT": ["topic grade", "topic lifecycle", "topic strength", "snapshot/as-of", "topic/stock return context", "warming evidence/provenance", "effective membership role and lineage"],
+      "technical": ["canonical OHLCV through T", "relative-gap history with dates", "liquidity/no-trade state", "WS2 technical evidence where consumed"],
+      "runtimeInputShapeEvidence": ["ThemeContext", "StrategyStockContext", "OpportunityStrategyInput"],
+      "authorityGap": "CATCH_UP is provisional shadow-only, not frozen Core V0 definition"
+    },
+    "outcomes": ["T+1", "T+3", "T+5", "T+10", "outcome lineage", "REC-A1 post-hoc integrity exclusion state"],
+    "outcomesFlowBackward": false
+  },
+  "governance": {
+    "database": "NOT_RUN",
+    "g1": "NOT_RERUN_PRESERVED_EVIDENCE",
+    "g2": "NOT_RERUN_PRESERVED_EVIDENCE",
+    "g3": "NOT_RERUN_PRESERVED_EVIDENCE",
+    "postCloseCanary": "NOT_RERUN_PRESERVED_EVIDENCE",
+    "migration": "NO",
+    "productionPersistence": "NO",
+    "apiUiProviderSchedulerDeploy": "NO",
+    "strategyReview": "NOT_MADE",
+    "recommendationPublication": "NOT_AUTHORIZED",
+    "opportunityProductionActivation": "NOT_AUTHORIZED",
+    "nextTaskChanged": false,
+    "pushRemote": false,
+    "productionMutation": false
+  },
+  "provenance": {
+    "phase1Report": {
+      "path": "docs/reports/TASK-REC-A1-CORE-V0-WALK-FORWARD-RESEARCH-2026-08-16.md",
+      "sha256": "db0005b930bec77c512dd4823af4abcc950555e5ae0139b58c13e5fe7e7cdfe0"
+    },
+    "phase1Json": {
+      "path": "reports/TASK-REC-A1-CORE-V0-WALK-FORWARD-RESEARCH-20260816/core-v0-protocol-and-preflight.json",
+      "sha256": "7b957477cca04aec3b0d0be94d434b5e0229fb391842dabf79971dd8829a0437"
+    },
+    "freezeClosure": {
+      "path": "docs/reports/TASK-REC-A1-DATASET-PROTOCOL-FREEZE_CANONICAL_CLOSURE.md",
+      "sha256": "dd586413f5f3625a66b54a7b6ab9b78b163c6508ca4232e62c04d258b500cedc"
+    },
+    "histCanonicalClosure": {
+      "path": "docs/reports/TASK-DATA-HIST-002B_CANONICAL_RECONCILIATION_CLOSURE.md",
+      "sha256": "83182a800f933fea40ccda6a72824ffe7c19dddc375295ba2e41b87c2d4fe3ca"
+    },
+    "pitClosure": {
+      "path": "docs/reports/TASK-TOPIC-DAILY-STATE-PIT-FORMAL-SCHEMA-AND-BOUNDED-MATERIALIZATION.md",
+      "sha256": "300f1e4c4a6b0b9d4985df1e43ade26da99c4bcff5d116179b758e15f75ec4f0"
+    },
+    "technicalContract": {
+      "path": "docs/architecture/STOCK_TECHNICAL_V0_POLICY_CONTRACT.md",
+      "sha256": "a951aa565aee6e5ea6a104ef34f580855c12ed6aec7ea29fe161ba07cb2ac67f"
+    },
+    "opportunityStrategyImplementation": {
+      "path": "services/api/src/topicpilot_api/topic_engine/opportunity_strategies.py",
+      "sha256": "a43f931484d4b88ce195210e93a2c2f2c227822ee326e70b2f26dde1e4355184"
+    }
+  },
+  "validation": {
+    "documentationOnly": true,
+    "jsonParse": "PASS",
+    "markdownPathAndLinkCheck": "PASS",
+    "protocolMatrixConsistency": "PASS",
+    "sourceCanonicalHashCheck": "PASS",
+    "gitDiffCheck": "PASS",
+    "secretAndRawPayloadScan": "PASS",
+    "testDelta": "NOT_APPLICABLE_DOCUMENTATION_ONLY"
+  },
+  "states": {
+    "canonicalStatus": "CANONICALIZED",
+    "canonicalReconciliationDisposition": "CANONICALIZED",
+    "releaseStatus": "NOT_A_RELEASE_CANDIDATE",
+    "productionVerification": "NOT_RUN",
+    "canonicalPromotionSourceCommit": "a82d3b3e6877d580eaf3611fe0e59a68d9644bb4",
+    "canonicalPromotionMethod": "EXPLICIT_GIT_PATCH_AND_COMMIT_ONLY_DUE_OWNER_DIRTY_STATE",
+    "hunkLevelReconciliationUsed": false,
+    "headIndexWorktreeAudit": "PASS_FOR_TASK_WRITE_SET"
+  }
+}

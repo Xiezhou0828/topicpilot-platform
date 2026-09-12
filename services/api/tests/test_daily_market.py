@@ -138,3 +138,20 @@ def test_no_trade_migration_projects_status_and_never_zero_fills():
     assert "COALESCE(ts.status_code, 'UNKNOWN')" in source
     assert "close = 0" not in source
     assert "DROP TABLE" not in source
+
+
+def test_active_reference_migration_prefers_active_rollover_rows():
+    migration = MIGRATION.with_name(
+        "0036_task_ws4_active_reference_daily_projection.py"
+    )
+    source = migration.read_text(encoding="utf-8")
+
+    assert 'down_revision = "0035_task_ws1_today_home_v2_formal_publication"' in source
+    assert "JOIN topicpilot.reference_registry_sets active_reference" in source
+    assert "active_reference.status = 'ACTIVE'" in source
+    assert "co.reference_data_version = active_reference.reference_data_version" in source
+    assert "active_co.instrument_id = co.instrument_id" in source
+    assert "active_co.observed_at AT TIME ZONE m.timezone" in source
+    assert "status_observation.reference_data_version = co.reference_data_version" in source
+    assert "canonical_observations" in source
+    assert "DROP TABLE" not in source

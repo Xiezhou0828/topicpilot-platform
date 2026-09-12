@@ -1,0 +1,8 @@
+{
+  "migration_0032": {"local_artifact": "PRESENT", "production_applied": "NOT_PROVEN"},
+  "migration_0033": {"local_artifact": "PRESENT", "production_applied": "NOT_RUN"},
+  "migration_0033_purpose": ["topic_snapshot_member_facts.structural_role", "topic_snapshot_member_facts.role_source", "topic_lifecycle_results.main_rise_segment", "topic_lifecycle_results.segment_entry_date", "topic_lifecycle_results.segment_anchor_date", "topic_lifecycle_results.days_since_meaningful_expansion", "topic_lifecycle_results.drawdown_from_peak_pct", "topic_lifecycle_results.state_memory"],
+  "runtime_schema_readiness": "LOCAL_CODE_READY_PRODUCTION_NOT_PROVEN",
+  "production_db_mutation": "NO",
+  "next_read_only_check": "Verify alembic current, table columns, runtime SHA/image, scheduler hook, and lifecycle result selection in production."
+}

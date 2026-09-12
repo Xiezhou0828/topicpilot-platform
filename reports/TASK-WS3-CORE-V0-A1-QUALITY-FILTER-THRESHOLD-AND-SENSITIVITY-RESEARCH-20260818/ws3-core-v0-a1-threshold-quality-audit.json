@@ -1,0 +1,253 @@
+{
+  "analytical_artifact_hashes": {
+    "aggregate_sha256": "2c3fc13503856016c1ce0465763dd4adc91c33f3924a9cca778a0c1d684da724",
+    "algorithm": "SHA-256",
+    "artifacts": {
+      "ws3-core-v0-a1-filter-candidate-cards.json": "c649f969ea7ad7c04fb24d71aef7159dc581bfdc69c7fdce9912488471b7afba",
+      "ws3-core-v0-a1-quality-retention-tradeoff.csv": "3cda3369eead70d539746c096cf19dcdb022f14d1411d31885406d0a785ae8cd",
+      "ws3-core-v0-a1-single-feature-threshold-surface.csv": "e4f453c7532f8da55d18f402360b36144b2863ca6d5ee5389a8ce12317ff6523",
+      "ws3-core-v0-a1-threshold-concentration-analysis.json": "feb3a4beb7be7d9431ee56fadf03276d766b084990bd31087c0d9358621228f5",
+      "ws3-core-v0-a1-threshold-sensitivity-summary.json": "e1dd474cf7092d938174dfab52e81913ee253502494f6826eca62fb374fde842",
+      "ws3-core-v0-a1-threshold-stability-by-segment.csv": "2e1bc3e968653092b56ca2dcdffe55aefd159c0b39fa7d05a080932e6f74cd47",
+      "ws3-core-v0-a1-two-feature-combination-diagnostic.csv": "aee02daf7eea46ccb61f1b5972061ec6cefb4661318fc2daa7f36f0e816682d0"
+    },
+    "byte_normalization": "CRLF_TO_LF_BEFORE_HASH"
+  },
+  "combination_cap": {
+    "maximum_combinations": 3,
+    "maximum_features_per_combination": 2,
+    "tested": 3
+  },
+  "database_writes": false,
+  "date_concentration_measured": true,
+  "deployment_executed": false,
+  "duplicate_handling": "one canonical A1 row per instrument/date; cohort reconciliation reused",
+  "forward_outcomes_used_for_selection": false,
+  "frozen_segments_preserved": true,
+  "frozen_spec_hash": "6e4cc504f969098e263cfa8e7c43240e9575a3f72f0641ba39da22794ea9870d",
+  "git_diff_check": "PASS",
+  "instrument_concentration_measured": true,
+  "label_leakage": false,
+  "market_split_measured": true,
+  "migration_executed": false,
+  "no_lookahead": true,
+  "outcome_derived_feature_used": false,
+  "parameter_search_used": false,
+  "pit_validity": true,
+  "primary_feature_count": 7,
+  "primary_feature_selection_provenance": [
+    {
+      "category": "BREAKOUT_PROXIMITY",
+      "feature_name": "recent_20_high_proximity",
+      "prior_classification": "ROBUST_CANDIDATE",
+      "prior_date_regime_confounding": "NO",
+      "prior_direction": "HIGHER_IN_SUCCESS",
+      "prior_evidence_source": "FEATURE_FAMILY_ASSESSMENT_TOP_FINDINGS",
+      "prior_standardized_effect_size": 0.4176730398758115,
+      "prior_validation_consistent": "YES",
+      "selection_rationale": "Prior robust BREAKOUT_PROXIMITY evidence, directionally consistent in Development/Validation/Holdout, and prior date-centered stock-level signal."
+    },
+    {
+      "category": "CONSOLIDATION_STRUCTURE",
+      "feature_name": "recent_20_high_age_sessions",
+      "prior_classification": "ROBUST_CANDIDATE",
+      "prior_date_regime_confounding": "NO",
+      "prior_direction": "HIGHER_IN_SUCCESS",
+      "prior_evidence_source": "FEATURE_FAMILY_ASSESSMENT_TOP_FINDINGS",
+      "prior_standardized_effect_size": 0.5020920293309611,
+      "prior_validation_consistent": "YES",
+      "selection_rationale": "Prior robust CONSOLIDATION_STRUCTURE evidence with a large stable effect and no prior date-regime flag."
+    },
+    {
+      "category": "MOMENTUM",
+      "feature_name": "return_5d",
+      "prior_classification": "ROBUST_CANDIDATE",
+      "prior_date_regime_confounding": "NO",
+      "prior_direction": "LOWER_IN_SUCCESS",
+      "prior_evidence_source": "FEATURE_FAMILY_ASSESSMENT_TOP_FINDINGS",
+      "prior_standardized_effect_size": -0.40980491472298386,
+      "prior_validation_consistent": "YES",
+      "selection_rationale": "Prior robust MOMENTUM evidence, stable lower-in-success direction, and no prior date-regime flag."
+    },
+    {
+      "category": "MA_STRUCTURE",
+      "feature_name": "close_ma20_distance",
+      "prior_classification": "ROBUST_CANDIDATE",
+      "prior_date_regime_confounding": "NO",
+      "prior_direction": "LOWER_IN_SUCCESS",
+      "prior_evidence_source": "FEATURE_FAMILY_ASSESSMENT_TOP_FINDINGS",
+      "prior_standardized_effect_size": -0.369109699342304,
+      "prior_validation_consistent": "YES",
+      "selection_rationale": "Prior robust MA_STRUCTURE evidence, stable lower-in-success direction, and stock-level date-centered signal."
+    },
+    {
+      "category": "VOLUME_CONFIRMATION",
+      "feature_name": "volume_ratio_5",
+      "prior_classification": "ROBUST_CANDIDATE",
+      "prior_date_regime_confounding": "NO",
+      "prior_direction": "LOWER_IN_SUCCESS",
+      "prior_evidence_source": "SUCCESS_VS_FAILED_COMPARISON+FEATURE_TIME_STABILITY+FEATURE_DATE_REGIME_CONFOUNDING",
+      "prior_standardized_effect_size": -0.330467405611416,
+      "prior_validation_consistent": "YES",
+      "selection_rationale": "Prior robust VOLUME_CONFIRMATION evidence with stable direction and no prior date-regime flag."
+    },
+    {
+      "category": "VOLATILITY",
+      "feature_name": "true_range_pct",
+      "prior_classification": "ROBUST_CANDIDATE",
+      "prior_date_regime_confounding": "NO",
+      "prior_direction": "LOWER_IN_SUCCESS",
+      "prior_evidence_source": "FEATURE_FAMILY_ASSESSMENT_TOP_FINDINGS",
+      "prior_standardized_effect_size": -0.5322531897909484,
+      "prior_validation_consistent": "YES",
+      "selection_rationale": "Prior top robust VOLATILITY evidence, stable direction, and the strongest prior stock-level effect among the selected families."
+    },
+    {
+      "category": "RELATIVE_CONTEXT",
+      "feature_name": "same_day_volume_ratio_20_percentile",
+      "prior_classification": "ROBUST_CANDIDATE",
+      "prior_date_regime_confounding": "NO",
+      "prior_direction": "LOWER_IN_SUCCESS",
+      "prior_evidence_source": "FEATURE_FAMILY_ASSESSMENT_TOP_FINDINGS",
+      "prior_standardized_effect_size": -0.3398040338924812,
+      "prior_validation_consistent": "YES",
+      "selection_rationale": "Prior robust RELATIVE_CONTEXT evidence, stable direction, and a distinct cross-sectional participation interpretation."
+    }
+  ],
+  "prior_feature_selection_preserved": true,
+  "prior_research_source_head": "3ab70b612cbb30335b43a5650d145488f9e8b2c1",
+  "production_filter_created": false,
+  "reproducibility": "PASS",
+  "reproducible": true,
+  "return_optimization_used": false,
+  "reverse_dependencies": {
+    "candidate_type": "A1_PRE_BREAKOUT",
+    "minimum_panel": {
+      "canonical_ohlcv_fields": [
+        "close",
+        "high",
+        "low",
+        "volume"
+      ],
+      "evaluation_context": [
+        "evaluation_session",
+        "signal_date",
+        "instrument_id",
+        "market (TPE/TWO)",
+        "as_of_timestamp <= signal_date"
+      ],
+      "formation_boundary": "Candidate formation consumes only information effective/observable <= T; candidate state is frozen at T. Forward outcomes cannot alter eligibility.",
+      "forward_outcomes_evaluation_only": [
+        "T+1",
+        "T+3",
+        "T+5",
+        "T+10",
+        "REC-A1 event-aware outcome exclusion metadata"
+      ],
+      "pit_membership_and_candidate_context": [
+        "A1_PRE_BREAKOUT membership/context at T",
+        "candidate_inputs.reference_value as observed at T",
+        "canonical cohort/source lineage"
+      ],
+      "selected_feature_dependencies": [
+        {
+          "category": "BREAKOUT_PROXIMITY",
+          "feature_name": "recent_20_high_proximity",
+          "lookback": "20 sessions including T",
+          "point_in_time_available": true,
+          "required_input_columns": [
+            "high",
+            "close"
+          ],
+          "source_lineage": "canonical Postgres historical read model via read_historical_bars; REC-A1 event dataset preserved",
+          "timestamp_rule": "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP"
+        },
+        {
+          "category": "CONSOLIDATION_STRUCTURE",
+          "feature_name": "recent_20_high_age_sessions",
+          "lookback": "20 sessions including T",
+          "point_in_time_available": true,
+          "required_input_columns": [
+            "high"
+          ],
+          "source_lineage": "canonical Postgres historical read model via read_historical_bars; REC-A1 event dataset preserved",
+          "timestamp_rule": "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP"
+        },
+        {
+          "category": "MOMENTUM",
+          "feature_name": "return_5d",
+          "lookback": "6 sessions",
+          "point_in_time_available": true,
+          "required_input_columns": [
+            "close"
+          ],
+          "source_lineage": "canonical Postgres historical read model via read_historical_bars; REC-A1 event dataset preserved",
+          "timestamp_rule": "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP"
+        },
+        {
+          "category": "MA_STRUCTURE",
+          "feature_name": "close_ma20_distance",
+          "lookback": "20 sessions",
+          "point_in_time_available": true,
+          "required_input_columns": [
+            "close"
+          ],
+          "source_lineage": "canonical Postgres historical read model via read_historical_bars; REC-A1 event dataset preserved",
+          "timestamp_rule": "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP"
+        },
+        {
+          "category": "VOLUME_CONFIRMATION",
+          "feature_name": "volume_ratio_5",
+          "lookback": "5 sessions",
+          "point_in_time_available": true,
+          "required_input_columns": [
+            "volume"
+          ],
+          "source_lineage": "canonical Postgres historical read model via read_historical_bars; REC-A1 event dataset preserved",
+          "timestamp_rule": "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP"
+        },
+        {
+          "category": "VOLATILITY",
+          "feature_name": "true_range_pct",
+          "lookback": "1 session",
+          "point_in_time_available": true,
+          "required_input_columns": [
+            "high",
+            "low",
+            "close"
+          ],
+          "source_lineage": "canonical Postgres historical read model via read_historical_bars; REC-A1 event dataset preserved",
+          "timestamp_rule": "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP"
+        },
+        {
+          "category": "RELATIVE_CONTEXT",
+          "feature_name": "same_day_volume_ratio_20_percentile",
+          "lookback": "20 sessions per instrument and date cross-section",
+          "point_in_time_available": true,
+          "required_input_columns": [
+            "volume"
+          ],
+          "source_lineage": "canonical Postgres historical read model via read_historical_bars; REC-A1 event dataset preserved",
+          "timestamp_rule": "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP"
+        }
+      ],
+      "technical_evidence_fields": []
+    },
+    "scope": "A1 quality-filter threshold research only; no global WS3 readiness gate",
+    "source_lineage": {
+      "event_dataset_is_evaluation_integrity_only": true,
+      "frozen_spec_hash": "6e4cc504f969098e263cfa8e7c43240e9575a3f72f0641ba39da22794ea9870d",
+      "prior_research_source_head": "3ab70b612cbb30335b43a5650d145488f9e8b2c1",
+      "research_read_model": "canonical Postgres historical read model via read_historical_bars; REC-A1 event-aware research dataset preserved"
+    },
+    "ws1_ws2_implication": "No complete Historical Topic/System State or WS2 technical publication is required for this A1 panel; only the listed candidate-specific fields are a dependency for this research lane."
+  },
+  "sample_size_integrity": true,
+  "secret_scan": "PASS_NO_SECRET_PATTERN",
+  "source_baseline_head": "9ca9ba4f15359aa5ea96ba4c3d6bed9439d0346e",
+  "source_canonical_head": "035587e4f263447e778f9384971885e03a53ecc2",
+  "task_id": "TASK-WS3-CORE-V0-A1-QUALITY-FILTER-THRESHOLD-AND-SENSITIVITY-RESEARCH-20260818",
+  "threshold_dense_optimization_used": false,
+  "threshold_grid_provenance": "train-only feature distribution Q20/Q30/Q40/Q50/Q60/Q70/Q80; no labels/outcomes",
+  "threshold_leakage": false
+}

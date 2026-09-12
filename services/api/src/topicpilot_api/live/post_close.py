@@ -14,6 +14,8 @@ from sqlalchemy import and_, or_, select
 from sqlalchemy.orm import Session
 
 from topicpilot_api.daily_market import DailyMarketReconciliation, reconcile_daily_market
+from topicpilot_api.home_v2_publication import materialize_home_v2
+from topicpilot_api.market_data.index_contract import fetch_official_market_indexes
 from topicpilot_api.market_data.ingestion import HistoricalSourceRegistration, ingest_historical
 from topicpilot_api.market_data.rate_limit import RateLimitedTransport
 from topicpilot_api.market_data.registry import build_historical_provider_registry
@@ -21,6 +23,7 @@ from topicpilot_api.normalizer import HISTORICAL_MAPPING_POLICY_VERSION, Mapping
 from topicpilot_api.normalizer.contracts import stable_hash
 from topicpilot_api.orm import Instrument, LiveCollectorAttempt, LiveCollectorRun, Market
 from topicpilot_api.provider_preflight import load_g2_preflight_context
+from topicpilot_api.topic_daily_state import materialize_bounded_formal_dates
 from topicpilot_api.topic_lifecycle_engine import TopicLifecycleEngine
 from topicpilot_api.topic_snapshot_engine import TopicSnapshotEngine
 
@@ -326,7 +329,13 @@ class PostCloseUpdater:
                         error_code = (
                             "APPROVED_NO_TRADE"
                             if result.instrument_status
-                            in {"SUSPENDED", "NO_TRADE", "EXCHANGE_CONFIRMED_NO_DATA"}
+                            in {
+                                "SUSPENDED",
+                                "NO_TRADE",
+                                "EXCHANGE_CONFIRMED_NO_DATA",
+                                "DELISTED",
+                                "TERMINATED",
+                            }
                             and result.priced_count == 0
                             else None
                         )
@@ -334,9 +343,10 @@ class PostCloseUpdater:
                     else:
                         skipped_count += 1
                         attempt_status = "SKIPPED"
-                        error_code = "UNEXPLAINED_MISSING_DATA"
+                        error_code = "MISSING_MARKET_DATA"
                         error_message = result.status_reason or (
-                            "official provider returned no priced or approved no-trade evidence"
+                            "official provider returned no priced bar and no "
+                            "lifecycle-authorized no-trade evidence"
                         )
                 except Exception as exc:
                     self.session.rollback()
@@ -392,6 +402,13 @@ class PostCloseUpdater:
             self._run_snapshot(
                 local_date,
                 eligible_instrument_ids=eligible_instrument_ids,
+                source_run_id=str(run_id),
+                market_index_facts=fetch_official_market_indexes(
+                    target_date=local_date,
+                    retrieved_at=self._now(),
+                    as_of=self._now(),
+                    transport=_official_transport,
+                ),
             )
             if reconciliation.downstream_ready
             else {
@@ -439,6 +456,8 @@ class PostCloseUpdater:
         *,
         market_closed: bool = False,
         eligible_instrument_ids: Collection[Any] | None = None,
+        source_run_id: str | None = None,
+        market_index_facts: Collection[Any] = (),
     ) -> dict[str, Any]:
         try:
             result = TopicSnapshotEngine(self.session).run_once(
@@ -448,19 +467,51 @@ class PostCloseUpdater:
             )
             if result.get("status") == "SUCCESS" and not market_closed:
                 try:
+                    formal_state = materialize_bounded_formal_dates(
+                        self.session,
+                        dates=(snapshot_date,),
+                    )
+                    result["formalTopicDailyState"] = {
+                        "status": "SUCCESS",
+                        "rowsBefore": formal_state["rowsBefore"],
+                        "rowsAfter": formal_state["rowsAfter"],
+                        "writes": formal_state["writes"],
+                        "preBoundaryBackfill": formal_state["preBoundaryBackfill"],
+                    }
                     result["lifecycle"] = TopicLifecycleEngine(self.session).run_once(
                         evaluation_date=snapshot_date,
-                        eligible_instrument_ids=eligible_instrument_ids,
                     )
                 except Exception as exc:
-                    # Lifecycle remains additive shadow work. A missing
-                    # migration or transient failure must not discard the
-                    # canonical topic snapshot already committed above.
+                    # Formal PIT materialization and lifecycle remain additive
+                    # shadow work. A missing authority/migration or transient
+                    # failure must not discard the canonical research snapshot
+                    # already committed above.
                     self.session.rollback()
-                    result["lifecycle"] = {
-                        "status": "SHADOW_EVALUATION_FAILED",
+                    result["formalTopicDailyState"] = {
+                        "status": "FORMAL_STATE_UNAVAILABLE",
                         "error": type(exc).__name__,
                     }
+                    result["lifecycle"] = {
+                        "status": "WAITING_FOR_FORMAL_SNAPSHOT",
+                        "error": type(exc).__name__,
+                    }
+                else:
+                    try:
+                        result["homePublication"] = materialize_home_v2(
+                            self.session,
+                            trading_date=snapshot_date,
+                            source_run_id=source_run_id,
+                            market_index_facts=tuple(market_index_facts),
+                        )
+                    except Exception as exc:
+                        # Home publication has its own typed gate.  A Home
+                        # persistence failure must not rewrite a successfully
+                        # materialized formal topic state as unavailable.
+                        self.session.rollback()
+                        result["homePublication"] = {
+                            "status": "HOME_PUBLICATION_UNAVAILABLE",
+                            "error": type(exc).__name__,
+                        }
             elif market_closed:
                 result["lifecycle"] = {"status": "MARKET_CLOSED"}
             return result

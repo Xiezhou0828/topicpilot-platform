@@ -6,7 +6,7 @@ import { useState } from "react";
 
 export const navItems = [
   ["今日市場", "/"], ["題材", "/topics"], ["股票", "/stocks"],
-  ["收藏", "/favorites"], ["機會", "/opportunities"], ["AI研究室", "/ai-studio"],
+  ["收藏", "/favorites"],
 ] as const;
 
 export function Surface({ children, className = "" }: { children: React.ReactNode; className?: string }) {
@@ -45,7 +45,7 @@ export function AccountMenu() {
 }
 
 export function PrimaryNav({ currentPath }: { currentPath: string }) {
-  return <header className="tp-primary-nav"><div className="tp-header-left"><Link href="/" className="tp-wordmark"><span className="tp-mark">T</span><span>TopicPilot</span></Link><nav className="tp-nav-links" aria-label="主要導覽">{navItems.map(([label, href]) => <Link key={href} href={href} className={currentPath === href ? "is-active" : ""}>{label}</Link>)}</nav></div><div className="tp-header-right"><GlobalSearchShell /><NotificationPlaceholder /><AccountMenu /></div></header>;
+  return <header className="tp-primary-nav"><div className="tp-header-left"><Link href="/" className="tp-wordmark"><span className="tp-mark">T</span><span>TopicPilot</span></Link><nav className="tp-nav-links" aria-label="主要導覽">{navItems.map(([label, href]) => <Link key={href} href={href} aria-current={currentPath === href ? "page" : undefined} className={currentPath === href ? "is-active" : ""}>{label}</Link>)}</nav></div></header>;
 }
 
 export function AppShell({ children, currentPath }: { children: React.ReactNode; currentPath: string }) {
@@ -66,8 +66,8 @@ export function Freshness({ state = "盤中更新", asOf = "尚未連接資料" 
 
 export function Skeleton({ className = "" }: { className?: string }) { return <span className={`tp-skeleton ${className}`} aria-hidden="true" />; }
 export function EmptyState({ title = "這裡會顯示內容", description = "目前尚未接入本頁資料。" }: { title?: string; description?: string }) { return <div className="tp-empty-state"><div className="tp-empty-icon"><Search size={20} /></div><h2>{title}</h2><p>{description}</p></div>; }
-export function FavoriteStar({ active = false, ...props }: { active?: boolean } & Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "children">) { return <IconButton label={active ? "取消收藏" : "加入收藏"} {...props}><Star size={18} fill={active ? "currentColor" : "none"} /></IconButton>; }
-export function GradeChip({ grade = "—" }: { grade?: string }) { return <span className="tp-chip tp-grade-chip">{grade}</span>; }
+export function FavoriteStar({ active = false, ...props }: { active?: boolean } & Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "children">) { return <IconButton type="button" label={active ? "取消收藏" : "加入收藏"} aria-pressed={active} {...props}><Star size={18} fill={active ? "currentColor" : "none"} /></IconButton>; }
+export function GradeChip({ grade = "—" }: { grade?: string | null }) { return <span className="tp-chip tp-grade-chip">{grade ?? "—"}</span>; }
 export function RoleChip({ children }: { children: React.ReactNode }) { return <span className="tp-chip tp-role-chip">{children}</span>; }
 export function Tabs({ items }: { items: string[] }) { return <div className="tp-tabs" role="tablist">{items.map((item, i) => <button key={item} className={i === 0 ? "is-active" : ""} role="tab">{item}</button>)}</div>; }
 export function SegmentedControl({ items }: { items: string[] }) { return <div className="tp-segmented">{items.map((item, i) => <button key={item} className={i === 0 ? "is-active" : ""}>{item}</button>)}</div>; }

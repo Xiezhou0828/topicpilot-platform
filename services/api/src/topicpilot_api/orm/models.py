@@ -151,6 +151,19 @@ class InstrumentTopicRelation(Base, IdentityMixin, CreatedAtMixin):
             "valid_to IS NULL OR valid_from IS NULL OR valid_to >= valid_from",
             name="ck_instrument_topic_relation_valid_range",
         ),
+        CheckConstraint(
+            "structural_role IS NULL OR structural_role IN ('REPRESENTATIVE', 'CORE', 'RELATED')",
+            name="ck_instrument_topic_relation_structural_role",
+        ),
+        CheckConstraint(
+            "approval_state IS NULL OR approval_state IN ("
+            "'DRAFT', 'PROPOSED', 'APPROVED', 'DEPRECATED', 'REJECTED')",
+            name="ck_instrument_topic_relation_approval_state",
+        ),
+        CheckConstraint(
+            "correction_sequence IS NULL OR correction_sequence >= 0",
+            name="ck_instrument_topic_relation_correction_sequence",
+        ),
     )
     instrument_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("topicpilot.instruments.id", ondelete="RESTRICT"), nullable=False
@@ -165,6 +178,23 @@ class InstrumentTopicRelation(Base, IdentityMixin, CreatedAtMixin):
     relationship_metadata: Mapped[dict[str, Any] | None] = mapped_column(
         "relationship_metadata", JSONB
     )
+    # Formal Structural Role Authority is an additive extension. Existing
+    # relation rows remain non-formal until these fields are explicitly
+    # populated by an approved, effective-dated authority ingest.
+    structural_role: Mapped[str | None] = mapped_column(String(32))
+    approval_state: Mapped[str | None] = mapped_column(String(32))
+    authority_version: Mapped[str | None] = mapped_column(String(64))
+    source_artifact_id: Mapped[str | None] = mapped_column(String(128))
+    source_artifact_hash: Mapped[str | None] = mapped_column(String(128))
+    approval_reference: Mapped[str | None] = mapped_column(String(256))
+    correction_sequence: Mapped[int | None] = mapped_column(Integer, server_default="0")
+    supersedes_authority_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("topicpilot.instrument_topic_relations.id", ondelete="RESTRICT")
+    )
+    superseded_by_authority_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("topicpilot.instrument_topic_relations.id", ondelete="RESTRICT")
+    )
+    lineage_hash: Mapped[str | None] = mapped_column(String(128))
     instrument: Mapped[Instrument] = relationship(back_populates="topic_relationships")
     topic: Mapped[Topic] = relationship(back_populates="instrument_relationships")
 

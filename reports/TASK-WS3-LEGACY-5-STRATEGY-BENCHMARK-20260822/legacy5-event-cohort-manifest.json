@@ -1,0 +1,39 @@
+{
+  "counts": {
+    "LEGACY-5": {
+      "distinct_episodes": 2471,
+      "episode_active_dates": 415,
+      "episode_unique_instruments": 544,
+      "raw_active_dates": 415,
+      "raw_qualifying_anchors": 2471,
+      "raw_unique_instruments": 544
+    },
+    "LEGACY-5+MA60": {
+      "distinct_episodes": 2096,
+      "episode_active_dates": 373,
+      "episode_unique_instruments": 529,
+      "raw_active_dates": 373,
+      "raw_qualifying_anchors": 2096,
+      "raw_unique_instruments": 529
+    },
+    "LEGACY-5+MA60+PRICE20": {
+      "distinct_episodes": 1952,
+      "episode_active_dates": 368,
+      "episode_unique_instruments": 504,
+      "raw_active_dates": 368,
+      "raw_qualifying_anchors": 1952,
+      "raw_unique_instruments": 504
+    }
+  },
+  "distinct_episode_definition": "existing WS3 contiguous qualifying accepted-session state semantics; consecutive qualifying rows for one instrument are one episode; first qualifying anchor retained; non-contiguous later row starts a new episode",
+  "episode_anchor_policy": "outcomes are measured at first qualifying anchor of each distinct episode; raw anchors are separately reported",
+  "no_cooldown_or_trade_rule": true,
+  "raw_anchor_definition": "all accepted canonical sessions satisfying the frozen conditions; no dedup",
+  "schema_version": "ws3-legacy5-event-cohort-manifest.v1",
+  "task_id": "TASK-WS3-LEGACY-5-STRATEGY-BENCHMARK-20260822",
+  "variant_semantics": {
+    "LEGACY-5": "20-day Close condition + KD9 cross + MA5>MA10 + mean last 5 volume >500 lots + K9<80",
+    "LEGACY-5+MA60": "LEGACY-5 plus Close>MA60",
+    "LEGACY-5+MA60+PRICE20": "LEGACY-5+MA60 plus Close>=20"
+  }
+}

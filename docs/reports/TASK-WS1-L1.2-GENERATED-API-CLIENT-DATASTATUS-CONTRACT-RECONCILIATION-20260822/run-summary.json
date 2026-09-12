@@ -1,0 +1,27 @@
+{
+  "task": "TASK-WS1-L1.2-GENERATED-API-CLIENT-DATASTATUS-CONTRACT-RECONCILIATION-20260822",
+  "result": "COMPLETE_PASS_WITH_BOUNDED_TEST_LIMITATION",
+  "promotion": "YES",
+  "canonicalForwardShadowRuntimeReady": "YES",
+  "blockers": [],
+  "resolvedBlocker": "GENERATED_API_CLIENT_DATASTATUS_CONTRACT_DRIFT",
+  "sourceOfTruth": "services/api/src/topicpilot_api/schemas.py:HomeMarketOverview.dataStatus",
+  "dataStatusValues": ["PARTIAL", "UNAVAILABLE"],
+  "candidateCommit": "336735fe4cfc4a74207660d9f1bd19e11947827b",
+  "promotionCommit": "5c2f304aed483c1d5a55d6d37cec392ab2a0b61c",
+  "canonicalHeadAtRuntimePromotion": "5c2f304aed483c1d5a55d6d37cec392ab2a0b61c",
+  "ownerDirtyChangesPreserved": true,
+  "lifecycleSemanticsChanged": false,
+  "migrationExecution": "NO",
+  "historicalBackfill": "NO",
+  "tests": {
+    "frontendTypeScript": {"status": "PASS"},
+    "api": {"passed": 16, "skipped": 1, "failed": 0, "status": "PASS_WITH_ENVIRONMENT_SKIP"},
+    "apiClient": {"passed": 3, "failed": 0, "status": "PASS"},
+    "frontendRelated": {"passed": 34, "failed": 0, "status": "PASS"}
+  },
+  "artifacts": {
+    "report": "docs/reports/TASK-WS1-L1.2-GENERATED-API-CLIENT-DATASTATUS-CONTRACT-RECONCILIATION-20260822/contract-reconciliation-report.md",
+    "runSummary": "docs/reports/TASK-WS1-L1.2-GENERATED-API-CLIENT-DATASTATUS-CONTRACT-RECONCILIATION-20260822/run-summary.json"
+  }
+}

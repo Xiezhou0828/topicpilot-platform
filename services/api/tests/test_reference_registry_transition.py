@@ -8,12 +8,13 @@ import pytest
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
-from topicpilot_api.orm.models import ReferenceRegistrySet
+from topicpilot_api.orm.models import ReferenceRegistrySet, ReferenceRegistryTransition
 from topicpilot_api.provider_preflight import load_g2_preflight_context
 from topicpilot_api.reference_check import inspect_reference_preflight
 from topicpilot_api.reference_data import load_bundle
 from topicpilot_api.reference_data.bootstrap import ReferenceBootstrapConflict
 from topicpilot_api.reference_data.transition import (
+    REFERENCE_VERSION_MAX_LENGTH,
     derive_transition_version,
     transition_reference_registry,
 )
@@ -77,6 +78,41 @@ def test_transition_version_is_deterministic_and_hash_bound():
     )
     with pytest.raises(ReferenceBootstrapConflict):
         derive_transition_version("tw-reference-v1", "not-a-sha")
+
+
+def test_transition_version_policy_is_bounded_across_repeated_rollovers():
+    version = "tw-reference-v1"
+    for index in range(10):
+        version = derive_transition_version(version, f"{index + 1:016x}" + "0" * 48)
+        assert len(version) <= REFERENCE_VERSION_MAX_LENGTH
+
+    assert version == "tw-reference-v1-rollover-000000000000000a"
+
+
+def test_transition_version_policy_preserves_current_production_family():
+    assert derive_transition_version(
+        "tw-reference-v1-rollover-daf19e9eb051255c",
+        "66edf7395785c4a19f36c39d22911b83843621f5cfdda49f90ea42099fa9a543",
+    ) == "tw-reference-v1-rollover-66edf7395785c4a1"
+
+
+def test_transition_version_policy_compacts_long_families_and_binds_full_identity():
+    long_family = "x" * REFERENCE_VERSION_MAX_LENGTH
+    first = derive_transition_version(long_family, "a" * 64)
+    repeat = derive_transition_version(long_family, "a" * 64)
+    different_family = derive_transition_version("y" * REFERENCE_VERSION_MAX_LENGTH, "a" * 64)
+    different_bundle = derive_transition_version(long_family, "b" * 64)
+
+    assert first == repeat
+    assert len(first) <= REFERENCE_VERSION_MAX_LENGTH
+    assert first != different_family
+    assert first != different_bundle
+
+
+def test_reference_registry_version_columns_keep_the_database_bound():
+    assert ReferenceRegistrySet.__table__.c.reference_data_version.type.length == 64
+    assert ReferenceRegistryTransition.__table__.c.from_reference_data_version.type.length == 64
+    assert ReferenceRegistryTransition.__table__.c.to_reference_data_version.type.length == 64
 
 
 @pytest.mark.postgres

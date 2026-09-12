@@ -1,0 +1,4 @@
+grid_label,range_width_cutoff,compression_cutoff_descriptive,retained_after_base,retention_pct_of_M0,named_false_positive_remaining,named_false_positive_removed,future_outcome_used_for_threshold,selection_note
+Q25,0.11941747572815531,0.36363636363636354,822,0.06319674021680634,0,2,NO,Coarse descriptive sensitivity only; no best-grid selection.
+Q50,0.17171717171717185,0.4912280701754379,1948,0.14976551087875759,1,1,NO,Coarse descriptive sensitivity only; no best-grid selection.
+Q75,0.25510204081632654,0.6458333333333334,3420,0.26293534250788037,1,1,NO,Coarse descriptive sensitivity only; no best-grid selection.

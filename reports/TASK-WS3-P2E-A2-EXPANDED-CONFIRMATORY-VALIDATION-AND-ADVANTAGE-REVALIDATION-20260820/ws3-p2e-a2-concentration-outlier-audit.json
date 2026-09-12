@@ -1,0 +1,285 @@
+{
+  "diagnostic_trimmed_primary_T5": {
+    "max": 0.6072289156626507,
+    "mean": 0.0182705410405987,
+    "median": 0.0,
+    "min": -0.3221884498480243,
+    "n": 5209,
+    "p05": -0.11471168144517266,
+    "p95": 0.21747295366401304,
+    "trimmed_mean_10pct": 0.0069651944107917705,
+    "win_rate": 0.4866577078133999
+  },
+  "outlier_policy": "retain all events; no deletion; no winsorized result used for disposition",
+  "primary_proxy": "OBSERVABLE_A2_CLOSE",
+  "top_1_date_share": 0.010422588592003032,
+  "top_5_instrument_share": 0.015918135304150087,
+  "top_date_event_share": [
+    [
+      "2026-01-14",
+      55
+    ],
+    [
+      "2026-05-25",
+      53
+    ],
+    [
+      "2026-04-13",
+      46
+    ],
+    [
+      "2026-05-22",
+      43
+    ],
+    [
+      "2026-01-19",
+      42
+    ],
+    [
+      "2026-01-16",
+      41
+    ],
+    [
+      "2026-06-01",
+      40
+    ],
+    [
+      "2026-04-22",
+      39
+    ],
+    [
+      "2026-05-05",
+      39
+    ],
+    [
+      "2025-02-13",
+      37
+    ]
+  ],
+  "top_instrument_event_share": [
+    [
+      "d6b10d3b-b7bb-485e-9d31-a932e409e76b",
+      18
+    ],
+    [
+      "74c0ac50-7f82-4952-af70-c1ae632beffa",
+      17
+    ],
+    [
+      "74f5c2ec-0353-4365-a170-7373ab3859f5",
+      17
+    ],
+    [
+      "dcb4fff4-3420-41e6-b6a1-618ff53f68e7",
+      16
+    ],
+    [
+      "ffeadd8b-1f01-4f4e-bcb1-852c8a1caf5b",
+      16
+    ],
+    [
+      "42525429-3938-43d2-b9c5-3217b6853076",
+      16
+    ],
+    [
+      "4bdeb474-4f9b-45e4-8995-1ffed59f7197",
+      16
+    ],
+    [
+      "b7afaca0-5a1a-4144-8795-db5f9261f7f4",
+      16
+    ],
+    [
+      "2417f16c-932f-447f-94cf-8a93330e15ae",
+      16
+    ],
+    [
+      "c19aad4e-c6b7-4042-a446-664444b795aa",
+      16
+    ]
+  ],
+  "top_negative_T5": [
+    {
+      "MAE": -0.3221884498480243,
+      "MFE": -0.009118541033434568,
+      "T5_forward_return": -0.3221884498480243,
+      "event_id": "b29d00658290c1e3130406d2ec923e61e63d51a37a58b7056c26f073fc2f85c5",
+      "instrument_id": "c27cb590-8393-4cee-ad9f-24130e7d8da5",
+      "market": "TWO",
+      "signal_date": "2025-11-13"
+    },
+    {
+      "MAE": -0.32352941176470584,
+      "MFE": -0.011029411764705843,
+      "T5_forward_return": -0.3036764705882353,
+      "event_id": "4b2b6f720f66378ca3df89f630053bfd9300d76a1773780f8baa4e0fecccae13",
+      "instrument_id": "0bd3faab-822f-48e2-9cac-c80bc9493003",
+      "market": "TWO",
+      "signal_date": "2026-06-04"
+    },
+    {
+      "MAE": -0.29912023460410553,
+      "MFE": 0.08797653958944274,
+      "T5_forward_return": -0.29912023460410553,
+      "event_id": "ff749280e226f71359be874d7e069110028b2b401c462a363c11667362ce6626",
+      "instrument_id": "99cfb835-b036-43fc-aca2-eaf598f198da",
+      "market": "TWO",
+      "signal_date": "2026-05-13"
+    },
+    {
+      "MAE": -0.2857142857142857,
+      "MFE": 0.14982578397212554,
+      "T5_forward_return": -0.2857142857142857,
+      "event_id": "3c4f5ab56c67d7d5e0011a0cabe761a15f44b2501e3a3faf27cda64e838bdfc4",
+      "instrument_id": "e727774b-e52f-4ccd-987b-24c2b0c6f039",
+      "market": "TWO",
+      "signal_date": "2026-06-01"
+    },
+    {
+      "MAE": -0.2696280991735537,
+      "MFE": -0.08161157024793375,
+      "T5_forward_return": -0.2696280991735537,
+      "event_id": "a2461fdaeea09368beba721301c03818f0d36f94bfd8c9fefad19809a337e978",
+      "instrument_id": "038a8ff5-318c-4184-8394-c720b8c69759",
+      "market": "TPE",
+      "signal_date": "2025-08-12"
+    },
+    {
+      "MAE": -0.27692307692307694,
+      "MFE": 0.098901098901099,
+      "T5_forward_return": -0.2681318681318682,
+      "event_id": "00924e521ba9c8b8f15d4fb9f3209f1d7e1ce144aab24e43d848d43a43b160d1",
+      "instrument_id": "728f1c66-9190-4893-9395-d5149c650866",
+      "market": "TPE",
+      "signal_date": "2026-07-03"
+    },
+    {
+      "MAE": -0.266260162601626,
+      "MFE": -0.04065040650406504,
+      "T5_forward_return": -0.266260162601626,
+      "event_id": "c8e2520e3646d9b5ffc5dc2a6e7558305b056469db66bbacffb7c0b1363244f4",
+      "instrument_id": "bd245b9d-0278-4aff-a5c2-8151ea53d599",
+      "market": "TWO",
+      "signal_date": "2025-03-28"
+    },
+    {
+      "MAE": -0.2866666666666666,
+      "MFE": -0.004444444444444473,
+      "T5_forward_return": -0.26222222222222225,
+      "event_id": "70e4aafb0d0459a25b039bd921e0bd66d3cd83407d37e93d6ffca6d31eb52fb9",
+      "instrument_id": "6ef69279-3e14-4fe2-9e6a-801904f1c218",
+      "market": "TWO",
+      "signal_date": "2026-07-06"
+    },
+    {
+      "MAE": -0.26388888888888884,
+      "MFE": -0.02777777777777779,
+      "T5_forward_return": -0.2569444444444444,
+      "event_id": "a82a9a137e0ac22e3719d02268e60e0749df99f3e85eaf57fa6f03240d0489cf",
+      "instrument_id": "cff2deb3-02f5-4346-9880-64cf9223cd5b",
+      "market": "TWO",
+      "signal_date": "2026-07-06"
+    },
+    {
+      "MAE": -0.2532347504621072,
+      "MFE": 0.009242144177449063,
+      "T5_forward_return": -0.2495378927911276,
+      "event_id": "5d111a8c535587046b1e9f7a4bd6ee46044907edbfb4e812305faf79e96796b3",
+      "instrument_id": "c3248e1c-11ff-47ce-8c0d-e86121a76399",
+      "market": "TPE",
+      "signal_date": "2026-05-12"
+    }
+  ],
+  "top_positive_T5": [
+    {
+      "MAE": 0.04819277108433728,
+      "MFE": 0.6072289156626507,
+      "T5_forward_return": 0.6072289156626507,
+      "event_id": "8d38facab1192dbda21c0a05e6c551529c3cc37d2ab1603e6ded346c819fba63",
+      "instrument_id": "59e5fb18-99da-40bc-9bf5-67b3f4d91ae8",
+      "market": "TWO",
+      "signal_date": "2025-02-05"
+    },
+    {
+      "MAE": 0.01618705035971213,
+      "MFE": 0.6061151079136691,
+      "T5_forward_return": 0.6061151079136691,
+      "event_id": "f93b46689bcda6387a19245c08af5c0d29f064c08fa43c360735d0bc9cf9f97d",
+      "instrument_id": "be8a23ef-f2d1-47e5-822f-45a6cb603ec9",
+      "market": "TWO",
+      "signal_date": "2026-03-11"
+    },
+    {
+      "MAE": 0.08940397350993368,
+      "MFE": 0.6059602649006623,
+      "T5_forward_return": 0.6059602649006623,
+      "event_id": "4d53c64b8dfa0f5ee5e56ff7896efe662fe77f6d57bebe19872c22fb0e3d17ec",
+      "instrument_id": "bd613044-31ff-4170-9d3a-1292191b918d",
+      "market": "TPE",
+      "signal_date": "2026-06-24"
+    },
+    {
+      "MAE": 0.10000000000000009,
+      "MFE": 0.6048780487804877,
+      "T5_forward_return": 0.6048780487804877,
+      "event_id": "ddcfb5561b3296ad5da51dceefc1c4d7c75d3e97a01d96a359026f1c9a53822d",
+      "instrument_id": "f54aebb5-7d39-49bb-ba3c-aae3968b022f",
+      "market": "TWO",
+      "signal_date": "2026-06-01"
+    },
+    {
+      "MAE": 0.018761726078799335,
+      "MFE": 0.604127579737336,
+      "T5_forward_return": 0.604127579737336,
+      "event_id": "a360755631879a2cd80457d3537ace8691be5a0d1bc0d6ae51eda1523dd1d428",
+      "instrument_id": "e727774b-e52f-4ccd-987b-24c2b0c6f039",
+      "market": "TWO",
+      "signal_date": "2026-05-18"
+    },
+    {
+      "MAE": 0.05882352941176472,
+      "MFE": 0.6038415366146459,
+      "T5_forward_return": 0.6038415366146459,
+      "event_id": "4d4eb3928362ba97d482fd14d0db8d76716d12bae7acdbbf43d334182fe0ba97",
+      "instrument_id": "c4883573-c5e0-48a4-89ec-554d794c2af5",
+      "market": "TPE",
+      "signal_date": "2024-12-18"
+    },
+    {
+      "MAE": 0.0,
+      "MFE": 0.603030303030303,
+      "T5_forward_return": 0.603030303030303,
+      "event_id": "43dfa3968fa37f65b22e842b1900700618d189665f47f209212f7fe3e542a470",
+      "instrument_id": "f0c0819a-6b2e-48b5-9cfc-ea1fdd8a5931",
+      "market": "TWO",
+      "signal_date": "2026-05-22"
+    },
+    {
+      "MAE": 0.0855614973262031,
+      "MFE": 0.6024955436720143,
+      "T5_forward_return": 0.6024955436720143,
+      "event_id": "f6f746e8f802e30c2b3bbdc8f6ea8b4c93b2e050f34058d6329c960a50d19147",
+      "instrument_id": "daf707c5-e982-4541-82b1-271828bddc3b",
+      "market": "TPE",
+      "signal_date": "2026-04-15"
+    },
+    {
+      "MAE": 0.042654028436019065,
+      "MFE": 0.6018957345971565,
+      "T5_forward_return": 0.6018957345971565,
+      "event_id": "8213c732c52b0553d6e3d5d7b39837174899dc663b79fe0a325be7c3ba25fa57",
+      "instrument_id": "1f3b09d5-02af-441c-b9fd-bf4d478d7922",
+      "market": "TWO",
+      "signal_date": "2026-05-25"
+    },
+    {
+      "MAE": 0.016778523489932917,
+      "MFE": 0.5973154362416107,
+      "T5_forward_return": 0.5973154362416107,
+      "event_id": "e93de8376702addaccb6aafc9be1cb3a24d67b4d99b459aade12352bb5876020",
+      "instrument_id": "48040d4a-7944-4c06-9b06-712647d00f2f",
+      "market": "TWO",
+      "signal_date": "2026-04-14"
+    }
+  ]
+}

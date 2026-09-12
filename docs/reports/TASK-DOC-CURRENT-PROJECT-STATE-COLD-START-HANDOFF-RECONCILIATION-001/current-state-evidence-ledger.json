@@ -1,0 +1,216 @@
+{
+  "task_id": "TASK-DOC-CURRENT-PROJECT-STATE-COLD-START-HANDOFF-RECONCILIATION-001",
+  "as_of": "2026-08-16",
+  "canonical_pre_sha": "147b991a03d3e8868a9a7c345a93e270260802f4",
+  "authority_rule": "Only committed canonical files and the explicitly linked committed closure reports are current-state evidence. Owner-untracked reports are not required evidence.",
+  "status_vocabulary": [
+    "IMPLEMENTED",
+    "VALIDATED",
+    "CANONICALIZED",
+    "RELEASE_CANDIDATE",
+    "PRODUCTION_RELEASED",
+    "POST_DEPLOY_VERIFIED",
+    "SHADOW",
+    "DEFERRED",
+    "RESEARCH_ONLY",
+    "UNKNOWN"
+  ],
+  "entries": [
+    {
+      "id": "stock.search_filter",
+      "area": "Stock",
+      "current_state": "Formal code/name search and formal topic filtering are canonicalized.",
+      "status_flags": {"IMPLEMENTED":"YES","VALIDATED":"YES","CANONICALIZED":"YES","RELEASE_CANDIDATE":"NO","PRODUCTION_RELEASED":"NO","POST_DEPLOY_VERIFIED":"NO","SHADOW":"NO","DEFERRED":"NO","RESEARCH_ONLY":"NO","UNKNOWN":"NO"},
+      "evidence": ["docs/reports/TASK-OPS-STOCK-004-CANONICAL-RECONCILIATION-001.md (d10a5b1/606a63a)"]
+    },
+    {
+      "id": "stock.eod",
+      "area": "Stock",
+      "current_state": "Canonical nullable EOD read and formal list/detail/Explorer/Drawer presentation are closed.",
+      "status_flags": {"IMPLEMENTED":"YES","VALIDATED":"YES","CANONICALIZED":"YES","RELEASE_CANDIDATE":"NO","PRODUCTION_RELEASED":"NO","POST_DEPLOY_VERIFIED":"NO","SHADOW":"NO","DEFERRED":"NO","RESEARCH_ONLY":"NO","UNKNOWN":"NO"},
+      "evidence": ["docs/reports/TASK-FE-BE-STOCK-005B_ADDITIVE_STOCK_EOD_READ_IMPLEMENTATION.md (fcf2f2f)", "docs/reports/TASK-FE-BE-STOCK-005C_EXPLORER_DRAWER_EOD_FORMAL_WIRING.md (88a4dcc)"]
+    },
+    {
+      "id": "stock.historical_bar_backend",
+      "area": "Stock",
+      "current_state": "Bounded V2 historical bar read is formally published from the shared canonical authority; raw adjustment remains unknown.",
+      "status_flags": {"IMPLEMENTED":"YES","VALIDATED":"YES","CANONICALIZED":"YES","RELEASE_CANDIDATE":"NO","PRODUCTION_RELEASED":"NO","POST_DEPLOY_VERIFIED":"NO","SHADOW":"NO","DEFERRED":"NO","RESEARCH_ONLY":"NO","UNKNOWN":"YES"},
+      "evidence": ["docs/reports/TASK-FE-BE-STOCK-006A_HISTORICAL_BAR_READ_PUBLICATION.md (1a34086/454a558)"]
+    },
+    {
+      "id": "stock.historical_price_frontend",
+      "area": "Stock",
+      "current_state": "Formal bounded raw historical price UI is canonically wired; no browser technical derivation or synthetic fallback.",
+      "status_flags": {"IMPLEMENTED":"YES","VALIDATED":"YES","CANONICALIZED":"YES","RELEASE_CANDIDATE":"NO","PRODUCTION_RELEASED":"NO","POST_DEPLOY_VERIFIED":"NO","SHADOW":"NO","DEFERRED":"NO","RESEARCH_ONLY":"NO","UNKNOWN":"NO"},
+      "evidence": ["docs/reports/TASK-FE-BE-STOCK-006A-FE_CANONICAL_RECONCILIATION_CLOSURE.md (a69b1ec)"]
+    },
+    {
+      "id": "stock.technical_publication",
+      "area": "Stock",
+      "current_state": "Basic and advanced technical publication are not ready; continuity and corporate-action policy are deferred.",
+      "status_flags": {"IMPLEMENTED":"NO","VALIDATED":"NO","CANONICALIZED":"NO","RELEASE_CANDIDATE":"NO","PRODUCTION_RELEASED":"NO","POST_DEPLOY_VERIFIED":"NO","SHADOW":"NO","DEFERRED":"YES","RESEARCH_ONLY":"YES","UNKNOWN":"NO"},
+      "evidence": ["docs/reports/TASK-FE-BE-STOCK-006A_HISTORICAL_BAR_READ_PUBLICATION.md (454a558)"]
+    },
+    {
+      "id": "stock.timeline_event_markers",
+      "area": "Stock",
+      "current_state": "Price-history timeline exists; event timeline and corporate-action markers are not published.",
+      "status_flags": {"IMPLEMENTED":"YES","VALIDATED":"YES","CANONICALIZED":"YES","RELEASE_CANDIDATE":"NO","PRODUCTION_RELEASED":"NO","POST_DEPLOY_VERIFIED":"NO","SHADOW":"NO","DEFERRED":"YES","RESEARCH_ONLY":"NO","UNKNOWN":"NO"},
+      "evidence": ["docs/reports/TASK-FE-BE-STOCK-006A_HISTORICAL_BAR_READ_PUBLICATION.md (454a558)"]
+    },
+    {
+      "id": "stock.institution_flow",
+      "area": "Stock",
+      "current_state": "Institution-flow chip/read state is unavailable.",
+      "status_flags": {"IMPLEMENTED":"NO","VALIDATED":"NO","CANONICALIZED":"NO","RELEASE_CANDIDATE":"NO","PRODUCTION_RELEASED":"NO","POST_DEPLOY_VERIFIED":"NO","SHADOW":"NO","DEFERRED":"YES","RESEARCH_ONLY":"NO","UNKNOWN":"NO"},
+      "evidence": ["docs/reports/TASK-FE-BE-STOCK-006A_HISTORICAL_BAR_READ_PUBLICATION.md (454a558)"]
+    },
+    {
+      "id": "stock.narrative",
+      "area": "Stock",
+      "current_state": "Stock narrative publication is unavailable.",
+      "status_flags": {"IMPLEMENTED":"NO","VALIDATED":"NO","CANONICALIZED":"NO","RELEASE_CANDIDATE":"NO","PRODUCTION_RELEASED":"NO","POST_DEPLOY_VERIFIED":"NO","SHADOW":"NO","DEFERRED":"YES","RESEARCH_ONLY":"NO","UNKNOWN":"NO"},
+      "evidence": ["docs/reports/TASK-FE-BE-STOCK-006A_HISTORICAL_BAR_READ_PUBLICATION.md (454a558)"]
+    },
+    {
+      "id": "stock.opportunity_recommendation",
+      "area": "Stock",
+      "current_state": "Stock Opportunity and recommendation publication are unavailable and not authorized by historical-price closure.",
+      "status_flags": {"IMPLEMENTED":"NO","VALIDATED":"NO","CANONICALIZED":"NO","RELEASE_CANDIDATE":"NO","PRODUCTION_RELEASED":"NO","POST_DEPLOY_VERIFIED":"NO","SHADOW":"NO","DEFERRED":"YES","RESEARCH_ONLY":"YES","UNKNOWN":"NO"},
+      "evidence": ["docs/reports/TASK-FE-BE-STOCK-006A_HISTORICAL_BAR_READ_PUBLICATION.md (454a558)", "docs/reports/TASK-BE-024_OPPORTUNITY_ENGINE_V1_REPORT.md (77dfd08)"]
+    },
+    {
+      "id": "today.home_wiring",
+      "area": "Today",
+      "current_state": "Shared Home wiring for Daily Focus, Main Topics, Heating/Cooling, Market Events, and Market Overview is canonicalized with explicit partial/temporary semantics.",
+      "status_flags": {"IMPLEMENTED":"YES","VALIDATED":"YES","CANONICALIZED":"YES","RELEASE_CANDIDATE":"NO","PRODUCTION_RELEASED":"NO","POST_DEPLOY_VERIFIED":"NO","SHADOW":"NO","DEFERRED":"NO","RESEARCH_ONLY":"NO","UNKNOWN":"NO"},
+      "evidence": ["docs/reports/TASK-FE-BE-TODAY-MAINLINE-C_TODAY_RECONCILIATION_20260814.md (4d11abe)", "docs/reports/TASK-FE-BE-TODAY-004D_MARKET_EVENTS_FORMAL_WIRING.md (4d11abe)", "docs/reports/TASK-FE-BE-TODAY-004E_MARKET_OVERVIEW_FORMAL_WIRING.md (4d11abe)"]
+    },
+    {
+      "id": "today.formal_indices",
+      "area": "Today",
+      "current_state": "Typed TWSE/TPEx index contract and fixtures are archived; source-use approval, persistence, capture, API projection, and frontend activation remain pending.",
+      "status_flags": {"IMPLEMENTED":"YES","VALIDATED":"YES","CANONICALIZED":"YES","RELEASE_CANDIDATE":"NO","PRODUCTION_RELEASED":"NO","POST_DEPLOY_VERIFIED":"NO","SHADOW":"NO","DEFERRED":"YES","RESEARCH_ONLY":"NO","UNKNOWN":"NO"},
+      "evidence": ["docs/reports/TASK-FE-BE-TODAY-005B_INDEX_TYPED_CONTRACT_AND_FIXTURE_BOUNDARY.md (committed closure in 77dfd08)"]
+    },
+    {
+      "id": "today.turnover",
+      "area": "Today",
+      "current_state": "Turnover remains blocked pending TPEx semantics and source-use approval.",
+      "status_flags": {"IMPLEMENTED":"NO","VALIDATED":"NO","CANONICALIZED":"NO","RELEASE_CANDIDATE":"NO","PRODUCTION_RELEASED":"NO","POST_DEPLOY_VERIFIED":"NO","SHADOW":"NO","DEFERRED":"YES","RESEARCH_ONLY":"NO","UNKNOWN":"YES"},
+      "evidence": ["docs/reports/TASK-FE-BE-TODAY-005B_INDEX_TYPED_CONTRACT_AND_FIXTURE_BOUNDARY.md (committed closure in 77dfd08)", "docs/reports/TASK-FE-BE-TODAY-004E_MARKET_OVERVIEW_FORMAL_WIRING.md (4d11abe)"]
+    },
+    {
+      "id": "today.narrative_market_score",
+      "area": "Today",
+      "current_state": "Derived market score, bullish/bearish narrative, and volume trend are not formally published; browser derivation is prohibited.",
+      "status_flags": {"IMPLEMENTED":"NO","VALIDATED":"NO","CANONICALIZED":"NO","RELEASE_CANDIDATE":"NO","PRODUCTION_RELEASED":"NO","POST_DEPLOY_VERIFIED":"NO","SHADOW":"NO","DEFERRED":"YES","RESEARCH_ONLY":"NO","UNKNOWN":"NO"},
+      "evidence": ["docs/reports/TASK-FE-BE-TODAY-004E_MARKET_OVERVIEW_FORMAL_WIRING.md (4d11abe)", "docs/reports/TASK-FE-BE-TODAY-MAINLINE-C_TODAY_RECONCILIATION_20260814.md (4d11abe)"]
+    },
+    {
+      "id": "topic.pit_membership_daily_state",
+      "area": "Topic",
+      "current_state": "Migration 0030 provides formal PIT membership snapshots and bounded daily state: 460 formal snapshots and 4,235 member facts across five dates.",
+      "status_flags": {"IMPLEMENTED":"YES","VALIDATED":"YES","CANONICALIZED":"YES","RELEASE_CANDIDATE":"NO","PRODUCTION_RELEASED":"NO","POST_DEPLOY_VERIFIED":"NO","SHADOW":"NO","DEFERRED":"NO","RESEARCH_ONLY":"NO","UNKNOWN":"NO"},
+      "evidence": ["docs/reports/TASK-TOPIC-DAILY-STATE-PIT-FORMAL-SCHEMA-AND-BOUNDED-MATERIALIZATION.md (f8736cf)"]
+    },
+    {
+      "id": "topic.overview_market_map",
+      "area": "Topic",
+      "current_state": "Topic Overview/Market Map UI is implemented; formal lanes are data-dependent and do not synthesize absent derived fields.",
+      "status_flags": {"IMPLEMENTED":"YES","VALIDATED":"YES","CANONICALIZED":"YES","RELEASE_CANDIDATE":"NO","PRODUCTION_RELEASED":"NO","POST_DEPLOY_VERIFIED":"NO","SHADOW":"NO","DEFERRED":"YES","RESEARCH_ONLY":"NO","UNKNOWN":"NO"},
+      "evidence": ["docs/reports/TASK-FE-004A_TOPIC_OVERVIEW_MARKET_SCAN_REPORT.md", "docs/reports/TASK-TOPIC-DAILY-STATE-PIT-FORMAL-SCHEMA-AND-BOUNDED-MATERIALIZATION.md (f8736cf)"]
+    },
+    {
+      "id": "topic.score_grade",
+      "area": "Topic",
+      "current_state": "Score and S/A/B/D Grade are not formally published by the PIT daily-state closure; score/grade remain null/deferred.",
+      "status_flags": {"IMPLEMENTED":"NO","VALIDATED":"NO","CANONICALIZED":"NO","RELEASE_CANDIDATE":"NO","PRODUCTION_RELEASED":"NO","POST_DEPLOY_VERIFIED":"NO","SHADOW":"NO","DEFERRED":"YES","RESEARCH_ONLY":"NO","UNKNOWN":"NO"},
+      "evidence": ["docs/reports/TASK-TOPIC-DAILY-STATE-PIT-FORMAL-SCHEMA-AND-BOUNDED-MATERIALIZATION.md (f8736cf)"]
+    },
+    {
+      "id": "topic.ranking_breadth_leadership_concentration",
+      "area": "Topic",
+      "current_state": "Raw participation counts/coverage exist; ranking, breadth, leadership, and concentration are deferred or unavailable.",
+      "status_flags": {"IMPLEMENTED":"YES","VALIDATED":"YES","CANONICALIZED":"YES","RELEASE_CANDIDATE":"NO","PRODUCTION_RELEASED":"NO","POST_DEPLOY_VERIFIED":"NO","SHADOW":"NO","DEFERRED":"YES","RESEARCH_ONLY":"NO","UNKNOWN":"NO"},
+      "evidence": ["docs/reports/TASK-TOPIC-DAILY-STATE-PIT-FORMAL-SCHEMA-AND-BOUNDED-MATERIALIZATION.md (f8736cf)"]
+    },
+    {
+      "id": "topic.lifecycle",
+      "area": "Topic",
+      "current_state": "Lifecycle engine and persistence boundary exist, but public Lifecycle history remains SHADOW_ONLY / UNPUBLISHED pending formal observations and activation.",
+      "status_flags": {"IMPLEMENTED":"YES","VALIDATED":"YES","CANONICALIZED":"YES","RELEASE_CANDIDATE":"NO","PRODUCTION_RELEASED":"NO","POST_DEPLOY_VERIFIED":"NO","SHADOW":"YES","DEFERRED":"YES","RESEARCH_ONLY":"NO","UNKNOWN":"NO"},
+      "evidence": ["docs/reports/TASK-BE-021_TOPIC_LIFECYCLE_ENGINE_PRODUCTION_INTEGRATION_REPORT.md", "docs/reports/TASK-BE-021A_TOPIC_LIFECYCLE_SHADOW_CALIBRATION_REPORT.md", "docs/reports/TASK-TOPIC-DAILY-STATE-PIT-FORMAL-SCHEMA-AND-BOUNDED-MATERIALIZATION.md (f8736cf)"]
+    },
+    {
+      "id": "topic.detail",
+      "area": "Topic",
+      "current_state": "Topic Detail UI/disclosure exists, but several formal detail domains remain unavailable or contract gaps.",
+      "status_flags": {"IMPLEMENTED":"YES","VALIDATED":"YES","CANONICALIZED":"YES","RELEASE_CANDIDATE":"NO","PRODUCTION_RELEASED":"NO","POST_DEPLOY_VERIFIED":"NO","SHADOW":"NO","DEFERRED":"YES","RESEARCH_ONLY":"NO","UNKNOWN":"NO"},
+      "evidence": ["docs/reports/TASK-FE-004A_TOPIC_OVERVIEW_MARKET_SCAN_REPORT.md", "docs/reports/TASK-BE-021_TOPIC_LIFECYCLE_ENGINE_PRODUCTION_INTEGRATION_REPORT.md"]
+    },
+    {
+      "id": "historical.ohlcv_authority",
+      "area": "Historical",
+      "current_state": "V2 canonical observation chain is the sole V1/V2 publication authority for 63,826 price and volume rows; legacy table is evidence/staging only.",
+      "status_flags": {"IMPLEMENTED":"YES","VALIDATED":"YES","CANONICALIZED":"YES","RELEASE_CANDIDATE":"NO","PRODUCTION_RELEASED":"NO","POST_DEPLOY_VERIFIED":"NO","SHADOW":"NO","DEFERRED":"NO","RESEARCH_ONLY":"NO","UNKNOWN":"NO"},
+      "evidence": ["docs/reports/TASK-DATA-HIST-PERSISTENCE-AUTHORITY-PROMOTION.md (d9c7787/f89129a)"]
+    },
+    {
+      "id": "historical.topic_system_state",
+      "area": "Historical",
+      "current_state": "Historical Topic/System State is not established by OHLCV; point-in-time membership, policies, relations, and lineage are still required.",
+      "status_flags": {"IMPLEMENTED":"NO","VALIDATED":"NO","CANONICALIZED":"NO","RELEASE_CANDIDATE":"NO","PRODUCTION_RELEASED":"NO","POST_DEPLOY_VERIFIED":"NO","SHADOW":"NO","DEFERRED":"YES","RESEARCH_ONLY":"YES","UNKNOWN":"NO"},
+      "evidence": ["docs/reports/TASK-DATA-HIST-PERSISTENCE-AUTHORITY-PROMOTION.md (f89129a)", "docs/reports/TASK-TOPIC-DAILY-STATE-PIT-FORMAL-SCHEMA-AND-BOUNDED-MATERIALIZATION.md (f8736cf)"]
+    },
+    {
+      "id": "rec_a1.dataset_protocol_freeze",
+      "area": "REC-A1",
+      "current_state": "Dataset/Protocol Freeze is canonicalized for research-only outcome-integrity support with owner-accepted residual uncertainty.",
+      "status_flags": {"IMPLEMENTED":"YES","VALIDATED":"YES","CANONICALIZED":"YES","RELEASE_CANDIDATE":"NO","PRODUCTION_RELEASED":"NO","POST_DEPLOY_VERIFIED":"NO","SHADOW":"NO","DEFERRED":"NO","RESEARCH_ONLY":"YES","UNKNOWN":"NO"},
+      "evidence": ["docs/reports/TASK-REC-A1-DATASET-PROTOCOL-FREEZE_CANONICAL_CLOSURE.md (309aa5f)", "docs/reports/TASK-REC-A1-DATASET-PROTOCOL-FREEZE-RISK-ACCEPTANCE-REASSESSMENT.md (850fee7)"]
+    },
+    {
+      "id": "rec_a1.core_v0_walk_forward",
+      "area": "REC-A1",
+      "current_state": "Core V0 walk-forward is READY_FOR_OWNER_AUTHORIZATION and has not been executed.",
+      "status_flags": {"IMPLEMENTED":"NO","VALIDATED":"YES","CANONICALIZED":"YES","RELEASE_CANDIDATE":"NO","PRODUCTION_RELEASED":"NO","POST_DEPLOY_VERIFIED":"NO","SHADOW":"NO","DEFERRED":"YES","RESEARCH_ONLY":"YES","UNKNOWN":"NO"},
+      "evidence": ["docs/reports/TASK-REC-A1-DATASET-PROTOCOL-FREEZE-RISK-ACCEPTANCE-REASSESSMENT.md (850fee7)", "docs/reports/TASK-REC-A1-DATASET-PROTOCOL-FREEZE_CANONICAL_CLOSURE.md (309aa5f)"]
+    },
+    {
+      "id": "opportunity.candidates",
+      "area": "Opportunity",
+      "current_state": "A1, A2, A3, and Catch-up/rotation remain research candidates, not accepted strategies.",
+      "status_flags": {"IMPLEMENTED":"NO","VALIDATED":"YES","CANONICALIZED":"YES","RELEASE_CANDIDATE":"NO","PRODUCTION_RELEASED":"NO","POST_DEPLOY_VERIFIED":"NO","SHADOW":"YES","DEFERRED":"YES","RESEARCH_ONLY":"YES","UNKNOWN":"NO"},
+      "evidence": ["docs/reports/TASK-BE-024_OPPORTUNITY_ENGINE_V1_REPORT.md (77dfd08)", "docs/reports/TASK-BE-024B_OPPORTUNITY_QUALIFICATION_POLICY_REPORT.md (77dfd08)"]
+    },
+    {
+      "id": "opportunity.shadow_contract",
+      "area": "Opportunity",
+      "current_state": "Deterministic shadow engine, versioned qualification policy, shadow read API, and frontend adapter exist; synthetic fixtures only and no production activation.",
+      "status_flags": {"IMPLEMENTED":"YES","VALIDATED":"YES","CANONICALIZED":"YES","RELEASE_CANDIDATE":"NO","PRODUCTION_RELEASED":"NO","POST_DEPLOY_VERIFIED":"NO","SHADOW":"YES","DEFERRED":"YES","RESEARCH_ONLY":"YES","UNKNOWN":"NO"},
+      "evidence": ["docs/reports/TASK-BE-024A_OPPORTUNITY_DECISION_CONTRACT_REPORT.md (77dfd08)", "docs/reports/TASK-BE-024C_OPPORTUNITY_SHADOW_READ_API_REPORT.md (77dfd08)"]
+    },
+    {
+      "id": "opportunity.backtest_strategy_recommendation",
+      "area": "Opportunity",
+      "current_state": "No completed performance backtest, walk-forward, strategy review/acceptance, or formal recommendation publication.",
+      "status_flags": {"IMPLEMENTED":"NO","VALIDATED":"NO","CANONICALIZED":"NO","RELEASE_CANDIDATE":"NO","PRODUCTION_RELEASED":"NO","POST_DEPLOY_VERIFIED":"NO","SHADOW":"NO","DEFERRED":"YES","RESEARCH_ONLY":"YES","UNKNOWN":"NO"},
+      "evidence": ["docs/reports/TASK-BE-024_OPPORTUNITY_ENGINE_V1_REPORT.md (77dfd08)", "docs/reports/TASK-BE-024B_OPPORTUNITY_QUALIFICATION_POLICY_REPORT.md (77dfd08)"]
+    },
+    {
+      "id": "release.hygiene_and_chain",
+      "area": "Release",
+      "current_state": "BLK-HYGIENE-01/02/03/04 are closed; repository hygiene is ready for release-chain closure, but owner authorization is required.",
+      "status_flags": {"IMPLEMENTED":"YES","VALIDATED":"YES","CANONICALIZED":"YES","RELEASE_CANDIDATE":"NO","PRODUCTION_RELEASED":"NO","POST_DEPLOY_VERIFIED":"NO","SHADOW":"NO","DEFERRED":"NO","RESEARCH_ONLY":"NO","UNKNOWN":"NO"},
+      "evidence": ["docs/reports/TASK-OPS-STOCK-004-CANONICAL-RECONCILIATION-001.md", "docs/reports/TASK-OPS-DOCUMENTATION-PROVIDERS-OWNER-DISPOSITION-AND-DB-INTEGRATION-FIXTURE-CLOSURE-001.md"]
+    },
+    {
+      "id": "release.production_runtime",
+      "area": "Release",
+      "current_state": "Production release is not ready; no release candidate, production promotion, post-deploy verification, runtime revision, push, or merge is evidenced here.",
+      "status_flags": {"IMPLEMENTED":"NO","VALIDATED":"NO","CANONICALIZED":"NO","RELEASE_CANDIDATE":"NO","PRODUCTION_RELEASED":"NO","POST_DEPLOY_VERIFIED":"NO","SHADOW":"NO","DEFERRED":"YES","RESEARCH_ONLY":"NO","UNKNOWN":"NO"},
+      "evidence": ["docs/reports/TASK-OPS-DOCUMENTATION-PROVIDERS-OWNER-DISPOSITION-AND-DB-INTEGRATION-FIXTURE-CLOSURE-001.md"]
+    }
+  ]
+}

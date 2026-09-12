@@ -1,0 +1,85 @@
+{
+  "gap_count": 5,
+  "informational_only": true,
+  "matrix_version": "technical-v0-future-evidence-gap.v1",
+  "rows": [
+    {
+      "available_now": [
+        "MA5",
+        "MA10",
+        "MA20",
+        "MA60",
+        "DISTANCE_TO_MA20",
+        "RSI14",
+        "MACD_12_26_9",
+        "VOLUME_RATIO_20"
+      ],
+      "consumer": "Opportunity A \u2014 Trend Continuation",
+      "future_evidence_gap": [
+        "MA20 slope/structure state is not a formal V2 field",
+        "full adjusted/continuity authority remains bounded"
+      ],
+      "gap_category": "DERIVABLE_FROM_EXISTING_DAILY_OHLCV",
+      "strategy_change": "NO"
+    },
+    {
+      "available_now": [
+        "RAW_CLOSE_RETURN_5D",
+        "RAW_CLOSE_RETURN_20D",
+        "VOLUME_MA5",
+        "VOLUME_MA20",
+        "RSI14"
+      ],
+      "consumer": "Opportunity B \u2014 Catch-up",
+      "future_evidence_gap": [
+        "cross-sectional relative strength/benchmark authority is not formal",
+        "benchmark and universe PIT contract required"
+      ],
+      "gap_category": "REQUIRES_EXTERNAL_DATA",
+      "strategy_change": "NO"
+    },
+    {
+      "available_now": [
+        "MA20",
+        "MA60",
+        "DISTANCE_TO_MA20",
+        "VOLUME_RATIO_20",
+        "MACD_12_26_9"
+      ],
+      "consumer": "Opportunity C \u2014 Early Strength",
+      "future_evidence_gap": [
+        "breakout, pattern, and volume-expansion definitions are not formal",
+        "no threshold optimization performed"
+      ],
+      "gap_category": "REQUIRES_NEW_TECHNICAL_MODULE",
+      "strategy_change": "NO"
+    },
+    {
+      "available_now": [
+        "RAW_CLOSE_RETURN_5D",
+        "RSI14",
+        "MACD_12_26_9",
+        "DISTANCE_TO_MA20"
+      ],
+      "consumer": "Opportunity D \u2014 Bearish-Reversal / Rebound",
+      "future_evidence_gap": [
+        "patterns, FVG, supply/demand, and reversal semantics are deferred",
+        "no short/recommendation semantics belong to WS2"
+      ],
+      "gap_category": "DEFERRED",
+      "strategy_change": "NO"
+    },
+    {
+      "available_now": [],
+      "consumer": "Shared continuity/adjustment authority",
+      "future_evidence_gap": [
+        "bounded event lookup limitation remains for 166 instruments in the prior full-universe assessment",
+        "no complete adjusted-price engine or universal no-event claim"
+      ],
+      "gap_category": "REQUIRES_EXTERNAL_DATA",
+      "strategy_change": "NO"
+    }
+  ],
+  "strategy_definitions_changed": false,
+  "task_id": "TASK-WS2-TECHNICAL-V0-INDICATOR-INVENTORY-AND-FORMAL-EVIDENCE-SURFACE-20260819"
+}

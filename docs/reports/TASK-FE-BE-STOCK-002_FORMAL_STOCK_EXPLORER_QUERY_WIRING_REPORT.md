@@ -1,7 +1,7 @@
 # TASK-FE-BE-STOCK-002｜Formal Stock Explorer Query Wiring
 
-Date: 2026-08-13  
-Branch: `codex/task-fe-be-stock-002-20260813`  
+Date: 2026-08-13
+Branch: `codex/task-fe-be-stock-002-20260813`
 Final status: `READY_FOR_STOCK_002_INTEGRATION_REVIEW`
 
 ## Authority and scope

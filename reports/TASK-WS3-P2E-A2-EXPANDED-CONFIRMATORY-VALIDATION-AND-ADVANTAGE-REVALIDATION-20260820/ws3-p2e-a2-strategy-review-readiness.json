@@ -1,0 +1,23 @@
+{
+  "a2_provisional_spec_readiness": "NO",
+  "accepted_strategy": false,
+  "deploy": false,
+  "entry_candidate_dispositions": {
+    "FAILED_CONFIRMATION": 3,
+    "SUPPORTED_WITH_BOUNDED_LIMITATIONS": 2
+  },
+  "formal_recommendation_publication": false,
+  "gate_0_disposition": "INCONCLUSIVE",
+  "invalidation_candidate_dispositions": {
+    "INCONCLUSIVE": 9,
+    "SUPPORTED_WITH_BOUNDED_LIMITATIONS": 6
+  },
+  "next_task_changed": false,
+  "opportunity_activation": false,
+  "production_mutation": false,
+  "promotion_status": "EVIDENCE_ONLY_NOT_PROMOTED",
+  "ready_to_interpret_a2_subhypotheses": "NO",
+  "research_conclusion": "STRATEGY_REVIEW_INPUT_ONLY",
+  "scheduler_change": false,
+  "schema_version": "ws3-p2e-a2-strategy-review-readiness.v1"
+}

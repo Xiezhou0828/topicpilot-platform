@@ -16,23 +16,21 @@ from decimal import ROUND_HALF_UP, Decimal
 from typing import Any
 from uuid import UUID
 
-from sqlalchemy import select
-from sqlalchemy.orm import Session
+from sqlalchemy import exists, select
+from sqlalchemy.orm import Session, aliased
 
 from topicpilot_api.orm import (
-    InstrumentTopicRelation,
-    LiveTrackingUniverse,
     TopicLifecycleResult,
     TopicSnapshot,
+    TopicSnapshotMemberFact,
+)
+from topicpilot_api.topic_lifecycle_contract import (
+    BACKEND_LIFECYCLE_STAGES,
 )
 from topicpilot_api.topic_snapshot_engine import MemberPriceEvidence, read_price_evidence
 
-SPROUTING = "SPROUTING"
-FERMENTING = "FERMENTING"
-MAIN_RISE = "MAIN_RISE"
-MATURE = "MATURE"
-DECLINING = "DECLINING"
-LIFECYCLE_STAGES = (SPROUTING, FERMENTING, MAIN_RISE, MATURE, DECLINING)
+BASE, SPROUTING, FERMENTING, MAIN_RISE, MATURE, DECLINING = BACKEND_LIFECYCLE_STAGES
+LIFECYCLE_STAGES = BACKEND_LIFECYCLE_STAGES
 LIFECYCLE_CALCULATION_VERSION = "topic-lifecycle-shadow.v1"
 LIFECYCLE_POLICY_VERSION = "topic-lifecycle-policy.provisional.1"
 
@@ -418,14 +416,162 @@ def evaluate_lifecycle(
     )
 
 
+# WS1 V1 replaces the previous aggregate-only evaluator.  Keep the persistence
+# adapter in this module for compatibility with existing callers, but bind all
+# public pure-evaluation names to the single identity-aware implementation.
+from topicpilot_api.topic_lifecycle_v1 import (  # noqa: E402,I001
+    LIFECYCLE_CALCULATION_VERSION as V1_LIFECYCLE_CALCULATION_VERSION,
+    LIFECYCLE_POLICY_VERSION as V1_LIFECYCLE_POLICY_VERSION,
+    LifecycleEvidence as V1LifecycleEvidence,
+    LifecycleInput as V1LifecycleInput,
+    LifecycleObservation as V1LifecycleObservation,
+    LifecyclePolicy as V1LifecyclePolicy,
+    LifecycleResult as V1LifecycleResult,
+    evaluate_lifecycle as evaluate_lifecycle_v1,
+)
+
+LIFECYCLE_CALCULATION_VERSION = V1_LIFECYCLE_CALCULATION_VERSION
+LIFECYCLE_POLICY_VERSION = V1_LIFECYCLE_POLICY_VERSION
+LifecycleEvidence = V1LifecycleEvidence  # noqa: F811
+LifecycleInput = V1LifecycleInput  # noqa: F811
+LifecycleObservation = V1LifecycleObservation  # noqa: F811
+LifecyclePolicy = V1LifecyclePolicy  # noqa: F811
+LifecycleResult = V1LifecycleResult  # noqa: F811
+evaluate_lifecycle = evaluate_lifecycle_v1  # noqa: F811
+
+
 def _date_rows(session: Session, evaluation_date: date) -> list[TopicSnapshot]:
+    successor = aliased(TopicSnapshot)
     return list(
         session.scalars(
             select(TopicSnapshot)
-            .where(TopicSnapshot.snapshot_date == evaluation_date)
+            .where(
+                TopicSnapshot.snapshot_date == evaluation_date,
+                TopicSnapshot.publication_mode == "FORMAL",
+                TopicSnapshot.membership_mode == "PIT_FORMAL",
+                TopicSnapshot.publication_state == "PUBLISHED",
+                TopicSnapshot.finality_state == "FINAL",
+                TopicSnapshot.superseded_by_snapshot_id.is_(None),
+                ~exists().where(successor.supersedes_snapshot_id == TopicSnapshot.id),
+            )
             .order_by(TopicSnapshot.topic_slug)
         )
     )
+
+
+def _snapshot_fact_rows(
+    session: Session, snapshots: list[TopicSnapshot]
+) -> dict[UUID, list[TopicSnapshotMemberFact]]:
+    snapshot_ids = [snapshot.id for snapshot in snapshots]
+    if not snapshot_ids:
+        return {}
+    rows = session.scalars(
+        select(TopicSnapshotMemberFact)
+        .where(TopicSnapshotMemberFact.snapshot_id.in_(snapshot_ids))
+        .order_by(TopicSnapshotMemberFact.snapshot_id, TopicSnapshotMemberFact.membership_order)
+    )
+    grouped: dict[UUID, list[TopicSnapshotMemberFact]] = defaultdict(list)
+    for row in rows:
+        grouped[row.snapshot_id].append(row)
+    return grouped
+
+
+def _formal_snapshot_lineage(
+    snapshot: TopicSnapshot, facts: list[TopicSnapshotMemberFact]
+) -> tuple[dict[str, Any] | None, str | None]:
+    """Require the existing formal snapshot identity before shadow evaluation."""
+
+    required_snapshot_fields = {
+        "snapshot_identity": snapshot.snapshot_identity,
+        "membership_snapshot_id": snapshot.membership_snapshot_id,
+        "membership_snapshot_hash": snapshot.membership_snapshot_hash,
+        "relation_version": snapshot.relation_version,
+        "source_artifact_id": snapshot.source_artifact_id,
+        "source_artifact_hash": snapshot.source_artifact_hash,
+        "lineage_hash": snapshot.lineage_hash,
+        "correction_sequence": snapshot.correction_sequence,
+    }
+    missing = sorted(name for name, value in required_snapshot_fields.items() if value is None)
+    if missing:
+        return None, f"MISSING_FORMAL_LINEAGE:{','.join(missing)}"
+    missing_fact_fields = sorted(
+        {
+            field
+            for fact in facts
+            for field, value in {
+                "fact_identity": fact.fact_identity,
+                "fact_hash": fact.fact_hash,
+            }.items()
+            if value is None or value == ""
+        }
+    )
+    if missing_fact_fields:
+        return None, f"MISSING_MEMBER_FACT_LINEAGE:{','.join(missing_fact_fields)}"
+    return {
+        "snapshotId": str(snapshot.id),
+        "snapshotIdentity": snapshot.snapshot_identity,
+        "membershipSnapshotId": snapshot.membership_snapshot_id,
+        "membershipSnapshotHash": snapshot.membership_snapshot_hash,
+        "relationVersion": snapshot.relation_version,
+        "sourceArtifactId": snapshot.source_artifact_id,
+        "sourceArtifactHash": snapshot.source_artifact_hash,
+        "lineageHash": snapshot.lineage_hash,
+        "correctionSequence": snapshot.correction_sequence,
+        "supersedesSnapshotId": (
+            str(snapshot.supersedes_snapshot_id) if snapshot.supersedes_snapshot_id else None
+        ),
+        "supersededBySnapshotId": (
+            str(snapshot.superseded_by_snapshot_id) if snapshot.superseded_by_snapshot_id else None
+        ),
+        "supersessionState": (
+            "ACTIVE" if snapshot.superseded_by_snapshot_id is None else "SUPERSEDED"
+        ),
+        "memberFactHashes": {
+            str(fact.instrument_id): fact.fact_hash
+            for fact in facts
+        },
+    }, None
+
+
+def _formal_observations(
+    snapshot: TopicSnapshot,
+    facts: list[TopicSnapshotMemberFact],
+    evidence: dict[UUID, MemberPriceEvidence],
+    eligible_ids: set[UUID] | None,
+    evaluation_date: date,
+) -> tuple[tuple[LifecycleObservation, ...] | None, str | None]:
+    observations: list[LifecycleObservation] = []
+    for fact in facts:
+        if fact.observation_date != evaluation_date:
+            return None, "MEMBER_FACT_DATE_MISMATCH"
+        if fact.fact_state != "OBSERVED":
+            continue
+        # Formal PIT member facts are the authority for lifecycle evaluation.
+        # Only an explicit caller restriction may narrow that set; the current
+        # live-tracking table is not a substitute for the snapshot's PIT set.
+        if eligible_ids is not None and fact.instrument_id not in eligible_ids:
+            continue
+        if fact.price_observation_id is None or fact.change_pct is None:
+            return None, "OBSERVED_MEMBER_FACT_MISSING_PRICE_EVIDENCE"
+        price = evidence.get(fact.instrument_id)
+        canonical_change = _change(price) if price is not None else None
+        if price is None or price.current_date != evaluation_date or canonical_change is None:
+            return None, "OBSERVED_MEMBER_FACT_NOT_BOUND_TO_CANONICAL_DAILY_BAR"
+        if abs(float(fact.change_pct) - canonical_change) > 0.0001:
+            return None, "MEMBER_FACT_CANONICAL_BAR_MISMATCH"
+        observations.append(
+            LifecycleObservation(
+                str(fact.instrument_id),
+                float(fact.change_pct),
+                getattr(fact, "structural_role", None),
+                getattr(fact, "role_source", None),
+                float(fact.close) if getattr(fact, "close", None) is not None else None,
+                float(fact.previous_close)
+                if getattr(fact, "previous_close", None) is not None
+                else None,
+            )
+        )
+    return tuple(observations), None
 
 
 class TopicLifecycleEngine:
@@ -457,58 +603,60 @@ class TopicLifecycleEngine:
                 "policyVersion": self.policy.version,
             }
         evidence = read_price_evidence(self.session, evaluation_date)
-        tracking_query = select(LiveTrackingUniverse.instrument_id)
-        if eligible_instrument_ids is not None:
-            tracking_query = tracking_query.where(
-                LiveTrackingUniverse.instrument_id.in_(tuple(eligible_instrument_ids))
-            )
-        tracking_ids = set(self.session.scalars(tracking_query).all())
-        relation_rows = list(
-            self.session.execute(
-                select(
-                    InstrumentTopicRelation.topic_id,
-                    InstrumentTopicRelation.instrument_id,
-                    InstrumentTopicRelation.relationship_metadata,
-                ).where(
-                    InstrumentTopicRelation.valid_from <= evaluation_date,
-                    (InstrumentTopicRelation.valid_to.is_(None))
-                    | (InstrumentTopicRelation.valid_to >= evaluation_date),
-                    InstrumentTopicRelation.instrument_id.in_(tracking_ids),
-                )
-            ).all()
+        eligible_ids = (
+            set(eligible_instrument_ids) if eligible_instrument_ids is not None else None
         )
-        members: dict[UUID, list[tuple[UUID, str | None]]] = defaultdict(list)
-        for topic_id, instrument_id, metadata in relation_rows:
-            role = None
-            if metadata:
-                role = metadata.get("topicRole") or metadata.get("role")
-            members[topic_id].append((instrument_id, role))
+        snapshot_facts = _snapshot_fact_rows(self.session, snapshots)
         previous = self._previous_states(evaluation_date)
         persisted = 0
         status_counts: dict[str, int] = defaultdict(int)
         topic_results: list[dict[str, Any]] = []
+        blocked_topics = 0
         for snapshot in snapshots:
-            member_rows = members.get(snapshot.topic_id, [])
-            observations = tuple(
-                LifecycleObservation(str(instrument_id), _change(item), role)
-                for instrument_id, role in member_rows
-                if (item := evidence.get(instrument_id)) is not None
-                and item.current_date == evaluation_date
-            )
+            facts = snapshot_facts.get(snapshot.id, [])
+            lineage, lineage_reason = _formal_snapshot_lineage(snapshot, facts)
+            observations, observation_reason = _formal_observations(
+                snapshot, facts, evidence, eligible_ids, evaluation_date
+            ) if lineage is not None else (None, None)
+            block_reason = lineage_reason or observation_reason
+            if block_reason is not None:
+                blocked_topics += 1
+                status_counts["WAITING_FOR_FORMAL_LINEAGE"] += 1
+                topic_results.append(
+                    {
+                        "topicId": str(snapshot.topic_id),
+                        "tradingDate": evaluation_date.isoformat(),
+                        "previousStage": None,
+                        "candidateStage": None,
+                        "finalStage": None,
+                        "stageEnteredAt": None,
+                        "stageTradingDays": None,
+                        "evaluationStatus": "BLOCKED",
+                        "dataStatus": "WAITING_FOR_FORMAL_LINEAGE",
+                        "transitionDecision": "HOLD_FORMAL_LINEAGE",
+                        "transitionReason": block_reason,
+                        "policyVersion": self.policy.version,
+                        "calculationVersion": self.calculation_version,
+                        "evaluationMode": "SHADOW",
+                        "lineage": lineage or {},
+                    }
+                )
+                continue
             state = previous.get(snapshot.topic_id, {})
             value = LifecycleInput(
                 str(snapshot.topic_id),
                 evaluation_date,
                 int(snapshot.stock_count),
-                observations,
+                observations or (),
                 state.get("final_stage"),
                 state.get("stage_entered_at"),
                 state.get("stage_trading_days"),
                 state.get("candidate_stage"),
                 int(state.get("candidate_streak") or 0),
+                state.get("state_memory"),
             )
             result = evaluate_lifecycle(self._with_calculation(value), self.policy)
-            self._persist(snapshot, result)
+            self._persist(snapshot, result, lineage or {})
             persisted += 1
             status_counts[result.data_status] += 1
             topic_results.append(
@@ -524,6 +672,20 @@ class TopicLifecycleEngine:
                         else None
                     ),
                     "stageTradingDays": result.stage_trading_days,
+                    "cycleNumber": result.cycle_number,
+                    "mainRiseSegment": result.main_rise_segment,
+                    "segmentEntryDate": (
+                        result.segment_entry_date.isoformat()
+                        if result.segment_entry_date
+                        else None
+                    ),
+                    "segmentAnchorDate": (
+                        result.segment_anchor_date.isoformat()
+                        if result.segment_anchor_date
+                        else None
+                    ),
+                    "daysSinceMeaningfulExpansion": result.days_since_meaningful_expansion,
+                    "drawdownFromPeakPct": result.drawdown_from_peak_pct,
                     "evaluationStatus": result.evaluation_status,
                     "dataStatus": result.data_status,
                     "transitionDecision": result.transition_decision,
@@ -533,6 +695,7 @@ class TopicLifecycleEngine:
                     "policyVersion": result.policy_version,
                     "calculationVersion": result.calculation_version,
                     "evaluationMode": result.evaluation_mode,
+                    "lineage": lineage,
                 }
             )
             previous[snapshot.topic_id] = {
@@ -541,12 +704,14 @@ class TopicLifecycleEngine:
                 "stage_trading_days": result.stage_trading_days,
                 "candidate_stage": result.candidate_stage,
                 "candidate_streak": result.confirmation_state.get("candidateStreak", 0),
+                "state_memory": result.state_memory,
             }
         self.session.commit()
         return {
             "evaluationDate": evaluation_date.isoformat(),
-            "status": "SUCCESS",
+            "status": "SUCCESS" if blocked_topics == 0 else "FAIL_CLOSED_FORMAL_LINEAGE",
             "topicCount": persisted,
+            "blockedTopicCount": blocked_topics,
             "dataStatusCounts": dict(sorted(status_counts.items())),
             "policyVersion": self.policy.version,
             "calculationVersion": self.calculation_version,
@@ -577,10 +742,16 @@ class TopicLifecycleEngine:
                 "stage_trading_days": row.stage_trading_days,
                 "candidate_stage": row.candidate_stage,
                 "candidate_streak": (row.confirmation_state or {}).get("candidateStreak", 0),
+                "state_memory": row.state_memory or {},
             }
         return states
 
-    def _persist(self, snapshot: TopicSnapshot, result: LifecycleResult) -> None:
+    def _persist(
+        self,
+        snapshot: TopicSnapshot,
+        result: LifecycleResult,
+        lineage: dict[str, Any],
+    ) -> None:
         existing = self.session.scalar(
             select(TopicLifecycleResult).where(
                 TopicLifecycleResult.topic_id == snapshot.topic_id,
@@ -615,6 +786,25 @@ class TopicLifecycleEngine:
             "snapshot_date": snapshot.snapshot_date,
             "average_change": _decimal(result.average_change),
             "coverage_pct": _decimal(result.coverage_pct, places=3),
+            "main_rise_segment": result.main_rise_segment,
+            "segment_entry_date": result.segment_entry_date,
+            "segment_anchor_date": result.segment_anchor_date,
+            "days_since_meaningful_expansion": result.days_since_meaningful_expansion,
+            "drawdown_from_peak_pct": _decimal(result.drawdown_from_peak_pct),
+            "state_memory": result.state_memory,
+            "snapshot_id": snapshot.id,
+            "snapshot_identity": lineage["snapshotIdentity"],
+            "membership_snapshot_id": lineage["membershipSnapshotId"],
+            "membership_snapshot_hash": lineage["membershipSnapshotHash"],
+            "relation_version": lineage["relationVersion"],
+            "source_artifact_id": lineage["sourceArtifactId"],
+            "source_artifact_hash": lineage["sourceArtifactHash"],
+            "lineage_hash": lineage["lineageHash"],
+            "member_fact_hashes": lineage["memberFactHashes"],
+            "correction_sequence": lineage["correctionSequence"],
+            "supersedes_snapshot_id": snapshot.supersedes_snapshot_id,
+            "superseded_by_snapshot_id": snapshot.superseded_by_snapshot_id,
+            "supersession_state": lineage["supersessionState"],
         }
         if existing is None:
             self.session.add(TopicLifecycleResult(**values))
@@ -647,6 +837,7 @@ def _decimal(value: float | None, *, places: int = 4) -> Decimal | None:
 
 
 __all__ = [
+    "BASE",
     "DECLINING",
     "FERMENTING",
     "LIFECYCLE_CALCULATION_VERSION",

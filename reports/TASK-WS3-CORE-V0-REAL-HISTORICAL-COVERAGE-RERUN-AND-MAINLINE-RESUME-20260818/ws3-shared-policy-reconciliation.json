@@ -1,0 +1,17 @@
+{
+  "task_id": "TASK-WS3-CORE-V0-REAL-HISTORICAL-COVERAGE-RERUN-AND-MAINLINE-RESUME-20260818",
+  "policy": "EVENT_AWARE_RESEARCH",
+  "policy_version": "ws3-event-aware-research.v1",
+  "shared_g2r_p_source_commit": "4f97a3f8195ce1f2eb254a2e4afcaa95a3e12240",
+  "task_branch_g2r_p_commit": "fb4ce16ea735746dff643507d4c5744991de6e51",
+  "formal_ws2_continuity_contract_changed": false,
+  "unknown_preserved": true,
+  "affirmative_no_event_required": false,
+  "covered_no_event_created": false,
+  "known_authoritative_event_action": "EXCLUDE",
+  "known_event_correction_count": 0,
+  "known_event_annotation_count": 0,
+  "partial_event_authority_handling": "TRACK_ONLY_NO_FABRICATED_NO_EVENT",
+  "g2r_c_run": false,
+  "shared_g3_run": false
+}

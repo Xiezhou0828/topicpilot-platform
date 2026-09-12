@@ -1,0 +1,53 @@
+{
+  "task_id": "TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-CANONICAL-AUTHORITY-PROMOTION-AND-CONSUMER-HANDOFF-20260820",
+  "authority_version": "sdf-603-ohlcv-2y.v1",
+  "source_manifest": "docs/reports/TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-CANONICAL-AUTHORITY-PROMOTION-AND-CONSUMER-HANDOFF-20260820/shared-data-foundation-authority-source-manifest.json",
+  "version_manifest": "docs/reports/TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-CANONICAL-AUTHORITY-PROMOTION-AND-CONSUMER-HANDOFF-20260820/shared-data-foundation-authority-version-manifest.json",
+  "current_authority": {
+    "universe": 603,
+    "TPE": 370,
+    "TWO": 233,
+    "accepted_ohlcv_rows": 288881,
+    "normalized_surface_sha256": "e803733e796d8f4d8cf00575cd4045f28c9364572fc61b31ef490e8a65ff47a4",
+    "pit_reconstructable": 603,
+    "ma60_calculable": 602
+  },
+  "handoff": {
+    "WS1": {
+      "state": "PAUSED_UNTIL_DATA_HANDOFF_CONSUMPTION",
+      "allowed_next_scope": "96-stock delta enrichment only",
+      "strategy_semantics_change": false
+    },
+    "WS2": {
+      "state": "SOURCE_CONTRACT_RESOLVABLE_AFTER_HANDOFF",
+      "next_allowed_scope": "WS2-E1 603 Technical V0 qualification; no indicator semantics change; no automatic start",
+      "baseline_blocker_preserved": true
+    },
+    "WS3": {
+      "state": "SOURCE_CONTRACT_RESOLVABLE_AFTER_HANDOFF",
+      "order": [
+        "P1-E Expanded Evidence Qualification / Cohort Reconstitution",
+        "P2-E frozen-hypothesis validation"
+      ],
+      "A1_A2_A2_Origin": "FROZEN",
+      "threshold_retune": false
+    },
+    "WS4": {
+      "state": "UNCHANGED"
+    },
+    "NEXT_TASK": {
+      "changed": false,
+      "automatic_start": false
+    }
+  },
+  "non_scope": [
+    "topic taxonomy",
+    "structural role",
+    "score projection",
+    "Technical V0 algorithms",
+    "MA60 policy",
+    "A1/A2/A2-Origin definitions or thresholds",
+    "WS4",
+    "production/deploy/push"
+  ]
+}

@@ -1,0 +1,270 @@
+{
+  "artifacts": {
+    "OWNER-DECISION-MEMO.md": {
+      "bytes": 1288,
+      "sha256": "34f101cb54b72f1dd74fefc6fbfd306214b1f5244ff32f110a2e37f10fb9a192"
+    },
+    "formal-closure-report.md": {
+      "bytes": 5721,
+      "sha256": "332926d0847687100187383ffbdda4ef9a57159e7feeb934c4b45fc942a35123"
+    },
+    "main-rise-transition-event-inventory.csv": {
+      "bytes": 136835,
+      "sha256": "76499a5ea3c66d2a9ccceee3fd76c7eedd29aeab59d773bce076aaa57e2d7e01"
+    },
+    "negative-control-comparison.csv": {
+      "bytes": 7536,
+      "sha256": "57a2e21e2d0507a0a78213ef7c80338c35ba0270555aab70f3376043fa7bb7df"
+    },
+    "pre-main-rise-conditional-expectancy.csv": {
+      "bytes": 55070,
+      "sha256": "606fc03561248bbdcd3e22b1f8cd63b255c4b5623e630fa8ec387c8d7aaf5367"
+    },
+    "pre-main-rise-path-risk-analysis.csv": {
+      "bytes": 43232,
+      "sha256": "65ca9a9d6c733968a4089b6ee609961538b303137016260703b79cdc28f30d3f"
+    },
+    "pre-main-rise-signal-join-coverage.csv": {
+      "bytes": 6859,
+      "sha256": "43f450d9275df9c4e0309c24b43e9bc1617656a2c4e8a28dde5a5de32fdfef7f"
+    },
+    "reproducibility-manifest.json": {
+      "bytes": 8304,
+      "sha256": "9b478cb7a6c8d6d3030b94db50a154b0faff92f22aedd54a6f793f83c5926139"
+    },
+    "robustness-concentration-audit.csv": {
+      "bytes": 40175,
+      "sha256": "30f97b3df07eb27c13a7a75c35ae26f2f485ed93716409158bed7c40d632be28"
+    },
+    "sample-retention-and-opportunity-cost.csv": {
+      "bytes": 26903,
+      "sha256": "d75405dd5ebcd354ee340b8aaa6635c60d7dad8104d6fe7bf2cd35433835a265"
+    },
+    "strength-trajectory-analysis.csv": {
+      "bytes": 42435,
+      "sha256": "7b6dd2e9d855e789a9798ebfba88e02e3ca6a099bf27019a05897c852a03a15f"
+    },
+    "transition-day-vs-pretransition-comparison.csv": {
+      "bytes": 22645,
+      "sha256": "ce04ba18acabf6177b1f45fae07d57da75d5b88f6824e68f5ff2f32c62cea4c9"
+    }
+  },
+  "authority": {
+    "current_instrument_count": 525,
+    "current_relation_count": 852,
+    "ohlcv_rows_queried": 277379,
+    "ohlcv_surface_adjustment_state": "UNKNOWN_RAW_ONLY",
+    "relation_hash": "ceb92222a7036631527401dba8ab1b1ca5c26613d8fd439b0beac7ad90080107"
+  },
+  "best_pretransition_window_all_technical": {
+    "T+10": {
+      "mean": 0.17627612364456918,
+      "median": 0.15384615384615374,
+      "window": "D-1"
+    },
+    "T+5": {
+      "mean": 0.0916820245193608,
+      "median": 0.09958506224066377,
+      "window": "D-3"
+    }
+  },
+  "canonical_source_root": "E:\\topicpilot-platform-canonical",
+  "d1_vs_technical_alone": {
+    "T+10_delta_mean": 0.11868627608622771,
+    "T+10_delta_median": 0.13096285865164572,
+    "T+5_delta_mean": 0.06054591498174943,
+    "T+5_delta_median": 0.0685813992079638
+  },
+  "dataset_protocol": {
+    "adjustment_state": "UNKNOWN_RAW_ONLY",
+    "candidate_vs_confirmed": "CANDIDATE_ONSET and CONFIRMED_TRANSITION are separate event semantics",
+    "dataset_declared_identity_sha256": "17faa9be1189d6fab1bdfe518a1faf9e90d9be1ec994008ed59beef8bf6ecb95",
+    "dataset_rows": 16250,
+    "dataset_version": "WS1-L5-CURRENT_TAXONOMY_HISTORICAL_RECONSTRUCTION",
+    "dataset_window": [
+      "2026-02-03",
+      "2026-08-13"
+    ],
+    "failure_criteria": [
+      "source path/hash/count mismatch",
+      "unavailable current relation or accepted OHLCV authority",
+      "missing required prior window is retained and not imputed",
+      "D0 evidence used in pretransition inference",
+      "ambiguous/no relation is not imputed"
+    ],
+    "forward_horizons": [
+      "T+5",
+      "T+10"
+    ],
+    "no_parameter_fitting": true,
+    "observation_windows": {
+      "D-1": "one prior L5 topic row",
+      "D-2": "two prior L5 topic rows",
+      "D-3": "three prior L5 topic rows",
+      "D0": "event transition row; contemporaneous only"
+    },
+    "parameter_version": "ws3-pre-main-rise-transition-expectancy.v1",
+    "path_contract": "+5% before -5% and +10% before -5%; same-session order unknown",
+    "pit_status": "NON_PIT_RETROSPECTIVE_RECONSTRUCTION; NOT_FORMAL_HISTORICAL_AUTHORITY",
+    "protocol_id": "ws3-pre-main-rise-transition-expectancy.v1",
+    "signal_cohorts": {
+      "A2": "existing 5,277-event panel",
+      "ALL_TECHNICAL": "A2 + Legacy-5 source observations; same-date source duplicates retained and disclosed",
+      "BOTH_SAME_SESSION": "existing exact-session intersection; two source observations per pair",
+      "BOTH_WITHIN_1_SENSITIVITY": "fixed one-to-one +/-1 accepted-session sensitivity; not mixed with primary",
+      "LEGACY5": "existing 2,471 distinct LEGACY-5 episodes"
+    },
+    "strength_contract": "raw positive_breadth, strong_breadth, weak_ratio, average_change_pct, leader_change_pct proxy only; no score/labels/thresholds",
+    "time_splits": {
+      "EARLY": [
+        "2026-02-03",
+        "2026-04-30"
+      ],
+      "LATE": [
+        "2026-07-01",
+        "2026-08-13"
+      ],
+      "MIDDLE": [
+        "2026-05-01",
+        "2026-06-30"
+      ]
+    }
+  },
+  "governance": {
+    "A2_DEFINITION_CHANGED": "NO",
+    "BOTH_DEFINITION_CHANGED": "NO",
+    "C_DRIVE_NEW_ARTIFACTS_CREATED": "NO",
+    "DB_MUTATION": "NO",
+    "DEPLOY": "NO",
+    "E_DRIVE_ONLY": "YES",
+    "FORMAL_RECOMMENDATION_PUBLICATION": "NO",
+    "LEGACY5_DEFINITION_CHANGED": "NO",
+    "LIFECYCLE_POLICY_CHANGED": "NO",
+    "NEXT_TASK_CHANGED": "NO",
+    "OPPORTUNITY_PRODUCTION_ACTIVATION": "NO",
+    "PRODUCTION_FILTER_CREATED": "NO",
+    "PUSH": "NO",
+    "RESEARCH_ONLY": "YES",
+    "STRATEGY_ACCEPTED": "NO",
+    "STRATEGY_DEFINITION_CHANGED": "NO",
+    "STRENGTH_SCORE_CREATED": "NO",
+    "WS3_ONLY": "YES"
+  },
+  "lookahead_audit": {
+    "D-1_excludes_D0": "PASS",
+    "D-2_excludes_D-1_D0": "PASS",
+    "D-3_excludes_D-2_D-1_D0": "PASS",
+    "D0_separately_labeled": "PASS",
+    "browser_or_adhoc_substitution": "NO",
+    "outcome_used_for_event_definition": "NO",
+    "outcome_used_for_signal_selection": "NO"
+  },
+  "negative_control": {
+    "descriptive_stratification": "signal_type + early/middle/late period; prior 5-session return disclosed",
+    "matching_status": "NOT_AVAILABLE_EXACT_MATCHING_NOT_PERFORMED"
+  },
+  "pair_counts": {
+    "a2": 5277,
+    "both_same_pairs": 560,
+    "both_within_1_pairs": 792,
+    "legacy5": 2471
+  },
+  "research_disposition": "RESEARCH_CANDIDATE",
+  "signal_counts_by_confirmed_transition_window": {
+    "A2": {
+      "D-1": 8,
+      "D-2": 4,
+      "D-3": 10,
+      "D0": 27
+    },
+    "ALL_TECHNICAL": {
+      "D-1": 13,
+      "D-2": 6,
+      "D-3": 11,
+      "D0": 42
+    },
+    "BOTH_SAME_SESSION": {
+      "D-1": 0,
+      "D-2": 0,
+      "D-3": 0,
+      "D0": 10
+    },
+    "BOTH_WITHIN_1_SENSITIVITY": {
+      "D-1": 1,
+      "D-2": 0,
+      "D-3": 1,
+      "D0": 13
+    },
+    "LEGACY5": {
+      "D-1": 5,
+      "D-2": 2,
+      "D-3": 1,
+      "D0": 15
+    }
+  },
+  "source_files": {
+    "a2_freeze": {
+      "bytes": 10356,
+      "path": "E:\\topicpilot-platform-canonical\\reports\\TASK-WS3-P2E-A2-EXPANDED-CONFIRMATORY-VALIDATION-AND-ADVANTAGE-REVALIDATION-20260820\\ws3-p2e-a2-confirmatory-protocol-freeze.json",
+      "sha256": "864bff2bf9d723a6c4968083da56afe77d4bd5b5c51a6c363fd9a5904f77b86d"
+    },
+    "a2_outcomes": {
+      "bytes": 24666854,
+      "path": "E:\\topicpilot-platform-canonical\\reports\\TASK-WS3-A2-OUTCOME-RECONSTRUCTION-FAILURE-ATTRIBUTION-20260821\\a2-path-aware-outcomes.csv",
+      "sha256": "3fa287b26a8db07e540a1f45bb663af52df4f88bed7156c69b357d31c9005538"
+    },
+    "a2_panel": {
+      "bytes": 81888767,
+      "path": "E:\\topicpilot-platform-canonical\\reports\\TASK-WS3-P2E-A2-EXPANDED-CONFIRMATORY-VALIDATION-AND-ADVANTAGE-REVALIDATION-20260820\\ws3-p2e-a2-expanded-event-panel.csv",
+      "sha256": "97b131479b90ce64a821f72a6c6cceb58d102aeb49c64eac60ba19dfca71bc52"
+    },
+    "joint_run": {
+      "bytes": 6815,
+      "path": "E:\\topicpilot-platform-canonical\\reports\\TASK-WS3-A2-LEGACY5-JOINT-SIGNAL-ROBUSTNESS-AND-BENCHMARK-VALIDATION-20260822\\run-summary.json",
+      "sha256": "5050933238a8c8e30e0504c652437514436647ca1f52c29a8ae944e30d49eb14"
+    },
+    "joint_semantics": {
+      "bytes": 3823,
+      "path": "E:\\topicpilot-platform-canonical\\reports\\TASK-WS3-A2-LEGACY5-JOINT-SIGNAL-ROBUSTNESS-AND-BENCHMARK-VALIDATION-20260822\\source-semantics-reconciliation-manifest.json",
+      "sha256": "9fa5e54da5ab293abbd9bcc0e7a37f11344a62c6e71ecf80ca219d99651c93bd"
+    },
+    "l5_dataset": {
+      "bytes": 15460715,
+      "path": "E:\\topicpilot-platform-canonical\\reports\\TASK-WS1-L5-CURRENT-TAXONOMY-HISTORICAL-LIFECYCLE-STRENGTH-RECONSTRUCTION-20260822\\historical-lifecycle-strength-dataset.csv",
+      "sha256": "4e2567025c85c1de51c4ebfe198eae1f39a7e0580d1a019d7a5c981b3c5945bd"
+    },
+    "l5_declared_dataset_identity": "17faa9be1189d6fab1bdfe518a1faf9e90d9be1ec994008ed59beef8bf6ecb95",
+    "l5_manifest": {
+      "bytes": 3244,
+      "path": "E:\\topicpilot-platform-canonical\\reports\\TASK-WS1-L5-CURRENT-TAXONOMY-HISTORICAL-LIFECYCLE-STRENGTH-RECONSTRUCTION-20260822\\reconstruction-manifest.json",
+      "sha256": "d4757cf178f174de013f622da13b911f3e305adf1782e5c6ff2d96b997321a14"
+    },
+    "legacy_episodes": {
+      "bytes": 2493112,
+      "path": "E:\\topicpilot-platform-canonical\\reports\\TASK-WS3-LEGACY-5-STRATEGY-BENCHMARK-20260822\\legacy5-distinct-episodes.csv",
+      "sha256": "404fccde5f4b4ba723131374c93474ca195891f6384da509e1a81f895c168d3a"
+    },
+    "legacy_manifest": {
+      "bytes": 1653,
+      "path": "E:\\topicpilot-platform-canonical\\reports\\TASK-WS3-LEGACY-5-STRATEGY-BENCHMARK-20260822\\legacy5-event-cohort-manifest.json",
+      "sha256": "c449f46ace1da21e3332e6ec293b735ec22176be1305282443c91bed657886c0"
+    },
+    "legacy_outcomes": {
+      "bytes": 23423107,
+      "path": "E:\\topicpilot-platform-canonical\\reports\\TASK-WS3-LEGACY-5-STRATEGY-BENCHMARK-20260822\\event-outcomes.csv",
+      "sha256": "acd578b20bfe1bc4fad8c09242b3c4963769a76734bf689fce8c98e83119762e"
+    }
+  },
+  "status": "COMPLETE_PASS_WITH_BOUNDED_RESEARCH_LIMITATIONS",
+  "task_id": "TASK-WS3-LIFECYCLE-TRANSITION-PRE-MAIN-RISE-CONDITIONAL-EXPECTANCY-STUDY-20260823",
+  "test_count_delta_status": "NOT_APPLICABLE_RESEARCH_ONLY",
+  "transition_events": {
+    "all_event_inventory_rows": 145,
+    "candidate_onset_events": 80,
+    "confirmed_bootstrap_events": 19,
+    "confirmed_full_prewindow_events": 54,
+    "confirmed_transition_events": 65
+  },
+  "walk_forward_execution": "YES; fixed retrospective transition-date slices executed",
+  "worktree_head": "4053d655d9fb16fe81aae604b22e7979f59b891c"
+}

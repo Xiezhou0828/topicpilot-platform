@@ -1,0 +1,163 @@
+{
+  "artifact_aggregate_sha256": "2dbde4f2e567bdcada811c0ea09d251f5d9a3847c465876c53ccc04dc50bab85",
+  "artifact_hashes": {
+    "OWNER-DECISION-MEMO.md": "239fcee59763c8f52ff4d118827cd81d15b233d3b63b135f37949d8f57cd428e",
+    "benchmark-adjusted-analysis.csv": "80c45ad4087cf4f33acd5153a0339facfcbea434901829a493029c9ff9771afa",
+    "benchmark-not-available.csv": "80c45ad4087cf4f33acd5153a0339facfcbea434901829a493029c9ff9771afa",
+    "extreme-winner-dependence.csv": "a8f74ebd898a00068031419cf6763392feeb7009166b3edffdbfc1de6c8d25ca",
+    "instrument-concentration-analysis.csv": "8c6ade99d1910c29cda6be9dde8b75ef09a76e310b1b07113a6027eb61c91147",
+    "joint-signal-endpoint-robustness.csv": "462230ddd30befe675f5b912b9eafaa8e152b69edb8d9afc7399244758f53b4f",
+    "joint-signal-path-robustness.csv": "1cb7e7e9b0cdc1104836265158eb0d8b5e60941e01917543f443618c6983c443",
+    "ma60-joint-signal-ablation.csv": "15ceceb9e9fa4917c5633f15c38cc967586e5f909ca0f9deca65e47b628ab1dd",
+    "market-split-analysis.csv": "0faaf007db14deb6a63424f6d42f9a95c870e980a39055be4b30d5a026631de5",
+    "regime-not-available.csv": "0a1b318edfc853ec66a1e258d9cdc77993fef4ad492b98490655e987442954b7",
+    "regime-robustness.csv": "0a1b318edfc853ec66a1e258d9cdc77993fef4ad492b98490655e987442954b7",
+    "signal-timing-path-analysis.csv": "4fe3b34aa4f2615fecf2fdb96334b12bc0344753991cb9fbb1eef476a17df17b",
+    "source-semantics-reconciliation-manifest.json": "9fa5e54da5ab293abbd9bcc0e7a37f11344a62c6e71ecf80ca219d99651c93bd",
+    "statistical-robustness-summary.json": "11710758e80a1f86d92e337425207037bb0a379b1d13fbf60bb6d65abe928e46",
+    "time-stability-analysis.csv": "591751e81bc6b15759bedc212ec3bbfc9c3b5ff644317a5a08f45796ded2e0e7"
+  },
+  "benchmark_adjusted_analysis": "NOT_AVAILABLE",
+  "cohorts": {
+    "A2_ONLY": {
+      "event_count": 4485,
+      "instrument_count": 599,
+      "observation_count": 4485,
+      "pair_count": 0
+    },
+    "BOTH_SAME_SESSION": {
+      "event_count": 1120,
+      "instrument_count": 330,
+      "observation_count": 1120,
+      "pair_count": 560
+    },
+    "BOTH_WITHIN_1_SESSION": {
+      "event_count": 464,
+      "instrument_count": 185,
+      "observation_count": 464,
+      "pair_count": 232
+    },
+    "LEGACY5_ONLY": {
+      "event_count": 1679,
+      "instrument_count": 504,
+      "observation_count": 1679,
+      "pair_count": 0
+    }
+  },
+  "corporate_action_governance": {
+    "adjustment_state": "UNKNOWN_RAW_ONLY",
+    "fail_closed": true,
+    "same_session_order": "SAME_SESSION_ORDER_UNKNOWN",
+    "synthetic_adjustment": false
+  },
+  "decision": {
+    "benchmark_adjusted_support": false,
+    "both_h10_mean": 0.0508413624404588,
+    "both_h10_median": 0.01509433962264151,
+    "both_h10_trimmed5_mean": 0.03755272742044196,
+    "both_h5_mean": 0.025834302404106755,
+    "both_h5_median": 0.0046948356807512415,
+    "both_h5_trimmed5_mean": 0.01828639398847514,
+    "caveat": "BOTH uses two source observations per pair; medians and outlier checks are event/source-observation descriptive, not independent-pair significance tests",
+    "final_disposition": "RESEARCH_CANDIDATE",
+    "ma60_a2_only_h5_mae_v0": -0.046100265798957624,
+    "ma60_a2_only_h5_mae_v2": -0.04613233908996064,
+    "ma60_a2_only_h5_v0": 0.01753965439887155,
+    "ma60_a2_only_h5_v2": 0.01742642630526122,
+    "ma60_both_h5_v0": 0.025834302404106755,
+    "ma60_both_h5_v2": 0.025834302404106755,
+    "ma60_joint_quality_support": true,
+    "ma60_legacy_only_h5_mae_v0": -0.05257836488959425,
+    "ma60_legacy_only_h5_mae_v2": -0.05716919109589083,
+    "ma60_legacy_only_h5_v0": 0.007000681049546191,
+    "ma60_legacy_only_h5_v2": 0.006214500734394615,
+    "ma60_removed_endpoint_le_0_h5": 185,
+    "ma60_removed_h5": 375,
+    "ma60_removed_mae_le_minus5_h5": 100,
+    "ma60_removed_mfe_ge_10_h5": 73,
+    "ma60_removed_mfe_ge_3_h5": 236,
+    "ma60_removed_mfe_ge_5_h5": 173,
+    "market_available_rows": 2,
+    "market_split_support": true,
+    "mean_advantage_both_vs_single": true,
+    "median_advantage_both_vs_single": true,
+    "next_oos_design": "Freeze A2, LEGACY-5, +/-1 matching and all reporting rules now; accumulate only future sessions after 2026-08-13; evaluate an untouched later period without changing thresholds or selecting on outcomes",
+    "out_of_sample_supported": "NO",
+    "outlier_adjusted_advantage": true,
+    "regime_support": false,
+    "robustness_blockers": [
+      "BENCHMARK_ADJUSTED_ANALYSIS=NOT_AVAILABLE",
+      "REGIME_ROBUSTNESS=NOT_AVAILABLE"
+    ],
+    "time_available_year_rows": 3,
+    "time_stability_support": true,
+    "timing_pair_counts": {
+      "A2_EARLIER": 12,
+      "LEGACY_EARLIER": 220,
+      "SAME_SESSION": 560
+    }
+  },
+  "final_disposition": "RESEARCH_CANDIDATE",
+  "governance": {
+    "A2_SEMANTICS_CHANGED": "NO",
+    "A_SETUP_ACCEPTED": "NO",
+    "A_STRATEGY_ACCEPTED": "NO",
+    "CORE_V0_MUTATION": "NO",
+    "DATABASE_WRITES": false,
+    "DATA_DOWNLOAD": "NO",
+    "DEPLOY": "NO",
+    "JOINT_SIGNAL_ACCEPTED": "NO",
+    "LARGE_OHLCV_PIPELINE_RERUN": "NO",
+    "LEGACY5_SEMANTICS_CHANGED": "NO",
+    "LEGACY_STRATEGY_ACCEPTED": "NO",
+    "MA20_RESEARCHED": "NO",
+    "NEXT_TASK_CHANGED": "NO",
+    "OUT_OF_SAMPLE_SUPPORTED": "NO",
+    "PRICE20_RESEARCHED": "NO",
+    "PRODUCTION_MUTATION": "NO",
+    "PUSH": "NO",
+    "THRESHOLD_SEARCH": "NO",
+    "WS1_WS2_WS4_MUTATION": "NO",
+    "WS3_ONLY": "YES"
+  },
+  "matching": {
+    "candidate_pair_count": 793,
+    "pair_counts_by_delta": {
+      "-1": 220,
+      "0": 560,
+      "1": 12
+    },
+    "window_sessions": 1
+  },
+  "raw_panel_scans": {
+    "raw_panel_scans": 1,
+    "reason": "Required only for exact accepted-session positions and event-level LEGACY-5 barrier races; no download, volume rescan, writes, or production pipeline rerun",
+    "scan_type": "read-only accepted PRICE DAILY_BAR fields"
+  },
+  "regime_robustness": "NOT_AVAILABLE",
+  "reproducibility": {
+    "bootstrap_replicates": 1000,
+    "bootstrap_seed": 20260822,
+    "reconstruction_runs": 2,
+    "reproducible": "YES"
+  },
+  "runtime_seconds": null,
+  "schema_version": "ws3-a2-legacy5-joint-signal-run-summary.v1",
+  "source_surface": {
+    "date_max": "2026-08-13",
+    "date_min": "2024-08-13",
+    "duplicate_session_count": 0,
+    "invalid_ohlcv_count": 0,
+    "queried_instruments": 603,
+    "queried_rows": 288881,
+    "query_scope": "accepted canonical PRICE DAILY_BAR only; no volume lateral; no writes"
+  },
+  "statistical_discipline": {
+    "formal_significance_claim": "NO",
+    "in_sample_descriptive": true,
+    "multiple_testing_adjustment": "NONE; results are exploratory descriptive robustness checks",
+    "ratio_is_risk_adjusted_return": "NO"
+  },
+  "task_id": "TASK-WS3-A2-LEGACY5-JOINT-SIGNAL-ROBUSTNESS-AND-BENCHMARK-VALIDATION-20260822",
+  "task_status": "COMPLETE_PASS_WITH_BOUNDED_LIMITATIONS"
+}

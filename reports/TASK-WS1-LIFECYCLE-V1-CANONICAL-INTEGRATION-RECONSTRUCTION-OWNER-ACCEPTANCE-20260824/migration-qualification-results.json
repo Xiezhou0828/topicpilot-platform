@@ -1,0 +1,21 @@
+{
+  "ws1_migration_reconciled": "YES",
+  "clean_db_bootstrap": "PASS",
+  "existing_release_head_upgrade": "PASS",
+  "existing_release_head": "0033_task_ws4_reference_registry_transition_merge",
+  "final_alembic_head": "0034_task_ws1_lifecycle_v1_identity_state_machine",
+  "alembic_single_intentional_head": "YES",
+  "destructive_reset_required": "NO",
+  "qualified_databases": {
+    "topicpilot": "0034_task_ws1_lifecycle_v1_identity_state_machine",
+    "topicpilot_ws1_existing": "0034_task_ws1_lifecycle_v1_identity_state_machine",
+    "topicpilot_reconstruction": {
+      "head": "0034_task_ws1_lifecycle_v1_identity_state_machine",
+      "topics": 130,
+      "canonical_observations": 715838,
+      "snapshots": 682,
+      "member_facts": 5083
+    }
+  },
+  "production_db_touched": "NO"
+}

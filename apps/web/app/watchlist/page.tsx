@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { AppNav } from "../components/AppNav";
 import { EmptyState } from "../components/EmptyState";
 import { FavoriteButton, useFavoriteCodes } from "../components/FavoriteButton";
@@ -135,6 +136,7 @@ export default function WatchlistPage() {
 
   return (
     <main><AppNav /><div className="appShell stockUniverseShell">
+      <aside className="adminError" role="status">Legacy Preview：此頁不是正式商用股票路徑。請使用 <Link href="/stocks">正式股票頁</Link>；此處的舊篩選與燈號不代表正式 Technical evidence。</aside>
       <header className="topbar"><div><p className="eyebrow">Stock universe</p><h1>股票一覽</h1></div><div className="topActions"><span>{bundle.qualityPanelData.freshness.dataDate ?? "資料日期不足"} · {sourceRows.length} 檔</span><strong>{favorites.length} 檔自選</strong></div></header>
       <LiveDataBanner />
 

@@ -1,0 +1,68 @@
+{
+  "expanded": [
+    {
+      "T5_forward_return_stats": {
+        "max": 0.6072289156626507,
+        "mean": 0.01892647744918652,
+        "median": 0.0,
+        "min": -0.3221884498480243,
+        "n": 4889
+      },
+      "active_date_count": 402,
+      "descriptive_only": true,
+      "event_count": 4957,
+      "failed_breakout_like_path_count": 809,
+      "instrument_count": 597,
+      "market_counts": {
+        "TPE": 3091,
+        "TWO": 1866
+      },
+      "origin_classification": "A1_ORIGIN_A2",
+      "reclaim_after_loss_count": 2827,
+      "reference_loss_count": 3636,
+      "year_counts": {
+        "2024": 120,
+        "2025": 2621,
+        "2026": 2216
+      }
+    },
+    {
+      "T5_forward_return_stats": {
+        "max": 0.6038415366146459,
+        "mean": 0.00824906259814295,
+        "median": -0.001776750580163411,
+        "min": -0.18709677419354842,
+        "n": 320
+      },
+      "active_date_count": 115,
+      "descriptive_only": true,
+      "event_count": 320,
+      "failed_breakout_like_path_count": 55,
+      "instrument_count": 230,
+      "market_counts": {
+        "TPE": 182,
+        "TWO": 138
+      },
+      "origin_classification": "DIRECT_ENTRY_A2",
+      "reclaim_after_loss_count": 175,
+      "reference_loss_count": 230,
+      "year_counts": {
+        "2024": 132,
+        "2025": 182,
+        "2026": 6
+      }
+    },
+    {
+      "definition": "No A1-origin date is direct-entry; unknown is not imputed.",
+      "event_count": 0,
+      "origin_classification": "UNCLASSIFIED"
+    }
+  ],
+  "origin_formation_rule": false,
+  "prior": {
+    "A1_ORIGIN_A2": 253,
+    "DIRECT_ENTRY_A2": 237,
+    "UNCLASSIFIED": 0,
+    "promotion_status": "EVIDENCE_ONLY_NOT_PROMOTED"
+  }
+}

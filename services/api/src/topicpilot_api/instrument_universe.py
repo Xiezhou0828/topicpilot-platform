@@ -96,6 +96,24 @@ def evaluate_instrument_eligibility(
     if row.market_valid_to is not None and run_date > row.market_valid_to:
         return InstrumentEligibility(False, "MARKET_VALIDITY_EXPIRED")
 
+    latest = resolve_lifecycle_status(row, run_date)
+    if latest is not None and latest in INELIGIBLE_LIFECYCLE_STATUSES:
+        return InstrumentEligibility(False, f"LIFECYCLE_{latest}")
+    return InstrumentEligibility(True, "ELIGIBLE")
+
+
+def resolve_lifecycle_status(
+    row: InstrumentUniverseRow,
+    run_date: date,
+) -> str | None:
+    """Return the latest evidenced lifecycle status effective on a date."""
+
+    _validate_range(valid_from=row.valid_from, valid_to=row.valid_to, label="instrument")
+    _validate_range(
+        valid_from=row.market_valid_from,
+        valid_to=row.market_valid_to,
+        label="market",
+    )
     applicable: list[InstrumentLifecycle] = []
     for event in row.lifecycle_events:
         if event.status_code not in KNOWN_LIFECYCLE_STATUSES:
@@ -119,11 +137,10 @@ def evaluate_instrument_eligibility(
         ):
             applicable.append(event)
 
-    if applicable:
-        latest = max(applicable, key=lambda event: (event.effective_from, event.evidence_id or ""))
-        if latest.status_code in INELIGIBLE_LIFECYCLE_STATUSES:
-            return InstrumentEligibility(False, f"LIFECYCLE_{latest.status_code}")
-    return InstrumentEligibility(True, "ELIGIBLE")
+    if not applicable:
+        return None
+    latest = max(applicable, key=lambda event: (event.effective_from, event.evidence_id or ""))
+    return latest.status_code
 
 
 def is_instrument_eligible_on_date(row: InstrumentUniverseRow, run_date: date) -> bool:
@@ -172,4 +189,5 @@ __all__ = [
     "build_date_effective_instrument_universe",
     "evaluate_instrument_eligibility",
     "is_instrument_eligible_on_date",
+    "resolve_lifecycle_status",
 ]

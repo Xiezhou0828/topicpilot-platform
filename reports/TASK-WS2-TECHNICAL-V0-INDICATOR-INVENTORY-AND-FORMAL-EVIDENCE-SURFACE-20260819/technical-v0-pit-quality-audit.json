@@ -1,0 +1,53 @@
+{
+  "audit_version": "technical-v0-pit-quality.v1",
+  "checks": [
+    {
+      "as_of": "2026-08-12",
+      "case": "above_ma60",
+      "future_observation_invariance": true
+    },
+    {
+      "as_of": "2026-08-12",
+      "case": "below_ma60",
+      "future_observation_invariance": true
+    },
+    {
+      "as_of": "2026-07-06",
+      "case": "future_event",
+      "future_observation_invariance": true
+    },
+    {
+      "as_of": "2026-08-12",
+      "case": "known_event",
+      "future_observation_invariance": true
+    },
+    {
+      "as_of": "2026-08-12",
+      "case": "lookup_unavailable",
+      "future_observation_invariance": true
+    },
+    {
+      "as_of": "2026-06-18",
+      "case": "successful_no_match",
+      "future_observation_invariance": true
+    },
+    {
+      "as_of": "2026-07-07",
+      "case": "future_event_knowledge",
+      "future_event_count_supplied": 1,
+      "future_event_invariance": true,
+      "instrument_identity": "TPE:1303"
+    }
+  ],
+  "formal_indicator_count": 14,
+  "future_event_invariance_pass": true,
+  "future_event_knowledge_consumed": false,
+  "future_observation_invariance_pass": true,
+  "future_observations_consumed": false,
+  "future_revision_silently_backfilled": false,
+  "future_topic_or_system_state_consumed": false,
+  "method": "prefix-vs-full real-history evidence comparison plus source/contract audit; no strategy optimization",
+  "pit_safe_formal_indicator_count": 14,
+  "pit_unsafe_formal_indicator_count": 0,
+  "task_id": "TASK-WS2-TECHNICAL-V0-INDICATOR-INVENTORY-AND-FORMAL-EVIDENCE-SURFACE-20260819"
+}

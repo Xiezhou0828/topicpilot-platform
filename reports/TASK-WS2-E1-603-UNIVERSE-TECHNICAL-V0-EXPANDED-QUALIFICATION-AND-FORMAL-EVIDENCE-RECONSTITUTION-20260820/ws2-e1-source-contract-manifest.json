@@ -1,0 +1,83 @@
+{
+  "task_id": "TASK-WS2-E1-603-UNIVERSE-TECHNICAL-V0-EXPANDED-QUALIFICATION-AND-FORMAL-EVIDENCE-RECONSTITUTION-20260820",
+  "audit_state": "BLOCKED_SOURCE_CONTRACT",
+  "source_canonical": {
+    "repository": "C:\\Users\\acer\\Desktop\\題材領航\\topicpilot-platform",
+    "branch": "codex/task-ops-023a-p3c-runtime-sha-audit-20260813",
+    "head": "c40aa42e7cac665386009f29c94a8dafce896427",
+    "owner_dirty_state_preserved": true
+  },
+  "shared_data_foundation": {
+    "required_universe_count": 603,
+    "required_scope": "approximately 2 years of canonical PIT-reconstructable daily OHLCV",
+    "canonical_authority": {
+      "path": "docs/reports/TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-BOOTSTRAP-EXECUTION-20260819",
+      "present_at_canonical_head": false,
+      "blob_id": null
+    },
+    "owner_checkout_path_exists_but_is_not_authority": true,
+    "status": "MISSING_FROM_CANONICAL_HEAD",
+    "interpretation": "No canonical source contract exists for the claimed 603-universe foundation; this is not evidence of no data or no events."
+  },
+  "canonical_expansion_reference": {
+    "authority": {
+      "path": "docs/reports/TASK-INSTRUMENT-UNIVERSE-96-STOCK-EXPANSION-REFERENCE-PACK-AND-RUNTIME-HANDOFF-20260819.md",
+      "present_at_canonical_head": false,
+      "blob_id": null
+    },
+    "current_canonical_universe_count": 507,
+    "expansion_candidate_count": 96,
+    "expected_target_count": 603,
+    "identity_overlap_count": 0
+  },
+  "frozen_technical_v0": {
+    "policy_contract": {
+      "path": "docs/architecture/STOCK_TECHNICAL_V0_POLICY_CONTRACT.md",
+      "present_at_canonical_head": false,
+      "blob_id": null
+    },
+    "policy_version": "stock-technical-v0-policy.v4",
+    "policy_file_sha256": "e557d8b08d65e1f4793c2f07ee3393c234e41a1152c1871d8c13403d44f9cd13",
+    "indicator_manifest": {
+      "path": "reports/TASK-WS2-TECHNICAL-V0-INDICATOR-INVENTORY-AND-FORMAL-EVIDENCE-SURFACE-20260819/technical-v0-indicator-manifest.json",
+      "present_at_canonical_head": false,
+      "blob_id": null
+    },
+    "indicator_manifest_sha256": "79fed66bf56cd1f6ae5cf9fecd5e186829993a162c4d3644b91503950be75836",
+    "formal_indicator_count": 14,
+    "indicator_ids": [
+      "MA5",
+      "MA10",
+      "MA20",
+      "MA60",
+      "DISTANCE_TO_MA20",
+      "RAW_CLOSE_RETURN_5D",
+      "RAW_CLOSE_RETURN_20D",
+      "VOLUME_MA5",
+      "VOLUME_MA20",
+      "VOLUME_RATIO_20",
+      "RSI14",
+      "MACD_12_26_9",
+      "MACD_SIGNAL_12_26_9",
+      "MACD_HISTOGRAM_12_26_9"
+    ],
+    "parameter_change": false,
+    "warmup_change": false,
+    "continuity_change": false,
+    "publication_change": false
+  },
+  "prior_canonical_baseline": {
+    "formal_instrument_count": 507,
+    "accepted_ohlcv_row_count": 63826,
+    "historical_start": "2026-02-02",
+    "historical_end": "2026-08-13",
+    "technical_eligible_count": 85,
+    "formal_evidence_blocked_count": 422,
+    "normalized_surface_sha256": "c0c804dacf173f50f2980fc530b4e1c40888c33f3323e562f29883e1c38b6d9c"
+  },
+  "required_next_bounded_authority_closure": [
+    "Canonicalize the 603-universe Shared Data Foundation closure and its source-to-canonical provenance.",
+    "Canonicalize the accepted OHLCV lineage, PIT reconstructability, quarantine/NO_DATA ledger, and normalized SHA256.",
+    "Re-run this E1 task from that exact canonical HEAD; do not infer 603 eligibility from the 96-stock reference pack alone."
+  ]
+}

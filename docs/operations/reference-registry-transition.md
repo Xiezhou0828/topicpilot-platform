@@ -13,11 +13,21 @@ the requested version already exists with a different non-null bundle hash.
 It must not overwrite the old registry or its provenance.
 
 The transition command therefore creates a new registry version derived from
-the source version and the full new bundle digest:
+the source version and the full new bundle digest. For a normal-length
+canonical family it uses:
 
 ```text
 <source-version>-rollover-<first-16-lowercase-hex-digest>
 ```
+
+When the source is already a generated rollover, the final
+`-rollover-<16-hex>` suffix is removed before deriving the next version. This
+keeps repeated rollovers bounded within the existing 64-character database
+contract. If a non-generated family is too long for the normal form, the
+implementation uses a deterministic compact family prefix plus a digest bound
+to the full family and full bundle hash. Full hashes and registry IDs remain
+the authoritative provenance; the version label is not used as a substitute
+for provenance.
 
 For the reviewed 006G bundle:
 

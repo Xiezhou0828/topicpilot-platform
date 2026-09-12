@@ -1,0 +1,51 @@
+{
+  "task_id": "TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-CANONICAL-AUTHORITY-PROMOTION-AND-CONSUMER-HANDOFF-20260820",
+  "architecture_audit_status": "PASS_EXISTING_CANONICAL_BOUNDARY_IDENTIFIED",
+  "canonical_db_target": {
+    "classification": "CANONICAL_NON_PRODUCTION_LOCAL_DOCKER_COMPOSE_POSTGRESQL",
+    "container": "topicpilot-platform-postgres-1",
+    "database": "topicpilot",
+    "schema": "topicpilot",
+    "production": false,
+    "target_uniquely_identified": true
+  },
+  "universe_authority": {
+    "mechanism": "topicpilot.instruments + topicpilot.markets official TPE/TWO active identity registry",
+    "active_reference_registry": {
+      "version": "sdf-reference-603-v1",
+      "status": "ACTIVE",
+      "bundle_sha256": "9f1aadb18ab148d55ff3139f4323cfaceb8e9eb4d364304a57316839d1ededf6",
+      "source_manifest_sha256": "fc335f689b8f8176c5c96366615ca1427ad4f2aa082512fc5b9fbe701515ee25"
+    },
+    "observed_counts": {
+      "official_active_instruments": 603,
+      "active": 603,
+      "equity": 603,
+      "TPE": 370,
+      "TWO": 233
+    },
+    "test_fixture_excluded": "TEST:TEST.EQ is not part of official universe"
+  },
+  "historical_authority": {
+    "mechanism": "topicpilot.canonical_observations + canonical_price_observations + canonical_volume_observations",
+    "consumer_projection": "topicpilot.vw_daily_market_observations",
+    "code_reader": "services/api/src/topicpilot_api/historical_read_model.py::read_historical_bars",
+    "legacy_table": "topicpilot.market_data_ohlcv",
+    "legacy_role": "evidence/staging only",
+    "no_fallback_to_legacy": true,
+    "no_provider_call_from_reader": true
+  },
+  "version_binding": {
+    "authority_version": "sdf-603-ohlcv-2y.v1",
+    "binding_artifact": "docs/reports/TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-CANONICAL-AUTHORITY-PROMOTION-AND-CONSUMER-HANDOFF-20260820/shared-data-foundation-authority-version-manifest.json",
+    "binding_hash": "fe1a51015d48d64b28007d36e291bed59085e7beacf5599ee5d5a35569747fcf",
+    "separate_historical_dataset_table": false,
+    "rationale": "existing canonical chain and read model already own publication; promotion adds a versioned handoff manifest rather than a parallel runtime model"
+  },
+  "safety": {
+    "provider_refetch": false,
+    "full_work_item_reexecution": false,
+    "strategy_semantics_changed": false,
+    "production_mutation": false
+  }
+}

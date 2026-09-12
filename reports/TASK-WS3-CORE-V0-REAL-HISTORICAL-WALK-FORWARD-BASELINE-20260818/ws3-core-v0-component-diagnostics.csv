@@ -1,0 +1,7 @@
+component,status,evidence,diagnostic_only
+MA60_HARD_ELIGIBILITY,FROZEN_AND_EVALUATED,Close(T) >= MA60(T),True
+A1_REFERENCE_DISTANCE,FROZEN_AND_EVALUATED,0 < distance <= 0.03,True
+A2_CLOSE_BREAKOUT,FROZEN_AND_EVALUATED,Close(T) > prior-20 high,True
+CORE_V0_SCORE,NOT_FORMALLY_DEFINED,No frozen continuous Core V0 score,True
+CORE_V0_RANKING,NOT_FORMALLY_DEFINED,No frozen daily ranking or Top-N selection,True
+SHADOW_OPPORTUNITY_WEIGHTS,NOT_CONSUMED,Provisional shadow policy is outside Core V0 baseline,True

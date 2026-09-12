@@ -1,0 +1,30 @@
+{
+  "bounded_lookup_semantics": "A valid raw/MA60 result may be FORMAL_WITH_LIMITATION through the known-event-aware overlay; no no-event claim is made.",
+  "contract_version": "stock-technical-publication.v3",
+  "event_authority_statuses": [
+    "KNOWN_EVENT",
+    "NO_KNOWN_EVENT_EVIDENCE",
+    "LOOKUP_UNAVAILABLE",
+    "NOT_APPLICABLE",
+    "ERROR"
+  ],
+  "known_event_policy_version": "stock-technical-v0-known-event-aware.v2",
+  "ma60_policy_changed": false,
+  "policy_version": "stock-technical-v0-policy.v4",
+  "publication_statuses": [
+    "AVAILABLE",
+    "AVAILABLE_WITH_LIMITATION",
+    "BLOCKED",
+    "UNAVAILABLE",
+    "ERROR"
+  ],
+  "strategy_semantics_changed": false,
+  "task_id": "TASK-WS2-TECHNICAL-V0-PUBLICATION-CONTRACT-AND-MAINLINE-SURFACE-CLOSURE-20260818",
+  "technical_result_statuses": [
+    "VALID",
+    "INELIGIBLE",
+    "UNAVAILABLE",
+    "ERROR"
+  ],
+  "technical_v0_algorithms_changed": false
+}

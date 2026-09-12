@@ -1,0 +1,191 @@
+{
+  "task_id": "TASK-TOPIC-STRUCTURAL-ROLE-SCORE-PROJECTION-POLICY-AND-MINIMAL-AUTHORITY-CLOSURE-002",
+  "predecessor_task": "TASK-TOPIC-STRUCTURAL-ROLE-AUTHORITY-AND-SCORE-PROJECTION-CLOSURE-001",
+  "canonical_pre_sha": "5186b2b086774ef9080bbc8767a937c942fec63e",
+  "canonical_post_sha": "bbd25caa81fab17f34c6a7805d76170bde185d2d",
+  "source_branch": "codex/task-topic-structural-role-score-projection-policy-minimal-authority-20260816",
+  "scope": "D001_policy_and_minimal_authority_projection_contract_closure_only",
+  "owner_decision_id": "WS1-P2B-D001",
+  "owner_decision_status": "APPROVED_AND_CANONICALIZED",
+  "structural_role_values": [
+    "REPRESENTATIVE",
+    "CORE",
+    "RELATED"
+  ],
+  "structural_role_governance": {
+    "classification_mode": "SEMI_MANUAL_GOVERNED",
+    "frequency": "LOW_FREQUENCY",
+    "effective_dated": true,
+    "versioned": true,
+    "owner_review_required": true,
+    "runtime_ai_selection": "PROHIBITED",
+    "automatic_hard_selector": "PROHIBITED"
+  },
+  "score_projection_universe": "APPROVED_EFFECTIVE_CORE_MEMBERS",
+  "score_projection_selection_policy": "BOUNDED_CORE_SUBSET",
+  "fixed_top_n": "NO",
+  "runtime_ai_selection": "PROHIBITED",
+  "approval_required": true,
+  "subset_selection": "AI_ASSISTED_PROPOSAL_PLUS_OWNER_REVIEW",
+  "importance_values": [
+    1.0,
+    0.75,
+    0.5
+  ],
+  "importance_semantics": {
+    "1.00": "PRIMARY_STRUCTURAL_REPRESENTATIVE_WITHIN_CORE",
+    "0.75": "STRONG_CORE_REPRESENTATIVE",
+    "0.50": "SUPPORTING_CORE_REPRESENTATIVE_INCLUDED_IN_SCORE_PROJECTION",
+    "role_taxonomy": false,
+    "promotes_non_core": false
+  },
+  "importance_update_policy": {
+    "low_frequency": true,
+    "governed": true,
+    "owner_reviewed": true,
+    "effective_dated": true,
+    "versioned": true,
+    "dynamic_market_auto_update": false,
+    "daily_evidence_auto_update": false
+  },
+  "dynamic_market_auto_selection": "NO",
+  "dynamic_market_auto_reweighting": "NO",
+  "second_role_authority_allowed": false,
+  "structural_role_authority_carrier": {
+    "name": "InstrumentTopicRelation",
+    "path": "services/api/src/topicpilot_api/orm/models.py",
+    "reuse": true,
+    "current_primitives": [
+      "topic_id",
+      "instrument_id",
+      "relation_type",
+      "relation_version",
+      "valid_from",
+      "valid_to",
+      "relationship_metadata"
+    ],
+    "missing_formal_primitives": [
+      "constrained_structural_role_namespace",
+      "approval_state_and_approval_reference",
+      "source_provenance_id_and_hash",
+      "correction_sequence_and_supersession_identity",
+      "formal_as_of_resolver"
+    ]
+  },
+  "structural_role_authority_readiness": {
+    "policy_ready": "YES",
+    "authority_ready": "NO",
+    "implementation_ready": "NO",
+    "disposition": "BLOCKED_BY_STRUCTURAL_ROLE_AUTHORITY_READ_MODEL",
+    "formal_artifact_present": false
+  },
+  "score_projection_readiness": {
+    "policy_ready": "YES",
+    "authority_ready": "NO",
+    "implementation_ready": "NO",
+    "disposition": "BLOCKED_BY_SCORE_PROJECTION_ARTIFACT_AND_READ_RESOLVER",
+    "required_fields": [
+      "topic_id",
+      "projection_version",
+      "effective_from",
+      "effective_to_or_supersession",
+      "approval_state",
+      "approval_reference",
+      "source_structural_role_authority_id",
+      "source_authority_version",
+      "selected_core_members",
+      "per_member_score_importance",
+      "projection_lineage",
+      "correction_and_supersession_identity"
+    ],
+    "formal_artifact_present": false
+  },
+  "governed_leader_set_adapter_readiness": {
+    "disposition": "COMPATIBILITY_ADAPTER_OVER_STRUCTURAL_ROLE_AUTHORITY",
+    "adapter_ready": "NO",
+    "adapter_may_select_members": false,
+    "adapter_may_change_importance": false,
+    "existing_shape": "GovernedLeaderSet",
+    "reason": "No approved Score Projection V1 artifact/read resolver can deterministically populate the existing shape."
+  },
+  "pm_approval_artifact_state": {
+    "referenced_artifact": "docs/reports/PHASE_3_7_003F_PM_FORMULA_APPROVAL_BRIEF.md",
+    "tracked_canonical": false,
+    "runtime_contract_present": true,
+    "disposition": "BLOCKED_BY_COMMITTED_PM_APPROVAL_ARTIFACT_RECONCILIATION",
+    "formula_reopened": false
+  },
+  "score_implementation_readiness": {
+    "ready": "NO",
+    "disposition": "BLOCKED_BY_STRUCTURAL_ROLE_AUTHORITY_READ_MODEL_AND_SCORE_PROJECTION_ARTIFACT"
+  },
+  "grade_implementation_readiness": {
+    "ready": "NO",
+    "disposition": "READY_AFTER_SCORE_IMPLEMENTATION_AND_PUBLICATION_AUTHORITY"
+  },
+  "score_publication_readiness": {
+    "ready": "NO",
+    "disposition": "BLOCKED_BY_SCORE_AUTHORITY_AND_EXISTING_PUBLICATION_SCOPE"
+  },
+  "grade_publication_readiness": {
+    "ready": "NO",
+    "disposition": "READY_AFTER_SCORE_PUBLICATION"
+  },
+  "remaining_blockers": [
+    {
+      "code": "BLOCKED_BY_STRUCTURAL_ROLE_AUTHORITY_READ_MODEL",
+      "scope": "formal structural role authority and as-of resolver",
+      "next_routing": "READY_FOR_STRUCTURAL_ROLE_AUTHORITY_READ_MODEL_AND_SCORE_PROJECTION_MINIMAL_IMPLEMENTATION"
+    },
+    {
+      "code": "BLOCKED_BY_SCORE_PROJECTION_ARTIFACT_AND_READ_RESOLVER",
+      "scope": "topic-specific bounded CORE subset and deterministic compatibility adapter"
+    },
+    {
+      "code": "BLOCKED_BY_COMMITTED_PM_APPROVAL_ARTIFACT_RECONCILIATION",
+      "scope": "formal Score/Grade policy activation metadata"
+    }
+  ],
+  "topic_scope": {
+    "eligibility_unit": "topic_id_and_as_of",
+    "missing_topic_projection": "UNAVAILABLE_FAIL_CLOSED",
+    "global_blocker": false
+  },
+  "forbidden_scope": {
+    "ranking": false,
+    "breadth": false,
+    "dynamic_leadership": false,
+    "concentration": false,
+    "lifecycle": false,
+    "topic_map": false,
+    "frontend": false,
+    "opportunity": false,
+    "recommendation": false,
+    "production": false,
+    "runtime_ai": false
+  },
+  "implementation_scope": {
+    "bounded_code_path_executed": false,
+    "reason": "Formal authority fields and resolver require migration/schema/read-model authority; docs-only closure preserves scope.",
+    "next_implementation_routing": "READY_FOR_STRUCTURAL_ROLE_AUTHORITY_READ_MODEL_AND_SCORE_PROJECTION_MINIMAL_IMPLEMENTATION"
+  },
+  "validation_scope": {
+    "application_code_changed": false,
+    "tests_changed": false,
+    "schema_or_migration_changed": false,
+    "database_mutation": false,
+    "api_or_frontend_changed": false,
+    "g1": "PRESERVED_NOT_RERUN",
+    "g2": "PRESERVED_NOT_RERUN",
+    "g3": "PRESERVED_NOT_RERUN",
+    "post_close_canary": "PRESERVED_NOT_RERUN",
+    "application_tests": "NOT_RUN_BY_SCOPE",
+    "postgresql": "NOT_RUN_BY_SCOPE",
+    "production": "NOT_RUN_BY_SCOPE",
+    "push_remote": "NO",
+    "merge_main": "NO",
+    "deploy": "NO",
+    "scheduler_activation": "NO",
+    "next_task_changed": false
+  }
+}

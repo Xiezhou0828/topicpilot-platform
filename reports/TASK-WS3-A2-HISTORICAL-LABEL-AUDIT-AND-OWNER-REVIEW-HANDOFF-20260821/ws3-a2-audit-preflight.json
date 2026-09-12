@@ -1,0 +1,26 @@
+{
+  "schema_version": "ws3-a2-historical-label-audit-preflight.v1",
+  "task_id": "TASK-WS3-A2-HISTORICAL-LABEL-AUDIT-AND-OWNER-REVIEW-HANDOFF-20260821",
+  "preflight_status": "PASS",
+  "required_files_exist": {
+    "reports\\TASK-WS3-P2E-A2-EXPANDED-CONFIRMATORY-VALIDATION-AND-ADVANTAGE-REVALIDATION-20260820\\ws3-p2e-a2-expanded-event-panel.csv": true,
+    "reports\\TASK-WS3-P2E-A2-EXPANDED-CONFIRMATORY-VALIDATION-AND-ADVANTAGE-REVALIDATION-20260820\\ws3-p2e-a2-run-summary.json": true,
+    "reports\\TASK-WS3-P2E-A2-EXPANDED-CONFIRMATORY-VALIDATION-AND-ADVANTAGE-REVALIDATION-20260820\\ws3-p2e-a2-frozen-contract-manifest.json": true,
+    "reports\\TASK-WS3-P2E-A2-EXPANDED-CONFIRMATORY-VALIDATION-AND-ADVANTAGE-REVALIDATION-20260820\\ws3-p2e-a2-confirmatory-protocol-freeze.json": true,
+    "reports\\TASK-WS3-P2E-A2-EXPANDED-CONFIRMATORY-VALIDATION-AND-ADVANTAGE-REVALIDATION-20260820\\ws3-p2e-a2-reproducibility-manifest.json": true,
+    "input\\instrument_universe_expansion_20260819.tsv": true
+  },
+  "fixture_rows_read": 25,
+  "fixture_is_not_full_panel_scan": true,
+  "selection_schema_valid": true,
+  "output_schema_valid": true,
+  "join_keys_valid": true,
+  "sampling_strata_valid": true,
+  "formatter_valid": true,
+  "large_panel_scan_count_before_generate": 0,
+  "large_panel_scan_budget": 1,
+  "full_replay_executed": "NO",
+  "feature_recompute_executed": "NO",
+  "threshold_search_executed": "NO",
+  "parallel_structural_eligibility_task_consulted": "NO"
+}

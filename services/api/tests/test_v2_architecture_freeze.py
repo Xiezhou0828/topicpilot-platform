@@ -30,7 +30,11 @@ IMPLEMENTED_V2_TABLES = {
     "live_collector_runs",
     "live_collector_attempts",
     "topic_snapshots",
+    "topic_score_projections",
+    "topic_score_projection_members",
     "topic_lifecycle_results",
+    "topic_lifecycle_formal_results",
+    "topic_authority_activations",
 }
 
 
@@ -40,6 +44,7 @@ def test_v2_metadata_contains_only_implemented_tables():
         "legacy_import_runs",
         "legacy_import_artifacts",
         "legacy_import_records",
+        "topic_snapshot_member_facts",
     }
     assert "detectors" not in tables
     assert "strategy_runs" not in tables

@@ -1,0 +1,12 @@
+{
+  "task_id": "TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-CANONICAL-AUTHORITY-PROMOTION-AND-CONSUMER-HANDOFF-20260820",
+  "database_mutation_this_task": "NO",
+  "runtime_rollback": "NOT_REQUIRED; no DB row or provider data mutation performed by promotion task",
+  "git_rollback": "revert task-owned authority bundle commit only; prior bootstrap evidence and legacy 507 provenance remain retained",
+  "old_baseline_recovery": {
+    "table": "topicpilot.market_data_ohlcv",
+    "rows": 63826,
+    "preserved": true
+  },
+  "no_delete_or_overwrite": true
+}

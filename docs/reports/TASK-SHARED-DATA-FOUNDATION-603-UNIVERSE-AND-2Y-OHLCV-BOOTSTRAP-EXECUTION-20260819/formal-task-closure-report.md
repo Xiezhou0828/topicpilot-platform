@@ -1,0 +1,97 @@
+# Shared Data Foundation｜603 Universe & ~2-Year OHLCV — Task Closure
+
+本 closure report 對應正式 execution task，資料寫入僅發生於已識別的 non-production local Docker Compose PostgreSQL。策略線與 `NEXT_TASK` 保持不變。
+
+## Required final output
+
+TASK_ID=TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-BOOTSTRAP-EXECUTION-20260819
+TASK_FINAL_STATUS=COMPLETED_PASS_WITH_BOUNDED_LIMITATIONS
+SOURCE_CANONICAL_HEAD=c40aa42e7cac665386009f29c94a8dafce896427
+TASK_COMMIT=NOT_COMMITTED_OWNER_DIRTY_STATE_PRESERVED
+FINAL_CANONICAL_HEAD=c40aa42e7cac665386009f29c94a8dafce896427
+FORMAL_SECURITY_AUTHORITY_PASS_COUNT=96
+FORMAL_SECURITY_AUTHORITY_PENDING_COUNT=0
+FORMAL_SECURITY_AUTHORITY_REJECTED_COUNT=0
+FORMAL_LISTING_AUTHORITY_PASS_COUNT=96
+FORMAL_LISTING_AUTHORITY_PENDING_COUNT=0
+GATE_1_FORMAL_REFERENCE_AUTHORITY=PASS
+SOURCE_FORMAL_INSTRUMENT_COUNT=507
+NEW_INSTRUMENT_COUNT=96
+FINAL_FORMAL_INSTRUMENT_COUNT=603
+NEW_ZERO_TOPIC_INSTRUMENT_COUNT=96
+NEW_STRUCTURAL_ROLE_RECORD_COUNT=0
+NEW_SCORE_PROJECTION_RECORD_COUNT=0
+UNIVERSE_TRANSACTION_ATOMIC=PASS
+UNIVERSE_BOOTSTRAP_IDEMPOTENT=PASS
+GATE_2_603_UNIVERSE=PASS
+HISTORICAL_REQUESTED_START=2024-08-13
+HISTORICAL_REQUESTED_END=2026-08-13
+TOTAL_HISTORICAL_WORK_ITEMS=15075
+COMPLETE_WORK_ITEMS=14748
+NO_DATA_WORK_ITEMS=142
+SKIPPED_LIFECYCLE_WORK_ITEMS=41
+ERROR_WORK_ITEMS=0
+QUARANTINED_WORK_ITEMS=144
+TOTAL_ACCEPTED_OHLCV_ROWS=288881
+TPE_ACCEPTED_ROWS=177427
+TWO_ACCEPTED_ROWS=111454
+FULL_REQUESTED_WINDOW_INSTRUMENT_COUNT=587
+LISTING_TRUNCATED_WINDOW_INSTRUMENT_COUNT=3
+PROVIDER_GAP_INSTRUMENT_COUNT=13
+UNRESOLVED_GAP_INSTRUMENT_COUNT=13
+DUPLICATE_SESSION_COUNT=0
+INVALID_OHLCV_COUNT=0
+INCOMPLETE_ACCEPTED_COUNT=0
+PIT_RECONSTRUCTABLE_INSTRUMENT_COUNT=603
+PIT_LIMITED_INSTRUMENT_COUNT=16
+PIT_UNUSABLE_INSTRUMENT_COUNT=0
+MA60_CALCULABLE_COUNT=602
+MA60_NONCALCULABLE_COUNT=1
+PROVIDER_LINEAGE_COMPLETE=YES (accepted rows 288881/288881; non-lifecycle work items 15034/15034)
+HISTORICAL_BOOTSTRAP_RESUMABLE=YES
+HISTORICAL_BOOTSTRAP_IDEMPOTENT=YES (two-run normalized surface reconciliation)
+REPRODUCIBLE=PASS
+NORMALIZED_AGGREGATE_SHA256=e803733e796d8f4d8cf00575cd4045f28c9364572fc61b31ef490e8a65ff47a4
+GATE_3_HISTORICAL_FOUNDATION=PASS_WITH_BOUNDED_LIMITATIONS
+DATABASE_MUTATION=YES (canonical non-production local Docker Compose PostgreSQL only)
+HISTORICAL_DATA_MUTATION=YES (canonical raw/timeline/PRICE/VOLUME chain)
+PRODUCTION_MUTATION=NO
+WS1_CHANGED=NO
+WS2_CHANGED=NO
+WS3_CHANGED=NO
+WS4_CHANGED=NO
+NEXT_TASK_CHANGED=NO
+READY_FOR_603_UNIVERSE_AND_2Y_OHLCV_BOOTSTRAP=YES (bootstrap complete; bounded quarantine/gap ledger retained)
+READY_FOR_WS1_96_STOCK_DELTA_ENRICHMENT=YES_WITH_BOUNDED_COVERAGE_CAVEAT
+READY_FOR_WS2_603_UNIVERSE_TECHNICAL_QUALIFICATION=YES_WITH_BOUNDED_COVERAGE_CAVEAT
+READY_FOR_WS3_P1E_EXPANDED_EVIDENCE_QUALIFICATION=YES_WITH_BOUNDED_COVERAGE_CAVEAT
+SHARED_DATA_FOUNDATION_603_2Y_CLOSURE=COMPLETE_WITH_BOUNDED_LIMITATIONS
+
+## Gate 3 judgment
+
+Gate 3 判定為 `PASS_WITH_BOUNDED_LIMITATIONS`：603 instruments 已完成 deterministic 15,075-cell bootstrap；accepted daily OHLCV 經 supersession filtering 後無 duplicate stable key、無 invalid OHLCV，288,881/288,881 accepted rows 具完整 canonical lineage，two-run normalized surface reconciliation 通過。
+
+保留的 bounded limitations：
+
+- 144 work items 為明確 `QUARANTINE`，其中包含 incomplete OHLCV；未以 0 或 synthetic value 修復。
+- 142 work items 為 provider-returned `NO_DATA`；未推論為 holiday、no-event、not-listed、suspended 或 no-trade。
+- 3 instruments 依正式 listing authority 截短 coverage；另有 13 instruments 具 provider/unresolved coverage gap。
+- `adjustment_state=UNKNOWN` 保留，未假設 adjusted 或 unadjusted continuity。
+
+## Evidence artifacts
+
+- `historical-bootstrap-run-manifest.json`
+- `historical-checkpoint-work-item-ledger.json`
+- `historical-acquisition-summary.json`
+- `provider-error-no-data-quarantine-ledger.tsv`
+- `historical-coverage-by-instrument.tsv` / `historical-coverage-by-market.json`
+- `ohlcv-quality-audit.json` / `provider-lineage-audit.json` / `pit-reconstructability-audit.json`
+- `gap-lifecycle-classification-audit.json` / `two-run-reproducibility-report.json`
+
+## Consumer handoff
+
+WS1 後續只接 96-stock delta enrichment；WS2 後續接 603-universe Technical V0 qualification；WS3 必須先走 P1-E Expanded Evidence Qualification / Cohort Reconstitution，再走 P2-E frozen-hypothesis validation。此 task 沒有自動啟動任何 consumer task，也沒有 retune、data-mine 或修改 strategy semantics。
+
+## Task safety
+
+`TASK_COMMIT=NOT_COMMITTED_OWNER_DIRTY_STATE_PRESERVED`。僅保留 task-owned evidence；未執行 production mutation、deploy、push、WS1/WS2/WS3/WS4 修改或 NEXT_TASK 修改。

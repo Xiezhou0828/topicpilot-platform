@@ -1,0 +1,136 @@
+{
+  "FIXTURE_DRY_RUN_PASS": "YES",
+  "FORMATTER_ASSERTION_PASS": "YES",
+  "HEADER_RESULTS": {
+    "matched_control_panel": {
+      "missing": [],
+      "pass": true,
+      "required": [
+        "stratum",
+        "successful_anchor_id",
+        "successful_episode_id",
+        "successful_instrument_id",
+        "successful_anchor_date",
+        "control_anchor_id",
+        "control_instrument_id",
+        "control_anchor_date",
+        "control_match_tier",
+        "control_distance_days",
+        "control_market",
+        "control_liquidity_quintile",
+        "control_volatility_quintile",
+        "control_price_scale_bucket",
+        "control_source_lineage",
+        "control_is_success_for_same_stratum",
+        "successful_outcome_T5",
+        "successful_outcome_T10",
+        "control_outcome_T5",
+        "control_outcome_T10",
+        "successful_source_lineage",
+        "successful_pit_status",
+        "control_pit_status"
+      ]
+    },
+    "pre_event_feature_panel": {
+      "missing": [],
+      "pass": true,
+      "required": [
+        "event_id",
+        "event_type",
+        "stratum",
+        "instrument_id",
+        "stock_code",
+        "market",
+        "anchor_date",
+        "relative_day",
+        "feature_status_summary",
+        "pit_status",
+        "source_lineage",
+        "source_observation_id",
+        "feature_manifest_version",
+        "feature_close_vs_ma20",
+        "feature_close_vs_ma60",
+        "feature_ma20_slope_5",
+        "feature_ma60_slope_5",
+        "feature_ma_alignment_bullish",
+        "feature_ma_alignment_bearish",
+        "feature_rolling_range_pct_5",
+        "feature_rolling_range_pct_20",
+        "feature_range_compression_5_to_20",
+        "feature_realized_vol_20",
+        "feature_volatility_contraction_5_to_20",
+        "feature_VOLUME_RATIO_20",
+        "feature_volume_ratio_5_to_20",
+        "feature_volume_expansion_state",
+        "feature_volume_contraction_state",
+        "feature_RAW_CLOSE_RETURN_5D",
+        "feature_RAW_CLOSE_RETURN_20D",
+        "feature_RSI14",
+        "feature_MACD_HISTOGRAM_12_26_9",
+        "feature_a1_preceded_20",
+        "feature_a2_preceded_20",
+        "feature_a1_to_a2_preceded_20",
+        "feature_a2_without_prior_a1_20",
+        "feature_a_state_bucket"
+      ]
+    },
+    "promising_signal_panel": {
+      "missing": [],
+      "pass": true,
+      "required": [
+        "feature_family",
+        "feature_id",
+        "classification"
+      ]
+    },
+    "raw_anchor_panel": {
+      "missing": [],
+      "pass": true,
+      "required": [
+        "anchor_id",
+        "instrument_id",
+        "stock_code",
+        "market",
+        "anchor_date",
+        "source_observation_id",
+        "source_lineage",
+        "pit_status",
+        "T5_forward_close_return",
+        "T5_mfe",
+        "T5_mae",
+        "T5_max_close_drawdown",
+        "T10_forward_close_return",
+        "T10_mfe",
+        "T10_mae",
+        "T10_max_close_drawdown",
+        "a_state_a_state_bucket",
+        "a_state_a1_preceded_20",
+        "a_state_a2_preceded_20",
+        "a_state_a1_to_a2_preceded_20",
+        "a_state_a2_without_prior_a1_20"
+      ]
+    },
+    "robust_signal_panel": {
+      "missing": [],
+      "pass": true,
+      "required": [
+        "feature_family",
+        "feature_id",
+        "classification"
+      ]
+    }
+  },
+  "JOIN_ASSERTION_PASS": "YES",
+  "JOIN_KEYS": {
+    "control_anchor_id": "bb384b9ca794d7502e1f3490dae0fb94cdc8eee0be52bac182f1e620e0968f7a",
+    "success_anchor_id": "a83cfdab09bdf9577e245c920dada45c2fb4e3d9a69a98c764a5f280f7a2c756"
+  },
+  "LARGE_SCAN_STARTED": "NO",
+  "OUTPUT_SCHEMA_ASSERTION_PASS": "YES",
+  "SELECTION_ASSERTION_PASS": "YES",
+  "SKILL_PATH_RESOLVED": "C:\\Users\\acer\\.codex\\plugins\\cache\\openai-curated-remote\\public-equity-investing\\0.1.31\\skills\\public-equity-investing\\SKILL.md",
+  "SMALL_FIXTURE_MATCH_ROWS": 2,
+  "SMALL_FIXTURE_PANEL_ROWS": 20,
+  "SOURCE_CANONICAL_HEAD": "e8d84d05215acc60f7a451935102346317fe4dbc",
+  "TASK_ID": "TASK-WS3-AB-SETUP-FALSE-FRIEND-CANDIDATE-EXTRACTION-AND-HUMAN-REVIEW-HANDOFF-20260821"
+}

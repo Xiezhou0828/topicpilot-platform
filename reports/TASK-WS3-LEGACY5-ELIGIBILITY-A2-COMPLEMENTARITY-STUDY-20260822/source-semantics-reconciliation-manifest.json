@@ -1,0 +1,103 @@
+{
+  "a2_legacy_comparability": {
+    "a2_adjustment_state": "UNKNOWN_RAW_ONLY",
+    "a2_anchor": "a2_close on signal_date",
+    "a2_time_to_opportunity": "NOT_DIRECTLY_COMPARABLE_AT_EVENT_LEVEL_FROM_EXISTING_ARTIFACT",
+    "corporate_action_policy": "UNKNOWN_RAW_ONLY/fail-closed",
+    "legacy_adjustment_state": "UNKNOWN_RAW_ONLY",
+    "legacy_anchor": "anchor_close on signal_date",
+    "same_session_order_policy": "SAME_SESSION_ORDER_UNKNOWN",
+    "status": "PASS_FOR_ENDPOINT_MFE_MAE_AND_BARRIER_FROM_RECONCILED_FIELDS"
+  },
+  "accepted_surface": {
+    "artifact_alias": "SDF-603-2Y-OHLCV-ACCEPTED-DAILY-V1",
+    "authority_version": "sdf-603-ohlcv-2y.v1",
+    "expected_instruments": 603,
+    "expected_rows": 288881,
+    "normalized_surface_sha256": "e803733e796d8f4d8cf00575cd4045f28c9364572fc61b31ef490e8a65ff47a4",
+    "queried_instruments": 603,
+    "queried_rows": 288881,
+    "reference_registry": "sdf-reference-603-v1",
+    "surface_query": "read-only accepted PRICE DAILY_BAR close/high/low/open; no data download; no volume pipeline rerun",
+    "window": [
+      "2024-08-13",
+      "2026-08-13"
+    ]
+  },
+  "eligibility_semantics": {
+    "fixed_set_only": true,
+    "price20": "NOT_RESEARCHED_IN_THIS_TASK",
+    "threshold_search": "NO",
+    "variants": {
+      "V0_LEGACY5": "Legacy-5 original: 20-day Close high + KD(9) cross + MA5>MA10 + mean last-5 volume >500 lots + K<80",
+      "V1_LEGACY5_MA20": "V0 plus Close>MA20",
+      "V2_LEGACY5_MA60": "V0 plus Close>MA60",
+      "V3_LEGACY5_MA20_MA60": "V0 plus Close>MA20 and Close>MA60"
+    }
+  },
+  "metric_reconciliation": {
+    "anchor": "signal-day close",
+    "barrier_race": "first cumulative daily High/Low crossing; same first session = SAME_SESSION_ORDER_UNKNOWN",
+    "comparison_posture": "descriptive ablation/complementarity only; no ranking or acceptance",
+    "distinct_episode": "contiguous qualifying accepted-session state; first anchor retained",
+    "endpoint": "future accepted session close / anchor close - 1",
+    "mae": "min future accepted session Low / anchor close - 1",
+    "mfe": "max future accepted session High / anchor close - 1",
+    "time_to_opportunity": "first future daily High crossing +3/+5/+10% for Legacy; A2 event artifact does not retain event-level first-threshold timing"
+  },
+  "overlap_policy": {
+    "bounded_window": "fixed +/-1 accepted trading session by instrument; no optimization",
+    "future_outcome_not_used_for_matching": true,
+    "if_calendar_date_missing": "fail closed from overlap rather than infer a session",
+    "matching": "deterministic one-to-one greedy matching sorted by absolute session distance then stable event/anchor ids",
+    "same_session": "same instrument and same signal_date"
+  },
+  "pit_governance": {
+    "accepted_quality_state_only": true,
+    "corporate_action_adjustment": "UNKNOWN_RAW_ONLY",
+    "future_outcome_not_used_for_overlap": true,
+    "supersession_predicate_applied": true,
+    "synthetic_adjustment": false,
+    "ws1_ws2_ws4_touched": false
+  },
+  "schema_version": "ws3-legacy5-a2-semantics-reconciliation.v1",
+  "source_files": [
+    {
+      "exists": true,
+      "name": "legacy_raw_anchors",
+      "path": "reports/TASK-WS3-LEGACY-5-STRATEGY-BENCHMARK-20260822/legacy5-raw-anchors.csv",
+      "sha256": "d54bc0f19b5a0ee38286cd8a820bb11c73571b9296a3ce2351306e6c558e992b"
+    },
+    {
+      "exists": true,
+      "name": "legacy_event_outcomes",
+      "path": "reports/TASK-WS3-LEGACY-5-STRATEGY-BENCHMARK-20260822/event-outcomes.csv",
+      "sha256": "acd578b20bfe1bc4fad8c09242b3c4963769a76734bf689fce8c98e83119762e"
+    },
+    {
+      "exists": true,
+      "name": "legacy_cohort_manifest",
+      "path": "reports/TASK-WS3-LEGACY-5-STRATEGY-BENCHMARK-20260822/legacy5-event-cohort-manifest.json",
+      "sha256": "c449f46ace1da21e3332e6ec293b735ec22176be1305282443c91bed657886c0"
+    },
+    {
+      "exists": true,
+      "name": "a2_event_panel",
+      "path": "reports/TASK-WS3-P2E-A2-EXPANDED-CONFIRMATORY-VALIDATION-AND-ADVANTAGE-REVALIDATION-20260820/ws3-p2e-a2-expanded-event-panel.csv",
+      "sha256": "97b131479b90ce64a821f72a6c6cceb58d102aeb49c64eac60ba19dfca71bc52"
+    },
+    {
+      "exists": true,
+      "name": "a2_path_aware_outcomes",
+      "path": "reports/TASK-WS3-A2-OUTCOME-RECONSTRUCTION-FAILURE-ATTRIBUTION-20260821/a2-path-aware-outcomes.csv",
+      "sha256": "3fa287b26a8db07e540a1f45bb663af52df4f88bed7156c69b357d31c9005538"
+    },
+    {
+      "exists": true,
+      "name": "a2_path_manifest",
+      "path": "reports/TASK-WS3-A2-OUTCOME-RECONSTRUCTION-FAILURE-ATTRIBUTION-20260821/path-aware-outcome-manifest.json",
+      "sha256": "cef8da5ee7006ee23b2a919528bdfeb6b47e8f88ed6f37edbd41ddb860b35392"
+    }
+  ],
+  "task_id": "TASK-WS3-LEGACY5-ELIGIBILITY-A2-COMPLEMENTARITY-STUDY-20260822"
+}

@@ -1,0 +1,87 @@
+{
+  "taskId": "TASK-REC-A1-CORE-V0-CANDIDATE-DEFINITION-AUTHORITY-CLOSURE-20260816",
+  "schemaVersion": "core-v0-candidate-dependency-matrix.v1",
+  "classificationVocabulary": ["REQUIRED_FOR_FORMATION", "REQUIRED_FOR_ELIGIBILITY", "OPTIONAL_EVIDENCE", "ENTRY/RISK_ONLY", "REQUIRED_FOR_EVALUATION", "NOT_REQUIRED"],
+  "common": {
+    "canonicalOHLCV": {"classification": "REQUIRED_FOR_ELIGIBILITY", "scope": "All candidates; accepted canonical OHLCV through T and exact source lineage."},
+    "sessionIdentityHistory": {"classification": "REQUIRED_FOR_ELIGIBILITY", "scope": "All candidates; session validity, identity validity, at least 60 prior canonical sessions, and candidate/date-specific warm-up."},
+    "ownerMA60Policy": {"classification": "REQUIRED_FOR_ELIGIBILITY", "scope": "All candidates; Close(T) >= MA60(T), subject to formal MA60 evidence and continuity PASS."},
+    "ws2MA60Evidence": {"classification": "REQUIRED_FOR_ELIGIBILITY", "scope": "All candidates; stock.sma.close.v1 period 60, as-of T, observation window, continuity, lineage, unavailable semantics."},
+    "ws2OtherTechnical": {"classification": "OPTIONAL_EVIDENCE", "scope": "RSI/MACD/volume ratio/MA slope/return remain evidence unless a future frozen definition promotes them."},
+    "pitMembership": {"classification": "REQUIRED_FOR_FORMATION", "scope": "Conditional candidate-specific minimum; do not require complete Historical Topic/System State globally."},
+    "recA1": {"classification": "REQUIRED_FOR_EVALUATION", "scope": "Frozen corporate-action post-hoc integrity exclusion may invalidate evaluation outcome only; it cannot rewrite candidate formation."},
+    "forwardOutcomes": {"classification": "REQUIRED_FOR_EVALUATION", "scope": "T+1/T+3/T+5/T+10 only; never candidate formation."}
+  },
+  "candidates": {
+    "A1_PRE_BREAKOUT": {
+      "canonicalOHLCV": "REQUIRED_FOR_FORMATION",
+      "ownerMA60Policy": "REQUIRED_FOR_ELIGIBILITY",
+      "ws2MA60Evidence": "REQUIRED_FOR_ELIGIBILITY",
+      "pitMembership": "REQUIRED_FOR_FORMATION",
+      "breakoutReference": "REQUIRED_FOR_FORMATION",
+      "structureImproving": "REQUIRED_FOR_FORMATION",
+      "ws2OtherTechnical": "OPTIONAL_EVIDENCE",
+      "topicScoreGradeLifecycle": "NOT_REQUIRED",
+      "entryRisk": "ENTRY/RISK_ONLY",
+      "forwardOutcomes": "REQUIRED_FOR_EVALUATION",
+      "recA1": "REQUIRED_FOR_EVALUATION"
+    },
+    "A2_CONFIRMED_BREAKOUT": {
+      "canonicalOHLCV": "REQUIRED_FOR_FORMATION",
+      "ownerMA60Policy": "REQUIRED_FOR_ELIGIBILITY",
+      "ws2MA60Evidence": "REQUIRED_FOR_ELIGIBILITY",
+      "pitMembership": "REQUIRED_FOR_FORMATION",
+      "breakoutReference": "REQUIRED_FOR_FORMATION",
+      "confirmation": "REQUIRED_FOR_FORMATION",
+      "ws2OtherTechnical": "OPTIONAL_EVIDENCE",
+      "topicScoreGradeLifecycle": "NOT_REQUIRED",
+      "entryRisk": "ENTRY/RISK_ONLY",
+      "forwardOutcomes": "REQUIRED_FOR_EVALUATION",
+      "recA1": "REQUIRED_FOR_EVALUATION"
+    },
+    "A3_STRONG_PULLBACK_RETEST": {
+      "canonicalOHLCV": "REQUIRED_FOR_FORMATION",
+      "ownerMA60Policy": "REQUIRED_FOR_ELIGIBILITY",
+      "ws2MA60Evidence": "REQUIRED_FOR_ELIGIBILITY",
+      "pitMembership": "REQUIRED_FOR_FORMATION",
+      "priorReference": "REQUIRED_FOR_FORMATION",
+      "supportAuthority": "REQUIRED_FOR_FORMATION",
+      "pullbackAcceptance": "REQUIRED_FOR_FORMATION",
+      "failureSemantics": "REQUIRED_FOR_FORMATION",
+      "ws2OtherTechnical": "OPTIONAL_EVIDENCE",
+      "topicScoreGradeLifecycle": "NOT_REQUIRED",
+      "forwardOutcomes": "REQUIRED_FOR_EVALUATION",
+      "recA1": "REQUIRED_FOR_EVALUATION"
+    },
+    "CATCH_UP_ROTATION": {
+      "canonicalOHLCV": "REQUIRED_FOR_FORMATION",
+      "ownerMA60Policy": "REQUIRED_FOR_ELIGIBILITY",
+      "ws2MA60Evidence": "REQUIRED_FOR_ELIGIBILITY",
+      "pitMembership": "REQUIRED_FOR_FORMATION",
+      "historicalTopicContext": "REQUIRED_FOR_FORMATION",
+      "strongTopicAuthority": "REQUIRED_FOR_FORMATION",
+      "relativeLaggardAuthority": "REQUIRED_FOR_FORMATION",
+      "becomingStrongerAuthority": "REQUIRED_FOR_FORMATION",
+      "crossTopicRotation": "NOT_REQUIRED",
+      "ws2OtherTechnical": "OPTIONAL_EVIDENCE",
+      "forwardOutcomes": "REQUIRED_FOR_EVALUATION",
+      "recA1": "REQUIRED_FOR_EVALUATION"
+    }
+  },
+  "ws1ReverseDependencies": {
+    "historicalTopicScore": "NOT_REQUIRED_FOR_A1_A2_A3_CURRENT_INTENT; REQUIRED_FOR_CATCH_UP_ONLY_IF_OWNER_FREEZES_IT",
+    "grade": "NOT_REQUIRED_FOR_A1_A2_A3_CURRENT_INTENT; REQUIRED_FOR_CATCH_UP_ONLY_IF_OWNER_FREEZES_IT",
+    "lifecycle": "NOT_REQUIRED_FOR_A1_A2_A3_CURRENT_INTENT; REQUIRED_FOR_CATCH_UP_ONLY_IF_OWNER_FREEZES_IT",
+    "breadthLeadershipConcentration": "NOT_REQUIRED_FOR_CURRENT_CANDIDATE_FORMATION; no WS3 global dependency",
+    "pitMembershipContext": "Candidate-specific minimum dependency; do not require complete WS1 derived publication"
+  },
+  "ws2ReverseDependencies": {
+    "formalMA60": "REQUIRED_FOR_ELIGIBILITY_ALL_CANDIDATES",
+    "continuity": "REQUIRED_FOR_ELIGIBILITY_ALL_CANDIDATES; use indicator-specific PASS/FAIL/UNKNOWN",
+    "rsiMacdVolumeRatioMASlopeReturn": "OPTIONAL_EVIDENCE_UNLESS_FROZEN",
+    "technicalPublication": "WS2-owned; WS3 does not implement it"
+  },
+  "recA1Boundary": "Research-only Freeze remains accepted; provenance ledger archive gap is carried forward; no re-review of 154 UNKNOWN and no candidate-formation backflow.",
+  "outcomesFlowBackward": false,
+  "deferred": ["MA60 ABOVE/BELOW/CROSSING B-path", "Cross-topic Rotation", "Advanced Technical"]
+}

@@ -1,0 +1,168 @@
+{
+  "SOURCE_ARTIFACTS_SUFFICIENT": true,
+  "TASK_ID": "TASK-WS3-A-STRUCTURAL-ELIGIBILITY-RECONSTRUCTION-AND-FALSE-POSITIVE-SEPARATION-20260821",
+  "artifacts": [
+    {
+      "artifact_key": "ab_a_candidates",
+      "path": "reports/TASK-WS3-AB-SETUP-FALSE-FRIEND-CANDIDATE-EXTRACTION-AND-HUMAN-REVIEW-HANDOFF-20260821/ws3-a-like-false-friend-candidates.csv",
+      "size_bytes": 19881,
+      "status": "FOUND"
+    },
+    {
+      "artifact_key": "ab_closure",
+      "path": "docs/reports/TASK-WS3-AB-SETUP-FALSE-FRIEND-CANDIDATE-EXTRACTION-AND-HUMAN-REVIEW-HANDOFF-20260821/formal-closure-report.md",
+      "size_bytes": 2875,
+      "status": "FOUND"
+    },
+    {
+      "artifact_key": "ab_manifest",
+      "path": "reports/TASK-WS3-AB-SETUP-FALSE-FRIEND-CANDIDATE-EXTRACTION-AND-HUMAN-REVIEW-HANDOFF-20260821/ws3-ab-false-friend-intermediate-manifest.jsonl",
+      "size_bytes": 730361,
+      "status": "FOUND"
+    },
+    {
+      "artifact_key": "ab_manifest_meta",
+      "path": "reports/TASK-WS3-AB-SETUP-FALSE-FRIEND-CANDIDATE-EXTRACTION-AND-HUMAN-REVIEW-HANDOFF-20260821/ws3-ab-false-friend-intermediate-manifest-meta.json",
+      "size_bytes": 908,
+      "status": "FOUND"
+    },
+    {
+      "artifact_key": "ab_summary",
+      "path": "reports/TASK-WS3-AB-SETUP-FALSE-FRIEND-CANDIDATE-EXTRACTION-AND-HUMAN-REVIEW-HANDOFF-20260821/ws3-ab-false-friend-summary.json",
+      "size_bytes": 2902,
+      "status": "FOUND"
+    },
+    {
+      "artifact_key": "intraday_evidence",
+      "path": "none; explicitly out of scope",
+      "size_bytes": null,
+      "status": "NOT_REQUIRED"
+    },
+    {
+      "artifact_key": "owner_promising_signals",
+      "path": "reports/TASK-WS3-SUCCESSFUL-SWING-HUMAN-ASSISTED-OWNER-REVIEW-PACK-EXTRACTION-20260821/ws3-owner-review-top20-promising-signals.csv",
+      "size_bytes": 27271,
+      "status": "FOUND"
+    },
+    {
+      "artifact_key": "owner_reference_cards",
+      "path": "reports/TASK-WS3-SUCCESSFUL-SWING-HUMAN-ASSISTED-OWNER-REVIEW-PACK-EXTRACTION-20260821/ws3-owner-review-reference-case-cards.json",
+      "size_bytes": 258599,
+      "status": "FOUND"
+    },
+    {
+      "artifact_key": "owner_review_pack",
+      "path": "reports/TASK-WS3-SUCCESSFUL-SWING-HUMAN-ASSISTED-OWNER-REVIEW-PACK-EXTRACTION-20260821/WS3-SUCCESSFUL-SWING-OWNER-HUMAN-REVIEW-PACK.md",
+      "size_bytes": 11515,
+      "status": "FOUND"
+    },
+    {
+      "artifact_key": "owner_robust_signals",
+      "path": "reports/TASK-WS3-SUCCESSFUL-SWING-HUMAN-ASSISTED-OWNER-REVIEW-PACK-EXTRACTION-20260821/ws3-owner-review-robust-signals.csv",
+      "size_bytes": 12544,
+      "status": "FOUND"
+    },
+    {
+      "artifact_key": "p1e_a2_event_panel",
+      "path": "reports/TASK-WS3-P1E-603-UNIVERSE-EXPANDED-EVIDENCE-QUALIFICATION-AND-COHORT-RECONSTITUTION-20260820/ws3-p1e-a2-expanded-event-panel.csv",
+      "size_bytes": 77853652,
+      "status": "FOUND"
+    },
+    {
+      "artifact_key": "p1e_pit_eligibility_surface",
+      "path": "reports/TASK-WS3-P1E-603-UNIVERSE-EXPANDED-EVIDENCE-QUALIFICATION-AND-COHORT-RECONSTITUTION-20260820/ws3-p1e-expanded-pit-eligibility-surface.csv",
+      "size_bytes": 55561380,
+      "status": "FOUND"
+    },
+    {
+      "artifact_key": "p1e_run_summary",
+      "path": "reports/TASK-WS3-P1E-603-UNIVERSE-EXPANDED-EVIDENCE-QUALIFICATION-AND-COHORT-RECONSTITUTION-20260820/ws3-p1e-run-summary.json",
+      "size_bytes": 3487,
+      "status": "FOUND"
+    },
+    {
+      "artifact_key": "p1e_source_contract",
+      "path": "reports/TASK-WS3-P1E-603-UNIVERSE-EXPANDED-EVIDENCE-QUALIFICATION-AND-COHORT-RECONSTITUTION-20260820/ws3-p1e-source-contract-manifest.json",
+      "size_bytes": 4763,
+      "status": "FOUND"
+    },
+    {
+      "artifact_key": "p2e_a1_event_panel",
+      "path": "reports/TASK-WS3-P2E-A1-FROZEN-CANDIDATE-CONFIRMATORY-VALIDATION-603-UNIVERSE-20260820/ws3-p2e-a1-event-level-candidate-panel.csv",
+      "size_bytes": 178209557,
+      "status": "FOUND"
+    },
+    {
+      "artifact_key": "p2e_a1_quality_audit",
+      "path": "reports/TASK-WS3-P2E-A1-FROZEN-CANDIDATE-CONFIRMATORY-VALIDATION-603-UNIVERSE-20260820/ws3-p2e-a1-quality-audit.json",
+      "size_bytes": 4288,
+      "status": "FOUND"
+    },
+    {
+      "artifact_key": "p2e_a1_run_summary",
+      "path": "reports/TASK-WS3-P2E-A1-FROZEN-CANDIDATE-CONFIRMATORY-VALIDATION-603-UNIVERSE-20260820/ws3-p2e-run-summary.json",
+      "size_bytes": 2382,
+      "status": "FOUND"
+    },
+    {
+      "artifact_key": "p2e_a2_event_panel",
+      "path": "reports/TASK-WS3-P2E-A2-EXPANDED-CONFIRMATORY-VALIDATION-AND-ADVANTAGE-REVALIDATION-20260820/ws3-p2e-a2-expanded-event-panel.csv",
+      "size_bytes": 81888767,
+      "status": "FOUND"
+    },
+    {
+      "artifact_key": "p2e_a2_quality_audit",
+      "path": "reports/TASK-WS3-P2E-A2-EXPANDED-CONFIRMATORY-VALIDATION-AND-ADVANTAGE-REVALIDATION-20260820/ws3-p2e-a2-quality-audit.json",
+      "size_bytes": 1029,
+      "status": "FOUND"
+    },
+    {
+      "artifact_key": "p2e_a2_run_summary",
+      "path": "reports/TASK-WS3-P2E-A2-EXPANDED-CONFIRMATORY-VALIDATION-AND-ADVANTAGE-REVALIDATION-20260820/ws3-p2e-a2-run-summary.json",
+      "size_bytes": 3242,
+      "status": "FOUND"
+    },
+    {
+      "artifact_key": "swing_episode_panel",
+      "path": "reports/TASK-WS3-SUCCESSFUL-SWING-OUTCOME-MINING-AND-LEADING-EVIDENCE-DISCOVERY-20260821/ws3-successful-swing-distinct-episode-panel.csv",
+      "size_bytes": 28467681,
+      "status": "FOUND"
+    },
+    {
+      "artifact_key": "swing_feature_panel",
+      "path": "reports/TASK-WS3-SUCCESSFUL-SWING-OUTCOME-MINING-AND-LEADING-EVIDENCE-DISCOVERY-20260821/ws3-successful-swing-pre-event-feature-panel.csv",
+      "size_bytes": 527286834,
+      "status": "FOUND"
+    },
+    {
+      "artifact_key": "swing_matched_control_panel",
+      "path": "reports/TASK-WS3-SUCCESSFUL-SWING-OUTCOME-MINING-AND-LEADING-EVIDENCE-DISCOVERY-20260821/ws3-successful-swing-matched-control-panel.csv",
+      "size_bytes": 33548879,
+      "status": "FOUND"
+    },
+    {
+      "artifact_key": "swing_protocol_freeze",
+      "path": "reports/TASK-WS3-SUCCESSFUL-SWING-OUTCOME-MINING-AND-LEADING-EVIDENCE-DISCOVERY-20260821/ws3-successful-swing-outcome-protocol-freeze.json",
+      "size_bytes": 3706,
+      "status": "FOUND"
+    },
+    {
+      "artifact_key": "swing_raw_anchor_panel",
+      "path": "reports/TASK-WS3-SUCCESSFUL-SWING-OUTCOME-MINING-AND-LEADING-EVIDENCE-DISCOVERY-20260821/ws3-successful-swing-raw-anchor-panel.csv",
+      "size_bytes": 231402178,
+      "status": "FOUND"
+    },
+    {
+      "artifact_key": "swing_reproducibility",
+      "path": "reports/TASK-WS3-SUCCESSFUL-SWING-OUTCOME-MINING-AND-LEADING-EVIDENCE-DISCOVERY-20260821/ws3-successful-swing-reproducibility-manifest.json",
+      "size_bytes": 2644,
+      "status": "FOUND"
+    },
+    {
+      "artifact_key": "swing_run_summary",
+      "path": "reports/TASK-WS3-SUCCESSFUL-SWING-OUTCOME-MINING-AND-LEADING-EVIDENCE-DISCOVERY-20260821/ws3-successful-swing-run-summary.json",
+      "size_bytes": 17732,
+      "status": "FOUND"
+    }
+  ]
+}

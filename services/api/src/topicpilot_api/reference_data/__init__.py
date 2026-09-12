@@ -9,13 +9,6 @@ from .bundle import (
     validate_bundle,
     write_bundle,
 )
-from .transition import (
-    TRANSITION_KIND,
-    TRANSITION_WRITE_SET,
-    ReferenceRegistryTransitionResult,
-    derive_transition_version,
-    transition_reference_registry,
-)
 
 __all__ = [
     "BUNDLE_FILE_NAMES",
@@ -31,3 +24,26 @@ __all__ = [
     "validate_bundle",
     "write_bundle",
 ]
+
+
+def __getattr__(name: str):
+    """Load database transition helpers only when a caller requests them.
+
+    Offline bundle generation and validation must not require the optional ORM
+    dependency merely because the reference-data package is imported.
+    """
+
+    transition_names = {
+        "TRANSITION_KIND",
+        "TRANSITION_WRITE_SET",
+        "ReferenceRegistryTransitionResult",
+        "derive_transition_version",
+        "transition_reference_registry",
+    }
+    if name in transition_names:
+        from . import transition
+
+        value = getattr(transition, name)
+        globals()[name] = value
+        return value
+    raise AttributeError(name)

@@ -1,0 +1,22 @@
+{
+  "TASK_ID": "TASK-WS3-AB-SETUP-FALSE-FRIEND-CANDIDATE-EXTRACTION-AND-HUMAN-REVIEW-HANDOFF-20260821",
+  "architecture_equivalent": "deterministic JSONL intermediate manifest",
+  "contains_only_selected_cases_and_comparators": true,
+  "fields": [
+    "candidate_id",
+    "setup_hypothesis",
+    "candidate",
+    "source_match",
+    "failure_labels",
+    "comparator",
+    "selection_rank",
+    "selection_note"
+  ],
+  "large_source_panels_rescanned_after_manifest": false,
+  "record_count": 30,
+  "report_generation_must_consume_this_manifest": true,
+  "schema_version": "ws3-ab-false-friend-intermediate-manifest.v1",
+  "sha256": "a3572927ed0f5aa7299f74ba8bbbffb357e1cec7cfb8ff37718d677db34eef91",
+  "source_review_task": "TASK-WS3-SUCCESSFUL-SWING-HUMAN-ASSISTED-OWNER-REVIEW-PACK-EXTRACTION-20260821",
+  "source_task": "TASK-WS3-SUCCESSFUL-SWING-OUTCOME-MINING-AND-LEADING-EVIDENCE-DISCOVERY-20260821"
+}

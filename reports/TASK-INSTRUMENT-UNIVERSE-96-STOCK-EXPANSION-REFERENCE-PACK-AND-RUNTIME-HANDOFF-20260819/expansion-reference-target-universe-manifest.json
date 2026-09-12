@@ -1,0 +1,20 @@
+{
+  "authority_state": {
+    "canonical_universe_mutated": false,
+    "expansion_ingested": false
+  },
+  "current_canonical": {
+    "authority": "tw-reference-v1 static reference bundle",
+    "instrument_count": 507
+  },
+  "expansion_candidate": {
+    "TPE": 56,
+    "TWO": 40,
+    "candidate_count": 96,
+    "status": "OWNER_APPROVED_EXPANSION_CANDIDATE"
+  },
+  "future_target": {
+    "expected_count": 603
+  },
+  "task_id": "TASK-INSTRUMENT-UNIVERSE-96-STOCK-EXPANSION-REFERENCE-PACK-AND-RUNTIME-HANDOFF-20260819"
+}

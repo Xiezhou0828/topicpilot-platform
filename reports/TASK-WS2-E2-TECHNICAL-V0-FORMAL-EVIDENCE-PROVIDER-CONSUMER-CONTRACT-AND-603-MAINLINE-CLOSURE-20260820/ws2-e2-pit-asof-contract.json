@@ -1,0 +1,26 @@
+{
+  "task_id": "TASK-WS2-E2-TECHNICAL-V0-FORMAL-EVIDENCE-PROVIDER-CONSUMER-CONTRACT-AND-603-MAINLINE-CLOSURE-20260820",
+  "pit_contract_version": "stock-technical-v0-pit-asof.v1",
+  "required_fields": [
+    "session_date",
+    "as_of",
+    "required_observation_window",
+    "actual_observation_window",
+    "source_max_session",
+    "pit_status"
+  ],
+  "pit_status_values": ["PIT_SAFE", "BLOCKED"],
+  "rules": [
+    "only accepted observations at or before requested session are eligible",
+    "optional as_of boundary further restricts the visible prefix",
+    "as_of earlier than session_date returns AS_OF_VIOLATION",
+    "future observations and future revisions are not consumed",
+    "future event knowledge is filtered from bounded reference requests",
+    "walk-forward consumer may use only evidence whose as_of is no later than decision point"
+  ],
+  "future_observation_invariance": "PASS",
+  "future_revision_silent_backfill": "NO",
+  "e1_future_event_invariance": "NOT_A_LOOKAHEAD_GATE; event-aware behavior intentionally consumes explicit later event knowledge",
+  "pit_asof_contract_defined": "YES",
+  "status": "PASS"
+}

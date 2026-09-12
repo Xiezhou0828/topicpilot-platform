@@ -1,0 +1,35 @@
+{
+  "task_id": "TASK-WS1-LIFECYCLE-V1-IDENTITY-AWARE-STATE-MACHINE-IMPLEMENTATION-20260823",
+  "policy_version": "topic-lifecycle-policy.v1",
+  "calculation_version": "topic-lifecycle-v1-shadow.v1",
+  "pure_state_machine_replay": {
+    "runs": 2,
+    "same_input_same_result": "PASS",
+    "lookahead": "NO",
+    "database_write": "NO"
+  },
+  "historical_reconstruction_replay": {
+    "requested_window": "2026-02-03..2026-08-13",
+    "status": "NOT_RUN",
+    "reason": "Local PostgreSQL port 5432 had no listener; no synthetic historical rows were created.",
+    "production_or_pit_claim": "NO",
+    "next_action": "Run the bounded adapter only after a read-only database endpoint is available and record both dataset hashes."
+  },
+  "production_read_model_evidence": {
+    "topics": 130,
+    "insufficient_data": 130,
+    "current_stage_null": 130,
+    "stage_bearing_shadow_row": "NOT_PROVEN",
+    "latest_legal_stage_date": "UNKNOWN"
+  },
+  "governance": {
+    "LIFECYCLE_POLICY_CHANGED": "NO",
+    "STRENGTH_SCORE_CREATED": "NO",
+    "PRODUCTION_DB_MUTATION": "NO",
+    "BACKFILL": "NO",
+    "RETROSPECTIVE_REPLAY": "NO",
+    "DEPLOY": "NO",
+    "PUSH": "NO",
+    "NEXT_TASK_CHANGED": "NO"
+  }
+}

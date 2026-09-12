@@ -16,7 +16,13 @@ from decimal import Decimal
 from typing import Any
 
 from sqlalchemy import text
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
+
+from topicpilot_api.home_v2_publication import (
+    empty_home_v2,
+    read_latest_home_publication,
+)
 
 GRADE_RANK = {"S": 5, "A": 4, "B": 3, "D": 2, "X": 0}
 
@@ -139,6 +145,35 @@ def build_home_read_model(session: Session, now: datetime | None = None) -> dict
     """Build the stable Home response from the current PostgreSQL read model."""
 
     generated_now = now or datetime.now(UTC)
+    # V2 is the formal authority.  The legacy bridge is consulted only when
+    # the additive V2 migration is not present, which keeps older compatibility
+    # databases readable without making public.ingestion_runs a Home gate.
+    try:
+        session.execute(text("SELECT 1 FROM topicpilot.home_publications LIMIT 0"))
+        v2_table_present = True
+    except SQLAlchemyError:
+        # A missing table on a pre-V2 compatibility database aborts the
+        # current transaction in PostgreSQL; clear it before the legacy read.
+        session.rollback()
+        v2_table_present = False
+    if v2_table_present:
+        publication = read_latest_home_publication(session)
+        if publication is not None:
+            return publication
+        tracked_stock_count = int(
+            session.scalar(
+                text(
+                    """
+                    SELECT count(*)
+                    FROM topicpilot.instruments i
+                    JOIN topicpilot.markets m ON m.id = i.market_id
+                    WHERE i.is_active = true AND m.is_active = true
+                    """
+                )
+            )
+            or 0
+        )
+        return empty_home_v2(generated_now, tracked_stock_count=tracked_stock_count)
     run = _row_dict(
         session.execute(
             text(

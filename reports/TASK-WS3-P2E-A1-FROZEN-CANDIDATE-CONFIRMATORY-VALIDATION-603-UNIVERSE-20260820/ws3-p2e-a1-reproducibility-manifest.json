@@ -1,0 +1,57 @@
+{
+  "candidate_definitions_not_normalized_away": true,
+  "clean_source_dependency_check": "PASS",
+  "dependency_environment": "topicpilot-platform-api approved container; existing project dependency/runtime surface",
+  "evidence_rows_not_normalized_away": true,
+  "lineage_and_pit_not_normalized_away": true,
+  "normalized_aggregate_sha256": "ba0f367a55168a1d35d186bffb91d9beb1d8f4399a4b2eda8001e5dccf1c5832",
+  "normalized_artifact_hashes": {
+    "ws3-p2e-a1-baseline-comparison.csv": "c0edf8bfe209343ea26a99d654524e34713b95f4f3e654e1f52d729a595c7960",
+    "ws3-p2e-a1-candidate-disposition-cards.json": "7802c5f4df703989dc04f7c3cfec11d760b073008ccecd4cecff50a45e6beae2",
+    "ws3-p2e-a1-candidate-overlap.csv": "1616cca1b713c89da2400ae085cea5e21d27f7ca35c43863c9963e0d2466ee0c",
+    "ws3-p2e-a1-candidate-summary.csv": "ef87965bff645151252aa7b1f45e89cfd8daf27868795bf48f18f359fd80ba63",
+    "ws3-p2e-a1-concentration-outlier-audit.json": "dc15fd45578071a7103a37200709b9c943a8006544791d97585236f7f61d9363",
+    "ws3-p2e-a1-confirmatory-protocol-freeze.json": "81815d2173f7617d8008d9b2154217b6a7672cf79485a35173e579d85211665a",
+    "ws3-p2e-a1-development-validation-holdout.csv": "ff9ab72c0274dea61955c180592cce281be66b70842670ba44979580eda31d2b",
+    "ws3-p2e-a1-event-level-candidate-panel.csv": "1e9152bd15febf94dfeb4e555c00ab63dd9c73db6a27046545696ff8d277ad2f",
+    "ws3-p2e-a1-forward-return-comparison.csv": "0b4e7f3cbd36a6e426e12e39fc6ff9077bbb8cd95ae0f8a2f2426983525dc6c0",
+    "ws3-p2e-a1-frozen-candidate-freeze.json": "4c9e461a8c5dea3da913ac79f69a8880cad860d3543d6055c2f5671c796d4148",
+    "ws3-p2e-a1-market-stability.csv": "0cd2eb967a65e5e758554e4cfd353263bee6c751c9e88307ebcc6216674a42a6",
+    "ws3-p2e-a1-mfe-mae-comparison.csv": "da3801a41de240dc3e6b0183bc7a11babe30eeef6c2d0c986d5c9d48a114cc34",
+    "ws3-p2e-a1-quality-audit.json": "6dff7ddf0e26a5cdd997a9eb94f594496b044264fbafbd56a0256c5e2773177b",
+    "ws3-p2e-a1-strategy-review-readiness.json": "dc16ba720feb8f2a8dcb6170ace13f5b69be784fd691fd4eb275f8c0773b307c",
+    "ws3-p2e-a1-temporal-stability.csv": "5f0cecdab4b82da9e572b4c6a889fbfd664c3370c990d4cb69ff971ad23d421c"
+  },
+  "outcomes_not_normalized_away": true,
+  "p1e_normalized_aggregate_sha256": "363af6741a6edbbb2b4a092aa1b3938e0492f5fb6169885dd05df12a7691224d",
+  "reconstruction_runs": [
+    {
+      "analysis_wall_clock_seconds": 120.647369,
+      "candidate_assignments": 76555,
+      "normalized_aggregate_sha256": "ba0f367a55168a1d35d186bffb91d9beb1d8f4399a4b2eda8001e5dccf1c5832",
+      "peak_memory": "NOT_MEASURED",
+      "raw_a1_events": 14557,
+      "run_mode": "FULL_RECONSTRUCTION",
+      "run_ordinal": 1,
+      "source_rows_consumed": 288881
+    },
+    {
+      "analysis_wall_clock_seconds": 112.787789,
+      "candidate_assignments": 76555,
+      "normalized_aggregate_sha256": "ba0f367a55168a1d35d186bffb91d9beb1d8f4399a4b2eda8001e5dccf1c5832",
+      "peak_memory": "NOT_MEASURED",
+      "raw_a1_events": 14557,
+      "run_mode": "FULL_RECONSTRUCTION",
+      "run_ordinal": 2,
+      "source_rows_consumed": 288881
+    }
+  ],
+  "reproducible": "YES",
+  "run_mode": "FULL_RECONSTRUCTION",
+  "schema_version": "ws3-p2e-a1-reproducibility-manifest.v1",
+  "source_canonical_head": "2b97372b3842e8008d2815bf1282b183c94dd320",
+  "source_foundation_sha256": "e803733e796d8f4d8cf00575cd4045f28c9364572fc61b31ef490e8a65ff47a4",
+  "splits_not_normalized_away": true,
+  "task_id": "TASK-WS3-P2E-A1-FROZEN-CANDIDATE-CONFIRMATORY-VALIDATION-603-UNIVERSE-20260820",
+  "test_count_delta": "N/A_RESEARCH_ONLY_NO_APPLICATION_TEST_FILE_CHANGED"
+}

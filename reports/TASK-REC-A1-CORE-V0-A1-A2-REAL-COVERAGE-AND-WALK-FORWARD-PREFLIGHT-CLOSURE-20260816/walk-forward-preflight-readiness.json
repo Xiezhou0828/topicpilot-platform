@@ -1,0 +1,92 @@
+{
+  "schemaVersion": "ws3-core-v0-walk-forward-preflight-readiness.v1",
+  "taskId": "TASK-REC-A1-CORE-V0-A1-A2-REAL-COVERAGE-AND-WALK-FORWARD-PREFLIGHT-CLOSURE-20260816",
+  "canonicalPreSha": "1acac134cebc994fdab350aeeb64fe5e997008bf",
+  "canonicalFinalAuditSha": "8cecf1737d8fa439526702f9ace70d97b16caefd",
+  "protocol": "core-v0-walk-forward.v1",
+  "authorityChecks": {
+    "ws3PredecessorAncestryVerified": true,
+    "ws2Phase2BAncestryVerified": true,
+    "a1DefinitionReady": true,
+    "a2DefinitionReady": true,
+    "recA1IdentityBound": true,
+    "recA1ProvenanceReconciled": false,
+    "realCandidatePanelReady": false,
+    "temporalEligibilityReady": false,
+    "ws2Ma60JoinContractReady": true,
+    "ws2FormalRealMa60Available": false,
+    "outcomeMappingReady": false
+  },
+  "ws2": {
+    "latestClosureAuthoritySha": "a811ca14293bfb172e3a97b1d1d662f5f1ae6ff1",
+    "implementationAuthoritySha": "663c574c870d225bd93b66216ba98398d69c427c",
+    "runtimeContinuityAuthoritySha": "8cecf1737d8fa439526702f9ace70d97b16caefd",
+    "runtimeContinuityImplementationSha": "d474025d0b21a94010ae2028dbe20856c36c5c62",
+    "runtimeContinuityProvenanceSha": "2f384f2b19280148d014c8dd4e98cf215052eeaa",
+    "runtimeAttachmentState": "IMPLEMENTED_LIFECYCLE_FAMILY_BOUNDED",
+    "passBoundedProduced": false,
+    "authorityCoverage": {
+      "cells": 4056,
+      "coveredEvent": 368,
+      "coveredNoEvent": 0,
+      "unknown": 3688,
+      "unknownIdentities": 154
+    },
+    "realTechnicalWindowAudit": "NOT_RUN_ENVIRONMENT_NOT_PROVIDED",
+    "indicatorId": "stock.sma.close.v1",
+    "algorithmId": "SMA_CLOSE_V1",
+    "period": 60,
+    "priceBasis": "RAW_OBSERVED",
+    "continuityRequired": "CONTINUITY_PASS_BOUNDED",
+    "publicationRequired": "FORMAL",
+    "joinKeys": ["instrument_identity", "evaluation_session", "as_of", "indicator_id", "algorithm_id"],
+    "joinContractReady": true,
+    "formalRealRowsAvailable": false,
+    "availability": "BOUNDED",
+    "reason": "Lifecycle-only bounded continuity attachment is canonicalized, but it cannot produce PASS_BOUNDED without complete all-family empty coverage; no reachable canonical database and no committed row-level technical evidence panel were available, so real technical windows remain NOT_RUN."
+  },
+  "candidateMatrix": [
+    {
+      "candidate": "A1",
+      "definitionAuthority": "FROZEN_CORE_V0_DEFINITION_AUTHORITY",
+      "panel": "NOT_AVAILABLE",
+      "temporal": "NOT_AVAILABLE",
+      "ws2": "BOUNDED_NO_REAL_FORMAL_ROWS",
+      "outcomes": "NOT_AVAILABLE_NO_CANDIDATE_PANEL",
+      "executionReadiness": "BLOCKED_BY_REAL_CANDIDATE_PANEL_AUTHORITY_GAP",
+      "readyForCoreV0WalkForwardExecution": false
+    },
+    {
+      "candidate": "A2",
+      "definitionAuthority": "FROZEN_CORE_V0_DEFINITION_AUTHORITY",
+      "panel": "NOT_AVAILABLE",
+      "temporal": "NOT_AVAILABLE",
+      "ws2": "BOUNDED_NO_REAL_FORMAL_ROWS",
+      "outcomes": "NOT_AVAILABLE_NO_CANDIDATE_PANEL",
+      "executionReadiness": "BLOCKED_BY_REAL_CANDIDATE_PANEL_AUTHORITY_GAP",
+      "readyForCoreV0WalkForwardExecution": false
+    },
+    {
+      "candidate": "A3",
+      "definitionAuthority": "BLOCKED_BY_PULLBACK_ACCEPTANCE_AUTHORITY",
+      "executionReadiness": "BLOCKED_BY_PULLBACK_ACCEPTANCE_AUTHORITY"
+    },
+    {
+      "candidate": "Catch-up",
+      "definitionAuthority": "BLOCKED_BY_CATCH_UP_DEFINITION_AUTHORITY",
+      "executionReadiness": "BLOCKED_BY_CATCH_UP_DEFINITION_AUTHORITY"
+    }
+  ],
+  "routing": {
+    "primary": "ROUTE_D_BLOCKED_BY_REAL_CANDIDATE_PANEL_AUTHORITY_GAP",
+    "secondary": [
+      "ROUTE_B_READY_AFTER_WS2_FORMAL_MA60",
+      "ROUTE_C_BLOCKED_BY_REC_A1_PROVENANCE_REPRODUCIBILITY_GAP"
+    ],
+    "globalReadyNoEmitted": false,
+    "readyForCoreV0WalkForwardExecution": false
+  },
+  "performanceMetricsGenerated": false,
+  "strategyAcceptedOrRejected": false,
+  "recommendationPublication": false
+}

@@ -1,0 +1,34 @@
+{
+  "taskId": "TASK-REC-A1-CORE-V0-A1-A2-EXECUTABLE-CANDIDATE-PANEL-AND-READINESS-CLOSURE-20260816",
+  "path": "C:/Users/acer/Desktop/題材領航/AI/NEXT_TASK.md",
+  "canonicalTopicPilotRepoTracking": "NOT_APPLICABLE_EXTERNAL_AI_REPOSITORY",
+  "aiRepository": {
+    "root": "C:/Users/acer/Desktop/題材領航",
+    "branch": "agent/workspace-cleanup-20260713",
+    "head": "473c60ccaf67f933f46b5cdb0d8489bbea41926e",
+    "committedPath": "AI/NEXT_TASK.md",
+    "committedGitBlob": "425a234b89a9b1382914517978f07d990790923f",
+    "ownerCheckoutStatus": "TRACKED_MODIFIED_UNCOMMITTED",
+    "ownerCheckoutDiffNumstat": {"insertions": 154, "deletions": 750}
+  },
+  "hashes": {
+    "startupBaselineRawSha256": "FF640C735A2CDD4D8238157B287D293D0385B67F673150249A90F49661FFEB70",
+    "currentOwnerCheckoutRawSha256": "FF640C735A2CDD4D8238157B287D293D0385B67F673150249A90F49661FFEB70",
+    "currentOwnerCheckoutLfNormalizedSha256": "0E52696AAF6809DDFB7AEE7298F532FEDBD79E16F9B2E584EC6919F15CA417DE",
+    "previousObservedExternalHash": "0E52696AAF6809DDFB7AEE7298F532FEDBD79E16F9B2E584EC6919F15CA417DE",
+    "hashMethodFinding": "FF is the raw owner-checkout hash; 0E is the LF-normalized hash of the same checkout representation, not an independently attributed content mutation."
+  },
+  "attribution": {
+    "disposition": "NEXT_TASK_DELTA_EXTERNAL_BUT_NON_BLOCKING_OWNER_STATE",
+    "canonicalMutationEvidence": "NONE",
+    "taskOwnedMutationEvidence": "NONE",
+    "parallelAuthorizedMutationEvidence": "NONE",
+    "possibleOldChatPromptMisuse": "UNKNOWN",
+    "usedAsTaskAuthority": false,
+    "changedByThisTask": false,
+    "rollbackPerformed": false,
+    "advancePerformed": false,
+    "preserved": true,
+    "reason": "The file is a tracked but uncommitted owner checkout rewrite in the external AI repository. TopicPilot canonical HEAD and the prior committed AI version were not altered by this task."
+  }
+}

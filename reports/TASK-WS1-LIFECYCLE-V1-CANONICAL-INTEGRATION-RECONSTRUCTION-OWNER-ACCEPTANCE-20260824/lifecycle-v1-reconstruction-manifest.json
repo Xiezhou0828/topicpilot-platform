@@ -1,0 +1,58 @@
+{
+  "task_id": "TASK-WS1-LIFECYCLE-V1-CANONICAL-INTEGRATION-RECONSTRUCTION-OWNER-ACCEPTANCE-20260824",
+  "source_class": "CURRENT_TAXONOMY_HISTORICAL_V1_RECONSTRUCTION",
+  "evaluation_mode": "RETROSPECTIVE_RESEARCH_ONLY",
+  "membership_mode": "CURRENT_TAXONOMY_FROZEN_RECONSTRUCTION",
+  "date_contract": {
+    "requested_start": "2026-02-03",
+    "requested_end": "2026-08-13",
+    "historical_taxonomy_projection": true,
+    "pit_claim": false
+  },
+  "lifecycle_contract": {
+    "policy_version": "topic-lifecycle-policy.v1",
+    "calculation_version": "topic-lifecycle-v1-shadow.v1",
+    "five_stages_unchanged": true,
+    "strength_score_created": false
+  },
+  "dataset": {
+    "topic_count": 130,
+    "member_relation_count": 852,
+    "date_count": 125,
+    "actual_start": "2026-02-03",
+    "actual_end": "2026-08-13",
+    "row_count": 16250,
+    "stage_or_status_counts": {
+      "PENDING": 680,
+      "INSUFFICIENT_DATA": 7750,
+      "FERMENTING": 3238,
+      "MAIN_RISE": 1306,
+      "SPROUTING": 1880,
+      "MATURE": 1321,
+      "DECLINING": 75
+    },
+    "role_authority_unavailable_rows": 1875,
+    "rows_with_missing_price": 101,
+    "universe_hash_count": 92,
+    "normalized_dataset_sha256": "a2941dddb640812858261a96942728213271e80b73699622f3bb17ca15af2886"
+  },
+  "replay": {
+    "reproducible": true,
+    "first_sha256": "a2941dddb640812858261a96942728213271e80b73699622f3bb17ca15af2886",
+    "second_sha256": "a2941dddb640812858261a96942728213271e80b73699622f3bb17ca15af2886",
+    "database_mutation": "NO"
+  },
+  "database_write": "NO",
+  "production_mutation": "NO",
+  "governance": {
+    "WS1_ONLY": "YES",
+    "E_DRIVE_ONLY": "YES",
+    "HISTORICAL_RECONSTRUCTION": "YES",
+    "LOOKAHEAD": "NO",
+    "WS3_FULL_BACKTEST": "NO",
+    "PRODUCTION_DB_MUTATION": "NO",
+    "DEPLOY": "NO",
+    "PUSH": "NO",
+    "NEXT_TASK_CHANGED": "NO"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "taskId": "TASK-WS1-L1.1-CANONICAL-PROMOTION-BLOCKER-RESOLUTION-20260822",
+  "date": "2026-08-22",
+  "canonicalHead": "b569430d2a358cab6a5915aeaacff2810df4913c",
+  "candidateHead": "c9239d66bcc3c330010ab8830d4184430efe9bfc5",
+  "ws1ImplementationCommit": "c46506e8dd3fd35cba103c0f0728da03e1a5eaf9",
+  "candidateMergeBase": "b569430d2a358cab6a5915aeaacff2810df4913c",
+  "promotion": "NO",
+  "canonicalForwardShadowRuntimeReady": "NO",
+  "lifecycleSemanticsModified": false,
+  "canonicalMutated": false,
+  "canonicalDirtyStatePreserved": true,
+  "ownerDirtyOverlap": {
+    "status": "SAFE_TO_RECONCILE_IN_ISOLATION",
+    "paths": [
+      "apps/web/app/components/v2/TopicListPage.tsx",
+      "apps/web/app/lib/topic-api.ts"
+    ],
+    "ownerContentPreservedInCandidate": true
+  },
+  "dataStatusMismatch": {
+    "status": "BLOCKING",
+    "source": "candidate-c46506e-generated-api-narrowing-vs-canonical-untracked-api-client-string",
+    "path": "apps/web/app/lib/today-home.ts:230",
+    "fullTypeScriptErrors": 1,
+    "changedLifecycleFilesModified": false,
+    "readOnlyReviewOnly": true
+  },
+  "remainingBlockerCount": 1,
+  "remainingBlocker": "GENERATED_API_CLIENT_DATASTATUS_CONTRACT_DRIFT",
+  "nextRouting": "MINIMAL_HOME_DATASTATUS_CONTRACT_RECONCILIATION_THEN_COLLISION_AWARE_PROMOTION_REHEARSAL"
+}

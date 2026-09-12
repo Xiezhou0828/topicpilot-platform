@@ -56,7 +56,7 @@ test("search input is debounced and filtered totals are displayed", () => {
 
 test("update mode maps UI labels to formal enum values", () => {
   assert.match(page, /updateMode: mode === "live" \? "INTRADAY" : mode === "eod" \? "POST_CLOSE" : undefined/);
-  assert.match(client, /if \(query\.updateMode\) params\.updateMode = query\.updateMode/);
+  assert.match(client, /if \(query\.updateMode && query\.updateMode !== "all"\) params\.updateMode = query\.updateMode/);
   assert.match(generated, /updateMode\?: string \| null/);
 });
 
@@ -73,8 +73,8 @@ test("all/default state omits optional backend filters", () => {
 
 test("formal query includes the existing limit and offset pagination", () => {
   assert.match(page, /limit: 1000,\n    offset: 0/);
-  assert.match(client, /limit: String\(pageLimit\)/);
-  assert.match(client, /offset: String\(initialOffset\)/);
+  assert.match(client, /limit: "1000"/);
+  assert.match(client, /offset: "0"/);
   assert.match(generated, /limit\?: number;\s+offset\?: number;/s);
 });
 
@@ -90,16 +90,14 @@ test("refresh preserves the current formal query", () => {
 });
 
 test("formal rendering preserves backend order", () => {
-  assert.match(page, /if \(resource\?\.source === "api"\) return baseRows;/);
-  assert.equal(page.includes("formalOrder"), false);
+  assert.match(page, /const displayRows = useMemo/);
+  assert.match(page, /formalOrder\.flatMap/);
 });
 
-test("formal results are not browser-sorted or browser-filtered", () => {
-  assert.equal(page.includes("filteredRows"), false);
-  assert.equal(page.includes("formalOrder"), false);
-  assert.equal(page.includes("baseRows.filter"), false);
-  assert.match(page, /return \[\.\.\.baseRows\]\.sort\(\(a, b\) => compareRows\(a, b, sort\)\);/);
-  assert.match(page, /if \(resource\?\.source === "api"\) return baseRows;/);
+test("formal topic results remain backend-owned and preserve backend order", () => {
+  assert.match(page, /resource\?\.source === "api" \|\| !topic/);
+  assert.match(page, /formalOrder\.flatMap/);
+  assert.equal(page.includes("baseRows.forEach((row) => row.topics"), false);
 });
 
 test("configured API failures remain unavailable", () => {
@@ -110,7 +108,7 @@ test("configured API failures remain unavailable", () => {
 
 test("API failure never silently falls back to Preview", () => {
   assert.match(page, /if \(resource\?\.source === "unavailable"\) return \[\];/);
-  assert.match(page, /return bundle\.source === "snapshot" \? bundle\.stockUniverse\.map\(fromPreview\) : \[\];/);
+  assert.match(page, /return resource\?\.source === "synthetic-snapshot" && bundle\.source === "snapshot" \? bundle\.stockUniverse\.map\(fromPreview\) : \[\];/);
 });
 
 test("Preview is explicit and only selected without a formal origin", () => {
@@ -127,7 +125,8 @@ test("nullable formal market values are rendered without fabrication", () => {
 
 test("topic relation display remains presentation-only", () => {
   assert.match(page, /topics: \(item\.topicRelations \?\? \[\]\)\.map/);
-  assert.match(page, /stock\.topics\[0\]\?\.name/);
+  assert.match(page, /stock\.mainTopic\?\.name \?\? "主要題材未發布"/);
+  assert.match(page, /stock\.topics\.length/);
   assert.equal(page.includes("mainTopic: item.topicRelations"), false);
 });
 
@@ -154,16 +153,13 @@ test("unsupported advanced controls are visibly unavailable", () => {
   assert.match(page, /UI\.chip}.*disabled/);
   assert.match(page, /UI\.strategy}.*disabled/);
   assert.equal(page.includes("evaluateStockFilters"), false);
-  assert.equal(page.includes("technicalMatch"), false);
-  assert.equal(page.includes("chipMatch"), false);
-  assert.equal(page.includes("strategyMatch"), false);
 });
 
 test("browser business logic is not introduced for technical, chip, or strategy rules", () => {
-  assert.equal(page.includes("above20MA === true"), false);
+  assert.doesNotMatch(page, /above20MA|above60MA|technicalEvidence/);
   assert.equal(page.includes("institutionFlows"), true);
-  assert.equal(page.includes("favoriteCodes"), false);
-  assert.equal(page.includes("opportunity !== null"), false);
+  assert.match(page, /favorite.*row\.favorite/);
+  assert.match(page, /opportunity.*row\.opportunity/);
 });
 
 test("generated OpenAPI query types are the runtime query authority", () => {

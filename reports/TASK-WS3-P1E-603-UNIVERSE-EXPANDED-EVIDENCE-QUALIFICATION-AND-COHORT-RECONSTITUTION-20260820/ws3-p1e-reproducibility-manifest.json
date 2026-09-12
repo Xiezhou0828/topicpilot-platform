@@ -1,0 +1,24 @@
+{
+  "evidence_rows_not_normalized_away": true,
+  "normalized_aggregate_sha256": "363af6741a6edbbb2b4a092aa1b3938e0492f5fb6169885dd05df12a7691224d",
+  "normalized_artifact_hashes": {
+    "ws3-p1e-a1-cohort-comparison.json": "8cdcdb5fef998a57b6e2ffc5c0089035f33c7e0006c4dfdffe386e639a8bcaeb",
+    "ws3-p1e-a1-expanded-event-panel.csv": "8c49e63ca74c757cb50735336390d01ea0a36d8ec307aaac0568ad62b4618a0e",
+    "ws3-p1e-a1-quality-candidate-capacity.csv": "97bf0867edf8cd4159eaf6fcf42fff8403a34e61c0ecd715d4e2a3912fcfda6e",
+    "ws3-p1e-a2-cohort-comparison.json": "6dd75a25f81bd2215d8a4040084ce579bcb8c595a26062b5c29be83f10259d6d",
+    "ws3-p1e-a2-entry-candidate-capacity.json": "1f794fc8665139a0f2a795fae276097244f10d4b2a53ec59f5385e42308e15c8",
+    "ws3-p1e-a2-expanded-event-panel.csv": "65148ce7a6c4014800246c1a3fa1b18585d05b28697937a01628dd26f85c915b",
+    "ws3-p1e-a2-invalidation-capacity.json": "180d5e0f3f62a61d2e4e9cb81a5ad4f700cd10881445b14c8764faf05d75530b",
+    "ws3-p1e-a2-origin-comparison.json": "f2086b57b59316924103f3dad583611582f1cb1246afcd665298f930da5397d0",
+    "ws3-p1e-a2-origin-expanded-panel.csv": "80bb9ff67b5fbfc27b6961f002f1e0f7d833dc4fea3f65ff385ba99ca115f62e",
+    "ws3-p1e-concentration-outlier-audit.json": "fb4e6633c57d795bca613f14a95ae1e1b1206ba8bb0713ff43deaa0aa69230bd",
+    "ws3-p1e-expanded-pit-eligibility-surface.csv": "e112c59af75ae8ef80ec482c8e3c0630017b7924148d2bf1eb605af56a681628",
+    "ws3-p1e-lookahead-pit-quality-audit.json": "684f9b3753ceaa5d57c210cc0219e202b022e931955191ae2da25b5044ad15ad",
+    "ws3-p1e-temporal-market-evidence-matrix.csv": "af452a77690ccac907d94ebad1888c1b630e657d84aaa22620bad18aee763c90"
+  },
+  "reconstruction_runs": 2,
+  "reproducible": "YES",
+  "run_mode": "FULL_RECONSTRUCTION",
+  "task_id": "TASK-WS3-P1E-603-UNIVERSE-EXPANDED-EVIDENCE-QUALIFICATION-AND-COHORT-RECONSTITUTION-20260820",
+  "timestamp_normalized": true
+}

@@ -1,0 +1,14 @@
+{
+  "task_id": "TASK-WS2-E1-603-UNIVERSE-TECHNICAL-V0-EXPANDED-QUALIFICATION-AND-FORMAL-EVIDENCE-RECONSTITUTION-20260820",
+  "status": "NOT_RUN_SOURCE_CONTRACT_BLOCKED",
+  "mode": "FULL_HISTORICAL_RECONSTRUCTION",
+  "source_ohlcv_rows_consumed": null,
+  "indicator_observations_generated": null,
+  "eligibility_runtime_seconds": null,
+  "indicator_calculation_runtime_seconds": null,
+  "evidence_normalization_runtime_seconds": null,
+  "quality_audit_runtime_seconds": null,
+  "total_wall_clock_runtime_seconds": null,
+  "peak_memory_bytes": null,
+  "reason": "Performance is not measured for an unexecuted reconstruction."
+}

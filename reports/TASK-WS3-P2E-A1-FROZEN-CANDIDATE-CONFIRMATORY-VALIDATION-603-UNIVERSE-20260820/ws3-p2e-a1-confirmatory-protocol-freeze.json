@@ -1,0 +1,97 @@
+{
+  "a2_research": "OUT_OF_SCOPE; frozen A1-to-A2 cohort semantics are preserved only.",
+  "candidate_filter_applied_after_raw_a1_formation": true,
+  "candidate_set_frozen_before_outcomes": true,
+  "concentration_rules": {
+    "date_low_top1_share_max": 0.1,
+    "date_medium_top1_share_max": 0.2,
+    "instrument_low_top5_share_max": 0.25,
+    "instrument_medium_top5_share_max": 0.4
+  },
+  "created_before_confirmatory_outcome_review": true,
+  "decision_rules_reused": {
+    "CONFIRMED": "Adequate confirmatory cohort; holdout success uplift and failed-breakout reduction each >= 3pp; no market contradiction; July direction non-negative; no HIGH concentration; not outlier-driven; forward support SUPPORTIVE or NON_DESTRUCTIVE; and independence level HIGH.",
+    "FAILED_CONFIRMATION": "Holdout quality direction is adverse, a market materially contradicts the frozen direction, or the frozen candidate has no meaningful confirmatory discrimination.",
+    "INCONCLUSIVE": "Insufficient confirmatory cohort, unresolved uncertainty, or materially mixed confirmatory direction without a clear adverse failure.",
+    "SUPPORTED_WITH_BOUNDED_LIMITATIONS": "Same frozen primary effect and market/no-outlier requirements as CONFIRMED, but independence is BOUNDED or a declared secondary limitation remains."
+  },
+  "feature_and_data_rules": {
+    "adjustment_policy": "UNKNOWN is preserved as raw-only; no adjusted-truth coercion.",
+    "candidate_definitions": "Copied byte-for-byte in the companion frozen-candidate artifact; no post-freeze search.",
+    "candidate_inputs_cutoff": "FEATURE_TIMESTAMP <= A1_SIGNAL_TIMESTAMP",
+    "forward_session_identity": "instrument + accepted canonical session date + observation id",
+    "known_event_policy": "Known corporate-action event sessions are excluded from forward evaluation; formation remains PIT-safe.",
+    "ma60_policy": "60 accepted closes inclusive of T; MA60 is evidence eligibility, not 20MA substitution.",
+    "missing_data_behavior": "Missing feature does not pass candidate filter; RAW_A1 remains preserved.",
+    "synthetic_fill": false
+  },
+  "formal_evaluation_window": [
+    "2026-02-02",
+    "2026-08-13"
+  ],
+  "formal_segments": {
+    "DEVELOPMENT": [
+      "2026-02-02",
+      "2026-06-30"
+    ],
+    "HOLDOUT": [
+      "2026-08-01",
+      "2026-08-13"
+    ],
+    "VALIDATION": [
+      "2026-07-01",
+      "2026-07-31"
+    ]
+  },
+  "forward_support_rule": "SUPPORTIVE if at least 2 of 4 confirmatory-horizon median deltas are positive and no median delta is below -0.05; NON_DESTRUCTIVE if all available median deltas are >= -0.05; otherwise MIXED or DESTRUCTIVE.",
+  "frozen_decision_segments": {
+    "HOLDOUT": [
+      "2026-08-01",
+      "2026-08-13"
+    ],
+    "TRAIN": [
+      "2026-05-12",
+      "2026-06-30"
+    ],
+    "VALIDATION": [
+      "2026-07-01",
+      "2026-07-31"
+    ]
+  },
+  "no_opportunity_activation": true,
+  "no_production_mutation": true,
+  "no_recommendation_publication": true,
+  "outcome_horizons": [
+    "T+1",
+    "T+3",
+    "T+5",
+    "T+10"
+  ],
+  "outcomes_evaluation_only": true,
+  "p1e_upstream": {
+    "a1_event_count": 14557,
+    "event_panel": "reports/TASK-WS3-P1E-603-UNIVERSE-EXPANDED-EVIDENCE-QUALIFICATION-AND-COHORT-RECONSTITUTION-20260820/ws3-p1e-a1-expanded-event-panel.csv",
+    "event_panel_sha256": "8c49e63ca74c757cb50735336390d01ea0a36d8ec307aaac0568ad62b4618a0e",
+    "normalized_aggregate_sha256": "363af6741a6edbbb2b4a092aa1b3938e0492f5fb6169885dd05df12a7691224d"
+  },
+  "primary_outcome": "SUCCESSFUL_A1 versus FAILED_BREAKOUT_A1",
+  "protocol_frozen_before_final_dispositions": true,
+  "protocol_id": "a1-quality-filter-confirmatory.v1",
+  "schema_version": "ws3-p2e-a1-confirmatory-protocol-freeze.v1",
+  "segment_reconciliation": "The task-mandated DEVELOPMENT window is 2026-02-02..2026-06-30. The predeclared frozen A1 decision framework retains TRAIN=2026-05-12..2026-06-30; 2026-02-02..2026-05-11 is reported as formal development support/warm-up and is not silently redefined.",
+  "source_canonical_head": "2b97372b3842e8008d2815bf1282b183c94dd320",
+  "source_foundation": {
+    "accepted_ohlcv_row_count": 288881,
+    "adjustment_state": "UNKNOWN_RAW_ONLY",
+    "authority_version": "sdf-603-ohlcv-2y.v1",
+    "formal_instrument_count": 603,
+    "normalized_aggregate_sha256": "e803733e796d8f4d8cf00575cd4045f28c9364572fc61b31ef490e8a65ff47a4",
+    "synthetic_fill": false,
+    "window": [
+      "2024-08-13",
+      "2026-08-13"
+    ]
+  },
+  "task_id": "TASK-WS3-P2E-A1-FROZEN-CANDIDATE-CONFIRMATORY-VALIDATION-603-UNIVERSE-20260820",
+  "walk_forward_protocol_id": "core-v0-walk-forward.v1"
+}

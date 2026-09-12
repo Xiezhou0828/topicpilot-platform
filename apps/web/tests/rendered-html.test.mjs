@@ -17,11 +17,14 @@ test("renders the approved V2 and retained workspace routes", async () => {
   const routes = [
     ["/", "tp-home-overview-card"],
     ["/market", null, 307],
-    ["/topics", "tp-topic-overview-page"],
+    ["/topics", 'data-state="LOADING"'],
+    ["/topics/solar?asOf=2026-08-28", 'data-state="LOADING"'],
     ["/watchlist", "stockUniverseShell"],
     ["/guide", "guideShell"],
     ["/studio", "studioPage"],
-    ["/stocks/DEMO-A1", "stockDetailGrid"],
+    ["/stocks/DEMO-A1", "data-stock-read-state"],
+    ["/opportunities", "機會功能尚未發布"],
+    ["/ai-studio", "AI 研究室尚未發布"],
   ];
   for (const [path, marker, expectedStatus = 200] of routes) {
     const response = await render(path);
@@ -34,6 +37,10 @@ test("renders the approved V2 and retained workspace routes", async () => {
     assert.match(html, /lang="zh-Hant"/);
     assert.match(html, /TopicPilot/);
     assert.match(html, new RegExp(marker));
+    if (path.startsWith("/topics/")) {
+      assert.match(html, /href="\/topics\?asOf=2026-08-28"/);
+      assert.doesNotMatch(html, /tp-grade-chip/);
+    }
   }
 });
 
@@ -42,18 +49,18 @@ test("V2 Home source contains the frozen market workflow and safety boundary", a
   const liveData = await readFile(new URL("../app/lib/live-data.mjs", import.meta.url), "utf8");
   for (const marker of [
     "market-overview-title",
-    "tp-home-story-card",
+    "tp-home-highlights-card",
     "mainline-title",
-    "events-title",
+    "topic-pulse-title",
     "rotation-title",
     "opportunities-title",
-    "isSyntheticPreview",
-    "canUseBackendData",
-    "只呈現研究入口，不在首頁完成推薦分析",
+    "marketOverview",
+    "市場廣度目前尚未提供",
+    "Today 只提供正式機會資料的摘要入口",
   ]) assert.match(home, new RegExp(marker));
   assert.match(home, /useTodayMainlines/);
-  assert.match(home, /mainlines\.resource\.data\.map/);
-  assert.match(home, /mainlines\.resource\.state === "UNAVAILABLE"/);
+  assert.match(home, /resource\.data\.map/);
+  assert.match(home, /resource\.state === "UNAVAILABLE"/);
   assert.match(home, /href=\{`\/topics\/\$\{topic\.slug\}`\}/);
   assert.match(liveData, /canShowTradeJudgement/);
   assert.doesNotMatch(home, /Buy|Sell|Strong Buy|stop-loss|Entry Score/);

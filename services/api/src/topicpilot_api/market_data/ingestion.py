@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Callable, Iterable, Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import date, datetime, time, timezone
 from decimal import Decimal
 from uuid import UUID
@@ -12,6 +12,11 @@ from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from topicpilot_api.instrument_lifecycle_authority import (
+    decide_missing_bar,
+    resolution_from_lifecycle_status,
+    resolve_sqlalchemy_trading_expectation,
+)
 from topicpilot_api.normalizer import (
     HISTORICAL_MAPPING_POLICY_VERSION,
     HistoricalDailyBarNormalizer,
@@ -178,6 +183,139 @@ def _load_instrument(session: Session, code: str, market_code: str) -> tuple[Ins
             "INSTRUMENT_NOT_FOUND", f"active V2 identity not found: {market_code}/{code}"
         )
     return row[0], row[1]
+
+
+def _effective_lifecycle_status(
+    session: Session,
+    *,
+    instrument_id: UUID,
+    reference_data_version: str,
+    trading_date: date,
+) -> str | None:
+    """Compatibility view over the shared market-aware resolver."""
+
+    resolution = resolve_sqlalchemy_trading_expectation(
+        session,
+        market_code=session.scalar(
+            select(Market.code)
+            .join(Instrument, Instrument.market_id == Market.id)
+            .where(Instrument.id == instrument_id)
+        )
+        or "",
+        instrument_code=session.scalar(
+            select(Instrument.instrument_code).where(Instrument.id == instrument_id)
+        )
+        or "",
+        as_of_date=trading_date,
+        reference_data_version=reference_data_version,
+    )
+    return resolution.lifecycle_status
+
+
+def classify_authoritative_no_trade_result(
+    result: HistoricalFetchResult,
+    *,
+    lifecycle_status: str | None,
+    trading_date: date | None,
+) -> HistoricalFetchResult:
+    """Separate lifecycle-authorized no-trade from active missing data.
+
+    Provider absence alone is not sufficient to approve a no-trade row.  A
+    date-effective lifecycle event is required; otherwise the result remains
+    an explicit ``UNKNOWN``/missing-data observation and the completeness gate
+    can block it.
+    """
+
+    if trading_date is None:
+        return result
+    resolution = resolution_from_lifecycle_status(
+        market_code=result.market_code,
+        instrument_code=result.instrument_code,
+        as_of_date=trading_date,
+        lifecycle_status=lifecycle_status,
+    )
+    decision = decide_missing_bar(
+        resolution,
+        has_observation=bool(result.bars),
+        has_priced_bar=result.has_priced_observation,
+    )
+    if decision.provider_conflict:
+        raise HistoricalIngestionError(
+            "LIFECYCLE_PROVIDER_CONFLICT",
+            f"{lifecycle_status} instrument returned an observation on "
+            f"{trading_date.isoformat()}",
+        )
+    if decision.covered:
+        return replace(
+            result,
+            instrument_status=decision.status_code,
+            status_reason=result.status_reason or decision.status_reason,
+            status_explicit=True,
+        )
+    if result.has_priced_observation:
+        return result
+    return replace(
+        result,
+        instrument_status=decision.status_code,
+        status_reason=decision.status_reason,
+        status_explicit=True,
+    )
+
+
+def _apply_authoritative_no_trade_state(
+    session: Session,
+    result: HistoricalFetchResult,
+    *,
+    instrument_id: UUID,
+    reference_data_version: str,
+    trading_date: date | None,
+) -> HistoricalFetchResult:
+    if trading_date is None:
+        return result
+    instrument = session.execute(
+        select(Instrument, Market)
+        .join(Market, Market.id == Instrument.market_id)
+        .where(Instrument.id == instrument_id)
+    ).one_or_none()
+    if instrument is None:
+        return classify_authoritative_no_trade_result(
+            result,
+            lifecycle_status=None,
+            trading_date=trading_date,
+        )
+    resolution = resolve_sqlalchemy_trading_expectation(
+        session,
+        market_code=instrument[1].code,
+        instrument_code=instrument[0].instrument_code,
+        as_of_date=trading_date,
+        reference_data_version=reference_data_version,
+    )
+    decision = decide_missing_bar(
+        resolution,
+        has_observation=bool(result.bars),
+        has_priced_bar=result.has_priced_observation,
+    )
+    if decision.provider_conflict:
+        raise HistoricalIngestionError(
+            "LIFECYCLE_PROVIDER_CONFLICT",
+            f"{decision.status_code} instrument returned an observation on "
+            f"{trading_date.isoformat()}",
+        )
+    if decision.covered:
+        return replace(
+            result,
+            instrument_status=decision.status_code,
+            status_reason=result.status_reason or decision.status_reason,
+            status_explicit=True,
+        )
+    if not result.has_priced_observation:
+        return replace(
+            result,
+            instrument_status=decision.status_code,
+            status_reason=decision.status_reason,
+            status_explicit=True,
+        )
+    return result
 
 
 def _get_or_create_source(
@@ -370,6 +508,13 @@ def ingest_historical(
     for (code, market_code), result, bars in fetched:
         instrument, market = _load_instrument(session, code, market_code)
         status_date = requested_from if requested_from == requested_to else None
+        result = _apply_authoritative_no_trade_state(
+            session,
+            result,
+            instrument_id=instrument.id,
+            reference_data_version=reference_data_version,
+            trading_date=status_date,
+        )
         observations: list[tuple[date, HistoricalBar | None, dict[str, str | None]]] = [
             (bar.trading_date, bar, _bar_payload(result, bar)) for bar in bars
         ]
@@ -384,7 +529,7 @@ def ingest_historical(
         if not observations:
             all_covered = False
         counts["provider"] += len(bars)
-        for trading_date, bar, payload in observations:
+        for trading_date, _bar, payload in observations:
             observed_at = _observed_at(trading_date, market.timezone)
             close_present = payload.get("close") is not None
             status_code = payload.get("instrument_status")
@@ -423,7 +568,10 @@ def ingest_historical(
                 raw = RawMarketObservation(
                     source_id=source.id,
                     instrument_id=instrument.id,
-                    upstream_observation_id=f"{result.source_symbol}:{bar.trading_date.isoformat()}",
+                    # A legitimate no-trade observation has no HistoricalBar.
+                    # Its stable identity is still anchored to the requested
+                    # trading date; never dereference the absent bar.
+                    upstream_observation_id=f"{result.source_symbol}:{trading_date.isoformat()}",
                     source_instrument_identifier=result.source_symbol,
                     observed_at=observed_at,
                     retrieved_at=result.retrieved_at,
@@ -458,7 +606,7 @@ def ingest_historical(
                     observed_at=raw.observed_at,
                     received_at=result.retrieved_at,
                     retrieved_at=result.retrieved_at,
-                    ordering_key=bar.trading_date.isoformat(),
+                    ordering_key=trading_date.isoformat(),
                     payload=payload,
                     content_hash=stable_hash({"raw": raw_hash, "payload": payload}),
                     supersedes_id=prior_entry.id if prior_entry else None,

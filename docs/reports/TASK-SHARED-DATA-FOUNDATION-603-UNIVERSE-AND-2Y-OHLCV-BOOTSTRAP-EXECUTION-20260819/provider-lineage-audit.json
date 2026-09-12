@@ -1,0 +1,59 @@
+{
+  "task_id": "TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-BOOTSTRAP-EXECUTION-20260819",
+  "accepted_daily_rows_with_complete_canonical_lineage": 288881,
+  "accepted_daily_rows_missing_lineage": 0,
+  "work_item_lineage_by_status": {
+    "complete": {
+      "with_provider_request_lineage": 14748,
+      "total": 14748
+    },
+    "error": {
+      "with_provider_request_lineage": 144,
+      "total": 144
+    },
+    "no_data": {
+      "with_provider_request_lineage": 142,
+      "total": 142
+    },
+    "skipped_lifecycle": {
+      "with_provider_request_lineage": 0,
+      "total": 41
+    }
+  },
+  "source_adapter_observations": [
+    {
+      "source_code": "TPEX_OFFICIAL_DAILY",
+      "adapter_version": "tpex-official-daily.v1",
+      "canonical_family_observations": 48606
+    },
+    {
+      "source_code": "TPEX_OFFICIAL_DAILY",
+      "adapter_version": "tpex-official-daily.v2",
+      "canonical_family_observations": 227020
+    },
+    {
+      "source_code": "TWSE_OFFICIAL_DAILY",
+      "adapter_version": "twse-official-daily.v1",
+      "canonical_family_observations": 207070
+    },
+    {
+      "source_code": "TWSE_OFFICIAL_DAILY",
+      "adapter_version": "twse-official-daily.v2",
+      "canonical_family_observations": 233142
+    }
+  ],
+  "provider_request_lineage_total": 15057,
+  "request_lineage_fields": [
+    "provider/source_code",
+    "adapter_version",
+    "request_url",
+    "retrieved_at",
+    "response_content_sha256",
+    "requested_window",
+    "effective_window",
+    "checkpoint/run_id",
+    "normalization_contract_version",
+    "mapping_policy_version",
+    "reference_data_version"
+  ]
+}

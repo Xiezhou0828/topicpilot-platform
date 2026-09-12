@@ -18,6 +18,31 @@ export declare class TopicPilotProblem extends Error {
 export interface TopicPilotClient {
   getDataStatus(init?: RequestInitLike): Promise<components["schemas"]["DataStatus"]>;
   getHome(init?: RequestInitLike): Promise<components["schemas"]["HomeResponse"]>;
+  getTopicCatalog(
+    query?: { asOf?: string | null; limit?: number; offset?: number },
+    init?: RequestInitLike,
+  ): Promise<components["schemas"]["TopicMinimumReadPage"]>;
+  getTopicCatalogDetail(
+    slug: string,
+    query?: { asOf?: string | null },
+    init?: RequestInitLike,
+  ): Promise<components["schemas"]["TopicMinimumRead"]>;
+  getCurrentTopicSnapshot(
+    slug: string,
+    query?: { asOf?: string | null },
+    init?: RequestInitLike,
+  ): Promise<components["schemas"]["TopicCurrentSnapshotRead"]>;
+  getTopicSnapshotHistory(
+    slug: string,
+    query?: {
+      asOf?: string | null;
+      from?: string | null;
+      to?: string | null;
+      limit?: number;
+      offset?: number;
+    },
+    init?: RequestInitLike,
+  ): Promise<components["schemas"]["TopicSnapshotHistoryReadPage"]>;
   getStocks(
     page?: { limit?: number; offset?: number },
     init?: RequestInitLike,

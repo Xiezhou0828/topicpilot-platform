@@ -1,0 +1,23 @@
+{
+  "task_id": "TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-CANONICAL-AUTHORITY-PROMOTION-AND-CONSUMER-HANDOFF-20260820",
+  "consumer": "WS3",
+  "prior_evidence_state": "A1_A2_A2-Origin_FROZEN",
+  "authority_resolution": {
+    "source_contract_path": "docs/reports/TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-CANONICAL-AUTHORITY-PROMOTION-AND-CONSUMER-HANDOFF-20260820/shared-data-foundation-authority-version-manifest.json",
+    "authority_version": "sdf-603-ohlcv-2y.v1",
+    "universe": 603,
+    "accepted_ohlcv_rows": 288881,
+    "normalized_surface_sha256": "e803733e796d8f4d8cf00575cd4045f28c9364572fc61b31ef490e8a65ff47a4",
+    "source_unique": true
+  },
+  "p1e_contract": {
+    "expanded_evidence_qualification": true,
+    "cohort_reconstitution": true,
+    "PIT_and_lineage_required": true
+  },
+  "p2e_contract": {
+    "frozen_hypothesis_validation_after_p1e": true,
+    "threshold_retime_or_mining": false
+  },
+  "result": "RESOLVABLE_P1E_FIRST_NO_AUTOSTART"
+}

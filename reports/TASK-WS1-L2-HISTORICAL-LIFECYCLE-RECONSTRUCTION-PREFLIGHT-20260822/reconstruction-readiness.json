@@ -1,0 +1,93 @@
+{
+  "task_id": "WS1/L2",
+  "authority": "HISTORICAL_RECONSTRUCTED_SHADOW",
+  "policy_version": "topic-lifecycle-policy.provisional.1",
+  "forward_boundary": "2026-08-13",
+  "historical_reconstruction_ready": "PARTIAL",
+  "safe_reconstruction_start": null,
+  "safe_reconstruction_end": null,
+  "bounded_pit_input_window_start": "2026-08-07",
+  "bounded_pit_input_window_end": "2026-08-13",
+  "strict_current_engine_replay": "NO",
+  "bounded_shadow_input_replay": "PARTIAL",
+  "topic_date_coverage": {
+    "fully_reconstructable": 0,
+    "partial_fail_closed": 460,
+    "not_reconstructable": 18650,
+    "total": 19110,
+    "pct_fully_reconstructable": 0,
+    "pct_bounded_pit_input": 2.4071
+  },
+  "fully_reconstructable_cells": "0 strict cells: every formal cell is blocked from a full replay claim by at least one cross-cutting input/lineage condition.",
+  "partial_fail_closed_cells": "460 formal PIT cells (92 topics x 5 dates) have bounded input artifacts but require fail-closed handling for current-only LiveTrackingUniverse, adjustment/corporate-action continuity, and the one-row member-fact reconciliation mismatch.",
+  "not_reconstructable_cells": "18650 cells outside the bounded formal PIT snapshot set, including 190 topic-date cells on formal dates for topics without a snapshot.",
+  "first_eligible_bootstrap": "2026-08-07 with previous_stage=null, previous_candidate_stage=null, previous_candidate_streak=0; label as UNSEEN_PRIOR_STATE/TRUNCATED_HISTORY; no pre-2026-08-07 stage claim.",
+  "missing_reasons": [
+    {
+      "gap_id": "PIT-001",
+      "category": "topic_membership",
+      "state": "MISSING",
+      "severity": "BLOCKER"
+    },
+    {
+      "gap_id": "PIT-002",
+      "category": "topic_snapshot",
+      "state": "MISSING",
+      "severity": "BLOCKER"
+    },
+    {
+      "gap_id": "PIT-003",
+      "category": "live_tracking_universe",
+      "state": "CURRENT_ONLY",
+      "severity": "BLOCKER_FOR_CURRENT_ENGINE_REPLAY"
+    },
+    {
+      "gap_id": "PIT-004",
+      "category": "price_window",
+      "state": "MISSING",
+      "severity": "BLOCKER"
+    },
+    {
+      "gap_id": "PIT-005",
+      "category": "price_corporate_action_lineage",
+      "state": "PARTIAL",
+      "severity": "BLOCKER_FOR_STRICT_RECONSTRUCTION"
+    },
+    {
+      "gap_id": "PIT-006",
+      "category": "identity_history",
+      "state": "MISSING",
+      "severity": "BLOCKER_FOR_SYMBOL_CONTINUITY"
+    },
+    {
+      "gap_id": "PIT-007",
+      "category": "previous_stage",
+      "state": "BOOTSTRAP_REQUIRED",
+      "severity": "BOUNDARY_CONDITION"
+    },
+    {
+      "gap_id": "PIT-008",
+      "category": "forward_boundary",
+      "state": "NOT_OBSERVED",
+      "severity": "BLOCKER"
+    },
+    {
+      "gap_id": "PIT-009",
+      "category": "migration_0032",
+      "state": "NOT_PRESENT_CANONICAL",
+      "severity": "OWNER_DECISION_REQUIRED"
+    },
+    {
+      "gap_id": "PIT-010",
+      "category": "member_fact_reconciliation",
+      "state": "COUNT_MISMATCH",
+      "severity": "BLOCKER_FOR_STRICT_REPLAY"
+    }
+  ],
+  "owner_decision_required": [
+    "Confirm whether 2026-08-07..2026-08-13 boundary-truncated HISTORICAL_RECONSTRUCTED_SHADOW evidence is acceptable for a later bounded replay task.",
+    "Resolve the canonical provenance/meaning of the absent Migration 0032 and absent FORWARD_SHADOW artifacts before extending the boundary.",
+    "Approve a separate contract for PIT-safe historical LiveTrackingUniverse or explicitly remove it from any future historical reconstruction adapter without changing this task."
+  ],
+  "next_minimal_bounded_route": "Owner-approved read-only reconciliation of PIT member-fact authority versus TopicLifecycleEngine input adapter for 2026-08-07..2026-08-13; no writer, backfill, schema, or engine change."
+}

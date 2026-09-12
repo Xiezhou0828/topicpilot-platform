@@ -1,0 +1,194 @@
+{
+  "active_source_contract": {
+    "authority_content_sha256": "fe1a51015d48d64b28007d36e291bed59085e7beacf5599ee5d5a35569747fcf",
+    "authority_report": "docs/reports/TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-CANONICAL-AUTHORITY-PROMOTION-AND-CONSUMER-HANDOFF-20260820",
+    "authority_version": "sdf-603-ohlcv-2y.v1",
+    "clean_consumer_probe": {
+      "clean_context": {
+        "db_target_is_non_production": true,
+        "owner_dirty_or_untracked_files_used": false,
+        "runtime_target": "topicpilot-platform-postgres-1",
+        "source_paths_are_task_owned": true
+      },
+      "historical_resolution": {
+        "accepted_ohlcv_rows": 288881,
+        "normalized_surface_sha256": "e803733e796d8f4d8cf00575cd4045f28c9364572fc61b31ef490e8a65ff47a4",
+        "read_model": "topicpilot_api.historical_read_model.read_historical_bars",
+        "result": "PASS"
+      },
+      "legacy_suppression": {
+        "fallback_used": false,
+        "legacy_is_active_publication_source": false,
+        "legacy_rows": 63826,
+        "result": "PASS"
+      },
+      "overall": "PASS_WITH_BOUNDED_LIMITATIONS",
+      "probe": "clean consumer authority resolution",
+      "source_resolution": {
+        "authority_content_sha256": "fe1a51015d48d64b28007d36e291bed59085e7beacf5599ee5d5a35569747fcf",
+        "authority_version": "sdf-603-ohlcv-2y.v1",
+        "bootstrap_head": "c40aa42e7cac665386009f29c94a8dafce896427",
+        "unique": true
+      },
+      "task_id": "TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-CANONICAL-AUTHORITY-PROMOTION-AND-CONSUMER-HANDOFF-20260820",
+      "universe_resolution": {
+        "TPE": 370,
+        "TWO": 233,
+        "active_registry": "sdf-reference-603-v1",
+        "official_active_instruments": 603,
+        "result": "PASS"
+      }
+    },
+    "expanded_ohlcv_reconciliation": {
+      "accepted_ohlcv_rows": 288881,
+      "family_quality_counts": [
+        {
+          "count": 357630,
+          "family_code": "PRICE",
+          "quality_state": "ACCEPTED"
+        },
+        {
+          "count": 289,
+          "family_code": "PRICE",
+          "quality_state": "INCOMPLETE"
+        },
+        {
+          "count": 357919,
+          "family_code": "VOLUME",
+          "quality_state": "ACCEPTED"
+        }
+      ],
+      "formal_instruments": 603,
+      "market_rows": {
+        "TPE": {
+          "accepted_full_ohlcv_rows": 177427,
+          "incomplete_view_rows": 32
+        },
+        "TWO": {
+          "accepted_full_ohlcv_rows": 111454,
+          "incomplete_view_rows": 240
+        }
+      },
+      "observed_surface": {
+        "distinct_instruments": 603,
+        "incomplete_view_rows": 272,
+        "max_trade_date": "2026-08-13",
+        "min_trade_date": "2024-08-13",
+        "normalized_surface_md5": "0cbdb8fe950c7cbe494dcc5cb50c6e33",
+        "normalized_surface_sha256": "e803733e796d8f4d8cf00575cd4045f28c9364572fc61b31ef490e8a65ff47a4",
+        "view_rows": 289153
+      },
+      "provider_feasibility": {
+        "TPE": "TWSE_OFFICIAL_DAILY",
+        "TWO": "TPEX_OFFICIAL_DAILY",
+        "monthly_path": "already executed and lineage retained; no refetch in promotion task"
+      },
+      "quality": {
+        "accepted_rows_missing_lineage": 0,
+        "accepted_rows_with_complete_lineage": 288881,
+        "adjustment_state": "UNKNOWN",
+        "candidate_alternative_rows_resolved": 50447,
+        "duplicate_stable_keys": 0,
+        "invalid_ohlcv": 0,
+        "synthetic_fill": 0
+      },
+      "reconciliation": "PASS_WITH_BOUNDED_LIMITATIONS",
+      "requested_window": {
+        "end": "2026-08-13",
+        "start": "2024-08-13"
+      },
+      "source_adapter_observations": [
+        {
+          "adapter_version": "tpex-official-daily.v1",
+          "canonical_family_observations": 48606,
+          "source_code": "TPEX_OFFICIAL_DAILY"
+        },
+        {
+          "adapter_version": "tpex-official-daily.v2",
+          "canonical_family_observations": 227020,
+          "source_code": "TPEX_OFFICIAL_DAILY"
+        },
+        {
+          "adapter_version": "twse-official-daily.v1",
+          "canonical_family_observations": 207070,
+          "source_code": "TWSE_OFFICIAL_DAILY"
+        },
+        {
+          "adapter_version": "twse-official-daily.v2",
+          "canonical_family_observations": 233142,
+          "source_code": "TWSE_OFFICIAL_DAILY"
+        }
+      ],
+      "source_run_id": "TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-BOOTSTRAP-EXECUTION-20260819-RUN-001",
+      "task_id": "TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-CANONICAL-AUTHORITY-PROMOTION-AND-CONSUMER-HANDOFF-20260820"
+    },
+    "normalized_ohlcv_surface_sha256": "e803733e796d8f4d8cf00575cd4045f28c9364572fc61b31ef490e8a65ff47a4",
+    "source_contract_probe": {
+      "authority_resolution": {
+        "accepted_ohlcv_rows": 288881,
+        "authority_version": "sdf-603-ohlcv-2y.v1",
+        "normalized_surface_sha256": "e803733e796d8f4d8cf00575cd4045f28c9364572fc61b31ef490e8a65ff47a4",
+        "source_contract_path": "docs/reports/TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-CANONICAL-AUTHORITY-PROMOTION-AND-CONSUMER-HANDOFF-20260820/shared-data-foundation-authority-version-manifest.json",
+        "source_unique": true,
+        "universe": 603
+      },
+      "consumer": "WS2-E1",
+      "contract_checks": {
+        "PIT_contract": true,
+        "canonical_daily_ohlcv": true,
+        "identity_lineage": true,
+        "indicator_rerun": false,
+        "legacy_not_active": true,
+        "limitation_manifest": true,
+        "ws2_semantics_changed": false
+      },
+      "prior_state": {
+        "audit_state": "BLOCKED_SOURCE_CONTRACT",
+        "baseline_rows": 63826,
+        "baseline_universe": 507,
+        "source_head": "c40aa42e7cac665386009f29c94a8dafce896427"
+      },
+      "result": "RESOLVABLE_AFTER_HANDOFF_NO_AUTOSTART",
+      "task_id": "TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-CANONICAL-AUTHORITY-PROMOTION-AND-CONSUMER-HANDOFF-20260820"
+    }
+  },
+  "attempt_number": 2,
+  "frozen_technical_v0": {
+    "algorithm_source": "services/api/src/topicpilot_api/technical_publication.py",
+    "contract_version": "stock-technical-publication.v3",
+    "event_dataset": "reports/TASK-REC-A1-CORPORATE-ACTION-RESEARCH-DATASET-IMPLEMENTATION/REC-A1-CA-EVENTS-V0.json",
+    "formal_indicator_count": 14,
+    "manifest_source": "reports/TASK-WS2-TECHNICAL-V0-INDICATOR-INVENTORY-AND-FORMAL-EVIDENCE-SURFACE-20260819/technical-v0-indicator-manifest.json",
+    "policy_unchanged": true,
+    "policy_version": "stock-technical-v0-policy.v4"
+  },
+  "prior_attempt": {
+    "preserved": true,
+    "report": "docs/reports/TASK-WS2-E1-603-UNIVERSE-TECHNICAL-V0-EXPANDED-QUALIFICATION-AND-FORMAL-EVIDENCE-RECONSTITUTION-20260820.md",
+    "source_manifest": "reports/TASK-WS2-E1-603-UNIVERSE-TECHNICAL-V0-EXPANDED-QUALIFICATION-AND-FORMAL-EVIDENCE-RECONSTITUTION-20260820/ws2-e1-source-contract-manifest.json",
+    "status": "BLOCKED_SOURCE_CONTRACT",
+    "task_id": "TASK-WS2-E1-603-UNIVERSE-TECHNICAL-V0-EXPANDED-QUALIFICATION-AND-FORMAL-EVIDENCE-RECONSTITUTION-20260820"
+  },
+  "required_consumption_checks": {
+    "ACTIVE_ACCEPTED_OHLCV_COUNT": 288881,
+    "ACTIVE_UNIVERSE_COUNT": 603,
+    "DATABASE_MUTATION": "NO",
+    "OWNER_DIRTY_STATE_REQUIRED": "NO",
+    "PROVIDER_REFETCH": "NO",
+    "SOURCE_HASH_MATCH": "YES",
+    "WS2_SOURCE_CONTRACT_RESOLVABLE": "YES"
+  },
+  "resolved_source": {
+    "active_accepted_ohlcv_rows": 288881,
+    "active_universe_count": 603,
+    "historical_window": {
+      "end": "2026-08-13",
+      "start": "2024-08-13"
+    },
+    "legacy_active": false,
+    "owner_dirty_state_required": false,
+    "projection": "topicpilot.vw_daily_market_observations",
+    "read_model": "topicpilot_api.historical_read_model.read_historical_bars"
+  },
+  "task_id": "TASK-WS2-E1-603-UNIVERSE-TECHNICAL-V0-EXPANDED-QUALIFICATION-RESUME-AFTER-SOURCE-CONTRACT-UNBLOCK-20260820"
+}

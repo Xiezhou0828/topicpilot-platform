@@ -89,3 +89,78 @@ SCHEDULER_CHANGED = NO
 BLOCKER = Awaiting exact-SHA integration/deploy and operator G3 evidence.
 FINAL_STATUS = READY_FOR_EXACT_SHA_CI_AND_PRODUCTION_G3_REVIEW
 ```
+
+## Production execution closure
+
+The implementation was released and verified by the operator in the same
+authenticated Production runtime. The application runtime authority is kept
+separate from any later local documentation change:
+
+```text
+TASK_DATA_REF_008 = CLOSED
+STARTING_ORIGIN_MAIN_SHA = eb50d2d1e242290e2b9c6c95389bd7cd257caf26
+IMPLEMENTATION_SHA = b9c881af0fa34d29e9ac0ccdf123351741e7f62d
+INTEGRATED_MAIN_SHA = NOT_MERGED; exact-ref release deployed from task branch
+APPLICATION_RUNTIME_AUTHORITY_SHA = b9c881af0fa34d29e9ac0ccdf123351741e7f62d
+DOCUMENTATION_SHA = NONE_CREATED_AFTER_DEPLOYMENT
+RUNTIME_GIT_COMMIT = b9c881af0fa34d29e9ac0ccdf123351741e7f62d
+PROVIDER_LINEAGE_BUILD_SHA = b9c881af0fa34d29e9ac0ccdf123351741e7f62d
+RUNTIME_SHA_VERIFIED = YES
+
+G0 = PASS (preserved prior evidence; not rerun)
+G1 = PASS (preserved prior evidence; not rerun)
+G2 = PASS (preserved prior evidence; not rerun)
+G3_ENTRYPOINT = topicpilot-market-semantics-check
+G3_EXECUTION_CLASS = READ_ONLY
+G3_RUN_DATE = 2026-08-13
+G3_REFERENCE_VERSION = tw-reference-v1-rollover-daf19e9eb051255c
+G3 = PASS
+
+TPE_PROVIDER = TWSE_OFFICIAL_DAILY
+TPE_PROVIDER_VERSION = twse-official-daily.v2
+TPE_DATA_DATE = 2026-08-13
+TPE_EXPECTED_ELIGIBLE_COUNT = 313
+TPE_SEMANTIC_ELIGIBLE_COUNT = 313
+TPE_MISSING_EXPECTED_IDENTITIES = 0
+TPE_OUT_OF_SCOPE_PROVIDER_IDENTITIES = 1065 (diagnostic-only)
+
+TWO_PROVIDER = TPEX_OFFICIAL_DAILY
+TWO_PROVIDER_VERSION = tpex-official-daily.v2
+TWO_DATA_DATE = 2026-08-13
+TWO_EXPECTED_ELIGIBLE_COUNT = 193
+TWO_SEMANTIC_ELIGIBLE_COUNT = 193
+TWO_MISSING_EXPECTED_IDENTITIES = 0
+TWO_OUT_OF_SCOPE_PROVIDER_IDENTITIES = 10281 (diagnostic-only)
+
+FALLBACK_USED = false
+TARGET_DATE_MATCHED = YES
+PRODUCTION_DB_ACCESS = YES (read-only)
+PRODUCTION_WRITE_SET = []
+PRODUCTION_MUTATION = NO
+PHYSICAL_6806_ROW_PRESERVED = YES
+CANARY = NOT_RUN
+SCHEDULER_CHANGED = NO
+
+EXACT_SHA_CI_RUN = 31770418256
+EXACT_SHA_CI = PASS
+DEPLOY_RUN = 31770585896
+DEPLOY = PASS
+PUSH = NON_FORCE_TASK_BRANCH_ONLY
+MAIN_PUSH = NO
+AI_WORKLOG_UPDATED = YES (local append-only)
+REPORT_UPDATED = YES (local closure append)
+BLOCKER = NONE
+FINAL_STATUS = READY_FOR_POST_CLOSE_CANARY
+```
+
+The Production G3 output had `readOnly=true`, `fallbackUsed=false`, an empty
+`failureReasons` list, and `productionWriteSet=[]`. Both official market
+payloads matched the authorized date and covered every date-effective expected
+identity. The additional provider identities were retained only as diagnostic
+counts and did not affect the PASS decision.
+
+No Canary, Scheduler, post-close writer, `topicpilot-live`, or other
+Production mutation was authorized or executed. The deployed application
+runtime authority remains `b9c881af0fa34d29e9ac0ccdf123351741e7f62d`; this
+closure update was kept local and did not create or push a new documentation
+release.

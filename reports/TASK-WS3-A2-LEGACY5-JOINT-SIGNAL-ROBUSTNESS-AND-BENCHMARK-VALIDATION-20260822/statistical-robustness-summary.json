@@ -1,0 +1,109 @@
+{
+  "bootstrap": {
+    "confidence_level": 0.95,
+    "method": "deterministic percentile bootstrap of event/source-observation means",
+    "replicates": 1000,
+    "seed": 20260822
+  },
+  "discipline": {
+    "formal_significance_claim": "NO",
+    "in_sample_descriptive": true,
+    "multiple_testing_adjustment": "NONE; results are exploratory descriptive robustness checks",
+    "ratio_is_risk_adjusted_return": "NO"
+  },
+  "endpoint_summary": [
+    {
+      "bootstrap_mean_ci_95_high": 0.02055081616639763,
+      "bootstrap_mean_ci_95_low": 0.014466887671701468,
+      "cohort": "A2_ONLY",
+      "horizon": 5,
+      "matured_count": 4382,
+      "mean": 0.01753965439887155,
+      "median": -0.0016077211973645755
+    },
+    {
+      "bootstrap_mean_ci_95_high": 0.03366153498266489,
+      "bootstrap_mean_ci_95_low": 0.024842562425243898,
+      "cohort": "A2_ONLY",
+      "horizon": 10,
+      "matured_count": 4368,
+      "mean": 0.029302009198561223,
+      "median": 0.0
+    },
+    {
+      "bootstrap_mean_ci_95_high": 0.011767827747763766,
+      "bootstrap_mean_ci_95_low": 0.002353758775325979,
+      "cohort": "LEGACY5_ONLY",
+      "horizon": 5,
+      "matured_count": 1668,
+      "mean": 0.007000681049546191,
+      "median": -0.007698598961667022
+    },
+    {
+      "bootstrap_mean_ci_95_high": 0.021677534608828514,
+      "bootstrap_mean_ci_95_low": 0.008624301862513612,
+      "cohort": "LEGACY5_ONLY",
+      "horizon": 10,
+      "matured_count": 1661,
+      "mean": 0.015101575402721239,
+      "median": -0.004761904761904762
+    },
+    {
+      "bootstrap_mean_ci_95_high": 0.032248240327185054,
+      "bootstrap_mean_ci_95_low": 0.019601087554861035,
+      "cohort": "BOTH_SAME_SESSION",
+      "horizon": 5,
+      "matured_count": 1109,
+      "mean": 0.025834302404106755,
+      "median": 0.0046948356807512415
+    },
+    {
+      "bootstrap_mean_ci_95_high": 0.06062390917387429,
+      "bootstrap_mean_ci_95_low": 0.04143015578354854,
+      "cohort": "BOTH_SAME_SESSION",
+      "horizon": 10,
+      "matured_count": 1109,
+      "mean": 0.0508413624404588,
+      "median": 0.01509433962264151
+    }
+  ],
+  "exploratory_effect_differences": [
+    {
+      "bootstrap_difference_ci_95_high": 0.015105703108403368,
+      "bootstrap_difference_ci_95_low": 0.0011608106892569173,
+      "horizon": 5,
+      "interpretation": "Exploratory descriptive interval only; no acceptance/significance claim and no multiple-testing correction",
+      "left": "BOTH_SAME_SESSION",
+      "mean_difference": 0.008294648005235206,
+      "right": "A2_ONLY"
+    },
+    {
+      "bootstrap_difference_ci_95_high": 0.026369884136816252,
+      "bootstrap_difference_ci_95_low": 0.011294533902075065,
+      "horizon": 5,
+      "interpretation": "Exploratory descriptive interval only; no acceptance/significance claim and no multiple-testing correction",
+      "left": "BOTH_SAME_SESSION",
+      "mean_difference": 0.018833621354560563,
+      "right": "LEGACY5_ONLY"
+    },
+    {
+      "bootstrap_difference_ci_95_high": 0.0322938813066446,
+      "bootstrap_difference_ci_95_low": 0.011561236866488078,
+      "horizon": 10,
+      "interpretation": "Exploratory descriptive interval only; no acceptance/significance claim and no multiple-testing correction",
+      "left": "BOTH_SAME_SESSION",
+      "mean_difference": 0.02153935324189758,
+      "right": "A2_ONLY"
+    },
+    {
+      "bootstrap_difference_ci_95_high": 0.04726047169779047,
+      "bootstrap_difference_ci_95_low": 0.024251534925239474,
+      "horizon": 10,
+      "interpretation": "Exploratory descriptive interval only; no acceptance/significance claim and no multiple-testing correction",
+      "left": "BOTH_SAME_SESSION",
+      "mean_difference": 0.035739787037737565,
+      "right": "LEGACY5_ONLY"
+    }
+  ],
+  "schema_version": "ws3-a2-legacy5-statistical-robustness.v1"
+}

@@ -1,0 +1,20 @@
+{
+  "schemaVersion": "ws3-core-v0-candidate-date-coverage.v1",
+  "taskId": "TASK-REC-A1-CORE-V0-A1-A2-EXECUTABLE-CANDIDATE-PANEL-AND-READINESS-CLOSURE-20260816",
+  "auditMode": "CONTRACT_AND_SYNTHETIC_FOCUSED_TESTS_ONLY",
+  "canonicalCandidateDateRowsLoaded": 0,
+  "countsArePerformanceMetrics": false,
+  "metricsGenerated": false,
+  "reasonRealCoverageNotRun": "No canonical candidate/outcome panel rows were available and formal WS2 MA60 publication remains bounded.",
+  "windows": {
+    "development": {"candidateDatesAudited": 0, "formed": 0, "unavailable": 0, "status": "NOT_RUN_BY_SCOPE"},
+    "validation": {"candidateDatesAudited": 0, "formed": 0, "unavailable": 0, "status": "NOT_RUN_BY_SCOPE"},
+    "holdout": {"candidateDatesAudited": 0, "formed": 0, "unavailable": 0, "status": "NOT_RUN_BY_SCOPE"}
+  },
+  "syntheticFocusedCases": {
+    "A1": {"cases": 5, "formed": 1, "notFormedOrUnavailable": 4},
+    "A2": {"cases": 3, "formed": 1, "notFormedOrUnavailable": 2}
+  },
+  "noLookahead": true,
+  "forwardOutcomeHorizons": ["T+1", "T+3", "T+5", "T+10"]
+}

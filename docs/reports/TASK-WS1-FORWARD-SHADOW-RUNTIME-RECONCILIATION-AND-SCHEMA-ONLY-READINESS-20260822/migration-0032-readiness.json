@@ -1,0 +1,13 @@
+{
+  "taskId": "TASK-WS1-LIFECYCLE-CANONICAL-COLLISION-RECONCILIATION-AND-PROMOTION-READINESS-20260822",
+  "revision": "0032_task_ws1_topic_lifecycle_contract_gap_closure",
+  "migrationArtifactPresentInCandidate": true,
+  "migrationChainHeadInLocalDatabase": "0032_task_ws1_topic_lifecycle_contract_gap_closure",
+  "localSchemaOnlyExecution": "PASS",
+  "productionExecution": "NOT_EXECUTED",
+  "historicalBackfill": "NO",
+  "retrospectiveReplay": "NO",
+  "productionMutation": "NO",
+  "schemaContract": "nullable lineage/correction/supersession fields and required foreign keys for lifecycle result lineage",
+  "canonicalReadiness": "ARTIFACT_READY_PROMOTION_HELD_BY_OWNER_DIRTY_STATE"
+}

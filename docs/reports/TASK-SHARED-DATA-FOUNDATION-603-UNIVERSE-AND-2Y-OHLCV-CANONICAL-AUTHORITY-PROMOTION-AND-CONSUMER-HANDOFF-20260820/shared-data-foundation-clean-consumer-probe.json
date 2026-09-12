@@ -1,0 +1,36 @@
+{
+  "task_id": "TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-CANONICAL-AUTHORITY-PROMOTION-AND-CONSUMER-HANDOFF-20260820",
+  "probe": "clean consumer authority resolution",
+  "clean_context": {
+    "owner_dirty_or_untracked_files_used": false,
+    "source_paths_are_task_owned": true,
+    "runtime_target": "topicpilot-platform-postgres-1",
+    "db_target_is_non_production": true
+  },
+  "source_resolution": {
+    "unique": true,
+    "bootstrap_head": "c40aa42e7cac665386009f29c94a8dafce896427",
+    "authority_version": "sdf-603-ohlcv-2y.v1",
+    "authority_content_sha256": "fe1a51015d48d64b28007d36e291bed59085e7beacf5599ee5d5a35569747fcf"
+  },
+  "universe_resolution": {
+    "official_active_instruments": 603,
+    "TPE": 370,
+    "TWO": 233,
+    "active_registry": "sdf-reference-603-v1",
+    "result": "PASS"
+  },
+  "historical_resolution": {
+    "read_model": "topicpilot_api.historical_read_model.read_historical_bars",
+    "accepted_ohlcv_rows": 288881,
+    "normalized_surface_sha256": "e803733e796d8f4d8cf00575cd4045f28c9364572fc61b31ef490e8a65ff47a4",
+    "result": "PASS"
+  },
+  "legacy_suppression": {
+    "legacy_rows": 63826,
+    "legacy_is_active_publication_source": false,
+    "fallback_used": false,
+    "result": "PASS"
+  },
+  "overall": "PASS_WITH_BOUNDED_LIMITATIONS"
+}

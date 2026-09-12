@@ -1,0 +1,211 @@
+{
+  "taskId": "TASK-REC-A1-CORE-V0-WALK-FORWARD-RESEARCH-20260816",
+  "mode": "RESEARCH_ONLY",
+  "status": "FAIL_CLOSED",
+  "walkForwardExecuted": false,
+  "researchConclusion": "INSUFFICIENT_CANONICAL_INPUTS_NO_STRATEGY_REVIEW_RESULT",
+  "canonicalSource": {
+    "repository": "C:/Users/acer/Desktop/題材領航/topicpilot-platform",
+    "sourceSha": "c40a1d4e0337d9c56cf805cbd708eba216b41ab0",
+    "sourceState": "ISOLATED_CLEAN_WORKTREE_FROM_CANONICAL_OWNER_HEAD"
+  },
+  "dataset": {
+    "datasetVersion": "REC-A1-CA-EVENTS-V0",
+    "datasetSchemaVersion": "rec-a1-corporate-action-research-dataset.v0",
+    "datasetContentHash": "4d9b4912bd1c4613510e60c5cf4b5a629c367e1c94dd733d3b1dc3f935e0eb5d",
+    "frozenOwnerArtifactSha256": "1091f97268ac01342a1803bc511780b9948c06c50176e367588b829af0d530e0",
+    "cleanCanonicalHeadArtifactSha256": "78f684d5b014f43f3b34393be1bc644805e67f05e18b21e7ab98d075a1cd60b2",
+    "frozenOwnerMetadataSha256": "019d41046198f3ee66d39429188dc6ae6d54de3e43a5e24767d7a7fbb918cfff",
+    "cleanCanonicalHeadMetadataSha256": "1281a8379ccaa9f56e65cadb98dc5bcd35be5d06761ab73b2370b54c5634a2e8",
+    "reviewLedgerSha256": "a22fde2f7fd75eb11708a25ebc4642bb66ecd6283243ea807ed99ee01b4984a5",
+    "coverageMatrixSha256": "97d12273d1ffd9b733d3c0956af20f48c0fb6bab4158037eadcebc009ea59ba8",
+    "automationFeasibilitySha256": "18ed2e5574c6a0d6840a8c4245c58f34cf366d8bfd5f1c172018f3acfec3d6d4",
+    "cleanCanonicalHeadReviewLedger": "NOT_PRESENT",
+    "researchWindow": {
+      "start": "2026-02-02",
+      "end": "2026-08-13"
+    },
+    "rows": 372,
+    "canonicalIdentities": 507,
+    "eventIdentities": 353,
+    "authoritativeNoEventIdentities": 0,
+    "reviewedUnknownIdentities": 154,
+    "unreviewedUnknownIdentities": 0,
+    "coverageStateForReviewedUnknowns": "UNKNOWN",
+    "freezePolicy": "BEST_EFFORT_RESEARCH_INTEGRITY_WITH_REVIEWED_RESIDUAL_UNCERTAINTY",
+    "use": "OUTCOME_INTEGRITY_SUPPORT_ONLY",
+    "tradingDecisionUse": "FORBIDDEN"
+  },
+  "protocol": {
+    "protocolVersion": "core-v0-walk-forward.v1",
+    "asOfSemantics": "EOD decision snapshot; every input must be effective and observable no later than evaluationDate",
+    "inputAuthority": "V2 canonical observation chain plus explicit point-in-time Topic/Stock context; no browser or ad-hoc replacement",
+    "timeSplits": [
+      {
+        "name": "development",
+        "start": "2026-02-02",
+        "end": "2026-06-30",
+        "role": "predeclared research window; no parameter optimization"
+      },
+      {
+        "name": "validation",
+        "start": "2026-07-01",
+        "end": "2026-07-31",
+        "role": "predeclared chronological validation window"
+      },
+      {
+        "name": "holdout",
+        "start": "2026-08-01",
+        "end": "2026-08-13",
+        "role": "predeclared final chronological holdout; requires subsequent outcome sessions"
+      }
+    ],
+    "minimumFeatureHistoryTradingSessions": 60,
+    "forwardOutcomeHorizonsTradingSessions": [1, 3, 5, 10],
+    "parameterVersion": "topic-opportunity-policy.provisional.1",
+    "parameterStatus": "PROVISIONAL_TUNABLE_VERSIONED",
+    "parameterSearch": "FORBIDDEN",
+    "thresholdTuning": "FORBIDDEN",
+    "strategyOptimization": "FORBIDDEN",
+    "candidateDefinitions": [
+      {
+        "candidateId": "A1_PRE_BREAKOUT",
+        "canonicalDefinitionStatus": "NOT_FORMALLY_DEFINED",
+        "runtimeId": null,
+        "executionStatus": "BLOCKED"
+      },
+      {
+        "candidateId": "A2_CONFIRMED_BREAKOUT",
+        "canonicalDefinitionStatus": "NOT_FORMALLY_DEFINED",
+        "runtimeId": null,
+        "executionStatus": "BLOCKED"
+      },
+      {
+        "candidateId": "A3_STRONG_PULLBACK_RETEST",
+        "canonicalDefinitionStatus": "FUTURE_RUNTIME_SLOT_ONLY",
+        "runtimeId": "PULLBACK_ACCEPTANCE",
+        "executionStatus": "BLOCKED"
+      },
+      {
+        "candidateId": "CATCH_UP_ROTATION",
+        "canonicalDefinitionStatus": "PROVISIONAL_SHADOW_ONLY",
+        "runtimeId": "CATCH_UP",
+        "executionStatus": "BLOCKED_BY_MISSING_PIT_PANEL"
+      }
+    ],
+    "availableShadowRuntime": [
+      "TREND_CONTINUATION",
+      "CATCH_UP"
+    ],
+    "futureRuntimeSlots": [
+      "EARLY_STRENGTH",
+      "PULLBACK_ACCEPTANCE"
+    ],
+    "metrics": [
+      "signal_count",
+      "eligible_count",
+      "coverage_by_horizon",
+      "forward_close_return_T+1_T+3_T+5_T+10",
+      "benchmark_excess_return",
+      "hit_rate",
+      "MFE",
+      "MAE",
+      "event_excluded_outcome_count",
+      "no_lookahead_assertion",
+      "explainability_lineage_coverage"
+    ],
+    "failureCriteria": [
+      "PIT_FEATURE_OR_TOPIC_CONTEXT_MISSING",
+      "CANONICAL_OHLCV_PANEL_MISSING",
+      "CANDIDATE_DEFINITION_OR_RUNTIME_MAPPING_MISSING",
+      "FORWARD_OUTCOME_HORIZON_INCOMPLETE",
+      "INPUT_LINEAGE_OR_EFFECTIVE_DATE_MISSING",
+      "LOOKAHEAD_DETECTED",
+      "DUPLICATE_OR_TAMPERED_INPUT",
+      "PROVISIONAL_PARAMETER_CHANGED_DURING_RUN"
+    ]
+  },
+  "preflightChecks": [
+    {
+      "checkId": "REC_A1_FREEZE_IDENTITY",
+      "status": "FAIL",
+      "evidence": "The owner dirty checkout contains the frozen artifact hash 1091f972..., but clean canonical HEAD contains 78f684d5... at the same path; the freeze metadata also differs and the linked review ledger is absent from clean HEAD. The frozen input is therefore not reproducible from the canonical SHA."
+    },
+    {
+      "checkId": "CANONICAL_OHLCV_RESEARCH_PANEL",
+      "status": "FAIL",
+      "evidence": "No canonical OHLCV research panel/export is present in the repository; the canonical OHLCV authority is described as a PostgreSQL read path."
+    },
+    {
+      "checkId": "READ_ONLY_DATABASE_AVAILABILITY",
+      "status": "FAIL",
+      "evidence": "No DATABASE_URL or TEST_DATABASE_URL was present; the repository default local PostgreSQL endpoint timed out during a read-only connection preflight."
+    },
+    {
+      "checkId": "PIT_TOPIC_CONTEXT",
+      "status": "FAIL",
+      "evidence": "Current canonical state has PIT daily membership foundation only; formal Score, Grade, Lifecycle, and historical Topic/System State inputs required by the Opportunity contract are not published."
+    },
+    {
+      "checkId": "CANDIDATE_DEFINITION_COMPLETENESS",
+      "status": "FAIL",
+      "evidence": "A1/A2/A3 are research-candidate labels without a frozen runtime definition; only provisional shadow Trend/Catch-up runtime IDs exist, with Pullback Acceptance explicitly future/not implemented."
+    },
+    {
+      "checkId": "FORWARD_OUTCOME_COVERAGE",
+      "status": "FAIL",
+      "evidence": "No point-in-time candidate/outcome panel is available, and the frozen research window ends 2026-08-13, so complete T+10 subsequent-session outcomes cannot be proven from canonical inputs."
+    },
+    {
+      "checkId": "LOOKAHEAD_GUARD",
+      "status": "NOT_RUN",
+      "evidence": "No replay was started because prerequisite input gates failed; no look-ahead claim is made."
+    },
+    {
+      "checkId": "RESEARCH_REPRODUCIBILITY",
+      "status": "BLOCKED",
+      "evidence": "Protocol and upstream hashes are fixed, but a lockfile-derived executable dataset/dependency run cannot be reproduced without the missing canonical panel/database."
+    }
+  ],
+  "results": {
+    "status": "NOT_RUN",
+    "signals": null,
+    "eligibleSignals": null,
+    "outcomes": null,
+    "metrics": null,
+    "lookAheadCheck": "NOT_RUN",
+    "explainabilityEvidence": null,
+    "failureCriteriaTriggered": [
+      "PIT_FEATURE_OR_TOPIC_CONTEXT_MISSING",
+      "CANONICAL_OHLCV_PANEL_MISSING",
+      "CANDIDATE_DEFINITION_OR_RUNTIME_MAPPING_MISSING",
+      "FORWARD_OUTCOME_HORIZON_INCOMPLETE"
+    ]
+  },
+  "validation": {
+    "preEditCleanSourceState": "PASS",
+    "postArtifactDiffCheck": "PASS",
+    "jsonParse": "PASS",
+    "sourceHashCrossCheck": "PASS_FOR_CLEAN_HEAD_HASH_AND_FAIL_FOR_FROZEN_OWNER_HASH",
+    "pytest": "NOT_RUN_PYTEST_UNAVAILABLE",
+    "ruff": "NOT_RUN_RUFF_UNAVAILABLE",
+    "testCountPre": null,
+    "testCountPost": null,
+    "testCountDelta": "NOT_APPLICABLE_DOCUMENTATION_ONLY",
+    "testCountDeltaReason": "No application or test source changed; executable test dependency is not installed in the available Python 3.12 runtime.",
+    "reproducibleDependencyState": "BLOCKED",
+    "secretOrRawPayloadScan": "NOT_APPLICABLE_METADATA_ONLY"
+  },
+  "governance": {
+    "strategyReviewInputOnly": true,
+    "acceptedStrategyDecision": "NOT_MADE",
+    "formalRecommendationPublication": "NOT_AUTHORIZED",
+    "opportunityProductionActivation": "NOT_AUTHORIZED",
+    "productContractPromotion": "NO",
+    "productionMutation": "NO",
+    "scheduler": "NO",
+    "deploy": "NO",
+    "pushRemote": "NO",
+    "nextTaskChanged": "NO"
+  }
+}

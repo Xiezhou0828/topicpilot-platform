@@ -48,6 +48,7 @@ from topicpilot_api.schemas import (
     TopicSummary,
 )
 from topicpilot_api.snapshot import assemble_snapshot
+from topicpilot_api.topic_catalog_api import router as topic_catalog_router
 from topicpilot_api.topic_intelligence_api import router as topic_intelligence_router
 from topicpilot_api.topic_recommendation_api import router as recommendation_router
 from topicpilot_api.topic_snapshot_api import router as topic_snapshot_router
@@ -82,6 +83,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     install_problem_handlers(application)
     application.include_router(admin_router)
     application.include_router(topic_intelligence_router)
+    application.include_router(topic_catalog_router)
     application.include_router(recommendation_router)
     application.include_router(production_read_model_router)
     application.include_router(topic_snapshot_router)

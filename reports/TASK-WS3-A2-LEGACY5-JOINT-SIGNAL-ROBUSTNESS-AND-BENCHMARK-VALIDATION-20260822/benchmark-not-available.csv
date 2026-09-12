@@ -1,0 +1,2 @@
+status,analysis,required_source,disposition,cohort_scope,horizons
+NOT_AVAILABLE,BENCHMARK_ADJUSTED_ANALYSIS,PIT-safe accepted TAIEX/market benchmark daily series,"No such committed source artifact exists in the canonical repository; no web download, synthetic index, or unknown proxy was used",A2_ONLY|LEGACY5_ONLY|BOTH_SAME_SESSION,5|10

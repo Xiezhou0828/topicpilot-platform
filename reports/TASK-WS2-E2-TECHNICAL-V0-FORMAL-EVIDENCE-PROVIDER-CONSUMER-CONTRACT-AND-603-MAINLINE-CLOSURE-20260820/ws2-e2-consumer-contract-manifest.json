@@ -1,0 +1,42 @@
+{
+  "task_id": "TASK-WS2-E2-TECHNICAL-V0-FORMAL-EVIDENCE-PROVIDER-CONSUMER-CONTRACT-AND-603-MAINLINE-CLOSURE-20260820",
+  "contract_type": "TECHNICAL_V0_FORMAL_EVIDENCE_CONSUMER",
+  "consumer_contract_version": "stock-technical-v0-formal-evidence-consumer.v1",
+  "allowed_consumers": [
+    "WS3_READ_ONLY_RESEARCH",
+    "FUTURE_API_ADAPTER",
+    "FUTURE_UI_ADAPTER",
+    "DIAGNOSTIC_TOOLING"
+  ],
+  "consumer_may_assume": [
+    "indicator_semantics_are_versioned",
+    "session_and_as_of_are_explicit",
+    "pit_status_is_explicit",
+    "availability_state_and_reason_are_explicit",
+    "source_foundation_and_lineage_are_identifiable",
+    "continuity_is_indicator_window_scoped"
+  ],
+  "consumer_must_not_assume": [
+    "unavailable_is_zero_or_false",
+    "lookup_limitation_is_no_event",
+    "raw_ohlcv_is_adjusted_ohlcv",
+    "consumer_recomputes_indicator_semantics",
+    "technical_evidence_is_strategy_acceptance"
+  ],
+  "availability_behavior": {
+    "AVAILABLE": "value may be consumed with identity/version/PIT/lineage checks",
+    "AVAILABLE_WITH_LIMITATION": "value may be consumed only with explicit limitation propagation",
+    "BLOCKED": "do not consume as a value; preserve state and reason",
+    "UNAVAILABLE": "do not consume as a value; preserve state and reason",
+    "ERROR": "do not consume; surface implementation/provider error"
+  },
+  "reference_consumer": {
+    "module": "services/api/src/topicpilot_api/technical_v0_evidence_contract.py",
+    "class": "TechnicalV0EvidenceConsumer",
+    "unavailable_unwrap_behavior": "RAISE_EvidenceUnavailable",
+    "api_route_created": "NO",
+    "ui_changed": "NO"
+  },
+  "evidence_only_boundary": "PASS",
+  "status": "DEFINED_AND_VALIDATED"
+}

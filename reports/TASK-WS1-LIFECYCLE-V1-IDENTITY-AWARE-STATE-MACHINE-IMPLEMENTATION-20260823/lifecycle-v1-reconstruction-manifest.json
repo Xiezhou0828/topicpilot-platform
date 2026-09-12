@@ -1,0 +1,15 @@
+{
+  "task_id": "TASK-WS1-LIFECYCLE-V1-IDENTITY-AWARE-STATE-MACHINE-IMPLEMENTATION-20260823",
+  "source_class": "CURRENT_TAXONOMY_HISTORICAL_V1_RECONSTRUCTION",
+  "requested_window": "2026-02-03..2026-08-13",
+  "status": "NOT_RUN",
+  "reason": "Local PostgreSQL port 5432 had no listener. Empty CSV headers are placeholders only; no synthetic historical values were emitted.",
+  "pit_claim": false,
+  "production_claim": false,
+  "policy_version": "topic-lifecycle-policy.v1",
+  "calculation_version": "topic-lifecycle-v1-shadow.v1",
+  "database_write": "NO",
+  "backfill": "NO",
+  "lookahead": "NO",
+  "ws3_full_backtest": "NO"
+}

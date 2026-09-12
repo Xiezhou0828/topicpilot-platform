@@ -1,0 +1,67 @@
+{
+  "concentration_is_descriptive_only": true,
+  "date_concentration": {
+    "top_1_share": 0.078125,
+    "top_3_share": 0.20535714285714285,
+    "top_5_share": 0.29464285714285715
+  },
+  "event_count": 448,
+  "horizon": 5,
+  "instrument_concentration": {
+    "top_10_share": 0.06919642857142858,
+    "top_1_share": 0.008928571428571428,
+    "top_5_share": 0.03571428571428571
+  },
+  "market_concentration": {
+    "top_1_share": 0.6540178571428571,
+    "top_2_share": 1.0
+  },
+  "primary_proxy": "OBSERVABLE_A2_CLOSE",
+  "task_id": "TASK-WS3-CORE-V0-A2-ENTRY-AND-BREAKOUT-INVALIDATION-RESEARCH-20260819",
+  "top_5_loser_abs_return_share_of_negative_sum": 0.07404181953955287,
+  "top_5_winner_return_share_of_positive_sum": 0.09316589714604882,
+  "top_losers": [
+    {
+      "event_id": "4b2b6f720f66378ca3df89f630053bfd9300d76a1773780f8baa4e0fecccae13",
+      "forward_return": -0.3036764705882353
+    },
+    {
+      "event_id": "00924e521ba9c8b8f15d4fb9f3209f1d7e1ce144aab24e43d848d43a43b160d1",
+      "forward_return": -0.2681318681318682
+    },
+    {
+      "event_id": "70e4aafb0d0459a25b039bd921e0bd66d3cd83407d37e93d6ffca6d31eb52fb9",
+      "forward_return": -0.26222222222222225
+    },
+    {
+      "event_id": "a82a9a137e0ac22e3719d02268e60e0749df99f3e85eaf57fa6f03240d0489cf",
+      "forward_return": -0.2569444444444444
+    },
+    {
+      "event_id": "04f45dcb94caf209ce500a683c9729d11d8016b57b87714e48d323018b817333",
+      "forward_return": -0.2248722316865417
+    }
+  ],
+  "top_winners": [
+    {
+      "event_id": "4d53c64b8dfa0f5ee5e56ff7896efe662fe77f6d57bebe19872c22fb0e3d17ec",
+      "forward_return": 0.6059602649006623
+    },
+    {
+      "event_id": "ddcfb5561b3296ad5da51dceefc1c4d7c75d3e97a01d96a359026f1c9a53822d",
+      "forward_return": 0.6048780487804877
+    },
+    {
+      "event_id": "156f371807c440d06872470b4dcdb5af539d347cc6688eb0fe13669728922cb1",
+      "forward_return": 0.525974025974026
+    },
+    {
+      "event_id": "a3766844ae2e44760785fd81a9937d9b2375c3521dfe72eb1e595f060c729aab",
+      "forward_return": 0.5172413793103448
+    },
+    {
+      "event_id": "0d01e328acbbf305cfb89c39ac7d94247d2097439a167e2beae35351cb8978e8",
+      "forward_return": 0.46706586826347296
+    }
+  ]
+}

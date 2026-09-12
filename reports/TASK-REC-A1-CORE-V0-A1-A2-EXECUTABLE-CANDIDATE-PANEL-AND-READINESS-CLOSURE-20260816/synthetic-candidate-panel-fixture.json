@@ -1,0 +1,44 @@
+{
+  "fixtureType": "SYNTHETIC_FIXTURE_NOT_CANONICAL_MARKET_EVIDENCE",
+  "taskId": "TASK-REC-A1-CORE-V0-A1-A2-EXECUTABLE-CANDIDATE-PANEL-AND-READINESS-CLOSURE-20260816",
+  "contractVersion": "core-v0-candidate-panel.v1",
+  "evaluationDate": "2026-04-01",
+  "asOf": "2026-04-01",
+  "reference": {
+    "policyId": "PRIOR_20_ACCEPTED_SESSION_HIGH",
+    "value": "105",
+    "windowAcceptedSessions": 20,
+    "evaluationSessionExcluded": true,
+    "birthSession": "2026-03-27",
+    "ageSessions": 5,
+    "mature": true
+  },
+  "records": [
+    {
+      "candidate": "A1",
+      "candidateId": "CORE_V0_A1_PRE_BREAKOUT",
+      "closeT": "103",
+      "distancePct": "0.01904761904761904761904761905",
+      "formationState": "FORMED",
+      "frozenAtT": true,
+      "readinessWithFormalDependencies": "READY_FOR_CORE_V0_WALK_FORWARD_EXECUTION"
+    },
+    {
+      "candidate": "A2",
+      "candidateId": "CORE_V0_A2_CONFIRMED_BREAKOUT",
+      "openT": "106",
+      "closeT": "106",
+      "closeComparison": "ABOVE",
+      "gapUpExcluded": false,
+      "formationState": "FORMED",
+      "frozenAtT": true,
+      "readinessWithCurrentCanonicalDependencies": "READY_AFTER_WS2_MA60_PUBLICATION"
+    }
+  ],
+  "outcomes": {
+    "formationInputsContainForwardOutcomes": false,
+    "outcomesFlowBackward": false,
+    "horizons": ["T+1", "T+3", "T+5", "T+10"],
+    "performanceValues": "NOT_INCLUDED"
+  }
+}

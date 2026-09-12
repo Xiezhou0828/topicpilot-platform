@@ -1,0 +1,12 @@
+{
+  "database_mutation": "NO",
+  "lookahead": "NO",
+  "main_dataset_replay": {
+    "database_mutation": "NO",
+    "first_sha256": "a2941dddb640812858261a96942728213271e80b73699622f3bb17ca15af2886",
+    "reproducible": true,
+    "second_sha256": "a2941dddb640812858261a96942728213271e80b73699622f3bb17ca15af2886"
+  },
+  "member_evidence_rows": 106500,
+  "owner_artifacts_recomputed_from_same_dataset": true
+}

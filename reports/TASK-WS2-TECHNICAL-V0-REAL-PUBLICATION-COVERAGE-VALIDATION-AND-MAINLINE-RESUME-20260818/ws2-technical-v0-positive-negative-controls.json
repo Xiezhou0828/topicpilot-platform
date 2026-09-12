@@ -1,0 +1,69 @@
+{
+  "task_id": "TASK-WS2-TECHNICAL-V0-REAL-PUBLICATION-COVERAGE-VALIDATION-AND-MAINLINE-RESUME-20260818",
+  "controls": [
+    {
+      "control_id": "TWSE-2380-CAPITAL-REDUCTION",
+      "identity": "TPE:2380",
+      "local_canonical_ohlcv_present": false,
+      "source_evidence_state": "PRESERVED_PRIOR_READ_ONLY_VERIFICATION",
+      "source_sha256": "698f899207b2bba0b28e5f7e0b530d2061f0bb0f80f564c8ce3de416885c44e3",
+      "effective_date": "2026-06-29",
+      "official_facts": "6.60 before reduction, 23.86 resumed-trading reference price, loss compensation",
+      "event_state": "KNOWN_VERIFIED_BREAKING_EVENT_FOUND",
+      "handling": "EXCLUDE",
+      "intersecting_window_publication": "UNAVAILABLE",
+      "not_claimed": "local historical-reader MA60 probe"
+    },
+    {
+      "control_id": "TPEX-5904-PAR-VALUE-CHANGE",
+      "identity": "TWO:5904",
+      "local_canonical_ohlcv_present": false,
+      "source_evidence_state": "PRESERVED_PRIOR_READ_ONLY_VERIFICATION",
+      "source_sha256": "f73f6c025d266264b5e25fcb534fb77c606f639e3c00f25807e460f3f00301fa",
+      "effective_date": "2026-08-10",
+      "official_facts": "par value 10 to 1, one old share exchanged for ten new shares, resumed 2026-08-10",
+      "event_state": "KNOWN_VERIFIED_BREAKING_EVENT_FOUND",
+      "handling": "EXCLUDE",
+      "intersecting_window_publication": "UNAVAILABLE",
+      "not_claimed": "local historical-reader MA60 probe"
+    },
+    {
+      "control_id": "TWSE-TWT49U-2330",
+      "identity": "TPE:2330",
+      "local_canonical_ohlcv_present": true,
+      "local_rows": 126,
+      "source_code": "TWSE_OFFICIAL_DAILY",
+      "official_lookup_sha256": "f610035f370ae2a9e9559625580daebb7d43a6198d1752a66387ee1869d6fd7b",
+      "matching_official_rows": 2,
+      "event_state": "KNOWN_VERIFIED_BREAKING_EVENT_FOUND",
+      "ma60_state": "UNAVAILABLE",
+      "ma60_reason": "KNOWN_VERIFIED_EVENT_REQUIRES_EVENT_AWARE_HANDLING",
+      "shorter_windows_outside_event_window": "FORMAL",
+      "hardcoded_identity_exception": false
+    },
+    {
+      "control_id": "TWSE-TWT49U-1314-ORDINARY",
+      "identity": "TPE:1314",
+      "local_canonical_ohlcv_present": true,
+      "local_rows": 125,
+      "source_code": "TWSE_OFFICIAL_DAILY",
+      "official_lookup_sha256": "f610035f370ae2a9e9559625580daebb7d43a6198d1752a66387ee1869d6fd7b",
+      "matching_official_rows": 0,
+      "authority_classification": "UNKNOWN_NOT_AFFIRMATIVE_NO_EVENT",
+      "event_state": "NO_KNOWN_VERIFIED_BREAKING_EVENT_FOUND",
+      "continuity_state": "CONTINUITY_UNKNOWN",
+      "ma60_state": "FORMAL",
+      "not_claimed": ["PROVEN_NO_EVENT", "COVERED_NO_EVENT", "universal_event_family_completeness"]
+    },
+    {
+      "control_id": "TPE:1314-LOOKUP-TIMEOUT",
+      "identity": "TPE:1314",
+      "local_canonical_ohlcv_present": true,
+      "event_state": "EVENT_LOOKUP_UNAVAILABLE",
+      "ma60_state": "UNAVAILABLE",
+      "ma60_reason": "EVENT_LOOKUP_UNAVAILABLE",
+      "publication_allowed": false
+    }
+  ],
+  "hardcoded_special_case_count": 0
+}

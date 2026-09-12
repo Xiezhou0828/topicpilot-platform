@@ -1,0 +1,36 @@
+{
+  "taskId": "TASK-WS1-LIFECYCLE-CANONICAL-COLLISION-RECONCILIATION-AND-PROMOTION-READINESS-20260822",
+  "canonicalHeadAtAudit": "b569430d2a358cab6a5915aeaacff2810df4913c",
+  "canonicalHeadAfterAudit": "b569430d2a358cab6a5915aeaacff2810df4913c",
+  "canonicalModifiedByTask": false,
+  "trackedDirtyCount": 22,
+  "untrackedStatusEntryCount": 159,
+  "ownerDirtyStatePreserved": true,
+  "ownerUntrackedStatePreserved": true,
+  "overlapPaths": [
+    {
+      "path": "apps/web/app/components/v2/TopicListPage.tsx",
+      "ownerProvenance": "uncommitted canonical working-tree diff; related untracked publication-disclosure test",
+      "ws1Change": "backend lifecycle enum mapping and lifecycle availability boundary",
+      "semanticConflict": false,
+      "threeWayDisposition": "MERGED_IN_FRESH_CANDIDATE",
+      "canonicalWorkingTreeChanged": false
+    },
+    {
+      "path": "apps/web/app/lib/topic-api.ts",
+      "ownerProvenance": "uncommitted canonical working-tree diff; no committed provenance available",
+      "ws1Change": "lifecycle availability and lineage typing",
+      "semanticConflict": false,
+      "threeWayDisposition": "MERGED_IN_FRESH_CANDIDATE",
+      "canonicalWorkingTreeChanged": false
+    }
+  ],
+  "forbiddenActions": {
+    "reset": false,
+    "clean": false,
+    "restoreAll": false,
+    "blindCherryPick": false,
+    "canonicalOverwrite": false
+  },
+  "promotion": "NO_OWNER_DIRTY_STATE_PRESERVED"
+}

@@ -1,0 +1,65 @@
+{
+  "task_id": "TASK-WS3-CORE-V0-BASELINE-ATTRIBUTION-AND-CANDIDATE-STATE-REVIEW-20260818",
+  "source_baseline_task": "TASK-WS3-CORE-V0-REAL-HISTORICAL-WALK-FORWARD-BASELINE-20260818",
+  "source_baseline_head": "9ca9ba4f15359aa5ea96ba4c3d6bed9439d0346e",
+  "core_v0_frozen_spec_hash": "6e4cc504f969098e263cfa8e7c43240e9575a3f72f0641ba39da22794ea9870d",
+  "frozen_spec_hash_unchanged": true,
+  "lookahead_violations": 0,
+  "signal_count_reconciliation": {
+    "A1_PRE_BREAKOUT": 700,
+    "A2_CONFIRMED_BREAKOUT": 512,
+    "TOTAL": 1212
+  },
+  "state_count_reconciliation": {
+    "A1_PRE_BREAKOUT": {
+      "state_id": "CORE_V0_A1_PRE_BREAKOUT",
+      "state_version": "core-v0-a1-pre-breakout.v1",
+      "raw_signal_observations": 700,
+      "unique_instrument_count": 297,
+      "active_signal_date_count": 66,
+      "first_signal_date": "2026-05-12",
+      "last_signal_date": "2026-08-13"
+    },
+    "A2_CONFIRMED_BREAKOUT": {
+      "state_id": "CORE_V0_A2_CONFIRMED_BREAKOUT",
+      "state_version": "core-v0-a2-confirmed-breakout.v1",
+      "raw_signal_observations": 512,
+      "unique_instrument_count": 320,
+      "active_signal_date_count": 62,
+      "first_signal_date": "2026-05-12",
+      "last_signal_date": "2026-08-13"
+    }
+  },
+  "accepted_baseline_reconciliation": {
+    "expected_total_signal_observations": 1212,
+    "observed_total_signal_observations": 1212,
+    "expected_A1_signal_observations": 700,
+    "observed_A1_signal_observations": 700,
+    "expected_A2_signal_observations": 512,
+    "observed_A2_signal_observations": 512,
+    "pass": true
+  },
+  "forward_horizon_censoring_consistency": "PASS; incomplete horizons retained as censored and event-excluded outcomes remain excluded",
+  "lookahead_leakage_audit": "PASS; candidate inputs <= T and forward outcomes > T",
+  "state_mutation_based_on_outcome": false,
+  "parameter_optimization_executed": false,
+  "reproducibility": "YES",
+  "method_a_eligibility_preserved": true,
+  "event_aware_policy_preserved": true,
+  "outcomes_flow_backward": false,
+  "database_writes": false,
+  "migration_executed": false,
+  "production_mutation": false,
+  "source_reconciliation": {
+    "expected_real_rows": 63826,
+    "observed_real_rows": 63826,
+    "expected_distinct_instruments": 507,
+    "observed_distinct_instruments": 507,
+    "expected_date_range": "2026-02-02..2026-08-13",
+    "observed_date_range": "2026-02-02..2026-08-13",
+    "pass": true
+  },
+  "known_event_formation_windows": 9731,
+  "partial_authority_windows_tracked": 279,
+  "data_gap_fail_closed_signal_count": 309
+}

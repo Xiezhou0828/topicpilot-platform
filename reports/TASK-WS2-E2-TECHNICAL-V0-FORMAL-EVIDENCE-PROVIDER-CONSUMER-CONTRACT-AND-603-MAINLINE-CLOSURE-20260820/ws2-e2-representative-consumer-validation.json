@@ -1,0 +1,31 @@
+{
+  "task_id": "TASK-WS2-E2-TECHNICAL-V0-FORMAL-EVIDENCE-PROVIDER-CONSUMER-CONTRACT-AND-603-MAINLINE-CLOSURE-20260820",
+  "representative_consumer_validated": "YES",
+  "cases": {
+    "TPE_eligible": {"status": "PASS", "indicator": "MA20", "pit": "PIT_SAFE"},
+    "TWO_eligible": {"status": "PASS", "indicator": "MACD_SIGNAL_12_26_9", "pit": "PIT_SAFE"},
+    "technically_ineligible": {"status": "PASS", "surface_state": "INELIGIBLE", "value_not_coerced": true},
+    "unavailable_empty_history": {"status": "PASS", "publication_state": "UNAVAILABLE", "reason_preserved": true},
+    "pit_limited": {"status": "PASS", "publication_state": "FORMAL_WITH_LIMITATION", "reason": "EVENT_LOOKUP_UNAVAILABLE"},
+    "MA60_calculable": {"status": "PASS", "minimum_observations": 60},
+    "MA60_noncalculable_warmup": {"status": "PASS", "reason": "UNAVAILABLE_INSUFFICIENT_HISTORY"},
+    "RSI14_warmup": {"status": "PASS", "minimum_observations": 15},
+    "MACD_line_warmup": {"status": "PASS", "minimum_observations": 26},
+    "MACD_signal_histogram_warmup": {"status": "PASS", "minimum_observations": 34},
+    "bounded_historical_lookup": {"status": "PASS"},
+    "current_latest_canonical_session": {"status": "PASS_WITH_BOUNDED_FIXTURE", "source_window_end": "2026-08-13"},
+    "future_leakage_control": {"status": "PASS", "future_observations_consumed": false},
+    "evidence_only_boundary": {"status": "PASS"}
+  },
+  "TPE_CONSUMER_CASE_PASS": "YES",
+  "TWO_CONSUMER_CASE_PASS": "YES",
+  "INELIGIBLE_CONSUMER_CASE_PASS": "YES",
+  "UNAVAILABLE_CONSUMER_CASE_PASS": "YES",
+  "PIT_LIMITED_CONSUMER_CASE_PASS": "YES",
+  "WARMUP_BOUNDARY_CASE_PASS": "YES",
+  "HISTORICAL_LOOKUP_CASE_PASS": "YES",
+  "BATCH_LOOKUP_CASE_PASS": "YES",
+  "LOOK_AHEAD_LEAKAGE_DETECTED": "NO",
+  "EVIDENCE_ONLY_BOUNDARY_PASS": "YES",
+  "status": "PASS_WITH_BOUNDED_LIMITATIONS"
+}

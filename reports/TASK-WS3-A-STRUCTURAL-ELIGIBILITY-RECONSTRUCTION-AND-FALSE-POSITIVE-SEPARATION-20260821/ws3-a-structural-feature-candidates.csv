@@ -1,0 +1,24 @@
+layer,feature,semantics,future_safe,available,research_role
+L0_GLOBAL_ELIGIBILITY,ma60_eligible,Frozen Close > MA60 surface; unknown fails closed.,YES,YES,hard primary eligibility
+L1_ENVIRONMENT,close_vs_ma60 / ma60_slope_5,Existing sign states across D-10/D-5/D-1.,YES,PARTIAL,environment classification
+L1_ENVIRONMENT,close_vs_ma20 / MA alignment,Existing sign/state context only.,YES,YES,transition and downtrend context
+L2_BASE_RANGE,rolling_range_pct_20,Existing normalized range width; cohort quantiles are descriptive.,YES,YES,range width proxy
+L2_BASE_RANGE,range_compression_5_to_20,Existing 5/20 range compression state.,YES,YES,compression evidence
+L2_BASE_RANGE,volatility_contraction_5_to_20,Existing volatility contraction state.,YES,YES,volatility-contraction family
+L2_BASE_RANGE,rolling high/floor/boundary tests,Not present in the frozen pre-event panel.,N/A,NO,required follow-up evidence
+L3_BREAKOUT_EVENT,existing frozen A2 event evidence,Descriptive lookup only; A2 semantics unchanged.,YES,PARTIAL,confirmed event / attempt evidence
+L3_BREAKOUT_EVENT,prior structural upper boundary,Not available for all prior A-like controls.,N/A,NO,required follow-up evidence
+L4_QUALITY,ma_alignment_bearish@D-1,Boolean state Close < MA5 < MA20 < MA60; a strict bearish moving-average ordering.,YES,YES,existing robust/promising post-structure evidence
+L4_QUALITY,ma_alignment_bearish@D-3,Boolean state Close < MA5 < MA20 < MA60; a strict bearish moving-average ordering.,YES,YES,existing robust/promising post-structure evidence
+L4_QUALITY,ma_alignment_bearish@D0,Boolean state Close < MA5 < MA20 < MA60; a strict bearish moving-average ordering.,YES,YES,existing robust/promising post-structure evidence
+L4_QUALITY,realized_vol_20@D-10,Population standard deviation of daily close returns over the fixed 20-session window.,YES,YES,existing robust/promising post-structure evidence
+L4_QUALITY,realized_vol_20@D-20,Population standard deviation of daily close returns over the fixed 20-session window.,YES,YES,existing robust/promising post-structure evidence
+L4_QUALITY,rolling_range_pct_20@D-10,(rolling 20-session high - rolling 20-session low) / current close.,YES,YES,existing robust/promising post-structure evidence
+L4_QUALITY,rolling_range_pct_20@D-20,(rolling 20-session high - rolling 20-session low) / current close.,YES,YES,existing robust/promising post-structure evidence
+L4_QUALITY,rolling_range_pct_20@D-5,(rolling 20-session high - rolling 20-session low) / current close.,YES,YES,existing robust/promising post-structure evidence
+L4_QUALITY,rolling_range_pct_20@D0,(rolling 20-session high - rolling 20-session low) / current close.,YES,YES,existing robust/promising post-structure evidence
+L4_QUALITY,rolling_range_pct_5@D-10,(rolling five-session high - rolling five-session low) / current close.,YES,YES,existing robust/promising post-structure evidence
+L4_QUALITY,true_range_pct@D-10,"max(high-low, abs(high-prevClose), abs(low-prevClose)) / prevClose; one-session range relative to prior close.",YES,YES,existing robust/promising post-structure evidence
+L4_QUALITY,volume_contraction_state@D-1,Boolean state VOLUME_RATIO_20 < 1; current participation below its 20-session baseline.,YES,YES,existing robust/promising post-structure evidence
+L4_QUALITY,volume_contraction_state@D-3,Boolean state VOLUME_RATIO_20 < 1; current participation below its 20-session baseline.,YES,YES,existing robust/promising post-structure evidence
+L4_QUALITY,volume_contraction_state@D-5,Boolean state VOLUME_RATIO_20 < 1; current participation below its 20-session baseline.,YES,YES,existing robust/promising post-structure evidence
