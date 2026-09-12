@@ -291,7 +291,12 @@ def test_read_normalization_replaces_legacy_daily_focus_with_deterministic_facts
                 {"indexName": "TWSE 加權指數", "value": 100, "change": 1, "changePct": 1},
             ],
         },
-        "dailyFocus": {"headline": "目前主線為 網通。", "bullets": ["legacy narrative"]},
+        "dailyFocus": {
+            "mode": "RULE_BASED_V1",
+            "source": "HOME_V2_DAILY_FOCUS_RULE_V1",
+            "headline": "目前主線為 網通。",
+            "bullets": ["legacy narrative"],
+        },
         "sectionStatuses": {"dailyFocus": {"status": "AVAILABLE"}},
     }
 

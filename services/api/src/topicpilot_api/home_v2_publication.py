@@ -358,12 +358,6 @@ def normalize_home_publication_for_read(payload: Mapping[str, Any]) -> dict[str,
     existing_focus = result.get("dailyFocus")
     if not isinstance(existing_focus, Mapping):
         return result
-    if (
-        existing_focus.get("mode") == "RULE_BASED_V1"
-        and existing_focus.get("source") == DAILY_FOCUS_SOURCE
-    ):
-        return result
-
     market_overview = result.get("marketOverview")
     if not isinstance(market_overview, Mapping):
         return result
