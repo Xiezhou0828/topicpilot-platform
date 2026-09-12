@@ -12,6 +12,11 @@ on:
         required: true
         type: boolean
         default: false
+      deploy_worker:
+        description: Trigger the protected Render live-worker deploy hook
+        required: true
+        type: boolean
+        default: false
       package_web:
         description: Build and package the validated Sites frontend artifact
         required: true
@@ -66,6 +71,28 @@ jobs:
           fi
           curl --fail --silent --show-error --request POST \
             "${RENDER_DEPLOY_HOOK_URL}${separator}ref=${{ inputs.release_ref }}"
+
+  deploy-worker:
+    name: Trigger Render live-worker deployment
+    if: ${{ inputs.deploy_worker }}
+    needs: validate
+    runs-on: ubuntu-latest
+    environment: production-worker
+    steps:
+      - name: Trigger protected worker deploy hook
+        env:
+          RENDER_WORKER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_WORKER_DEPLOY_HOOK_URL }}
+        run: |
+          if [ -z "$RENDER_WORKER_DEPLOY_HOOK_URL" ]; then
+            echo "RENDER_WORKER_DEPLOY_HOOK_URL is not configured in production-worker." >&2
+            exit 1
+          fi
+          separator="?"
+          if [[ "$RENDER_WORKER_DEPLOY_HOOK_URL" == *\?* ]]; then
+            separator="&"
+          fi
+          curl --fail --silent --show-error --request POST \
+            "${RENDER_WORKER_DEPLOY_HOOK_URL}${separator}ref=${{ inputs.release_ref }}"
 
   package-web:
     name: Package Sites frontend

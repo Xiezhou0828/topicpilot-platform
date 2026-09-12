@@ -75,12 +75,17 @@ def test_snapshot_models_expose_typed_formal_and_member_fact_authority():
     assert TopicSnapshot.__table__.c.strong_stock_count.default is None
     assert TopicSnapshot.__table__.c.weak_stock_count.nullable is True
     assert TopicSnapshot.__table__.c.weak_stock_count.default is None
+    assert any(
+        constraint.name == "uq_topic_snapshots_supersedes_once"
+        for constraint in TopicSnapshot.__table__.constraints
+    )
 
 
 def test_formal_topic_read_model_filters_to_published_rows():
     sql = TOPIC_ROWS_SQL.text
     assert "publication_mode = 'FORMAL'" in sql
     assert "publication_state = 'PUBLISHED'" in sql
+    assert "superseded_by_snapshot_id IS NULL" in sql
     assert "successor.supersedes_snapshot_id = topic_snapshots.id" in sql
 
 
@@ -156,3 +161,17 @@ def test_formal_authority_migration_is_additive_and_single_head():
     assert "uq_topic_snapshots_topic_date" in migration
     assert "snapshot_identity" in migration
     assert "publication_mode" in migration
+
+
+def test_formal_correction_migration_adds_append_only_successor_guards():
+    migration = (
+        Path(__file__).resolve().parents[1]
+        / "alembic"
+        / "versions"
+        / "0039_task_a9_b2_formal_correction_supersession.py"
+    ).read_text(encoding="utf-8")
+    assert 'down_revision = "0038_task_b2_topic_authority_activation_v1"' in migration
+    assert "decision_revision" in migration
+    assert "supersedes_decision_id" in migration
+    assert "uq_topic_lifecycle_formal_supersedes_once" in migration
+    assert "uq_topic_snapshots_supersedes_once" in migration

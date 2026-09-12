@@ -18,7 +18,7 @@ from decimal import ROUND_HALF_UP, Decimal
 from typing import Any
 from uuid import UUID
 
-from sqlalchemy import select
+from sqlalchemy import exists, func, select
 from sqlalchemy.orm import Session, aliased
 
 from topicpilot_api.orm import (
@@ -49,6 +49,7 @@ FORMAL_SCOPE_EXPECTED_LEAVES = 107
 FORMAL_PUBLICATION_STATUS_PUBLISHED = "PUBLISHED"
 FORMAL_PUBLICATION_STATUS_UNAVAILABLE = "UNAVAILABLE"
 FORMAL_PUBLICATION_STATUS_SUPERSEDED = "SUPERSEDED"
+FORMAL_CORRECTION_SUPERSESSION_REASON = "CORRECTED_A9_STRUCTURAL_ROLE_AUTHORITY"
 
 
 @dataclass(frozen=True)
@@ -70,6 +71,10 @@ class FormalLifecycleRun:
     reason_breakdown: dict[str, int]
     backward_transitions: int
     topic_results: list[dict[str, Any]]
+    new_published: int = 0
+    new_unavailable: int = 0
+    superseded_decisions: int = 0
+    idempotent_rows: int = 0
 
     def as_dict(self) -> dict[str, Any]:
         return {
@@ -81,6 +86,10 @@ class FormalLifecycleRun:
             "persistedRows": self.persisted_rows,
             "reasonBreakdown": self.reason_breakdown,
             "backwardTransitions": self.backward_transitions,
+            "NEW_PUBLISHED": self.new_published,
+            "NEW_UNAVAILABLE": self.new_unavailable,
+            "SUPERSEDED_DECISIONS": self.superseded_decisions,
+            "IDEMPOTENT": self.idempotent_rows,
             "topicResults": self.topic_results,
             "contractVersion": LIFECYCLE_CONTRACT_VERSION,
             "policyVersion": LifecyclePolicy().version,
@@ -157,9 +166,8 @@ def _formal_snapshots_for_date(
                 TopicSnapshot.membership_mode == "PIT_FORMAL",
                 TopicSnapshot.publication_state == "PUBLISHED",
                 TopicSnapshot.finality_state == "FINAL",
-                ~select(successor.id)
-                .where(successor.supersedes_snapshot_id == TopicSnapshot.id)
-                .exists(),
+                TopicSnapshot.superseded_by_snapshot_id.is_(None),
+                ~exists().where(successor.supersedes_snapshot_id == TopicSnapshot.id),
             )
             .order_by(TopicSnapshot.topic_slug, TopicSnapshot.id)
         )
@@ -284,9 +292,10 @@ def _previous_formal_states(
                 TopicLifecycleFormalResult.contract_version == LIFECYCLE_CONTRACT_VERSION,
                 TopicLifecycleFormalResult.publication_status
                 == FORMAL_PUBLICATION_STATUS_PUBLISHED,
-                ~select(successor.id)
-                .where(successor.supersedes_decision_id == TopicLifecycleFormalResult.id)
-                .exists(),
+                TopicLifecycleFormalResult.supersession_state == "ACTIVE",
+                ~exists().where(
+                    successor.supersedes_decision_id == TopicLifecycleFormalResult.id
+                ),
                 TopicLifecycleFormalResult.final_stage.is_not(None),
             )
             .order_by(
@@ -299,6 +308,30 @@ def _previous_formal_states(
     for row in rows:
         states[row.topic_id] = _state_from_row(row)
     return states
+
+
+def _current_formal_decision_count(session: Session, dates: Iterable[date]) -> int:
+    successor = aliased(TopicLifecycleFormalResult)
+    values = tuple(dates)
+    if not values:
+        return 0
+    return int(
+        session.scalar(
+            select(func.count())
+            .select_from(TopicLifecycleFormalResult)
+            .where(
+                TopicLifecycleFormalResult.evaluation_date.in_(values),
+                TopicLifecycleFormalResult.contract_version == LIFECYCLE_CONTRACT_VERSION,
+                TopicLifecycleFormalResult.publication_status
+                != FORMAL_PUBLICATION_STATUS_SUPERSEDED,
+                TopicLifecycleFormalResult.supersession_state == "ACTIVE",
+                ~exists().where(
+                    successor.supersedes_decision_id == TopicLifecycleFormalResult.id
+                ),
+            )
+        )
+        or 0
+    )
 
 
 def _prior_or_bootstrap(
@@ -504,6 +537,13 @@ def _serialize_result_values(values: Mapping[str, Any]) -> dict[str, Any]:
         "memberFactHashes": values.get("member_fact_hashes") or {},
         "correctionSequence": values.get("correction_sequence"),
         "supersessionState": values.get("supersession_state"),
+        "decisionRevision": values.get("decision_revision", 0),
+        "supersedesDecisionId": (
+            str(values["supersedes_decision_id"])
+            if values.get("supersedes_decision_id")
+            else None
+        ),
+        "supersessionReason": values.get("supersession_reason"),
     }
     return result
 
@@ -562,9 +602,20 @@ class FormalLifecyclePublisher:
         session: Session,
         *,
         policy: LifecyclePolicy | None = None,
+        writer_context: Mapping[str, str] | None = None,
     ) -> None:
         self.session = session
         self.policy = policy or LifecyclePolicy()
+        self.writer_context = dict(writer_context or {})
+
+    def _attach_writer_context(self, values: dict[str, Any]) -> dict[str, Any]:
+        if not self.writer_context:
+            return values
+        values["source_reference"] = {
+            **(values.get("source_reference") or {}),
+            "publicationWriter": dict(self.writer_context),
+        }
+        return values
 
     def run_once(
         self,
@@ -591,6 +642,10 @@ class FormalLifecyclePublisher:
         formal_rows = 0
         unavailable_rows = 0
         backward_transitions = 0
+        new_published = 0
+        new_unavailable = 0
+        superseded_decisions = 0
+        idempotent_rows = 0
 
         for topic in leaves:
             candidates = snapshots.get(topic.id, [])
@@ -637,12 +692,14 @@ class FormalLifecyclePublisher:
                     )
                     lineage = gate.lineage
                     input_hash = gate.input_snapshot_hash or input_snapshot_hash(snapshot, facts)
-                    values = _result_values(
-                        snapshot=snapshot,
-                        result=result,
-                        lineage=lineage,
-                        input_hash=input_hash,
-                        initialization_mode=initialization_mode,
+                    values = self._attach_writer_context(
+                        _result_values(
+                            snapshot=snapshot,
+                            result=result,
+                            lineage=lineage,
+                            input_hash=input_hash,
+                            initialization_mode=initialization_mode,
+                        )
                     )
                     values_to_persist.append(values)
                     payload = _topic_result_payload(values)
@@ -667,20 +724,28 @@ class FormalLifecyclePublisher:
             unavailable_rows += 1
             reason_value = reason or "FORMAL_LIFECYCLE_GATE_FAILED"
             reason_breakdown[reason_value] += 1
-            values = _unavailable_values(
+            values = self._attach_writer_context(_unavailable_values(
                 topic=topic,
                 evaluation_date=evaluation_date,
                 snapshot=snapshot,
                 facts=facts,
                 gate=gate,
                 reason=reason_value,
-            )
+            ))
             values_to_persist.append(values)
             topic_results.append(_topic_result_payload(values))
 
         if persist:
             for values in values_to_persist:
-                self._persist(values)
+                persistence_result = self._persist(values)
+                if persistence_result == "NEW_PUBLISHED":
+                    new_published += 1
+                elif persistence_result == "NEW_UNAVAILABLE":
+                    new_unavailable += 1
+                elif persistence_result == "SUPERSEDED":
+                    superseded_decisions += 1
+                elif persistence_result == "IDEMPOTENT":
+                    idempotent_rows += 1
             self.session.commit()
 
         return FormalLifecycleRun(
@@ -693,6 +758,10 @@ class FormalLifecyclePublisher:
             dict(sorted(reason_breakdown.items())),
             backward_transitions,
             topic_results,
+            new_published,
+            new_unavailable,
+            superseded_decisions,
+            idempotent_rows,
         )
 
     def run_replay(
@@ -712,9 +781,8 @@ class FormalLifecyclePublisher:
                     TopicSnapshot.membership_mode == "PIT_FORMAL",
                     TopicSnapshot.publication_state == "PUBLISHED",
                     TopicSnapshot.finality_state == "FINAL",
-                    ~select(successor.id)
-                    .where(successor.supersedes_snapshot_id == TopicSnapshot.id)
-                    .exists(),
+                    TopicSnapshot.superseded_by_snapshot_id.is_(None),
+                    ~exists().where(successor.supersedes_snapshot_id == TopicSnapshot.id),
                 )
                 .distinct()
                 .order_by(TopicSnapshot.snapshot_date)
@@ -722,6 +790,7 @@ class FormalLifecyclePublisher:
         )
         if to_date is not None:
             dates = [item for item in dates if item <= to_date]
+        original_decisions = _current_formal_decision_count(self.session, dates)
         runs = [self.run_once(evaluation_date=item, persist=persist) for item in dates]
         reason_breakdown: Counter[str] = Counter()
         for run in runs:
@@ -738,6 +807,11 @@ class FormalLifecyclePublisher:
             "unavailableRows": sum(run.unavailable_rows for run in runs),
             "reasonBreakdown": dict(sorted(reason_breakdown.items())),
             "backwardTransitions": sum(run.backward_transitions for run in runs),
+            "ORIGINAL_DECISIONS": original_decisions,
+            "NEW_PUBLISHED": sum(run.new_published for run in runs),
+            "NEW_UNAVAILABLE": sum(run.new_unavailable for run in runs),
+            "SUPERSEDED_DECISIONS": sum(run.superseded_decisions for run in runs),
+            "IDEMPOTENT": sum(run.idempotent_rows for run in runs),
             "contractVersion": LIFECYCLE_CONTRACT_VERSION,
             "policyVersion": self.policy.version,
             "calculationVersion": LIFECYCLE_CALCULATION_VERSION,
@@ -747,22 +821,30 @@ class FormalLifecyclePublisher:
             "formalScopeLeaves": FORMAL_SCOPE_EXPECTED_LEAVES,
         }
 
-    def _persist(self, values: dict[str, Any]) -> None:
+    def _persist(self, values: dict[str, Any]) -> str:
         successor = aliased(TopicLifecycleFormalResult)
         existing = self.session.scalar(
             select(TopicLifecycleFormalResult).where(
                 TopicLifecycleFormalResult.topic_id == values["topic_id"],
                 TopicLifecycleFormalResult.evaluation_date == values["evaluation_date"],
                 TopicLifecycleFormalResult.contract_version == LIFECYCLE_CONTRACT_VERSION,
-                ~select(successor.id)
-                .where(successor.supersedes_decision_id == TopicLifecycleFormalResult.id)
-                .exists(),
+                TopicLifecycleFormalResult.publication_status
+                != FORMAL_PUBLICATION_STATUS_SUPERSEDED,
+                TopicLifecycleFormalResult.supersession_state == "ACTIVE",
+                ~exists().where(
+                    successor.supersedes_decision_id == TopicLifecycleFormalResult.id
+                ),
             )
+            .with_for_update()
         )
         if existing is None:
             values["decision_revision"] = 0
             self.session.add(TopicLifecycleFormalResult(**values))
-            return
+            return (
+                "NEW_PUBLISHED"
+                if values["publication_status"] == FORMAL_PUBLICATION_STATUS_PUBLISHED
+                else "NEW_UNAVAILABLE"
+            )
 
         immutable_fields = (
             "final_stage",
@@ -773,11 +855,12 @@ class FormalLifecyclePublisher:
             "lineage_hash",
         )
         if all(getattr(existing, field) == values[field] for field in immutable_fields):
-            return
+            return "IDEMPOTENT"
         values["decision_revision"] = getattr(existing, "decision_revision", 0) + 1
         values["supersedes_decision_id"] = existing.id
-        values["supersession_reason"] = "CORRECTED_A9_STRUCTURAL_ROLE_AUTHORITY"
+        values["supersession_reason"] = FORMAL_CORRECTION_SUPERSESSION_REASON
         self.session.add(TopicLifecycleFormalResult(**values))
+        return "SUPERSEDED"
 
 
 def read_formal_lifecycle(session: Session, topic_id: UUID) -> dict[str, Any] | None:
@@ -792,9 +875,10 @@ def read_formal_lifecycle(session: Session, topic_id: UUID) -> dict[str, Any] | 
                 TopicLifecycleFormalResult.contract_version == LIFECYCLE_CONTRACT_VERSION,
                 TopicLifecycleFormalResult.publication_status
                 != FORMAL_PUBLICATION_STATUS_SUPERSEDED,
-                ~select(successor.id)
-                .where(successor.supersedes_decision_id == TopicLifecycleFormalResult.id)
-                .exists(),
+                TopicLifecycleFormalResult.supersession_state == "ACTIVE",
+                ~exists().where(
+                    successor.supersedes_decision_id == TopicLifecycleFormalResult.id
+                ),
             )
             .order_by(TopicLifecycleFormalResult.evaluation_date)
         )
@@ -883,21 +967,52 @@ def read_formal_lifecycle(session: Session, topic_id: UUID) -> dict[str, Any] | 
             "decisionRevision": getattr(current, "decision_revision", 0),
             "supersedesDecisionId": (
                 str(getattr(current, "supersedes_decision_id", None))
-                if getattr(current, "supersedes_decision_id", None) else None
+                if getattr(current, "supersedes_decision_id", None)
+                else None
             ),
             "supersessionReason": getattr(current, "supersession_reason", None),
         },
     }
 
 
+def formal_correction_dates(
+    session: Session,
+    *,
+    from_date: date = A9_FORMAL_TOPIC_SNAPSHOT_START,
+    to_date: date | None = None,
+) -> tuple[date, ...]:
+    """Return the current formal A9 dates eligible for correction planning."""
+
+    successor = aliased(TopicSnapshot)
+    statement = (
+        select(TopicSnapshot.snapshot_date)
+        .where(
+            TopicSnapshot.snapshot_date >= from_date,
+            TopicSnapshot.publication_mode == "FORMAL",
+            TopicSnapshot.membership_mode == "PIT_FORMAL",
+            TopicSnapshot.publication_state == "PUBLISHED",
+            TopicSnapshot.finality_state == "FINAL",
+            TopicSnapshot.superseded_by_snapshot_id.is_(None),
+            ~exists().where(successor.supersedes_snapshot_id == TopicSnapshot.id),
+        )
+        .distinct()
+        .order_by(TopicSnapshot.snapshot_date)
+    )
+    if to_date is not None:
+        statement = statement.where(TopicSnapshot.snapshot_date <= to_date)
+    return tuple(session.scalars(statement))
+
+
 __all__ = [
     "A9_FORMAL_TOPIC_SNAPSHOT_START",
+    "FORMAL_CORRECTION_SUPERSESSION_REASON",
     "FORMAL_PUBLICATION_STATUS_PUBLISHED",
     "FORMAL_PUBLICATION_STATUS_SUPERSEDED",
     "FORMAL_PUBLICATION_STATUS_UNAVAILABLE",
     "FormalLifecycleGate",
     "FormalLifecyclePublisher",
     "FormalLifecycleRun",
+    "formal_correction_dates",
     "input_snapshot_hash",
     "read_formal_lifecycle",
 ]

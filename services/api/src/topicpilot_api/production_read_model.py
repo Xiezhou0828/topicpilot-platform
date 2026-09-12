@@ -395,6 +395,7 @@ TOPIC_ROWS_SQL = text(
         FROM topicpilot.topic_snapshots
         WHERE publication_mode = 'FORMAL'
           AND publication_state = 'PUBLISHED'
+          AND superseded_by_snapshot_id IS NULL
           AND NOT EXISTS (
               SELECT 1 FROM topicpilot.topic_snapshots successor
               WHERE successor.supersedes_snapshot_id = topic_snapshots.id
@@ -939,11 +940,12 @@ FORMAL_TOPIC_CONSTITUENTS_SQL = text(
         WHERE topic.slug = :slug
           AND snapshot.publication_mode = 'FORMAL'
           AND snapshot.publication_state = 'PUBLISHED'
-          AND NOT EXISTS (
-              SELECT 1 FROM topicpilot.topic_snapshots successor
-              WHERE successor.supersedes_snapshot_id = snapshot.id
-          )
-        ORDER BY snapshot.topic_id, snapshot.snapshot_date DESC, snapshot.updated_at DESC
+           AND snapshot.superseded_by_snapshot_id IS NULL
+           AND NOT EXISTS (
+               SELECT 1 FROM topicpilot.topic_snapshots successor
+               WHERE successor.supersedes_snapshot_id = snapshot.id
+           )
+         ORDER BY snapshot.topic_id, snapshot.snapshot_date DESC, snapshot.updated_at DESC
     )
     SELECT fact.instrument_id, instrument.instrument_code, instrument.name,
            market.code AS market_code, fact.close, fact.change_pct,

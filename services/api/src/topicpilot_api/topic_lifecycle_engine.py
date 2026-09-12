@@ -16,8 +16,8 @@ from decimal import ROUND_HALF_UP, Decimal
 from typing import Any
 from uuid import UUID
 
-from sqlalchemy import select
-from sqlalchemy.orm import Session
+from sqlalchemy import exists, select
+from sqlalchemy.orm import Session, aliased
 
 from topicpilot_api.orm import (
     TopicLifecycleResult,
@@ -439,6 +439,7 @@ evaluate_lifecycle = evaluate_lifecycle_v1  # noqa: F811
 
 
 def _date_rows(session: Session, evaluation_date: date) -> list[TopicSnapshot]:
+    successor = aliased(TopicSnapshot)
     return list(
         session.scalars(
             select(TopicSnapshot)
@@ -449,6 +450,7 @@ def _date_rows(session: Session, evaluation_date: date) -> list[TopicSnapshot]:
                 TopicSnapshot.publication_state == "PUBLISHED",
                 TopicSnapshot.finality_state == "FINAL",
                 TopicSnapshot.superseded_by_snapshot_id.is_(None),
+                ~exists().where(successor.supersedes_snapshot_id == TopicSnapshot.id),
             )
             .order_by(TopicSnapshot.topic_slug)
         )

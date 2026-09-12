@@ -55,9 +55,21 @@ def upgrade() -> None:
         ["supersedes_decision_id"],
         schema="topicpilot",
     )
+    op.create_unique_constraint(
+        "uq_topic_snapshots_supersedes_once",
+        "topic_snapshots",
+        ["supersedes_snapshot_id"],
+        schema="topicpilot",
+    )
 
 
 def downgrade() -> None:
+    op.drop_constraint(
+        "uq_topic_snapshots_supersedes_once",
+        "topic_snapshots",
+        schema="topicpilot",
+        type_="unique",
+    )
     op.drop_constraint(
         "uq_topic_lifecycle_formal_supersedes_once",
         "topic_lifecycle_formal_results",
@@ -76,9 +88,15 @@ def downgrade() -> None:
         schema="topicpilot",
         type_="foreignkey",
     )
-    op.drop_column("topic_lifecycle_formal_results", "supersession_reason", schema="topicpilot")
-    op.drop_column("topic_lifecycle_formal_results", "supersedes_decision_id", schema="topicpilot")
-    op.drop_column("topic_lifecycle_formal_results", "decision_revision", schema="topicpilot")
+    op.drop_column(
+        "topic_lifecycle_formal_results", "supersession_reason", schema="topicpilot"
+    )
+    op.drop_column(
+        "topic_lifecycle_formal_results", "supersedes_decision_id", schema="topicpilot"
+    )
+    op.drop_column(
+        "topic_lifecycle_formal_results", "decision_revision", schema="topicpilot"
+    )
     op.create_unique_constraint(
         "uq_topic_lifecycle_formal_identity",
         "topic_lifecycle_formal_results",

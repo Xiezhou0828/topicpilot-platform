@@ -394,9 +394,16 @@ def test_formal_table_is_separate_and_constrained():
         "input_snapshot_hash",
         "lineage_hash",
         "as_of_at",
+        "decision_revision",
+        "supersedes_decision_id",
+        "supersession_reason",
     }
     assert any(
         constraint.name == "uq_topic_lifecycle_formal_identity"
+        for constraint in TopicLifecycleFormalResult.__table__.constraints
+    )
+    assert any(
+        constraint.name == "uq_topic_lifecycle_formal_supersedes_once"
         for constraint in TopicLifecycleFormalResult.__table__.constraints
     )
 
@@ -466,7 +473,9 @@ def test_corrected_formal_decision_appends_superseding_revision():
     assert len(session.added) == 2
     assert session.row.supersedes_decision_id == old.id
     assert session.row.decision_revision == 1
-    assert session.row.supersession_reason == "CORRECTED_A9_STRUCTURAL_ROLE_AUTHORITY"
+    assert session.row.supersession_reason == (
+        "CORRECTED_A9_STRUCTURAL_ROLE_AUTHORITY"
+    )
     assert old.transition_reason == "OLD_UNAVAILABLE"
 
 

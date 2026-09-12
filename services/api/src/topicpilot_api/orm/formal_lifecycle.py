@@ -67,6 +67,10 @@ class TopicLifecycleFormalResult(Base, IdentityMixin, UpdatedAtMixin):
             "decision_revision",
             name="uq_topic_lifecycle_formal_identity",
         ),
+        UniqueConstraint(
+            "supersedes_decision_id",
+            name="uq_topic_lifecycle_formal_supersedes_once",
+        ),
     )
     evaluation_date: Mapped[date] = mapped_column(Date, nullable=False)
     topic_id: Mapped[UUID] = mapped_column(

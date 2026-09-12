@@ -34,6 +34,11 @@ class TopicSnapshot(Base, IdentityMixin, UpdatedAtMixin):
     __tablename__ = "topic_snapshots"
     __table_args__ = (
         UniqueConstraint("snapshot_identity", name="uq_topic_snapshots_identity"),
+        # A correction may have at most one governed successor.  NULL values
+        # on original snapshots are intentionally allowed by PostgreSQL.
+        UniqueConstraint(
+            "supersedes_snapshot_id", name="uq_topic_snapshots_supersedes_once"
+        ),
         CheckConstraint(
             "publication_mode IN ('FORMAL', 'RESEARCH_ONLY', 'SHADOW')",
             name="ck_topic_snapshots_publication_mode",

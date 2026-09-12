@@ -103,6 +103,7 @@ FORMAL_SNAPSHOT_COLUMNS = """
 FORMAL_SNAPSHOT_FILTER = """
     s.publication_mode = 'FORMAL'
     AND s.publication_state = 'PUBLISHED'
+    AND s.superseded_by_snapshot_id IS NULL
     AND NOT EXISTS (
         SELECT 1 FROM topicpilot.topic_snapshots successor
         WHERE successor.supersedes_snapshot_id = s.id

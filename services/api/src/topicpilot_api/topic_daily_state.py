@@ -11,14 +11,14 @@ from __future__ import annotations
 import hashlib
 import json
 from collections import defaultdict
-from collections.abc import Iterable, Sequence
+from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
 from datetime import UTC, date, datetime
 from decimal import Decimal
 from typing import Any
 from uuid import UUID
 
-from sqlalchemy import bindparam, func, or_, select, text
+from sqlalchemy import bindparam, exists, func, or_, select, text
 from sqlalchemy.orm import Session, aliased
 
 from topicpilot_api.orm import (
@@ -31,6 +31,7 @@ from topicpilot_api.orm import (
     ReferenceSession,
     SecurityIdentity,
     Topic,
+    TopicHierarchy,
     TopicSnapshot,
     TopicSnapshotMemberFact,
 )
@@ -122,6 +123,29 @@ class DateMaterializationPlan:
     status: str
     reason: str | None
     topics: tuple[TopicMaterializationPlan, ...]
+
+
+@dataclass(frozen=True)
+class FormalCorrectionPlan:
+    """Read-only A9 correction classification before any write is allowed."""
+
+    dates: tuple[DateMaterializationPlan, ...]
+    target_count: int
+    correctable_count: int
+    legitimate_unavailable_count: int
+    ambiguous_count: int
+    not_correction_target_count: int
+    classifications: tuple[dict[str, Any], ...]
+
+    def as_dict(self) -> dict[str, Any]:
+        return {
+            "A9_CORRECTION_TARGET": self.target_count,
+            "CORRECTABLE": self.correctable_count,
+            "LEGITIMATE_UNAVAILABLE": self.legitimate_unavailable_count,
+            "AMBIGUOUS": self.ambiguous_count,
+            "NOT_A_CORRECTION_TARGET": self.not_correction_target_count,
+            "classifications": list(self.classifications),
+        }
 
 
 def _hash_payload(payload: Any) -> str:
@@ -672,7 +696,10 @@ def enumerate_formal_dates(
 
 
 def plan_formal_materialization(
-    session: Session, dates: Iterable[date]
+    session: Session,
+    dates: Iterable[date],
+    *,
+    leaf_only: bool = False,
 ) -> tuple[DateMaterializationPlan, ...]:
     """Dry-run the bounded authority gates without writing database rows."""
 
@@ -690,8 +717,20 @@ def plan_formal_materialization(
                 )
             )
             continue
+        date_topics = topics
+        if leaf_only:
+            child_ids = set(
+                session.scalars(
+                    select(TopicHierarchy.child_topic_id).where(
+                        TopicHierarchy.valid_from <= trading_date,
+                        (TopicHierarchy.valid_to.is_(None))
+                        | (TopicHierarchy.valid_to >= trading_date),
+                    )
+                )
+            )
+            date_topics = [topic for topic in topics if topic.id in child_ids]
         topic_plans: list[TopicMaterializationPlan] = []
-        for topic in topics:
+        for topic in date_topics:
             try:
                 membership = resolve_formal_membership(session, topic.id, trading_date)
                 facts = read_canonical_member_facts(session, trading_date, membership.members)
@@ -759,6 +798,7 @@ def _snapshot_values(
     now: datetime,
     correction_sequence: int,
     supersedes_snapshot_id: UUID | None,
+    writer_context: Mapping[str, str] | None = None,
 ) -> dict[str, Any]:
     assert plan.membership is not None
     membership = plan.membership
@@ -791,6 +831,9 @@ def _snapshot_values(
     }
     lineage_hash = _hash_payload(lineage)
     snapshot_identity = f"formal:{plan.topic_id}:{plan.trading_date.isoformat()}:{artifact_hash}"
+    metadata_payload: dict[str, Any] = {"authority": "FORMAL_PIT_TOPIC_DAILY_STATE"}
+    if writer_context:
+        metadata_payload["publicationWriter"] = dict(writer_context)
     return {
         "snapshot_date": plan.trading_date,
         "topic_id": plan.topic_id,
@@ -813,7 +856,7 @@ def _snapshot_values(
         "data_status": "COMPLETE" if not unknown else "PARTIAL",
         "score_status": "DEFERRED",
         "calculation_version": CALCULATION_VERSION,
-        "metadata_payload": {"authority": "FORMAL_PIT_TOPIC_DAILY_STATE"},
+        "metadata_payload": metadata_payload,
         "publication_mode": FORMAL_PUBLICATION_MODE,
         "membership_mode": FORMAL_MEMBERSHIP_MODE,
         "relation_version": membership.relation_version,
@@ -867,7 +910,102 @@ def _snapshot_values(
     }
 
 
-def materialize_formal_plan(session: Session, plan: DateMaterializationPlan) -> dict[str, Any]:
+def _current_formal_snapshots(
+    session: Session,
+    topic_id: UUID,
+    trading_date: date,
+    *,
+    lock: bool = False,
+) -> list[TopicSnapshot]:
+    successor = aliased(TopicSnapshot)
+    statement = (
+        select(TopicSnapshot)
+        .where(
+            TopicSnapshot.topic_id == topic_id,
+            TopicSnapshot.snapshot_date == trading_date,
+            TopicSnapshot.publication_mode == FORMAL_PUBLICATION_MODE,
+            TopicSnapshot.publication_state == "PUBLISHED",
+            TopicSnapshot.superseded_by_snapshot_id.is_(None),
+            ~exists().where(successor.supersedes_snapshot_id == TopicSnapshot.id),
+        )
+        .order_by(TopicSnapshot.correction_sequence.desc(), TopicSnapshot.updated_at.desc())
+    )
+    if lock:
+        statement = statement.with_for_update()
+    return list(session.scalars(statement))
+
+
+def plan_formal_correction(
+    session: Session, dates: Iterable[date]
+) -> FormalCorrectionPlan:
+    """Classify a bounded A9 replay without changing database state."""
+
+    plans = plan_formal_materialization(session, dates, leaf_only=True)
+    target_count = 0
+    correctable_count = 0
+    legitimate_unavailable_count = 0
+    ambiguous_count = 0
+    not_correction_target_count = 0
+    classifications: list[dict[str, Any]] = []
+    for date_plan in plans:
+        for item in date_plan.topics:
+            target_count += 1
+            current_rows = _current_formal_snapshots(
+                session, item.topic_id, item.trading_date
+            )
+            if len(current_rows) > 1:
+                ambiguous_count += 1
+                classification = "AMBIGUOUS"
+                reason = "MULTIPLE_CURRENT_FORMAL_SNAPSHOTS"
+            elif item.status == "READY" and current_rows:
+                candidate_hash = _topic_artifact_hash(item.membership, item.facts)  # type: ignore[arg-type]
+                candidate_identity = (
+                    f"formal:{item.topic_id}:{item.trading_date.isoformat()}:{candidate_hash}"
+                )
+                if current_rows[0].snapshot_identity == candidate_identity:
+                    classification = "NOT_A_CORRECTION_TARGET"
+                    reason = "CANDIDATE_ALREADY_CURRENT"
+                    not_correction_target_count += 1
+                else:
+                    classification = "CORRECTABLE"
+                    reason = "FORMAL_INPUT_IDENTITY_CHANGED"
+                    correctable_count += 1
+            elif item.status == "READY":
+                classification = "NOT_A_CORRECTION_TARGET"
+                reason = "NO_EXISTING_FORMAL_SNAPSHOT"
+                not_correction_target_count += 1
+            else:
+                classification = "LEGITIMATE_UNAVAILABLE"
+                reason = item.reason or "FORMAL_INPUT_UNAVAILABLE"
+                legitimate_unavailable_count += 1
+            classifications.append(
+                {
+                    "tradingDate": item.trading_date.isoformat(),
+                    "topicId": str(item.topic_id),
+                    "topicSlug": item.topic_slug,
+                    "classification": classification,
+                    "reason": reason,
+                }
+            )
+    return FormalCorrectionPlan(
+        tuple(plans),
+        target_count,
+        correctable_count,
+        legitimate_unavailable_count,
+        ambiguous_count,
+        not_correction_target_count,
+        tuple(classifications),
+    )
+
+
+def materialize_formal_plan(
+    session: Session,
+    plan: DateMaterializationPlan,
+    *,
+    commit: bool = True,
+    correction_only: bool = False,
+    writer_context: Mapping[str, str] | None = None,
+) -> dict[str, Any]:
     """Write only READY plan items with immutable correction semantics."""
 
     if plan.status != "READY":
@@ -892,32 +1030,22 @@ def materialize_formal_plan(session: Session, plan: DateMaterializationPlan) -> 
         if existing_identity is not None:
             idempotent_rows += 1
             continue
-        successor = aliased(TopicSnapshot)
-        current_rows = list(
-            session.scalars(
-                select(TopicSnapshot)
-                .where(
-                    TopicSnapshot.topic_id == item.topic_id,
-                    TopicSnapshot.snapshot_date == item.trading_date,
-                    TopicSnapshot.publication_mode == FORMAL_PUBLICATION_MODE,
-                    TopicSnapshot.publication_state == "PUBLISHED",
-                    ~select(successor.id)
-                    .where(successor.supersedes_snapshot_id == TopicSnapshot.id)
-                    .exists(),
-                )
-                .order_by(TopicSnapshot.correction_sequence.desc(), TopicSnapshot.updated_at.desc())
-            )
+        current_rows = _current_formal_snapshots(
+            session, item.topic_id, item.trading_date, lock=True
         )
         if len(current_rows) > 1:
             raise FormalAuthorityUnavailable(
                 "multiple current formal snapshots require reconciliation"
             )
         previous = current_rows[0] if current_rows else None
+        if correction_only and previous is None:
+            continue
         values = _snapshot_values(
             item,
             now=now,
             correction_sequence=(previous.correction_sequence + 1 if previous else 0),
             supersedes_snapshot_id=previous.id if previous else None,
+            writer_context=writer_context,
         )
         row = TopicSnapshot(**values)
         session.add(row)
@@ -953,14 +1081,52 @@ def materialize_formal_plan(session: Session, plan: DateMaterializationPlan) -> 
                 )
             )
         rows_written += 1
-    session.commit()
+    if commit:
+        session.commit()
     return {
         "tradingDate": plan.trading_date.isoformat(),
         "status": "SUCCESS",
         "rowsWritten": rows_written,
         "idempotentRows": idempotent_rows,
+        "skippedNonTargetRows": (
+            sum(1 for item in plan.topics if item.status == "READY")
+            - rows_written
+            - idempotent_rows
+            if correction_only
+            else 0
+        ),
         "memberFactRows": sum(len(item.facts) for item in plan.topics if item.status == "READY"),
     }
+
+
+def materialize_formal_correction(
+    session: Session,
+    correction_plan: FormalCorrectionPlan,
+    *,
+    writer_context: Mapping[str, str] | None = None,
+) -> dict[str, Any]:
+    """Publish a preflighted A9 correction as one append-only transaction."""
+
+    if correction_plan.ambiguous_count:
+        return {**correction_plan.as_dict(), "status": "FAIL_CLOSED", "writes": []}
+    writes: list[dict[str, Any]] = []
+    try:
+        for date_plan in correction_plan.dates:
+            if date_plan.status == "READY":
+                writes.append(
+                    materialize_formal_plan(
+                        session,
+                        date_plan,
+                        commit=False,
+                        correction_only=True,
+                        writer_context=writer_context,
+                    )
+                )
+        session.commit()
+    except Exception:
+        session.rollback()
+        raise
+    return {**correction_plan.as_dict(), "status": "SUCCESS", "writes": writes}
 
 
 def materialize_bounded_formal_dates(
@@ -978,6 +1144,7 @@ def materialize_bounded_formal_dates(
         else enumerate_formal_dates(session, from_date=from_date, to_date=to_date)
     )
     plans = plan_formal_materialization(session, materialization_dates)
+    successor = aliased(TopicSnapshot)
     before = int(
         session.scalar(
             select(func.count())
@@ -986,6 +1153,7 @@ def materialize_bounded_formal_dates(
                 TopicSnapshot.publication_mode == FORMAL_PUBLICATION_MODE,
                 TopicSnapshot.publication_state == "PUBLISHED",
                 TopicSnapshot.superseded_by_snapshot_id.is_(None),
+                ~exists().where(successor.supersedes_snapshot_id == TopicSnapshot.id),
             )
         )
         or 0
@@ -999,6 +1167,7 @@ def materialize_bounded_formal_dates(
                 TopicSnapshot.publication_mode == FORMAL_PUBLICATION_MODE,
                 TopicSnapshot.publication_state == "PUBLISHED",
                 TopicSnapshot.superseded_by_snapshot_id.is_(None),
+                ~exists().where(successor.supersedes_snapshot_id == TopicSnapshot.id),
             )
         )
         or 0
@@ -1036,13 +1205,16 @@ __all__ = [
     "MAPPING_POLICY_VERSION",
     "DateMaterializationPlan",
     "FormalAuthorityUnavailable",
+    "FormalCorrectionPlan",
     "MembershipMember",
     "MembershipSnapshot",
     "SelectedMemberFact",
     "TopicMaterializationPlan",
     "enumerate_formal_dates",
     "materialize_bounded_formal_dates",
+    "materialize_formal_correction",
     "materialize_formal_plan",
+    "plan_formal_correction",
     "plan_formal_materialization",
     "read_canonical_member_facts",
     "resolve_formal_membership",
