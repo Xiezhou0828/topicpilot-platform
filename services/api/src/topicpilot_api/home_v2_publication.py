@@ -284,8 +284,11 @@ def build_daily_focus(
         direction = "上漲" if change > 0 else "下跌" if change < 0 else "持平"
         change_pct = item.get("changePct")
         pct = f"（{change_pct}%）" if change_pct is not None else ""
+        index_name = {"TPE": "加權指數", "TWO": "櫃買指數"}.get(
+            item.get("market"), item.get("indexName", "指數")
+        )
         index_facts.append(
-            f"{item['indexName']} {direction} {change:+g} 點{pct}，收盤 {item['value']}。"
+            f"{index_name} {direction} {change:+g} 點{pct}，收盤 {item['value']}。"
         )
     if index_facts:
         evidence.append("；".join(index_facts))
@@ -364,9 +367,12 @@ def normalize_home_publication_for_read(payload: Mapping[str, Any]) -> dict[str,
     if isinstance(health, Mapping):
         advance = health.get("advance")
         decline = health.get("decline")
+        flat = health.get("flat")
         if isinstance(advance, (int, float)) and not isinstance(advance, bool) and isinstance(decline, (int, float)) and not isinstance(decline, bool):
             health_copy = dict(health)
             health_copy["net"] = advance - decline
+            if isinstance(flat, (int, float)) and not isinstance(flat, bool) and health_copy.get("breadthEligible") is None:
+                health_copy["breadthEligible"] = advance + decline + flat
             market_overview_copy["marketHealth"] = health_copy
     turnover = market_overview_copy.get("turnover")
     if isinstance(turnover, list) and not any(isinstance(item, Mapping) and item.get("market") == "TOTAL" for item in turnover):
