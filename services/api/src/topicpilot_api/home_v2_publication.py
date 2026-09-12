@@ -344,6 +344,88 @@ def build_daily_focus(
     )
 
 
+def normalize_home_publication_for_read(payload: Mapping[str, Any]) -> dict[str, Any]:
+    """Keep persisted V2 envelopes within the current commercial contract.
+
+    A deployment can move ahead of the scheduled EOD writer.  During that
+    interval an older V2 row may still be the latest published row.  Do not
+    expose its historical narrative through the new read contract: rebuild
+    Daily Focus from the persisted market facts using the deterministic rules,
+    or return the truthful unavailable state when those facts are incomplete.
+    """
+
+    result = dict(payload)
+    existing_focus = result.get("dailyFocus")
+    if not isinstance(existing_focus, Mapping):
+        return result
+    if (
+        existing_focus.get("mode") == "RULE_BASED_V1"
+        and existing_focus.get("source") == DAILY_FOCUS_SOURCE
+    ):
+        return result
+
+    market_overview = result.get("marketOverview")
+    if not isinstance(market_overview, Mapping):
+        return result
+
+    def _as_date(value: Any) -> date | None:
+        if isinstance(value, date) and not isinstance(value, datetime):
+            return value
+        if isinstance(value, str):
+            try:
+                return date.fromisoformat(value[:10])
+            except ValueError:
+                return None
+        return None
+
+    def _as_datetime(value: Any) -> datetime | None:
+        if isinstance(value, datetime):
+            return value
+        if isinstance(value, str):
+            try:
+                return datetime.fromisoformat(value.replace("Z", "+00:00"))
+            except ValueError:
+                return None
+        return None
+
+    data_date = _as_date(
+        market_overview.get("dataDate")
+        or (result.get("publication") or {}).get("tradingDate")
+        or result.get("asOf")
+    )
+    as_of = _as_datetime(
+        market_overview.get("updatedAt")
+        or market_overview.get("latestSnapshotTime")
+        or (result.get("publication") or {}).get("asOf")
+    )
+    normalized = build_daily_focus(
+        market_overview=market_overview,
+        main_topics=(),
+        heating_topics=(),
+        cooling_topics=(),
+        data_date=data_date,
+        as_of=as_of,
+    )
+    result["dailyFocus"] = normalized.payload
+    statuses = result.get("sectionStatuses")
+    if isinstance(statuses, Mapping):
+        result["sectionStatuses"] = {
+            **statuses,
+            "dailyFocus": normalized.status_payload(),
+        }
+    publication = result.get("publication")
+    if isinstance(publication, Mapping):
+        completeness = publication.get("completeness")
+        if isinstance(completeness, Mapping):
+            publication_copy = dict(publication)
+            publication_copy["completeness"] = {
+                **completeness,
+                "sectionStatuses": result.get("sectionStatuses", statuses),
+            }
+            result["publication"] = publication_copy
+    return result
+
+
 def validate_home_gate(
     *, market_overview: SectionResult, main_topics: SectionResult, daily_focus: SectionResult
 ) -> tuple[str, str | None]:
@@ -1113,7 +1195,7 @@ def read_latest_home_publication(session: Session) -> dict[str, Any] | None:
         ).mappings().one_or_none()
     except SQLAlchemyError:
         return None
-    return dict(row["payload"]) if row else None
+    return normalize_home_publication_for_read(row["payload"]) if row else None
 
 
 def empty_home_v2(now: datetime, *, tracked_stock_count: int = 0) -> dict[str, Any]:
@@ -1209,6 +1291,7 @@ __all__ = [
     "calculate_rotation_14d",
     "empty_home_v2",
     "materialize_home_v2",
+    "normalize_home_publication_for_read",
     "rank_formal_topics",
     "read_latest_home_publication",
     "validate_home_gate",

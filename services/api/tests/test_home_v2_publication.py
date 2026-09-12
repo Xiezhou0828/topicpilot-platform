@@ -8,6 +8,7 @@ from topicpilot_api.home_v2_publication import (
     build_market_distribution,
     calculate_rotation_14d,
     empty_home_v2,
+    normalize_home_publication_for_read,
     rank_formal_topics,
     validate_home_gate,
 )
@@ -272,6 +273,34 @@ def test_empty_home_is_typed_and_product_safe_before_first_publication():
     assert payload["dailyFocus"]["temporary"] is False
     assert payload["dailyFocus"]["bullets"] == []
     assert payload["sectionStatuses"]["marketEvents"]["status"] == "UNAVAILABLE"
+
+
+def test_read_normalization_replaces_legacy_daily_focus_with_deterministic_facts():
+    payload = {
+        "asOf": "2026-09-09",
+        "publication": {
+            "tradingDate": "2026-09-09",
+            "asOf": "2026-09-09T13:35:00+08:00",
+            "completeness": {"sectionStatuses": {"dailyFocus": {"status": "AVAILABLE"}}},
+        },
+        "marketOverview": {
+            "dataDate": "2026-09-09",
+            "updatedAt": "2026-09-09T13:35:00+08:00",
+            "marketHealth": {"breadthEligible": 2, "advance": 1, "decline": 1, "flat": 0},
+            "indices": [
+                {"indexName": "TWSE 加權指數", "value": 100, "change": 1, "changePct": 1},
+            ],
+        },
+        "dailyFocus": {"headline": "目前主線為 網通。", "bullets": ["legacy narrative"]},
+        "sectionStatuses": {"dailyFocus": {"status": "AVAILABLE"}},
+    }
+
+    result = normalize_home_publication_for_read(payload)
+
+    assert result["dailyFocus"]["mode"] == "RULE_BASED_V1"
+    assert result["dailyFocus"]["source"] == "HOME_V2_DAILY_FOCUS_RULE_V1"
+    assert "目前主線為" not in " ".join(result["dailyFocus"]["bullets"])
+    assert result["sectionStatuses"]["dailyFocus"]["source"] == "HOME_V2_DAILY_FOCUS_RULE_V1"
 
 
 def test_official_index_fetch_transport_failure_is_typed_unavailable():
