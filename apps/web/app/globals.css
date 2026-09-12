@@ -4218,6 +4218,8 @@ tbody tr:hover td { background: rgba(86, 198, 189, 0.06); }
   .tp-home-index-card,.tp-home-turnover-card{padding:12px 10px}
   .tp-home-index-value{font-size:clamp(19px,6vw,26px)}
   .tp-home-turnover-value{font-size:clamp(13px,4.8vw,20px)}
+  .tp-home-page-container .tp-home-story-list{display:grid;min-width:0;gap:9px;padding-bottom:10px}
+  .tp-home-page-container .tp-home-story-list li{min-width:0;white-space:normal;overflow-wrap:anywhere}
   .tp-home-distribution-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
   .tp-home-market-structure-heading{align-items:flex-start;flex-direction:column;gap:4px}
   .tp-home-topic-ticker-viewport{margin-right:-18px;padding-right:18px;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:thin}
