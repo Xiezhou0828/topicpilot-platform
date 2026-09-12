@@ -1,6 +1,6 @@
 {
   "bundleSchemaVersion": "reference-bundle.v1",
-  "bundleSha256": "dd2c70fbfea8e400c1b08f76449a07c4ecfc972c68474c9cceb2cb6c401db47d",
+  "bundleSha256": "0578862f98914eb7b52fa2de8c253b6da6c4f882429c4c65dff2bdf7317b3662",
   "derivedSummary": {
     "adjustmentCount": 3,
     "calendarDateCount": 24,
@@ -12,7 +12,7 @@
       "TPE": 348,
       "TWO": 208
     },
-    "lifecycleEventCount": 6,
+    "lifecycleEventCount": 7,
     "marketCount": 2,
     "sessionCount": 1,
     "timezoneCount": 1,
@@ -22,8 +22,8 @@
     "adjustments.json": "1217e6f4722bb87afe5d2d033caabbfcd9cdc128e3e1067b6c79a5e5f669e558",
     "calendar_dates.json": "08f972307f5fef79e2154d3b96419c0206d0f5a60ae735f680492962143c7439",
     "currencies.json": "eb4b8c3d49b294f72d177fcb98f60d899325c856edce5e8272921290b17bce36",
-    "evidence.json": "3398332ae90ae38d24d32d9e7af99aa41898bf6d8ac5439a5bf126c83c938556",
-    "instrument_lifecycles.json": "cfffb6711c872a900a6ecfa5554623c43f2767baebce3479e43c660dfef8b66e",
+    "evidence.json": "761f1bdc63120e3585391c4c4daa6f50b4751b86d05ccf7aefb353872791d5a6",
+    "instrument_lifecycles.json": "9197bc9090c736566b070ed423cb43ef06255833b38f0256c6933a39d59e38b7",
     "instruments.json": "a0f1da139042b4b9590e405de038b0eba33fd7caa91c2ef09e1c34b58118c160",
     "markets.json": "816e0fd8bcd1c9d9597a4ef99a00fe2eed4c2756be1d9033a50a310c11c401bf",
     "sessions.json": "f8b2366c25dc79b16b610710ce510073d631827802aee78782b3cc7c6bbfcd28",
@@ -37,13 +37,14 @@
     "calendarAuthority": "TWSE 2026 market holiday schedule plus exceptional closure notice",
     "currencyAuthority": "existing live runtime/reference context contract",
     "dateEffectiveAuthority": "official TWSE/TPEx company profile or historical listing notice",
+    "instrument8277Lifecycle": "OFFICIAL_TPEX_BULLETIN_11500055041",
     "instrumentExpansion": "OWNER_APPROVED_CANONICAL_REFERENCE_EXPANSION_REVIEW_20260912",
     "instrumentIdentityUuid": "UUIDv5(topicpilot.instrument.v1:{marketCode}:{instrumentCode})",
     "marketAuthority": "provider registry plus existing identity bootstrap defaults",
     "statusAuthority": "DAILY_TRADING_STATUS_CODES plus explicit evidence validation"
   },
-  "previousReferenceVersion": "tw-reference-v1-rollover-57247b5a861c0ae3",
-  "referenceDataVersion": "tw-reference-v1-rollover-57247b5a861c0ae3",
+  "previousReferenceVersion": "tw-reference-v1-rollover-dd2c70fbfea8e400",
+  "referenceDataVersion": "tw-reference-v1-rollover-dd2c70fbfea8e400",
   "sourceArtifacts": [
     {
       "acceptedRowCount": 507,
@@ -121,6 +122,14 @@
       "role": "HISTORICAL_DELISTING_AUTHORITY",
       "sha256": "baecbd3d7322a7ce081e67de631566fd6e259d0640f51615ca2420c27423ed3b",
       "sourceUrl": "https://dsp.tpex.org.tw/web/announcement/announcement_detail.php?content_file=MTEzMDAxMTA4NDEuaHRtbA%3D%3D&content_number=MTEzMDAxMTA4NDE%3D"
+    },
+    {
+      "documentDate": "2026-08-31",
+      "fileName": "two_8277_capital_reduction.json",
+      "role": "STATUS_EVIDENCE_ADDENDUM",
+      "sha256": "59bcee3b2a301d9d6b644b977d715843612fa29980f10c6ed634fef5abf931f5",
+      "sourceDescription": "TPEx official 8277 capital-reduction share-exchange notice",
+      "sourceUrl": "https://www.tpex.org.tw/www/zh-tw/bulletin/annDetail?content_file=MTE1MDAwNTUwNDEuaHRtbA%3D%3D&docId=MTE1MDAwNTUwNDE%3D"
     }
   ]
 }

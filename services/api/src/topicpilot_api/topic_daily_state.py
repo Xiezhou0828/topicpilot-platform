@@ -42,8 +42,10 @@ FORMAL_MEMBERSHIP_MODE = "PIT_FORMAL"
 RESEARCH_PUBLICATION_MODE = "RESEARCH_ONLY"
 SHADOW_PUBLICATION_MODE = "SHADOW"
 MAPPING_POLICY_VERSION = "topic-membership-pit.v1"
-CALCULATION_VERSION = "topic-daily-state.v1"
-NO_TRADE_STATUS_CODES = frozenset({"NO_TRADE", "EXCHANGE_CONFIRMED_NO_DATA"})
+CALCULATION_VERSION = "topic-daily-state.v2"
+NO_TRADE_STATUS_CODES = frozenset(
+    {"SUSPENDED", "NO_TRADE", "EXCHANGE_CONFIRMED_NO_DATA"}
+)
 
 
 class FormalAuthorityUnavailable(ValueError):
@@ -63,6 +65,9 @@ class MembershipMember:
     role_authority_version: str = "UNAPPROVED"
     role_authority_hash: str = "UNAPPROVED"
     role_lineage_hash: str = "UNAPPROVED"
+    trading_expectation: str = "EXPECTED_TO_TRADE"
+    availability_reason: str | None = None
+    lifecycle_evidence_id: str | None = None
 
 
 @dataclass(frozen=True)
@@ -367,7 +372,15 @@ def resolve_formal_membership(
     relation_versions: set[str] = set()
     for row in candidates:
         lifecycle = lifecycle_by_instrument.get(row.instrument_id, [])
-        if lifecycle:
+        if len(lifecycle) > 1:
+            rendered = ";".join(
+                sorted(f"{item.status_code}:{item.evidence_id}" for item in lifecycle)
+            )
+            raise FormalAuthorityUnavailable(
+                f"overlapping lifecycle authority for {row.instrument_id}: {rendered}"
+            )
+        lifecycle_event = lifecycle[0] if lifecycle else None
+        if lifecycle_event and lifecycle_event.status_code in {"DELISTED", "TERMINATED"}:
             reason = ";".join(
                 sorted(f"{item.status_code}:{item.evidence_id}" for item in lifecycle)
             )
@@ -397,6 +410,19 @@ def resolve_formal_membership(
                 role_authority_version=row.authority_version,
                 role_authority_hash=row.role_authority_hash,
                 role_lineage_hash=row.role_lineage_hash,
+                trading_expectation=(
+                    "LEGAL_NO_TRADE"
+                    if lifecycle_event and lifecycle_event.status_code == "SUSPENDED"
+                    else "EXPECTED_TO_TRADE"
+                ),
+                availability_reason=(
+                    f"SUSPENDED:{lifecycle_event.evidence_id}"
+                    if lifecycle_event and lifecycle_event.status_code == "SUSPENDED"
+                    else None
+                ),
+                lifecycle_evidence_id=(
+                    lifecycle_event.evidence_id if lifecycle_event else None
+                ),
             )
         )
 
@@ -428,6 +454,9 @@ def resolve_formal_membership(
                 "roleAuthorityVersion": member.role_authority_version,
                 "roleAuthorityHash": member.role_authority_hash,
                 "roleLineageHash": member.role_lineage_hash,
+                "tradingExpectation": member.trading_expectation,
+                "availabilityReason": member.availability_reason,
+                "lifecycleEvidenceId": member.lifecycle_evidence_id,
             }
             for member in member_order
         ],
@@ -571,8 +600,14 @@ def read_canonical_member_facts(
 
     facts: list[SelectedMemberFact] = []
     for member in sorted(members, key=_member_sort_key):
-        price = price_by_instrument.get(member.instrument_id, {}).get(1)
-        previous = price_by_instrument.get(member.instrument_id, {}).get(2)
+        ranked_prices = price_by_instrument.get(member.instrument_id, {})
+        latest = ranked_prices.get(1)
+        price = (
+            latest
+            if latest is not None and latest["trading_date"] == trading_date
+            else None
+        )
+        previous = ranked_prices.get(2) if price is not None else latest
         volume = volume_by_instrument.get(member.instrument_id)
         status = status_by_instrument.get(member.instrument_id)
         close = price["close"] if price is not None else None
@@ -588,7 +623,18 @@ def read_canonical_member_facts(
             classification = "NEGATIVE"
         else:
             classification = "FLAT"
-        status_code = status["status_code"] if status is not None else None
+        status_code = (
+            status["status_code"]
+            if status is not None
+            else "SUSPENDED"
+            if member.trading_expectation == "LEGAL_NO_TRADE"
+            else None
+        )
+        status_reason = (
+            status["status_reason"]
+            if status is not None
+            else member.availability_reason
+        )
         fact_state = (
             "OBSERVED"
             if close is not None
@@ -622,7 +668,9 @@ def read_canonical_member_facts(
             "changePct": _json_value(change_pct),
             "observedClassification": classification,
             "tradingStatus": status_code,
-            "tradingStatusReason": status["status_reason"] if status is not None else None,
+            "tradingStatusReason": status_reason,
+            "tradingExpectation": member.trading_expectation,
+            "lifecycleEvidenceId": member.lifecycle_evidence_id,
             "priceContentHash": price["content_hash"] if price is not None else None,
             "volumeContentHash": volume["content_hash"] if volume is not None else None,
             "statusContentHash": status["content_hash"] if status is not None else None,
@@ -853,7 +901,7 @@ def _snapshot_values(
             if membership.eligible_count
             else None
         ),
-        "data_status": "COMPLETE" if not unknown else "PARTIAL",
+        "data_status": "COMPLETE" if not no_trade and not unknown else "PARTIAL",
         "score_status": "DEFERRED",
         "calculation_version": CALCULATION_VERSION,
         "metadata_payload": metadata_payload,
@@ -888,6 +936,19 @@ def _snapshot_values(
             "participation": "RAW_COUNTS_AND_COVERAGE_ONLY",
             "breadth": "DEFERRED",
             "leadership": "UNAVAILABLE",
+            "availableMemberCount": len(observed),
+            "unavailableMemberCount": len(no_trade) + len(unknown),
+            "legalNoTradeMemberCount": len(no_trade),
+            "isolatedUnavailableMemberCount": len(unknown),
+            "memberAvailabilityReasons": [
+                {
+                    "instrumentId": str(fact.instrument_id),
+                    "factState": fact.fact_state,
+                    "reason": fact.raw_fact_payload.get("tradingStatusReason"),
+                }
+                for fact in facts
+                if fact.fact_state != "OBSERVED"
+            ],
             "concentration": "DEFERRED",
             "ranking": "DEFERRED",
             "lifecycle": "SHADOW_ONLY_UNPUBLISHED",

@@ -75,6 +75,39 @@ def test_unknown_missing_is_not_covered_even_when_observed_row_exists():
     assert "UNEXPLAINED_MISSING_DATA" in result.reason_codes
 
 
+def test_isolated_missing_quote_is_truthful_partial_but_downstream_ready():
+    result = assess_daily_coverage(
+        trade_date=date(2026, 9, 11),
+        expected_by_market={"TPE": 348, "TWO": 208},
+        observed_by_market={"TPE": 348, "TWO": 208},
+        priced_by_market={"TPE": 348, "TWO": 207},
+        covered_by_market={"TPE": 348, "TWO": 207},
+        isolated_unavailable_by_market={"TWO": 1},
+    )
+
+    assert result.status == "PARTIAL"
+    assert result.downstream_ready is True
+    assert result.isolated_unavailable_count == 1
+    assert result.systemic_failure_count == 0
+    assert "ISOLATED_UNAVAILABLE_COVERAGE" in result.reason_codes
+    assert "TWO_INCOMPLETE" not in result.reason_codes
+
+
+def test_market_wide_provider_failure_stays_fail_closed():
+    result = assess_daily_coverage(
+        trade_date=date(2026, 9, 11),
+        expected_by_market={"TPE": 348, "TWO": 208},
+        observed_by_market={"TPE": 348, "TWO": 0},
+        systemic_failure_by_market={"TWO": True},
+    )
+
+    assert result.status == "PARTIAL"
+    assert result.downstream_ready is False
+    assert result.systemic_failure_count == 208
+    assert "MARKET_PROVIDER_UNAVAILABLE" in result.reason_codes
+    assert "TWO_SYSTEMIC_FAILURE" in result.reason_codes
+
+
 def test_null_close_is_unavailable_and_never_coerced_to_zero():
     result = assess_daily_coverage(
         trade_date=date(2026, 8, 12),

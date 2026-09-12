@@ -1,0 +1,27 @@
+{
+  "schemaVersion": "instrument-lifecycle-authority.v1",
+  "marketCode": "TWO",
+  "instrumentCode": "8277",
+  "instrumentName": "商丞科技",
+  "noticeDate": "2026-08-31",
+  "noticeNumber": "證櫃監字第11500055041號",
+  "subject": "商丞科技股份有限公司減資彌補虧損換發新股，舊股票停止櫃檯買賣及新股票開始櫃檯買賣",
+  "authority": {
+    "provider": "TPEx",
+    "endpoint": "https://www.tpex.org.tw/www/zh-tw/bulletin/annDetail?content_file=MTE1MDAwNTUwNDEuaHRtbA%3D%3D&docId=MTE1MDAwNTUwNDE%3D",
+    "downloadPath": "/storage/eb_data/11508/11500055041.html",
+    "retrievalContract": "TPEx bulletin annDetail JSON"
+  },
+  "events": [
+    {
+      "status": "SUSPENDED",
+      "effectiveFrom": "2026-09-10",
+      "effectiveTo": "2026-09-18",
+      "oldShareLastTradingDate": "2026-09-09",
+      "newShareBaseDate": "2026-09-18",
+      "newShareTradingDate": "2026-09-21",
+      "evidenceId": "TPEX-TWO-8277-SUSPENDED-20260910",
+      "reason": "TPEx notice states that 8277 old shares stop OTC trading from 2026-09-10 through 2026-09-18 for the capital-reduction share exchange; new shares start OTC trading on 2026-09-21."
+    }
+  ]
+}

@@ -89,6 +89,18 @@ def test_formal_topic_read_model_filters_to_published_rows():
     assert "successor.supersedes_snapshot_id = topic_snapshots.id" in sql
 
 
+def test_member_fact_reader_never_promotes_a_prior_bar_to_target_date():
+    source = (
+        Path(__file__).resolve().parents[1]
+        / "src"
+        / "topicpilot_api"
+        / "topic_daily_state.py"
+    ).read_text(encoding="utf-8")
+
+    assert 'latest["trading_date"] == trading_date' in source
+    assert "previous = ranked_prices.get(2) if price is not None else latest" in source
+
+
 def test_correction_values_are_immutable_and_explicitly_superseding():
     instrument_id = uuid4()
     superseded_id = uuid4()
@@ -146,6 +158,104 @@ def test_correction_values_are_immutable_and_explicitly_superseding():
     assert values["correction_sequence"] == 1
     assert values["supersedes_snapshot_id"] == superseded_id
     assert values["supersession_reason"] == "CORRECTION"
+
+
+def test_partial_snapshot_excludes_legal_no_trade_from_aggregate_truthfully():
+    observed_id = uuid4()
+    suspended_id = uuid4()
+    members = (
+        MembershipMember(observed_id, "2330", "TPE", "RELATED", "v1", "BOUNDED"),
+        MembershipMember(
+            suspended_id,
+            "8277",
+            "TWO",
+            "RELATED",
+            "v1",
+            "BOUNDED",
+            trading_expectation="LEGAL_NO_TRADE",
+            availability_reason="SUSPENDED:TPEX-TWO-8277-SUSPENDED-20260910",
+            lifecycle_evidence_id="TPEX-TWO-8277-SUSPENDED-20260910",
+        ),
+    )
+    membership = MembershipSnapshot(
+        topic_id=uuid4(),
+        trading_date=date(2026, 9, 11),
+        relation_version="v1",
+        mapping_effective_from=FORMAL_MAPPING_EARLIEST_DATE,
+        membership_snapshot_id="membership:partial",
+        membership_snapshot_hash="partial",
+        reference_registry_version="ref-v1",
+        session_code="TPE-REGULAR",
+        calendar_code="TWSE",
+        trading_day_state="TRADING",
+        expected_count=2,
+        eligible_count=2,
+        excluded_count=0,
+        excluded_reasons=(),
+        members=members,
+    )
+    facts = (
+        SelectedMemberFact(
+            instrument_id=observed_id,
+            trading_date=date(2026, 9, 11),
+            fact_state="OBSERVED",
+            price_observation_id=None,
+            volume_observation_id=None,
+            trading_status_observation_id=None,
+            close=Decimal("100"),
+            previous_close=Decimal("99"),
+            change_pct=Decimal("1.0101"),
+            observed_classification="POSITIVE",
+            observed_at=None,
+            retrieved_at=None,
+            raw_fact_payload={"instrumentId": str(observed_id)},
+            fact_identity="fact:observed",
+            fact_hash="observed",
+        ),
+        SelectedMemberFact(
+            instrument_id=suspended_id,
+            trading_date=date(2026, 9, 11),
+            fact_state="NO_TRADE",
+            price_observation_id=None,
+            volume_observation_id=None,
+            trading_status_observation_id=None,
+            close=None,
+            previous_close=Decimal("10"),
+            change_pct=None,
+            observed_classification=None,
+            observed_at=None,
+            retrieved_at=None,
+            raw_fact_payload={
+                "instrumentId": str(suspended_id),
+                "tradingStatusReason": "SUSPENDED:TPEX-TWO-8277-SUSPENDED-20260910",
+            },
+            fact_identity="fact:suspended",
+            fact_hash="suspended",
+        ),
+    )
+    plan = TopicMaterializationPlan(
+        date(2026, 9, 11),
+        membership.topic_id,
+        "topic",
+        "Topic",
+        "READY",
+        None,
+        membership,
+        facts,
+    )
+
+    values = _snapshot_values(
+        plan,
+        now=datetime(2026, 9, 11, tzinfo=UTC),
+        correction_sequence=0,
+        supersedes_snapshot_id=None,
+    )
+
+    assert values["data_status"] == "PARTIAL"
+    assert values["observed_stock_count"] == 1
+    assert values["no_trade_count"] == 1
+    assert values["coverage_pct"] == Decimal("50")
+    assert values["quality_flags"]["unavailableMemberCount"] == 1
 
 
 def test_formal_authority_migration_is_additive_and_single_head():

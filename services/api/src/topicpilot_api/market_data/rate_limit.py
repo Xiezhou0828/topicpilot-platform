@@ -42,6 +42,7 @@ class RateLimitedTransport:
         self._requests: deque[float] = deque()
         self._last_request: float | None = None
         self.retry_count = 0
+        self.request_count = 0
 
     def _wait_for_budget(self) -> None:
         while True:
@@ -59,6 +60,7 @@ class RateLimitedTransport:
                 current = self.clock()
                 self._requests.append(current)
                 self._last_request = current
+                self.request_count += 1
                 return
             self.sleep(delay)
 

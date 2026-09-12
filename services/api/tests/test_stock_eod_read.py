@@ -75,6 +75,11 @@ def _row(**overrides):
         "status_retrieved_at": None,
         "quality_conflict": False,
         "value_conflict": False,
+        "read_date": date(2026, 8, 13),
+        "previous_trading_date": date(2026, 8, 12),
+        "current_lifecycle_status": None,
+        "current_lifecycle_reason": None,
+        "current_lifecycle_evidence_id": None,
     }
     row.update(overrides)
     return row
@@ -131,6 +136,46 @@ def test_stock_eod_preserves_explicit_no_trade_and_previous_close():
     assert eod["changePct"] is None
 
 
+def test_stock_eod_uses_active_lifecycle_for_8277_without_faking_today_price():
+    eod = _stock_eod(
+        _row(
+            instrument_code="8277",
+            read_date=date(2026, 9, 11),
+            eod_date=date(2026, 9, 9),
+            daily_close=Decimal("16.4"),
+            current_lifecycle_status="SUSPENDED",
+            current_lifecycle_reason="TPEx capital-reduction share exchange",
+            current_lifecycle_evidence_id="TPEX-TWO-8277-SUSPENDED-20260910",
+        )
+    )
+
+    assert eod["dataStatus"] == "SUSPENDED"
+    assert eod["tradingDate"] == date(2026, 9, 11)
+    assert eod["lastFormalTradingDate"] == date(2026, 9, 9)
+    assert eod["previousClose"] == 16.4
+    assert eod["close"] is None
+    assert eod["availabilityEvidenceId"] == "TPEX-TWO-8277-SUSPENDED-20260910"
+
+
+def test_stock_item_does_not_promote_stale_close_for_suspended_instrument():
+    item = _stock_item(
+        _row(
+            instrument_code="8277",
+            read_date=date(2026, 9, 11),
+            eod_date=date(2026, 9, 9),
+            daily_close=Decimal("16.4"),
+            current_lifecycle_status="SUSPENDED",
+            current_lifecycle_reason="TPEx capital-reduction share exchange",
+            current_lifecycle_evidence_id="TPEX-TWO-8277-SUSPENDED-20260910",
+        ),
+        [],
+    )
+
+    assert item["price"] is None
+    assert item["volume"] is None
+    assert item["eod"]["dataStatus"] == "SUSPENDED"
+
+
 def test_intraday_price_does_not_pair_with_top_level_eod_change_pct():
     item = _stock_item(
         _row(
@@ -170,3 +215,5 @@ def test_stock_eod_query_is_set_based_and_current_observation_safe():
     assert "cv.aggregation_code = 'DAILY_TOTAL'" in sql
     assert "AT TIME ZONE m.timezone" in sql
     assert "daily_price_by_day" in sql
+    assert "registry.status = 'ACTIVE'" in sql
+    assert "current_lifecycle_status" in sql

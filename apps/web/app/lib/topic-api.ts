@@ -45,6 +45,8 @@ export type TopicSummary = {
   strengthState: string | null;
   readableState: string;
   coveragePct: number | null;
+  snapshotDataStatus: string | null;
+  unavailableMemberCount: number | null;
   constituentCount: number;
   direction: string | null;
   status?: TopicStatus[];
@@ -222,6 +224,11 @@ function roleFor(value: string | null | undefined): "代表股" | "核心股" | 
 }
 
 function summaryFromApi(item: ApiTopicSummary): TopicSummary {
+  const quality = item.quality ?? {};
+  const snapshotDataStatus = typeof quality.dataStatus === "string" ? quality.dataStatus : null;
+  const unavailableMemberCount = typeof quality.unavailableMemberCount === "number"
+    ? quality.unavailableMemberCount
+    : null;
   return {
     ...item,
     // Formal catalog identity is authoritative. Never replace an unfamiliar
@@ -230,6 +237,8 @@ function summaryFromApi(item: ApiTopicSummary): TopicSummary {
     groupName: item.groupName,
     readableState: readableState(item.strengthState),
     direction: item.direction,
+    snapshotDataStatus,
+    unavailableMemberCount,
   };
 }
 
@@ -271,6 +280,7 @@ export function lifecycleStatusLabel(status: LifecycleAvailability | null | unde
 
 export function getTopicPublication(source: TopicSource, topic: TopicSummary | TopicDetail): TopicPublication {
   const snapshotReady = Boolean(topic.dataDate) && (topic.direction !== null || topic.strengthState !== null || topic.coveragePct !== null);
+  const snapshotPartial = topic.snapshotDataStatus === "PARTIAL";
   const statusReady = Boolean(topic.dataDate) && (topic.status ?? []).length === 3 && (topic.status ?? []).every((item) => item.state !== null);
   const lifecycleState = lifecyclePublicationState(topic.lifecycle?.dataStatus);
   const lifecycleNote = topic.lifecycle?.dataStatus === "SHADOW_AVAILABLE"
@@ -285,7 +295,7 @@ export function getTopicPublication(source: TopicSource, topic: TopicSummary | T
     relations: sourceDisclosure("relations", source, "FORMAL", "正式 effective-dated relation/read route。"),
     score: sourceDisclosure("score", source, topic.score === null ? "DEFERRED" : "FORMAL", topic.score === null ? "正式 score 尚未發布；前端不自行計算。" : "正式 API 已回傳 score。"),
     grade: sourceDisclosure("grade", source, topic.grade === null ? "DEFERRED" : "FORMAL", topic.grade === null ? "正式 grade 尚未發布；不推導 S/A/B/D。" : "正式 API 已回傳 grade。"),
-    snapshot: sourceDisclosure("snapshot", source, snapshotReady ? "FORMAL" : "FORMAL_NOT_WIRED", snapshotReady ? "Topic Snapshot 欄位已有可用 evidence。" : "Snapshot-backed 欄位尚未有完整 published evidence。"),
+    snapshot: sourceDisclosure("snapshot", source, snapshotPartial ? "TEMPORARY" : snapshotReady ? "FORMAL" : "FORMAL_NOT_WIRED", snapshotPartial ? `正式 Topic Snapshot 為 PARTIAL；${topic.unavailableMemberCount ?? 0} 檔當日未納入 aggregate。` : snapshotReady ? "Topic Snapshot 欄位已有可用 evidence。" : "Snapshot-backed 欄位尚未有完整 published evidence。"),
     participation: sourceDisclosure("participation", source, statusReady ? "FORMAL" : "FORMAL_NOT_WIRED", statusReady ? "三個 participation status 均由 API 回傳。" : "participation/leadership/diffusion 尚未有完整 published evidence。"),
     lifecycle: sourceDisclosure("lifecycle", source, lifecycleState, lifecycleNote),
     leaderCore: sourceDisclosure("leaderCore", source, "CONTRACT_GAP", "Leader/Core formal contract 尚未提供。"),
@@ -319,6 +329,8 @@ function rawTopicSummary(topic: RawTopic): TopicSummary | null {
     strengthState: topic.strengthState ?? null,
     readableState: readableState(topic.strengthState),
     coveragePct: topic.breadthRatio ?? null,
+    snapshotDataStatus: null,
+    unavailableMemberCount: null,
     constituentCount: topic.stockCount ?? 0,
     direction: null,
   };
@@ -347,6 +359,8 @@ function syntheticTopics(): TopicSummary[] {
       strengthState: item.state,
       readableState: item.state,
       coveragePct: null,
+      snapshotDataStatus: null,
+      unavailableMemberCount: null,
       constituentCount: item.constituents.length,
       direction: null,
     }));

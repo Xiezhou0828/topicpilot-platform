@@ -111,6 +111,11 @@ test("EOD status and lineage fields are wired into the Drawer", () => {
   assert.match(explorer, /eod: item\.eod/);
   assert.match(explorer, /selectStockQuote\(stock\)/);
   assert.match(generated, /StockEodRead:/);
+  assert.match(drawer, /目前暫停報價／暫停交易/);
+  assert.match(drawer, /今日報價暫不可用/);
+  for (const field of ["availabilityReason", "availabilityEvidenceId", "lastFormalTradingDate"]) {
+    assert.match(drawer, new RegExp(`eod\\.${field}`));
+  }
 });
 
 test("browser remains render-only for EOD business semantics", () => {

@@ -29,6 +29,7 @@ IMPLEMENTED_V2_TABLES = {
     "live_tracking_universe",
     "live_collector_runs",
     "live_collector_attempts",
+    "live_collector_checkpoints",
     "topic_snapshots",
     "topic_score_projections",
     "topic_score_projection_members",

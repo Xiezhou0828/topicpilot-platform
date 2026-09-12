@@ -24,6 +24,9 @@ class DailyMarketReconciliation:
     priced_count: int
     covered_count: int
     unavailable_count: int
+    legal_no_trade_count: int
+    isolated_unavailable_count: int
+    systemic_failure_count: int
     unexplained_missing_count: int
     wrong_date_count: int
     duplicate_key_count: int
@@ -47,6 +50,9 @@ class DailyMarketReconciliation:
             "pricedCount": self.priced_count,
             "coveredCount": self.covered_count,
             "unavailableCount": self.unavailable_count,
+            "legalNoTradeCount": self.legal_no_trade_count,
+            "isolatedUnavailableCount": self.isolated_unavailable_count,
+            "systemicFailureCount": self.systemic_failure_count,
             "unexplainedMissingCount": self.unexplained_missing_count,
             "wrongDateCount": self.wrong_date_count,
             "duplicateKeyCount": self.duplicate_key_count,
@@ -65,6 +71,8 @@ def assess_daily_coverage(
     observed_by_market: dict[str, int],
     priced_by_market: dict[str, int] | None = None,
     covered_by_market: dict[str, int] | None = None,
+    isolated_unavailable_by_market: dict[str, int] | None = None,
+    systemic_failure_by_market: dict[str, bool] | None = None,
     wrong_date_count: int = 0,
     duplicate_key_count: int = 0,
     market_closed: bool = False,
@@ -74,29 +82,42 @@ def assess_daily_coverage(
     An observation with a null close is retained and counted as unavailable,
     never coerced to zero.  Approved ``SUSPENDED``, ``NO_TRADE``, and
     ``EXCHANGE_CONFIRMED_NO_DATA`` statuses count as covered but remain
-    unpriced. Unknown/provider-missing instruments remain unexplained.
+    unpriced. Unknown/provider-missing instruments remain unexplained unless a
+    successful market-wide response proves that the missing row is isolated.
+    A failed market-wide request is always systemic and blocks publication.
     """
 
     markets = sorted(set(expected_by_market) | set(observed_by_market))
     priced_by_market = observed_by_market if priced_by_market is None else priced_by_market
     covered_by_market = priced_by_market if covered_by_market is None else covered_by_market
+    isolated_unavailable_by_market = isolated_unavailable_by_market or {}
+    systemic_failure_by_market = systemic_failure_by_market or {}
     expected = sum(expected_by_market.get(item, 0) for item in markets)
     observed = sum(observed_by_market.get(item, 0) for item in markets)
     priced = sum(priced_by_market.get(item, 0) for item in markets)
     covered = sum(covered_by_market.get(item, 0) for item in markets)
+    isolated = sum(isolated_unavailable_by_market.get(item, 0) for item in markets)
+    legal_no_trade = max(0, covered - priced)
+    systemic_failures = sum(
+        expected_by_market.get(item, 0)
+        for item in markets
+        if systemic_failure_by_market.get(item, False)
+    )
     unavailable = max(0, expected - priced)
-    unexplained = max(0, expected - covered)
+    unexplained = max(0, expected - covered - isolated)
     reasons: list[str] = []
     if market_closed:
         reasons.append("MARKET_CLOSED")
     if expected == 0:
         reasons.append("EMPTY_FORMAL_UNIVERSE")
-    if covered != expected:
+    if covered + isolated != expected:
         reasons.append("INCOMPLETE_COVERAGE")
     if priced != expected:
         reasons.append("UNAVAILABLE_DAILY_CLOSE")
     if covered > priced:
         reasons.append("APPROVED_NO_TRADE_COVERAGE")
+    if isolated:
+        reasons.append("ISOLATED_UNAVAILABLE_COVERAGE")
     if unexplained:
         reasons.append("UNEXPLAINED_MISSING_DATA")
     if wrong_date_count:
@@ -104,7 +125,13 @@ def assess_daily_coverage(
     if duplicate_key_count:
         reasons.append("DUPLICATE_STABLE_KEY")
     for market in markets:
-        if covered_by_market.get(market, 0) != expected_by_market.get(market, 0):
+        if systemic_failure_by_market.get(market, False):
+            reasons.extend(("MARKET_PROVIDER_UNAVAILABLE", f"{market}_SYSTEMIC_FAILURE"))
+        elif (
+            covered_by_market.get(market, 0)
+            + isolated_unavailable_by_market.get(market, 0)
+            != expected_by_market.get(market, 0)
+        ):
             reasons.append(f"{market}_INCOMPLETE")
 
     blocking_reasons = {
@@ -114,11 +141,20 @@ def assess_daily_coverage(
         "DATA_DATE_MISMATCH",
         "DUPLICATE_STABLE_KEY",
         "UNEXPLAINED_MISSING_DATA",
+        "MARKET_PROVIDER_UNAVAILABLE",
     }
     ready = not any(
         reason in blocking_reasons or reason.endswith("_INCOMPLETE") for reason in reasons
     )
-    status = "MARKET_CLOSED" if market_closed else "READY" if ready else "PARTIAL"
+    status = (
+        "MARKET_CLOSED"
+        if market_closed
+        else "PARTIAL"
+        if isolated and ready
+        else "READY"
+        if ready
+        else "PARTIAL"
+    )
     return DailyMarketReconciliation(
         trade_date=trade_date,
         expected_count=expected,
@@ -126,6 +162,9 @@ def assess_daily_coverage(
         priced_count=priced,
         covered_count=covered,
         unavailable_count=unavailable,
+        legal_no_trade_count=legal_no_trade,
+        isolated_unavailable_count=isolated,
+        systemic_failure_count=systemic_failures,
         unexplained_missing_count=unexplained,
         wrong_date_count=wrong_date_count,
         duplicate_key_count=duplicate_key_count,
@@ -135,11 +174,21 @@ def assess_daily_coverage(
                 "observed": observed_by_market.get(market, 0),
                 "priced": priced_by_market.get(market, 0),
                 "covered": covered_by_market.get(market, 0),
+                "legalNoTrade": max(
+                    0,
+                    covered_by_market.get(market, 0)
+                    - priced_by_market.get(market, 0),
+                ),
+                "isolatedUnavailable": isolated_unavailable_by_market.get(market, 0),
+                "systemicFailure": bool(systemic_failure_by_market.get(market, False)),
                 "unavailable": max(
                     0, expected_by_market.get(market, 0) - priced_by_market.get(market, 0)
                 ),
                 "unexplainedMissing": max(
-                    0, expected_by_market.get(market, 0) - covered_by_market.get(market, 0)
+                    0,
+                    expected_by_market.get(market, 0)
+                    - covered_by_market.get(market, 0)
+                    - isolated_unavailable_by_market.get(market, 0),
                 ),
             }
             for market in markets
@@ -156,6 +205,7 @@ def reconcile_daily_market(
     *,
     market_closed: bool = False,
     expected_instrument_ids: Collection[Any] | None = None,
+    systemic_market_codes: Collection[str] = (),
 ) -> DailyMarketReconciliation:
     """Reconcile the canonical daily projection against a date-effective universe."""
 
@@ -180,7 +230,12 @@ def reconcile_daily_market(
                            'SUSPENDED', 'NO_TRADE', 'EXCHANGE_CONFIRMED_NO_DATA',
                            'DELISTED', 'TERMINATED'
                        )
-                ) AS covered_count
+                ) AS covered_count,
+                count(d.instrument_id) FILTER (
+                    WHERE d.close IS NULL
+                      AND d.status_code = 'UNKNOWN'
+                      AND d.status_reason LIKE 'MISSING_MARKET_DATA:%'
+                ) AS isolated_unavailable_count
             FROM topicpilot.markets m
             JOIN topicpilot.instruments i ON i.market_id = m.id
             LEFT JOIN topicpilot.vw_daily_market_observations d
@@ -201,12 +256,16 @@ def reconcile_daily_market(
     observed_by_market: dict[str, int] = {}
     priced_by_market: dict[str, int] = {}
     covered_by_market: dict[str, int] = {}
+    isolated_unavailable_by_market: dict[str, int] = {}
     for row in rows:
         market = str(row["market_code"])
         expected_by_market[market] = int(row["expected_count"] or 0)
         observed_by_market[market] = int(row["observed_count"] or 0)
         priced_by_market[market] = int(row["priced_count"] or 0)
         covered_by_market[market] = int(row["covered_count"] or 0)
+        isolated_unavailable_by_market[market] = int(
+            row["isolated_unavailable_count"] or 0
+        )
     duplicate_query = text(
         f"""
                 SELECT count(*) FROM (
@@ -230,6 +289,10 @@ def reconcile_daily_market(
         observed_by_market=observed_by_market,
         priced_by_market=priced_by_market,
         covered_by_market=covered_by_market,
+        isolated_unavailable_by_market=isolated_unavailable_by_market,
+        systemic_failure_by_market={
+            market: market in set(systemic_market_codes) for market in expected_by_market
+        },
         duplicate_key_count=duplicate_count,
         market_closed=market_closed,
     )

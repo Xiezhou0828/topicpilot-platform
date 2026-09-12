@@ -298,6 +298,9 @@ class LiveStatusResponse(ApiModel):
     failure_code: str | None = Field(default=None, alias="failureCode")
     failure_message: str | None = Field(default=None, alias="failureMessage")
     provider_health: list[dict[str, object]] = Field(default_factory=list, alias="providerHealth")
+    recovery_progress: dict[str, Any] = Field(
+        default_factory=dict, alias="recoveryProgress"
+    )
 
 
 class LiveTrackingResponse(ApiModel):
@@ -536,6 +539,13 @@ class StockEodRead(ApiModel):
     volume_source: StockEodSource | None = Field(alias="volumeSource")
     observed_at: datetime | None = Field(alias="observedAt")
     retrieved_at: datetime | None = Field(alias="retrievedAt")
+    availability_reason: str | None = Field(default=None, alias="availabilityReason")
+    availability_evidence_id: str | None = Field(
+        default=None, alias="availabilityEvidenceId"
+    )
+    last_formal_trading_date: date | None = Field(
+        default=None, alias="lastFormalTradingDate"
+    )
     data_status: Literal[
         "AVAILABLE",
         "PARTIAL",

@@ -2194,6 +2194,11 @@
             "title": "Providerstatus",
             "type": "string"
           },
+          "recoveryProgress": {
+            "additionalProperties": true,
+            "title": "Recoveryprogress",
+            "type": "object"
+          },
           "retryCount": {
             "title": "Retrycount",
             "type": "integer"
@@ -3592,6 +3597,28 @@
             "title": "Adjustmentstate",
             "type": "string"
           },
+          "availabilityEvidenceId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Availabilityevidenceid"
+          },
+          "availabilityReason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Availabilityreason"
+          },
           "change": {
             "anyOf": [
               {
@@ -3648,6 +3675,18 @@
               }
             ],
             "title": "High"
+          },
+          "lastFormalTradingDate": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lastformaltradingdate"
           },
           "low": {
             "anyOf": [

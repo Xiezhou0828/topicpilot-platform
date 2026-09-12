@@ -9,10 +9,11 @@ from datetime import UTC, date, datetime, timedelta
 from datetime import time as clock_time
 from decimal import Decimal
 from typing import Any
+from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 from uuid import UUID
 
-from sqlalchemy import and_, or_, select
+from sqlalchemy import and_, func, or_, select
 from sqlalchemy.exc import DBAPIError
 from sqlalchemy.orm import Session
 
@@ -37,6 +38,7 @@ from topicpilot_api.normalizer.contracts import stable_hash
 from topicpilot_api.orm import (
     Instrument,
     LiveCollectorAttempt,
+    LiveCollectorCheckpoint,
     LiveCollectorRun,
     Market,
     TopicSnapshot,
@@ -69,6 +71,39 @@ def _json_safe(value: Any) -> Any:
     if isinstance(value, (Decimal, UUID)):
         return str(value)
     return value
+
+
+def _provider_exception_classification(exc: Exception) -> str:
+    """Map transport/parser failures to the operational provider vocabulary."""
+
+    root = exc
+    seen: set[int] = set()
+    while root.__cause__ is not None and id(root) not in seen:
+        seen.add(id(root))
+        root = root.__cause__
+    code = " ".join(
+        str(getattr(item, "code", "") or "").upper() for item in (exc, root)
+    )
+    message = f"{exc} {root}".upper()
+    combined = f"{code} {message}"
+    if isinstance(exc, HTTPError) or "429" in combined or "RATE_LIMIT" in combined:
+        return "RATE_LIMIT" if "429" in combined or "RATE_LIMIT" in combined else "HTTP_ERROR"
+    if isinstance(exc, TimeoutError) or "TIMEOUT" in combined:
+        return "PROVIDER_TIMEOUT"
+    if isinstance(exc, (ConnectionError, URLError, OSError)) or any(
+        marker in combined for marker in ("CONNECTION", "DNS", "UNREACHABLE")
+    ):
+        return "PROVIDER_CONNECTION_ERROR"
+    if "DATE_MISMATCH" in combined:
+        return "DATE_MISMATCH"
+    if "EMPTY" in combined or "NO_RESULT" in combined:
+        return "MARKET_PROVIDER_UNAVAILABLE"
+    if isinstance(exc, (ValueError, TypeError)) or any(
+        marker in combined
+        for marker in ("PAYLOAD", "PARSE", "OHLC", "NUMBER", "DUPLICATE")
+    ):
+        return "PARSE_ERROR"
+    return "HTTP_ERROR"
 
 
 @dataclass(frozen=True)
@@ -324,6 +359,28 @@ class PostCloseUpdater:
             for market_code, codes in grouped.items()
         }
 
+    @staticmethod
+    def _publication_universe(
+        context: Any,
+        run_date: date,
+        eligible_by_market: Mapping[str, Collection[str]],
+    ) -> Mapping[str, tuple[str, ...]]:
+        """Retain active, lifecycle-authorized suspensions in session accounting."""
+
+        grouped: dict[str, set[str]] = {
+            market_code: set(codes)
+            for market_code, codes in eligible_by_market.items()
+        }
+        for row in context.universe_rows:
+            if row.market_code not in grouped or not row.is_active:
+                continue
+            if resolve_lifecycle_status(row, run_date) == "SUSPENDED":
+                grouped[row.market_code].add(row.instrument_code)
+        return {
+            market_code: tuple(sorted(codes))
+            for market_code, codes in grouped.items()
+        }
+
     def _runs_for_date(self, run_date: date) -> list[LiveCollectorRun]:
         """Load POST_CLOSE runs for the requested market date.
 
@@ -477,6 +534,8 @@ class PostCloseUpdater:
         scope: str = "FULL",
         target_symbols: Collection[str] = (),
         execution_mode: str = "MANUAL",
+        total_batch_count: int = 0,
+        initial_succeeded_count: int = 0,
     ) -> LiveCollectorRun:
         metadata = {
             "runType": "POST_CLOSE",
@@ -528,6 +587,24 @@ class PostCloseUpdater:
         self.session.add(run)
         self.session.flush()
         self.session.commit()
+        self._persist_progress(
+            run_id=run.id,
+            run_date=run_date,
+            total_count=requested_count,
+            processed_count=initial_succeeded_count,
+            succeeded_count=initial_succeeded_count,
+            failed_count=0,
+            skipped_count=0,
+            current_batch=None,
+            last_completed_batch=None,
+            total_batch_count=total_batch_count,
+            completed_batch_keys=(),
+            provider_retry_count=0,
+            provider_failure_count=0,
+            provider_request_count=0,
+            failure_classifications={},
+            failure_details=(),
+        )
         return run
 
     def _idempotent_result(self, run_date: date) -> PostCloseRunResult | None:
@@ -598,6 +675,205 @@ class PostCloseUpdater:
             ),
         )
 
+    @staticmethod
+    def _history_provider_classification(
+        result: HistoricalInstrumentResult,
+        *,
+        attempt_status: str,
+        error_code: str | None,
+    ) -> str:
+        if attempt_status == "SUCCESS":
+            return "SUCCESS"
+        code = str(error_code or "").upper()
+        reason = str(result.status_reason or "").upper()
+        combined = f"{code} {reason}"
+        if "DATE_MISMATCH" in combined:
+            return "DATE_MISMATCH"
+        if "PARSE" in combined or "PAYLOAD" in combined:
+            return "PARSE_ERROR"
+        if "EMPTY" in combined or "NO_ROW" in combined:
+            return "EMPTY_RESPONSE"
+        if result.provider_point_count == 0:
+            return "OFFICIAL_NO_ROW"
+        return "HTTP_ERROR"
+
+    @staticmethod
+    def _attempt_key(instrument: Instrument, market: Market) -> tuple[str, str]:
+        return market.code, instrument.instrument_code
+
+    def _latest_attempts(
+        self,
+        run_id: Any,
+        expected_keys: Collection[tuple[str, str]],
+    ) -> dict[tuple[str, str], LiveCollectorAttempt]:
+        """Load the latest immutable outcome for each expected instrument."""
+
+        wanted = set(expected_keys)
+        attempts = self.session.scalars(
+            select(LiveCollectorAttempt)
+            .where(LiveCollectorAttempt.run_id == run_id)
+            .order_by(LiveCollectorAttempt.updated_at, LiveCollectorAttempt.id)
+        ).all()
+        latest: dict[tuple[str, str], LiveCollectorAttempt] = {}
+        for attempt in attempts:
+            key = (attempt.market_code, attempt.instrument_code)
+            if key in wanted:
+                latest[key] = attempt
+        return latest
+
+    @staticmethod
+    def _batch_key(run_date: date, batch: Collection[tuple[Instrument, Market]]) -> str:
+        return stable_hash(
+            {
+                "runDate": run_date.isoformat(),
+                "market": batch[0][1].code,
+                "symbols": [instrument.instrument_code for instrument, _market in batch],
+            }
+        )
+
+    def _market_batches(
+        self,
+        instruments: Collection[tuple[Instrument, Market]],
+    ) -> list[list[tuple[Instrument, Market]]]:
+        batches: list[list[tuple[Instrument, Market]]] = []
+        for market_code in ("TPE", "TWO"):
+            market_instruments = [
+                item for item in instruments if item[1].code == market_code
+            ]
+            for batch_start in range(
+                0, len(market_instruments), self.config.history_batch_size
+            ):
+                batches.append(
+                    market_instruments[
+                        batch_start : batch_start + self.config.history_batch_size
+                    ]
+                )
+        return batches
+
+    def _checkpoint_attempt_number(self, run_id: Any, batch_key: str) -> int:
+        latest = self.session.scalar(
+            select(func.max(LiveCollectorCheckpoint.attempt_number)).where(
+                LiveCollectorCheckpoint.run_id == run_id,
+                LiveCollectorCheckpoint.batch_key == batch_key,
+            )
+        )
+        return int(latest or 0) + 1
+
+    def _append_checkpoint(
+        self,
+        *,
+        run_id: Any,
+        run_date: date,
+        batch_number: int,
+        batch_key: str,
+        status: str,
+        processed_count: int,
+        succeeded_count: int,
+        failed_count: int,
+        skipped_count: int,
+        retry_count: int,
+        provider_request_count: int,
+        provider_failure_count: int,
+        attempt_number: int,
+        failure_classifications: Mapping[str, int],
+    ) -> None:
+        checkpoint_payload = {
+            "runId": str(run_id),
+            "runDate": run_date.isoformat(),
+            "batchNumber": batch_number,
+            "batchKey": batch_key,
+            "attemptNumber": attempt_number,
+            "status": status,
+            "processedCount": processed_count,
+            "succeededCount": succeeded_count,
+            "failedCount": failed_count,
+            "skippedCount": skipped_count,
+            "retryCount": retry_count,
+            "providerRequestCount": provider_request_count,
+            "providerFailureCount": provider_failure_count,
+            "failureClassifications": dict(sorted(failure_classifications.items())),
+        }
+        self.session.add(
+            LiveCollectorCheckpoint(
+                run_id=run_id,
+                batch_number=batch_number,
+                batch_key=batch_key,
+                attempt_number=attempt_number,
+                status=status,
+                processed_count=processed_count,
+                succeeded_count=succeeded_count,
+                failed_count=failed_count,
+                skipped_count=skipped_count,
+                retry_count=retry_count,
+                provider_request_count=provider_request_count,
+                provider_failure_count=provider_failure_count,
+                checkpoint_hash=stable_hash(checkpoint_payload),
+                metadata_payload=_json_safe(checkpoint_payload),
+            )
+        )
+
+    def _persist_progress(
+        self,
+        *,
+        run_id: Any,
+        run_date: date,
+        total_count: int,
+        processed_count: int,
+        succeeded_count: int,
+        failed_count: int,
+        skipped_count: int,
+        current_batch: int | None,
+        last_completed_batch: int | None,
+        total_batch_count: int,
+        completed_batch_keys: Collection[str],
+        provider_retry_count: int,
+        provider_failure_count: int,
+        provider_request_count: int,
+        failure_classifications: Mapping[str, int],
+        failure_details: Collection[Mapping[str, Any]],
+        checkpoint_status: str = "RUNNING",
+    ) -> None:
+        run = self.session.get(LiveCollectorRun, run_id)
+        if run is None:
+            return
+        now = self._now()
+        checkpoint = {
+            "status": checkpoint_status,
+            "jobId": str(run_id),
+            "runId": str(run_id),
+            "runDate": run_date.isoformat(),
+            "referenceDataVersion": self.config.reference_data_version,
+            "totalBatchCount": total_batch_count,
+            "completedBatchKeys": list(completed_batch_keys),
+            "nextBatch": current_batch
+            if current_batch is not None
+            else (last_completed_batch + 1 if last_completed_batch is not None else 1),
+        }
+        progress = {
+            "RECOVERY_TOTAL": total_count,
+            "RECOVERY_PROCESSED": processed_count,
+            "RECOVERY_SUCCEEDED": succeeded_count,
+            "RECOVERY_FAILED": failed_count,
+            "RECOVERY_SKIPPED": skipped_count,
+            "CURRENT_BATCH": current_batch,
+            "LAST_COMPLETED_BATCH": last_completed_batch,
+            "LAST_PROGRESS_AT": now,
+            "PROVIDER_RETRY_COUNT": provider_retry_count,
+            "PROVIDER_FAILURE_COUNT": provider_failure_count,
+            "PROVIDER_REQUESTS": provider_request_count,
+            "PROVIDER_FAILURE_CLASSIFICATIONS": dict(
+                sorted(failure_classifications.items())
+            ),
+            "PROVIDER_FAILURES": list(failure_details),
+            "CHECKPOINT": checkpoint,
+        }
+        metadata = dict(run.metadata_payload or {})
+        metadata["recoveryProgress"] = _json_safe(progress)
+        run.metadata_payload = metadata
+        run.heartbeat_at = now
+        run.updated_at = now
+        self.session.commit()
+
     def _record_history_attempt(
         self,
         *,
@@ -660,20 +936,28 @@ class PostCloseUpdater:
         expected_by_market = {
             market.market_code: tuple(market.instrument_codes) for market in context.markets
         }
+        publication_universe = self._publication_universe(
+            context, local_date, expected_by_market
+        )
         target_universe = (
             self._targetable_universe(context, local_date, expected_by_market)
             if target_symbols is not None
-            else expected_by_market
+            else publication_universe
         )
         selected_by_market, normalized_target_symbols = self._resolve_target_symbols(
             target_universe,
             target_symbols,
         )
         is_targeted = selected_by_market is not None
-        requested_by_market = selected_by_market or expected_by_market
+        requested_by_market = selected_by_market or publication_universe
         instruments = self._instruments(requested_by_market)
         self._validate_instruments(instruments, requested_by_market)
         eligible_instrument_ids = tuple(instrument.id for instrument, _market in instruments)
+        market_batches = self._market_batches(instruments)
+        total_batch_count = len(market_batches)
+        expected_attempt_keys = {
+            self._attempt_key(instrument, market) for instrument, market in instruments
+        }
         idempotent = None if is_targeted else self._idempotent_result(local_date)
         if idempotent is not None:
             return idempotent
@@ -693,7 +977,34 @@ class PostCloseUpdater:
         if active_other_scope is not None:
             raise PostClosePreconditionError("POST_CLOSE_RUN_IN_PROGRESS")
         recovery_of_run_id = None
+        run_to_resume: LiveCollectorRun | None = None
+        resume_source_run: LiveCollectorRun | None = None
+        run_key = (
+            f"post-close:{self.config.reference_data_version}:"
+            f"{self.config.calendar_code}:{local_date.isoformat()}"
+        )
         if existing_run is not None:
+            if existing_run.status == "RUNNING":
+                stale_after = max(
+                    self.config.poll_interval_seconds * 2,
+                    int(self.config.provider_timeout_seconds)
+                    * max(1, self.config.history_batch_size)
+                    * (self.config.history_max_retries + 1),
+                )
+                progress = (existing_run.metadata_payload or {}).get(
+                    "recoveryProgress", {}
+                )
+                checkpoint = progress.get("CHECKPOINT") if isinstance(progress, dict) else None
+                if (
+                    not self._is_recent_run(existing_run, now, stale_after=stale_after)
+                    and isinstance(checkpoint, dict)
+                    and checkpoint.get("runId") == str(existing_run.id)
+                    and checkpoint.get("runDate") == local_date.isoformat()
+                    and checkpoint.get("referenceDataVersion")
+                    == self.config.reference_data_version
+                ):
+                    run_to_resume = existing_run
+                    resume_source_run = existing_run
             if existing_run.status in {"SUCCESS", "MARKET_CLOSED"}:
                 metadata = existing_run.metadata_payload or {}
                 forward_status = (metadata.get("forwardAutomation") or {}).get("status")
@@ -710,6 +1021,8 @@ class PostCloseUpdater:
                 if not allow_terminal_recovery:
                     return self._existing_result(existing_run, run_date=local_date)
                 recovery_of_run_id = existing_run.id
+            if recovery_of_run_id is not None and resume_source_run is None:
+                resume_source_run = existing_run
             attempt_summary = self._completed_attempt_summary(
                 existing_run.id,
                 eligible_instrument_ids,
@@ -795,21 +1108,121 @@ class PostCloseUpdater:
                     ),
                     failure_codes=attempt_summary["failure_codes"],
                 )
-            if recovery_of_run_id is None:
+            if recovery_of_run_id is None and run_to_resume is None:
                 raise PostClosePreconditionError("POST_CLOSE_RUN_IN_PROGRESS")
 
-        run = self._create_run(
-            len(instruments),
-            now,
-            run_date=local_date,
-            recovery_of_run_id=recovery_of_run_id,
-            scope="TARGETED" if is_targeted else "FULL",
-            target_symbols=normalized_target_symbols,
-            execution_mode=execution_mode,
-        )
+        resume_keys: set[tuple[str, str]] = set()
+        if resume_source_run is not None:
+            source_metadata = resume_source_run.metadata_payload or {}
+            if source_metadata.get("forwardRunKey") == run_key:
+                latest_attempts = self._latest_attempts(
+                    resume_source_run.id,
+                    expected_attempt_keys,
+                )
+                resume_keys = {
+                    key
+                    for key, attempt in latest_attempts.items()
+                    if attempt.status == "SUCCESS"
+                }
+            elif run_to_resume is not None:
+                raise PostClosePreconditionError("RECOVERY_CHECKPOINT_CONTEXT_MISMATCH")
+
+        completed_batch_keys = [
+            self._batch_key(local_date, batch)
+            for batch in market_batches
+            if all(
+                self._attempt_key(instrument, market) in resume_keys
+                for instrument, market in batch
+            )
+        ]
+        completed_batch_numbers = [
+            number
+            for number, batch in enumerate(market_batches, start=1)
+            if all(
+                self._attempt_key(instrument, market) in resume_keys
+                for instrument, market in batch
+            )
+        ]
+        last_completed_batch = max(completed_batch_numbers, default=None)
+        if run_to_resume is not None:
+            run = run_to_resume
+        else:
+            run = self._create_run(
+                len(instruments),
+                now,
+                run_date=local_date,
+                recovery_of_run_id=recovery_of_run_id,
+                scope="TARGETED" if is_targeted else "FULL",
+                target_symbols=normalized_target_symbols,
+                execution_mode=execution_mode,
+                total_batch_count=total_batch_count,
+                initial_succeeded_count=len(resume_keys),
+            )
         run_id = run.id
         failure_codes: list[str] = []
-        success_count = failure_count = skipped_count = retry_count = point_count = 0
+        existing_progress = (run.metadata_payload or {}).get("recoveryProgress", {})
+        if not isinstance(existing_progress, dict):
+            existing_progress = {}
+        success_count = (
+            max(
+                len(resume_keys),
+                int(existing_progress.get("RECOVERY_SUCCEEDED", 0) or 0),
+            )
+            if run_to_resume is not None
+            else len(resume_keys)
+        )
+        failure_count = 0
+        skipped_count = 0
+        retry_count = (
+            int(existing_progress.get("PROVIDER_RETRY_COUNT", 0) or 0)
+            if run_to_resume is not None
+            else 0
+        )
+        point_count = 0
+        provider_failure_count = (
+            int(existing_progress.get("PROVIDER_FAILURE_COUNT", 0) or 0)
+            if run_to_resume is not None
+            else 0
+        )
+        provider_request_count = (
+            int(existing_progress.get("PROVIDER_REQUESTS", 0) or 0)
+            if run_to_resume is not None
+            else 0
+        )
+        failure_classifications = (
+            {
+                str(key): int(value)
+                for key, value in (
+                    existing_progress.get("PROVIDER_FAILURE_CLASSIFICATIONS", {}) or {}
+                ).items()
+            }
+            if run_to_resume is not None
+            else {}
+        )
+        failure_details = (
+            list(existing_progress.get("PROVIDER_FAILURES", ()) or ())
+            if run_to_resume is not None
+            else []
+        )
+        if resume_source_run is not None and run_to_resume is None:
+            self._persist_progress(
+                run_id=run_id,
+                run_date=local_date,
+                total_count=len(instruments),
+                processed_count=success_count,
+                succeeded_count=success_count,
+                failed_count=0,
+                skipped_count=0,
+                current_batch=None,
+                last_completed_batch=last_completed_batch,
+                total_batch_count=total_batch_count,
+                completed_batch_keys=completed_batch_keys,
+                provider_retry_count=0,
+                provider_failure_count=0,
+                provider_request_count=0,
+                failure_classifications={},
+                failure_details=(),
+            )
 
         session_status = self.session_clock.status(
             datetime.combine(local_date, clock_time(13, 30), tzinfo=self.session_clock.timezone)
@@ -880,29 +1293,141 @@ class PostCloseUpdater:
             calendar_code=self.config.calendar_code,
         )
 
-        market_batches: list[list[tuple[Instrument, Market]]] = []
-        for market_code in ("TPE", "TWO"):
-            market_instruments = [
-                item for item in instruments if item[1].code == market_code
-            ]
-            for batch_start in range(
-                0, len(market_instruments), self.config.history_batch_size
-            ):
-                market_batches.append(
-                    market_instruments[
-                        batch_start : batch_start + self.config.history_batch_size
-                    ]
+        # Both official post-close adapters use one market-wide payload per
+        # market/day. Validate that request scope once up front. A transport,
+        # date, or payload failure here is systemic for the affected market;
+        # a successful payload with a missing symbol remains instrument-level.
+        systemic_market_failures: dict[str, tuple[str, str]] = {}
+        for market_code in sorted(requested_by_market):
+            registration = registry.for_market(market_code)[0]
+            try:
+                registration.adapter.fetch_market_day()
+            except Exception as exc:
+                systemic_market_failures[market_code] = (
+                    _provider_exception_classification(exc),
+                    str(getattr(exc, "code", type(exc).__name__)),
                 )
+        provider_request_count = transport.request_count
+        retry_count += transport.retry_count
 
-        for batch in market_batches:
+        for batch_number, full_batch in enumerate(market_batches, start=1):
+            batch_key = self._batch_key(local_date, full_batch)
+            batch = [
+                item
+                for item in full_batch
+                if self._attempt_key(item[0], item[1]) not in resume_keys
+            ]
+            if not batch:
+                continue
             market = batch[0][1]
             registration = registry.for_market(market.code)[0]
+            self._persist_progress(
+                run_id=run_id,
+                run_date=local_date,
+                total_count=len(instruments),
+                processed_count=success_count + failure_count + skipped_count,
+                succeeded_count=success_count,
+                failed_count=failure_count,
+                skipped_count=skipped_count,
+                current_batch=batch_number,
+                last_completed_batch=last_completed_batch,
+                total_batch_count=total_batch_count,
+                completed_batch_keys=completed_batch_keys,
+                provider_retry_count=retry_count,
+                provider_failure_count=provider_failure_count,
+                provider_request_count=provider_request_count,
+                failure_classifications=failure_classifications,
+                failure_details=failure_details,
+            )
             batch_started = self._now()
             retries_before = transport.retry_count
+            request_count_before = transport.request_count
             batch_retry_count = 0
             batch_success_count = 0
             batch_skipped_count = 0
             batch_point_count = 0
+            batch_failure_count = 0
+            batch_failure_classifications: dict[str, int] = {}
+            batch_status = "FAILED"
+            failure_details_before_batch = len(failure_details)
+            if market.code in systemic_market_failures:
+                classification, provider_error_code = systemic_market_failures[
+                    market.code
+                ]
+                completed = self._now()
+                with self.session.begin():
+                    for instrument, item_market in batch:
+                        self._record_history_attempt(
+                            run_id=run_id,
+                            instrument=instrument,
+                            market=item_market,
+                            started_at=batch_started,
+                            completed_at=completed,
+                            attempt_status="FAILED",
+                            retry_count=0,
+                            error_code="MARKET_PROVIDER_UNAVAILABLE",
+                            error_message=(
+                                f"{classification}:{provider_error_code}"
+                            ),
+                            provider_status="ERROR",
+                        )
+                        failure_details.append(
+                            {
+                                "batchNumber": batch_number,
+                                "instrumentCode": instrument.instrument_code,
+                                "marketCode": item_market.code,
+                                "classification": "MARKET_PROVIDER_UNAVAILABLE",
+                                "providerFailureClassification": classification,
+                                "errorCode": provider_error_code,
+                                "requestScope": "MARKET_DAY",
+                            }
+                        )
+                    self._append_checkpoint(
+                        run_id=run_id,
+                        run_date=local_date,
+                        batch_number=batch_number,
+                        batch_key=batch_key,
+                        status="FAILED",
+                        processed_count=len(batch),
+                        succeeded_count=0,
+                        failed_count=len(batch),
+                        skipped_count=0,
+                        retry_count=0,
+                        provider_request_count=0,
+                        provider_failure_count=1,
+                        attempt_number=self._checkpoint_attempt_number(
+                            run_id, batch_key
+                        ),
+                        failure_classifications={
+                            "MARKET_PROVIDER_UNAVAILABLE": len(batch)
+                        },
+                    )
+                failure_count += len(batch)
+                provider_failure_count += 1
+                failure_codes.append("MARKET_PROVIDER_UNAVAILABLE")
+                failure_classifications["MARKET_PROVIDER_UNAVAILABLE"] = (
+                    failure_classifications.get("MARKET_PROVIDER_UNAVAILABLE", 0)
+                    + len(batch)
+                )
+                self._persist_progress(
+                    run_id=run_id,
+                    run_date=local_date,
+                    total_count=len(instruments),
+                    processed_count=success_count + failure_count + skipped_count,
+                    succeeded_count=success_count,
+                    failed_count=failure_count,
+                    skipped_count=skipped_count,
+                    current_batch=None,
+                    last_completed_batch=last_completed_batch,
+                    total_batch_count=total_batch_count,
+                    completed_batch_keys=completed_batch_keys,
+                    provider_retry_count=retry_count,
+                    provider_failure_count=provider_failure_count,
+                    provider_request_count=provider_request_count,
+                    failure_classifications=failure_classifications,
+                    failure_details=failure_details,
+                )
+                continue
             try:
                 # One transaction covers the whole provider batch.  A single
                 # provider/normalizer failure falls back to savepoint-isolated
@@ -955,21 +1480,71 @@ class PostCloseUpdater:
                             error_message=error_message,
                             provider_status=summary.instrument_status,
                         )
+                        classification = self._history_provider_classification(
+                            summary,
+                            attempt_status=attempt_status,
+                            error_code=error_code,
+                        )
                         if attempt_status == "SUCCESS":
                             batch_success_count += 1
                         else:
                             batch_skipped_count += 1
+                            batch_failure_classifications[classification] = (
+                                batch_failure_classifications.get(classification, 0) + 1
+                            )
+                            failure_details.append(
+                                {
+                                    "batchNumber": batch_number,
+                                    "instrumentCode": instrument.instrument_code,
+                                    "marketCode": item_market.code,
+                                    "classification": classification,
+                                    "errorCode": error_code,
+                                }
+                            )
                             if is_targeted and error_code:
                                 failure_codes.append(error_code)
+                    batch_status = (
+                        "COMPLETED"
+                        if batch_success_count == len(batch)
+                        else "PARTIAL"
+                    )
+                    self._append_checkpoint(
+                        run_id=run_id,
+                        run_date=local_date,
+                        batch_number=batch_number,
+                        batch_key=batch_key,
+                        status=batch_status,
+                        processed_count=len(batch),
+                        succeeded_count=batch_success_count,
+                        failed_count=0,
+                        skipped_count=batch_skipped_count,
+                        retry_count=batch_retry_count,
+                        provider_request_count=transport.request_count
+                        - request_count_before,
+                        provider_failure_count=batch_skipped_count,
+                        attempt_number=self._checkpoint_attempt_number(run_id, batch_key),
+                        failure_classifications=batch_failure_classifications,
+                    )
                 batch_point_count = result.provider_point_count
                 success_count += batch_success_count
                 skipped_count += batch_skipped_count
                 point_count += batch_point_count
                 retry_count += batch_retry_count
+                provider_request_count = transport.request_count
+                provider_failure_count += batch_skipped_count
+                for classification, count in batch_failure_classifications.items():
+                    failure_classifications[classification] = (
+                        failure_classifications.get(classification, 0) + count
+                    )
+                if batch_status == "COMPLETED":
+                    completed_batch_keys.append(batch_key)
+                    last_completed_batch = batch_number
             except Exception:
                 batch_retry_count = transport.retry_count - retries_before
                 retry_count += batch_retry_count
                 self.session.rollback()
+                del failure_details[failure_details_before_batch:]
+                batch_failure_classifications = {}
 
                 # Preserve the old per-symbol failure isolation only for a
                 # batch that could not be committed as a unit.  In the normal
@@ -1023,12 +1598,42 @@ class PostCloseUpdater:
                                 fallback_success_count += 1
                             else:
                                 fallback_skipped_count += 1
+                                classification = self._history_provider_classification(
+                                    summary,
+                                    attempt_status=attempt_status,
+                                    error_code=error_code,
+                                )
+                                batch_failure_classifications[classification] = (
+                                    batch_failure_classifications.get(classification, 0) + 1
+                                )
+                                failure_details.append(
+                                    {
+                                        "batchNumber": batch_number,
+                                        "instrumentCode": instrument.instrument_code,
+                                        "marketCode": item_market.code,
+                                        "classification": classification,
+                                        "errorCode": error_code,
+                                    }
+                                )
                                 if is_targeted and error_code:
                                     failure_codes.append(error_code)
                         except Exception as exc:
                             fallback_failure_count += 1
                             error_code = getattr(exc, "code", type(exc).__name__)
                             error_message = str(exc)
+                            classification = _provider_exception_classification(exc)
+                            batch_failure_classifications[classification] = (
+                                batch_failure_classifications.get(classification, 0) + 1
+                            )
+                            failure_details.append(
+                                {
+                                    "batchNumber": batch_number,
+                                    "instrumentCode": instrument.instrument_code,
+                                    "marketCode": item_market.code,
+                                    "classification": classification,
+                                    "errorCode": str(error_code),
+                                }
+                            )
                             failure_codes.append(error_code)
                         completed = self._now()
                         item_retry_count = transport.retry_count - item_retries_before
@@ -1045,11 +1650,62 @@ class PostCloseUpdater:
                             error_message=error_message,
                             provider_status=provider_status,
                         )
+                    batch_status = (
+                        "COMPLETED"
+                        if fallback_success_count == len(batch)
+                        else "PARTIAL"
+                        if fallback_success_count or fallback_skipped_count
+                        else "FAILED"
+                    )
+                    self._append_checkpoint(
+                        run_id=run_id,
+                        run_date=local_date,
+                        batch_number=batch_number,
+                        batch_key=batch_key,
+                        status=batch_status,
+                        processed_count=len(batch),
+                        succeeded_count=fallback_success_count,
+                        failed_count=fallback_failure_count,
+                        skipped_count=fallback_skipped_count,
+                        retry_count=transport.retry_count - retries_before,
+                        provider_request_count=transport.request_count
+                        - request_count_before,
+                        provider_failure_count=fallback_failure_count
+                        + fallback_skipped_count,
+                        attempt_number=self._checkpoint_attempt_number(run_id, batch_key),
+                        failure_classifications=batch_failure_classifications,
+                    )
                 success_count += fallback_success_count
                 skipped_count += fallback_skipped_count
                 failure_count += fallback_failure_count
                 point_count += fallback_point_count
-            self._heartbeat(run_id, self._now())
+            provider_request_count = transport.request_count
+            provider_failure_count += batch_failure_count + batch_skipped_count
+            for classification, count in batch_failure_classifications.items():
+                failure_classifications[classification] = (
+                    failure_classifications.get(classification, 0) + count
+                )
+            if batch_status == "COMPLETED":
+                completed_batch_keys.append(batch_key)
+                last_completed_batch = batch_number
+            self._persist_progress(
+                run_id=run_id,
+                run_date=local_date,
+                total_count=len(instruments),
+                processed_count=success_count + failure_count + skipped_count,
+                succeeded_count=success_count,
+                failed_count=failure_count,
+                skipped_count=skipped_count,
+                current_batch=None,
+                last_completed_batch=last_completed_batch,
+                total_batch_count=total_batch_count,
+                completed_batch_keys=completed_batch_keys,
+                provider_retry_count=retry_count,
+                provider_failure_count=provider_failure_count,
+                provider_request_count=provider_request_count,
+                failure_classifications=failure_classifications,
+                failure_details=failure_details,
+            )
 
         if is_targeted:
             return self._finalize_targeted_run(
@@ -1074,6 +1730,7 @@ class PostCloseUpdater:
             retry_count=retry_count,
             point_count=point_count,
             failure_codes=tuple(sorted(set(failure_codes))),
+            systemic_market_codes=tuple(sorted(systemic_market_failures)),
         )
 
     def _heartbeat(self, run_id: Any, now: datetime) -> None:
@@ -1139,6 +1796,20 @@ class PostCloseUpdater:
                     "errorCode": "POST_CLOSE_FINALIZATION_FAILED",
                     "exceptionType": type(exc).__name__,
                 }
+                progress = metadata.get("recoveryProgress")
+                if isinstance(progress, dict):
+                    checkpoint = progress.get("CHECKPOINT")
+                    if isinstance(checkpoint, dict):
+                        checkpoint = dict(checkpoint)
+                        checkpoint.update(
+                            {
+                                "status": "FAILED",
+                                "nextBatch": checkpoint.get("nextBatch"),
+                            }
+                        )
+                        progress["CHECKPOINT"] = checkpoint
+                    progress["LAST_PROGRESS_AT"] = now
+                    metadata["recoveryProgress"] = _json_safe(progress)
                 run.metadata_payload = metadata
                 run.completed_at = now
                 run.heartbeat_at = now
@@ -1214,19 +1885,21 @@ class PostCloseUpdater:
         retry_count: int,
         point_count: int,
         failure_codes: Collection[str],
+        systemic_market_codes: Collection[str] = (),
     ) -> PostCloseRunResult:
         try:
             reconciliation = reconcile_daily_market(
                 self.session,
                 local_date,
                 expected_instrument_ids=eligible_instrument_ids,
+                systemic_market_codes=systemic_market_codes,
             )
-            if failure_count or skipped_count:
-                status = "PARTIAL" if success_count else "FAILED"
-            else:
+            if reconciliation.downstream_ready and not failure_count:
                 status = "SUCCESS"
-            if status == "SUCCESS" and not reconciliation.downstream_ready:
+            elif success_count:
                 status = "PARTIAL"
+            else:
+                status = "FAILED"
 
             tracking_count = self._refresh_tracking_universe_with_retry(
                 now=self._now(),
@@ -1527,6 +2200,39 @@ class PostCloseUpdater:
                 else formal_readback.get("status", "FAIL")
             ),
         }
+        progress = metadata.get("recoveryProgress")
+        if not isinstance(progress, dict):
+            progress = {}
+        progress.update(
+            {
+                "RECOVERY_TOTAL": int(run.requested_count or 0),
+                "RECOVERY_PROCESSED": int(success_count)
+                + int(failure_count)
+                + int(skipped_count),
+                "RECOVERY_SUCCEEDED": int(success_count),
+                "RECOVERY_FAILED": int(failure_count),
+                "RECOVERY_SKIPPED": int(skipped_count),
+                "CURRENT_BATCH": None,
+                "LAST_PROGRESS_AT": now,
+                "PROVIDER_RETRY_COUNT": int(retry_count),
+                "PROVIDER_FAILURE_COUNT": int(failure_count) + int(skipped_count),
+            }
+        )
+        checkpoint = progress.get("CHECKPOINT")
+        if not isinstance(checkpoint, dict):
+            checkpoint = {}
+        checkpoint.update(
+            {
+                "status": "COMPLETED",
+                "jobId": str(run_id),
+                "runId": str(run_id),
+                "runDate": metadata.get("runDate"),
+                "referenceDataVersion": self.config.reference_data_version,
+                "nextBatch": None,
+            }
+        )
+        progress["CHECKPOINT"] = checkpoint
+        metadata["recoveryProgress"] = _json_safe(progress)
         run.metadata_payload = _json_safe(metadata)
         run.completed_at = now
         run.heartbeat_at = now

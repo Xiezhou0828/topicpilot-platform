@@ -14,6 +14,7 @@ from topicpilot_api.live.post_close import (
     PostClosePreconditionError,
     PostCloseUpdater,
     _json_safe,
+    _provider_exception_classification,
 )
 from topicpilot_api.market_data.ingestion import HistoricalInstrumentResult
 
@@ -143,6 +144,45 @@ def test_targeted_symbols_can_reach_lifecycle_authorized_no_trade_identity():
     assert normalized == ("TWO:6129",)
 
 
+def test_full_publication_universe_retains_active_suspended_8277():
+    context = SimpleNamespace(
+        universe_rows=(
+            InstrumentUniverseRow(
+                market_code="TWO",
+                instrument_code="8277",
+                instrument_type="EQUITY",
+                is_active=True,
+                lifecycle_events=(
+                    InstrumentLifecycle(
+                        status_code="SUSPENDED",
+                        effective_from=date(2026, 9, 10),
+                        effective_to=date(2026, 9, 18),
+                        evidence_id="TPEX-TWO-8277-SUSPENDED-20260910",
+                    ),
+                ),
+            ),
+        )
+    )
+
+    assert PostCloseUpdater._publication_universe(
+        context, date(2026, 9, 11), {"TPE": ("2330",), "TWO": ("6488",)}
+    ) == {"TPE": ("2330",), "TWO": ("6488", "8277")}
+
+
+@pytest.mark.parametrize(
+    ("error", "classification"),
+    [
+        (TimeoutError("timed out"), "PROVIDER_TIMEOUT"),
+        (ConnectionError("connection refused"), "PROVIDER_CONNECTION_ERROR"),
+        (ValueError("payload parse error"), "PARSE_ERROR"),
+    ],
+)
+def test_provider_failure_classification_uses_stable_operational_names(
+    error, classification
+):
+    assert _provider_exception_classification(error) == classification
+
+
 def test_targeted_finalization_does_not_promote_full_snapshot():
     captured: dict[str, object] = {}
     updater = PostCloseUpdater.__new__(PostCloseUpdater)
@@ -198,7 +238,7 @@ def test_post_close_explicit_recovery_is_date_bound_and_auditable():
     assert "allow_terminal_recovery=args.recover" in cli_source
     assert "allow_terminal_recovery: bool = False" in post_close_source
     assert '"recoveryOfRunId"' in post_close_source
-    assert "if recovery_of_run_id is None:" in post_close_source
+    assert "recovery_of_run_id is not None" in post_close_source
     assert 'metadata_payload["runDate"]' in post_close_source
     assert 'existing_run.failure_code == "POST_CLOSE_FINALIZATION_FAILED"' in post_close_source
     assert "_completed_attempt_summary" in post_close_source

@@ -23,7 +23,12 @@ from .home import HomeMarketFact, HomePublication, HomePublicationSection  # noq
 from .identity import *  # noqa: F403
 from .import_audit import LegacyImportArtifact, LegacyImportRecord, LegacyImportRun
 from .lifecycle import TopicLifecycleResult
-from .live import LiveCollectorAttempt, LiveCollectorRun, LiveTrackingUniverse
+from .live import (
+    LiveCollectorAttempt,
+    LiveCollectorCheckpoint,
+    LiveCollectorRun,
+    LiveTrackingUniverse,
+)
 from .market_data import *  # noqa: F403
 from .models import (
     ReferenceAdjustment,
@@ -48,6 +53,7 @@ __all__ = [
     "LegacyImportRecord",
     "LegacyImportRun",
     "LiveCollectorAttempt",
+    "LiveCollectorCheckpoint",
     "LiveCollectorRun",
     "LiveTrackingUniverse",
     "ReferenceAdjustment",
@@ -59,9 +65,9 @@ __all__ = [
     "ReferenceSession",
     "ReferenceTimezone",
     "ReferenceTradingStatus",
+    "TopicAuthorityActivation",
     "TopicLifecycleFormalResult",
     "TopicLifecycleResult",
-    "TopicAuthorityActivation",
 ]
 for _module in (
     canonical_observations,

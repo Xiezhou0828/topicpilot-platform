@@ -13,6 +13,14 @@ from topicpilot_api.reference_data import (
 
 ROOT = Path(__file__).resolve().parents[1]
 BUNDLE = ROOT / "src" / "topicpilot_api" / "reference_data" / "bundles" / "tw-reference-v1"
+EXPANSION_BUNDLE = (
+    ROOT
+    / "src"
+    / "topicpilot_api"
+    / "reference_data"
+    / "bundles"
+    / "tw-reference-v1-expansion-20260912"
+)
 
 
 def test_committed_tw_reference_bundle_is_derived_and_contains_known_evidence():
@@ -51,6 +59,23 @@ def test_committed_tw_reference_bundle_is_derived_and_contains_known_evidence():
     assert by_identity[("TPE", "1563", "SUSPENDED")]["effective_to"] == "2026-09-04"
     assert by_identity[("TWO", "6129", "SUSPENDED")]["effective_from"] == "2026-09-03"
     assert by_identity[("TWO", "6129", "SUSPENDED")]["effective_to"] == "2026-09-11"
+
+
+def test_expansion_bundle_contains_official_8277_date_effective_suspension():
+    bundle = load_bundle(EXPANSION_BUNDLE)
+    lifecycle = next(
+        row
+        for row in bundle.instrument_lifecycles
+        if row["market_code"] == "TWO" and row["instrument_code"] == "8277"
+    )
+
+    assert lifecycle["status_code"] == "SUSPENDED"
+    assert lifecycle["effective_from"] == "2026-09-10"
+    assert lifecycle["effective_to"] == "2026-09-18"
+    assert lifecycle["evidence_id"] == "TPEX-TWO-8277-SUSPENDED-20260910"
+    assert bundle.evidence["suspensions"]["8277"]["events"][0][
+        "oldShareLastTradingDate"
+    ] == "2026-09-09"
 
 
 def test_bundle_generation_derives_instruments_without_a_count_business_rule(tmp_path: Path):

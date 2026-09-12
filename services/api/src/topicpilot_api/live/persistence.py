@@ -602,8 +602,31 @@ def read_live_status(session: Session) -> dict[str, Any]:
             "skippedCount": 0,
             "universeCounts": read_live_universe_counts(session),
             "providerHealth": [],
+            "recoveryProgress": {},
         }
     metadata = run.metadata_payload or {}
+    recovery_progress = metadata.get("recoveryProgress")
+    if not isinstance(recovery_progress, dict):
+        skipped_count = int(metadata.get("skippedCount", 0) or 0)
+        recovery_progress = {
+            "RECOVERY_TOTAL": int(run.requested_count or 0),
+            "RECOVERY_PROCESSED": int(run.success_count or 0)
+            + int(run.failure_count or 0)
+            + skipped_count,
+            "RECOVERY_SUCCEEDED": int(run.success_count or 0),
+            "RECOVERY_FAILED": int(run.failure_count or 0),
+            "RECOVERY_SKIPPED": skipped_count,
+            "CURRENT_BATCH": None,
+            "LAST_COMPLETED_BATCH": None,
+            "LAST_PROGRESS_AT": run.heartbeat_at,
+            "PROVIDER_RETRY_COUNT": int(run.retry_count or 0),
+            "PROVIDER_FAILURE_COUNT": int(run.failure_count or 0) + skipped_count,
+            "PROVIDER_REQUESTS": None,
+            "CHECKPOINT": {
+                "status": "NOT_AVAILABLE",
+                "reason": "LEGACY_RUN_WITHOUT_RECOVERY_CHECKPOINT",
+            },
+        }
     return {
         "status": run.status,
         "lastRun": {
@@ -625,6 +648,7 @@ def read_live_status(session: Session) -> dict[str, Any]:
         "failureCode": run.failure_code,
         "failureMessage": run.failure_message,
         "providerHealth": metadata.get("providerHealth", []),
+        "recoveryProgress": recovery_progress,
     }
 
 

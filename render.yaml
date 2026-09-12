@@ -21,6 +21,12 @@ services:
         value: INFO
       - key: TOPICPILOT_CORS_ORIGINS
         sync: false
+      - key: TOPICPILOT_LIVE_SESSION_CLOSE
+        value: "13:30"
+      - key: TOPICPILOT_LIVE_POST_CLOSE_START
+        value: "13:35"
+      - key: TOPICPILOT_LIVE_REFERENCE_DATA_VERSION
+        value: tw-reference-v1-rollover-0578862f98914eb7
       - key: UVICORN_APP
         value: topicpilot_api.main:app
 
@@ -46,6 +52,10 @@ services:
         value: "30"
       - key: TOPICPILOT_LIVE_TIMEZONE
         value: Asia/Taipei
+      - key: TOPICPILOT_LIVE_SESSION_CLOSE
+        value: "13:30"
+      - key: TOPICPILOT_LIVE_REFERENCE_DATA_VERSION
+        value: tw-reference-v1-rollover-0578862f98914eb7
       - key: TOPICPILOT_LIVE_POLL_INTERVAL_SECONDS
         value: "300"
       - key: TOPICPILOT_LIVE_PROVIDER_TIMEOUT_SECONDS

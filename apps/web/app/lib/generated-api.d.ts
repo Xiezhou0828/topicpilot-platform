@@ -1396,6 +1396,10 @@ export interface components {
             }[];
             /** Providerstatus */
             providerStatus: string;
+            /** Recoveryprogress */
+            recoveryProgress?: {
+                [key: string]: unknown;
+            };
             /** Retrycount */
             retryCount: number;
             /**
@@ -1845,6 +1849,10 @@ export interface components {
              * @enum {string}
              */
             adjustmentState: "ADJUSTED" | "UNADJUSTED" | "UNKNOWN";
+            /** Availabilityevidenceid */
+            availabilityEvidenceId?: string | null;
+            /** Availabilityreason */
+            availabilityReason?: string | null;
             /** Change */
             change: number | null;
             /** Changepct */
@@ -1858,6 +1866,8 @@ export interface components {
             dataStatus: "AVAILABLE" | "PARTIAL" | "UNAVAILABLE" | "NO_TRADE" | "SUSPENDED" | "ADJUSTMENT_UNKNOWN" | "SOURCE_CONFLICT";
             /** High */
             high: number | null;
+            /** Lastformaltradingdate */
+            lastFormalTradingDate?: string | null;
             /** Low */
             low: number | null;
             /** Observedat */

@@ -297,7 +297,7 @@ STOCK_ROWS_SQL = text(
           )
         GROUP BY co.instrument_id
     )
-    SELECT u.*, e.eod_date,
+    SELECT u.*, e.eod_date, CAST(:as_of_date AS date) AS read_date,
            cp.open AS eod_open, cp.high AS eod_high, cp.low AS eod_low,
            cp.close AS daily_close, cp.price_currency_code AS eod_price_currency_code,
            cp.price_scale AS eod_price_scale, cp.adjustment_state AS eod_adjustment_state,
@@ -309,7 +309,8 @@ STOCK_ROWS_SQL = text(
            cp.quality_state AS eod_price_quality_state, cp.source_code AS eod_price_source_code,
            cp.adapter_version AS eod_price_adapter_version,
            cp.observation_semantics AS eod_price_observation_semantics,
-           pp.previous_daily_close, pp.previous_price_currency_code,
+           pp.previous_daily_close, pp.previous_trading_date,
+           pp.previous_price_currency_code,
            pp.previous_price_scale, pp.previous_adjustment_state,
            v.observation_id AS volume_observation_id, v.volume_quantity AS daily_volume,
            v.volume_unit_code, v.volume_scale,
@@ -327,7 +328,13 @@ STOCK_ROWS_SQL = text(
            h.history_from, h.history_to, h.history_rows,
            c.quality_conflict, c.value_conflict,
            intr.intraday_close, intr.intraday_observed_at,
-           intr.intraday_retrieved_at, iv.volume_quantity AS intraday_volume
+           intr.intraday_retrieved_at, iv.volume_quantity AS intraday_volume,
+           lifecycle.status_code AS current_lifecycle_status,
+           lifecycle.reason AS current_lifecycle_reason,
+           lifecycle.evidence_id AS current_lifecycle_evidence_id,
+           lifecycle.source_url AS current_lifecycle_source_url,
+           lifecycle.effective_from AS current_lifecycle_effective_from,
+           lifecycle.effective_to AS current_lifecycle_effective_to
     FROM universe u
     LEFT JOIN eod_dates e ON e.instrument_id = u.instrument_id
     LEFT JOIN daily_price_by_day cp
@@ -349,6 +356,19 @@ STOCK_ROWS_SQL = text(
       ON c.instrument_id = u.instrument_id AND c.trading_date = e.eod_date
     LEFT JOIN intraday intr ON intr.instrument_id = u.instrument_id AND intr.row_rank = 1
     LEFT JOIN intraday_volume iv ON iv.instrument_id = u.instrument_id AND iv.row_rank = 1
+    LEFT JOIN LATERAL (
+        SELECT rl.status_code, rl.reason, rl.evidence_id, rl.source_url,
+               rl.effective_from, rl.effective_to
+        FROM topicpilot.reference_instrument_lifecycles rl
+        JOIN topicpilot.reference_registry_sets registry
+          ON registry.id = rl.registry_set_id
+         AND registry.status = 'ACTIVE'
+        WHERE rl.instrument_id = u.instrument_id
+          AND rl.effective_from <= CAST(:as_of_date AS date)
+          AND (rl.effective_to IS NULL OR rl.effective_to >= CAST(:as_of_date AS date))
+        ORDER BY rl.effective_from DESC, rl.id DESC
+        LIMIT 1
+    ) lifecycle ON true
     ORDER BY u.market_code, u.instrument_code
     """
 )
@@ -498,16 +518,20 @@ def _read_relations(session: Session, as_of_date: date) -> dict[str, list[dict[s
 
 
 def _stock_eod(row: Any) -> dict[str, Any] | None:
-    trading_date = row["eod_date"]
+    lifecycle_status = row.get("current_lifecycle_status")
+    lifecycle_suspended = lifecycle_status == "SUSPENDED"
+    trading_date = row.get("read_date") if lifecycle_suspended else row["eod_date"]
     if trading_date is None:
         return None
 
-    status_code = row["eod_status_code"]
+    status_code = lifecycle_status if lifecycle_suspended else row["eod_status_code"]
     no_trade = status_code in {"NO_TRADE", "EXCHANGE_CONFIRMED_NO_DATA"}
     suspended = status_code == "SUSPENDED"
     source_conflict = bool(row["quality_conflict"] or row["value_conflict"])
-    daily_close = row["daily_close"]
-    previous_close = row["previous_daily_close"]
+    daily_close = None if lifecycle_suspended else row["daily_close"]
+    previous_close = (
+        row["daily_close"] if lifecycle_suspended else row["previous_daily_close"]
+    )
     current_adjustment = str(row["eod_adjustment_state"] or "UNKNOWN")
     previous_adjustment = str(row["previous_adjustment_state"] or "UNKNOWN")
     known_adjustments = {"ADJUSTED", "UNADJUSTED"}
@@ -545,6 +569,19 @@ def _stock_eod(row: Any) -> dict[str, Any] | None:
         data_status = "AVAILABLE"
 
     suppress_current_facts = source_conflict or suspended or no_trade or daily_close is None
+    availability_reason = (
+        row.get("current_lifecycle_reason")
+        if lifecycle_suspended
+        else row.get("eod_status_reason")
+    )
+    availability_evidence_id = (
+        row.get("current_lifecycle_evidence_id") if lifecycle_suspended else None
+    )
+    last_formal_trading_date = (
+        row.get("eod_date")
+        if lifecycle_suspended or row.get("daily_close") is not None
+        else row.get("previous_trading_date")
+    )
     change: Decimal | None = None
     change_pct: Decimal | None = None
     if (
@@ -589,18 +626,24 @@ def _stock_eod(row: Any) -> dict[str, Any] | None:
         "observedAt": observed_at,
         "retrievedAt": retrieved_at,
         "dataStatus": data_status,
+        "availabilityReason": availability_reason,
+        "availabilityEvidenceId": availability_evidence_id,
+        "lastFormalTradingDate": last_formal_trading_date,
     }
 
 
 def _stock_item(row: Any, relations: list[dict[str, Any]]) -> dict[str, Any]:
     update_mode = row["update_mode"] or "UNKNOWN"
-    daily_close = row["daily_close"]
     intraday_close = row["intraday_close"]
     use_intraday = update_mode == "INTRADAY" and intraday_close is not None
-    price_value = intraday_close if use_intraday else daily_close
-    observed_at = row["intraday_observed_at"] if use_intraday else row["daily_observed_at"]
-    retrieved_at = row["intraday_retrieved_at"] if use_intraday else row["daily_retrieved_at"]
     eod = _stock_eod(row)
+    price_value = intraday_close if use_intraday else eod["close"] if eod else None
+    observed_at = (
+        row["intraday_observed_at"] if use_intraday else eod["observedAt"] if eod else None
+    )
+    retrieved_at = (
+        row["intraday_retrieved_at"] if use_intraday else eod["retrievedAt"] if eod else None
+    )
     change_pct = None if use_intraday or eod is None else eod["changePct"]
     tracking_period = row["moving_average_period"]
     tracking_state = row["moving_average_state"] if row["moving_average"] is not None else None
@@ -619,7 +662,9 @@ def _stock_item(row: Any, relations: list[dict[str, Any]]) -> dict[str, Any]:
         "volume": _float(
             row["intraday_volume"]
             if use_intraday and row["intraday_volume"] is not None
-            else row["daily_volume"]
+            else eod["volume"]
+            if eod
+            else None
         ),
         "eod": eod,
         "observedAt": observed_at,
@@ -685,6 +730,7 @@ def read_stocks(
             "market_code": normalized_market,
             "update_mode": normalized_mode,
             "search": normalized_search,
+            "as_of_date": as_of_date,
         },
     ).mappings()
     all_items = [_stock_item(row, relation_map.get(str(row["instrument_id"]), [])) for row in rows]
@@ -838,11 +884,14 @@ def _topic_read_item(
             "correctionSequence": topic_row["correction_sequence"],
         },
         "quality": {
+            "dataStatus": topic_row["data_status"],
             "expectedCount": topic_row["expected_count"],
             "eligibleCount": topic_row["eligible_count"],
             "observedCount": topic_row["observed_stock_count"],
             "noTradeCount": topic_row["no_trade_count"],
             "unknownCount": topic_row["unknown_count"],
+            "unavailableMemberCount": int(topic_row["no_trade_count"] or 0)
+            + int(topic_row["unknown_count"] or 0),
             "excludedCount": topic_row["excluded_count"],
             "coveragePct": _float(topic_row["coverage_pct"]),
             "flags": topic_row["quality_flags"] or {},

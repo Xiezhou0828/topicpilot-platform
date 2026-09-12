@@ -116,6 +116,7 @@ function TodayStatusSection({
     <ResearchValue label="題材狀態" value={preview || topic.strengthState ? topic.readableState : null} disclosure={stateDisclosure} note={preview ? "Explicit Preview" : undefined} />
     <ResearchValue label="今日方向" value={topic.direction} disclosure={snapshotDisclosure} note={preview ? "Explicit Preview field" : undefined} />
     <ResearchValue label="資料日期" value={topic.dataDate} disclosure={dateDisclosure} />
+    <ResearchValue label="Snapshot 狀態" value={topic.snapshotDataStatus} disclosure={snapshotDisclosure} note={topic.snapshotDataStatus === "PARTIAL" ? `當日 ${topic.unavailableMemberCount ?? 0} 檔未納入 aggregate；未冒充 COMPLETE。` : undefined} />
     <ResearchValue label="覆蓋率" value={topic.coveragePct === null ? null : `${topic.coveragePct}%`} disclosure={snapshotDisclosure} />
   </div></Card>;
 }
