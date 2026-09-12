@@ -245,8 +245,8 @@ def test_scheduler_starts_worker_at_open_and_stops_before_post_close():
             2026,
             8,
             10,
-            1 if timeline.cycles == 0 else 5,
-            0 if timeline.cycles == 0 else 30,
+                1 if timeline.cycles == 0 else 5,
+                0 if timeline.cycles == 0 else 35,
             tzinfo=UTC,
         ),
     )
