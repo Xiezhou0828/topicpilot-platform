@@ -20,11 +20,17 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL?.trim().replace(/\/+$/, "");
+  const releaseSha = process.env.NEXT_PUBLIC_RELEASE_SHA?.trim() || "UNKNOWN";
   const snapshotApiUrl = process.env.NEXT_PUBLIC_SNAPSHOT_API_URL?.trim()
     || (apiBaseUrl ? `${apiBaseUrl}/api/v1/snapshot/latest` : undefined);
 
   return (
-    <html lang="zh-Hant" data-snapshot-api-url={snapshotApiUrl} data-api-base-url={apiBaseUrl}>
+    <html
+      lang="zh-Hant"
+      data-snapshot-api-url={snapshotApiUrl}
+      data-api-base-url={apiBaseUrl}
+      data-release-sha={releaseSha}
+    >
       <body>
         <SnapshotProvider>{children}</SnapshotProvider>
       </body>
