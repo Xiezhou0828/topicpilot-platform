@@ -899,6 +899,198 @@ class OpportunityShadowResponse(ApiModel):
     opportunity: OpportunityShadowCard | None = None
 
 
+class OpportunityProviderLineage(ApiModel):
+    """Lineage for an Opportunity page publication.
+
+    This is intentionally separate from the existing shadow contract.  A
+    formal consumer must be able to identify the provider and point-in-time
+    artifact without borrowing research or fixture metadata.
+    """
+
+    provider: str
+    authority: str
+    contract_version: str = Field(alias="contractVersion")
+    source_artifact_id: str | None = Field(default=None, alias="sourceArtifactId")
+    source_artifact_hash: str | None = Field(default=None, alias="sourceArtifactHash")
+    policy_version: str | None = Field(default=None, alias="policyVersion")
+
+
+class OpportunityLifecycleContextRead(ApiModel):
+    """Backend-published Lifecycle context; the browser never derives it."""
+
+    status: Literal["AVAILABLE", "DEFERRED", "UNAVAILABLE", "FAIL_CLOSED"]
+    current_stage: str | None = Field(default=None, alias="currentStage")
+    stage_entered_at: date | None = Field(default=None, alias="stageEnteredAt")
+    stage_trading_days: int | None = Field(default=None, alias="stageTradingDays")
+    previous_stage: str | None = Field(default=None, alias="previousStage")
+    transition_reason: str | None = Field(default=None, alias="transitionReason")
+    policy_version: str | None = Field(default=None, alias="policyVersion")
+    as_of: date | None = Field(default=None, alias="asOf")
+    data_status: str = Field(alias="dataStatus")
+    publication_status: Literal["FORMAL", "UNAVAILABLE"] = Field(alias="publicationStatus")
+
+
+class OpportunityEvidenceRead(ApiModel):
+    """Provider-owned, bounded reason/evidence context."""
+
+    code: str
+    kind: str
+    detail: str | None = None
+    source: str | None = None
+    status: str | None = None
+
+
+class OpportunityInstrumentRead(ApiModel):
+    """Formal Opportunity instrument identity, independent of shadow schemas."""
+
+    id: str
+    symbol: str
+    name: str
+
+
+class OpportunityTechnicalValidationRead(ApiModel):
+    """Counts/status from one provider; no browser-side arithmetic."""
+
+    status: Literal["AVAILABLE", "EMPTY", "DEFERRED", "UNAVAILABLE", "FAIL_CLOSED"]
+    member_count: int | None = Field(default=None, ge=0, alias="memberCount")
+    evaluated_count: int | None = Field(default=None, ge=0, alias="evaluatedCount")
+    validated_count: int | None = Field(default=None, ge=0, alias="validatedCount")
+    data_status: str = Field(alias="dataStatus")
+    as_of: date | None = Field(default=None, alias="asOf")
+    publication_status: Literal["FORMAL", "UNAVAILABLE"] = Field(alias="publicationStatus")
+
+
+class OpportunitySelectorCandidateRead(ApiModel):
+    """One formally published Selector V1 research candidate."""
+
+    rank: Literal[1, 2]
+    instrument: OpportunityInstrumentRead
+    topic_role: str | None = Field(default=None, alias="topicRole")
+    screen_status: Literal["PASSED"] = Field(alias="screenStatus")
+    evidence_status: Literal["AVAILABLE"] = Field(alias="evidenceStatus")
+    as_of: date = Field(alias="asOf")
+    data_status: str = Field(alias="dataStatus")
+    publication_status: Literal["FORMAL"] = Field(alias="publicationStatus")
+
+
+class OpportunitySelectorV1Read(ApiModel):
+    """Selector V1 publication boundary, not a recommendation contract."""
+
+    contract_version: Literal["selector-v1"] = Field(alias="contractVersion")
+    status: Literal["AVAILABLE", "EMPTY", "DEFERRED", "UNAVAILABLE", "FAIL_CLOSED"]
+    candidate_status: str = Field(alias="candidateStatus")
+    candidates: list[OpportunitySelectorCandidateRead] = Field(default_factory=list)
+    missing_evidence: list[str] = Field(default_factory=list, alias="missingEvidence")
+    as_of: date | None = Field(default=None, alias="asOf")
+    data_status: str = Field(alias="dataStatus")
+    publication_status: Literal["FORMAL", "UNAVAILABLE"] = Field(alias="publicationStatus")
+
+
+class OpportunityTopicIdentityRead(ApiModel):
+    id: str
+    name: str
+    slug: str | None = None
+    topic_type: Literal["LEAF", "PARENT"] = Field(alias="topicType")
+
+
+class OpportunityMemberRead(ApiModel):
+    """One member from the complete topic-member read model."""
+
+    instrument: OpportunityInstrumentRead
+    topic_role: str | None = Field(default=None, alias="topicRole")
+    technical_status: str | None = Field(default=None, alias="technicalStatus")
+    change_pct: float | None = Field(default=None, alias="changePct")
+    as_of: date | None = Field(default=None, alias="asOf")
+    data_status: str = Field(alias="dataStatus")
+    publication_status: Literal["FORMAL", "UNAVAILABLE"] = Field(alias="publicationStatus")
+
+
+class OpportunityMembersRead(ApiModel):
+    """Explicit full-member availability; missing members cannot be hidden."""
+
+    status: Literal["AVAILABLE", "DEFERRED", "UNAVAILABLE", "FAIL_CLOSED"]
+    reason: str | None = None
+    items: list[OpportunityMemberRead] = Field(default_factory=list)
+
+
+class OpportunitySummaryRead(ApiModel):
+    opportunity_id: str = Field(alias="opportunityId")
+    opportunity_key: str = Field(alias="opportunityKey")
+    display_order: int = Field(ge=1, alias="displayOrder")
+    topic: OpportunityTopicIdentityRead
+    opportunity_state: str = Field(alias="opportunityState")
+    display_key: str | None = Field(default=None, alias="displayKey")
+    section_key: str | None = Field(default=None, alias="sectionKey")
+    topic_grade: str | None = Field(default=None, alias="topicGrade")
+    topic_strength: float | None = Field(default=None, alias="topicStrength")
+    summary: str | None = None
+    evidence: list[OpportunityEvidenceRead] = Field(default_factory=list)
+    lifecycle: OpportunityLifecycleContextRead
+    technical_validation: OpportunityTechnicalValidationRead | None = Field(
+        default=None, alias="technicalValidation"
+    )
+    selector_v1: OpportunitySelectorV1Read = Field(alias="selectorV1")
+    primary_risk: str | None = Field(default=None, alias="primaryRisk")
+    as_of: date | None = Field(default=None, alias="asOf")
+    updated_at: datetime | None = Field(default=None, alias="updatedAt")
+    publication_status: Literal["FORMAL"] = Field(alias="publicationStatus")
+    data_status: str = Field(alias="dataStatus")
+    source_status: Literal["FORMAL_CANONICAL"] = Field(alias="sourceStatus")
+    provider_lineage: OpportunityProviderLineage = Field(alias="providerLineage")
+
+
+class OpportunitySectionRead(ApiModel):
+    """Backend-owned page grouping; never inferred from state or Lifecycle."""
+
+    section_key: str = Field(alias="sectionKey")
+    display_key: str = Field(alias="displayKey")
+    display_order: int = Field(ge=1, alias="displayOrder")
+    opportunity_count: int = Field(ge=0, alias="opportunityCount")
+    opportunities: list[OpportunitySummaryRead] = Field(default_factory=list)
+
+
+class OpportunityPageRead(ApiModel):
+    """Formal Opportunity page read model, separate from Topic Detail."""
+
+    contract_version: Literal["opportunity-page-read.v1"] = Field(alias="contractVersion")
+    state: Literal["READY", "EMPTY", "DEFERRED", "UNAVAILABLE", "ERROR"]
+    publication_status: Literal["FORMAL"] = Field(alias="publicationStatus")
+    data_status: str = Field(alias="dataStatus")
+    source_status: Literal["FORMAL_CANONICAL"] = Field(alias="sourceStatus")
+    as_of: date | None = Field(default=None, alias="asOf")
+    updated_at: datetime | None = Field(default=None, alias="updatedAt")
+    section_mapping_status: Literal["AVAILABLE", "DEFERRED", "UNAVAILABLE"] = Field(
+        alias="sectionMappingStatus"
+    )
+    provider_lineage: OpportunityProviderLineage = Field(alias="providerLineage")
+    sections: list[OpportunitySectionRead] = Field(default_factory=list)
+
+
+class OpportunityDetailRead(OpportunitySummaryRead):
+    lifecycle_evidence: list[OpportunityEvidenceRead] = Field(
+        default_factory=list, alias="lifecycleEvidence"
+    )
+    selector_evidence: list[OpportunityEvidenceRead] = Field(
+        default_factory=list, alias="selectorEvidence"
+    )
+    members: OpportunityMembersRead
+
+
+class OpportunityDetailResponse(ApiModel):
+    """Formal Opportunity detail envelope."""
+
+    contract_version: Literal["opportunity-page-read.v1"] = Field(alias="contractVersion")
+    state: Literal["READY", "EMPTY", "DEFERRED", "UNAVAILABLE", "ERROR"]
+    publication_status: Literal["FORMAL"] = Field(alias="publicationStatus")
+    data_status: str = Field(alias="dataStatus")
+    source_status: Literal["FORMAL_CANONICAL"] = Field(alias="sourceStatus")
+    as_of: date | None = Field(default=None, alias="asOf")
+    updated_at: datetime | None = Field(default=None, alias="updatedAt")
+    query: dict[str, Any] = Field(default_factory=dict)
+    provider_lineage: OpportunityProviderLineage = Field(alias="providerLineage")
+    opportunity: OpportunityDetailRead | None = None
+
+
 class HomeSectionStatus(ApiModel):
     status: Literal["AVAILABLE", "PARTIAL", "UNAVAILABLE"]
     data_date: date | None = Field(alias="dataDate")

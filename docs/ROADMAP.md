@@ -32,6 +32,17 @@ The protected data, historical, Today, Stock, and Topic foundations below
 remain the current baseline; the parallel execution routes are stated first so
 that active work does not get mistaken for a serialized release path.
 
+### GOV-001 branch/runtime reconciliation — 2026-09-13
+
+The next recovery report is [GOV-001 Canonical Reconciliation](reports/TASK-GOV-001-CANONICAL-RECONCILIATION-20260913.md).
+It is the current routing checkpoint after GOV-000. The live API remains
+`bf68cc8` from the diverged Today production-convergence branch; the canonical
+product baseline remains `origin/main@b2eaf33`. The existing formal Opportunity
+page slice may be canonicalized as a bounded fail-closed contract, but no new
+provider, algorithm, recommendation semantics, or Production activation is
+authorized. A10/A9, Topic, Today, FUND, and release-chain gaps remain governed
+by their recorded states.
+
 ## Current Parallel Plan
 
 The 2026-08-22 execution route is four isolated workstreams. Completion or

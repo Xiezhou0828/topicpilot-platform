@@ -2356,6 +2356,897 @@
         "title": "MigrationRevisionResponse",
         "type": "object"
       },
+      "OpportunityDetailRead": {
+        "properties": {
+          "asOf": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Asof"
+          },
+          "dataStatus": {
+            "title": "Datastatus",
+            "type": "string"
+          },
+          "displayKey": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Displaykey"
+          },
+          "displayOrder": {
+            "minimum": 1.0,
+            "title": "Displayorder",
+            "type": "integer"
+          },
+          "evidence": {
+            "items": {
+              "$ref": "#/components/schemas/OpportunityEvidenceRead"
+            },
+            "title": "Evidence",
+            "type": "array"
+          },
+          "lifecycle": {
+            "$ref": "#/components/schemas/OpportunityLifecycleContextRead"
+          },
+          "lifecycleEvidence": {
+            "items": {
+              "$ref": "#/components/schemas/OpportunityEvidenceRead"
+            },
+            "title": "Lifecycleevidence",
+            "type": "array"
+          },
+          "members": {
+            "$ref": "#/components/schemas/OpportunityMembersRead"
+          },
+          "opportunityId": {
+            "title": "Opportunityid",
+            "type": "string"
+          },
+          "opportunityKey": {
+            "title": "Opportunitykey",
+            "type": "string"
+          },
+          "opportunityState": {
+            "title": "Opportunitystate",
+            "type": "string"
+          },
+          "primaryRisk": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Primaryrisk"
+          },
+          "providerLineage": {
+            "$ref": "#/components/schemas/OpportunityProviderLineage"
+          },
+          "publicationStatus": {
+            "const": "FORMAL",
+            "title": "Publicationstatus",
+            "type": "string"
+          },
+          "sectionKey": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sectionkey"
+          },
+          "selectorEvidence": {
+            "items": {
+              "$ref": "#/components/schemas/OpportunityEvidenceRead"
+            },
+            "title": "Selectorevidence",
+            "type": "array"
+          },
+          "selectorV1": {
+            "$ref": "#/components/schemas/OpportunitySelectorV1Read"
+          },
+          "sourceStatus": {
+            "const": "FORMAL_CANONICAL",
+            "title": "Sourcestatus",
+            "type": "string"
+          },
+          "summary": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Summary"
+          },
+          "technicalValidation": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/OpportunityTechnicalValidationRead"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "topic": {
+            "$ref": "#/components/schemas/OpportunityTopicIdentityRead"
+          },
+          "topicGrade": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Topicgrade"
+          },
+          "topicStrength": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Topicstrength"
+          },
+          "updatedAt": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updatedat"
+          }
+        },
+        "required": [
+          "opportunityId",
+          "opportunityKey",
+          "displayOrder",
+          "topic",
+          "opportunityState",
+          "lifecycle",
+          "selectorV1",
+          "publicationStatus",
+          "dataStatus",
+          "sourceStatus",
+          "providerLineage",
+          "members"
+        ],
+        "title": "OpportunityDetailRead",
+        "type": "object"
+      },
+      "OpportunityDetailResponse": {
+        "description": "Formal Opportunity detail envelope.",
+        "properties": {
+          "asOf": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Asof"
+          },
+          "contractVersion": {
+            "const": "opportunity-page-read.v1",
+            "title": "Contractversion",
+            "type": "string"
+          },
+          "dataStatus": {
+            "title": "Datastatus",
+            "type": "string"
+          },
+          "opportunity": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/OpportunityDetailRead"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "providerLineage": {
+            "$ref": "#/components/schemas/OpportunityProviderLineage"
+          },
+          "publicationStatus": {
+            "const": "FORMAL",
+            "title": "Publicationstatus",
+            "type": "string"
+          },
+          "query": {
+            "additionalProperties": true,
+            "title": "Query",
+            "type": "object"
+          },
+          "sourceStatus": {
+            "const": "FORMAL_CANONICAL",
+            "title": "Sourcestatus",
+            "type": "string"
+          },
+          "state": {
+            "enum": [
+              "READY",
+              "EMPTY",
+              "DEFERRED",
+              "UNAVAILABLE",
+              "ERROR"
+            ],
+            "title": "State",
+            "type": "string"
+          },
+          "updatedAt": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updatedat"
+          }
+        },
+        "required": [
+          "contractVersion",
+          "state",
+          "publicationStatus",
+          "dataStatus",
+          "sourceStatus",
+          "providerLineage"
+        ],
+        "title": "OpportunityDetailResponse",
+        "type": "object"
+      },
+      "OpportunityEvidenceRead": {
+        "description": "Provider-owned, bounded reason/evidence context.",
+        "properties": {
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "detail": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Detail"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status"
+          }
+        },
+        "required": [
+          "code",
+          "kind"
+        ],
+        "title": "OpportunityEvidenceRead",
+        "type": "object"
+      },
+      "OpportunityInstrumentRead": {
+        "description": "Formal Opportunity instrument identity, independent of shadow schemas.",
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "symbol": {
+            "title": "Symbol",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "symbol",
+          "name"
+        ],
+        "title": "OpportunityInstrumentRead",
+        "type": "object"
+      },
+      "OpportunityLifecycleContextRead": {
+        "description": "Backend-published Lifecycle context; the browser never derives it.",
+        "properties": {
+          "asOf": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Asof"
+          },
+          "currentStage": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Currentstage"
+          },
+          "dataStatus": {
+            "title": "Datastatus",
+            "type": "string"
+          },
+          "policyVersion": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Policyversion"
+          },
+          "previousStage": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Previousstage"
+          },
+          "publicationStatus": {
+            "enum": [
+              "FORMAL",
+              "UNAVAILABLE"
+            ],
+            "title": "Publicationstatus",
+            "type": "string"
+          },
+          "stageEnteredAt": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stageenteredat"
+          },
+          "stageTradingDays": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stagetradingdays"
+          },
+          "status": {
+            "enum": [
+              "AVAILABLE",
+              "DEFERRED",
+              "UNAVAILABLE",
+              "FAIL_CLOSED"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "transitionReason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Transitionreason"
+          }
+        },
+        "required": [
+          "status",
+          "dataStatus",
+          "publicationStatus"
+        ],
+        "title": "OpportunityLifecycleContextRead",
+        "type": "object"
+      },
+      "OpportunityMemberRead": {
+        "description": "One member from the complete topic-member read model.",
+        "properties": {
+          "asOf": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Asof"
+          },
+          "changePct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Changepct"
+          },
+          "dataStatus": {
+            "title": "Datastatus",
+            "type": "string"
+          },
+          "instrument": {
+            "$ref": "#/components/schemas/OpportunityInstrumentRead"
+          },
+          "publicationStatus": {
+            "enum": [
+              "FORMAL",
+              "UNAVAILABLE"
+            ],
+            "title": "Publicationstatus",
+            "type": "string"
+          },
+          "technicalStatus": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Technicalstatus"
+          },
+          "topicRole": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Topicrole"
+          }
+        },
+        "required": [
+          "instrument",
+          "dataStatus",
+          "publicationStatus"
+        ],
+        "title": "OpportunityMemberRead",
+        "type": "object"
+      },
+      "OpportunityMembersRead": {
+        "description": "Explicit full-member availability; missing members cannot be hidden.",
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/OpportunityMemberRead"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          },
+          "status": {
+            "enum": [
+              "AVAILABLE",
+              "DEFERRED",
+              "UNAVAILABLE",
+              "FAIL_CLOSED"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "title": "OpportunityMembersRead",
+        "type": "object"
+      },
+      "OpportunityPageRead": {
+        "description": "Formal Opportunity page read model, separate from Topic Detail.",
+        "properties": {
+          "asOf": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Asof"
+          },
+          "contractVersion": {
+            "const": "opportunity-page-read.v1",
+            "title": "Contractversion",
+            "type": "string"
+          },
+          "dataStatus": {
+            "title": "Datastatus",
+            "type": "string"
+          },
+          "providerLineage": {
+            "$ref": "#/components/schemas/OpportunityProviderLineage"
+          },
+          "publicationStatus": {
+            "const": "FORMAL",
+            "title": "Publicationstatus",
+            "type": "string"
+          },
+          "sectionMappingStatus": {
+            "enum": [
+              "AVAILABLE",
+              "DEFERRED",
+              "UNAVAILABLE"
+            ],
+            "title": "Sectionmappingstatus",
+            "type": "string"
+          },
+          "sections": {
+            "items": {
+              "$ref": "#/components/schemas/OpportunitySectionRead"
+            },
+            "title": "Sections",
+            "type": "array"
+          },
+          "sourceStatus": {
+            "const": "FORMAL_CANONICAL",
+            "title": "Sourcestatus",
+            "type": "string"
+          },
+          "state": {
+            "enum": [
+              "READY",
+              "EMPTY",
+              "DEFERRED",
+              "UNAVAILABLE",
+              "ERROR"
+            ],
+            "title": "State",
+            "type": "string"
+          },
+          "updatedAt": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updatedat"
+          }
+        },
+        "required": [
+          "contractVersion",
+          "state",
+          "publicationStatus",
+          "dataStatus",
+          "sourceStatus",
+          "sectionMappingStatus",
+          "providerLineage"
+        ],
+        "title": "OpportunityPageRead",
+        "type": "object"
+      },
+      "OpportunityProviderLineage": {
+        "description": "Lineage for an Opportunity page publication.\n\nThis is intentionally separate from the existing shadow contract.  A\nformal consumer must be able to identify the provider and point-in-time\nartifact without borrowing research or fixture metadata.",
+        "properties": {
+          "authority": {
+            "title": "Authority",
+            "type": "string"
+          },
+          "contractVersion": {
+            "title": "Contractversion",
+            "type": "string"
+          },
+          "policyVersion": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Policyversion"
+          },
+          "provider": {
+            "title": "Provider",
+            "type": "string"
+          },
+          "sourceArtifactHash": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sourceartifacthash"
+          },
+          "sourceArtifactId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sourceartifactid"
+          }
+        },
+        "required": [
+          "provider",
+          "authority",
+          "contractVersion"
+        ],
+        "title": "OpportunityProviderLineage",
+        "type": "object"
+      },
+      "OpportunitySectionRead": {
+        "description": "Backend-owned page grouping; never inferred from state or Lifecycle.",
+        "properties": {
+          "displayKey": {
+            "title": "Displaykey",
+            "type": "string"
+          },
+          "displayOrder": {
+            "minimum": 1.0,
+            "title": "Displayorder",
+            "type": "integer"
+          },
+          "opportunities": {
+            "items": {
+              "$ref": "#/components/schemas/OpportunitySummaryRead"
+            },
+            "title": "Opportunities",
+            "type": "array"
+          },
+          "opportunityCount": {
+            "minimum": 0.0,
+            "title": "Opportunitycount",
+            "type": "integer"
+          },
+          "sectionKey": {
+            "title": "Sectionkey",
+            "type": "string"
+          }
+        },
+        "required": [
+          "sectionKey",
+          "displayKey",
+          "displayOrder",
+          "opportunityCount"
+        ],
+        "title": "OpportunitySectionRead",
+        "type": "object"
+      },
+      "OpportunitySelectorCandidateRead": {
+        "description": "One formally published Selector V1 research candidate.",
+        "properties": {
+          "asOf": {
+            "format": "date",
+            "title": "Asof",
+            "type": "string"
+          },
+          "dataStatus": {
+            "title": "Datastatus",
+            "type": "string"
+          },
+          "evidenceStatus": {
+            "const": "AVAILABLE",
+            "title": "Evidencestatus",
+            "type": "string"
+          },
+          "instrument": {
+            "$ref": "#/components/schemas/OpportunityInstrumentRead"
+          },
+          "publicationStatus": {
+            "const": "FORMAL",
+            "title": "Publicationstatus",
+            "type": "string"
+          },
+          "rank": {
+            "enum": [
+              1,
+              2
+            ],
+            "title": "Rank",
+            "type": "integer"
+          },
+          "screenStatus": {
+            "const": "PASSED",
+            "title": "Screenstatus",
+            "type": "string"
+          },
+          "topicRole": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Topicrole"
+          }
+        },
+        "required": [
+          "rank",
+          "instrument",
+          "screenStatus",
+          "evidenceStatus",
+          "asOf",
+          "dataStatus",
+          "publicationStatus"
+        ],
+        "title": "OpportunitySelectorCandidateRead",
+        "type": "object"
+      },
+      "OpportunitySelectorV1Read": {
+        "description": "Selector V1 publication boundary, not a recommendation contract.",
+        "properties": {
+          "asOf": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Asof"
+          },
+          "candidateStatus": {
+            "title": "Candidatestatus",
+            "type": "string"
+          },
+          "candidates": {
+            "items": {
+              "$ref": "#/components/schemas/OpportunitySelectorCandidateRead"
+            },
+            "title": "Candidates",
+            "type": "array"
+          },
+          "contractVersion": {
+            "const": "selector-v1",
+            "title": "Contractversion",
+            "type": "string"
+          },
+          "dataStatus": {
+            "title": "Datastatus",
+            "type": "string"
+          },
+          "missingEvidence": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Missingevidence",
+            "type": "array"
+          },
+          "publicationStatus": {
+            "enum": [
+              "FORMAL",
+              "UNAVAILABLE"
+            ],
+            "title": "Publicationstatus",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "AVAILABLE",
+              "EMPTY",
+              "DEFERRED",
+              "UNAVAILABLE",
+              "FAIL_CLOSED"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "contractVersion",
+          "status",
+          "candidateStatus",
+          "dataStatus",
+          "publicationStatus"
+        ],
+        "title": "OpportunitySelectorV1Read",
+        "type": "object"
+      },
       "OpportunityShadowCard": {
         "properties": {
           "asOf": {
@@ -3062,6 +3953,296 @@
           "strength"
         ],
         "title": "OpportunityShadowTopic",
+        "type": "object"
+      },
+      "OpportunitySummaryRead": {
+        "properties": {
+          "asOf": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Asof"
+          },
+          "dataStatus": {
+            "title": "Datastatus",
+            "type": "string"
+          },
+          "displayKey": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Displaykey"
+          },
+          "displayOrder": {
+            "minimum": 1.0,
+            "title": "Displayorder",
+            "type": "integer"
+          },
+          "evidence": {
+            "items": {
+              "$ref": "#/components/schemas/OpportunityEvidenceRead"
+            },
+            "title": "Evidence",
+            "type": "array"
+          },
+          "lifecycle": {
+            "$ref": "#/components/schemas/OpportunityLifecycleContextRead"
+          },
+          "opportunityId": {
+            "title": "Opportunityid",
+            "type": "string"
+          },
+          "opportunityKey": {
+            "title": "Opportunitykey",
+            "type": "string"
+          },
+          "opportunityState": {
+            "title": "Opportunitystate",
+            "type": "string"
+          },
+          "primaryRisk": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Primaryrisk"
+          },
+          "providerLineage": {
+            "$ref": "#/components/schemas/OpportunityProviderLineage"
+          },
+          "publicationStatus": {
+            "const": "FORMAL",
+            "title": "Publicationstatus",
+            "type": "string"
+          },
+          "sectionKey": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sectionkey"
+          },
+          "selectorV1": {
+            "$ref": "#/components/schemas/OpportunitySelectorV1Read"
+          },
+          "sourceStatus": {
+            "const": "FORMAL_CANONICAL",
+            "title": "Sourcestatus",
+            "type": "string"
+          },
+          "summary": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Summary"
+          },
+          "technicalValidation": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/OpportunityTechnicalValidationRead"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "topic": {
+            "$ref": "#/components/schemas/OpportunityTopicIdentityRead"
+          },
+          "topicGrade": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Topicgrade"
+          },
+          "topicStrength": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Topicstrength"
+          },
+          "updatedAt": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updatedat"
+          }
+        },
+        "required": [
+          "opportunityId",
+          "opportunityKey",
+          "displayOrder",
+          "topic",
+          "opportunityState",
+          "lifecycle",
+          "selectorV1",
+          "publicationStatus",
+          "dataStatus",
+          "sourceStatus",
+          "providerLineage"
+        ],
+        "title": "OpportunitySummaryRead",
+        "type": "object"
+      },
+      "OpportunityTechnicalValidationRead": {
+        "description": "Counts/status from one provider; no browser-side arithmetic.",
+        "properties": {
+          "asOf": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Asof"
+          },
+          "dataStatus": {
+            "title": "Datastatus",
+            "type": "string"
+          },
+          "evaluatedCount": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Evaluatedcount"
+          },
+          "memberCount": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Membercount"
+          },
+          "publicationStatus": {
+            "enum": [
+              "FORMAL",
+              "UNAVAILABLE"
+            ],
+            "title": "Publicationstatus",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "AVAILABLE",
+              "EMPTY",
+              "DEFERRED",
+              "UNAVAILABLE",
+              "FAIL_CLOSED"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "validatedCount": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Validatedcount"
+          }
+        },
+        "required": [
+          "status",
+          "dataStatus",
+          "publicationStatus"
+        ],
+        "title": "OpportunityTechnicalValidationRead",
+        "type": "object"
+      },
+      "OpportunityTopicIdentityRead": {
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "slug": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Slug"
+          },
+          "topicType": {
+            "enum": [
+              "LEAF",
+              "PARENT"
+            ],
+            "title": "Topictype",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "topicType"
+        ],
+        "title": "OpportunityTopicIdentityRead",
         "type": "object"
       },
       "Page_CandidateResponse_": {
@@ -10153,6 +11334,152 @@
         "summary": "Home",
         "tags": [
           "home"
+        ]
+      }
+    },
+    "/api/v2/opportunities": {
+      "get": {
+        "operationId": "list_opportunities_api_v2_opportunities_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "asOf",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Asof"
+            }
+          },
+          {
+            "in": "query",
+            "name": "sectionKey",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Sectionkey"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 100,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OpportunityPageRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "500": {
+            "description": "Configured provider returned an invalid formal payload"
+          },
+          "503": {
+            "description": "No canonical formal Opportunity provider is configured"
+          }
+        },
+        "summary": "Read the formal Opportunity page",
+        "tags": [
+          "opportunities"
+        ]
+      }
+    },
+    "/api/v2/opportunities/{opportunity_id}": {
+      "get": {
+        "operationId": "opportunity_detail_api_v2_opportunities__opportunity_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "opportunity_id",
+            "required": true,
+            "schema": {
+              "title": "Opportunity Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OpportunityDetailResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "description": "Opportunity was not found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "500": {
+            "description": "Configured provider returned an invalid formal payload"
+          },
+          "503": {
+            "description": "No canonical formal Opportunity provider is configured"
+          }
+        },
+        "summary": "Read one formal Opportunity detail",
+        "tags": [
+          "opportunities"
         ]
       }
     },

@@ -551,6 +551,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v2/opportunities": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read the formal Opportunity page */
+        get: operations["list_opportunities_api_v2_opportunities_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v2/opportunities/{opportunity_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read one formal Opportunity detail */
+        get: operations["opportunity_detail_api_v2_opportunities__opportunity_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v2/stocks": {
         parameters: {
             query?: never;
@@ -1450,6 +1484,337 @@ export interface components {
              */
             readOnly: true;
         };
+        /** OpportunityDetailRead */
+        OpportunityDetailRead: {
+            /** Asof */
+            asOf?: string | null;
+            /** Datastatus */
+            dataStatus: string;
+            /** Displaykey */
+            displayKey?: string | null;
+            /** Displayorder */
+            displayOrder: number;
+            /** Evidence */
+            evidence?: components["schemas"]["OpportunityEvidenceRead"][];
+            lifecycle: components["schemas"]["OpportunityLifecycleContextRead"];
+            /** Lifecycleevidence */
+            lifecycleEvidence?: components["schemas"]["OpportunityEvidenceRead"][];
+            members: components["schemas"]["OpportunityMembersRead"];
+            /** Opportunityid */
+            opportunityId: string;
+            /** Opportunitykey */
+            opportunityKey: string;
+            /** Opportunitystate */
+            opportunityState: string;
+            /** Primaryrisk */
+            primaryRisk?: string | null;
+            providerLineage: components["schemas"]["OpportunityProviderLineage"];
+            /**
+             * Publicationstatus
+             * @constant
+             */
+            publicationStatus: "FORMAL";
+            /** Sectionkey */
+            sectionKey?: string | null;
+            /** Selectorevidence */
+            selectorEvidence?: components["schemas"]["OpportunityEvidenceRead"][];
+            selectorV1: components["schemas"]["OpportunitySelectorV1Read"];
+            /**
+             * Sourcestatus
+             * @constant
+             */
+            sourceStatus: "FORMAL_CANONICAL";
+            /** Summary */
+            summary?: string | null;
+            technicalValidation?: components["schemas"]["OpportunityTechnicalValidationRead"] | null;
+            topic: components["schemas"]["OpportunityTopicIdentityRead"];
+            /** Topicgrade */
+            topicGrade?: string | null;
+            /** Topicstrength */
+            topicStrength?: number | null;
+            /** Updatedat */
+            updatedAt?: string | null;
+        };
+        /**
+         * OpportunityDetailResponse
+         * @description Formal Opportunity detail envelope.
+         */
+        OpportunityDetailResponse: {
+            /** Asof */
+            asOf?: string | null;
+            /**
+             * Contractversion
+             * @constant
+             */
+            contractVersion: "opportunity-page-read.v1";
+            /** Datastatus */
+            dataStatus: string;
+            opportunity?: components["schemas"]["OpportunityDetailRead"] | null;
+            providerLineage: components["schemas"]["OpportunityProviderLineage"];
+            /**
+             * Publicationstatus
+             * @constant
+             */
+            publicationStatus: "FORMAL";
+            /** Query */
+            query?: {
+                [key: string]: unknown;
+            };
+            /**
+             * Sourcestatus
+             * @constant
+             */
+            sourceStatus: "FORMAL_CANONICAL";
+            /**
+             * State
+             * @enum {string}
+             */
+            state: "READY" | "EMPTY" | "DEFERRED" | "UNAVAILABLE" | "ERROR";
+            /** Updatedat */
+            updatedAt?: string | null;
+        };
+        /**
+         * OpportunityEvidenceRead
+         * @description Provider-owned, bounded reason/evidence context.
+         */
+        OpportunityEvidenceRead: {
+            /** Code */
+            code: string;
+            /** Detail */
+            detail?: string | null;
+            /** Kind */
+            kind: string;
+            /** Source */
+            source?: string | null;
+            /** Status */
+            status?: string | null;
+        };
+        /**
+         * OpportunityInstrumentRead
+         * @description Formal Opportunity instrument identity, independent of shadow schemas.
+         */
+        OpportunityInstrumentRead: {
+            /** Id */
+            id: string;
+            /** Name */
+            name: string;
+            /** Symbol */
+            symbol: string;
+        };
+        /**
+         * OpportunityLifecycleContextRead
+         * @description Backend-published Lifecycle context; the browser never derives it.
+         */
+        OpportunityLifecycleContextRead: {
+            /** Asof */
+            asOf?: string | null;
+            /** Currentstage */
+            currentStage?: string | null;
+            /** Datastatus */
+            dataStatus: string;
+            /** Policyversion */
+            policyVersion?: string | null;
+            /** Previousstage */
+            previousStage?: string | null;
+            /**
+             * Publicationstatus
+             * @enum {string}
+             */
+            publicationStatus: "FORMAL" | "UNAVAILABLE";
+            /** Stageenteredat */
+            stageEnteredAt?: string | null;
+            /** Stagetradingdays */
+            stageTradingDays?: number | null;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "AVAILABLE" | "DEFERRED" | "UNAVAILABLE" | "FAIL_CLOSED";
+            /** Transitionreason */
+            transitionReason?: string | null;
+        };
+        /**
+         * OpportunityMemberRead
+         * @description One member from the complete topic-member read model.
+         */
+        OpportunityMemberRead: {
+            /** Asof */
+            asOf?: string | null;
+            /** Changepct */
+            changePct?: number | null;
+            /** Datastatus */
+            dataStatus: string;
+            instrument: components["schemas"]["OpportunityInstrumentRead"];
+            /**
+             * Publicationstatus
+             * @enum {string}
+             */
+            publicationStatus: "FORMAL" | "UNAVAILABLE";
+            /** Technicalstatus */
+            technicalStatus?: string | null;
+            /** Topicrole */
+            topicRole?: string | null;
+        };
+        /**
+         * OpportunityMembersRead
+         * @description Explicit full-member availability; missing members cannot be hidden.
+         */
+        OpportunityMembersRead: {
+            /** Items */
+            items?: components["schemas"]["OpportunityMemberRead"][];
+            /** Reason */
+            reason?: string | null;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "AVAILABLE" | "DEFERRED" | "UNAVAILABLE" | "FAIL_CLOSED";
+        };
+        /**
+         * OpportunityPageRead
+         * @description Formal Opportunity page read model, separate from Topic Detail.
+         */
+        OpportunityPageRead: {
+            /** Asof */
+            asOf?: string | null;
+            /**
+             * Contractversion
+             * @constant
+             */
+            contractVersion: "opportunity-page-read.v1";
+            /** Datastatus */
+            dataStatus: string;
+            providerLineage: components["schemas"]["OpportunityProviderLineage"];
+            /**
+             * Publicationstatus
+             * @constant
+             */
+            publicationStatus: "FORMAL";
+            /**
+             * Sectionmappingstatus
+             * @enum {string}
+             */
+            sectionMappingStatus: "AVAILABLE" | "DEFERRED" | "UNAVAILABLE";
+            /** Sections */
+            sections?: components["schemas"]["OpportunitySectionRead"][];
+            /**
+             * Sourcestatus
+             * @constant
+             */
+            sourceStatus: "FORMAL_CANONICAL";
+            /**
+             * State
+             * @enum {string}
+             */
+            state: "READY" | "EMPTY" | "DEFERRED" | "UNAVAILABLE" | "ERROR";
+            /** Updatedat */
+            updatedAt?: string | null;
+        };
+        /**
+         * OpportunityProviderLineage
+         * @description Lineage for an Opportunity page publication.
+         *
+         *     This is intentionally separate from the existing shadow contract.  A
+         *     formal consumer must be able to identify the provider and point-in-time
+         *     artifact without borrowing research or fixture metadata.
+         */
+        OpportunityProviderLineage: {
+            /** Authority */
+            authority: string;
+            /** Contractversion */
+            contractVersion: string;
+            /** Policyversion */
+            policyVersion?: string | null;
+            /** Provider */
+            provider: string;
+            /** Sourceartifacthash */
+            sourceArtifactHash?: string | null;
+            /** Sourceartifactid */
+            sourceArtifactId?: string | null;
+        };
+        /**
+         * OpportunitySectionRead
+         * @description Backend-owned page grouping; never inferred from state or Lifecycle.
+         */
+        OpportunitySectionRead: {
+            /** Displaykey */
+            displayKey: string;
+            /** Displayorder */
+            displayOrder: number;
+            /** Opportunities */
+            opportunities?: components["schemas"]["OpportunitySummaryRead"][];
+            /** Opportunitycount */
+            opportunityCount: number;
+            /** Sectionkey */
+            sectionKey: string;
+        };
+        /**
+         * OpportunitySelectorCandidateRead
+         * @description One formally published Selector V1 research candidate.
+         */
+        OpportunitySelectorCandidateRead: {
+            /**
+             * Asof
+             * Format: date
+             */
+            asOf: string;
+            /** Datastatus */
+            dataStatus: string;
+            /**
+             * Evidencestatus
+             * @constant
+             */
+            evidenceStatus: "AVAILABLE";
+            instrument: components["schemas"]["OpportunityInstrumentRead"];
+            /**
+             * Publicationstatus
+             * @constant
+             */
+            publicationStatus: "FORMAL";
+            /**
+             * Rank
+             * @enum {integer}
+             */
+            rank: 1 | 2;
+            /**
+             * Screenstatus
+             * @constant
+             */
+            screenStatus: "PASSED";
+            /** Topicrole */
+            topicRole?: string | null;
+        };
+        /**
+         * OpportunitySelectorV1Read
+         * @description Selector V1 publication boundary, not a recommendation contract.
+         */
+        OpportunitySelectorV1Read: {
+            /** Asof */
+            asOf?: string | null;
+            /** Candidatestatus */
+            candidateStatus: string;
+            /** Candidates */
+            candidates?: components["schemas"]["OpportunitySelectorCandidateRead"][];
+            /**
+             * Contractversion
+             * @constant
+             */
+            contractVersion: "selector-v1";
+            /** Datastatus */
+            dataStatus: string;
+            /** Missingevidence */
+            missingEvidence?: string[];
+            /**
+             * Publicationstatus
+             * @enum {string}
+             */
+            publicationStatus: "FORMAL" | "UNAVAILABLE";
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "AVAILABLE" | "EMPTY" | "DEFERRED" | "UNAVAILABLE" | "FAIL_CLOSED";
+        };
         /** OpportunityShadowCard */
         OpportunityShadowCard: {
             /** Asof */
@@ -1678,6 +2043,92 @@ export interface components {
             name: string;
             /** Strength */
             strength: number | null;
+        };
+        /** OpportunitySummaryRead */
+        OpportunitySummaryRead: {
+            /** Asof */
+            asOf?: string | null;
+            /** Datastatus */
+            dataStatus: string;
+            /** Displaykey */
+            displayKey?: string | null;
+            /** Displayorder */
+            displayOrder: number;
+            /** Evidence */
+            evidence?: components["schemas"]["OpportunityEvidenceRead"][];
+            lifecycle: components["schemas"]["OpportunityLifecycleContextRead"];
+            /** Opportunityid */
+            opportunityId: string;
+            /** Opportunitykey */
+            opportunityKey: string;
+            /** Opportunitystate */
+            opportunityState: string;
+            /** Primaryrisk */
+            primaryRisk?: string | null;
+            providerLineage: components["schemas"]["OpportunityProviderLineage"];
+            /**
+             * Publicationstatus
+             * @constant
+             */
+            publicationStatus: "FORMAL";
+            /** Sectionkey */
+            sectionKey?: string | null;
+            selectorV1: components["schemas"]["OpportunitySelectorV1Read"];
+            /**
+             * Sourcestatus
+             * @constant
+             */
+            sourceStatus: "FORMAL_CANONICAL";
+            /** Summary */
+            summary?: string | null;
+            technicalValidation?: components["schemas"]["OpportunityTechnicalValidationRead"] | null;
+            topic: components["schemas"]["OpportunityTopicIdentityRead"];
+            /** Topicgrade */
+            topicGrade?: string | null;
+            /** Topicstrength */
+            topicStrength?: number | null;
+            /** Updatedat */
+            updatedAt?: string | null;
+        };
+        /**
+         * OpportunityTechnicalValidationRead
+         * @description Counts/status from one provider; no browser-side arithmetic.
+         */
+        OpportunityTechnicalValidationRead: {
+            /** Asof */
+            asOf?: string | null;
+            /** Datastatus */
+            dataStatus: string;
+            /** Evaluatedcount */
+            evaluatedCount?: number | null;
+            /** Membercount */
+            memberCount?: number | null;
+            /**
+             * Publicationstatus
+             * @enum {string}
+             */
+            publicationStatus: "FORMAL" | "UNAVAILABLE";
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "AVAILABLE" | "EMPTY" | "DEFERRED" | "UNAVAILABLE" | "FAIL_CLOSED";
+            /** Validatedcount */
+            validatedCount?: number | null;
+        };
+        /** OpportunityTopicIdentityRead */
+        OpportunityTopicIdentityRead: {
+            /** Id */
+            id: string;
+            /** Name */
+            name: string;
+            /** Slug */
+            slug?: string | null;
+            /**
+             * Topictype
+             * @enum {string}
+             */
+            topicType: "LEAF" | "PARENT";
         };
         /** Page[CandidateResponse] */
         Page_CandidateResponse_: {
@@ -4157,6 +4608,106 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["HomeResponse"];
                 };
+            };
+        };
+    };
+    list_opportunities_api_v2_opportunities_get: {
+        parameters: {
+            query?: {
+                asOf?: string | null;
+                sectionKey?: string | null;
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpportunityPageRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Configured provider returned an invalid formal payload */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description No canonical formal Opportunity provider is configured */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    opportunity_detail_api_v2_opportunities__opportunity_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                opportunity_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpportunityDetailResponse"];
+                };
+            };
+            /** @description Opportunity was not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Configured provider returned an invalid formal payload */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description No canonical formal Opportunity provider is configured */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };

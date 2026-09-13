@@ -15,6 +15,7 @@ from topicpilot_api.constants import STRATEGY_HORIZONS, STRATEGY_KEYS
 from topicpilot_api.database import get_db
 from topicpilot_api.home_read_model import build_home_read_model
 from topicpilot_api.live_api import router as live_router
+from topicpilot_api.opportunity_api import router as opportunity_router
 from topicpilot_api.opportunity_shadow_api import router as opportunity_shadow_router
 from topicpilot_api.problems import ApiProblem, NotFoundProblem, install_problem_handlers
 from topicpilot_api.production_read_model_api import router as production_read_model_router
@@ -89,6 +90,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     application.include_router(production_read_model_router)
     application.include_router(topic_snapshot_router)
     application.include_router(opportunity_shadow_router)
+    application.include_router(opportunity_router)
     application.include_router(live_router)
 
     @application.get("/healthz", response_model=HealthResponse, tags=["operations"])
