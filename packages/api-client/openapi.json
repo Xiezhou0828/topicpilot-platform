@@ -722,6 +722,20 @@
             ],
             "title": "Reasoncode"
           },
+          "signalCatalog": {
+            "items": {
+              "$ref": "#/components/schemas/HomeMarketSignalCatalog"
+            },
+            "title": "Signalcatalog",
+            "type": "array"
+          },
+          "signals": {
+            "items": {
+              "$ref": "#/components/schemas/HomeMarketSignal"
+            },
+            "title": "Signals",
+            "type": "array"
+          },
           "source": {
             "title": "Source",
             "type": "string"
@@ -1499,6 +1513,84 @@
           "source"
         ],
         "title": "HomeMarketPulseEvent",
+        "type": "object"
+      },
+      "HomeMarketSignal": {
+        "properties": {
+          "direction": {
+            "title": "Direction",
+            "type": "string"
+          },
+          "evidence": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Evidence",
+            "type": "array"
+          },
+          "interpretation": {
+            "title": "Interpretation",
+            "type": "string"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "severity": {
+            "enum": [
+              "INFO",
+              "WATCH",
+              "WARNING"
+            ],
+            "title": "Severity",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "name",
+          "severity",
+          "direction",
+          "interpretation"
+        ],
+        "title": "HomeMarketSignal",
+        "type": "object"
+      },
+      "HomeMarketSignalCatalog": {
+        "properties": {
+          "condition": {
+            "title": "Condition",
+            "type": "string"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "direction": {
+            "title": "Direction",
+            "type": "string"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "name",
+          "condition",
+          "direction",
+          "description"
+        ],
+        "title": "HomeMarketSignalCatalog",
         "type": "object"
       },
       "HomeMarketTurnover": {

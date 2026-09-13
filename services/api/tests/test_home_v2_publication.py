@@ -7,6 +7,7 @@ from topicpilot_api.home_v2_publication import (
     _derived_total_turnover,
     build_daily_focus,
     build_market_distribution,
+    build_market_signals,
     calculate_rotation_14d,
     empty_home_v2,
     normalize_home_publication_for_read,
@@ -190,9 +191,9 @@ def test_market_distribution_does_not_classify_transport_or_legal_no_quote_as_pr
     assert sum(item["count"] for item in result["buckets"]) == 0
 
 
-def test_daily_focus_is_rule_based_and_fail_closed_without_evidence():
+def test_daily_focus_is_rule_based_and_reports_no_signal_without_triggered_condition():
     overview = {
-        "marketHealth": {"advance": 12, "decline": 4, "flat": 2},
+        "marketHealth": {"status": "AVAILABLE", "advance": 12, "decline": 4, "flat": 2},
         "breadth": [],
         "indices": [{"indexName": "TWSE", "value": 100, "change": 1}],
     }
@@ -208,7 +209,10 @@ def test_daily_focus_is_rule_based_and_fail_closed_without_evidence():
     assert focus.status == "AVAILABLE"
     assert focus.payload["temporary"] is False
     assert focus.payload["mode"] == "RULE_BASED_V1"
-    assert focus.payload["bullets"]
+    assert focus.payload["headline"] == "今日無異常訊號"
+    assert focus.payload["bullets"] == []
+    assert focus.payload["signals"] == []
+    assert len(focus.payload["signalCatalog"]) == 4
     assert build_daily_focus(
         market_overview={},
         main_topics=[],
@@ -222,10 +226,19 @@ def test_daily_focus_is_rule_based_and_fail_closed_without_evidence():
 def test_daily_focus_uses_only_index_breadth_and_divergence_facts():
     focus = build_daily_focus(
         market_overview={
-            "marketHealth": {"advance": 2, "decline": 5, "flat": 1, "breadthEligible": 8},
+            "marketHealth": {
+                "status": "AVAILABLE", "advance": 2, "decline": 5,
+                "flat": 1, "breadthEligible": 8,
+            },
             "indices": [
-                {"indexName": "TWSE", "value": 100, "change": 1, "changePct": 1.0},
-                {"indexName": "TPEx", "value": 80, "change": -0.5, "changePct": None},
+                {
+                    "market": "TPE", "indexName": "TWSE", "value": 100, "status": "AVAILABLE",
+                    "change": 1, "changePct": 1.0,
+                },
+                {
+                    "market": "TWO", "indexName": "TPEx", "value": 80, "status": "AVAILABLE",
+                    "change": -0.5, "changePct": None,
+                },
             ],
         },
         main_topics=[{"name": "不要出現在重點中的題材"}],
@@ -235,12 +248,49 @@ def test_daily_focus_uses_only_index_breadth_and_divergence_facts():
         as_of=None,
     )
 
-    text = " ".join(focus.payload["bullets"])
     assert focus.status == "AVAILABLE"
-    assert "TWSE" in text and "TPEx" in text
-    assert "方向分歧" in text
-    assert "下跌家數多於上漲家數" in text
+    assert len(focus.payload["signals"]) == 2
+    assert {item["key"] for item in focus.payload["signals"]} == {
+        "INDEX_DIVERGENCE",
+        "BREADTH_DIVERGENCE",
+    }
+    text = " ".join(
+        signal_text
+        for item in focus.payload["signals"]
+        for signal_text in [item["name"], *item["evidence"], item["interpretation"]]
+    )
+    assert "TWSE" not in text
+    assert "大型股\uFF0F中小型股分化" in text
+    assert "下跌家數 5" in text
     assert "不要出現在重點中的題材" not in text
+
+
+def test_market_signals_require_formal_inputs_and_do_not_infer_missing_facts():
+    assert build_market_signals(
+        {
+            "indices": [
+                {"market": "TPE", "change": 1, "status": "AVAILABLE"},
+                {"market": "TWO", "change": -1, "status": "AVAILABLE"},
+            ],
+            "turnover": [{"market": "TWO", "status": "AVAILABLE", "value": 10}],
+        }
+    ) == [
+        {
+            "key": "INDEX_DIVERGENCE",
+            "name": "大型股\uFF0F中小型股分化",
+            "severity": "WATCH",
+            "direction": "Neutral",
+            "evidence": ["加權指數 +1 點", "櫃買指數 -1 點"],
+            "interpretation": "大型股與中小型股走勢明顯分化。",
+        }
+    ]
+
+    assert build_market_signals(
+        {
+            "indices": [{"market": "TPE", "change": 1, "status": "AVAILABLE"}],
+            "marketHealth": {"status": "AVAILABLE", "advance": 5, "decline": 4},
+        }
+    ) == []
 
 
 def test_home_gate_requires_market_and_formal_topics_but_not_optional_sections():

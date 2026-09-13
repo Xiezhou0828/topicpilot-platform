@@ -59,7 +59,7 @@ USER_MESSAGES = {
     "NO_PUBLISHED_MARKET_FACTS": "市場資料尚未完整。",
     "NO_FORMAL_TOPIC_PUBLICATION": "題材資料尚未完成發布。",
     "INSUFFICIENT_ROTATION_HISTORY": "目前累積的交易日資料不足，尚無法計算 14 日變化。",
-    "DAILY_FOCUS_EVIDENCE_INCOMPLETE": "今日市場重點尚未完成。",
+    "DAILY_FOCUS_EVIDENCE_INCOMPLETE": "今日市場訊號尚未完成。",
     "UPSTREAM_SOURCE_UNAVAILABLE": "這項市場資料目前無法提供。",
     "NO_FORMAL_MARKET_BREADTH": "市場廣度資料目前無法提供。",
     "OPTIONAL_SECTION_NOT_FORMAL": "此區塊目前尚未建立正式資料來源。",
@@ -154,6 +154,37 @@ def _status(
         payload=payload,
         diagnostic_detail=detail,
     )
+
+MARKET_SIGNAL_CATALOG = (
+    {
+        "key": "INDEX_DIVERGENCE",
+        "name": "大型股／中小型股分化",
+        "condition": "TSE 與 TWO 報酬方向相反",
+        "direction": "Neutral / Watch",
+        "description": "大型股與中小型股走勢分歧。",
+    },
+    {
+        "key": "OTC_VOLUME_PRICE_DIVERGENCE",
+        "name": "櫃買量價背離",
+        "condition": "TWO 下跌且上櫃成交金額較前一交易日增加",
+        "direction": "Bearish / Warning",
+        "description": "中小型股成交熱度升高但價格走弱。",
+    },
+    {
+        "key": "INSTITUTION_PRICE_DIVERGENCE",
+        "name": "法人與價格背離",
+        "condition": "指數上漲且外資淨賣超",
+        "direction": "Watch",
+        "description": "價格與外資籌碼方向不一致。",
+    },
+    {
+        "key": "BREADTH_DIVERGENCE",
+        "name": "市場廣度背離",
+        "condition": "指數上漲且下跌家數高於上漲家數",
+        "direction": "Watch",
+        "description": "指數上漲但市場參與度不足。",
+    },
+)
 
 
 def rank_formal_topics(rows: Iterable[Mapping[str, Any]], limit: int = 3) -> list[dict[str, Any]]:
@@ -259,6 +290,140 @@ def calculate_rotation_14d(
     return heating[:limit], cooling[:limit], None
 
 
+def _signal_change_text(item: Mapping[str, Any], label: str) -> str:
+    change = item.get("change")
+    if not isinstance(change, (int, float)) or isinstance(change, bool):
+        return f"{label}漲跌點尚未提供"
+    change_text = f"{change:+g} 點"
+    change_pct = item.get("changePct")
+    if isinstance(change_pct, (int, float)) and not isinstance(change_pct, bool):
+        change_text += f"（{change_pct:+g}%）"
+    return f"{label} {change_text}"
+
+
+def build_market_signals(
+    market_overview: Mapping[str, Any],
+) -> list[dict[str, Any]]:
+    """Return only triggered signals from formal, published market facts.
+
+    Every rule is intentionally narrow.  Missing inputs do not become a
+    signal, and no topic, narrative, or preview field participates.
+    """
+
+    health = market_overview.get("marketHealth") or {}
+    formal_statuses = {"AVAILABLE", "PUBLISHED", "FORMAL"}
+    indices = {
+        str(item.get("market")): item
+        for item in market_overview.get("indices") or []
+        if isinstance(item, Mapping)
+        and str(item.get("status") or "").upper() in formal_statuses
+        and isinstance(item.get("change"), (int, float))
+        and not isinstance(item.get("change"), bool)
+    }
+    signals: list[dict[str, Any]] = []
+
+    tpe = indices.get("TPE")
+    two = indices.get("TWO")
+    if tpe is not None and two is not None:
+        tpe_change = tpe["change"]
+        two_change = two["change"]
+        if (tpe_change > 0 and two_change < 0) or (tpe_change < 0 and two_change > 0):
+            signals.append(
+                {
+                    "key": "INDEX_DIVERGENCE",
+                    "name": "大型股／中小型股分化",
+                    "severity": "WATCH",
+                    "direction": "Neutral",
+                    "evidence": [
+                        _signal_change_text(tpe, "加權指數"),
+                        _signal_change_text(two, "櫃買指數"),
+                    ],
+                    "interpretation": "大型股與中小型股走勢明顯分化。",
+                }
+            )
+
+    turnover_by_market = {
+        str(item.get("market")): item
+        for item in market_overview.get("turnover") or []
+        if isinstance(item, Mapping)
+    }
+    two_turnover = turnover_by_market.get("TWO")
+    two_change_pct = two_turnover.get("changePct") if two_turnover else None
+    if (
+        two is not None
+        and two["change"] < 0
+        and two_turnover is not None
+        and str(two_turnover.get("status") or "").upper() in formal_statuses
+        and isinstance(two_change_pct, (int, float))
+        and not isinstance(two_change_pct, bool)
+        and two_change_pct > 0
+    ):
+        signals.append(
+            {
+                "key": "OTC_VOLUME_PRICE_DIVERGENCE",
+                "name": "櫃買量價背離",
+                "severity": "WARNING",
+                "direction": "Bearish",
+                "evidence": [
+                    _signal_change_text(two, "櫃買指數"),
+                    f"上櫃成交金額 {two_change_pct:+g}%（較前一交易日）",
+                ],
+                "interpretation": "中小型股成交熱度升高但價格走弱。",
+            }
+        )
+
+    institution_flows = market_overview.get("institutionFlows")
+    foreign = institution_flows.get("foreign") if isinstance(institution_flows, Mapping) else None
+    foreign_value = foreign.get("value") if isinstance(foreign, Mapping) else None
+    foreign_status = str(foreign.get("status") or "").upper() if isinstance(foreign, Mapping) else ""
+    if (
+        tpe is not None
+        and tpe["change"] > 0
+        and foreign_status in formal_statuses
+        and isinstance(foreign_value, (int, float))
+        and not isinstance(foreign_value, bool)
+        and foreign_value < 0
+    ):
+        signals.append(
+            {
+                "key": "INSTITUTION_PRICE_DIVERGENCE",
+                "name": "法人與價格背離",
+                "severity": "WATCH",
+                "direction": "Watch",
+                "evidence": [
+                    _signal_change_text(tpe, "加權指數"),
+                    f"外資淨賣超 {foreign_value:g}",
+                ],
+                "interpretation": "價格與外資籌碼方向不一致。",
+            }
+        )
+
+    advance = health.get("advance")
+    decline = health.get("decline")
+    if (
+        tpe is not None
+        and tpe["change"] > 0
+        and str(health.get("status") or "").upper() in formal_statuses
+        and isinstance(advance, int)
+        and isinstance(decline, int)
+        and decline > advance
+    ):
+        signals.append(
+            {
+                "key": "BREADTH_DIVERGENCE",
+                "name": "市場廣度背離",
+                "severity": "WATCH",
+                "direction": "Watch",
+                "evidence": [
+                    _signal_change_text(tpe, "加權指數"),
+                    f"上漲家數 {advance}、下跌家數 {decline}",
+                ],
+                "interpretation": "指數上漲但市場參與度不足。",
+            }
+        )
+    return signals
+
+
 def build_daily_focus(
     *,
     market_overview: Mapping[str, Any],
@@ -268,50 +433,17 @@ def build_daily_focus(
     data_date: date | None,
     as_of: datetime | None,
 ) -> SectionResult:
-    """Build formal Daily Focus from published facts only."""
+    """Build formal Market Signals from published facts only."""
 
-    health = market_overview.get("marketHealth") or {}
-    breadth = market_overview.get("breadth") or []
-    indices = [
-        item
-        for item in market_overview.get("indices") or []
-        if item.get("value") is not None and item.get("change") is not None
-    ]
-    evidence: list[str] = []
-    index_facts: list[str] = []
-    for item in indices[:2]:
-        change = item["change"]
-        direction = "上漲" if change > 0 else "下跌" if change < 0 else "持平"
-        change_pct = item.get("changePct")
-        pct = f"（{change_pct}%）" if change_pct is not None else ""
-        index_name = {"TPE": "加權指數", "TWO": "櫃買指數"}.get(
-            item.get("market"), item.get("indexName", "指數")
-        )
-        index_facts.append(
-            f"{index_name} {direction} {change:+g} 點{pct}，收盤 {item['value']}。"
-        )
-    if index_facts:
-        evidence.append("；".join(index_facts))
-    breadth_eligible = int(health.get("breadthEligible") or 0)
-    if breadth_eligible:
-        evidence.append(
-            f"市場廣度：上漲 {health.get('advance', 0)} 家、下跌 {health.get('decline', 0)} 家、"
-            f"平盤 {health.get('flat', 0)} 家。"
-        )
-    if len(indices) >= 2 and ((indices[0]["change"] > 0) != (indices[1]["change"] > 0)):
-        evidence.append("TWSE 與 TPEx 指數方向分歧。")
-    if breadth_eligible and indices:
-        advance = int(health.get("advance") or 0)
-        decline = int(health.get("decline") or 0)
-        if indices[0]["change"] > 0 and decline > advance:
-            evidence.append("加權指數上漲，但下跌家數多於上漲家數。")
-        elif indices[0]["change"] < 0 and advance > decline:
-            evidence.append("加權指數下跌，但上漲家數多於下跌家數。")
-    if not evidence and breadth:
-        observed = sum(int(item.get("observed") or 0) for item in breadth)
-        if observed:
-            evidence.append(f"目前已觀測 {observed} 家上市櫃股票的市場廣度。")
-    if not evidence:
+    has_market_evidence = bool(
+        (market_overview.get("indices") or [])
+        or (market_overview.get("turnover") or [])
+        or (market_overview.get("breadth") or [])
+        or (market_overview.get("marketHealth") or {}).get("breadthEligible")
+    )
+    signal_catalog = [dict(item) for item in MARKET_SIGNAL_CATALOG]
+    signals = build_market_signals(market_overview) if has_market_evidence else []
+    if not has_market_evidence:
         return _status(
             "UNAVAILABLE",
             data_date=data_date,
@@ -322,15 +454,17 @@ def build_daily_focus(
             payload={
                 "mode": "RULE_BASED_V1",
                 "temporary": False,
-                "headline": "今日市場重點尚未完成",
+                "headline": "今日市場訊號尚未完成",
                 "bullets": [],
+                "signals": [],
+                "signalCatalog": signal_catalog,
                 "dataDate": data_date,
                 "source": DAILY_FOCUS_SOURCE,
                 "reasonCode": "DAILY_FOCUS_EVIDENCE_INCOMPLETE",
                 "userMessage": USER_MESSAGES["DAILY_FOCUS_EVIDENCE_INCOMPLETE"],
             },
         )
-    headline = evidence[0]
+    headline = signals[0]["name"] if signals else "今日無異常訊號"
     return _status(
         "AVAILABLE",
         data_date=data_date,
@@ -340,7 +474,9 @@ def build_daily_focus(
             "mode": "RULE_BASED_V1",
             "temporary": False,
             "headline": headline,
-            "bullets": evidence[:4],
+            "bullets": [item["interpretation"] for item in signals[:4]],
+            "signals": signals,
+            "signalCatalog": signal_catalog,
             "dataDate": data_date,
             "source": DAILY_FOCUS_SOURCE,
         },
@@ -1339,8 +1475,10 @@ def empty_home_v2(now: datetime, *, tracked_stock_count: int = 0) -> dict[str, A
         "dailyFocus": {
             "mode": "RULE_BASED_V1",
             "temporary": False,
-            "headline": "今日市場重點尚未完成",
+            "headline": "今日市場訊號尚未完成",
             "bullets": [],
+            "signals": [],
+            "signalCatalog": [dict(item) for item in MARKET_SIGNAL_CATALOG],
             "dataDate": None,
             "source": DAILY_FOCUS_SOURCE,
             "reasonCode": "DAILY_FOCUS_EVIDENCE_INCOMPLETE",
@@ -1374,6 +1512,7 @@ __all__ = [
     "MarketTurnoverFact",
     "build_daily_focus",
     "build_market_distribution",
+    "build_market_signals",
     "calculate_rotation_14d",
     "empty_home_v2",
     "materialize_home_v2",

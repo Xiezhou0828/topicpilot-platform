@@ -1030,11 +1030,32 @@ class HomeMarketOverview(ApiModel):
     source: str
 
 
+class HomeMarketSignal(ApiModel):
+    key: str
+    name: str
+    severity: Literal["INFO", "WATCH", "WARNING"]
+    direction: str
+    evidence: list[str] = Field(default_factory=list)
+    interpretation: str
+
+
+class HomeMarketSignalCatalog(ApiModel):
+    key: str
+    name: str
+    condition: str
+    direction: str
+    description: str
+
+
 class HomeDailyFocus(ApiModel):
     mode: str
     temporary: bool
     headline: str
     bullets: list[str] = Field(default_factory=list)
+    signals: list[HomeMarketSignal] = Field(default_factory=list)
+    signal_catalog: list[HomeMarketSignalCatalog] = Field(
+        alias="signalCatalog", default_factory=list
+    )
     data_date: date | None = Field(alias="dataDate")
     source: str
     reason_code: str | None = Field(alias="reasonCode", default=None)

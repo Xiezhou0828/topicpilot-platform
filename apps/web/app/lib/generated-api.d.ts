@@ -995,6 +995,10 @@ export interface components {
             mode: string;
             /** Reasoncode */
             reasonCode?: string | null;
+            /** Signalcatalog */
+            signalCatalog?: components["schemas"]["HomeMarketSignalCatalog"][];
+            /** Signals */
+            signals?: components["schemas"]["HomeMarketSignal"][];
             /** Source */
             source: string;
             /** Temporary */
@@ -1197,6 +1201,37 @@ export interface components {
             topic: string;
             /** Topicslug */
             topicSlug: string;
+        };
+        /** HomeMarketSignal */
+        HomeMarketSignal: {
+            /** Direction */
+            direction: string;
+            /** Evidence */
+            evidence?: string[];
+            /** Interpretation */
+            interpretation: string;
+            /** Key */
+            key: string;
+            /** Name */
+            name: string;
+            /**
+             * Severity
+             * @enum {string}
+             */
+            severity: "INFO" | "WATCH" | "WARNING";
+        };
+        /** HomeMarketSignalCatalog */
+        HomeMarketSignalCatalog: {
+            /** Condition */
+            condition: string;
+            /** Description */
+            description: string;
+            /** Direction */
+            direction: string;
+            /** Key */
+            key: string;
+            /** Name */
+            name: string;
         };
         /** HomeMarketTurnover */
         HomeMarketTurnover: {
