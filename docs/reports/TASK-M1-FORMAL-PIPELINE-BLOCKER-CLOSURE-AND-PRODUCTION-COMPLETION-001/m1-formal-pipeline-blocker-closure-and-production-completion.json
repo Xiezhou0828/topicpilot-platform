@@ -32,7 +32,7 @@
   },
   "production_environment_differential": {
     "runtime_config_read_without_secrets": "PASS",
-    "reference_data_version": "tw-reference-v1-rollover-dd2c70fbfea8e400",
+    "reference_data_version": "tw-reference-v1-rollover-0578862f98914eb7",
     "provider_selection": "fixed canonical official registry; no runtime fallback",
     "timezone": "Asia/Taipei",
     "session": "REGULAR",
@@ -69,13 +69,26 @@
     "POST_CLOSE_FAILED": 0,
     "POST_CLOSE_SKIPPED": 1,
     "POST_CLOSE_CHECKPOINT": "COMPLETED_29_OF_29",
-    "HISTORICAL_REPLAY_STATUS": "NOT_EXECUTED",
+    "HISTORICAL_REPLAY_STATUS": "STOPPED_AT_UNSAFE_BOUNDARY",
     "OWNER_CHECKOUT_PRESERVED": "YES",
-    "EARLIEST_REMAINING_BLOCKER": "TWO_REFERENCE_COVERAGE_MISMATCH_8277",
-    "BLOCKER_LAYER": "PRODUCTION_REFERENCE_PROVIDER_COVERAGE",
+    "REFERENCE_TRANSITION_STATUS": "ACTIVATED",
+    "ACTIVE_REFERENCE_VERSION": "tw-reference-v1-rollover-0578862f98914eb7",
+    "RETIRED_REFERENCE_VERSION": "tw-reference-v1-rollover-dd2c70fbfea8e400",
+    "REFERENCE_BUNDLE_SHA256": "0578862f98914eb7b52fa2de8c253b6da6c4f882429c4c65dff2bdf7317b3662",
+    "REFERENCE_TRANSITION_CREATED_REFERENCE_ROWS": 45,
+    "REFERENCE_TRANSITION_NON_REFERENCE_WRITE_SET": [],
+    "REFERENCE_8277_LIFECYCLE": "OFFICIAL_TPEX_BULLETIN_11500055041",
+    "REFERENCE_8277_SUSPENDED": "2026-09-10..2026-09-18",
+    "REFERENCE_8277_NEW_SHARES_TRADE": "2026-09-21",
+    "REFERENCE_8277_ELIGIBILITY": "EXCLUDED_DURING_SUSPENSION;ELIGIBLE_2026-09-09_AND_2026-09-21",
+    "TARGET_REFERENCE_PREFLIGHT_20260918": "PASS",
+    "EARLIEST_REMAINING_BLOCKER": "HISTORICAL_FORMAL_REPLAY_AND_OPPORTUNITY_AUTHORITY",
+    "BLOCKER_LAYER": "HISTORICAL_REPLAY_AND_FORMAL_OPPORTUNITY_POLICY",
     "OWNER_ACTION_REQUIRED": "NO",
     "TECHNICAL_ACCESS_REQUIRED": "NO",
-    "NEXT_SAFE_ACTION": "Resolve the active TWO:8277 reference/provider coverage mismatch, then separately authorize any future replay; do not run another full recovery in this closeout"
+    "HISTORICAL_REPLAY_20260910": "SUCCESS_553_OF_553;APPROVED_NO_TRADE_8277",
+    "HISTORICAL_REPLAY_20260911": "STOP_REQUESTED_ORPHANED_RUNNING_UNSAFE_CANONICAL_CONFLICT;TPE:2049,2308;PRICE_VOLUME",
+    "NEXT_SAFE_ACTION": "Resolve canonical supersession conflicts for TPE:2049 and TPE:2308, then separately authorize continuation; do not cross to 2026-09-12"
   },
   "production": {
     "api_sha_before": "bf68cc8bf0a4432d7623db43f42e9219c94d7b6b",
@@ -218,7 +231,44 @@
   "historical_recovery": {
     "earliest_required_date": "2026-09-10",
     "latest_required_date": "2026-09-17",
-    "recovered_trading_sessions": [],
+    "recovered_trading_sessions": ["2026-09-10"],
+    "replay_runs": {
+      "2026-09-10": {
+        "run_id": "2e05c3fe-8174-47df-a371-1143bf32140c",
+        "status": "SUCCESS",
+        "requested": 553,
+        "succeeded": 553,
+        "failed": 0,
+        "retries": 0,
+        "checkpoint": "COMPLETED_29_OF_29",
+        "isolated_lifecycle_outcome": "TWO:8277:APPROVED_NO_TRADE:SUSPENDED",
+        "normal_eod_readback": "PASS",
+        "normal_eod_publication": "PASS",
+        "normal_topic_snapshot_readback": "PASS",
+        "normal_topic_snapshot_publication": "PASS",
+        "market_reconciliation": "READY_100_PERCENT_COVERAGE",
+        "priced_count": 551,
+        "legal_no_trade_count": 2,
+        "lifecycle_status": "UNAVAILABLE_REGISTERED_TYPEERROR_BASELINE",
+        "score_status": "DEFERRED"
+      },
+      "2026-09-11": {
+        "run_id": "c73eeeb7-9e2f-49ad-9701-fd237a6c7ee2",
+        "status": "STOP_REQUESTED_ORPHANED_RUNNING_UNSAFE_CANONICAL_CONFLICT",
+        "requested": 553,
+        "observed_attempts": 60,
+        "successful_attempts": 58,
+        "failed_attempts": 2,
+        "checkpoint": "BATCH_3_PARTIAL",
+        "canonical_conflicts": [
+          {"market_code": "TPE", "instrument_code": "2049", "error_code": "RuntimeError", "message": "canonical supersession branch conflict: ['PRICE', 'VOLUME']"},
+          {"market_code": "TPE", "instrument_code": "2308", "error_code": "RuntimeError", "message": "canonical supersession branch conflict: ['PRICE', 'VOLUME']"}
+        ],
+        "cross_date_continuation": "NOT_PERFORMED",
+        "persisted_run_status_after_stop_request": "RUNNING",
+        "heartbeat_after_stop_request": "UNCHANGED"
+      }
+    },
     "daily_close": "BLOCKED",
     "today_market": "BLOCKED",
     "a9": "BLOCKED",
@@ -264,22 +314,22 @@
   },
   "production_deployment_performed": "YES_API_AND_WORKER",
   "production_migration_performed": "YES",
-  "production_replay_performed": "NO",
+  "production_replay_performed": "YES_PARTIAL_STOPPED_AT_UNSAFE_BOUNDARY",
   "production_post_close_retry": "EXECUTED_ONCE_COMPLETED_WITH_ISOLATED_NO_ROW",
   "current_stop_boundary": {
     "technical_access": "AVAILABLE",
     "render_operator_session": "AUTHENTICATED",
     "owner_authorization": "GRANTED",
     "production_post_close_retry": "EXECUTED_ONCE_COMPLETED_WITH_ISOLATED_NO_ROW",
-    "next_safe_action": "Resolve TWO:8277 reference/provider coverage mismatch; do not run another full recovery in this closeout"
+    "next_safe_action": "Resolve canonical supersession conflicts for TPE:2049 and TPE:2308, then separately authorize continuation; do not cross to 2026-09-12"
   },
   "c_owner_head_changed": "NO",
   "c_owner_dirty_state_changed": "NO",
   "owner_policy_decision_required": "NO_FOR_THIS_CLOSEOUT",
   "owner_interaction_required": "NO_FOR_THIS_CLOSEOUT",
-  "earliest_remaining_blocker": "TWO_REFERENCE_COVERAGE_MISMATCH_8277",
+  "earliest_remaining_blocker": "CANONICAL_SUPERSESSION_CONFLICT_TPE_2049_2308",
   "remaining_blockers": [
-    "Active rollover reference expects TWO:8277 but exact-date official TPEx payload and management table contain no row",
+    "Historical 2026-09-11 recovery stopped on canonical supersession conflicts for TPE:2049 and TPE:2308",
     "formal Opportunity numeric policy and Leader Set publication authority",
     "historical formal replay and downstream publication"
   ],

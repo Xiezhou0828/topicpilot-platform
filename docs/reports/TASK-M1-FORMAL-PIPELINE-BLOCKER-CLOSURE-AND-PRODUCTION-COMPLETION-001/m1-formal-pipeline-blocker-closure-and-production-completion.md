@@ -9,7 +9,7 @@ Execution date: `2026-09-18` (Asia/Taipei)
 
 Result: `BLOCKED`.
 
-Authoritative continuation closeout: the M1 recovery entrypoint and scheduled Worker execution-mode defects were fixed and deployed. M1 remains blocked only by the isolated active-reference mismatch `TWO:8277`, the unreplayed required historical sessions, and the formal Opportunity provider/policy gate.
+Authoritative continuation closeout: the M1 recovery entrypoint and scheduled Worker execution-mode defects were fixed and deployed. The owner-supplied `TWO:8277` lifecycle evidence was independently verified against the official TPEx bulletin, registered through the governed reference bundle, and activated in Production. M1 remains blocked by the unreplayed required historical sessions and the formal Opportunity provider/policy gate; `TWO:8277` is now handled as a date-effective lifecycle exclusion rather than an unresolved reference mismatch.
 
 The governed release was reconstructed from `origin/main` without carrying the
 historical 6.4 GiB LFS artifact set, pushed successfully, and deployed to the
@@ -27,16 +27,14 @@ contains a consumer boundary, but the current PM specification leaves the
 numeric Opportunity policy open and no approved canonical provider/Leader Set
 publication artifact exists. Shadow output was not promoted.
 
-The historical first unsafe boundary was the Production provider canary. The
-governed POST_CLOSE run for `2026-09-18` failed before any formal recovery
-could be trusted: 553 requested, 0 succeeded, 553 failed. TPE produced 347
-`EXCHANGE_NO_DATA` failures; TWO produced 206 `EMPTY_RESPONSE` failures. The
-checkpoint is `FAILED` with 0 of 29 batches completed. A fresh exact-date
-official-source recheck and bounded canonical provider canary now both pass,
-but the one-shot Production POST_CLOSE recovery attempt executed through the
-authenticated Render Worker Shell still failed at the runtime provider gate:
-553 requested, 0 succeeded, 553 failed. Historical replay and formal
-publication remain stopped; no failed provider output was promoted.
+The historical first unsafe boundary was the superseded Production provider
+canary. The governed POST_CLOSE run for `2026-09-18` initially failed before
+any formal recovery could be trusted: 553 requested, 0 succeeded, 553 failed.
+The recovery-routing and scheduled execution-mode defects were then fixed, the
+reference lifecycle evidence was activated, and the authorized continuation
+completed the target session with an isolated legal no-trade outcome for
+`TWO:8277`. Historical replay is now proceeding sequentially from
+`2026-09-10`; no failed provider output was promoted.
 
 ## Protected Owner checkout
 
@@ -307,8 +305,8 @@ retrievability only, not original-runtime provider health or formal publication.
 
 | Date | Daily Close | Today Market | A9 | Strength | Score | Grade | Lifecycle | Topic publication | Opportunity | Readback |
 |---|---|---|---|---|---|---|---|---|---|---|
-| 2026-09-10 | NOT_PROVEN | NOT_PROVEN | NOT_PROVEN | NOT_PROVEN | NOT_PROVEN | NOT_PROVEN | NOT_PROVEN | NOT_PROVEN | UNAVAILABLE | no recovered formal snapshot |
-| 2026-09-11 | NOT_PROVEN | NOT_PROVEN | NOT_PROVEN | NOT_PROVEN | NOT_PROVEN | NOT_PROVEN | NOT_PROVEN | NOT_PROVEN | UNAVAILABLE | no recovered formal snapshot |
+| 2026-09-10 | PASS | READY | NOT_PROVEN | NOT_PROVEN | DEFERRED | NOT_PROVEN | UNAVAILABLE (registered Lifecycle `TypeError`) | PASS | UNAVAILABLE | recovery `2e05c3fe-8174-47df-a371-1143bf32140c`; 553/553 attempts; EOD/topic readback and publication PASS |
+| 2026-09-11 | STOP REQUESTED | STOP REQUESTED | STOP REQUESTED | STOP REQUESTED | STOP REQUESTED | STOP REQUESTED | STOP REQUESTED | STOP REQUESTED | UNAVAILABLE | recovery `c73eeeb7-9e2f-49ad-9701-fd237a6c7ee2`; canonical supersession conflict on TPE 2049 and 2308 (`PRICE`,`VOLUME`); DB row retained RUNNING with heartbeat unchanged; no cross-date continuation |
 | 2026-09-14 | NOT_PROVEN | NOT_PROVEN | NOT_PROVEN | NOT_PROVEN | NOT_PROVEN | NOT_PROVEN | NOT_PROVEN | NOT_PROVEN | UNAVAILABLE | no recovered formal snapshot |
 | 2026-09-15 | NOT_PROVEN | NOT_PROVEN | NOT_PROVEN | NOT_PROVEN | NOT_PROVEN | NOT_PROVEN | NOT_PROVEN | NOT_PROVEN | UNAVAILABLE | no recovered formal snapshot |
 | 2026-09-16 | NOT_PROVEN | NOT_PROVEN | NOT_PROVEN | NOT_PROVEN | NOT_PROVEN | NOT_PROVEN | NOT_PROVEN | NOT_PROVEN | UNAVAILABLE | no recovered formal snapshot |
@@ -500,6 +498,8 @@ NEXT_ROADMAP_MILESTONE: NOT_AUTHORIZED_BEFORE_M1_COMPLETE
 
 ### Continuation machine-readable closeout (authoritative)
 
+The preceding 2026-09-18-only machine summary is retained as the pre-reference-transition snapshot. The latest owner-evidence, reference-transition, and historical-replay state is recorded in the addendum at the end of this report and supersedes any earlier `TWO_REFERENCE_COVERAGE_MISMATCH_8277` or `HISTORICAL_REPLAY_STATUS=NOT_EXECUTED` wording.
+
 ```text
 M1_COMPLETE=NO
 PRODUCTION_FORMAL_PIPELINE_READY=NO
@@ -534,9 +534,72 @@ HOME_V2_SOURCE_RUN_ID=2b5f8547-70a7-4783-a2dd-5729cb4799ac
 FORMAL_OPPORTUNITY_STATUS=UNAVAILABLE_OPTIONAL_SECTION_NOT_FORMAL
 OWNER_CHECKOUT_PRESERVED=YES
 OWNER_AUTHORIZATION=GRANTED
-EARLIEST_REMAINING_BLOCKER=TWO_REFERENCE_COVERAGE_MISMATCH_8277
-BLOCKER_LAYER=PRODUCTION_REFERENCE_PROVIDER_COVERAGE
+REFERENCE_TRANSITION_STATUS=ACTIVATED
+ACTIVE_REFERENCE_VERSION=tw-reference-v1-rollover-0578862f98914eb7
+RETIRED_REFERENCE_VERSION=tw-reference-v1-rollover-dd2c70fbfea8e400
+REFERENCE_BUNDLE_SHA256=0578862f98914eb7b52fa2de8c253b6da6c4f882429c4c65dff2bdf7317b3662
+REFERENCE_TRANSITION_CREATED_REFERENCE_ROWS=45
+REFERENCE_TRANSITION_NON_REFERENCE_WRITE_SET=[]
+REFERENCE_8277_LIFECYCLE=OFFICIAL_TPEX_BULLETIN_11500055041
+REFERENCE_8277_SUSPENDED=2026-09-10..2026-09-18
+REFERENCE_8277_NEW_SHARES_TRADE=2026-09-21
+REFERENCE_8277_ELIGIBILITY=EXCLUDED_DURING_SUSPENSION;ELIGIBLE_2026-09-09_AND_2026-09-21
+RENDER_RUNTIME_REFERENCE_VERSION=tw-reference-v1-rollover-0578862f98914eb7
+TARGET_REFERENCE_PREFLIGHT_20260918=PASS
+EARLIEST_REMAINING_BLOCKER=HISTORICAL_FORMAL_REPLAY_AND_OPPORTUNITY_AUTHORITY
+BLOCKER_LAYER=HISTORICAL_REPLAY_AND_FORMAL_OPPORTUNITY_POLICY
 OWNER_ACTION_REQUIRED=NO
 TECHNICAL_ACCESS_REQUIRED=NO
-NEXT_SAFE_ACTION=Resolve the active TWO:8277 reference/provider coverage mismatch, then separately authorize any future replay; do not run another full recovery in this closeout
+HISTORICAL_REPLAY_20260910=SUCCESS_553_OF_553;APPROVED_NO_TRADE_8277
+HISTORICAL_REPLAY_20260911=STOP_REQUESTED_ORPHANED_RUNNING_UNSAFE_CANONICAL_CONFLICT;TPE:2049,2308;PRICE_VOLUME
+NEXT_SAFE_ACTION=Resolve canonical supersession conflicts for TPE:2049 and TPE:2308, then separately authorize continuation; do not cross to 2026-09-12
 ```
+
+### Latest continuation addendum — owner evidence, reference transition, and replay
+
+The owner-supplied `TWO:8277` evidence was independently verified against the
+[official TPEx bulletin](https://www.tpex.org.tw/www/zh-tw/bulletin/annDetail?content_file=MTE1MDAwNTUwNDEuaHRtbA%3D%3D&docId=MTE1MDAwNTUwNDE%3D), bulletin `11500055041`. It records temporary suspension from `2026-09-10` through `2026-09-18`, replacement-share base date `2026-09-18`, and new-share OTC trading date `2026-09-21`.
+
+The governed reference transition was validated and activated atomically. The
+new active version is `tw-reference-v1-rollover-0578862f98914eb7`, with bundle
+SHA-256 `0578862f98914eb7b52fa2de8c253b6da6c4f882429c4c65dff2bdf7317b3662`;
+the previous version `tw-reference-v1-rollover-dd2c70fbfea8e400` is retired and
+preserved. The dry-run reported 45 reference-only rows, zero instrument or
+market creations, an empty non-reference write set, and transactional atomicity.
+
+Date-effective eligibility readback is now:
+
+- `2026-09-09`: 8277 eligible and included in the TWO quote universe.
+- `2026-09-10` through `2026-09-18`: 8277 suspended and excluded with reason `LIFECYCLE_SUSPENDED`.
+- `2026-09-21`: 8277 eligible again and included in the TWO quote universe.
+
+The Render Worker environment was updated to the active reference version and
+the live runtime read back the same version at Worker SHA
+`45b1fa198db34471ce03f29a9184d8236299d525`. The target-date reference
+preflight passed with TWO official record count `11481` and no missing identity
+codes.
+
+Sequential historical replay then started at `2026-09-10`. Run
+`2e05c3fe-8174-47df-a371-1143bf32140c` completed `553/553` attempts with zero
+failures and zero retries. The 8277 attempt is explicitly `SUCCESS` with
+provider status `SUSPENDED`, freshness `FRESH`, error code
+`APPROVED_NO_TRADE`, and the message that the official TPEx market dataset had
+no row for the requested instrument/date. This is the expected isolated
+lifecycle outcome, not a provider outage. Its persisted downstream readback
+reports `normalEodReadback=PASS`, `normalEodPublication=PASS`,
+`normalTopicSnapshotReadback=PASS`, and `normalTopicSnapshotPublication=PASS`;
+market reconciliation is `READY` at 100% coverage with 551 priced items and 2
+legal no-trade items. The same metadata records the pre-existing Lifecycle
+`TypeError` baseline as `LIFECYCLE_UNAVAILABLE` and `scoreStatus=DEFERRED`, so
+those stages remain fail-closed and are not relabeled as successful.
+
+The next sequential recovery, `2026-09-11`, reached 3 checkpoints with 58
+successful and 2 failed attempts before the governed stop boundary. TPE
+instruments `2049` and `2308` returned `RuntimeError` with
+`canonical supersession branch conflict: ['PRICE', 'VOLUME']`. This is a
+canonical-data conflict, not an isolated legal no-trade or provider-unavailable
+classification. A stop signal was sent; the persisted run row remains
+`RUNNING` with heartbeat unchanged after the stop request, so it is treated as
+an orphaned/incomplete run and not as a formal result. The run was not advanced
+to `2026-09-12` and no fallback, manual overwrite, or policy relaxation was
+performed.
