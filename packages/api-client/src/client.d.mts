@@ -18,6 +18,16 @@ export declare class TopicPilotProblem extends Error {
 export interface TopicPilotClient {
   getDataStatus(init?: RequestInitLike): Promise<components["schemas"]["DataStatus"]>;
   getHome(init?: RequestInitLike): Promise<components["schemas"]["HomeResponse"]>;
+  getInstitutionalFlow(
+    query?: {
+      market?: string | null;
+      asOf?: string | null;
+      from?: string | null;
+      to?: string | null;
+      limit?: number;
+    },
+    init?: RequestInitLike,
+  ): Promise<components["schemas"]["MarketInstitutionalFlowResponse"]>;
   getTopicCatalog(
     query?: { asOf?: string | null; limit?: number; offset?: number },
     init?: RequestInitLike,

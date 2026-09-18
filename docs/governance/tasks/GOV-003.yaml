@@ -1,0 +1,22 @@
+{
+  "task_id": "GOV-003",
+  "title": "TopicPilot Agentic Parallel Development Runtime",
+  "status": "READY_FOR_INTEGRATION",
+  "owner_role": "Governance / Integration Owner",
+  "workstream": "GOVERNANCE",
+  "base_sha": "02d3086183d1c582bb6c66c4c316340ccce3fa97",
+  "branch": "codex/gov-003-agentic-parallel-development-runtime-20260914",
+  "worktree": "E:\\topicpilot-worktrees\\gov-003-agentic-parallel-development-runtime-20260914",
+  "owned_paths": [".github/copilot-instructions.md", ".github/skills/**", ".github/agents/**", ".github/hooks/**", "scripts/governance/**", "docs/governance/**", "docs/reports/TASK-GOV-003-*.md"],
+  "shared_paths": ["PROJECT_CONTEXT.md", "docs/ROADMAP.md", "docs/WORK_ORDERS.md", "docs/DOCUMENTATION_INDEX.md", ".github/workflows/**"],
+  "forbidden_paths": ["services/**", "apps/**", "packages/**", "infra/**", "services/api/alembic/**", "NEXT_TASK"],
+  "dependencies": [],
+  "implementation_commits": ["4ecea21", "801a95b"],
+  "governance_commits": [],
+  "migration_scope": "NONE",
+  "production_scope": "NONE",
+  "owner_decision_required": false,
+  "next_allowed_state": "INTEGRATED",
+  "shared_surface_policy": "EXPLICIT_RECONCILIATION",
+  "dependency_notes": ["C owner checkout is read-only; promotion requires owner review.", "Repo-side runtime is complete and ready for canonical reconciliation; GitHub settings and host hook execution remain unverified."]
+}

@@ -14,6 +14,7 @@ from collections.abc import Callable, Mapping
 from datetime import date, datetime
 from decimal import Decimal, InvalidOperation
 from typing import Any, Final
+from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 from zoneinfo import ZoneInfo
@@ -87,13 +88,110 @@ def _read_url(url: str, timeout: float) -> bytes:
 
 
 def _json(transport: Transport, url: str, timeout: float) -> Mapping[str, Any]:
+    """Read one exchange response without losing its first failure class."""
+
     try:
-        payload = json.loads(transport(url, timeout).decode("utf-8"))
+        raw = transport(url, timeout)
+    except HistoricalProviderError:
+        raise
+    except HTTPError as exc:
+        if exc.code in {401, 403}:
+            raise HistoricalProviderError(
+                "AUTH_FAILED", f"exchange HTTP status {exc.code}", classification="AUTH_FAILED"
+            ) from exc
+        if exc.code in {408, 425, 429}:
+            raise HistoricalProviderError(
+                "RATE_LIMITED",
+                f"exchange HTTP status {exc.code}",
+                classification="RATE_LIMITED",
+            ) from exc
+        raise HistoricalProviderError(
+            "PROVIDER_REQUEST_FAILED",
+            f"exchange HTTP status {exc.code}",
+            classification=("PROVIDER_UNAVAILABLE" if exc.code >= 500 else "HTTP_ERROR"),
+        ) from exc
+    except TimeoutError as exc:
+        raise HistoricalProviderError(
+            "PROVIDER_REQUEST_FAILED",
+            "exchange request timed out",
+            classification="PROVIDER_TIMEOUT",
+        ) from exc
+    except (URLError, OSError) as exc:
+        raise HistoricalProviderError(
+            "PROVIDER_REQUEST_FAILED",
+            "exchange endpoint unavailable",
+            classification="PROVIDER_UNAVAILABLE",
+        ) from exc
     except Exception as exc:
-        raise HistoricalProviderError("PROVIDER_REQUEST_FAILED", "exchange request failed") from exc
+        raise HistoricalProviderError(
+            "PROVIDER_REQUEST_FAILED",
+            "exchange request failed",
+            classification="PROVIDER_UNAVAILABLE",
+        ) from exc
+    if not raw or not raw.strip():
+        raise HistoricalProviderError(
+            "EMPTY_RESPONSE", "exchange response body is empty", classification="EMPTY_RESPONSE"
+        )
+    try:
+        payload = json.loads(raw.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise HistoricalProviderError(
+            "SCHEMA_MISMATCH",
+            "exchange response is not valid UTF-8 JSON",
+            classification="SCHEMA_MISMATCH",
+        ) from exc
+    except AttributeError as exc:
+        raise HistoricalProviderError(
+            "SCHEMA_MISMATCH",
+            "exchange response body is not bytes",
+            classification="SCHEMA_MISMATCH",
+        ) from exc
     if not isinstance(payload, Mapping):
-        raise HistoricalProviderError("INVALID_PAYLOAD", "exchange response must be an object")
+        raise HistoricalProviderError(
+            "INVALID_PAYLOAD",
+            "exchange response must be an object",
+            classification="SCHEMA_MISMATCH",
+        )
     return payload
+
+
+def _require_exchange_ok(payload: Mapping[str, Any]) -> None:
+    """Translate an exchange status into a precise operational diagnosis."""
+
+    if "stat" not in payload:
+        raise HistoricalProviderError(
+            "SCHEMA_MISMATCH",
+            "exchange response has no stat field",
+            classification="SCHEMA_MISMATCH",
+        )
+    status = str(payload.get("stat", "")).strip()
+    if status.upper() == "OK":
+        return
+    if not status:
+        raise HistoricalProviderError(
+            "EMPTY_RESPONSE", "exchange response stat is empty", classification="EMPTY_RESPONSE"
+        )
+    normalized = status.upper()
+    if any(marker in normalized for marker in ("AUTH", "UNAUTHORIZED", "FORBIDDEN", "PERMISSION")):
+        raise HistoricalProviderError(
+            "AUTH_FAILED", "exchange rejected the request", classification="AUTH_FAILED"
+        )
+    if any(marker in normalized for marker in ("429", "RATE", "TOO MANY", "頻繁")):
+        raise HistoricalProviderError(
+            "RATE_LIMITED", "exchange rate limit response", classification="RATE_LIMITED"
+        )
+    if any(
+        marker in normalized
+        for marker in ("NO DATA", "NO_RESULT", "NO RESULT", "查無", "沒有資料", "無資料")
+    ) or ("沒有" in normalized and "資料" in normalized):
+        raise HistoricalProviderError(
+            "EXCHANGE_NO_DATA", status[:96], classification="EXCHANGE_NO_DATA"
+        )
+    raise HistoricalProviderError(
+        "PROVIDER_REQUEST_FAILED",
+        f"exchange rejected request: {status[:96]}",
+        classification="PROVIDER_UNAVAILABLE",
+    )
 
 
 def _validate_bar(bar: HistoricalBar) -> None:
@@ -196,15 +294,13 @@ class TwseOfficialDailyProvider:
             }
         )
         payload = _json(self.transport, f"{self.market_base_url}?{query}", self.timeout)
-        if str(payload.get("stat", "")).upper() != "OK":
-            raise HistoricalProviderError(
-                "EXCHANGE_NO_DATA", str(payload.get("stat", "unknown"))
-            )
+        _require_exchange_ok(payload)
         response_date = str(payload.get("date", ""))
         if response_date != target_date.strftime("%Y%m%d"):
             raise HistoricalProviderError(
                 "PROVIDER_DATE_MISMATCH",
                 f"TWSE response date {response_date!r} != {target_date.isoformat()}",
+                classification="TRADING_DATE_MISMATCH",
             )
         tables = payload.get("tables")
         if not isinstance(tables, list):
@@ -222,9 +318,7 @@ class TwseOfficialDailyProvider:
             None,
         )
         if table is None:
-            raise HistoricalProviderError(
-                "INVALID_PAYLOAD", "TWSE market close table is missing"
-            )
+            raise HistoricalProviderError("INVALID_PAYLOAD", "TWSE market close table is missing")
         bars: dict[str, HistoricalBar] = {}
         for row in table["data"]:
             if not isinstance(row, list) or len(row) < 9:
@@ -292,10 +386,7 @@ class TwseOfficialDailyProvider:
                 }
             )
             payload = _json(self.transport, f"{self.base_url}?{query}", self.timeout)
-            if str(payload.get("stat", "")).upper() != "OK":
-                raise HistoricalProviderError(
-                    "EXCHANGE_NO_DATA", str(payload.get("stat", "unknown"))
-                )
+            _require_exchange_ok(payload)
             rows = payload.get("data", [])
             if not isinstance(rows, list):
                 raise HistoricalProviderError("INVALID_PAYLOAD", "TWSE data must be an array")
@@ -375,19 +466,15 @@ class TpexOfficialDailyProvider:
         if self._market_cache is not None:
             return self._market_cache
         target_date = self.start_date
-        query = urlencode(
-            {"date": target_date.strftime("%Y/%m/%d"), "response": "json"}
-        )
+        query = urlencode({"date": target_date.strftime("%Y/%m/%d"), "response": "json"})
         payload = _json(self.transport, f"{self.market_base_url}?{query}", self.timeout)
-        if str(payload.get("stat", "")).lower() != "ok":
-            raise HistoricalProviderError(
-                "EXCHANGE_NO_DATA", str(payload.get("stat", "unknown"))
-            )
+        _require_exchange_ok(payload)
         response_date = str(payload.get("date", ""))
         if response_date != target_date.strftime("%Y%m%d"):
             raise HistoricalProviderError(
                 "PROVIDER_DATE_MISMATCH",
                 f"TPEx response date {response_date!r} != {target_date.isoformat()}",
+                classification="TRADING_DATE_MISMATCH",
             )
         tables = payload.get("tables")
         if not isinstance(tables, list):
@@ -406,9 +493,7 @@ class TpexOfficialDailyProvider:
             None,
         )
         if table is None:
-            raise HistoricalProviderError(
-                "INVALID_PAYLOAD", "TPEx market close table is missing"
-            )
+            raise HistoricalProviderError("INVALID_PAYLOAD", "TPEx market close table is missing")
         bars: dict[str, HistoricalBar] = {}
         for row in table["data"]:
             if not isinstance(row, list) or len(row) < 9:
@@ -476,10 +561,7 @@ class TpexOfficialDailyProvider:
                 }
             )
             payload = _json(self.transport, f"{self.base_url}?{query}", self.timeout)
-            if str(payload.get("stat", "")).lower() != "ok":
-                raise HistoricalProviderError(
-                    "EXCHANGE_NO_DATA", str(payload.get("stat", "unknown"))
-                )
+            _require_exchange_ok(payload)
             tables = payload.get("tables")
             if not isinstance(tables, list) or not tables or not isinstance(tables[0], Mapping):
                 raise HistoricalProviderError("INVALID_PAYLOAD", "TPEx tables are missing")

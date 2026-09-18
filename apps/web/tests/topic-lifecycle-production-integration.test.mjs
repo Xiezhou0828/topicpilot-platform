@@ -28,4 +28,14 @@ test("topic detail displays backend lifecycle/shadow data and has explicit pendi
   assert.match(page, /<EmptyState title=/);
   assert.match(page, /canonical backend Lifecycle read model/);
   assert.match(page, /publication\?\.lifecycle/);
+  assert.match(page, /Snapshot 狀態/);
+  assert.match(page, /未納入 aggregate/);
+});
+
+test("topic publication preserves formal PARTIAL snapshot disclosure", async () => {
+  const api = await read("lib/topic-api.ts");
+  assert.match(api, /snapshotDataStatus/);
+  assert.match(api, /unavailableMemberCount/);
+  assert.match(api, /snapshotPartial \? "TEMPORARY"/);
+  assert.match(api, /正式 Topic Snapshot 為 PARTIAL/);
 });

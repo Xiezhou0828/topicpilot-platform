@@ -6,6 +6,7 @@ import argparse
 import logging
 import signal
 from datetime import date
+from datetime import time as clock_time
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
@@ -20,6 +21,7 @@ from topicpilot_api.live.persistence import LiveRepository
 from topicpilot_api.live.post_close import PostClosePreconditionError, PostCloseUpdater
 from topicpilot_api.live.scheduler import LiveScheduler
 from topicpilot_api.live.session import MarketSessionClock
+from topicpilot_api.live.transaction import SessionRecoveryError, recover_session
 from topicpilot_api.market_data.registry import build_live_provider_router
 
 
@@ -112,7 +114,7 @@ def main(argv: list[str] | None = None) -> int:
             if state.state == "OPEN"
             else "POST_CLOSE"
             if state.reason not in {"WEEKEND", "CONFIGURED_CLOSED_DATE"}
-            and state.local_time.time() >= scheduler_clock.close_time
+            and state.local_time.time() >= clock_time.fromisoformat(config.post_close_start)
             else "WAIT"
         )
     log_event(
@@ -133,8 +135,26 @@ def main(argv: list[str] | None = None) -> int:
         # tracking state before that precondition and could reintroduce a
         # date-ineligible identity such as TPE:6806.
         if decision != "POST_CLOSE":
-            repository.refresh_tracking_universe()
-            session.commit()
+            try:
+                repository.refresh_tracking_universe()
+                session.commit()
+            except Exception as exc:
+                recovery = recover_session(
+                    session,
+                    job_name="INITIAL_TRACKING_REFRESH",
+                    original_exception=exc,
+                    logger=logging.getLogger("topicpilot.live.cli"),
+                )
+                log_event(
+                    logging.getLogger("topicpilot.live.cli"),
+                    "live_job_failed",
+                    jobName="INITIAL_TRACKING_REFRESH",
+                    failureState="FAILED",
+                    retryDecision="RETRY_SCHEDULED",
+                    **recovery.to_dict(),
+                )
+                if not recovery.session_usable:
+                    raise SessionRecoveryError("INITIAL_TRACKING_REFRESH", exc, recovery) from exc
         collector = LiveCollector(repository, provider_router, config)
         post_close = PostCloseUpdater(session, config)
         daily_forward = DailyForwardRunner(session, config, updater=post_close)
@@ -158,7 +178,10 @@ def main(argv: list[str] | None = None) -> int:
             collector,
             config,
             worker=worker,
-            post_close_runner=post_close_runner,
+            post_close_runner=lambda: daily_forward.run_once(
+                run_date=args.run_date,
+                replay=args.run_date is not None,
+            ),
         )
         try:
             if args.once:
@@ -174,11 +197,7 @@ def main(argv: list[str] | None = None) -> int:
                     result=result_payload,
                     providerHealth=provider_router.health_snapshot(),
                 )
-                return (
-                    0
-                    if result is None or result.status in {"SUCCESS", "PARTIAL", "MARKET_CLOSED"}
-                    else 1
-                )
+                return 0 if result is None or result.status in {"SUCCESS", "MARKET_CLOSED"} else 1
 
             stop = __import__("threading").Event()
             signal.signal(signal.SIGTERM, lambda *_: stop.set())

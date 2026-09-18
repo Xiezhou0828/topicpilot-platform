@@ -1,0 +1,90 @@
+{
+  "task_id": "TASK-INT-B2-FORMAL-AUTHORITY-EVIDENCE-RECOVERY-AND-GATE-RERUN-002",
+  "title": "B2 Formal Authority Evidence Recovery and Gate Rerun",
+  "status": "PARTIAL",
+  "owner_role": "INTEGRATION_OWNER",
+  "workstream": "INTEGRATION",
+  "base_sha": "48f80c5cc154ae2620b40766351abc9094cbef35",
+  "governed_development_base_sha": "a8357d46194f9669709f184949270e20a7a2546c",
+  "previous_governed_base_sha": "c3405736e345c670f2eaa5c1eb34b76f61a58ee7",
+  "branch": "codex/task-int-b2-formal-authority-evidence-recovery-and-gate-rerun-002-20260915",
+  "worktree": "E:\\topicpilot-worktrees\\int-b2-formal-authority-evidence-recovery-and-gate-rerun-002-20260915",
+  "owned_paths": [
+    "docs/governance/tasks/TASK-INT-B2-FORMAL-AUTHORITY-EVIDENCE-RECOVERY-AND-GATE-RERUN-002.yaml",
+    "docs/governance/provenance/TASK-INT-B2-FORMAL-AUTHORITY-EVIDENCE-RECOVERY-AND-GATE-RERUN-002.json",
+    "docs/reports/TASK-INT-B2-FORMAL-AUTHORITY-EVIDENCE-RECOVERY-AND-GATE-RERUN-002-20260915.md",
+    "docs/reports/TASK-INT-B2-FORMAL-AUTHORITY-EVIDENCE-RECOVERY-AND-GATE-RERUN-002-20260915/evidence/**"
+  ],
+  "shared_paths": [
+    "docs/WORK_ORDERS.md",
+    "docs/architecture/README.md",
+    "docs/architecture/TOPIC_B2_LAYER2_FORMAL_AUTHORITY_CONTRACT.md",
+    "docs/reports/TASK-SCHEMA-B2-LAYER2-FORMAL-AUTHORITY-CONTRACT-001-20260915.md",
+    "docs/reports/TASK-SCHEMA-B2-LAYER2-FORMAL-AUTHORITY-CONTRACT-001-20260915/**",
+    "docs/reports/TASK-SCHEMA-B2-LAYER2-FORMAL-AUTHORITY-CONTRACT-001-CONTINUATION-20260915.md",
+    "services/api/src/topicpilot_api/governance_identity.py",
+    "services/api/src/topicpilot_api/topic_engine/__init__.py",
+    "services/api/src/topicpilot_api/topic_engine/layer2_formal_authority.py",
+    "services/api/src/topicpilot_api/topic_engine/policy_approval.py",
+    "services/api/tests/test_layer2_formal_authority.py",
+    "services/api/tests/test_layer2_formal_authority_continuation.py"
+  ],
+  "forbidden_paths": [
+    "services/api/alembic/**",
+    "services/api/src/topicpilot_api/live/**",
+    "services/api/src/topicpilot_api/opportunity*.py",
+    "apps/web/app/components/v2/TodayMarketPage.tsx",
+    "apps/web/app/**opportunity**",
+    "apps/web/app/**stock**",
+    "F1-F9/**",
+    "FUND-001/**",
+    "NEXT_TASK",
+    "PROJECT_CONTEXT.md",
+    "docs/ROADMAP.md",
+    "docs/DOCUMENTATION_INDEX.md",
+    "config/**"
+  ],
+  "dependencies": [
+    "GOV-003",
+    "TASK-INT-B2-FORMAL-AUTHORITY-CANONICAL-RECONCILIATION-001",
+    "TASK-INT-TOPIC-B2-003F-GOVERNED-REGISTRATION-001",
+    "TASK-INT-A10-A9-REC-002-MANIFEST-AND-0040-RECONCILIATION-001",
+    "TASK-A10-A9-REC-002",
+    "TASK-A10-POST-CLOSE-CHECKPOINT-RECONCILIATION-002",
+    "TASK-TOPIC-REC-002",
+    "TOPIC-B2-AUTHORITY-RECONCILIATION-001",
+    "TOPIC-B2-CANONICAL-ARTIFACT-PROVENANCE-AND-PUBLICATION-GATE-001"
+  ],
+  "implementation_commits": [
+    "b31a0f09788609644844883bc6fd7a057716c538",
+    "17bb8db30ffb69fcaca2f41997dc42a71d1634cc"
+  ],
+  "governance_commits": [
+    "d1a822c36ed8a04b863950f7c75fbbabb55aa9ff",
+    "c882842415cb292b747f7008628cf728466bc5f3",
+    "abd2866a24a6b9ec1c24c70a9a6f3527911023d5",
+    "a734ae1ef959cb032c0e6c3b185a40b4a1b4e7ae"
+  ],
+  "source_implementation_commits": [
+    "3011f00fe50e5c397635ef9a25ca3a9282bbd523",
+    "1a4978700391df3e99ebbef263dd1bfe7af35c25"
+  ],
+  "source_governance_commits": [
+    "ee65c530058da5694741e4e5d7c5dcc1895ba9b0",
+    "56fdef52e7e280fb0d753f6e5f756f066a749845",
+    "06c6836f5acd1f665d8e2927ac6eb64cabdc01f7",
+    "e0a6eb34139116ebf4d4a0f4d218a799832ea523"
+  ],
+  "migration_scope": "NONE; no migration execution or 0040 reservation; provenance audit only",
+  "production_scope": "NONE; read-only evidence registration; no Production write, deploy, scheduler, or publication",
+  "owner_decision_required": true,
+  "next_allowed_state": "OWNER_DECISION_REQUIRED",
+  "shared_surface_policy": "EXPLICIT_RECONCILIATION",
+  "dependency_notes": [
+    "Layer 2 was recovered from a separate Schema Owner lineage and replayed as a bounded exact-source port; source and canonical commit mappings are recorded in the report.",
+    "The brief's implementation and governance prefixes were not exact source object IDs; actual verified source IDs are recorded.",
+    "The DB continuation source manifest SHA is 992B8F676C19519B443B3BCDD870AFF577D54E72B302D174B5B1CA73588FFA2F.",
+    "The 0040 resolved closure remains absent; only the two branch-only candidates and the prior unresolved collision report are recoverable.",
+    "Today, Opportunity implementation, Stock implementation, F1-F9, FUND-001, NEXT_TASK, C:, and Production remain outside this task."
+  ]
+}

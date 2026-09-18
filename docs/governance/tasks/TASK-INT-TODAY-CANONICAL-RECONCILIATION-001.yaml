@@ -1,0 +1,89 @@
+{
+  "task_id": "TASK-INT-TODAY-CANONICAL-RECONCILIATION-001",
+  "title": "Today Canonical Integration and Development-Series Closure",
+  "status": "INTEGRATED",
+  "owner_role": "Integration Owner",
+  "workstream": "INTEGRATION",
+  "base_sha": "c3405736e345c670f2eaa5c1eb34b76f61a58ee7",
+  "previous_governed_base_sha": "2a062d8de8ab637e02aa1021c715b248fdd1322c",
+  "branch": "codex/task-int-today-canonical-reconciliation-001-20260915",
+  "worktree": "E:\\topicpilot-worktrees\\int-today-canonical-reconciliation-001-20260915",
+  "owned_paths": [
+    "services/api/src/topicpilot_api/schemas.py",
+    "packages/api-client/**",
+    "apps/web/app/lib/generated-api.d.ts",
+    "docs/governance/tasks/TASK-INT-TODAY-CANONICAL-RECONCILIATION-001.yaml",
+    "docs/governance/provenance/TASK-INT-TODAY-CANONICAL-RECONCILIATION-001.json",
+    "docs/reports/TASK-INT-TODAY-CANONICAL-RECONCILIATION-001-*.md"
+  ],
+  "shared_paths": [
+    "services/api/src/topicpilot_api/home_v2_publication.py",
+    "services/api/tests/test_home_v2_publication.py",
+    "docs/governance/tasks/TASK-TODAY-SIGNALS-CANONICAL-PROMOTION-003.yaml",
+    "docs/governance/provenance/**"
+  ],
+  "forbidden_paths": [
+    "services/api/alembic/**",
+    "services/api/src/topicpilot_api/live/**",
+    "services/api/src/topicpilot_api/topic_engine/**",
+    "services/api/src/topicpilot_api/opportunity*.py",
+    "apps/web/app/components/**",
+    "infra/**",
+    ".github/workflows/**",
+    "PROJECT_CONTEXT.md",
+    "docs/ROADMAP.md",
+    "docs/WORK_ORDERS.md",
+    "docs/DOCUMENTATION_INDEX.md",
+    "NEXT_TASK"
+  ],
+  "dependencies": [
+    "GOV-003",
+    "TASK-TODAY-SIGNALS-CANONICAL-RECONCILIATION-002",
+    "TASK-TODAY-SIGNALS-CANONICAL-PROMOTION-003"
+  ],
+  "implementation_commits": [
+    "a5730d1fc7b6c6cb4a239ec9b7c9bdce2c5568bc",
+    "9ec77e06f4ababa55f9dbf0cd2f8a0d4b83eb104"
+  ],
+  "governance_commits": [
+    "4976ec36fad2549ce810af807e40e04f1499c0aa",
+    "3cb35d40e300b7f4ac50a90c4e01b50bb3388f33",
+    "12bf6be5bd205d9b1f720149b156d36c12751c36",
+    "4b2209b6712e05b57e218992b3cfaa4143778b1e"
+  ],
+  "migration_scope": "NONE; preserve canonical A10 0040 boundary and do not create a Today migration",
+  "production_scope": "NONE; development integration only",
+  "owner_decision_required": false,
+  "next_allowed_state": "READY_FOR_RELEASE",
+  "shared_surface_policy": "EXPLICIT_RECONCILIATION",
+  "canonical_today_integration_sha": "9ec77e06f4ababa55f9dbf0cd2f8a0d4b83eb104",
+  "canonical_integration_status": "INTEGRATED",
+  "canonical_integration_timestamp": "2026-09-15",
+  "closeout_report": "docs/reports/TASK-INT-TODAY-CANONICAL-RECONCILIATION-001-20260915.md",
+  "source_task_lineage": [
+    "TASK-TODAY-SIGNALS-CONTRACT-PORT-001",
+    "TASK-TODAY-SIGNALS-CANONICAL-RECONCILIATION-002",
+    "TASK-INT-TODAY-SIGNALS-SHARED-CONTRACT-001",
+    "TASK-GOV-TODAY-INTEGRATION-REGISTRATION-001",
+    "TASK-TODAY-SIGNALS-CANONICAL-PROMOTION-003",
+    "TASK-GOV-TODAY-CANONICAL-PROMOTION-REGISTRATION-001"
+  ],
+  "source_commits": [
+    "e4d675453aa03c51bd1c4e198ee3b7cb6742657f",
+    "f7ba09dd2ea8dc803d7ecdf97c6a9238d8dc9ad4",
+    "4bd18505a3db4f0b4edac9da47276f298fddfc36",
+    "1f6286421aee49ea5159effc1bb86fa44b1114e8",
+    "0c08fcb7b495ad9f4f7a2c35a32d5b8802e288b7",
+    "439f61e43a5a3caf31b3542b15b870742c433d1b",
+    "4976ec36fad2549ce810af807e40e04f1499c0aa",
+    "3cb35d40e300b7f4ac50a90c4e01b50bb3388f33",
+    "12bf6be5bd205d9b1f720149b156d36c12751c36",
+    "4b2209b6712e05b57e218992b3cfaa4143778b1e"
+  ],
+  "dependency_notes": [
+    "The candidate is already implemented, validated, composed, and governance-registered in isolated E: worktrees.",
+    "Integration Owner reconciles shared schemas/OpenAPI/generated declarations and the Today-owned Home/test result without transferring ownership.",
+    "Canonical integration is performed against the current c340573 GOV-003 E: baseline because C: is dirty owner-controlled state.",
+    "Historical Today 0040 is not part of this candidate; canonical migration 0040 remains A10-owned evidence and no Today migration is created."
+  ]
+}

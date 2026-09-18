@@ -65,6 +65,7 @@ contract or the owner-retained disposition recorded in the task report:
 - Persistence and data boundary: [V2 Production Data Architecture](TOPICPILOT_V2_PRODUCTION_DATA_ARCHITECTURE.md)
 - Topic derived-intelligence publication and Lifecycle dependency boundary: [Topic Derived Intelligence Publication and Lifecycle Dependency Contract](TOPIC_DERIVED_INTELLIGENCE_PUBLICATION_AND_LIFECYCLE_DEPENDENCY_CONTRACT.md)
 - Topic derived-intelligence definition and publication authority closure: [Topic Derived Intelligence Definition and Publication Authority Closure](TOPIC_DERIVED_INTELLIGENCE_DEFINITION_AND_PUBLICATION_AUTHORITY_CLOSURE.md)
+- Topic/B2 Layer 2 formal authority: [Topic/B2 Layer 2 Formal Authority Contract](TOPIC_B2_LAYER2_FORMAL_AUTHORITY_CONTRACT.md)
 - API boundary: [API guide](../api/api-guide.md)
 - Stock technical V0 policy: [Stock Technical V0 Formal Publication Policy](STOCK_TECHNICAL_V0_POLICY_CONTRACT.md)
 - Stock technical V0 formal evidence provider/consumer contract: [Technical V0 Formal Evidence Provider & Consumer Contract](STOCK_TECHNICAL_V0_FORMAL_EVIDENCE_PROVIDER_CONSUMER_CONTRACT.md)

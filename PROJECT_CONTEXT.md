@@ -1,11 +1,32 @@
 # TopicPilot current project context
 
-**Status:** `CURRENT STARTUP / HANDOFF NAVIGATION`
-**Last reviewed:** `2026-08-22`
+**Status:** `HISTORICAL CLOSURE COMPLETE / EXTERNAL RELEASE GATE OPEN`
+**Last reviewed:** `2026-09-16`
 
 This file is deliberately short. It tells a contributor where the current
 authority lives and what is true at handoff; it is not a duplicate product,
 architecture, schema, or work-order authority.
+
+## 2026-09-16 owner-controlled canonical closure
+
+The verified unified candidate from
+TASK-INT-CANONICAL-LINEAGE-CONVERGENCE-AND-RELEASE-BASELINE-001 is now
+represented by an owner-controlled, commit-preserving documentation closure
+ref. The source implementation baseline is
+d6371af5994f0c2d5e0612969f100f6cef26b772; the clean source E head and new
+governed forward baseline are
+277a49382240503fcd0767e9cfb17e2fd974e8a3, a documentation-only descendant.
+Historical recovery is CLOSED and canonical lineage is VERIFIED. The dirty
+canonical owner checkout remains untouched.
+
+The release boundary remains external: API readback is exact at
+bf68cc8bf0a4432d7623db43f42e9219c94d7b6b and the protected database readback
+is revision 0040_task_a10_recovery_checkpoint_observability, while Web has
+only an opaque deployment identifier and Worker exact provenance is
+unavailable. No canary or Production mutation was authorized. The latest
+POST_CLOSE readback is FAILED with PARTIAL freshness, and formal Opportunity
+readiness remains blocked. See the
+[owner closure report](docs/reports/TASK-OWNER-TOPICPILOT-CANONICAL-PROMOTION-RELEASE-AND-RUNTIME-CLOSURE-001-20260916.md).
 
 ## Read first
 
@@ -15,6 +36,7 @@ architecture, schema, or work-order authority.
 4. [Architecture authority map](docs/architecture/README.md)
 5. [Accepted product surfaces contract](docs/architecture/PRODUCT_SURFACES_AND_UX_CONTRACT.md) — owner-retained semantic source; repository canonicalization status is tracked separately
 6. [Documentation index](docs/DOCUMENTATION_INDEX.md)
+7. [Agentic development runtime](docs/governance/AGENTIC_DEVELOPMENT.md) — GOV-003 task memory, lifecycle, ownership, integration, and release governance
 
 ## Canonical boundary
 
@@ -297,6 +319,44 @@ and its linked evidence ledger; those committed files are sufficient without
 chat memory or owner-untracked reports.
 `NEXT_TASK` remains Owner-controlled; an agent may recommend a task but may not
 change the roadmap's authorized next task.
+
+## 2026-09-13 GOV-002 parallel-topology checkpoint
+
+The [GOV-002 recovery report](docs/reports/TASK-GOV-002-PARALLEL-WORKSTREAM-RECOVERY-AND-BRANCH-HYGIENE-20260913.md)
+and its canonical registries now govern the post-recovery development topology:
+[CURRENT_PROJECT_STATE.md](CURRENT_PROJECT_STATE.md),
+[ACTIVE_WORK.md](ACTIVE_WORK.md),
+[INCOMPLETE_WORK_REGISTRY.md](INCOMPLETE_WORK_REGISTRY.md),
+[BRANCH_RECOVERY_MATRIX.md](BRANCH_RECOVERY_MATRIX.md), and
+[PARALLEL_EXECUTION_MATRIX.md](PARALLEL_EXECUTION_MATRIX.md). The shared
+development integration base is the clean main-derived candidate
+`a8357d46194f...`; it is not Production truth. Four task-scoped sparse recovery
+worktrees are registered for Opportunity, Today, A10/A9, and Topic/B2. Today
+and A10/A9 may audit in parallel; shared schema/migration/OpenAPI/generated and
+release surfaces remain serial. Opportunity and Topic remain authority-blocked;
+B3/B4 remain locked/not started; FUND-001 remains proposed and owner-gated.
+
+GOV-002 completed memory recovery and topology governance without product
+implementation, deployment, Production mutation, branch cleanup, or `NEXT_TASK`
+change. New work is allowed only through a named packet in the registries, and
+the independent `REL-002-OPERATOR-READBACK-001` gate remains open.
+
+## 2026-09-14 GOV-003 agentic runtime checkpoint
+
+GOV-003 adds a repo-native, machine-checkable runtime in the isolated
+`codex/gov-003-agentic-parallel-development-runtime-20260914` worktree. The
+runtime includes project-memory, lifecycle, worktree, incomplete-work,
+integration, release, and handoff skills; current task manifests;
+WORKSTREAM_OWNERSHIP and BASELINE_FAILURE_REGISTRY contracts; deterministic
+guards; bounded custom agents; and a governance CI workflow. The canonical
+owner checkout remains read-only and no product, migration, Production, or
+`NEXT_TASK` mutation is included.
+
+The manifest/registry layer is the durable task authority for new work. Central
+status documents remain navigation and aggregate views; parallel tasks should
+write per-task manifests and reports, with shared schemas, migrations,
+OpenAPI/generated clients, formal publication, release configuration, and
+central views reconciled serially. See [GOV-003 report](docs/reports/TASK-GOV-003-AGENTIC-PARALLEL-DEVELOPMENT-RUNTIME-20260914.md).
 
 ## Hardened promotion evidence
 

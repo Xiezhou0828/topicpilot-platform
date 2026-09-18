@@ -1,0 +1,29 @@
+{
+  "task_id": "TASK-INT-DAILY-CLOSE-CANONICAL-RELEASE-REPLAY-AND-FORMAL-E2E-CLOSURE-001",
+  "candidate_sha": "2cfd954ee68e8bb53571271870dbc99fabc81360",
+  "candidate_migration": "0040_task_a10_recovery_checkpoint_observability",
+  "production_migration": "0040_task_a10_recovery_checkpoint_observability",
+  "migration_lineage": "MIGRATION_COMPATIBLE",
+  "production": {
+    "api_sha": "bf68cc8bf0a4432d7623db43f42e9219c94d7b6b",
+    "api_status": "VERIFIED_EXACT_RUNTIME_ONLY; READBACK EVIDENCE FROM 2026-09-16",
+    "web_sha": "UNKNOWN_EXACT_SHA",
+    "web_status": "UNAVAILABLE_EXACT; OPAQUE DEPLOYMENT ID ONLY",
+    "worker_sha": "UNKNOWN_EXACT_SHA",
+    "worker_status": "UNAVAILABLE_EXACT",
+    "db_revision": "0040_task_a10_recovery_checkpoint_observability",
+    "db_status": "VERIFIED_COMPATIBLE_FROM_PRIOR_OPERATOR_READBACK",
+    "current_re_read": "NOT_AVAILABLE_WITHOUT_OPERATOR_RUNTIME_AUTHORITY"
+  },
+  "release_gate": {
+    "status": "BLOCKED_PROVENANCE",
+    "production_mutation": false,
+    "provenance_gaps": [
+      "candidate API SHA 2cfd954 differs from observed Production API SHA bf68cc8",
+      "Production Web exact SHA unavailable",
+      "Production Worker exact SHA unavailable",
+      "operator authorization for deployment and canary unavailable"
+    ]
+  },
+  "classification": "PARTIAL"
+}

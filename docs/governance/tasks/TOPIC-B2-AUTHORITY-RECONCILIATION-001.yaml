@@ -1,0 +1,32 @@
+{
+  "task_id": "TOPIC-B2-AUTHORITY-RECONCILIATION-001",
+  "title": "Topic/B2 Authority Reconciliation",
+  "status": "PARTIAL",
+  "owner_role": "WS1 / B2 owner with integration owner",
+  "workstream": "TOPIC_B2",
+  "base_sha": "a8357d46194f9669709f184949270e20a7a2546c",
+  "branch": "codex/topic-b2-authority-reconciliation-001-20260913",
+  "worktree": "E:\\TopicPilot\\worktrees\\topic-b2-authority-reconciliation-001-20260913",
+  "owned_paths": [
+    "services/api/src/topicpilot_api/topic_engine/**",
+    "services/api/src/topicpilot_api/topic_lifecycle_*.py",
+    "services/api/src/topicpilot_api/topic_snapshot_*.py",
+    "services/api/tests/test_topic*.py",
+    "services/api/tests/test_structural_role_score_projection.py",
+    "docs/reports/TASK-TOPIC*.md"
+  ],
+  "shared_paths": ["docs/ROADMAP.md", "docs/WORK_ORDERS.md", "docs/DOCUMENTATION_INDEX.md", "PROJECT_CONTEXT.md", "services/api/alembic/versions/**", "services/api/src/topicpilot_api/schemas.py", "packages/api-client/**"],
+  "forbidden_paths": ["services/api/src/topicpilot_api/live/**", "services/api/src/topicpilot_api/home_v2_publication.py", "apps/web/app/components/v2/TodayMarketPage.tsx", "services/api/src/topicpilot_api/opportunity*.py", "NEXT_TASK"],
+  "dependencies": ["TASK-TOPIC-REC-002"],
+  "implementation_commits": ["72101002e18f6ba770ab53d02b6f9c0e4cf3f201"],
+  "governance_commits": ["d41985ae7027d7fd5d4f995544f5f80d9b70e1b3"],
+  "migration_scope": "AUDIT_ONLY; no migration execution",
+  "production_scope": "NONE",
+  "owner_decision_required": false,
+  "next_allowed_state": "IN_PROGRESS",
+  "shared_surface_policy": "EXPLICIT_RECONCILIATION",
+  "dependency_notes": [
+    "Historical reconciliation report records partial authority readiness and preserves the formal publication block.",
+    "Exact implementation and governance SHAs are registered for recovery; no historical product changes are replayed into C."
+  ]
+}

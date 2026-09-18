@@ -1,0 +1,21 @@
+{
+  "task_id": "OPP-FORMAL-AUTHORITY-READINESS-001",
+  "title": "Opportunity Formal Authority Readiness",
+  "status": "BLOCKED",
+  "owner_role": "Product / Release Owner with formal-data authority",
+  "workstream": "OPPORTUNITY",
+  "base_sha": "a8357d46194f9669709f184949270e20a7a2546c",
+  "branch": null,
+  "worktree": null,
+  "owned_paths": ["services/api/src/topicpilot_api/opportunity*.py", "services/api/src/topicpilot_api/topic_engine/opportunity_*.py", "services/api/tests/test_opportunity*.py", "apps/web/app/opportunities/**", "docs/reports/TASK-OPP*.md"],
+  "shared_paths": ["services/api/src/topicpilot_api/schemas.py", "packages/api-client/**"],
+  "forbidden_paths": ["services/api/alembic/**", "services/api/src/topicpilot_api/live/**", "services/api/src/topicpilot_api/home_v2_publication.py", "services/api/src/topicpilot_api/topic_lifecycle_*.py"],
+  "dependencies": [],
+  "implementation_commits": [],
+  "governance_commits": [],
+  "migration_scope": "NONE",
+  "production_scope": "NONE",
+  "owner_decision_required": true,
+  "next_allowed_state": "OWNER_DECISION_REQUIRED",
+  "dependency_notes": ["Formal provider, effective date, read model, and owner approval are absent."]
+}

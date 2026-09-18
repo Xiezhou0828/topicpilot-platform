@@ -1,0 +1,81 @@
+{
+  "task": "TASK-FUND-B-STOCK-INSTITUTIONAL-FLOW-FORMAL-CAPABILITY-001",
+  "role": "FUND_STOCK_INSTITUTIONAL_FLOW_CAPABILITY_OWNER",
+  "mode": "ONE_SHOT_FORMAL_CAPABILITY_DISCOVERY_IMPLEMENTATION_VALIDATION_AND_INTEGRATION_READINESS",
+  "result": "COMPLETE_WITH_EXTERNAL_GATE",
+  "source": {
+    "implementation_sha": "192ec78fd055dc94a167bfa3501f32ccef9576dc",
+    "governance_sha": "3c73631105090b0ceb439b064520d5fd6dd44567",
+    "closeout_sha": "3c73631105090b0ceb439b064520d5fd6dd44567",
+    "semantic_parent_sha": "02d3086183d1c582bb6c66c4c316340ccce3fa97"
+  },
+  "canonical": {
+    "current_checkout_sha": "02d3086183d1c582bb6c66c4c316340ccce3fa97",
+    "worktree_branch": "codex/task-fund-b-stock-institutional-flow-formal-capability-001",
+    "promotion_status": "PENDING_OWNER_PROMOTION",
+    "canonical_repo_modified": false,
+    "c_drive": "UNTOUCHED"
+  },
+  "capability": {
+    "TPE_stock_institutional_flow": "READY",
+    "TWO_stock_institutional_flow": "READY_WITH_CURRENT_SNAPSHOT_LIMIT",
+    "canonical_unit": "SHARES_SCALE_0",
+    "daily_flow": "READY",
+    "rolling_5d": "READY_COMPLETE_ONLY",
+    "rolling_10d": "READY_COMPLETE_ONLY",
+    "rolling_20d": "READY_COMPLETE_ONLY",
+    "consecutive_buy_sell": "READY",
+    "flow_reversal": "READY",
+    "price_flow_context": "READY_EVIDENCE_ONLY",
+    "divergence_evidence": "READY_DETERMINISTIC_ONLY",
+    "abnormal_flow": "DEFERRED_POLICY_REQUIRED",
+    "liquidity_relative_flow": "READY_WITH_POSITIVE_VOLUME_DENOMINATOR",
+    "stock_formal_contract": "READY",
+    "stock_detail_consumer": "READY_FOR_ADDITIVE_CONSUMER",
+    "fund_c_evidence_readiness": "READY",
+    "fund_e_future_compatibility": "READY"
+  },
+  "validation": {
+    "focused_affected_tests": "7 passed",
+    "backend_tests": "606 passed, 41 skipped, 5 registered baseline failures",
+    "api_client_tests": "4 passed",
+    "web_tests": "157 passed",
+    "web_build": "PASS",
+    "web_lint": "PASS_WITH_ONE_PREEXISTING_WARNING",
+    "static_checks": [
+      "ruff check PASS",
+      "ruff format --check PASS",
+      "compileall PASS",
+      "git diff --check PASS",
+      "conflict marker scan PASS"
+    ],
+    "openapi_drift": "PASS_AFTER_GENERATION_AND_SYNC",
+    "generated_client_drift": "PASS_AFTER_DETERMINISTIC_REGEN",
+    "migration_structure": "PASS; 0033 -> 0032",
+    "postgresql_migration_execution": "NOT_RUN_EXTERNAL_GATE"
+  },
+  "governance": {
+    "composite_institutional_score_created": "NO",
+    "fund_a_policy_changed": "NO",
+    "today_signals_policy_changed": "NO",
+    "opportunity_policy_changed": "NO",
+    "fund_e_implemented": "NO",
+    "production_ready": "NO",
+    "production_mutation": "NO",
+    "migration_execution": "NO",
+    "push": "NO",
+    "next_task_changed": "NO",
+    "project_memory_recovery_test": "PASS",
+    "owner_decision_required": "YES",
+    "next_governed_action": "Owner reviews the packet, promotes the isolated branch serially into the canonical checkout, then runs migration 0033 only in an approved non-Production environment and separately authorizes the capture runtime."
+  },
+  "registered_baseline_failures": [
+    "tests/test_ws3_core_v0_a1_quality_filter_confirmatory_validation.py::ConfirmatoryValidationContractTests::test_candidate_freeze_is_deterministic_and_complete",
+    "tests/test_ws3_core_v0_a1_quality_filter_confirmatory_validation.py::ConfirmatoryValidationContractTests::test_pit_and_outcome_boundaries_are_explicit",
+    "tests/test_ws3_core_v0_a1_quality_filter_confirmatory_validation.py::ConfirmatoryValidationContractTests::test_raw_cohort_authority_is_preserved",
+    "tests/test_ws3_core_v0_a1_quality_filter_confirmatory_validation.py::ConfirmatoryValidationContractTests::test_thresholds_and_operators_are_immutable_freeze_values",
+    "tests/test_ws3_core_v0_a2_entry_breakout_invalidation.py::test_a1_forward_contract_preserves_exact_seven_candidates"
+  ],
+  "task_caused_failures": 0,
+  "unknown_failures": 0
+}

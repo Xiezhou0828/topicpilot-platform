@@ -1,0 +1,206 @@
+{
+  "task_id": "TASK-INT-CANONICAL-LINEAGE-CONVERGENCE-AND-RELEASE-BASELINE-001",
+  "role": "INTEGRATION_OWNER_AND_CANONICAL_BASELINE_OWNER",
+  "mode": "ONE_SHOT_GLOBAL_CANONICAL_LINEAGE_CONVERGENCE_AND_RELEASE_BASELINE",
+  "result": "COMPLETE_WITH_EXTERNAL_GATE",
+  "stop_reason": "PRODUCTION_OPERATOR_AUTHORITY_REQUIRED",
+  "date": "2026-09-16",
+  "previous_canonical_sha": "02d3086183d1c582bb6c66c4c316340ccce3fa97",
+  "previous_governed_baseline_sha": "a8357d46194f9669709f184949270e20a7a2546c",
+  "candidate_branch": "codex/task-int-canonical-lineage-convergence-and-release-baseline-001-20260916",
+  "candidate_worktree": "E:\\topicpilot-worktrees\\int-canonical-lineage-convergence-and-release-baseline-001-20260916",
+  "unified_canonical_development_sha": "d6371af5994f0c2d5e0612969f100f6cef26b772",
+  "unified_governed_baseline_sha": "d6371af5994f0c2d5e0612969f100f6cef26b772",
+  "lineage_matrix": [
+    {
+      "surface": "GOV-003",
+      "source_evidence": "VERIFIED",
+      "implementation": "VERIFIED",
+      "governance_registration": "VERIFIED",
+      "canonical_integration": "VERIFIED",
+      "production_status": "NOT_RELEASED",
+      "evidence": ["4ecea21e69f76ee00c4e521dcdfd4dc2c51a3b46", "801a95b1866cb46d8630d6c16b725544d6e0803e", "beb5b3d850bb8def248239f829abe39bcd24979b"]
+    },
+    {
+      "surface": "Today Signals",
+      "source_evidence": "VERIFIED",
+      "implementation": "VERIFIED",
+      "governance_registration": "VERIFIED",
+      "canonical_integration": "VERIFIED",
+      "production_status": "NOT_RELEASED",
+      "evidence": ["e4d675453aa03c51bd1c4e198ee3b7cb6742657f", "4bd18505a3db4f0b4edac9da47276f298fddfc36", "9ec77e06f4ababa55f9dbf0cd2f8a0d4b83eb104", "4fc7983f0a83612516bf62973171f9fbc2d497b2"]
+    },
+    {
+      "surface": "Migration 0040 / A10",
+      "source_evidence": "VERIFIED",
+      "implementation": "VERIFIED",
+      "governance_registration": "VERIFIED",
+      "canonical_integration": "VERIFIED",
+      "production_status": "EVIDENCE_ONLY",
+      "evidence": ["51dbe48db203adb56e5fbc47da2f44b0e33997d2", "35a4e53d8b857301546fe310c32762e0668d10d6", "68600af6f095fc84084cad9cde235cfee707df95"]
+    },
+    {
+      "surface": "B2 003F Governed Authority",
+      "source_evidence": "VERIFIED",
+      "implementation": "VERIFIED",
+      "governance_registration": "VERIFIED",
+      "canonical_integration": "VERIFIED",
+      "production_status": "EVIDENCE_ONLY",
+      "evidence": ["05c486674378f1c8807375905ba1eedb84dd1b31", "34fb7306378395cd6f9ef1aa83343ec79d9c4404"]
+    },
+    {
+      "surface": "B2 Layer 2 Formal Authority",
+      "source_evidence": "VERIFIED",
+      "implementation": "VERIFIED",
+      "governance_registration": "VERIFIED",
+      "canonical_integration": "VERIFIED",
+      "production_status": "EVIDENCE_ONLY",
+      "evidence": ["1a4978700391df3e99ebbef263dd1bfe7af35c25", "06c6836f5acd1f665d8e2927ac6eb64cabdc01f7", "e0a6eb34139116ebf4d4a0f4d218a799832ea523"]
+    },
+    {
+      "surface": "B2 DB readback 107/25/107/1160",
+      "source_evidence": "VERIFIED",
+      "implementation": "NOT_APPLICABLE",
+      "governance_registration": "VERIFIED",
+      "canonical_integration": "PROVENANCE_REGISTERED",
+      "production_status": "EVIDENCE_ONLY",
+      "evidence": ["992B8F676C19519B443B3BCDD870AFF577D54E72B302D174B5B1CA73588FFA2F", "3D99A36B31D024614C36F8C8160204D934D24B78CC0DEB00E87C9AEFF6D64FFA", "951F4D09E726C921A68F48A881E04F4A3709A3932114F3B8AEDEF5A9DD840EBA"]
+    },
+    {
+      "surface": "Stock F6/F7",
+      "source_evidence": "VERIFIED",
+      "implementation": "VERIFIED",
+      "governance_registration": "VERIFIED",
+      "canonical_integration": "VERIFIED",
+      "production_status": "NOT_RELEASED",
+      "evidence": ["a47a693e407b012243493b585d6a165cd66e7cea", "f5153cf2d65f7b5deb1a3ffa891340e02429e5f8", "b8f16894816dc25839f9b2204481af85fbb3efa2", "16a00d44a4ce73d655908b7f1639e849b49b5f03", "c6b0891291b16e967f00273aa8e4b22d543cf6ea"]
+    },
+    {
+      "surface": "F1-F9 historical recovery",
+      "source_evidence": "VERIFIED",
+      "implementation": "NOT_APPLICABLE",
+      "governance_registration": "VERIFIED",
+      "canonical_integration": "PROVENANCE_ONLY",
+      "production_status": "EVIDENCE_ONLY",
+      "evidence": ["1f9dc51409626c1bfc439f974668f5ec85802eb1", "4ecea21e69f76ee00c4e521dcdfd4dc2c51a3b46", "801a95b1866cb46d8630d6c16b725544d6e0803e", "beb5b3d850bb8def248239f829abe39bcd24979b"]
+    },
+    {
+      "surface": "OPS session rollback remediation",
+      "source_evidence": "VERIFIED",
+      "implementation": "VERIFIED",
+      "governance_registration": "VERIFIED",
+      "canonical_integration": "VERIFIED",
+      "production_status": "NOT_RELEASED",
+      "evidence": ["9d327ea5f828b1afec41235d9fd2f6e554e8e88a", "25a8d3d7e8d688d8332af0f7b7b6894e6eb792de", "1702daf50b4bb4a7d18a5111413cd12128f7f2d7", "f7e91d2f3ef3987a7d256ce7fa2f95faf0f35259"]
+    }
+  ],
+  "migration": {
+    "canonical_chain": ["0039_task_a9_b2_formal_correction_supersession", "0040_task_a10_recovery_checkpoint_observability"],
+    "head": "0040_task_a10_recovery_checkpoint_observability",
+    "source_commit": "51dbe48db203adb56e5fbc47da2f44b0e33997d2",
+    "source_path": "services/api/alembic/versions/0040_task_a10_recovery_checkpoint_observability.py",
+    "source_sha256": "FA435D2DC1E632A0B11E454484ADB6F59FA49B0D273845E315500A45EC2D063E",
+    "canonical_source_count": 1,
+    "collision_status": "RESOLVED_BY_EXACT_SOURCE_BLOB_AND_NEWER_CLOSURE_EVIDENCE",
+    "today_historical_0040_reintroduced": false,
+    "migration_execution": "NOT_PERFORMED",
+    "production_db_revision": "0040_task_a10_recovery_checkpoint_observability"
+  },
+  "b2_readback": {
+    "production_revision": "0040_task_a10_recovery_checkpoint_observability",
+    "leaves": 107,
+    "parents": 25,
+    "hierarchy_edges": 107,
+    "structural_roles": 1160,
+    "formal_snapshot_rows": 92,
+    "all_structural_roles_approved": true,
+    "readback_mutation": false
+  },
+  "layer2_authority": {
+    "schema": "topic-layer2-formal-authority.v1",
+    "schema_digest": "a5e1ec615017d2a2ece2a7ccf47b771afa8560bf3ca554b73cc3c39aef6f84e0",
+    "owner_id": "topicpilot-owner",
+    "policy_state": "POLICY_APPROVED",
+    "publication": "BLOCKED",
+    "activation": "NOT_ACTIVE",
+    "daily_strength": "PARTIAL_BY_DESIGN_FAIL_CLOSED",
+    "score_grade": "APPROVED_VERIFIED",
+    "lifecycle_stages": ["SPROUTING", "FERMENTING", "MAIN_RISE", "MATURE", "DECLINING"],
+    "003G": "PASS",
+    "003H": "PASS"
+  },
+  "patch_disposition": [
+    {"source": "0c08fcb7b495ad9f4f7a2c35a32d5b8802e288b7", "classification": "ALREADY_PRESENT", "canonical": "9ec77e06f4ababa55f9dbf0cd2f8a0d4b83eb104", "reason": "identical patch-id; no duplicate Today implementation"},
+    {"source": "68600af6f095fc84084cad9cde235cfee707df95", "classification": "ALREADY_PRESENT", "canonical": "43dede0ce2b1e73059de5b450ba55388f6440579", "reason": "13:35 predecessor content already present in cumulative lineage"},
+    {"source": "51dbe48db203adb56e5fbc47da2f44b0e33997d2", "classification": "CHERRY_PICK_EXACT_PLUS_SEMANTIC_RECONCILIATION", "canonical": "d6371af5994f0c2d5e0612969f100f6cef26b772", "reason": "exact 0040 source hash retained; overlapping OPS/F6/F7 consumers reconciled"},
+    {"source": "00ea8f01a8c6cea408247442576ac6ec8066591d", "classification": "SUPERSEDED", "canonical": "9d327ea5f828b1afec41235d9fd2f6e554e8e88a", "reason": "original rematerialized IDs unavailable; newer canonical OPS source and closeout verified"},
+    {"source": "587ca49a943f50f95518fc61305abc0da16fbec3", "classification": "PROVENANCE_ONLY", "canonical": "51dbe48db203adb56e5fbc47da2f44b0e33997d2", "reason": "claimed historical ID unavailable; exact source blob and SHA256 are authoritative"}
+  ],
+  "validation": {
+    "backend_full_suite": "807 collected; 739 passed; 59 skipped for PostgreSQL/environment; 9 registered TOPIC_B2 lifecycle baseline failures; 0 task-caused; 0 unknown",
+    "focused_convergence_suite": "39 passed; 1 registered TOPIC_B2 lifecycle baseline failure",
+    "governance_runtime": "8 passed",
+    "web_tests": "164 passed; 0 failed",
+    "web_build": "PASS",
+    "web_typescript": "PASS",
+    "web_lint": "PASS; 0 errors; 2 pre-existing warnings",
+    "openapi_drift": "PASS",
+    "generated_client_drift": "PASS",
+    "targeted_ruff": "PASS",
+    "repository_ruff": "INHERITED_HISTORICAL_DEBT; no-new-debt assessed at task-touched runtime scope",
+    "targeted_ruff_format": "INHERITED_FORMATTING_DEBT_ON_MERGED_RUNTIME_FILES; no semantic defect",
+    "python_compileall": "PASS",
+    "conflict_marker_scan": "PASS",
+    "project_memory_recovery": "PASS",
+    "git_diff_check": "PASS",
+    "task_caused_failures": 0,
+    "registered_baseline_failures": 9,
+    "unknown_failures": 0
+  },
+  "integration_gate": {
+    "status": "PASS",
+    "qualification": "READY_FOR_INTEGRATION_WITH_REGISTERED_BASELINE",
+    "ownership_conflicts": 0,
+    "unknown_failures": 0
+  },
+  "release_gate": {
+    "status": "BLOCKED_PROVENANCE",
+    "migration_compatibility": "MIGRATION_COMPATIBLE",
+    "candidate_migration": "0040_task_a10_recovery_checkpoint_observability",
+    "production_migration": "0040_task_a10_recovery_checkpoint_observability",
+    "api_release_readiness": "ENGINEERING_READY; exact Production SHA unavailable",
+    "web_release_readiness": "ENGINEERING_READY; exact Production SHA unavailable",
+    "worker_release_readiness": "ENGINEERING_READY; exact Production SHA unavailable",
+    "production_exact_sha": "UNAVAILABLE_OPERATOR_READBACK_REQUIRED",
+    "ops_canary_required": true,
+    "ops_canary": "NOT_EXECUTED_OPERATOR_AUTHORITY_REQUIRED",
+    "production_mutation": false
+  },
+  "project_memory": {
+    "skill": ".github/skills/topicpilot-project-memory/SKILL.md",
+    "ordered_authority_recovery": "PASS",
+    "fresh_work_mode_recoverable": true,
+    "sources": ["AGENTS.md", "PROJECT_CONTEXT.md", "CURRENT_PROJECT_STATE.md", "ACTIVE_WORK.md", "INCOMPLETE_WORK_REGISTRY.md", "BRANCH_RECOVERY_MATRIX.md", "PARALLEL_EXECUTION_MATRIX.md", "docs/ROADMAP.md", "docs/WORK_ORDERS.md", "docs/DOCUMENTATION_INDEX.md", "latest governed reports", "git refs and worktrees"]
+  },
+  "remaining_work": {
+    "historical_governance_debt": "NONE_TASK_SCOPED",
+    "normal_forward_development_backlog": ["Leader Set authority/publication", "Lifecycle publication support", "A9 formal writer", "B2 formal publication activation", "Daily Close E2E and freshness", "Opportunity daily recommendation pipeline", "remaining Stock backend/frontend capabilities", "FUND-001 Institutional Flow", "later F1-F9 implementation work"],
+    "ready_to_start_daily_close_e2e": false,
+    "daily_close_blockers": ["exact candidate SHA must be promoted under owner control", "Production exact API/Web/Worker SHA readback", "separate governed freshness/readback authorization"],
+    "opportunity_daily_recommendation_ready": false
+  },
+  "boundaries": {
+    "c_drive": "UNTOUCHED",
+    "c_drive_head": "02d3086183d1c582bb6c66c4c316340ccce3fa97",
+    "c_drive_branch": "codex/task-ops-023a-p3c-runtime-sha-audit-20260813",
+    "c_drive_status_entries": 152,
+    "production": "UNTOUCHED",
+    "migration_execution": "NOT_PERFORMED",
+    "push": false,
+    "credentials_used": false,
+    "owner_decision_required": false,
+    "integration_owner_action_required": false,
+    "release_owner_action_required": true,
+    "next_governed_action": "Owner reviews and promotes the exact candidate from E into C; release owner separately supplies exact Production SHA readback and authorizes any canary."
+  }
+}

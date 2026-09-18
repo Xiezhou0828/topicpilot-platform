@@ -1,0 +1,26 @@
+{
+  "task_id": "TASK-INT-DAILY-CLOSE-CANONICAL-RELEASE-REPLAY-AND-FORMAL-E2E-CLOSURE-001",
+  "observed_at": "2026-09-17T00:30:00+08:00",
+  "source_remediation_sha": "3e602119284dd7abe0779a107e5f004052bc0ac1",
+  "canonical_base_sha": "277a49382240503fcd0767e9cfb17e2fd974e8a3",
+  "integrated_candidate_sha": "2cfd954ee68e8bb53571271870dbc99fabc81360",
+  "integration_method": "CLEAN_CHERRY_PICK",
+  "collision_status": "NO_CODE_COLLISION",
+  "semantic_preservation": {
+    "failure_classification": "PASS",
+    "session_rollback_containment": "PRESERVED",
+    "worker_process_survival": "PRESERVED",
+    "retry_idempotency": "PRESERVED",
+    "failed_transaction_commit_protection": "PRESERVED",
+    "provider_diagnostics": "PRESERVED"
+  },
+  "integration_gate": "PASS",
+  "candidate_source_state_before_evidence_docs": "CLEAN",
+  "protected_c_owner": {
+    "path": "C:\\Users\\acer\\Desktop\\題材領航\\topicpilot-platform",
+    "head": "02d3086183d1c582bb6c66c4c316340ccce3fa97",
+    "pre_existing_status_entries": 152,
+    "mutation": false
+  },
+  "canonical_status": "CLEAN_CANONICAL_DEVELOPMENT_CANDIDATE; PROTECTED_C_OWNER_PROMOTION_PENDING"
+}

@@ -44,8 +44,9 @@ from .history import (
 class HistoricalIngestionError(ValueError):
     """A deterministic, caller-visible ingestion failure."""
 
-    def __init__(self, code: str, message: str):
+    def __init__(self, code: str, message: str, *, classification: str | None = None):
         self.code = code
+        self.classification = classification
         super().__init__(f"{code}: {message}")
 
 
@@ -162,9 +163,7 @@ def _bar_payload(result: HistoricalFetchResult, bar: HistoricalBar) -> dict[str,
     return payload
 
 
-def _status_payload(
-    result: HistoricalFetchResult, trading_date: date
-) -> dict[str, str | None]:
+def _status_payload(result: HistoricalFetchResult, trading_date: date) -> dict[str, str | None]:
     """Represent exchange-confirmed no-trade as evidence, not a fabricated bar."""
 
     return {
@@ -502,8 +501,10 @@ def ingest_historical(
         ]
         if not observations and status_date is not None:
             observations.append((status_date, None, _status_payload(result, status_date)))
-        result_status = result.instrument_status if result.status_explicit else (
-            "AVAILABLE" if any(bar.close is not None for bar in bars) else "UNKNOWN"
+        result_status = (
+            result.instrument_status
+            if result.status_explicit
+            else ("AVAILABLE" if any(bar.close is not None for bar in bars) else "UNKNOWN")
         )
         result_statuses.append(result_status)
         if result.status_reason:
@@ -615,6 +616,7 @@ def ingest_historical(
                 raise HistoricalIngestionError(
                     "REFERENCE_DATA_UNAVAILABLE",
                     f"reference data context unavailable: {exc}",
+                    classification="NORMALIZATION_FAILED",
                 ) from exc
             for persisted in normalized.persisted:
                 if persisted.created:
@@ -656,14 +658,10 @@ def ingest_historical(
         canonical_reused=counts["canonical_reused"],
         incomplete_canonical_count=counts["incomplete"],
         instrument_status=(
-            result_statuses[0]
-            if len(set(result_statuses)) == 1 and result_statuses
-            else "UNKNOWN"
+            result_statuses[0] if len(set(result_statuses)) == 1 and result_statuses else "UNKNOWN"
         ),
         status_reason=(
-            result_reasons[0]
-            if len(set(result_reasons)) == 1 and result_reasons
-            else None
+            result_reasons[0] if len(set(result_reasons)) == 1 and result_reasons else None
         ),
         observed_count=counts["observed"],
         priced_count=counts["priced"],

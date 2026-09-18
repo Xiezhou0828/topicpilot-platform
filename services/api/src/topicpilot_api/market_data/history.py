@@ -49,10 +49,17 @@ COVERED_NO_TRADE_STATUS_CODES: Final = frozenset(
 
 
 class HistoricalProviderError(ValueError):
-    """A bounded, machine-readable historical-provider failure."""
+    """A bounded, machine-readable historical-provider failure.
 
-    def __init__(self, code: str, message: str) -> None:
+    ``code`` remains the persisted compatibility code.  ``classification``
+    is an optional operational diagnosis so a legacy code such as
+    ``INVALID_PAYLOAD`` or ``PROVIDER_DATE_MISMATCH`` does not erase the first
+    failing layer in the live run metadata.
+    """
+
+    def __init__(self, code: str, message: str, *, classification: str | None = None) -> None:
         self.code = code
+        self.classification = classification
         super().__init__(f"{code}: {message}")
 
 

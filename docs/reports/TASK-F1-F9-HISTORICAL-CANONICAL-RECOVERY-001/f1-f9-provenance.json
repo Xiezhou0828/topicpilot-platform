@@ -1,0 +1,156 @@
+{
+  "task_id": "TASK-F1-F9-HISTORICAL-CANONICAL-RECOVERY-001",
+  "purpose": "Repository-only historical archaeology and canonical disposition mapping for the F1-F9 arc.",
+  "execution": {
+    "isolated_worktree": "E:\\topicpilot-platform-f1-f9-historical-recovery-001",
+    "task_branch": "codex/task-f1-f9-historical-recovery-001",
+    "task_base_sha": "beb5b3d850bb8def248239f829abe39bcd24979b",
+    "governed_baseline": "origin/main@b2eaf33e0ec5f9bb72d936eb0165eb93dac3fa40",
+    "development_integration_base": "a8357d46194f9669709f184949270e20a7a2546c",
+    "canonical_repository": "C:\\Users\\acer\\Desktop\\題材領航\\topicpilot-platform",
+    "owner_checkout_policy": "read_only_dirty_evidence_only",
+    "production_or_push_actions": "none"
+  },
+  "historical_source": {
+    "aggregate_snapshot_sha": "1501468da8b7b4d8338ae1c2da23996126ee918c",
+    "aggregate_snapshot_parent": "12b0c7c97031f223fe61c6ffe9de016852214fc5",
+    "aggregate_snapshot_subject": "release(today): commercial investor market view",
+    "aggregate_snapshot_date": "2026-09-12T23:33:54+08:00",
+    "reachable_from": [
+      "origin/codex/today-commercial-investor-release-20260912@569d2b4d5f4b94c2ab403a440e8b4b02c2fd2586",
+      "origin/codex/today-production-convergence-20260913@bf68cc8bf0a4432d7623db43f42e9219c94d7b6b"
+    ],
+    "not_ancestor_of": [
+      "origin/main@b2eaf33e0ec5f9bb72d936eb0165eb93dac3fa40",
+      "codex/gov-003-agentic-parallel-development-runtime-20260914@beb5b3d850bb8def248239f829abe39bcd24979b",
+      "development_integration_base@a8357d46194f9669709f184949270e20a7a2546c"
+    ],
+    "later_development_ref": "5901437ba55661dfee726ea867286e2289541439 (origin/main is its ancestor; it is not origin/main or Production)",
+    "interpretation": "Best reachable aggregate evidence snapshot, not six independent task commits and not current canonical code."
+  },
+  "item_evidence": {
+    "F1": {
+      "status": "UNKNOWN",
+      "report_paths": [],
+      "path_search": "no F1 report or F1-specific path in reachable refs",
+      "message_search": "no TASK-F1, TASK-FE-F1, TASK=F1, or functional alias hit",
+      "implementation_sha": "UNKNOWN",
+      "governance_sha": "UNKNOWN",
+      "production": "UNKNOWN",
+      "tests": "UNKNOWN"
+    },
+    "F2": {
+      "status": "UNKNOWN",
+      "report_paths": [],
+      "path_search": "no F2 report or F2-specific path in reachable refs",
+      "message_search": "no TASK-F2, TASK-FE-F2, TASK=F2, or functional alias hit",
+      "implementation_sha": "UNKNOWN",
+      "governance_sha": "UNKNOWN",
+      "production": "UNKNOWN",
+      "tests": "UNKNOWN"
+    },
+    "F3": {
+      "status": "UNKNOWN",
+      "report_paths": [],
+      "path_search": "no F3 report or F3-specific path in reachable refs",
+      "message_search": "no TASK-F3, TASK-FE-F3, TASK=F3, or functional alias hit",
+      "implementation_sha": "UNKNOWN",
+      "governance_sha": "UNKNOWN",
+      "production": "UNKNOWN",
+      "tests": "UNKNOWN"
+    },
+    "F4": {
+      "status": "BRANCH_ONLY",
+      "report_path": "docs/reports/TASK-FE-F4-TODAY-OFFICIAL-MARKET-FIELDS-CONSUMER-20260909/formal-closure-report.md",
+      "report_snapshot_sha": "1501468da8b7b4d8338ae1c2da23996126ee918c",
+      "reported_before_sha": "b8f854db08de379c6d9b6eba27575fc4afd5cc45",
+      "reported_after_sha": "NOT_RECOVERABLE_REPORT_SELF_REFERENCE",
+      "implementation_sha": "1501468da8b7b4d8338ae1c2da23996126ee918c (aggregate snapshot only)",
+      "governance_sha": "1501468da8b7b4d8338ae1c2da23996126ee918c (historical report snapshot)",
+      "message": "feat(today): connect official market fields",
+      "tests": "historical report: frontend 182, focused Today 17, backend Today 7 plus one skipped Postgres, API client 4, tsc/build/diff pass",
+      "production": "DEVELOPMENT_ONLY; production pending A10; no push/merge/deploy"
+    },
+    "F5": {
+      "status": "BRANCH_ONLY",
+      "report_path": "docs/reports/TASK-FE-F5-COMMERCIAL-STATE-SEMANTICS-20260909/formal-closure-report.md",
+      "report_snapshot_sha": "1501468da8b7b4d8338ae1c2da23996126ee918c",
+      "reported_before_sha": "1fec0260c2e0fa2b3e4b9592294dc5e34281d5f5",
+      "reported_after_sha": "NOT_RECOVERABLE_REPORT_SELF_REFERENCE",
+      "implementation_sha": "1501468da8b7b4d8338ae1c2da23996126ee918c (aggregate snapshot only)",
+      "governance_sha": "1501468da8b7b4d8338ae1c2da23996126ee918c (historical report snapshot)",
+      "message": "refactor(ui): unify commercial data states",
+      "tests": "historical report: frontend 193, focused 47, API client 4, tsc/build/diff pass",
+      "production": "DEVELOPMENT_ONLY; no push/merge/deploy"
+    },
+    "F6": {
+      "status": "BRANCH_ONLY",
+      "report_path": "docs/reports/TASK-FE-F6-STOCK-FORMAL-READ-VIEW-UNIFICATION-20260909/formal-closure-report.md",
+      "report_snapshot_sha": "1501468da8b7b4d8338ae1c2da23996126ee918c",
+      "reported_before_sha": "09bc660e6a660afff2ac86076a0e42c6ea8e01c1",
+      "reported_after_sha": "NOT_RECOVERABLE_REPORT_SELF_REFERENCE",
+      "implementation_sha": "1501468da8b7b4d8338ae1c2da23996126ee918c (aggregate snapshot only)",
+      "governance_sha": "1501468da8b7b4d8338ae1c2da23996126ee918c (historical report snapshot)",
+      "message": "feat(stocks): unify formal read view",
+      "tests": "historical report: focused Stock 47, frontend 190, backend EOD 13 plus five skipped Postgres, API client 4, tsc/build/diff pass",
+      "production": "DEVELOPMENT_ONLY; no production validation; no push/merge/deploy"
+    },
+    "F7": {
+      "status": "BRANCH_ONLY",
+      "report_path": "docs/reports/TASK-FE-F7-STOCK-FORMAL-TECHNICAL-EVIDENCE-CONSUMER-20260909/formal-closure-report.md",
+      "report_snapshot_sha": "1501468da8b7b4d8338ae1c2da23996126ee918c",
+      "reported_before_sha": "1e8baf6d99c2c960eda7490de345a6b34d1393fc",
+      "reported_after_sha": "NOT_RECOVERABLE_REPORT_SELF_REFERENCE",
+      "implementation_sha": "1501468da8b7b4d8338ae1c2da23996126ee918c (aggregate snapshot only)",
+      "governance_sha": "1501468da8b7b4d8338ae1c2da23996126ee918c (historical report snapshot)",
+      "message": "feat(stocks): connect formal technical evidence",
+      "technical_indicator_ids": ["MA5", "MA10", "MA20", "MA60", "DISTANCE_TO_MA20", "RAW_CLOSE_RETURN_5D", "RAW_CLOSE_RETURN_20D", "VOLUME_MA5", "VOLUME_MA20", "VOLUME_RATIO_20", "RSI14", "MACD_12_26_9", "MACD_SIGNAL_12_26_9", "MACD_HISTOGRAM_12_26_9"],
+      "tests": "historical report: focused 52, clean frontend 195, dirty frontend 198, backend technical 33, API client 4, tsc/build/diff pass",
+      "production": "DEVELOPMENT_ONLY; no production validation; no push/merge/deploy"
+    },
+    "F8": {
+      "status": "BRANCH_ONLY",
+      "report_path": "docs/reports/TASK-FE-F8-COMMERCIAL-UX-NAVIGATION-CLOSURE-20260909/formal-closure-report.md",
+      "report_snapshot_sha": "1501468da8b7b4d8338ae1c2da23996126ee918c",
+      "reported_before_sha": "e814e78780fce303ab9d823ecc51dcf2bac9de0c",
+      "reported_after_sha": "NOT_RECOVERABLE_REPORT_SELF_REFERENCE",
+      "implementation_sha": "1501468da8b7b4d8338ae1c2da23996126ee918c (aggregate snapshot only)",
+      "governance_sha": "1501468da8b7b4d8338ae1c2da23996126ee918c (historical report snapshot)",
+      "message": "refactor(ui): close commercial navigation ux",
+      "tests": "historical report: clean frontend 201, dirty frontend 204, tsc/build/diff pass",
+      "production": "DEVELOPMENT_ONLY; no production validation; no push/merge/deploy"
+    },
+    "F9": {
+      "status": "BRANCH_ONLY_BLOCKED",
+      "report_path": "docs/reports/TASK-FE-F9-TRUTHFUL-READONLY-COMMERCIAL-BETA-INTEGRATION-CLOSURE-20260909/formal-closure-report.md",
+      "report_snapshot_sha": "1501468da8b7b4d8338ae1c2da23996126ee918c",
+      "reported_before_sha": "909c7600001e43e17f216cd8fed51ebda94805b3",
+      "reported_after_sha": "NOT_RECOVERABLE_REPORT_SELF_REFERENCE",
+      "implementation_sha": "1501468da8b7b4d8338ae1c2da23996126ee918c (aggregate snapshot only)",
+      "governance_sha": "1501468da8b7b4d8338ae1c2da23996126ee918c (historical report snapshot)",
+      "message": "fix(ui): close commercial beta integration",
+      "tests": "historical report: focused 76, clean frontend 202, shared frontend 205, backend Home/Stock 45, API client 4, tsc/build/diff pass; browser smoke preserved",
+      "production": "DEVELOPMENT_ONLY; blocked before production; no push/merge/deploy",
+      "blocker": "Historical frontend called topic catalog routes that were absent from the exact committed baseline; the apparent provider existed only in the uncommitted dirty tree."
+    }
+  },
+  "search_method": {
+    "refs": "all local and remote refs available in the nested repository",
+    "history": "full-history path logs, subject/grep searches, pickaxe searches, branch containment, ancestor checks",
+    "aliases": ["TASK-F1", "TASK-F2", "TASK-F3", "TASK-FE-F1", "TASK-FE-F2", "TASK-FE-F3", "Today", "commercial state", "stock formal read", "technical evidence", "commercial navigation", "read-only commercial beta"],
+    "negative_result_limit": "No evidence in currently reachable repository objects does not prove that F1-F3 never existed."
+  },
+  "disposition": {
+    "F1": "UNKNOWN",
+    "F2": "UNKNOWN",
+    "F3": "UNKNOWN",
+    "F4": "MERGE",
+    "F5": "MERGE",
+    "F6": "MERGE",
+    "F7": "MERGE",
+    "F8": "MERGE",
+    "F9": "MERGE",
+    "production_migration": "NONE",
+    "new_product_code": "NONE"
+  }
+}

@@ -1,0 +1,184 @@
+{
+  "task_id": "TASK-INT-FUND-A-MARKET-FLOW-CANONICAL-RECONCILIATION-001",
+  "role": "INTEGRATION_OWNER",
+  "mode": "ONE_SHOT_FUND_A_CANONICAL_RECONCILIATION_VALIDATION_AND_CLOSEOUT",
+  "status": "INTEGRATED",
+  "timestamp": "2026-09-17",
+  "previous_governed_base_sha": "277a49382240503fcd0767e9cfb17e2fd974e8a3",
+  "current_governed_base_sha": "07b7a73e7cfd070aae39a2d61240bf5050e19e4a",
+  "current_canonical_base_sha": "07b7a73e7cfd070aae39a2d61240bf5050e19e4a",
+  "current_canonical_head_before_task": "07b7a73e7cfd070aae39a2d61240bf5050e19e4a",
+  "canonical_fund_a_integration_sha": "589d33ed9389a418183f1505e221cd62217e3ef4",
+  "integration_record_sha": "FINAL_GOVERNANCE_COMMIT",
+  "source_evidence": {
+    "source_task": "TASK-FUND-A-MARKET-FLOW-FORMAL-CAPABILITY-001",
+    "source_worktree": "E:\\topicpilot-worktrees\\fund-a-market-flow-formal-capability-001",
+    "source_branch": "codex/task-fund-a-market-flow-formal-capability-001",
+    "source_final_sha": "1cd5af2f55f7abc715e0d23ee09721767ab662d4",
+    "source_base_sha": "07b7a73e7cfd070aae39a2d61240bf5050e19e4a",
+    "source_parent_match": true,
+    "source_status": "READY_FOR_INTEGRATION",
+    "source_canonicalization_before_task": "NOT_CANONICALIZED",
+    "implementation_sha": "b062df38c6cd0bf6f238b849d2ff2600f5c63411",
+    "governance_closeout_sha": "a5e54a9d73e57a466325417151beb895f55d1229",
+    "provenance_pin_sha": "ee95deae125c19d9d7c2e9970d18fb07365b70df"
+  },
+  "integration_commits": [
+    {
+      "sha": "b959c99a2b5f985d910f9ec1420ba9a2432d23a9",
+      "source_sha": "b062df38c6cd0bf6f238b849d2ff2600f5c63411",
+      "scope": "FUND_A_IMPLEMENTATION_REPLAY_WITH_EXPLICIT_PROVENANCE"
+    },
+    {
+      "sha": "589d33ed9389a418183f1505e221cd62217e3ef4",
+      "source_sha": null,
+      "scope": "CANONICAL_MIGRATION_CONTRACT_AND_BASELINE_FAILURE_RECONCILIATION"
+    }
+  ],
+  "path_partition": {
+    "fund_a_owned": [
+      "services/api/src/topicpilot_api/market_data/institutional_flow.py",
+      "services/api/src/topicpilot_api/market_data/institutional_flow_persistence.py",
+      "services/api/src/topicpilot_api/orm/institutional_flow.py",
+      "services/api/alembic/versions/0041_task_fund_a_market_flow_formal_capability.py",
+      "services/api/src/topicpilot_api/market_institutional_flow_api.py",
+      "services/api/tests/fixtures/institutional_flow/**",
+      "services/api/tests/test_institutional_flow.py",
+      "services/api/tests/test_market_institutional_flow_api.py"
+    ],
+    "shared_contract": [
+      "services/api/src/topicpilot_api/schemas.py",
+      "services/api/src/topicpilot_api/main.py",
+      "services/api/src/topicpilot_api/market_data/__init__.py",
+      "services/api/src/topicpilot_api/orm/__init__.py",
+      "packages/api-client/**",
+      "apps/web/app/lib/generated-api.d.ts"
+    ],
+    "today_consumer": [
+      "services/api/src/topicpilot_api/home_v2_publication.py",
+      "apps/web/app/components/v2/TodayMarketPage.tsx",
+      "apps/web/tests/today-market-institutional-flow.test.mjs"
+    ],
+    "governance_and_evidence": [
+      "docs/governance/BASELINE_FAILURE_REGISTRY.yaml",
+      "docs/governance/tasks/TASK-FUND-A-MARKET-FLOW-FORMAL-CAPABILITY-001.yaml",
+      "docs/governance/provenance/TASK-FUND-A-MARKET-FLOW-FORMAL-CAPABILITY-001.json",
+      "docs/reports/TASK-FUND-A-MARKET-FLOW-FORMAL-CAPABILITY-001/**",
+      "docs/governance/tasks/TASK-INT-FUND-A-MARKET-FLOW-CANONICAL-RECONCILIATION-001.yaml",
+      "docs/governance/provenance/TASK-INT-FUND-A-MARKET-FLOW-CANONICAL-RECONCILIATION-001.json",
+      "docs/reports/TASK-INT-FUND-A-MARKET-FLOW-CANONICAL-RECONCILIATION-001-20260917.md"
+    ],
+    "integration_test_reconciliation": [
+      "services/api/tests/test_canonical_observation_implementation.py",
+      "services/api/tests/test_v2_architecture_freeze.py"
+    ],
+    "unauthorized": [],
+    "unknown": []
+  },
+  "ownership": {
+    "ownership_transferred": false,
+    "source_owner": "FUND_A",
+    "integration_owner": "INTEGRATION",
+    "today_owner_preserved": true,
+    "fund_b_owner_preserved": true,
+    "daily_close_owner_preserved": true,
+    "b2_owner_preserved": true,
+    "opportunity_owner_preserved": true,
+    "c_drive_owner_checkout_mutated": false
+  },
+  "semantic_reconciliation": {
+    "source_parent_equals_current_base": true,
+    "identical": [],
+    "semantically_equivalent": [
+      "Generated OpenAPI and client artifacts remain synchronized with the additive institutional-flow route and schema.",
+      "Today Market consumes the formal Home marketOverview.institutionFlows contract as a render-only surface."
+    ],
+    "missing": [],
+    "superseded": [],
+    "conflicting": [],
+    "minimal_contract_updates": [
+      "Updated the canonical migration-head expectation from 0040 to the new 0041 FUND-A migration.",
+      "Registered market_institutional_flow_daily in the implemented V2 table freeze test."
+    ],
+    "policy_changed": false
+  },
+  "market_flow_contract": {
+    "markets": ["TPE", "TWO"],
+    "tpe_provider": "Official TWSE fund.BFI82U",
+    "two_provider": "Official TPEx tpex_3insti_summary",
+    "unit": "TWD",
+    "scale": 0,
+    "missing_numeric_values_become_zero": false,
+    "availability_states_explicit": true,
+    "freshness_states_explicit": true,
+    "source_as_of_preserved": true,
+    "source_identity_preserved": true,
+    "status_reason_preserved": true
+  },
+  "today_signals": {
+    "evidence_integration": "INTEGRATED",
+    "existing_signal": "INSTITUTION_PRICE_DIVERGENCE",
+    "scoring_changed": false,
+    "ranking_changed": false,
+    "threshold_changed": false,
+    "risk_policy_changed": false
+  },
+  "concurrency": {
+    "fund_b": {"status": "NONE", "collision": false, "waited": false},
+    "daily_close": {"status": "NONE", "collision": false, "runtime_changed": false},
+    "b2": {"status": "NONE", "collision": false, "authority_changed": false},
+    "opportunity": {"status": "NONE", "collision": false, "policy_changed": false}
+  },
+  "migration_boundary": {
+    "0040_untouched": true,
+    "0041_added": true,
+    "0041_down_revision": "0040_task_a10_recovery_checkpoint_observability",
+    "historical_0040_reintroduced": false,
+    "execution": "NONE",
+    "production_database_contact": false
+  },
+  "validation": {
+    "source_integration_gate": "PASS",
+    "focused_backend": "26 passed, 1 warning",
+    "backend_full_pre": "734 passed, 14 registered baseline failures, 59 skipped",
+    "backend_full_post": "744 passed, 14 registered baseline failures, 59 skipped",
+    "executed_tests_pre": 748,
+    "executed_tests_post": 758,
+    "executed_test_delta": 10,
+    "executed_test_delta_reason": "FUND-A added coverage",
+    "api_client": "5 passed",
+    "web": "165 passed",
+    "web_build": "PASS",
+    "web_lint": "0 errors, 2 existing warnings",
+    "openapi_drift": "PASS",
+    "generated_client_drift": "PASS",
+    "ruff_check_changed_fund_a_files": "PASS",
+    "ruff_format_fund_a_new_files": "PASS",
+    "compileall": "PASS",
+    "git_diff_check": "PASS",
+    "conflict_secret_scan": "PASS",
+    "postgres_roundtrip": "NOT_RUN_NO_TEST_DATABASE_URL_OR_DATABASE_URL",
+    "task_caused_failures": 0,
+    "registered_baseline_failures": 14,
+    "environment_skips": 59,
+    "unknown_failures": 0
+  },
+  "production_boundary": {
+    "status": "NOT_RELEASED",
+    "mutation": false,
+    "migration_execution": false,
+    "deploy": false,
+    "push": false,
+    "scheduler_activation": false,
+    "production_read": false,
+    "production_write": false
+  },
+  "lifecycle": {
+    "before": "READY_FOR_INTEGRATION",
+    "after": "INTEGRATED",
+    "development_series": "CLOSED",
+    "next_allowed_state": "READY_FOR_RELEASE",
+    "owner_decision_required": false,
+    "integration_owner_action_required": false
+  }
+}

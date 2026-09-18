@@ -1,0 +1,31 @@
+{
+  "task_id": "TASK-TOPIC-B2-003F-CANONICAL-PROVENANCE-001",
+  "title": "Topic/B2 003F Canonical Provenance",
+  "status": "READY_FOR_INTEGRATION",
+  "owner_role": "WS1 / B2 owner with integration owner",
+  "workstream": "TOPIC_B2",
+  "base_sha": "bf7f06741bf701ed46a3fb11aed45fa5755af964",
+  "governed_development_base_sha": "a8357d46194f9669709f184949270e20a7a2546c",
+  "branch": "codex/topic-b2-003f-canonical-provenance-001-20260914",
+  "worktree": "E:\\TopicPilot\\worktrees\\b2-003f-prov-001-20260914",
+  "owned_paths": [
+    "docs/reports/PHASE_3_7_003F_PM_FORMULA_APPROVAL_BRIEF.md",
+    "docs/work-orders/PHASE_3_7_003F_PM_FORMULA_APPROVAL.md",
+    "docs/reports/TASK-TOPIC-B2-003F-CANONICAL-PROVENANCE-001-20260914/**",
+    "docs/reports/TASK-TOPIC-B2-003F-CANONICAL-PROVENANCE-001-20260914.md"
+  ],
+  "shared_paths": ["docs/ROADMAP.md", "docs/WORK_ORDERS.md", "docs/DOCUMENTATION_INDEX.md", "PROJECT_CONTEXT.md"],
+  "forbidden_paths": ["services/**", "apps/**", "packages/**", "infra/**", "services/api/alembic/**", "NEXT_TASK", "docs/reports/TASK-003G*", "docs/reports/TASK-003H*"],
+  "dependencies": ["TOPIC-B2-CANONICAL-ARTIFACT-PROVENANCE-AND-PUBLICATION-GATE-001", "TASK-TOPIC-REC-002"],
+  "implementation_commits": ["05c486674378f1c8807375905ba1eedb84dd1b31"],
+  "governance_commits": ["34fb7306378395cd6f9ef1aa83343ec79d9c4404"],
+  "migration_scope": "NONE; canonical provenance and governance artifacts only",
+  "production_scope": "NONE",
+  "owner_decision_required": false,
+  "next_allowed_state": "INTEGRATED",
+  "shared_surface_policy": "EXPLICIT_RECONCILIATION",
+  "dependency_notes": [
+    "Historical source report is COMPLETE for bounded canonical provenance and explicitly does not activate formal publication.",
+    "This manifest registers exact historical implementation and governance commits; READY_FOR_INTEGRATION is not INTEGRATED."
+  ]
+}

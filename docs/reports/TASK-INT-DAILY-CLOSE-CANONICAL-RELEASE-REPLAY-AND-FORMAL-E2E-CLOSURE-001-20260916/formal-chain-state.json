@@ -1,0 +1,14 @@
+{
+  "task_id": "TASK-INT-DAILY-CLOSE-CANONICAL-RELEASE-REPLAY-AND-FORMAL-E2E-CLOSURE-001",
+  "daily_close_e2e": "BLOCKED",
+  "A10_POST_CLOSE": "BLOCKED_PENDING_FORMAL_REPLAY_READBACK",
+  "A9_FORMAL_WRITER": "BLOCKED",
+  "B2_FORMAL_POLICY_AUTHORITY": "READY_POLICY_ONLY",
+  "B2_FORMAL_DB": "VERIFIED_EVIDENCE_ONLY: 107 leaves, 25 parents, 107 hierarchy edges, 1160 structural roles",
+  "LEADER_SET": "PRESENT_NOT_FORMAL",
+  "DAILY_STRENGTH": "PARTIAL_BY_DESIGN_FAIL_CLOSED",
+  "SCORE_GRADE": "APPROVED_VERIFIED",
+  "LIFECYCLE": "BLOCKED_NOT_FORMALLY_PUBLISHED",
+  "B2_FORMAL_PUBLICATION": "BLOCKED",
+  "evidence_boundary": "B2 counts and policy are preserved from prior governed readback; no new Production publication was activated."
+}

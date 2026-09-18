@@ -48,10 +48,9 @@ test("signal lamps retain positive, negative, neutral and missing states", async
     assert.match(lamps, new RegExp(`"${state}"`));
     assert.match(css, new RegExp(`\\.signalLamp\\.${state}`));
   }
-  assert.match(detail, /stockDetailGrid/);
-  assert.match(detail, /Evidence summary/);
-  assert.match(detail, /trigger-/);
-  assert.match(detail, /dataGapText/);
+  assert.match(detail, /StockEncyclopediaDrawer/);
+  assert.match(detail, /get\("market"\)/);
+  assert.doesNotMatch(detail, /useSnapshot|evaluateTriggerState|stockDetailGrid|trigger-/);
 });
 
 test("V2 Topic Overview has explicit unavailable and Preview recovery states", async () => {

@@ -1,0 +1,22 @@
+{
+  "task_id": "TASK-TODAY-SIGNALS-CANONICAL-PROMOTION-003",
+  "title": "Today Signals Canonical Promotion",
+  "status": "PLANNED",
+  "owner_role": "Today FE/BE owner with integration owner",
+  "workstream": "TODAY",
+  "base_sha": "a8357d46194f9669709f184949270e20a7a2546c",
+  "branch": "codex/task-today-signals-canonical-promotion-003-20260914",
+  "worktree": "E:\\topicpilot-worktrees\\today-signals-canonical-promotion-003",
+  "owned_paths": ["services/api/src/topicpilot_api/home_v2_publication.py", "services/api/tests/test_home_v2_publication.py", "docs/reports/TASK-TODAY-SIGNALS-*.md"],
+  "shared_paths": ["services/api/src/topicpilot_api/schemas.py", "packages/api-client/**", "apps/web/app/lib/generated-api.d.ts"],
+  "forbidden_paths": ["services/api/alembic/**", "services/api/src/topicpilot_api/live/**", "services/api/src/topicpilot_api/topic_engine/**", "services/api/src/topicpilot_api/opportunity*.py", "apps/web/app/components/**", ".github/workflows/**"],
+  "dependencies": ["TASK-TODAY-SIGNALS-CANONICAL-RECONCILIATION-002"],
+  "implementation_commits": ["e4d675453aa03c51bd1c4e198ee3b7cb6742657f"],
+  "governance_commits": [],
+  "migration_scope": "NONE",
+  "production_scope": "NONE",
+  "owner_decision_required": false,
+  "next_allowed_state": "IN_PROGRESS",
+  "shared_surface_policy": "INTEGRATION_OWNER_ONLY",
+  "dependency_notes": ["Dry-run metadata only; do not start automatically."]
+}

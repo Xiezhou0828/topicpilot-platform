@@ -13,6 +13,7 @@ from .collector import LiveCollector
 from .config import LiveRuntimeConfig
 from .logging import log_event
 from .session import MarketSessionClock, SessionState
+from .transaction import SessionRecoveryError, recover_session
 
 
 class LiveScheduler:
@@ -49,7 +50,7 @@ class LiveScheduler:
         if status.state == SessionState.OPEN:
             return "INTRADAY"
         local = status.local_time
-        if self.post_close_start <= local.time():
+        if self.post_close_start <= local.time() and local.weekday() < 5:
             return "POST_CLOSE"
         return "WAIT"
 
@@ -83,27 +84,22 @@ class LiveScheduler:
                         worker_started = False
                     local_date = self.session_clock.status(self.clock()).local_time.date()
                     if completed_post_close_date != local_date:
-                        log_event(
-                            self.logger,
-                            "post_close_scheduled_trigger",
-                            schedulerDate=local_date.isoformat(),
-                            timezone=self.config.timezone_name,
-                            postCloseStart=self.config.post_close_start,
-                            executionMode="SCHEDULED",
-                        )
+                        post_close_ok = True
                         try:
                             result = self.run_once("POST_CLOSE", enforce_session=False)
                         except Exception as exc:
-                            error_code = getattr(exc, "code", type(exc).__name__)
+                            post_close_ok = self._contain_job_failure(
+                                "POST_CLOSE",
+                                exc,
+                                run_id=getattr(exc, "run_id", None),
+                            )
                             log_event(
                                 self.logger,
                                 "post_close_run_failed",
-                                errorCode=error_code,
+                                errorCode=getattr(exc, "code", type(exc).__name__),
+                                retryDecision="RETRY_SCHEDULED",
                             )
-                            # Keep the worker alive after a run-level failure.
-                            # A restarted process must inspect the existing
-                            # date-keyed run before it can start another one.
-                        else:
+                        if post_close_ok:
                             run_status = getattr(result, "status", None)
                             log_event(
                                 self.logger,
@@ -119,8 +115,9 @@ class LiveScheduler:
                                 executionMode="SCHEDULED",
                             )
                             if result is None or run_status in {None, "SUCCESS", "MARKET_CLOSED"}:
-                                self._refresh_tracking()
-                                completed_post_close_date = local_date
+                                tracking_ok = self._run_tracking_refresh_with_containment()
+                                if tracking_ok:
+                                    completed_post_close_date = local_date
                             else:
                                 log_event(
                                     self.logger,
@@ -133,9 +130,13 @@ class LiveScheduler:
                         worker_started = True
                     local_date = self.session_clock.status(self.clock()).local_time.date()
                     if tracking_refresh_date != local_date:
-                        self._refresh_tracking()
-                        tracking_refresh_date = local_date
-                    self.run_once("INTRADAY")
+                        tracking_ok = self._run_tracking_refresh_with_containment()
+                        if tracking_ok:
+                            tracking_refresh_date = local_date
+                    else:
+                        tracking_ok = True
+                    if tracking_ok:
+                        self._run_intraday_with_containment()
                 else:
                     if worker_started:
                         self.worker.stop()
@@ -156,6 +157,55 @@ class LiveScheduler:
         if callable(commit):
             commit()
         log_event(self.logger, "tracking_universe_refreshed", instrumentCount=count)
+
+    def _run_tracking_refresh_with_containment(self) -> bool:
+        try:
+            self._refresh_tracking()
+        except Exception as exc:
+            return self._contain_job_failure("TRACKING_REFRESH", exc)
+        return True
+
+    def _run_intraday_with_containment(self) -> bool:
+        try:
+            self.run_once("INTRADAY")
+        except Exception as exc:
+            return self._contain_job_failure("INTRADAY", exc)
+        return True
+
+    def _contain_job_failure(
+        self,
+        job_name: str,
+        exc: Exception,
+        *,
+        run_id: object | None = None,
+    ) -> bool:
+        session = getattr(self.collector.repository, "session", None)
+        if isinstance(exc, SessionRecoveryError):
+            recovery = exc.recovery
+        else:
+            rollback = getattr(self.collector.repository, "rollback", None)
+            recovery = recover_session(
+                session,
+                job_name=job_name,
+                original_exception=exc,
+                logger=self.logger,
+                run_id=run_id,
+                rollback=rollback if callable(rollback) else None,
+            )
+        log_event(
+            self.logger,
+            "live_job_failed",
+            jobName=job_name,
+            exceptionType=type(exc).__name__,
+            failureState="FAILED",
+            retryDecision="RETRY_SCHEDULED",
+            **recovery.to_dict(),
+        )
+        if not recovery.session_usable:
+            if isinstance(exc, SessionRecoveryError):
+                raise exc
+            raise SessionRecoveryError(job_name, exc, recovery) from exc
+        return False
 
 
 __all__ = ["LiveScheduler"]

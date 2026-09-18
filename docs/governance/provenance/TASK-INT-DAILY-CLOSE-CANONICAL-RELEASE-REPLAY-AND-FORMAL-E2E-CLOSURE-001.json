@@ -1,0 +1,74 @@
+{
+  "task_id": "TASK-INT-DAILY-CLOSE-CANONICAL-RELEASE-REPLAY-AND-FORMAL-E2E-CLOSURE-001",
+  "role": "INTEGRATION_RELEASE_RUNTIME_AND_FORMAL_E2E_OWNER",
+  "mode": "ONE_SHOT_CONTINUATION_CANONICAL_INTEGRATION_RELEASE_REPLAY_FORMAL_E2E_AND_OPPORTUNITY_READINESS",
+  "result": "COMPLETE_WITH_EXTERNAL_GATE",
+  "execution": {
+    "worktree": "E:\\topicpilot-worktrees\\int-daily-close-canonical-release-replay-formal-e2e-20260916",
+    "branch": "codex/task-int-daily-close-canonical-release-replay-formal-e2e-001-20260916",
+    "base_sha": "277a49382240503fcd0767e9cfb17e2fd974e8a3",
+    "source_remediation_sha": "3e602119284dd7abe0779a107e5f004052bc0ac1",
+    "canonical_integration_sha": "2cfd954ee68e8bb53571271870dbc99fabc81360",
+    "governance_sha": "5c90702e1dba575c001d35c8d9dfd64e2437ef81",
+    "final_closeout_sha": "5c90702e1dba575c001d35c8d9dfd64e2437ef81"
+  },
+  "canonical": {
+    "integration": "PASS",
+    "method": "CLEAN_CHERRY_PICK",
+    "collision": "NONE",
+    "protected_c_owner_head": "02d3086183d1c582bb6c66c4c316340ccce3fa97",
+    "protected_c_owner_status_entries": 152,
+    "protected_c_owner_mutation": false,
+    "promotion_to_protected_c": "PENDING_OWNER_CONTROLLED_ACTION"
+  },
+  "release": {
+    "api_sha": "bf68cc8bf0a4432d7623db43f42e9219c94d7b6b",
+    "web_sha": "UNKNOWN_EXACT_SHA",
+    "worker_sha": "UNKNOWN_EXACT_SHA",
+    "db_revision": "0040_task_a10_recovery_checkpoint_observability",
+    "provenance": "PARTIAL",
+    "gate": "BLOCKED_PROVENANCE",
+    "deployment": false,
+    "canary": "NOT_RUN",
+    "operator_authority": false
+  },
+  "replay": {
+    "target_trading_date": "2026-09-15",
+    "required": true,
+    "performed": false,
+    "status": "BLOCKED_PENDING_EXACT_DEPLOYMENT_CANARY_AND_OPERATOR_AUTHORITY",
+    "production_mutation": false
+  },
+  "formal_chain": {
+    "daily_close_completeness": "NOT_VERIFIED",
+    "daily_close_freshness": "NOT_VERIFIED",
+    "daily_close_e2e": "BLOCKED",
+    "A10_POST_CLOSE": "BLOCKED",
+    "A9_FORMAL_WRITER": "BLOCKED",
+    "B2_FORMAL_POLICY_AUTHORITY": "READY_POLICY_ONLY",
+    "B2_FORMAL_PUBLICATION": "BLOCKED",
+    "opportunity_formal_input_readiness": "BLOCKED",
+    "opportunity_daily_recommendation_ready": "NO"
+  },
+  "validation": {
+    "focused_remediation": "124 passed",
+    "formal_and_opportunity": "132 passed; 1 registered TOPIC_B2 baseline failure",
+    "task_caused_failures": 0,
+    "registered_baseline_failures": 9,
+    "environment_failures": "1 corrected initial PYTHONPATH collection issue",
+    "unknown_failures": 0,
+    "ruff": "PASS",
+    "format": "PASS",
+    "compile": "PASS",
+    "diff": "PASS"
+  },
+  "safety": {
+    "migration_execution": "NONE",
+    "production_mutation": "NONE",
+    "push": "NO",
+    "FUND_A_collision": "NONE",
+    "Topic_UX_collision": "NONE",
+    "project_memory_recovery_test": "PASS"
+  },
+  "next_governed_action": "Integration owner promotes 2cfd954 into the protected canonical owner checkout or approved canonical ref; release owner recovers exact Web/Worker provenance and authorizes exact-SHA deployment/canary; operator then performs only the 2026-09-15 replay and formal readback."
+}

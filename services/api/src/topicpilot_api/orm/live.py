@@ -124,4 +124,44 @@ class LiveCollectorAttempt(Base, IdentityMixin, CreatedAtMixin):
     payload_hash: Mapped[str | None] = mapped_column(String(128))
 
 
-__all__ = ["LiveCollectorAttempt", "LiveCollectorRun", "LiveTrackingUniverse"]
+class LiveCollectorCheckpoint(Base, IdentityMixin, CreatedAtMixin):
+    """Immutable batch checkpoint events for resumable official captures."""
+
+    __tablename__ = "live_collector_checkpoints"
+    __table_args__ = (
+        CheckConstraint(
+            "status IN ('IN_PROGRESS', 'COMPLETED', 'PARTIAL', 'FAILED')",
+            name="ck_live_collector_checkpoints_status",
+        ),
+        UniqueConstraint(
+            "run_id",
+            "batch_key",
+            "attempt_number",
+            name="uq_live_collector_checkpoints_event",
+        ),
+        Index("ix_live_collector_checkpoints_run_batch", "run_id", "batch_number"),
+    )
+    run_id: Mapped[UUID] = mapped_column(
+        ForeignKey("topicpilot.live_collector_runs.id", ondelete="RESTRICT"), nullable=False
+    )
+    batch_number: Mapped[int] = mapped_column(Integer, nullable=False)
+    batch_key: Mapped[str] = mapped_column(String(128), nullable=False)
+    attempt_number: Mapped[int] = mapped_column(Integer, nullable=False)
+    status: Mapped[str] = mapped_column(String(16), nullable=False)
+    processed_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    succeeded_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    failed_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    skipped_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    retry_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    provider_request_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    provider_failure_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    checkpoint_hash: Mapped[str] = mapped_column(String(128), nullable=False)
+    metadata_payload: Mapped[dict[str, Any] | None] = mapped_column("metadata", JSONB)
+
+
+__all__ = [
+    "LiveCollectorAttempt",
+    "LiveCollectorCheckpoint",
+    "LiveCollectorRun",
+    "LiveTrackingUniverse",
+]

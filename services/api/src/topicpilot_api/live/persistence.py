@@ -101,14 +101,18 @@ class LiveRepository:
         bind = self.session.get_bind()
         if bind.dialect.name != "postgresql":
             return None
-        previous = self.session.execute(
-            text(
-                """
+        previous = (
+            self.session.execute(
+                text(
+                    """
                 SELECT current_setting('lock_timeout') AS lock_timeout,
                        current_setting('statement_timeout') AS statement_timeout
                 """
+                )
             )
-        ).mappings().one()
+            .mappings()
+            .one()
+        )
         self.session.execute(
             text(
                 """
@@ -265,9 +269,9 @@ class LiveRepository:
                 "moving_average": moving_average,
                 "observation_count": count,
                 "reference_observed_at": row["latest_observed_at"],
-                "as_of_date": row["latest_observed_at"].astimezone(
-                    ZoneInfo(self.config.timezone_name)
-                ).date()
+                "as_of_date": row["latest_observed_at"]
+                .astimezone(ZoneInfo(self.config.timezone_name))
+                .date()
                 if row["latest_observed_at"]
                 else None,
                 "classification_reason": reason,
@@ -601,9 +605,36 @@ def read_live_status(session: Session) -> dict[str, Any]:
             "retryCount": 0,
             "skippedCount": 0,
             "universeCounts": read_live_universe_counts(session),
+            "failureCodes": [],
+            "providerFailureClassifications": {},
+            "providerDiagnostics": {},
+            "providerRequestCount": 0,
             "providerHealth": [],
+            "recoveryProgress": {},
         }
     metadata = run.metadata_payload or {}
+    recovery_progress = metadata.get("recoveryProgress")
+    if not isinstance(recovery_progress, dict):
+        skipped_count = int(metadata.get("skippedCount", 0) or 0)
+        recovery_progress = {
+            "RECOVERY_TOTAL": int(run.requested_count or 0),
+            "RECOVERY_PROCESSED": int(run.success_count or 0)
+            + int(run.failure_count or 0)
+            + skipped_count,
+            "RECOVERY_SUCCEEDED": int(run.success_count or 0),
+            "RECOVERY_FAILED": int(run.failure_count or 0),
+            "RECOVERY_SKIPPED": skipped_count,
+            "CURRENT_BATCH": None,
+            "LAST_COMPLETED_BATCH": None,
+            "LAST_PROGRESS_AT": run.heartbeat_at,
+            "PROVIDER_RETRY_COUNT": int(run.retry_count or 0),
+            "PROVIDER_FAILURE_COUNT": int(run.failure_count or 0) + skipped_count,
+            "PROVIDER_REQUESTS": None,
+            "CHECKPOINT": {
+                "status": "NOT_AVAILABLE",
+                "reason": "LEGACY_RUN_WITHOUT_RECOVERY_CHECKPOINT",
+            },
+        }
     return {
         "status": run.status,
         "lastRun": {
@@ -624,7 +655,14 @@ def read_live_status(session: Session) -> dict[str, Any]:
         "universeCounts": read_live_universe_counts(session),
         "failureCode": run.failure_code,
         "failureMessage": run.failure_message,
+        "failureCodes": metadata.get("failureCodes", []),
         "providerHealth": metadata.get("providerHealth", []),
+        "providerDiagnostics": metadata.get("providerDiagnostics", {}),
+        "recoveryProgress": recovery_progress,
+        "providerFailureClassifications": recovery_progress.get(
+            "PROVIDER_FAILURE_CLASSIFICATIONS", {}
+        ),
+        "providerRequestCount": recovery_progress.get("PROVIDER_REQUESTS", 0),
     }
 
 

@@ -298,6 +298,9 @@ class LiveStatusResponse(ApiModel):
     failure_code: str | None = Field(default=None, alias="failureCode")
     failure_message: str | None = Field(default=None, alias="failureMessage")
     provider_health: list[dict[str, object]] = Field(default_factory=list, alias="providerHealth")
+    recovery_progress: dict[str, Any] = Field(
+        default_factory=dict, alias="recoveryProgress"
+    )
 
 
 class LiveTrackingResponse(ApiModel):
@@ -536,6 +539,13 @@ class StockEodRead(ApiModel):
     volume_source: StockEodSource | None = Field(alias="volumeSource")
     observed_at: datetime | None = Field(alias="observedAt")
     retrieved_at: datetime | None = Field(alias="retrievedAt")
+    availability_reason: str | None = Field(default=None, alias="availabilityReason")
+    availability_evidence_id: str | None = Field(
+        default=None, alias="availabilityEvidenceId"
+    )
+    last_formal_trading_date: date | None = Field(
+        default=None, alias="lastFormalTradingDate"
+    )
     data_status: Literal[
         "AVAILABLE",
         "PARTIAL",
@@ -589,6 +599,192 @@ class StockReadModelPage(ApiModel):
     offset: int
     query: dict[str, Any]
     universe: dict[str, int]
+
+
+StockFlowStatusLiteral = Literal[
+    "OK",
+    "NO_DATA",
+    "NOT_TRADING_DAY",
+    "PROVIDER_UNAVAILABLE",
+    "AUTH_ERROR",
+    "RATE_LIMITED",
+    "SCHEMA_ERROR",
+    "MAPPING_ERROR",
+    "PARTIAL",
+    "STALE",
+    "UNKNOWN",
+]
+StockFlowFreshnessLiteral = Literal["CURRENT", "STALE", "UNKNOWN"]
+
+
+class StockInstitutionalFlowLegRead(ApiModel):
+    buy: Decimal
+    sell: Decimal
+    net: Decimal
+    unit: Literal["SHARES"]
+    scale: int
+
+
+class StockInstitutionalFlowFactRead(ApiModel):
+    instrument_id: str | None = Field(alias="instrumentId")
+    instrument_code: str = Field(alias="instrumentCode")
+    market: Literal["TPE", "TWO"]
+    trading_date: date = Field(alias="tradingDate")
+    foreign: StockInstitutionalFlowLegRead
+    investment_trust: StockInstitutionalFlowLegRead = Field(alias="investmentTrust")
+    dealer: StockInstitutionalFlowLegRead
+    total: StockInstitutionalFlowLegRead
+    foreign_dealer: StockInstitutionalFlowLegRead | None = Field(
+        default=None, alias="foreignDealer"
+    )
+    dealer_self: StockInstitutionalFlowLegRead | None = Field(default=None, alias="dealerSelf")
+    dealer_hedge: StockInstitutionalFlowLegRead | None = Field(default=None, alias="dealerHedge")
+    source_provider: str = Field(alias="sourceProvider")
+    source_identity: str = Field(alias="sourceIdentity")
+    source_dataset: str = Field(alias="sourceDataset")
+    source_endpoint: str = Field(alias="sourceEndpoint")
+    adapter_version: str = Field(alias="adapterVersion")
+    source_as_of: datetime | None = Field(alias="sourceAsOf")
+    retrieved_at: datetime = Field(alias="retrievedAt")
+    status: StockFlowStatusLiteral
+    freshness: StockFlowFreshnessLiteral
+    status_reason: str | None = Field(alias="statusReason")
+    lineage: str
+    response_content_hash: str | None = Field(alias="responseContentHash")
+    unit: Literal["SHARES"]
+    scale: int
+
+
+class StockInstitutionalFlowWindowRead(ApiModel):
+    required_sessions: int = Field(alias="requiredSessions")
+    observed_sessions: int = Field(alias="observedSessions")
+    complete: bool
+    foreign_net: Decimal | None = Field(alias="foreignNet")
+    investment_trust_net: Decimal | None = Field(alias="investmentTrustNet")
+    dealer_net: Decimal | None = Field(alias="dealerNet")
+    total_net: Decimal | None = Field(alias="totalNet")
+    unit: Literal["SHARES"]
+    scale: int
+
+
+class StockInstitutionalFlowStreakRead(ApiModel):
+    direction: Literal["BUY", "SELL", "FLAT", "UNKNOWN"]
+    sessions: int
+    status: str
+
+
+class StockPriceFlowRead(ApiModel):
+    state: str
+    price_direction: Literal["UP", "DOWN", "FLAT", "UNKNOWN"] = Field(alias="priceDirection")
+    flow_direction: Literal["BUY", "SELL", "FLAT", "UNKNOWN"] = Field(alias="flowDirection")
+    price_change: Decimal | None = Field(alias="priceChange")
+    institutional_net: Decimal | None = Field(alias="institutionalNet")
+    price_basis: str = Field(alias="priceBasis")
+    status: str
+
+
+class StockFlowReversalRead(ApiModel):
+    state: Literal["SELL_TO_BUY", "BUY_TO_SELL", "NONE", "UNAVAILABLE"]
+    current_direction: Literal["BUY", "SELL", "FLAT", "UNKNOWN"] = Field(alias="currentDirection")
+    prior_direction: Literal["BUY", "SELL", "FLAT", "UNKNOWN"] = Field(alias="priorDirection")
+    status: str
+
+
+class StockFlowDivergenceRead(ApiModel):
+    state: str
+    condition: str
+    status: str
+
+
+class StockUnusualFlowRead(ApiModel):
+    state: str
+    metric: Decimal | None
+    status: str
+    reason: str
+
+
+class StockLiquidityRelativeRead(ApiModel):
+    state: str
+    ratio: Decimal | None
+    institutional_net: Decimal | None = Field(alias="institutionalNet")
+    daily_volume: Decimal | None = Field(alias="dailyVolume")
+    numerator_unit: Literal["SHARES"] = Field(alias="numeratorUnit")
+    denominator_unit: Literal["SHARES"] = Field(alias="denominatorUnit")
+    status: str
+
+
+class StockInstitutionalFlowSourceRead(ApiModel):
+    provider: str
+    identity: str
+    dataset: str
+    endpoint: str
+    adapter_version: str = Field(alias="adapterVersion")
+
+
+class StockInstitutionalFlowResponse(ApiModel):
+    contract_version: str = Field(alias="contractVersion")
+    instrument_id: str | None = Field(alias="instrumentId")
+    instrument_code: str = Field(alias="instrumentCode")
+    market: Literal["TPE", "TWO"]
+    requested_as_of: date = Field(alias="requestedAsOf")
+    as_of_date: date | None = Field(alias="asOfDate")
+    latest_available_date: date | None = Field(alias="latestAvailableDate")
+    status: StockFlowStatusLiteral
+    freshness: StockFlowFreshnessLiteral
+    status_reason: str | None = Field(alias="statusReason")
+    today: StockInstitutionalFlowFactRead | None
+    sessions: list[StockInstitutionalFlowFactRead]
+    windows: dict[str, StockInstitutionalFlowWindowRead]
+    streaks: dict[str, StockInstitutionalFlowStreakRead]
+    reversal: StockFlowReversalRead
+    price_flow: StockPriceFlowRead = Field(alias="priceFlow")
+    divergence: StockFlowDivergenceRead
+    unusual_flow: StockUnusualFlowRead = Field(alias="unusualFlow")
+    liquidity_relative: StockLiquidityRelativeRead = Field(alias="liquidityRelative")
+    source_as_of: datetime | None = Field(alias="sourceAsOf")
+    source: StockInstitutionalFlowSourceRead | None
+    unit: Literal["SHARES"]
+    scale: int
+
+
+class OpportunityInstitutionalEvidenceAlignmentRead(ApiModel):
+    classification: Literal["POLICY_DECISION_REQUIRED"]
+    status: Literal["NOT_EVALUATED"]
+    selection_effect: Literal["NONE"] = Field(alias="selectionEffect")
+
+
+class OpportunityInstitutionalEvidenceRead(ApiModel):
+    """Optional FUND-C evidence attached to an Opportunity read model."""
+
+    contract_version: Literal["opportunity-institutional-evidence.v1"] = Field(
+        alias="contractVersion"
+    )
+    evidence_type: Literal["STOCK_INSTITUTIONAL_FLOW"] = Field(alias="evidenceType")
+    instrument_id: str | None = Field(alias="instrumentId")
+    symbol: str
+    market: Literal["TPE", "TWO"]
+    requested_date: date = Field(alias="requestedDate")
+    trading_date: date | None = Field(alias="tradingDate")
+    latest_available_session: date | None = Field(alias="latestAvailableSession")
+    availability: StockFlowStatusLiteral
+    freshness: StockFlowFreshnessLiteral
+    status_reason: str = Field(alias="statusReason")
+    source_as_of: datetime | None = Field(alias="sourceAsOf")
+    fetched_at: datetime | None = Field(alias="fetchedAt")
+    today: StockInstitutionalFlowFactRead | None
+    sessions: list[StockInstitutionalFlowFactRead] = Field(default_factory=list)
+    rolling: dict[str, StockInstitutionalFlowWindowRead]
+    streaks: dict[str, StockInstitutionalFlowStreakRead]
+    reversal: StockFlowReversalRead
+    price_flow: StockPriceFlowRead = Field(alias="priceFlow")
+    divergence: StockFlowDivergenceRead
+    unusual_flow: StockUnusualFlowRead = Field(alias="unusualFlow")
+    liquidity_relative: StockLiquidityRelativeRead = Field(alias="liquidityRelative")
+    source: StockInstitutionalFlowSourceRead | None
+    unit: Literal["SHARES"]
+    scale: int
+    alignment: OpportunityInstitutionalEvidenceAlignmentRead
+    canonical_evidence: dict[str, Any] | None = Field(alias="canonicalEvidence")
 
 
 class TopicStatusRead(ApiModel):
@@ -861,6 +1057,9 @@ class OpportunityShadowCard(ApiModel):
     data_status: str = Field(alias="dataStatus")
     source_data_status: str | None = Field(alias="sourceDataStatus", default=None)
     detail: dict[str, Any] | None = None
+    institutional_evidence: OpportunityInstitutionalEvidenceRead | None = Field(
+        default=None, alias="institutionalEvidence"
+    )
 
 
 class OpportunityShadowStrategySection(ApiModel):
@@ -899,6 +1098,201 @@ class OpportunityShadowResponse(ApiModel):
     opportunity: OpportunityShadowCard | None = None
 
 
+class OpportunityProviderLineage(ApiModel):
+    """Lineage for an Opportunity page publication.
+
+    This is intentionally separate from the existing shadow contract.  A
+    formal consumer must be able to identify the provider and point-in-time
+    artifact without borrowing research or fixture metadata.
+    """
+
+    provider: str
+    authority: str
+    contract_version: str = Field(alias="contractVersion")
+    source_artifact_id: str | None = Field(default=None, alias="sourceArtifactId")
+    source_artifact_hash: str | None = Field(default=None, alias="sourceArtifactHash")
+    policy_version: str | None = Field(default=None, alias="policyVersion")
+
+
+class OpportunityLifecycleContextRead(ApiModel):
+    """Backend-published Lifecycle context; the browser never derives it."""
+
+    status: Literal["AVAILABLE", "DEFERRED", "UNAVAILABLE", "FAIL_CLOSED"]
+    current_stage: str | None = Field(default=None, alias="currentStage")
+    stage_entered_at: date | None = Field(default=None, alias="stageEnteredAt")
+    stage_trading_days: int | None = Field(default=None, alias="stageTradingDays")
+    previous_stage: str | None = Field(default=None, alias="previousStage")
+    transition_reason: str | None = Field(default=None, alias="transitionReason")
+    policy_version: str | None = Field(default=None, alias="policyVersion")
+    as_of: date | None = Field(default=None, alias="asOf")
+    data_status: str = Field(alias="dataStatus")
+    publication_status: Literal["FORMAL", "UNAVAILABLE"] = Field(alias="publicationStatus")
+
+
+class OpportunityEvidenceRead(ApiModel):
+    """Provider-owned, bounded reason/evidence context."""
+
+    code: str
+    kind: str
+    detail: str | None = None
+    source: str | None = None
+    status: str | None = None
+
+
+class OpportunityInstrumentRead(ApiModel):
+    """Formal Opportunity instrument identity, independent of shadow schemas."""
+
+    id: str
+    symbol: str
+    name: str
+
+
+class OpportunityTechnicalValidationRead(ApiModel):
+    """Counts/status from one provider; no browser-side arithmetic."""
+
+    status: Literal["AVAILABLE", "EMPTY", "DEFERRED", "UNAVAILABLE", "FAIL_CLOSED"]
+    member_count: int | None = Field(default=None, ge=0, alias="memberCount")
+    evaluated_count: int | None = Field(default=None, ge=0, alias="evaluatedCount")
+    validated_count: int | None = Field(default=None, ge=0, alias="validatedCount")
+    data_status: str = Field(alias="dataStatus")
+    as_of: date | None = Field(default=None, alias="asOf")
+    publication_status: Literal["FORMAL", "UNAVAILABLE"] = Field(alias="publicationStatus")
+
+
+class OpportunitySelectorCandidateRead(ApiModel):
+    """One formally published Selector V1 research candidate."""
+
+    rank: Literal[1, 2]
+    instrument: OpportunityInstrumentRead
+    topic_role: str | None = Field(default=None, alias="topicRole")
+    screen_status: Literal["PASSED"] = Field(alias="screenStatus")
+    evidence_status: Literal["AVAILABLE"] = Field(alias="evidenceStatus")
+    as_of: date = Field(alias="asOf")
+    data_status: str = Field(alias="dataStatus")
+    publication_status: Literal["FORMAL"] = Field(alias="publicationStatus")
+
+
+class OpportunitySelectorV1Read(ApiModel):
+    """Selector V1 publication boundary, not a recommendation contract."""
+
+    contract_version: Literal["selector-v1"] = Field(alias="contractVersion")
+    status: Literal["AVAILABLE", "EMPTY", "DEFERRED", "UNAVAILABLE", "FAIL_CLOSED"]
+    candidate_status: str = Field(alias="candidateStatus")
+    candidates: list[OpportunitySelectorCandidateRead] = Field(default_factory=list)
+    missing_evidence: list[str] = Field(default_factory=list, alias="missingEvidence")
+    as_of: date | None = Field(default=None, alias="asOf")
+    data_status: str = Field(alias="dataStatus")
+    publication_status: Literal["FORMAL", "UNAVAILABLE"] = Field(alias="publicationStatus")
+
+
+class OpportunityTopicIdentityRead(ApiModel):
+    id: str
+    name: str
+    slug: str | None = None
+    topic_type: Literal["LEAF", "PARENT"] = Field(alias="topicType")
+
+
+class OpportunityMemberRead(ApiModel):
+    """One member from the complete topic-member read model."""
+
+    instrument: OpportunityInstrumentRead
+    topic_role: str | None = Field(default=None, alias="topicRole")
+    technical_status: str | None = Field(default=None, alias="technicalStatus")
+    change_pct: float | None = Field(default=None, alias="changePct")
+    as_of: date | None = Field(default=None, alias="asOf")
+    data_status: str = Field(alias="dataStatus")
+    publication_status: Literal["FORMAL", "UNAVAILABLE"] = Field(alias="publicationStatus")
+
+
+class OpportunityMembersRead(ApiModel):
+    """Explicit full-member availability; missing members cannot be hidden."""
+
+    status: Literal["AVAILABLE", "DEFERRED", "UNAVAILABLE", "FAIL_CLOSED"]
+    reason: str | None = None
+    items: list[OpportunityMemberRead] = Field(default_factory=list)
+
+
+class OpportunitySummaryRead(ApiModel):
+    opportunity_id: str = Field(alias="opportunityId")
+    opportunity_key: str = Field(alias="opportunityKey")
+    display_order: int = Field(ge=1, alias="displayOrder")
+    topic: OpportunityTopicIdentityRead
+    opportunity_state: str = Field(alias="opportunityState")
+    display_key: str | None = Field(default=None, alias="displayKey")
+    section_key: str | None = Field(default=None, alias="sectionKey")
+    topic_grade: str | None = Field(default=None, alias="topicGrade")
+    topic_strength: float | None = Field(default=None, alias="topicStrength")
+    summary: str | None = None
+    evidence: list[OpportunityEvidenceRead] = Field(default_factory=list)
+    institutional_evidence: OpportunityInstitutionalEvidenceRead | None = Field(
+        default=None, alias="institutionalEvidence"
+    )
+    lifecycle: OpportunityLifecycleContextRead
+    technical_validation: OpportunityTechnicalValidationRead | None = Field(
+        default=None, alias="technicalValidation"
+    )
+    selector_v1: OpportunitySelectorV1Read = Field(alias="selectorV1")
+    primary_risk: str | None = Field(default=None, alias="primaryRisk")
+    as_of: date | None = Field(default=None, alias="asOf")
+    updated_at: datetime | None = Field(default=None, alias="updatedAt")
+    publication_status: Literal["FORMAL"] = Field(alias="publicationStatus")
+    data_status: str = Field(alias="dataStatus")
+    source_status: Literal["FORMAL_CANONICAL"] = Field(alias="sourceStatus")
+    provider_lineage: OpportunityProviderLineage = Field(alias="providerLineage")
+
+
+class OpportunitySectionRead(ApiModel):
+    """Backend-owned page grouping; never inferred from state or Lifecycle."""
+
+    section_key: str = Field(alias="sectionKey")
+    display_key: str = Field(alias="displayKey")
+    display_order: int = Field(ge=1, alias="displayOrder")
+    opportunity_count: int = Field(ge=0, alias="opportunityCount")
+    opportunities: list[OpportunitySummaryRead] = Field(default_factory=list)
+
+
+class OpportunityPageRead(ApiModel):
+    """Formal Opportunity page read model, separate from Topic Detail."""
+
+    contract_version: Literal["opportunity-page-read.v1"] = Field(alias="contractVersion")
+    state: Literal["READY", "EMPTY", "DEFERRED", "UNAVAILABLE", "ERROR"]
+    publication_status: Literal["FORMAL"] = Field(alias="publicationStatus")
+    data_status: str = Field(alias="dataStatus")
+    source_status: Literal["FORMAL_CANONICAL"] = Field(alias="sourceStatus")
+    as_of: date | None = Field(default=None, alias="asOf")
+    updated_at: datetime | None = Field(default=None, alias="updatedAt")
+    section_mapping_status: Literal["AVAILABLE", "DEFERRED", "UNAVAILABLE"] = Field(
+        alias="sectionMappingStatus"
+    )
+    provider_lineage: OpportunityProviderLineage = Field(alias="providerLineage")
+    sections: list[OpportunitySectionRead] = Field(default_factory=list)
+
+
+class OpportunityDetailRead(OpportunitySummaryRead):
+    lifecycle_evidence: list[OpportunityEvidenceRead] = Field(
+        default_factory=list, alias="lifecycleEvidence"
+    )
+    selector_evidence: list[OpportunityEvidenceRead] = Field(
+        default_factory=list, alias="selectorEvidence"
+    )
+    members: OpportunityMembersRead
+
+
+class OpportunityDetailResponse(ApiModel):
+    """Formal Opportunity detail envelope."""
+
+    contract_version: Literal["opportunity-page-read.v1"] = Field(alias="contractVersion")
+    state: Literal["READY", "EMPTY", "DEFERRED", "UNAVAILABLE", "ERROR"]
+    publication_status: Literal["FORMAL"] = Field(alias="publicationStatus")
+    data_status: str = Field(alias="dataStatus")
+    source_status: Literal["FORMAL_CANONICAL"] = Field(alias="sourceStatus")
+    as_of: date | None = Field(default=None, alias="asOf")
+    updated_at: datetime | None = Field(default=None, alias="updatedAt")
+    query: dict[str, Any] = Field(default_factory=dict)
+    provider_lineage: OpportunityProviderLineage = Field(alias="providerLineage")
+    opportunity: OpportunityDetailRead | None = None
+
+
 class HomeSectionStatus(ApiModel):
     status: Literal["AVAILABLE", "PARTIAL", "UNAVAILABLE"]
     data_date: date | None = Field(alias="dataDate")
@@ -911,6 +1305,7 @@ class HomeSectionStatus(ApiModel):
 class HomePublicationLineage(ApiModel):
     canonical_daily_market: str | None = Field(alias="canonicalDailyMarket", default=None)
     formal_topics: str | None = Field(alias="formalTopics", default=None)
+    institutional_flow: str | None = Field(alias="institutionalFlow", default=None)
 
 
 class HomePublication(ApiModel):
@@ -1003,6 +1398,9 @@ class HomeMarketOverview(ApiModel):
     tracked_topic_count: int = Field(alias="trackedTopicCount")
     latest_snapshot_time: datetime | None = Field(alias="latestSnapshotTime")
     market_health: HomeMarketHealth | None = Field(alias="marketHealth")
+    institution_flows: HomeInstitutionalFlow | None = Field(
+        default=None, alias="institutionFlows"
+    )
     breadth: list[HomeMarketBreadth] = Field(default_factory=list)
     indices: list[HomeMarketIndex] = Field(default_factory=list)
     turnover: list[HomeMarketTurnover] = Field(default_factory=list)
@@ -1010,11 +1408,122 @@ class HomeMarketOverview(ApiModel):
     source: str
 
 
+class HomeMarketSignal(ApiModel):
+    key: str
+    name: str
+    severity: Literal["INFO", "WATCH", "WARNING"]
+    direction: str
+    evidence: list[str] = Field(default_factory=list)
+    interpretation: str
+
+
+class HomeMarketSignalCatalog(ApiModel):
+    key: str
+    name: str
+    condition: str
+    direction: str
+    description: str
+
+
+class MarketFlowLegRead(ApiModel):
+    buy: Decimal | None
+    sell: Decimal | None
+    net: Decimal | None
+    value: Decimal | None = None
+    unit: str
+    scale: int
+    status: str
+
+
+class MarketInstitutionalFlowDailyRead(ApiModel):
+    market: str
+    trading_date: date | None = Field(alias="tradingDate")
+    foreign: MarketFlowLegRead | None
+    investment_trust: MarketFlowLegRead | None = Field(alias="investmentTrust")
+    dealer: MarketFlowLegRead | None
+    total: MarketFlowLegRead | None
+    source_provider: str = Field(alias="sourceProvider")
+    source_identity: str = Field(alias="sourceIdentity")
+    source_dataset: str = Field(alias="sourceDataset")
+    source_endpoint: str = Field(alias="sourceEndpoint")
+    adapter_version: str = Field(alias="adapterVersion")
+    source_as_of: datetime | None = Field(alias="sourceAsOf")
+    published_at: datetime | None = Field(alias="publishedAt")
+    retrieved_at: datetime = Field(alias="retrievedAt")
+    availability: str
+    freshness: str
+    status_reason: str | None = Field(alias="statusReason")
+    lineage: str
+    response_content_hash: str | None = Field(alias="responseContentHash")
+
+
+class MarketFlowWindowRead(ApiModel):
+    required_sessions: int = Field(alias="requiredSessions")
+    observed_sessions: int = Field(alias="observedSessions")
+    complete: bool
+    foreign_net: Decimal | None = Field(alias="foreignNet")
+    investment_trust_net: Decimal | None = Field(alias="investmentTrustNet")
+    dealer_net: Decimal | None = Field(alias="dealerNet")
+    total_net: Decimal | None = Field(alias="totalNet")
+    unit: str
+    scale: int
+
+
+class MarketPriceFlowRelationRead(ApiModel):
+    market: str
+    index_change: Decimal | None = Field(alias="indexChange")
+    flow_net: Decimal | None = Field(alias="flowNet")
+    market_direction: str = Field(alias="marketDirection")
+    flow_direction: str = Field(alias="flowDirection")
+    direction_relation: str = Field(alias="directionRelation")
+    availability: str
+
+
+class MarketInstitutionalFlowTrendRead(ApiModel):
+    market: str
+    as_of_date: date | None = Field(alias="asOfDate")
+    availability: str
+    freshness: str
+    current: MarketInstitutionalFlowDailyRead | None
+    previous: MarketInstitutionalFlowDailyRead | None
+    rolling_5_session: MarketFlowWindowRead = Field(alias="rolling5Session")
+    rolling_20_session: MarketFlowWindowRead = Field(alias="rolling20Session")
+    streaks: dict[str, dict[str, Any]]
+    acceleration: dict[str, Any]
+    price_flow_relation: MarketPriceFlowRelationRead = Field(alias="priceFlowRelation")
+    source_as_of: datetime | None = Field(alias="sourceAsOf")
+    source: str | None
+    status_reason: str | None = Field(alias="statusReason")
+
+
+class HomeInstitutionalFlow(ApiModel):
+    contract_version: str = Field(alias="contractVersion")
+    as_of_date: date | None = Field(alias="asOfDate")
+    status: Literal["AVAILABLE", "PARTIAL", "UNAVAILABLE"]
+    freshness: str
+    markets: list[MarketInstitutionalFlowTrendRead] = Field(default_factory=list)
+    source_as_of: datetime | None = Field(alias="sourceAsOf")
+    source: str | None
+    unit: str
+    scale: int
+
+
+class MarketInstitutionalFlowResponse(HomeInstitutionalFlow):
+    pass
+
+
+HomeMarketOverview.model_rebuild()
+
+
 class HomeDailyFocus(ApiModel):
     mode: str
     temporary: bool
     headline: str
     bullets: list[str] = Field(default_factory=list)
+    signals: list[HomeMarketSignal] = Field(default_factory=list)
+    signal_catalog: list[HomeMarketSignalCatalog] = Field(
+        alias="signalCatalog", default_factory=list
+    )
     data_date: date | None = Field(alias="dataDate")
     source: str
     reason_code: str | None = Field(alias="reasonCode", default=None)

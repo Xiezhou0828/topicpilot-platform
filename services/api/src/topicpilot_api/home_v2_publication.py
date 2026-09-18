@@ -23,6 +23,10 @@ from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
+from topicpilot_api.market_data.institutional_flow import (
+    MarketInstitutionalFlowFact,
+    to_home_institutional_flow_payload,
+)
 from topicpilot_api.orm import HomeMarketFact, HomePublication, HomePublicationSection
 
 HOME_PUBLICATION_VERSION = "home-v2.formal.v1"
@@ -50,6 +54,37 @@ USER_MESSAGES = {
     "PARTIAL_MARKET_FACTS": "部分市場資料目前無法提供。",
     "OPTIONAL_SECTION_NOT_FORMAL": "此區塊目前尚未建立正式資料來源。",
 }
+
+MARKET_SIGNAL_CATALOG = (
+    {
+        "key": "INDEX_DIVERGENCE",
+        "name": "大型股／中小型股分化",
+        "condition": "TSE 與 TWO 報酬方向相反",
+        "direction": "Neutral / Watch",
+        "description": "大型股與中小型股走勢分歧。",
+    },
+    {
+        "key": "OTC_VOLUME_PRICE_DIVERGENCE",
+        "name": "櫃買量價背離",
+        "condition": "TWO 下跌且上櫃成交金額較前一交易日增加",
+        "direction": "Bearish / Warning",
+        "description": "中小型股成交熱度升高但價格走弱。",
+    },
+    {
+        "key": "INSTITUTION_PRICE_DIVERGENCE",
+        "name": "法人與價格背離",
+        "condition": "指數上漲且外資淨賣超",
+        "direction": "Watch",
+        "description": "價格與外資籌碼方向不一致。",
+    },
+    {
+        "key": "BREADTH_DIVERGENCE",
+        "name": "市場廣度背離",
+        "condition": "指數上漲且下跌家數高於上漲家數",
+        "direction": "Watch",
+        "description": "指數上漲但市場參與度不足。",
+    },
+)
 
 
 @dataclass(frozen=True)
@@ -245,6 +280,143 @@ def calculate_rotation_14d(
     return heating[:limit], cooling[:limit], None
 
 
+def _signal_change_text(item: Mapping[str, Any], label: str) -> str:
+    change = item.get("change")
+    if not isinstance(change, (int, float)) or isinstance(change, bool):
+        return f"{label}漲跌點尚未提供"
+    change_text = f"{change:+g} 點"
+    change_pct = item.get("changePct")
+    if isinstance(change_pct, (int, float)) and not isinstance(change_pct, bool):
+        change_text += f"（{change_pct:+g}%）"
+    return f"{label} {change_text}"
+
+
+def build_market_signals(
+    market_overview: Mapping[str, Any],
+) -> list[dict[str, Any]]:
+    """Return only triggered signals from formal, published market facts."""
+
+    health = market_overview.get("marketHealth") or {}
+    formal_statuses = {"AVAILABLE", "PUBLISHED", "FORMAL"}
+    indices = {
+        str(item.get("market")): item
+        for item in market_overview.get("indices") or []
+        if isinstance(item, Mapping)
+        and str(item.get("status") or "").upper() in formal_statuses
+        and isinstance(item.get("change"), (int, float))
+        and not isinstance(item.get("change"), bool)
+    }
+    signals: list[dict[str, Any]] = []
+
+    tpe = indices.get("TPE")
+    two = indices.get("TWO")
+    if tpe is not None and two is not None:
+        tpe_change = tpe["change"]
+        two_change = two["change"]
+        if (tpe_change > 0 and two_change < 0) or (tpe_change < 0 and two_change > 0):
+            signals.append(
+                {
+                    "key": "INDEX_DIVERGENCE",
+                    "name": "大型股／中小型股分化",
+                    "severity": "WATCH",
+                    "direction": "Neutral",
+                    "evidence": [
+                        _signal_change_text(tpe, "加權指數"),
+                        _signal_change_text(two, "櫃買指數"),
+                    ],
+                    "interpretation": "大型股與中小型股走勢明顯分化。",
+                }
+            )
+
+    turnover_by_market = {
+        str(item.get("market")): item
+        for item in market_overview.get("turnover") or []
+        if isinstance(item, Mapping)
+    }
+    two_turnover = turnover_by_market.get("TWO")
+    two_change_pct = two_turnover.get("changePct") if two_turnover else None
+    if (
+        two is not None
+        and two["change"] < 0
+        and two_turnover is not None
+        and str(two_turnover.get("status") or "").upper() in formal_statuses
+        and isinstance(two_change_pct, (int, float))
+        and not isinstance(two_change_pct, bool)
+        and two_change_pct > 0
+    ):
+        signals.append(
+            {
+                "key": "OTC_VOLUME_PRICE_DIVERGENCE",
+                "name": "櫃買量價背離",
+                "severity": "WARNING",
+                "direction": "Bearish",
+                "evidence": [
+                    _signal_change_text(two, "櫃買指數"),
+                    f"上櫃成交金額 {two_change_pct:+g}%（較前一交易日）",
+                ],
+                "interpretation": "中小型股成交熱度升高但價格走弱。",
+            }
+        )
+
+    institution_flows = market_overview.get("institutionFlows")
+    foreign = institution_flows.get("foreign") if isinstance(institution_flows, Mapping) else None
+    if isinstance(institution_flows, Mapping) and isinstance(institution_flows.get("markets"), list):
+        tpe_flow = next(
+            (item for item in institution_flows["markets"] if isinstance(item, Mapping) and item.get("market") == "TPE"),
+            None,
+        )
+        current = tpe_flow.get("current") if isinstance(tpe_flow, Mapping) else None
+        foreign = current.get("foreign") if isinstance(current, Mapping) else None
+    foreign_value = foreign.get("value") if isinstance(foreign, Mapping) else None
+    foreign_status = str(foreign.get("status") or "").upper() if isinstance(foreign, Mapping) else ""
+    if (
+        tpe is not None
+        and tpe["change"] > 0
+        and foreign_status in formal_statuses
+        and isinstance(foreign_value, (int, float))
+        and not isinstance(foreign_value, bool)
+        and foreign_value < 0
+    ):
+        signals.append(
+            {
+                "key": "INSTITUTION_PRICE_DIVERGENCE",
+                "name": "法人與價格背離",
+                "severity": "WATCH",
+                "direction": "Watch",
+                "evidence": [
+                    _signal_change_text(tpe, "加權指數"),
+                    f"外資淨賣超 {foreign_value:g}",
+                ],
+                "interpretation": "價格與外資籌碼方向不一致。",
+            }
+        )
+
+    advance = health.get("advance")
+    decline = health.get("decline")
+    if (
+        tpe is not None
+        and tpe["change"] > 0
+        and str(health.get("status") or "").upper() in formal_statuses
+        and isinstance(advance, int)
+        and isinstance(decline, int)
+        and decline > advance
+    ):
+        signals.append(
+            {
+                "key": "BREADTH_DIVERGENCE",
+                "name": "市場廣度背離",
+                "severity": "WATCH",
+                "direction": "Watch",
+                "evidence": [
+                    _signal_change_text(tpe, "加權指數"),
+                    f"上漲家數 {advance}、下跌家數 {decline}",
+                ],
+                "interpretation": "指數上漲但市場參與度不足。",
+            }
+        )
+    return signals
+
+
 def build_daily_focus(
     *,
     market_overview: Mapping[str, Any],
@@ -254,57 +426,38 @@ def build_daily_focus(
     data_date: date | None,
     as_of: datetime | None,
 ) -> SectionResult:
-    """Build formal Daily Focus from published facts only."""
+    """Build formal Market Signals from published facts only."""
 
-    health = market_overview.get("marketHealth") or {}
-    breadth = market_overview.get("breadth") or []
-    evidence: list[str] = []
-    if health.get("advance") is not None and health.get("decline") is not None:
-        evidence.append(
-            f"市場上漲 {health['advance']} 家、下跌 {health['decline']} 家，"
-            f"平盤 {health.get('flat', '—')} 家。"
-        )
-    elif breadth:
-        observed = sum(int(item.get("observed") or 0) for item in breadth)
-        evidence.append(f"目前已觀測 {observed} 家上市櫃股票的市場廣度。")
-    if market_overview.get("indices"):
-        available = [item for item in market_overview["indices"] if item.get("value") is not None]
-        if available:
-            first = available[0]
-            direction = "上漲" if (first.get("change") or 0) > 0 else "下跌" if (first.get("change") or 0) < 0 else "持平"
-            evidence.append(f"{first['indexName']} {direction}，收盤 {first['value']}。")
-    if main_topics:
-        evidence.append(f"目前主線為 {main_topics[0]['name']}。")
-    if heating_topics:
-        evidence.append(f"升溫題材以 {heating_topics[0]['topic']} 為首。")
-    if cooling_topics:
-        evidence.append(f"降溫題材以 {cooling_topics[0]['topic']} 為首。")
-    if not evidence:
+    has_market_evidence = bool(
+        (market_overview.get("indices") or [])
+        or (market_overview.get("turnover") or [])
+        or (market_overview.get("breadth") or [])
+        or (market_overview.get("marketHealth") or {}).get("breadthEligible")
+    )
+    signal_catalog = [dict(item) for item in MARKET_SIGNAL_CATALOG]
+    signals = build_market_signals(market_overview) if has_market_evidence else []
+    if not has_market_evidence:
         return _status(
             "UNAVAILABLE",
             data_date=data_date,
             as_of=as_of,
             source=DAILY_FOCUS_SOURCE,
             reason_code="DAILY_FOCUS_EVIDENCE_INCOMPLETE",
-            detail="formal Home inputs did not contain a meaningful market or topic fact",
+            detail="formal Home inputs did not contain a meaningful market fact",
             payload={
                 "mode": "RULE_BASED_V1",
                 "temporary": False,
-                "headline": "今日市場重點尚未完成",
+                "headline": "今日市場訊號尚未完成",
                 "bullets": [],
+                "signals": [],
+                "signalCatalog": signal_catalog,
                 "dataDate": data_date,
                 "source": DAILY_FOCUS_SOURCE,
                 "reasonCode": "DAILY_FOCUS_EVIDENCE_INCOMPLETE",
                 "userMessage": USER_MESSAGES["DAILY_FOCUS_EVIDENCE_INCOMPLETE"],
             },
         )
-    headline = (
-        "市場偏強，今日主線值得留意。"
-        if (health.get("advance") or 0) > (health.get("decline") or 0)
-        else "市場偏弱，今日主線仍需觀察。"
-        if (health.get("decline") or 0) > (health.get("advance") or 0)
-        else f"今日市場焦點：{main_topics[0]['name']}。"
-    )
+    headline = signals[0]["name"] if signals else "今日無異常訊號"
     return _status(
         "AVAILABLE",
         data_date=data_date,
@@ -314,11 +467,85 @@ def build_daily_focus(
             "mode": "RULE_BASED_V1",
             "temporary": False,
             "headline": headline,
-            "bullets": evidence[:4],
+            "bullets": [item["interpretation"] for item in signals[:4]],
+            "signals": signals,
+            "signalCatalog": signal_catalog,
             "dataDate": data_date,
             "source": DAILY_FOCUS_SOURCE,
         },
     )
+
+
+def normalize_home_publication_for_read(payload: Mapping[str, Any]) -> dict[str, Any]:
+    """Rebuild persisted Daily Focus from the current deterministic contract."""
+
+    result = dict(payload)
+    existing_focus = result.get("dailyFocus")
+    if not isinstance(existing_focus, Mapping):
+        return result
+    market_overview = result.get("marketOverview")
+    if not isinstance(market_overview, Mapping):
+        return result
+
+    def _as_date(value: Any) -> date | None:
+        if isinstance(value, date) and not isinstance(value, datetime):
+            return value
+        if isinstance(value, str):
+            try:
+                return date.fromisoformat(value[:10])
+            except ValueError:
+                return None
+        return None
+
+    def _as_datetime(value: Any) -> datetime | None:
+        if isinstance(value, datetime):
+            return value
+        if isinstance(value, str):
+            try:
+                return datetime.fromisoformat(value.replace("Z", "+00:00"))
+            except ValueError:
+                return None
+        return None
+
+    publication = result.get("publication")
+    publication_mapping = publication if isinstance(publication, Mapping) else {}
+    data_date = _as_date(
+        market_overview.get("dataDate")
+        or publication_mapping.get("tradingDate")
+        or result.get("asOf")
+    )
+    as_of = _as_datetime(
+        market_overview.get("updatedAt")
+        or market_overview.get("latestSnapshotTime")
+        or publication_mapping.get("asOf")
+    )
+    normalized = build_daily_focus(
+        market_overview=market_overview,
+        main_topics=(),
+        heating_topics=(),
+        cooling_topics=(),
+        data_date=data_date,
+        as_of=as_of,
+    )
+    result["dailyFocus"] = normalized.payload
+    statuses = result.get("sectionStatuses")
+    updated_statuses = statuses
+    if isinstance(statuses, Mapping):
+        updated_statuses = {
+            **statuses,
+            "dailyFocus": normalized.status_payload(),
+        }
+        result["sectionStatuses"] = updated_statuses
+    if isinstance(publication, Mapping):
+        completeness = publication.get("completeness")
+        if isinstance(completeness, Mapping):
+            publication_copy = dict(publication)
+            publication_copy["completeness"] = {
+                **completeness,
+                "sectionStatuses": updated_statuses if isinstance(updated_statuses, Mapping) else statuses,
+            }
+            result["publication"] = publication_copy
+    return result
 
 
 def validate_home_gate(
@@ -601,6 +828,7 @@ def materialize_home_v2(
     market_index_facts: Sequence[Any] = (),
     turnover_facts: Sequence[MarketTurnoverFact | Mapping[str, Any]] = (),
     market_aggregate_facts: Sequence[Any] = (),
+    institutional_flow_facts: Sequence[MarketInstitutionalFlowFact] = (),
     now: datetime | None = None,
 ) -> dict[str, Any]:
     """Materialize and persist one deterministic Home envelope."""
@@ -711,6 +939,15 @@ def materialize_home_v2(
             },
         )
     indices = [by_market_index[market] for market in ("TPE", "TWO")]
+    institutional_flow_payload = to_home_institutional_flow_payload(
+        institutional_flow_facts,
+        index_changes={
+            str(item.get("market")): item.get("change")
+            for item in indices
+            if item.get("market")
+        },
+        as_of_date=trading_date,
+    )
     if aggregate_inputs:
         turnover_inputs = [
             {
@@ -784,6 +1021,7 @@ def materialize_home_v2(
         "indices": indices,
         "turnover": turnover,
         "limits": limits_payload,
+        "institutionFlows": institutional_flow_payload,
         "source": HOME_SOURCE,
     }
     market_status = market_data_status
@@ -905,6 +1143,7 @@ def materialize_home_v2(
             "lineage": {
                 "canonicalDailyMarket": "topicpilot.vw_daily_market_observations",
                 "formalTopics": "topicpilot.topic_snapshots",
+                "institutionalFlow": "topicpilot.market_institutional_flow_daily",
             },
             "completeness": {
                 "required": ["marketOverview"],
@@ -1118,7 +1357,7 @@ def read_latest_home_publication(session: Session) -> dict[str, Any] | None:
         ).mappings().one_or_none()
     except SQLAlchemyError:
         return None
-    return dict(row["payload"]) if row else None
+    return normalize_home_publication_for_read(row["payload"]) if row else None
 
 
 def empty_home_v2(now: datetime, *, tracked_stock_count: int = 0) -> dict[str, Any]:
@@ -1179,13 +1418,16 @@ def empty_home_v2(now: datetime, *, tracked_stock_count: int = 0) -> dict[str, A
             "indices": [],
             "turnover": [],
             "limits": None,
+            "institutionFlows": None,
             "source": HOME_SOURCE,
         },
         "dailyFocus": {
             "mode": "RULE_BASED_V1",
             "temporary": False,
-            "headline": "今日市場重點尚未完成",
+            "headline": "今日市場訊號尚未完成",
             "bullets": [],
+            "signals": [],
+            "signalCatalog": [dict(item) for item in MARKET_SIGNAL_CATALOG],
             "dataDate": None,
             "source": DAILY_FOCUS_SOURCE,
             "reasonCode": "DAILY_FOCUS_EVIDENCE_INCOMPLETE",
@@ -1214,11 +1456,14 @@ def empty_home_v2(now: datetime, *, tracked_stock_count: int = 0) -> dict[str, A
 __all__ = [
     "DAILY_FOCUS_SOURCE",
     "HOME_PUBLICATION_VERSION",
+    "MARKET_SIGNAL_CATALOG",
     "MarketTurnoverFact",
     "build_daily_focus",
+    "build_market_signals",
     "calculate_rotation_14d",
     "empty_home_v2",
     "materialize_home_v2",
+    "normalize_home_publication_for_read",
     "rank_formal_topics",
     "read_latest_home_publication",
     "validate_home_gate",

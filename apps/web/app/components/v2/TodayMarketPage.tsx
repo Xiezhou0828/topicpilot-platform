@@ -173,6 +173,36 @@ function OverviewValue({ label, value }: { label: string; value: number | string
   );
 }
 
+function InstitutionalFlowSummary({ overview }: { overview: NonNullable<TodayMarketOverviewResource["data"]> }) {
+  const flow = overview.institutionFlows;
+  if (!flow) {
+    return <div className="tp-empty-state"><p>法人流向資料尚未提供。</p></div>;
+  }
+  return (
+    <div className="tp-home-institutional-flow" data-flow-status={flow.status}>
+      <div className="tp-home-secondary-metrics">
+        {flow.markets.map((market) => {
+          const current = market.current;
+          const format = (value: string | null) => value === null ? "—" : value.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+          return (
+            <div className="tp-home-institutional-flow-market" key={market.market}>
+              <strong>{market.market}</strong>
+              <OverviewValue label="外資淨額" value={format(current?.foreign?.net ?? null)} />
+              <OverviewValue label="投信淨額" value={format(current?.investmentTrust?.net ?? null)} />
+              <OverviewValue label="自營商淨額" value={format(current?.dealer?.net ?? null)} />
+              <OverviewValue label="三大法人合計" value={format(current?.total?.net ?? null)} />
+              {market.availability !== "AVAILABLE" && (
+                <small>{market.statusReason ?? "法人流向資料尚未提供。"}</small>
+              )}
+            </div>
+          );
+        })}
+      </div>
+      <small>單位：{flow.unit}；資料狀態：{flow.status}；新鮮度：{flow.freshness}</small>
+    </div>
+  );
+}
+
 function OpportunityTeaserCard({
   loading,
   resource,
@@ -282,6 +312,7 @@ function MarketOverviewCard({
           section="市場概況"
         />
       )}
+      {overview && <InstitutionalFlowSummary overview={overview} />}
       <SectionDisclosure loading={loading} resource={resource} sectionKey="marketOverview" sectionLabel="Market Overview" />
     </Card>
   );

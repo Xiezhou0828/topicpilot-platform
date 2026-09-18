@@ -1,0 +1,95 @@
+{
+  "schema_version": "fund-b-stock-institutional-flow-implementation-evidence.v1",
+  "task": "TASK-FUND-B-STOCK-INSTITUTIONAL-FLOW-FORMAL-CAPABILITY-001",
+  "role": "FUND_STOCK_INSTITUTIONAL_FLOW_CAPABILITY_OWNER",
+  "mode": "ONE_SHOT_FORMAL_CAPABILITY_DISCOVERY_IMPLEMENTATION_VALIDATION_AND_INTEGRATION_READINESS",
+  "worktree": "E:/topicpilot-worktrees/fund-b-stock-institutional-flow-formal-capability-001",
+  "branch": "codex/task-fund-b-stock-institutional-flow-formal-capability-001",
+  "base_sha": "02d3086183d1c582bb6c66c4c316340ccce3fa97",
+  "implementation_sha": "192ec78fd055dc94a167bfa3501f32ccef9576dc",
+  "governance_sha": "3c73631105090b0ceb439b064520d5fd6dd44567",
+  "final_closeout_sha": "3c73631105090b0ceb439b064520d5fd6dd44567",
+  "sources": {
+    "TPE": {
+      "provider": "TWSE",
+      "identity": "TWSE_OFFICIAL_STOCK_INSTITUTIONAL_FLOW",
+      "dataset": "fund.T86",
+      "endpoint": "https://www.twse.com.tw/rwd/zh/fund/T86",
+      "unit": "SHARES",
+      "historical_request": "date=YYYYMMDD&selectType=ALL&response=json",
+      "normalized_foreign": "外陸資買賣超股數(不含外資自營商)",
+      "normalized_dealer": "外資自營商 + 自營商自行買賣 + 自營商避險",
+      "normalized_total": "normalized foreign + investment trust + normalized dealer"
+    },
+    "TWO": {
+      "provider": "TPEx",
+      "identity": "TPEX_OFFICIAL_STOCK_INSTITUTIONAL_FLOW",
+      "dataset": "tpex_3insti_daily_trading",
+      "endpoint": "https://www.tpex.org.tw/openapi/v1/tpex_3insti_daily_trading",
+      "unit": "SHARES",
+      "historical_request": "CURRENT_SNAPSHOT_ONLY",
+      "normalized_foreign": "Foreign Investors include Mainland Area Investors (Foreign Dealers excluded)",
+      "normalized_dealer": "Dealers",
+      "normalized_total": "normalized foreign + investment trust + dealers; validated against TotalDifference"
+    }
+  },
+  "contract": {
+    "daily": "foreign/investmentTrust/dealer/total buy-sell-net legs",
+    "windows": ["oneDay", "fiveDay", "tenDay", "twentyDay"],
+    "window_unit": "TRADING_SESSIONS",
+    "streak_categories": ["foreign", "investmentTrust", "dealer", "total"],
+    "reversal_states": ["SELL_TO_BUY", "BUY_TO_SELL", "NONE", "UNAVAILABLE"],
+    "quality_states": ["OK", "NO_DATA", "NOT_TRADING_DAY", "PROVIDER_UNAVAILABLE", "AUTH_ERROR", "RATE_LIMITED", "SCHEMA_ERROR", "MAPPING_ERROR", "PARTIAL", "STALE", "UNKNOWN"],
+    "abnormal_flow": "DEFERRED_NO_APPROVED_FORMULA",
+    "composite_score": false
+  },
+  "artifacts": {
+    "migration": "services/api/alembic/versions/0033_task_fund_b_stock_institutional_flow.py",
+    "contract": "services/api/src/topicpilot_api/market_data/stock_institutional_flow.py",
+    "persistence": "services/api/src/topicpilot_api/stock_institutional_flow_persistence.py",
+    "api": "services/api/src/topicpilot_api/stock_institutional_flow_api.py",
+    "schemas": "services/api/src/topicpilot_api/schemas.py",
+    "web_client": "apps/web/app/lib/stock-api.ts",
+    "generated_openapi": "packages/api-client/openapi.json",
+    "tests": [
+      "services/api/tests/test_stock_institutional_flow.py",
+      "packages/api-client/tests/client.test.mjs"
+    ]
+  },
+  "validation": {
+    "focused_backend": "7 passed",
+    "full_backend": "606 passed, 41 skipped, 5 registered baseline failures",
+    "api_client": "4 passed",
+    "web": "build passed; 157 tests passed",
+    "web_lint": "0 errors, 1 pre-existing React Hook warning",
+    "ruff": "PASS",
+    "ruff_format": "PASS",
+    "compileall": "PASS",
+    "git_diff_check": "PASS",
+    "openapi_generation": "PASS",
+    "generated_client_sync": "PASS",
+    "migration_structure": "PASS; 0033 -> 0032",
+    "postgresql_migration_execution": "NOT_RUN_EXTERNAL_GATE",
+    "production_verification": "NOT_RUN",
+    "production_mutation": "NO"
+  },
+  "baseline_failures": [
+    "tests/test_ws3_core_v0_a1_quality_filter_confirmatory_validation.py::ConfirmatoryValidationContractTests::test_candidate_freeze_is_deterministic_and_complete",
+    "tests/test_ws3_core_v0_a1_quality_filter_confirmatory_validation.py::ConfirmatoryValidationContractTests::test_pit_and_outcome_boundaries_are_explicit",
+    "tests/test_ws3_core_v0_a1_quality_filter_confirmatory_validation.py::ConfirmatoryValidationContractTests::test_raw_cohort_authority_is_preserved",
+    "tests/test_ws3_core_v0_a1_quality_filter_confirmatory_validation.py::ConfirmatoryValidationContractTests::test_thresholds_and_operators_are_immutable_freeze_values",
+    "tests/test_ws3_core_v0_a2_entry_breakout_invalidation.py::test_a1_forward_contract_preserves_exact_seven_candidates"
+  ],
+  "boundaries": {
+    "fund_a_policy_changed": false,
+    "today_signals_policy_changed": false,
+    "opportunity_policy_changed": false,
+    "fund_e_implemented": false,
+    "c_drive": "UNTOUCHED",
+    "push": "NO",
+    "next_task_changed": false,
+    "canonical_status": "NOT_CANONICALIZED",
+    "canonical_reconciliation_disposition": "READY_FOR_CANONICAL_RECONCILIATION",
+    "owner_decision_required": true
+  }
+}

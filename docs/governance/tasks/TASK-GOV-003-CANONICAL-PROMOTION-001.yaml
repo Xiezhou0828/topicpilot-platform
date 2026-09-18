@@ -1,0 +1,51 @@
+{
+  "task_id": "TASK-GOV-003-CANONICAL-PROMOTION-001",
+  "title": "GOV-003 Governance Runtime Canonical Promotion and First Governed-Baseline Qualification",
+  "status": "READY_FOR_INTEGRATION",
+  "owner_role": "Governance / Integration Owner",
+  "workstream": "GOVERNANCE",
+  "base_sha": "a8357d46194f9669709f184949270e20a7a2546c",
+  "branch": "codex/task-gov-003-canonical-promotion-001-20260914",
+  "worktree": "E:\\topicpilot-worktrees\\gov-003-canonical-promotion-001-20260914",
+  "owned_paths": [
+    ".github/copilot-instructions.md",
+    ".github/skills/**",
+    ".github/agents/**",
+    ".github/hooks/**",
+    "scripts/governance/**",
+    "docs/governance/**",
+    "docs/reports/TASK-GOV-003-*.md",
+    "docs/reports/TASK-GOV-003-CANONICAL-PROMOTION-001-20260914.md"
+  ],
+  "shared_paths": [
+    "PROJECT_CONTEXT.md",
+    "docs/ROADMAP.md",
+    "docs/WORK_ORDERS.md",
+    "docs/DOCUMENTATION_INDEX.md",
+    ".github/workflows/**"
+  ],
+  "forbidden_paths": [
+    "services/**",
+    "apps/**",
+    "packages/**",
+    "infra/**",
+    "services/api/alembic/**",
+    "NEXT_TASK"
+  ],
+  "dependencies": [],
+  "implementation_commits": ["96879fd", "9fbbb8d", "f96b229"],
+  "governance_commits": [],
+  "migration_scope": "NONE / READ_ONLY_LINEAGE_CHECK",
+  "production_scope": "NONE / READ_ONLY_PROVENANCE_CHECK",
+  "owner_decision_required": false,
+  "next_allowed_state": "INTEGRATED",
+  "shared_surface_policy": "EXPLICIT_RECONCILIATION",
+  "source_base": "02d3086183d1c582bb6c66c4c316340ccce3fa97",
+  "promotion_source_commits": ["4ecea21", "801a95b", "beb5b3d850bb8def248239f829abe39bcd24979b"],
+  "target_development_base": "a8357d46194f9669709f184949270e20a7a2546c",
+  "dependency_notes": [
+    "Port GOV-003 commits one at a time; do not merge product or branch-only migration work.",
+    "C owner checkout is evidence-only and must remain unchanged; canonical promotion means a clean governed development baseline, not Production release.",
+    "Final qualification/report commit is the governed development baseline at handoff; remote push and C checkout promotion are not performed."
+  ]
+}

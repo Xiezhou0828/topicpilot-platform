@@ -6,6 +6,7 @@ from . import (
     home,
     identity,
     import_audit,  # noqa: F401
+    institutional_flow,
     lifecycle,
     live,
     market_data,
@@ -13,6 +14,7 @@ from . import (
     observation_timeline,
     score_projections,
     snapshots,
+    stock_institutional_flow,
     topic_authority,
     topics,
 )
@@ -22,8 +24,14 @@ from .formal_lifecycle import TopicLifecycleFormalResult
 from .home import HomeMarketFact, HomePublication, HomePublicationSection  # noqa: F401
 from .identity import *  # noqa: F403
 from .import_audit import LegacyImportArtifact, LegacyImportRecord, LegacyImportRun
+from .institutional_flow import MarketInstitutionalFlowDaily
 from .lifecycle import TopicLifecycleResult
-from .live import LiveCollectorAttempt, LiveCollectorRun, LiveTrackingUniverse
+from .live import (
+    LiveCollectorAttempt,
+    LiveCollectorCheckpoint,
+    LiveCollectorRun,
+    LiveTrackingUniverse,
+)
 from .market_data import *  # noqa: F403
 from .models import (
     ReferenceAdjustment,
@@ -39,6 +47,7 @@ from .models import (
 from .observation_timeline import *  # noqa: F403
 from .score_projections import *  # noqa: F403
 from .snapshots import *  # noqa: F403
+from .stock_institutional_flow import *  # noqa: F403
 from .topic_authority import TopicAuthorityActivation
 from .topics import *  # noqa: F403
 
@@ -48,8 +57,10 @@ __all__ = [
     "LegacyImportRecord",
     "LegacyImportRun",
     "LiveCollectorAttempt",
+    "LiveCollectorCheckpoint",
     "LiveCollectorRun",
     "LiveTrackingUniverse",
+    "MarketInstitutionalFlowDaily",
     "ReferenceAdjustment",
     "ReferenceCalendarDate",
     "ReferenceCurrency",
@@ -59,15 +70,16 @@ __all__ = [
     "ReferenceSession",
     "ReferenceTimezone",
     "ReferenceTradingStatus",
+    "TopicAuthorityActivation",
     "TopicLifecycleFormalResult",
     "TopicLifecycleResult",
-    "TopicAuthorityActivation",
 ]
 for _module in (
     canonical_observations,
     formal_lifecycle,
     home,
     identity,
+    institutional_flow,
     live,
     lifecycle,
     market_data,
@@ -75,6 +87,7 @@ for _module in (
     score_projections,
     snapshots,
     topic_authority,
+    stock_institutional_flow,
     topics,
 ):
     __all__ += list(getattr(_module, "__all__", ()))

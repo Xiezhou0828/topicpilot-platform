@@ -1,0 +1,148 @@
+{
+  "task": "TASK-TOPIC-B2-107-25-FORMAL-DB-READBACK-001",
+  "mode": "ONE_SHOT_OPERATOR_READBACK_CONTINUATION",
+  "readback_timestamp": "2026-09-15T12:33:14.768+08:00",
+  "read_only": true,
+  "result": "COMPLETE",
+  "production_access": {
+    "render_service": "topicpilot-api",
+    "render_service_id": "srv-d9tvnm740ujc73f7vmf0",
+    "api_origin": "https://topicpilot-api.onrender.com",
+    "healthz": {"status": "ok", "gitSha": "bf68cc8bf0a4432d7623db43f42e9219c94d7b6b"},
+    "readyz": {"status": "ready", "gitSha": "bf68cc8bf0a4432d7623db43f42e9219c94d7b6b"},
+    "neon_project": "topicpilot",
+    "neon_branch": "production",
+    "database": "neondb",
+    "schema": "topicpilot",
+    "authenticated_operator_surface": "Neon SQL Editor on production branch",
+    "connection_method": "official interactive browser session"
+  },
+  "production_db_revision": "0040_task_a10_recovery_checkpoint_observability",
+  "canonical_authority": {
+    "003f_status": "VERIFIED",
+    "003f_implementation_sha": "05c486674378f1c8807375905ba1eedb84dd1b31",
+    "003f_governance_sha": "34fb7306378395cd6f9ef1aa83343ec79d9c4404",
+    "topic_scope_artifact": {
+      "version": "topic-authority-lifecycle-formal-scope.20260911.v2",
+      "artifact_sha256": "1100c8bb4f760f6edab6e2ed59f4ee1d3e4776777b63a494d2611990f8c31753",
+      "source_master_sha256": "8f5646f4b9e5f00c9263bf7511911f4520ec2b940af1fc50c778b0d9e83ce2c4",
+      "leaves": 107,
+      "parents": 25
+    },
+    "role_scope_artifact": {
+      "version": "structural-role-authority-20260912.v4",
+      "artifact_sha256": "c35c15911c355766dbaa53e76629ae17c84f8d1bbc98e2053b7e87592c0274bc",
+      "source_master_sha256": "641a1c1dbd1849d70ffd7efa775f24d0bc5f7e35610179e27f0a587834bce188",
+      "rows": 1160,
+      "distinct_leaves": 107,
+      "expected_existing_production_count": 440,
+      "expected_missing_production_count": 720,
+      "role_counts": {"PRIMARY": 474, "SECONDARY": 686, "CORE": 650, "REPRESENTATIVE": 329, "RELATED": 181},
+      "approval_state": "ALL_APPROVED"
+    }
+  },
+  "topic_identity_readback": {
+    "database_active_topics": 132,
+    "production_api_catalog_total": 132,
+    "production_api_leaf_topics": 107,
+    "production_api_parent_topics": 25,
+    "unique_topic_ids": 132,
+    "identity": "EXACT_MATCH",
+    "missing": 0,
+    "extra": 0,
+    "duplicates": 0,
+    "canonical_sha256": "06CB9DB776682B65BB68B9F97DA6272557B65E772E5F2400DEDF779026B2BC13",
+    "production_sha256": "06CB9DB776682B65BB68B9F97DA6272557B65E772E5F2400DEDF779026B2BC13",
+    "canonical_md5": "34b5f2e4ab6ff3164c69e55d7f064bd3",
+    "production_db_md5": "34b5f2e4ab6ff3164c69e55d7f064bd3",
+    "as_of": "2026-09-15",
+    "source_version": "topic-authority-lifecycle-formal-scope.20260911.v2"
+  },
+  "hierarchy_readback": {
+    "database_edges": 107,
+    "canonical_edges": 107,
+    "identity": "EXACT_MATCH",
+    "missing": 0,
+    "extra": 0,
+    "duplicates": 0,
+    "invalid_parent_or_child_edges": 0,
+    "orphan_active_topic_ids": 0,
+    "canonical_sha256": "40EEAFFA1BDA80873EEEFDA9BF0654222CCCA041A0B0C85AFC00C4EADE34BD34",
+    "production_sha256": "40EEAFFA1BDA80873EEEFDA9BF0654222CCCA041A0B0C85AFC00C4EADE34BD34",
+    "canonical_md5": "155bd6e3535b663ae9ddab3a62eb5eee",
+    "production_db_md5": "155bd6e3535b663ae9ddab3a62eb5eee",
+    "relationship_semantics": "current date-effective parent_topic_id -> child_topic_id"
+  },
+  "structural_role_readback": {
+    "canonical_artifact_rows_in_db": 1160,
+    "unique_relation_ids": 1160,
+    "unique_authority_tuples": 1160,
+    "structural_role_nonnull": 1160,
+    "approved": 1160,
+    "current_topic_linkage": 1160,
+    "active_instrument_linkage": 1160,
+    "authority_version_exact": 1160,
+    "source_artifact_id_exact": 1160,
+    "source_artifact_hash_exact": 1160,
+    "approval_reference_exact": 1160,
+    "content_identity": "EXACT_MATCH",
+    "canonical_content_md5": "6d2e7f0284060a439b6cb15163244630",
+    "production_content_md5": "6d2e7f0284060a439b6cb15163244630",
+    "canonical_full_key_md5": "5fbdba7ea2c3ad4632007d68bfa0985a",
+    "production_full_key_md5": "f27d5e3b8d41fc5346ea4641902d5224",
+    "relation_version_reconciliation": {
+      "owner_topic_membership_version_rows": 720,
+      "existing_v1_membership_version_rows_with_canonical_artifact": 440,
+      "interpretation": "Matches the authority artifact reconciliation of 720 missing/new and 440 existing production relations; authority_version and source_artifact_hash are exact for all 1160. The full-key hash intentionally differs because relation_version preserves the 440 existing v1 membership records."
+    },
+    "role_distribution": {
+      "PRIMARY": 474,
+      "SECONDARY": 686,
+      "CORE": 650,
+      "REPRESENTATIVE": 329,
+      "RELATED": 181
+    },
+    "authority": "EXACT_PROVENANCE_MATCH"
+  },
+  "authority_activation_readback": {
+    "activation_version": "topic-authority-lifecycle-formal-scope.20260911.v2",
+    "status": "ACTIVE",
+    "artifact_sha256": "1100c8bb4f760f6edab6e2ed59f4ee1d3e4776777b63a494d2611990f8c31753",
+    "source_master_sha256": "8f5646f4b9e5f00c9263bf7511911f4520ec2b940af1fc50c778b0d9e83ce2c4",
+    "source_revision": "e80d136c6aa123d870adf4f5fcf067a47f93f414",
+    "target_environment": "production",
+    "target_database": "neondb",
+    "active_parent_count": 25,
+    "active_leaf_count": 107,
+    "lifecycle_scope_count": 107,
+    "readback_sha256": "a93449fc766009d2ed7d1f6d5d636ed54c37cc6ec2b71e22a71e0f71de763838"
+  },
+  "formal_publication_boundary": {
+    "task_did_not_publish_or_activate": true,
+    "latest_formal_snapshot_rows": 92,
+    "latest_snapshot_distinct_topics": 92,
+    "latest_snapshot_date": "2026-09-09",
+    "publication_mode": "FORMAL",
+    "publication_state": "PUBLISHED",
+    "lifecycle_quality_flag": "SHADOW_ONLY_UNPUBLISHED",
+    "interpretation": "The B2 DB authority prerequisite is satisfied. Snapshot/lifecycle publication remains a separate governed gate and is not activated by this readback."
+  },
+  "gate_consequences": {
+    "b2_formal_db_prerequisite": "SATISFIED",
+    "a9_formal_writer_db_prerequisite": "SATISFIED",
+    "opportunity_downstream_db_prerequisite": "PARTIAL",
+    "stock_downstream_db_prerequisite": "PARTIAL",
+    "leader_set": "PRESENT_NOT_FORMAL",
+    "formal_policy_approval": "OUT_OF_SCOPE_PARALLEL_TASK"
+  },
+  "integrity_and_security": {
+    "previous_evidence_manifest_hash_verified": "PASS",
+    "query_set": "readback-queries.sql",
+    "secrets_recorded": false,
+    "production_mutation": "NONE",
+    "migration": "NOT_PERFORMED",
+    "publication": "NOT_PERFORMED",
+    "c_drive": "UNTOUCHED",
+    "push": "NO"
+  }
+}

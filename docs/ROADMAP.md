@@ -1,7 +1,7 @@
 # TopicPilot execution roadmap
 
 **Owner:** execution sequence, phase priority, status, and dependency routing
-**Last reviewed:** `2026-08-22`
+**Last reviewed:** `2026-09-16`
 
 This document owns execution routing. It does not replace the accepted product
 contract, architecture specifications, work orders, or validation reports.
@@ -9,6 +9,56 @@ Permanent product direction belongs to the [Product Direction and Surfaces
 Contract](architecture/PRODUCT_SURFACES_AND_UX_CONTRACT.md). Work-order scope
 and evidence remain in [WORK_ORDERS.md](WORK_ORDERS.md) and the linked reports.
 Startup and handoff navigation belongs to [PROJECT_CONTEXT.md](../PROJECT_CONTEXT.md).
+
+## 2026-09-16 owner-controlled canonical closure
+
+The verified unified implementation baseline is
+d6371af5994f0c2d5e0612969f100f6cef26b772. Canonical promotion and historical
+recovery closure are complete on owner-controlled baseline
+277a49382240503fcd0767e9cfb17e2fd974e8a3, a documentation-only descendant.
+The dirty canonical owner checkout remains untouched.
+
+The external release gate is still open: API exact readback is
+bf68cc8bf0a4432d7623db43f42e9219c94d7b6b and protected DB revision 0040 is
+verified, but exact Web/Worker provenance and canary authorization are absent.
+The latest POST_CLOSE run is FAILED with PARTIAL freshness and EXCHANGE_NO_DATA.
+Formal Opportunity input and daily recommendation readiness remain blocked.
+The [owner closure report](reports/TASK-OWNER-TOPICPILOT-CANONICAL-PROMOTION-RELEASE-AND-RUNTIME-CLOSURE-001-20260916.md)
+is the current evidence boundary.
+
+## 2026-09-13 GOV-002 topology checkpoint
+
+Before any new FUND, Today Signals, Topic, or Opportunity implementation, read
+the canonical [Current Project State](../CURRENT_PROJECT_STATE.md),
+[Active Work](../ACTIVE_WORK.md),
+[Incomplete Work Registry](../INCOMPLETE_WORK_REGISTRY.md),
+[Branch Recovery Matrix](../BRANCH_RECOVERY_MATRIX.md), and
+[Parallel Execution Matrix](../PARALLEL_EXECUTION_MATRIX.md), together with
+the [GOV-002 report](reports/TASK-GOV-002-PARALLEL-WORKSTREAM-RECOVERY-AND-BRANCH-HYGIENE-20260913.md).
+
+The shared development recovery base is `a8357d46194f...`, derived from
+`origin/main@b2eaf33...`; it is not a Production release. Today and A10/A9 can
+perform isolated read-only recovery audits in parallel. Opportunity and
+Topic/B2 remain blocked on formal authority. B3/B4 are locked/not started and
+FUND-001 remains owner-decision-required. Schema, migration, OpenAPI/generated
+client, shared Home/Topic, provider, scheduler, and release surfaces are
+serial-only. This checkpoint does not change `NEXT_TASK`.
+
+## 2026-09-14 GOV-003 agentic development runtime
+
+GOV-003 establishes the repo-native governance runtime for durable project
+memory, task manifests, lifecycle transitions, E: worktree isolation,
+ownership guards, incomplete-work detection, baseline-failure attribution,
+integration gates, release migration gates, handoff, bounded custom agents,
+hooks, and governance CI. It does not implement product features, mutate
+Production, execute migrations, or change `NEXT_TASK`.
+
+New parallel tasks should add a manifest under `docs/governance/tasks/` and a
+task report rather than rewriting all central status documents. Shared
+schemas, migrations, OpenAPI/generated clients, formal publication contracts,
+release configuration, and central governance views remain serial integration
+surfaces. See the [GOV-003 runtime guide](governance/AGENTIC_DEVELOPMENT.md)
+and [GOV-003 report](reports/TASK-GOV-003-AGENTIC-PARALLEL-DEVELOPMENT-RUNTIME-20260914.md).
 
 ## Execution principles
 
@@ -31,6 +81,17 @@ Startup and handoff navigation belongs to [PROJECT_CONTEXT.md](../PROJECT_CONTEX
 The protected data, historical, Today, Stock, and Topic foundations below
 remain the current baseline; the parallel execution routes are stated first so
 that active work does not get mistaken for a serialized release path.
+
+### GOV-001 branch/runtime reconciliation — 2026-09-13
+
+The next recovery report is [GOV-001 Canonical Reconciliation](reports/TASK-GOV-001-CANONICAL-RECONCILIATION-20260913.md).
+It is the current routing checkpoint after GOV-000. The live API remains
+`bf68cc8` from the diverged Today production-convergence branch; the canonical
+product baseline remains `origin/main@b2eaf33`. The existing formal Opportunity
+page slice may be canonicalized as a bounded fail-closed contract, but no new
+provider, algorithm, recommendation semantics, or Production activation is
+authorized. A10/A9, Topic, Today, FUND, and release-chain gaps remain governed
+by their recorded states.
 
 ## Current Parallel Plan
 

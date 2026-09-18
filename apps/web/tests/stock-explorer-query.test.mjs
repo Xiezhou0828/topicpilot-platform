@@ -108,7 +108,7 @@ test("configured API failures remain unavailable", () => {
 
 test("API failure never silently falls back to Preview", () => {
   assert.match(page, /if \(resource\?\.source === "unavailable"\) return \[\];/);
-  assert.match(page, /return bundle\.source === "snapshot" \? bundle\.stockUniverse\.map\(fromPreview\) : \[\];/);
+  assert.match(page, /resource\?\.source === "synthetic-snapshot" && bundle\.source === "snapshot"/);
 });
 
 test("Preview is explicit and only selected without a formal origin", () => {
@@ -125,7 +125,8 @@ test("nullable formal market values are rendered without fabrication", () => {
 
 test("topic relation display remains presentation-only", () => {
   assert.match(page, /topics: \(item\.topicRelations \?\? \[\]\)\.map/);
-  assert.match(page, /stock\.topics\[0\]\?\.name/);
+  assert.match(page, /stock\.mainTopic\?\.name/);
+  assert.match(page, /stock\.topics\.length/);
   assert.equal(page.includes("mainTopic: item.topicRelations"), false);
 });
 
@@ -155,7 +156,8 @@ test("unsupported advanced controls are visibly unavailable", () => {
 });
 
 test("browser business logic is not introduced for technical, chip, or strategy rules", () => {
-  assert.match(page, /above20MA === true/);
+  assert.equal(page.includes("above20MA"), false);
+  assert.equal(page.includes("above60MA"), false);
   assert.equal(page.includes("institutionFlows"), true);
   assert.match(page, /favorite.*row\.favorite/);
   assert.match(page, /opportunity.*row\.opportunity/);

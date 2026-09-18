@@ -92,6 +92,8 @@ test("existing frontend reads the FastAPI snapshot through one data layer", asyn
   assert.match(source, /NEXT_PUBLIC_API_BASE_URL/);
   assert.match(source, /NEXT_PUBLIC_SNAPSHOT_API_URL/);
   assert.match(await read("layout.tsx"), /data-snapshot-api-url=\{snapshotApiUrl\}/);
+  assert.match(await read("layout.tsx"), /NEXT_PUBLIC_RELEASE_SHA/);
+  assert.match(await read("layout.tsx"), /data-release-sha=\{releaseSha\}/);
   assert.match(source, /\/snapshot-api\.json\?refresh=\$\{Date\.now\(\)\}/);
   assert.match(source, /document\.documentElement\.dataset\.snapshotApiUrl/);
   assert.match(source, /parsed\.protocol === "https:" \|\| parsed\.protocol === "http:"/);

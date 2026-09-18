@@ -1,0 +1,160 @@
+{
+  "version": 1,
+  "policy": {
+    "unknown_failure": "BLOCK_QUALIFICATION",
+    "known_failure_other_workstream": "DO_NOT_BLOCK_UNRELATED_TASK",
+    "recheck_required": true
+  },
+  "failures": [
+    {
+      "test_id": "services/api/tests/test_canonical_observation_implementation.py::test_canonical_revision_is_linear_after_0018",
+      "first_observed": "2026-09-13",
+      "owner_workstream": "A9_B2",
+      "classification": "OTHER_WORKSTREAM",
+      "evidence": "Historical 0036 expectation superseded by the verified 0039 -> 0040 canonical migration chain; convergence candidate validates 0040.",
+      "blocks_workstreams": ["A9_A10", "TOPIC_B2", "RELEASE"],
+      "expires_or_recheck": "2026-09-30",
+      "resolved_by": "dc8534adee9696c1a52097e8d9698631203e1cf0"
+    },
+    {
+      "test_id": "services/api/tests/test_topic_lifecycle_contract_closure.py::test_frozen_stage_contract_has_one_owner_sequence_and_no_legacy_stage",
+      "first_observed": "2026-09-13",
+      "owner_workstream": "TOPIC_B2",
+      "classification": "OTHER_WORKSTREAM",
+      "evidence": "a8357d4 and e4d6754 identity comparison",
+      "blocks_workstreams": ["TOPIC_B2", "A9_A10", "RELEASE"],
+      "expires_or_recheck": "2026-09-30",
+      "resolved_by": null
+    },
+    {
+      "test_id": "services/api/tests/test_topic_lifecycle_engine.py::test_sprouting_requires_confirmation_and_uses_leader_proxy",
+      "first_observed": "2026-09-13",
+      "owner_workstream": "TOPIC_B2",
+      "classification": "OTHER_WORKSTREAM",
+      "evidence": "a8357d4 and e4d6754 identity comparison",
+      "blocks_workstreams": ["TOPIC_B2", "A9_A10", "RELEASE"],
+      "expires_or_recheck": "2026-09-30",
+      "resolved_by": null
+    },
+    {
+      "test_id": "services/api/tests/test_topic_lifecycle_engine.py::test_fermenting_is_partial_diffusion_not_main_rise",
+      "first_observed": "2026-09-13",
+      "owner_workstream": "TOPIC_B2",
+      "classification": "OTHER_WORKSTREAM",
+      "evidence": "a8357d4 and e4d6754 identity comparison",
+      "blocks_workstreams": ["TOPIC_B2", "A9_A10", "RELEASE"],
+      "expires_or_recheck": "2026-09-30",
+      "resolved_by": null
+    },
+    {
+      "test_id": "services/api/tests/test_topic_lifecycle_engine.py::test_main_rise_strong_structure_can_jump_without_two_day_confirmation",
+      "first_observed": "2026-09-13",
+      "owner_workstream": "TOPIC_B2",
+      "classification": "OTHER_WORKSTREAM",
+      "evidence": "a8357d4 and e4d6754 identity comparison",
+      "blocks_workstreams": ["TOPIC_B2", "A9_A10", "RELEASE"],
+      "expires_or_recheck": "2026-09-30",
+      "resolved_by": null
+    },
+    {
+      "test_id": "services/api/tests/test_topic_lifecycle_engine.py::test_mature_requires_prior_main_rise_and_persistent_divergence",
+      "first_observed": "2026-09-13",
+      "owner_workstream": "TOPIC_B2",
+      "classification": "OTHER_WORKSTREAM",
+      "evidence": "a8357d4 and e4d6754 identity comparison",
+      "blocks_workstreams": ["TOPIC_B2", "A9_A10", "RELEASE"],
+      "expires_or_recheck": "2026-09-30",
+      "resolved_by": null
+    },
+    {
+      "test_id": "services/api/tests/test_topic_lifecycle_engine.py::test_declining_strong_structural_weakening_can_jump",
+      "first_observed": "2026-09-13",
+      "owner_workstream": "TOPIC_B2",
+      "classification": "OTHER_WORKSTREAM",
+      "evidence": "a8357d4 and e4d6754 identity comparison",
+      "blocks_workstreams": ["TOPIC_B2", "A9_A10", "RELEASE"],
+      "expires_or_recheck": "2026-09-30",
+      "resolved_by": null
+    },
+    {
+      "test_id": "services/api/tests/test_topic_lifecycle_engine.py::test_reentry_resets_day_n_for_new_main_rise",
+      "first_observed": "2026-09-13",
+      "owner_workstream": "TOPIC_B2",
+      "classification": "OTHER_WORKSTREAM",
+      "evidence": "a8357d4 and e4d6754 identity comparison",
+      "blocks_workstreams": ["TOPIC_B2", "A9_A10", "RELEASE"],
+      "expires_or_recheck": "2026-09-30",
+      "resolved_by": null
+    },
+    {
+      "test_id": "services/api/tests/test_topic_lifecycle_engine.py::test_trading_day_arithmetic_is_date_sequence_driven",
+      "first_observed": "2026-09-13",
+      "owner_workstream": "TOPIC_B2",
+      "classification": "OTHER_WORKSTREAM",
+      "evidence": "a8357d4 and e4d6754 identity comparison",
+      "blocks_workstreams": ["TOPIC_B2", "A9_A10", "RELEASE"],
+      "expires_or_recheck": "2026-09-30",
+      "resolved_by": null
+    },
+    {
+      "test_id": "services/api/tests/test_topic_lifecycle_engine.py::test_ordinary_signal_cannot_skip_adjacent_lifecycle_stage",
+      "first_observed": "2026-09-13",
+      "owner_workstream": "TOPIC_B2",
+      "classification": "OTHER_WORKSTREAM",
+      "evidence": "a8357d4 and e4d6754 identity comparison",
+      "blocks_workstreams": ["TOPIC_B2", "A9_A10", "RELEASE"],
+      "expires_or_recheck": "2026-09-30",
+      "resolved_by": null
+    },
+    {
+      "test_id": "services/api/tests/test_ws3_core_v0_a1_quality_filter_confirmatory_validation.py::ConfirmatoryValidationContractTests::test_candidate_freeze_is_deterministic_and_complete",
+      "first_observed": "2026-09-17",
+      "owner_workstream": "WS3",
+      "classification": "OTHER_WORKSTREAM",
+      "evidence": "Clean governed 07b7a73 baseline lacks the WS3 threshold-sensitivity JSON artifact required by the research-only confirmatory test; the same failure reproduces before FUND-A composition.",
+      "blocks_workstreams": ["WS3", "RELEASE"],
+      "expires_or_recheck": "2026-09-30",
+      "resolved_by": null
+    },
+    {
+      "test_id": "services/api/tests/test_ws3_core_v0_a1_quality_filter_confirmatory_validation.py::ConfirmatoryValidationContractTests::test_pit_and_outcome_boundaries_are_explicit",
+      "first_observed": "2026-09-17",
+      "owner_workstream": "WS3",
+      "classification": "OTHER_WORKSTREAM",
+      "evidence": "Clean governed 07b7a73 baseline lacks the WS3 threshold-sensitivity JSON artifact required by the research-only confirmatory test; the same failure reproduces before FUND-A composition.",
+      "blocks_workstreams": ["WS3", "RELEASE"],
+      "expires_or_recheck": "2026-09-30",
+      "resolved_by": null
+    },
+    {
+      "test_id": "services/api/tests/test_ws3_core_v0_a1_quality_filter_confirmatory_validation.py::ConfirmatoryValidationContractTests::test_raw_cohort_authority_is_preserved",
+      "first_observed": "2026-09-17",
+      "owner_workstream": "WS3",
+      "classification": "OTHER_WORKSTREAM",
+      "evidence": "Clean governed 07b7a73 baseline lacks the WS3 threshold-sensitivity JSON artifact required by the research-only confirmatory test; the same failure reproduces before FUND-A composition.",
+      "blocks_workstreams": ["WS3", "RELEASE"],
+      "expires_or_recheck": "2026-09-30",
+      "resolved_by": null
+    },
+    {
+      "test_id": "services/api/tests/test_ws3_core_v0_a1_quality_filter_confirmatory_validation.py::ConfirmatoryValidationContractTests::test_thresholds_and_operators_are_immutable_freeze_values",
+      "first_observed": "2026-09-17",
+      "owner_workstream": "WS3",
+      "classification": "OTHER_WORKSTREAM",
+      "evidence": "Clean governed 07b7a73 baseline lacks the WS3 threshold-sensitivity JSON artifact required by the research-only confirmatory test; the same failure reproduces before FUND-A composition.",
+      "blocks_workstreams": ["WS3", "RELEASE"],
+      "expires_or_recheck": "2026-09-30",
+      "resolved_by": null
+    },
+    {
+      "test_id": "services/api/tests/test_ws3_core_v0_a2_entry_breakout_invalidation.py::test_a1_forward_contract_preserves_exact_seven_candidates",
+      "first_observed": "2026-09-17",
+      "owner_workstream": "WS3",
+      "classification": "OTHER_WORKSTREAM",
+      "evidence": "Clean governed 07b7a73 baseline lacks the WS3 confirmatory-freeze JSON artifact required by the research-only forward-contract test; the same failure reproduces before FUND-A composition.",
+      "blocks_workstreams": ["WS3", "RELEASE"],
+      "expires_or_recheck": "2026-09-30",
+      "resolved_by": null
+    }
+  ]
+}

@@ -6,6 +6,8 @@ or interpret formulas, weights, thresholds, or normalization rules.
 
 from __future__ import annotations
 
+import hashlib
+import json
 import re
 from collections.abc import Mapping
 from dataclasses import dataclass
@@ -120,6 +122,18 @@ def export_policy_approval_artifact(record: PolicyApprovalRecord) -> dict[str, o
         else getattr(record, field)
         for field in _ARTIFACT_FIELDS
     }
+
+
+def policy_approval_sha256(record: PolicyApprovalRecord) -> str:
+    """Return the deterministic SHA-256 of the strict approval artifact."""
+
+    encoded = json.dumps(
+        export_policy_approval_artifact(record),
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode("utf-8")
+    return hashlib.sha256(encoded).hexdigest()
 
 
 def parse_policy_approval_artifact(payload: Mapping[str, object]) -> PolicyApprovalRecord:
@@ -277,5 +291,6 @@ __all__ = [
     "evaluate_policy_approval",
     "export_policy_approval_artifact",
     "parse_policy_approval_artifact",
+    "policy_approval_sha256",
     "require_policy_approval",
 ]

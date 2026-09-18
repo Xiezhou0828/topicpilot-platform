@@ -1,0 +1,12 @@
+{
+  "task_id": "TASK-INT-DAILY-CLOSE-CANONICAL-RELEASE-REPLAY-AND-FORMAL-E2E-CLOSURE-001",
+  "target_trading_date": "2026-09-15",
+  "status": "NOT_VERIFIED",
+  "historical_incident_status": "FAIL_OR_PARTIAL",
+  "source_trading_date": "NOT_PERSISTED_READ_BACK",
+  "formal_effective_date": "NOT_PERSISTED_READ_BACK",
+  "persisted_timestamp": "NOT_READ_BACK",
+  "provider_as_of": "Provider-only control matched 2026-09-15; persistence freshness not proven",
+  "stale_prior_day_leakage": "NOT_VERIFIED",
+  "fail_closed_reason": "No authorized date-bound replay and formal persisted readback."
+}

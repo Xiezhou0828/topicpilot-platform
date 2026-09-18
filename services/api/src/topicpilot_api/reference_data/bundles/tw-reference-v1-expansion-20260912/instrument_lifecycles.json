@@ -55,5 +55,15 @@
     "reason": "TPEx official termination notice",
     "source_url": "https://dsp.tpex.org.tw/web/announcement/announcement_detail.php?content_file=MTEzMDAxMTA4NDEuaHRtbA%3D%3D&content_number=MTEzMDAxMTA4NDE%3D",
     "status_code": "DELISTED"
+  },
+  {
+    "effective_from": "2026-09-10",
+    "effective_to": "2026-09-18",
+    "evidence_id": "TPEX-TWO-8277-SUSPENDED-20260910",
+    "instrument_code": "8277",
+    "market_code": "TWO",
+    "reason": "TPEx notice states that 8277 old shares stop OTC trading from 2026-09-10 through 2026-09-18 for the capital-reduction share exchange; new shares start OTC trading on 2026-09-21.",
+    "source_url": "https://www.tpex.org.tw/www/zh-tw/bulletin/annDetail?content_file=MTE1MDAwNTUwNDEuaHRtbA%3D%3D&docId=MTE1MDAwNTUwNDE%3D",
+    "status_code": "SUSPENDED"
   }
 ]

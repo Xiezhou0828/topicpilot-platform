@@ -1,0 +1,35 @@
+{
+  "task_id": "TASK-INT-TOPIC-B2-003F-GOVERNED-REGISTRATION-001",
+  "title": "One-Shot 003F Governed Registration",
+  "status": "PARTIAL",
+  "owner_role": "Governance / Integration Owner",
+  "workstream": "INTEGRATION",
+  "base_sha": "c3405736e345c670f2eaa5c1eb34b76f61a58ee7",
+  "governed_development_base_sha": "a8357d46194f9669709f184949270e20a7a2546c",
+  "qualified_gov003_baseline": "2a062d2830dfac4ba2c6c3d25d2c12d0c9fc29b0",
+  "branch": "codex/task-int-topic-b2-003f-governed-registration-001-20260915",
+  "worktree": "E:\\topicpilot-worktrees\\int-topic-b2-003f-governed-registration-001-20260915",
+  "owned_paths": [
+    "docs/governance/tasks/TASK-INT-TOPIC-B2-003F-GOVERNED-REGISTRATION-001.yaml",
+    "docs/governance/tasks/TASK-TOPIC-B2-003F-CANONICAL-PROVENANCE-001.yaml",
+    "docs/governance/tasks/TOPIC-B2-AUTHORITY-RECONCILIATION-001.yaml",
+    "docs/governance/tasks/TOPIC-B2-CANONICAL-ARTIFACT-PROVENANCE-AND-PUBLICATION-GATE-001.yaml",
+    "docs/governance/provenance/**",
+    "docs/governance/provenance/TASK-TOPIC-B2-003F-CANONICAL-PROVENANCE-001.json",
+    "docs/reports/TASK-INT-TOPIC-B2-003F-GOVERNED-REGISTRATION-001-20260915.md"
+  ],
+  "shared_paths": ["docs/ROADMAP.md", "docs/WORK_ORDERS.md", "docs/DOCUMENTATION_INDEX.md", "PROJECT_CONTEXT.md", "services/api/alembic/versions/**", "services/api/src/topicpilot_api/schemas.py", "packages/api-client/**", ".github/workflows/**"],
+  "forbidden_paths": ["services/**", "apps/**", "packages/**", "infra/**", "services/api/alembic/**", ".github/workflows/**", "NEXT_TASK", "docs/reports/TASK-003G*", "docs/reports/TASK-003H*"],
+  "dependencies": ["GOV-003", "TASK-TOPIC-REC-002", "TASK-A10-A9-REC-002"],
+  "implementation_commits": [],
+  "governance_commits": [],
+  "migration_scope": "NONE; governance registration only",
+  "production_scope": "NONE",
+  "owner_decision_required": false,
+  "next_allowed_state": "IN_PROGRESS",
+  "shared_surface_policy": "EXPLICIT_RECONCILIATION",
+  "dependency_notes": [
+    "Registers exact 003F authority/provenance evidence into the current GOV-003 lineage without replaying historical artifacts into product code.",
+    "Formal publication, database readback, A10/A9, 003G/003H, Stock, and Opportunity remain outside this task boundary."
+  ]
+}

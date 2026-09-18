@@ -1,0 +1,21 @@
+{
+  "task_id": "TASK-A10-POST-CLOSE-CHECKPOINT-RECONCILIATION-002",
+  "title": "A10 Post-Close Checkpoint Reconciliation",
+  "status": "PLANNED",
+  "owner_role": "DATA / Live / Release owner",
+  "workstream": "A10_A9",
+  "base_sha": "a8357d46194f9669709f184949270e20a7a2546c",
+  "branch": "codex/task-a10-post-close-checkpoint-reconciliation-002-20260914",
+  "worktree": "E:\\topicpilot-worktrees\\a10-post-close-checkpoint-reconciliation-002",
+  "owned_paths": ["services/api/src/topicpilot_api/live/post_close.py", "services/api/src/topicpilot_api/live/scheduler.py", "services/api/src/topicpilot_api/live/orchestrator.py", "services/api/src/topicpilot_api/live/persistence.py", "services/api/tests/test_post_close*.py", "docs/reports/TASK-A10*.md"],
+  "shared_paths": ["services/api/alembic/versions/**", "services/api/src/topicpilot_api/schemas.py", "packages/api-client/**"],
+  "forbidden_paths": ["services/api/src/topicpilot_api/home_v2_publication.py", "services/api/src/topicpilot_api/topic_engine/**", "apps/web/**", "services/api/src/topicpilot_api/opportunity*.py"],
+  "dependencies": ["TASK-A10-A9-REC-002"],
+  "implementation_commits": [],
+  "governance_commits": [],
+  "migration_scope": "NONE",
+  "production_scope": "NONE",
+  "owner_decision_required": false,
+  "next_allowed_state": "IN_PROGRESS",
+  "dependency_notes": ["Dry-run metadata only; scheduler activation and migration execution remain forbidden."]
+}

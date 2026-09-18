@@ -13,6 +13,7 @@ from .contracts import CollectorRunResult, IntradayProvider, LiveProviderError, 
 from .logging import log_event
 from .persistence import LivePersistenceError, LiveRepository
 from .session import MarketSessionClock, SessionState
+from .transaction import SessionRecoveryError, recover_session
 
 
 class LiveCollector:
@@ -225,11 +226,21 @@ class LiveCollector:
                         updatedAt=updated,
                     )
                     break
+                except SessionRecoveryError:
+                    raise
                 except Exception as exc:
                     rollback = getattr(self.repository, "rollback", None)
-                    if callable(rollback):
-                        rollback()
-                    code = getattr(exc, "code", "LIVE_RUNTIME_ERROR")
+                    recovery = recover_session(
+                        getattr(self.repository, "session", None),
+                        job_name="INTRADAY_SYMBOL",
+                        original_exception=exc,
+                        logger=self.logger,
+                        run_id=run_id,
+                        rollback=rollback if callable(rollback) else None,
+                    )
+                    if not recovery.session_usable:
+                        raise SessionRecoveryError("INTRADAY_SYMBOL", exc, recovery) from exc
+                    code = getattr(exc, "code", None) or type(exc).__name__
                     retryable = getattr(exc, "retryable", isinstance(exc, TimeoutError))
                     message = (
                         str(exc)

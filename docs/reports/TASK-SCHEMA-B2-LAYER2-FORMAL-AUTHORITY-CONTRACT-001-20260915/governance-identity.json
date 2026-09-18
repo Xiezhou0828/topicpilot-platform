@@ -1,0 +1,14 @@
+{
+  "accountBinding": "none",
+  "authority": [
+    "PRODUCT_POLICY_APPROVAL",
+    "FORMAL_GOVERNANCE_DECISION"
+  ],
+  "credential": false,
+  "formalDecisionRefs": [
+    "TOPIC_B2_LAYER2_POLICY_V1"
+  ],
+  "id": "topicpilot-owner",
+  "kind": "GOVERNANCE_OWNER",
+  "schemaVersion": "topicpilot-governance-identity.v1"
+}

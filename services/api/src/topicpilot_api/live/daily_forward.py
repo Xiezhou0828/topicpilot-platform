@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import UTC, date, datetime, time, timedelta
@@ -13,6 +14,7 @@ from topicpilot_api.provider_preflight import load_g2_preflight_context
 
 from .config import LiveRuntimeConfig
 from .post_close import PostCloseRunResult, PostCloseUpdater
+from .transaction import SessionRecoveryError, recover_session
 
 
 @dataclass(frozen=True)
@@ -51,12 +53,14 @@ class DailyForwardRunner:
         clock: Callable[[], datetime] | None = None,
         updater: PostCloseUpdater | None = None,
         context_loader: Callable[..., Any] = load_g2_preflight_context,
+        logger: logging.Logger | None = None,
     ) -> None:
         self.session = session
         self.config = config
         self.clock = clock or (lambda: datetime.now(UTC))
         self.updater = updater or PostCloseUpdater(session, config, clock=self.clock)
         self.context_loader = context_loader
+        self.logger = logger or logging.getLogger("topicpilot.live.daily_forward")
 
     def _now(self) -> datetime:
         value = self.clock()
@@ -85,56 +89,32 @@ class DailyForwardRunner:
             candidate = target_date + timedelta(days=offset)
             try:
                 context = self._context(candidate)
-            except Exception:
+            except SessionRecoveryError:
+                raise
+            except Exception as exc:
+                self._recover_after_failure("NEXT_SESSION_PREFLIGHT", exc)
                 return None
             if self._context_ready(context) and context.target_date_is_session:
                 return candidate
         return None
-
-    def _latest_closed_session(self, now: datetime) -> tuple[date | None, tuple[str, ...]]:
-        local_now = now.astimezone(self.updater.session_clock.timezone)
-        close_time = time.fromisoformat(self.config.session_close)
-        latest_possible = local_now.date()
-        if local_now.time() < close_time:
-            latest_possible -= timedelta(days=1)
-
-        for offset in range(0, 15):
-            candidate = latest_possible - timedelta(days=offset)
-            try:
-                context = self._context(candidate)
-            except Exception as exc:
-                return None, (f"REFERENCE_PREFLIGHT_{type(exc).__name__}",)
-            if not self._context_ready(context):
-                return None, ("REFERENCE_PREFLIGHT_FAILED",)
-            if context.target_date_is_session:
-                return candidate, ()
-        return None, ("NO_ELIGIBLE_CLOSED_SESSION",)
 
     def run_once(
         self,
         *,
         run_date: date | None = None,
         replay: bool = False,
-        execution_mode: str = "MANUAL",
     ) -> DailyForwardRunResult:
         now = self._now()
         local_date = now.astimezone(self.updater.session_clock.timezone).date()
-        if run_date is None:
-            target_date, resolution_reasons = self._latest_closed_session(now)
-            if target_date is None:
-                return DailyForwardRunResult(
-                    "BLOCKED",
-                    None,
-                    None,
-                    resolution_reasons,
-                )
-        else:
-            target_date = run_date
+        target_date = run_date or local_date
         is_replay = replay or (run_date is not None and target_date != local_date)
 
         try:
             context = self._context(target_date)
+        except SessionRecoveryError:
+            raise
         except Exception as exc:
+            self._recover_after_failure("DAILY_FORWARD_PREFLIGHT", exc)
             return DailyForwardRunResult(
                 "BLOCKED",
                 target_date,
@@ -161,10 +141,9 @@ class DailyForwardRunner:
 
         next_session = self._next_session(target_date)
         if not context.target_date_is_session:
-            result = self.updater.run_once(
-                run_date=target_date,
-                execution_mode=execution_mode,
-            )
+            # Let the existing updater record an explicit MARKET_CLOSED run;
+            # its calendar gate prevents any official provider call.
+            result = self.updater.run_once(run_date=target_date)
             return DailyForwardRunResult(
                 result.status,
                 target_date,
@@ -176,7 +155,7 @@ class DailyForwardRunner:
 
         local_time = now.astimezone(self.updater.session_clock.timezone).time()
         post_close_start = time.fromisoformat(self.config.post_close_start)
-        if not is_replay and local_time < post_close_start:
+        if not is_replay and (target_date != local_date or local_time < post_close_start):
             return DailyForwardRunResult(
                 "WAITING_FOR_POST_CLOSE",
                 target_date,
@@ -184,10 +163,7 @@ class DailyForwardRunner:
                 ("POST_CLOSE_WINDOW_NOT_REACHED",),
             )
 
-        result = self.updater.run_once(
-            run_date=target_date,
-            execution_mode=execution_mode,
-        )
+        result = self.updater.run_once(run_date=target_date)
         return DailyForwardRunResult(
             result.status,
             target_date,
@@ -196,6 +172,16 @@ class DailyForwardRunner:
             post_close=result,
             replay=is_replay,
         )
+
+    def _recover_after_failure(self, job_name: str, exc: Exception) -> None:
+        recovery = recover_session(
+            self.session,
+            job_name=job_name,
+            original_exception=exc,
+            logger=self.logger,
+        )
+        if not recovery.session_usable:
+            raise SessionRecoveryError(job_name, exc, recovery) from exc
 
 
 __all__ = ["DailyForwardRunResult", "DailyForwardRunner"]

@@ -722,6 +722,20 @@
             ],
             "title": "Reasoncode"
           },
+          "signalCatalog": {
+            "items": {
+              "$ref": "#/components/schemas/HomeMarketSignalCatalog"
+            },
+            "title": "Signalcatalog",
+            "type": "array"
+          },
+          "signals": {
+            "items": {
+              "$ref": "#/components/schemas/HomeMarketSignal"
+            },
+            "title": "Signals",
+            "type": "array"
+          },
           "source": {
             "title": "Source",
             "type": "string"
@@ -808,6 +822,89 @@
           "classification"
         ],
         "title": "HomeDataQuality",
+        "type": "object"
+      },
+      "HomeInstitutionalFlow": {
+        "properties": {
+          "asOfDate": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Asofdate"
+          },
+          "contractVersion": {
+            "title": "Contractversion",
+            "type": "string"
+          },
+          "freshness": {
+            "title": "Freshness",
+            "type": "string"
+          },
+          "markets": {
+            "items": {
+              "$ref": "#/components/schemas/MarketInstitutionalFlowTrendRead"
+            },
+            "title": "Markets",
+            "type": "array"
+          },
+          "scale": {
+            "title": "Scale",
+            "type": "integer"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source"
+          },
+          "sourceAsOf": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sourceasof"
+          },
+          "status": {
+            "enum": [
+              "AVAILABLE",
+              "PARTIAL",
+              "UNAVAILABLE"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "unit": {
+            "title": "Unit",
+            "type": "string"
+          }
+        },
+        "required": [
+          "contractVersion",
+          "asOfDate",
+          "status",
+          "freshness",
+          "sourceAsOf",
+          "source",
+          "unit",
+          "scale"
+        ],
+        "title": "HomeInstitutionalFlow",
         "type": "object"
       },
       "HomeMarketBreadth": {
@@ -1212,6 +1309,16 @@
             "title": "Indices",
             "type": "array"
           },
+          "institutionFlows": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/HomeInstitutionalFlow"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "latestSnapshotTime": {
             "anyOf": [
               {
@@ -1331,6 +1438,84 @@
           "source"
         ],
         "title": "HomeMarketPulseEvent",
+        "type": "object"
+      },
+      "HomeMarketSignal": {
+        "properties": {
+          "direction": {
+            "title": "Direction",
+            "type": "string"
+          },
+          "evidence": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Evidence",
+            "type": "array"
+          },
+          "interpretation": {
+            "title": "Interpretation",
+            "type": "string"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "severity": {
+            "enum": [
+              "INFO",
+              "WATCH",
+              "WARNING"
+            ],
+            "title": "Severity",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "name",
+          "severity",
+          "direction",
+          "interpretation"
+        ],
+        "title": "HomeMarketSignal",
+        "type": "object"
+      },
+      "HomeMarketSignalCatalog": {
+        "properties": {
+          "condition": {
+            "title": "Condition",
+            "type": "string"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "direction": {
+            "title": "Direction",
+            "type": "string"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "name",
+          "condition",
+          "direction",
+          "description"
+        ],
+        "title": "HomeMarketSignalCatalog",
         "type": "object"
       },
       "HomeMarketTurnover": {
@@ -1733,6 +1918,17 @@
               }
             ],
             "title": "Formaltopics"
+          },
+          "institutionalFlow": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Institutionalflow"
           }
         },
         "title": "HomePublicationLineage",
@@ -2194,6 +2390,11 @@
             "title": "Providerstatus",
             "type": "string"
           },
+          "recoveryProgress": {
+            "additionalProperties": true,
+            "title": "Recoveryprogress",
+            "type": "object"
+          },
           "retryCount": {
             "title": "Retrycount",
             "type": "integer"
@@ -2330,6 +2531,595 @@
         "title": "LiveTrackingResponse",
         "type": "object"
       },
+      "MarketFlowLegRead": {
+        "properties": {
+          "buy": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Buy"
+          },
+          "net": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Net"
+          },
+          "scale": {
+            "title": "Scale",
+            "type": "integer"
+          },
+          "sell": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sell"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "unit": {
+            "title": "Unit",
+            "type": "string"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value"
+          }
+        },
+        "required": [
+          "buy",
+          "sell",
+          "net",
+          "unit",
+          "scale",
+          "status"
+        ],
+        "title": "MarketFlowLegRead",
+        "type": "object"
+      },
+      "MarketFlowWindowRead": {
+        "properties": {
+          "complete": {
+            "title": "Complete",
+            "type": "boolean"
+          },
+          "dealerNet": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dealernet"
+          },
+          "foreignNet": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Foreignnet"
+          },
+          "investmentTrustNet": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Investmenttrustnet"
+          },
+          "observedSessions": {
+            "title": "Observedsessions",
+            "type": "integer"
+          },
+          "requiredSessions": {
+            "title": "Requiredsessions",
+            "type": "integer"
+          },
+          "scale": {
+            "title": "Scale",
+            "type": "integer"
+          },
+          "totalNet": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Totalnet"
+          },
+          "unit": {
+            "title": "Unit",
+            "type": "string"
+          }
+        },
+        "required": [
+          "requiredSessions",
+          "observedSessions",
+          "complete",
+          "foreignNet",
+          "investmentTrustNet",
+          "dealerNet",
+          "totalNet",
+          "unit",
+          "scale"
+        ],
+        "title": "MarketFlowWindowRead",
+        "type": "object"
+      },
+      "MarketInstitutionalFlowDailyRead": {
+        "properties": {
+          "adapterVersion": {
+            "title": "Adapterversion",
+            "type": "string"
+          },
+          "availability": {
+            "title": "Availability",
+            "type": "string"
+          },
+          "dealer": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MarketFlowLegRead"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "foreign": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MarketFlowLegRead"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "freshness": {
+            "title": "Freshness",
+            "type": "string"
+          },
+          "investmentTrust": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MarketFlowLegRead"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "lineage": {
+            "title": "Lineage",
+            "type": "string"
+          },
+          "market": {
+            "title": "Market",
+            "type": "string"
+          },
+          "publishedAt": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Publishedat"
+          },
+          "responseContentHash": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Responsecontenthash"
+          },
+          "retrievedAt": {
+            "format": "date-time",
+            "title": "Retrievedat",
+            "type": "string"
+          },
+          "sourceAsOf": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sourceasof"
+          },
+          "sourceDataset": {
+            "title": "Sourcedataset",
+            "type": "string"
+          },
+          "sourceEndpoint": {
+            "title": "Sourceendpoint",
+            "type": "string"
+          },
+          "sourceIdentity": {
+            "title": "Sourceidentity",
+            "type": "string"
+          },
+          "sourceProvider": {
+            "title": "Sourceprovider",
+            "type": "string"
+          },
+          "statusReason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Statusreason"
+          },
+          "total": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MarketFlowLegRead"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "tradingDate": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tradingdate"
+          }
+        },
+        "required": [
+          "market",
+          "tradingDate",
+          "foreign",
+          "investmentTrust",
+          "dealer",
+          "total",
+          "sourceProvider",
+          "sourceIdentity",
+          "sourceDataset",
+          "sourceEndpoint",
+          "adapterVersion",
+          "sourceAsOf",
+          "publishedAt",
+          "retrievedAt",
+          "availability",
+          "freshness",
+          "statusReason",
+          "lineage",
+          "responseContentHash"
+        ],
+        "title": "MarketInstitutionalFlowDailyRead",
+        "type": "object"
+      },
+      "MarketInstitutionalFlowResponse": {
+        "properties": {
+          "asOfDate": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Asofdate"
+          },
+          "contractVersion": {
+            "title": "Contractversion",
+            "type": "string"
+          },
+          "freshness": {
+            "title": "Freshness",
+            "type": "string"
+          },
+          "markets": {
+            "items": {
+              "$ref": "#/components/schemas/MarketInstitutionalFlowTrendRead"
+            },
+            "title": "Markets",
+            "type": "array"
+          },
+          "scale": {
+            "title": "Scale",
+            "type": "integer"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source"
+          },
+          "sourceAsOf": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sourceasof"
+          },
+          "status": {
+            "enum": [
+              "AVAILABLE",
+              "PARTIAL",
+              "UNAVAILABLE"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "unit": {
+            "title": "Unit",
+            "type": "string"
+          }
+        },
+        "required": [
+          "contractVersion",
+          "asOfDate",
+          "status",
+          "freshness",
+          "sourceAsOf",
+          "source",
+          "unit",
+          "scale"
+        ],
+        "title": "MarketInstitutionalFlowResponse",
+        "type": "object"
+      },
+      "MarketInstitutionalFlowTrendRead": {
+        "properties": {
+          "acceleration": {
+            "additionalProperties": true,
+            "title": "Acceleration",
+            "type": "object"
+          },
+          "asOfDate": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Asofdate"
+          },
+          "availability": {
+            "title": "Availability",
+            "type": "string"
+          },
+          "current": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MarketInstitutionalFlowDailyRead"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "freshness": {
+            "title": "Freshness",
+            "type": "string"
+          },
+          "market": {
+            "title": "Market",
+            "type": "string"
+          },
+          "previous": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MarketInstitutionalFlowDailyRead"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "priceFlowRelation": {
+            "$ref": "#/components/schemas/MarketPriceFlowRelationRead"
+          },
+          "rolling20Session": {
+            "$ref": "#/components/schemas/MarketFlowWindowRead"
+          },
+          "rolling5Session": {
+            "$ref": "#/components/schemas/MarketFlowWindowRead"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source"
+          },
+          "sourceAsOf": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sourceasof"
+          },
+          "statusReason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Statusreason"
+          },
+          "streaks": {
+            "additionalProperties": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Streaks",
+            "type": "object"
+          }
+        },
+        "required": [
+          "market",
+          "asOfDate",
+          "availability",
+          "freshness",
+          "current",
+          "previous",
+          "rolling5Session",
+          "rolling20Session",
+          "streaks",
+          "acceleration",
+          "priceFlowRelation",
+          "sourceAsOf",
+          "source",
+          "statusReason"
+        ],
+        "title": "MarketInstitutionalFlowTrendRead",
+        "type": "object"
+      },
+      "MarketPriceFlowRelationRead": {
+        "properties": {
+          "availability": {
+            "title": "Availability",
+            "type": "string"
+          },
+          "directionRelation": {
+            "title": "Directionrelation",
+            "type": "string"
+          },
+          "flowDirection": {
+            "title": "Flowdirection",
+            "type": "string"
+          },
+          "flowNet": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Flownet"
+          },
+          "indexChange": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Indexchange"
+          },
+          "market": {
+            "title": "Market",
+            "type": "string"
+          },
+          "marketDirection": {
+            "title": "Marketdirection",
+            "type": "string"
+          }
+        },
+        "required": [
+          "market",
+          "indexChange",
+          "flowNet",
+          "marketDirection",
+          "flowDirection",
+          "directionRelation",
+          "availability"
+        ],
+        "title": "MarketPriceFlowRelationRead",
+        "type": "object"
+      },
       "MigrationRevisionResponse": {
         "properties": {
           "alembicRevision": {
@@ -2354,6 +3144,1164 @@
           "alembicRevision"
         ],
         "title": "MigrationRevisionResponse",
+        "type": "object"
+      },
+      "OpportunityDetailRead": {
+        "properties": {
+          "asOf": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Asof"
+          },
+          "dataStatus": {
+            "title": "Datastatus",
+            "type": "string"
+          },
+          "displayKey": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Displaykey"
+          },
+          "displayOrder": {
+            "minimum": 1.0,
+            "title": "Displayorder",
+            "type": "integer"
+          },
+          "evidence": {
+            "items": {
+              "$ref": "#/components/schemas/OpportunityEvidenceRead"
+            },
+            "title": "Evidence",
+            "type": "array"
+          },
+          "institutionalEvidence": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/OpportunityInstitutionalEvidenceRead"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "lifecycle": {
+            "$ref": "#/components/schemas/OpportunityLifecycleContextRead"
+          },
+          "lifecycleEvidence": {
+            "items": {
+              "$ref": "#/components/schemas/OpportunityEvidenceRead"
+            },
+            "title": "Lifecycleevidence",
+            "type": "array"
+          },
+          "members": {
+            "$ref": "#/components/schemas/OpportunityMembersRead"
+          },
+          "opportunityId": {
+            "title": "Opportunityid",
+            "type": "string"
+          },
+          "opportunityKey": {
+            "title": "Opportunitykey",
+            "type": "string"
+          },
+          "opportunityState": {
+            "title": "Opportunitystate",
+            "type": "string"
+          },
+          "primaryRisk": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Primaryrisk"
+          },
+          "providerLineage": {
+            "$ref": "#/components/schemas/OpportunityProviderLineage"
+          },
+          "publicationStatus": {
+            "const": "FORMAL",
+            "title": "Publicationstatus",
+            "type": "string"
+          },
+          "sectionKey": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sectionkey"
+          },
+          "selectorEvidence": {
+            "items": {
+              "$ref": "#/components/schemas/OpportunityEvidenceRead"
+            },
+            "title": "Selectorevidence",
+            "type": "array"
+          },
+          "selectorV1": {
+            "$ref": "#/components/schemas/OpportunitySelectorV1Read"
+          },
+          "sourceStatus": {
+            "const": "FORMAL_CANONICAL",
+            "title": "Sourcestatus",
+            "type": "string"
+          },
+          "summary": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Summary"
+          },
+          "technicalValidation": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/OpportunityTechnicalValidationRead"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "topic": {
+            "$ref": "#/components/schemas/OpportunityTopicIdentityRead"
+          },
+          "topicGrade": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Topicgrade"
+          },
+          "topicStrength": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Topicstrength"
+          },
+          "updatedAt": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updatedat"
+          }
+        },
+        "required": [
+          "opportunityId",
+          "opportunityKey",
+          "displayOrder",
+          "topic",
+          "opportunityState",
+          "lifecycle",
+          "selectorV1",
+          "publicationStatus",
+          "dataStatus",
+          "sourceStatus",
+          "providerLineage",
+          "members"
+        ],
+        "title": "OpportunityDetailRead",
+        "type": "object"
+      },
+      "OpportunityDetailResponse": {
+        "description": "Formal Opportunity detail envelope.",
+        "properties": {
+          "asOf": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Asof"
+          },
+          "contractVersion": {
+            "const": "opportunity-page-read.v1",
+            "title": "Contractversion",
+            "type": "string"
+          },
+          "dataStatus": {
+            "title": "Datastatus",
+            "type": "string"
+          },
+          "opportunity": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/OpportunityDetailRead"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "providerLineage": {
+            "$ref": "#/components/schemas/OpportunityProviderLineage"
+          },
+          "publicationStatus": {
+            "const": "FORMAL",
+            "title": "Publicationstatus",
+            "type": "string"
+          },
+          "query": {
+            "additionalProperties": true,
+            "title": "Query",
+            "type": "object"
+          },
+          "sourceStatus": {
+            "const": "FORMAL_CANONICAL",
+            "title": "Sourcestatus",
+            "type": "string"
+          },
+          "state": {
+            "enum": [
+              "READY",
+              "EMPTY",
+              "DEFERRED",
+              "UNAVAILABLE",
+              "ERROR"
+            ],
+            "title": "State",
+            "type": "string"
+          },
+          "updatedAt": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updatedat"
+          }
+        },
+        "required": [
+          "contractVersion",
+          "state",
+          "publicationStatus",
+          "dataStatus",
+          "sourceStatus",
+          "providerLineage"
+        ],
+        "title": "OpportunityDetailResponse",
+        "type": "object"
+      },
+      "OpportunityEvidenceRead": {
+        "description": "Provider-owned, bounded reason/evidence context.",
+        "properties": {
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "detail": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Detail"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status"
+          }
+        },
+        "required": [
+          "code",
+          "kind"
+        ],
+        "title": "OpportunityEvidenceRead",
+        "type": "object"
+      },
+      "OpportunityInstitutionalEvidenceAlignmentRead": {
+        "properties": {
+          "classification": {
+            "const": "POLICY_DECISION_REQUIRED",
+            "title": "Classification",
+            "type": "string"
+          },
+          "selectionEffect": {
+            "const": "NONE",
+            "title": "Selectioneffect",
+            "type": "string"
+          },
+          "status": {
+            "const": "NOT_EVALUATED",
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "classification",
+          "status",
+          "selectionEffect"
+        ],
+        "title": "OpportunityInstitutionalEvidenceAlignmentRead",
+        "type": "object"
+      },
+      "OpportunityInstitutionalEvidenceRead": {
+        "description": "Optional FUND-C evidence attached to an Opportunity read model.",
+        "properties": {
+          "alignment": {
+            "$ref": "#/components/schemas/OpportunityInstitutionalEvidenceAlignmentRead"
+          },
+          "availability": {
+            "enum": [
+              "OK",
+              "NO_DATA",
+              "NOT_TRADING_DAY",
+              "PROVIDER_UNAVAILABLE",
+              "AUTH_ERROR",
+              "RATE_LIMITED",
+              "SCHEMA_ERROR",
+              "MAPPING_ERROR",
+              "PARTIAL",
+              "STALE",
+              "UNKNOWN"
+            ],
+            "title": "Availability",
+            "type": "string"
+          },
+          "canonicalEvidence": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Canonicalevidence"
+          },
+          "contractVersion": {
+            "const": "opportunity-institutional-evidence.v1",
+            "title": "Contractversion",
+            "type": "string"
+          },
+          "divergence": {
+            "$ref": "#/components/schemas/StockFlowDivergenceRead"
+          },
+          "evidenceType": {
+            "const": "STOCK_INSTITUTIONAL_FLOW",
+            "title": "Evidencetype",
+            "type": "string"
+          },
+          "fetchedAt": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fetchedat"
+          },
+          "freshness": {
+            "enum": [
+              "CURRENT",
+              "STALE",
+              "UNKNOWN"
+            ],
+            "title": "Freshness",
+            "type": "string"
+          },
+          "instrumentId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Instrumentid"
+          },
+          "latestAvailableSession": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latestavailablesession"
+          },
+          "liquidityRelative": {
+            "$ref": "#/components/schemas/StockLiquidityRelativeRead"
+          },
+          "market": {
+            "enum": [
+              "TPE",
+              "TWO"
+            ],
+            "title": "Market",
+            "type": "string"
+          },
+          "priceFlow": {
+            "$ref": "#/components/schemas/StockPriceFlowRead"
+          },
+          "requestedDate": {
+            "format": "date",
+            "title": "Requesteddate",
+            "type": "string"
+          },
+          "reversal": {
+            "$ref": "#/components/schemas/StockFlowReversalRead"
+          },
+          "rolling": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/StockInstitutionalFlowWindowRead"
+            },
+            "title": "Rolling",
+            "type": "object"
+          },
+          "scale": {
+            "title": "Scale",
+            "type": "integer"
+          },
+          "sessions": {
+            "items": {
+              "$ref": "#/components/schemas/StockInstitutionalFlowFactRead"
+            },
+            "title": "Sessions",
+            "type": "array"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/StockInstitutionalFlowSourceRead"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "sourceAsOf": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sourceasof"
+          },
+          "statusReason": {
+            "title": "Statusreason",
+            "type": "string"
+          },
+          "streaks": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/StockInstitutionalFlowStreakRead"
+            },
+            "title": "Streaks",
+            "type": "object"
+          },
+          "symbol": {
+            "title": "Symbol",
+            "type": "string"
+          },
+          "today": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/StockInstitutionalFlowFactRead"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "tradingDate": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tradingdate"
+          },
+          "unit": {
+            "const": "SHARES",
+            "title": "Unit",
+            "type": "string"
+          },
+          "unusualFlow": {
+            "$ref": "#/components/schemas/StockUnusualFlowRead"
+          }
+        },
+        "required": [
+          "contractVersion",
+          "evidenceType",
+          "instrumentId",
+          "symbol",
+          "market",
+          "requestedDate",
+          "tradingDate",
+          "latestAvailableSession",
+          "availability",
+          "freshness",
+          "statusReason",
+          "sourceAsOf",
+          "fetchedAt",
+          "today",
+          "rolling",
+          "streaks",
+          "reversal",
+          "priceFlow",
+          "divergence",
+          "unusualFlow",
+          "liquidityRelative",
+          "source",
+          "unit",
+          "scale",
+          "alignment",
+          "canonicalEvidence"
+        ],
+        "title": "OpportunityInstitutionalEvidenceRead",
+        "type": "object"
+      },
+      "OpportunityInstrumentRead": {
+        "description": "Formal Opportunity instrument identity, independent of shadow schemas.",
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "symbol": {
+            "title": "Symbol",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "symbol",
+          "name"
+        ],
+        "title": "OpportunityInstrumentRead",
+        "type": "object"
+      },
+      "OpportunityLifecycleContextRead": {
+        "description": "Backend-published Lifecycle context; the browser never derives it.",
+        "properties": {
+          "asOf": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Asof"
+          },
+          "currentStage": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Currentstage"
+          },
+          "dataStatus": {
+            "title": "Datastatus",
+            "type": "string"
+          },
+          "policyVersion": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Policyversion"
+          },
+          "previousStage": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Previousstage"
+          },
+          "publicationStatus": {
+            "enum": [
+              "FORMAL",
+              "UNAVAILABLE"
+            ],
+            "title": "Publicationstatus",
+            "type": "string"
+          },
+          "stageEnteredAt": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stageenteredat"
+          },
+          "stageTradingDays": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stagetradingdays"
+          },
+          "status": {
+            "enum": [
+              "AVAILABLE",
+              "DEFERRED",
+              "UNAVAILABLE",
+              "FAIL_CLOSED"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "transitionReason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Transitionreason"
+          }
+        },
+        "required": [
+          "status",
+          "dataStatus",
+          "publicationStatus"
+        ],
+        "title": "OpportunityLifecycleContextRead",
+        "type": "object"
+      },
+      "OpportunityMemberRead": {
+        "description": "One member from the complete topic-member read model.",
+        "properties": {
+          "asOf": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Asof"
+          },
+          "changePct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Changepct"
+          },
+          "dataStatus": {
+            "title": "Datastatus",
+            "type": "string"
+          },
+          "instrument": {
+            "$ref": "#/components/schemas/OpportunityInstrumentRead"
+          },
+          "publicationStatus": {
+            "enum": [
+              "FORMAL",
+              "UNAVAILABLE"
+            ],
+            "title": "Publicationstatus",
+            "type": "string"
+          },
+          "technicalStatus": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Technicalstatus"
+          },
+          "topicRole": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Topicrole"
+          }
+        },
+        "required": [
+          "instrument",
+          "dataStatus",
+          "publicationStatus"
+        ],
+        "title": "OpportunityMemberRead",
+        "type": "object"
+      },
+      "OpportunityMembersRead": {
+        "description": "Explicit full-member availability; missing members cannot be hidden.",
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/OpportunityMemberRead"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          },
+          "status": {
+            "enum": [
+              "AVAILABLE",
+              "DEFERRED",
+              "UNAVAILABLE",
+              "FAIL_CLOSED"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "title": "OpportunityMembersRead",
+        "type": "object"
+      },
+      "OpportunityPageRead": {
+        "description": "Formal Opportunity page read model, separate from Topic Detail.",
+        "properties": {
+          "asOf": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Asof"
+          },
+          "contractVersion": {
+            "const": "opportunity-page-read.v1",
+            "title": "Contractversion",
+            "type": "string"
+          },
+          "dataStatus": {
+            "title": "Datastatus",
+            "type": "string"
+          },
+          "providerLineage": {
+            "$ref": "#/components/schemas/OpportunityProviderLineage"
+          },
+          "publicationStatus": {
+            "const": "FORMAL",
+            "title": "Publicationstatus",
+            "type": "string"
+          },
+          "sectionMappingStatus": {
+            "enum": [
+              "AVAILABLE",
+              "DEFERRED",
+              "UNAVAILABLE"
+            ],
+            "title": "Sectionmappingstatus",
+            "type": "string"
+          },
+          "sections": {
+            "items": {
+              "$ref": "#/components/schemas/OpportunitySectionRead"
+            },
+            "title": "Sections",
+            "type": "array"
+          },
+          "sourceStatus": {
+            "const": "FORMAL_CANONICAL",
+            "title": "Sourcestatus",
+            "type": "string"
+          },
+          "state": {
+            "enum": [
+              "READY",
+              "EMPTY",
+              "DEFERRED",
+              "UNAVAILABLE",
+              "ERROR"
+            ],
+            "title": "State",
+            "type": "string"
+          },
+          "updatedAt": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updatedat"
+          }
+        },
+        "required": [
+          "contractVersion",
+          "state",
+          "publicationStatus",
+          "dataStatus",
+          "sourceStatus",
+          "sectionMappingStatus",
+          "providerLineage"
+        ],
+        "title": "OpportunityPageRead",
+        "type": "object"
+      },
+      "OpportunityProviderLineage": {
+        "description": "Lineage for an Opportunity page publication.\n\nThis is intentionally separate from the existing shadow contract.  A\nformal consumer must be able to identify the provider and point-in-time\nartifact without borrowing research or fixture metadata.",
+        "properties": {
+          "authority": {
+            "title": "Authority",
+            "type": "string"
+          },
+          "contractVersion": {
+            "title": "Contractversion",
+            "type": "string"
+          },
+          "policyVersion": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Policyversion"
+          },
+          "provider": {
+            "title": "Provider",
+            "type": "string"
+          },
+          "sourceArtifactHash": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sourceartifacthash"
+          },
+          "sourceArtifactId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sourceartifactid"
+          }
+        },
+        "required": [
+          "provider",
+          "authority",
+          "contractVersion"
+        ],
+        "title": "OpportunityProviderLineage",
+        "type": "object"
+      },
+      "OpportunitySectionRead": {
+        "description": "Backend-owned page grouping; never inferred from state or Lifecycle.",
+        "properties": {
+          "displayKey": {
+            "title": "Displaykey",
+            "type": "string"
+          },
+          "displayOrder": {
+            "minimum": 1.0,
+            "title": "Displayorder",
+            "type": "integer"
+          },
+          "opportunities": {
+            "items": {
+              "$ref": "#/components/schemas/OpportunitySummaryRead"
+            },
+            "title": "Opportunities",
+            "type": "array"
+          },
+          "opportunityCount": {
+            "minimum": 0.0,
+            "title": "Opportunitycount",
+            "type": "integer"
+          },
+          "sectionKey": {
+            "title": "Sectionkey",
+            "type": "string"
+          }
+        },
+        "required": [
+          "sectionKey",
+          "displayKey",
+          "displayOrder",
+          "opportunityCount"
+        ],
+        "title": "OpportunitySectionRead",
+        "type": "object"
+      },
+      "OpportunitySelectorCandidateRead": {
+        "description": "One formally published Selector V1 research candidate.",
+        "properties": {
+          "asOf": {
+            "format": "date",
+            "title": "Asof",
+            "type": "string"
+          },
+          "dataStatus": {
+            "title": "Datastatus",
+            "type": "string"
+          },
+          "evidenceStatus": {
+            "const": "AVAILABLE",
+            "title": "Evidencestatus",
+            "type": "string"
+          },
+          "instrument": {
+            "$ref": "#/components/schemas/OpportunityInstrumentRead"
+          },
+          "publicationStatus": {
+            "const": "FORMAL",
+            "title": "Publicationstatus",
+            "type": "string"
+          },
+          "rank": {
+            "enum": [
+              1,
+              2
+            ],
+            "title": "Rank",
+            "type": "integer"
+          },
+          "screenStatus": {
+            "const": "PASSED",
+            "title": "Screenstatus",
+            "type": "string"
+          },
+          "topicRole": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Topicrole"
+          }
+        },
+        "required": [
+          "rank",
+          "instrument",
+          "screenStatus",
+          "evidenceStatus",
+          "asOf",
+          "dataStatus",
+          "publicationStatus"
+        ],
+        "title": "OpportunitySelectorCandidateRead",
+        "type": "object"
+      },
+      "OpportunitySelectorV1Read": {
+        "description": "Selector V1 publication boundary, not a recommendation contract.",
+        "properties": {
+          "asOf": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Asof"
+          },
+          "candidateStatus": {
+            "title": "Candidatestatus",
+            "type": "string"
+          },
+          "candidates": {
+            "items": {
+              "$ref": "#/components/schemas/OpportunitySelectorCandidateRead"
+            },
+            "title": "Candidates",
+            "type": "array"
+          },
+          "contractVersion": {
+            "const": "selector-v1",
+            "title": "Contractversion",
+            "type": "string"
+          },
+          "dataStatus": {
+            "title": "Datastatus",
+            "type": "string"
+          },
+          "missingEvidence": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Missingevidence",
+            "type": "array"
+          },
+          "publicationStatus": {
+            "enum": [
+              "FORMAL",
+              "UNAVAILABLE"
+            ],
+            "title": "Publicationstatus",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "AVAILABLE",
+              "EMPTY",
+              "DEFERRED",
+              "UNAVAILABLE",
+              "FAIL_CLOSED"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "contractVersion",
+          "status",
+          "candidateStatus",
+          "dataStatus",
+          "publicationStatus"
+        ],
+        "title": "OpportunitySelectorV1Read",
         "type": "object"
       },
       "OpportunityShadowCard": {
@@ -2448,6 +4396,16 @@
             "additionalProperties": true,
             "title": "Explanation",
             "type": "object"
+          },
+          "institutionalEvidence": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/OpportunityInstitutionalEvidenceRead"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "instrument": {
             "$ref": "#/components/schemas/OpportunityShadowInstrument"
@@ -3064,6 +5022,306 @@
         "title": "OpportunityShadowTopic",
         "type": "object"
       },
+      "OpportunitySummaryRead": {
+        "properties": {
+          "asOf": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Asof"
+          },
+          "dataStatus": {
+            "title": "Datastatus",
+            "type": "string"
+          },
+          "displayKey": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Displaykey"
+          },
+          "displayOrder": {
+            "minimum": 1.0,
+            "title": "Displayorder",
+            "type": "integer"
+          },
+          "evidence": {
+            "items": {
+              "$ref": "#/components/schemas/OpportunityEvidenceRead"
+            },
+            "title": "Evidence",
+            "type": "array"
+          },
+          "institutionalEvidence": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/OpportunityInstitutionalEvidenceRead"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "lifecycle": {
+            "$ref": "#/components/schemas/OpportunityLifecycleContextRead"
+          },
+          "opportunityId": {
+            "title": "Opportunityid",
+            "type": "string"
+          },
+          "opportunityKey": {
+            "title": "Opportunitykey",
+            "type": "string"
+          },
+          "opportunityState": {
+            "title": "Opportunitystate",
+            "type": "string"
+          },
+          "primaryRisk": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Primaryrisk"
+          },
+          "providerLineage": {
+            "$ref": "#/components/schemas/OpportunityProviderLineage"
+          },
+          "publicationStatus": {
+            "const": "FORMAL",
+            "title": "Publicationstatus",
+            "type": "string"
+          },
+          "sectionKey": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sectionkey"
+          },
+          "selectorV1": {
+            "$ref": "#/components/schemas/OpportunitySelectorV1Read"
+          },
+          "sourceStatus": {
+            "const": "FORMAL_CANONICAL",
+            "title": "Sourcestatus",
+            "type": "string"
+          },
+          "summary": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Summary"
+          },
+          "technicalValidation": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/OpportunityTechnicalValidationRead"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "topic": {
+            "$ref": "#/components/schemas/OpportunityTopicIdentityRead"
+          },
+          "topicGrade": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Topicgrade"
+          },
+          "topicStrength": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Topicstrength"
+          },
+          "updatedAt": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updatedat"
+          }
+        },
+        "required": [
+          "opportunityId",
+          "opportunityKey",
+          "displayOrder",
+          "topic",
+          "opportunityState",
+          "lifecycle",
+          "selectorV1",
+          "publicationStatus",
+          "dataStatus",
+          "sourceStatus",
+          "providerLineage"
+        ],
+        "title": "OpportunitySummaryRead",
+        "type": "object"
+      },
+      "OpportunityTechnicalValidationRead": {
+        "description": "Counts/status from one provider; no browser-side arithmetic.",
+        "properties": {
+          "asOf": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Asof"
+          },
+          "dataStatus": {
+            "title": "Datastatus",
+            "type": "string"
+          },
+          "evaluatedCount": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Evaluatedcount"
+          },
+          "memberCount": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Membercount"
+          },
+          "publicationStatus": {
+            "enum": [
+              "FORMAL",
+              "UNAVAILABLE"
+            ],
+            "title": "Publicationstatus",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "AVAILABLE",
+              "EMPTY",
+              "DEFERRED",
+              "UNAVAILABLE",
+              "FAIL_CLOSED"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "validatedCount": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Validatedcount"
+          }
+        },
+        "required": [
+          "status",
+          "dataStatus",
+          "publicationStatus"
+        ],
+        "title": "OpportunityTechnicalValidationRead",
+        "type": "object"
+      },
+      "OpportunityTopicIdentityRead": {
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "slug": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Slug"
+          },
+          "topicType": {
+            "enum": [
+              "LEAF",
+              "PARENT"
+            ],
+            "title": "Topictype",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "topicType"
+        ],
+        "title": "OpportunityTopicIdentityRead",
+        "type": "object"
+      },
       "Page_CandidateResponse_": {
         "properties": {
           "items": {
@@ -3592,6 +5850,28 @@
             "title": "Adjustmentstate",
             "type": "string"
           },
+          "availabilityEvidenceId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Availabilityevidenceid"
+          },
+          "availabilityReason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Availabilityreason"
+          },
           "change": {
             "anyOf": [
               {
@@ -3648,6 +5928,18 @@
               }
             ],
             "title": "High"
+          },
+          "lastFormalTradingDate": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lastformaltradingdate"
           },
           "low": {
             "anyOf": [
@@ -3853,6 +6145,799 @@
           "mappingPolicyVersion"
         ],
         "title": "StockEodSource",
+        "type": "object"
+      },
+      "StockFlowDivergenceRead": {
+        "properties": {
+          "condition": {
+            "title": "Condition",
+            "type": "string"
+          },
+          "state": {
+            "title": "State",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "state",
+          "condition",
+          "status"
+        ],
+        "title": "StockFlowDivergenceRead",
+        "type": "object"
+      },
+      "StockFlowReversalRead": {
+        "properties": {
+          "currentDirection": {
+            "enum": [
+              "BUY",
+              "SELL",
+              "FLAT",
+              "UNKNOWN"
+            ],
+            "title": "Currentdirection",
+            "type": "string"
+          },
+          "priorDirection": {
+            "enum": [
+              "BUY",
+              "SELL",
+              "FLAT",
+              "UNKNOWN"
+            ],
+            "title": "Priordirection",
+            "type": "string"
+          },
+          "state": {
+            "enum": [
+              "SELL_TO_BUY",
+              "BUY_TO_SELL",
+              "NONE",
+              "UNAVAILABLE"
+            ],
+            "title": "State",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "state",
+          "currentDirection",
+          "priorDirection",
+          "status"
+        ],
+        "title": "StockFlowReversalRead",
+        "type": "object"
+      },
+      "StockInstitutionalFlowFactRead": {
+        "properties": {
+          "adapterVersion": {
+            "title": "Adapterversion",
+            "type": "string"
+          },
+          "dealer": {
+            "$ref": "#/components/schemas/StockInstitutionalFlowLegRead"
+          },
+          "dealerHedge": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/StockInstitutionalFlowLegRead"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "dealerSelf": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/StockInstitutionalFlowLegRead"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "foreign": {
+            "$ref": "#/components/schemas/StockInstitutionalFlowLegRead"
+          },
+          "foreignDealer": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/StockInstitutionalFlowLegRead"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "freshness": {
+            "enum": [
+              "CURRENT",
+              "STALE",
+              "UNKNOWN"
+            ],
+            "title": "Freshness",
+            "type": "string"
+          },
+          "instrumentCode": {
+            "title": "Instrumentcode",
+            "type": "string"
+          },
+          "instrumentId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Instrumentid"
+          },
+          "investmentTrust": {
+            "$ref": "#/components/schemas/StockInstitutionalFlowLegRead"
+          },
+          "lineage": {
+            "title": "Lineage",
+            "type": "string"
+          },
+          "market": {
+            "enum": [
+              "TPE",
+              "TWO"
+            ],
+            "title": "Market",
+            "type": "string"
+          },
+          "responseContentHash": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Responsecontenthash"
+          },
+          "retrievedAt": {
+            "format": "date-time",
+            "title": "Retrievedat",
+            "type": "string"
+          },
+          "scale": {
+            "title": "Scale",
+            "type": "integer"
+          },
+          "sourceAsOf": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sourceasof"
+          },
+          "sourceDataset": {
+            "title": "Sourcedataset",
+            "type": "string"
+          },
+          "sourceEndpoint": {
+            "title": "Sourceendpoint",
+            "type": "string"
+          },
+          "sourceIdentity": {
+            "title": "Sourceidentity",
+            "type": "string"
+          },
+          "sourceProvider": {
+            "title": "Sourceprovider",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "OK",
+              "NO_DATA",
+              "NOT_TRADING_DAY",
+              "PROVIDER_UNAVAILABLE",
+              "AUTH_ERROR",
+              "RATE_LIMITED",
+              "SCHEMA_ERROR",
+              "MAPPING_ERROR",
+              "PARTIAL",
+              "STALE",
+              "UNKNOWN"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "statusReason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Statusreason"
+          },
+          "total": {
+            "$ref": "#/components/schemas/StockInstitutionalFlowLegRead"
+          },
+          "tradingDate": {
+            "format": "date",
+            "title": "Tradingdate",
+            "type": "string"
+          },
+          "unit": {
+            "const": "SHARES",
+            "title": "Unit",
+            "type": "string"
+          }
+        },
+        "required": [
+          "instrumentId",
+          "instrumentCode",
+          "market",
+          "tradingDate",
+          "foreign",
+          "investmentTrust",
+          "dealer",
+          "total",
+          "sourceProvider",
+          "sourceIdentity",
+          "sourceDataset",
+          "sourceEndpoint",
+          "adapterVersion",
+          "sourceAsOf",
+          "retrievedAt",
+          "status",
+          "freshness",
+          "statusReason",
+          "lineage",
+          "responseContentHash",
+          "unit",
+          "scale"
+        ],
+        "title": "StockInstitutionalFlowFactRead",
+        "type": "object"
+      },
+      "StockInstitutionalFlowLegRead": {
+        "properties": {
+          "buy": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Buy",
+            "type": "string"
+          },
+          "net": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Net",
+            "type": "string"
+          },
+          "scale": {
+            "title": "Scale",
+            "type": "integer"
+          },
+          "sell": {
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Sell",
+            "type": "string"
+          },
+          "unit": {
+            "const": "SHARES",
+            "title": "Unit",
+            "type": "string"
+          }
+        },
+        "required": [
+          "buy",
+          "sell",
+          "net",
+          "unit",
+          "scale"
+        ],
+        "title": "StockInstitutionalFlowLegRead",
+        "type": "object"
+      },
+      "StockInstitutionalFlowResponse": {
+        "properties": {
+          "asOfDate": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Asofdate"
+          },
+          "contractVersion": {
+            "title": "Contractversion",
+            "type": "string"
+          },
+          "divergence": {
+            "$ref": "#/components/schemas/StockFlowDivergenceRead"
+          },
+          "freshness": {
+            "enum": [
+              "CURRENT",
+              "STALE",
+              "UNKNOWN"
+            ],
+            "title": "Freshness",
+            "type": "string"
+          },
+          "instrumentCode": {
+            "title": "Instrumentcode",
+            "type": "string"
+          },
+          "instrumentId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Instrumentid"
+          },
+          "latestAvailableDate": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latestavailabledate"
+          },
+          "liquidityRelative": {
+            "$ref": "#/components/schemas/StockLiquidityRelativeRead"
+          },
+          "market": {
+            "enum": [
+              "TPE",
+              "TWO"
+            ],
+            "title": "Market",
+            "type": "string"
+          },
+          "priceFlow": {
+            "$ref": "#/components/schemas/StockPriceFlowRead"
+          },
+          "requestedAsOf": {
+            "format": "date",
+            "title": "Requestedasof",
+            "type": "string"
+          },
+          "reversal": {
+            "$ref": "#/components/schemas/StockFlowReversalRead"
+          },
+          "scale": {
+            "title": "Scale",
+            "type": "integer"
+          },
+          "sessions": {
+            "items": {
+              "$ref": "#/components/schemas/StockInstitutionalFlowFactRead"
+            },
+            "title": "Sessions",
+            "type": "array"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/StockInstitutionalFlowSourceRead"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "sourceAsOf": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sourceasof"
+          },
+          "status": {
+            "enum": [
+              "OK",
+              "NO_DATA",
+              "NOT_TRADING_DAY",
+              "PROVIDER_UNAVAILABLE",
+              "AUTH_ERROR",
+              "RATE_LIMITED",
+              "SCHEMA_ERROR",
+              "MAPPING_ERROR",
+              "PARTIAL",
+              "STALE",
+              "UNKNOWN"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "statusReason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Statusreason"
+          },
+          "streaks": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/StockInstitutionalFlowStreakRead"
+            },
+            "title": "Streaks",
+            "type": "object"
+          },
+          "today": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/StockInstitutionalFlowFactRead"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "unit": {
+            "const": "SHARES",
+            "title": "Unit",
+            "type": "string"
+          },
+          "unusualFlow": {
+            "$ref": "#/components/schemas/StockUnusualFlowRead"
+          },
+          "windows": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/StockInstitutionalFlowWindowRead"
+            },
+            "title": "Windows",
+            "type": "object"
+          }
+        },
+        "required": [
+          "contractVersion",
+          "instrumentId",
+          "instrumentCode",
+          "market",
+          "requestedAsOf",
+          "asOfDate",
+          "latestAvailableDate",
+          "status",
+          "freshness",
+          "statusReason",
+          "today",
+          "sessions",
+          "windows",
+          "streaks",
+          "reversal",
+          "priceFlow",
+          "divergence",
+          "unusualFlow",
+          "liquidityRelative",
+          "sourceAsOf",
+          "source",
+          "unit",
+          "scale"
+        ],
+        "title": "StockInstitutionalFlowResponse",
+        "type": "object"
+      },
+      "StockInstitutionalFlowSourceRead": {
+        "properties": {
+          "adapterVersion": {
+            "title": "Adapterversion",
+            "type": "string"
+          },
+          "dataset": {
+            "title": "Dataset",
+            "type": "string"
+          },
+          "endpoint": {
+            "title": "Endpoint",
+            "type": "string"
+          },
+          "identity": {
+            "title": "Identity",
+            "type": "string"
+          },
+          "provider": {
+            "title": "Provider",
+            "type": "string"
+          }
+        },
+        "required": [
+          "provider",
+          "identity",
+          "dataset",
+          "endpoint",
+          "adapterVersion"
+        ],
+        "title": "StockInstitutionalFlowSourceRead",
+        "type": "object"
+      },
+      "StockInstitutionalFlowStreakRead": {
+        "properties": {
+          "direction": {
+            "enum": [
+              "BUY",
+              "SELL",
+              "FLAT",
+              "UNKNOWN"
+            ],
+            "title": "Direction",
+            "type": "string"
+          },
+          "sessions": {
+            "title": "Sessions",
+            "type": "integer"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "direction",
+          "sessions",
+          "status"
+        ],
+        "title": "StockInstitutionalFlowStreakRead",
+        "type": "object"
+      },
+      "StockInstitutionalFlowWindowRead": {
+        "properties": {
+          "complete": {
+            "title": "Complete",
+            "type": "boolean"
+          },
+          "dealerNet": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dealernet"
+          },
+          "foreignNet": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Foreignnet"
+          },
+          "investmentTrustNet": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Investmenttrustnet"
+          },
+          "observedSessions": {
+            "title": "Observedsessions",
+            "type": "integer"
+          },
+          "requiredSessions": {
+            "title": "Requiredsessions",
+            "type": "integer"
+          },
+          "scale": {
+            "title": "Scale",
+            "type": "integer"
+          },
+          "totalNet": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Totalnet"
+          },
+          "unit": {
+            "const": "SHARES",
+            "title": "Unit",
+            "type": "string"
+          }
+        },
+        "required": [
+          "requiredSessions",
+          "observedSessions",
+          "complete",
+          "foreignNet",
+          "investmentTrustNet",
+          "dealerNet",
+          "totalNet",
+          "unit",
+          "scale"
+        ],
+        "title": "StockInstitutionalFlowWindowRead",
+        "type": "object"
+      },
+      "StockLiquidityRelativeRead": {
+        "properties": {
+          "dailyVolume": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dailyvolume"
+          },
+          "denominatorUnit": {
+            "const": "SHARES",
+            "title": "Denominatorunit",
+            "type": "string"
+          },
+          "institutionalNet": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Institutionalnet"
+          },
+          "numeratorUnit": {
+            "const": "SHARES",
+            "title": "Numeratorunit",
+            "type": "string"
+          },
+          "ratio": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ratio"
+          },
+          "state": {
+            "title": "State",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "state",
+          "ratio",
+          "institutionalNet",
+          "dailyVolume",
+          "numeratorUnit",
+          "denominatorUnit",
+          "status"
+        ],
+        "title": "StockLiquidityRelativeRead",
+        "type": "object"
+      },
+      "StockPriceFlowRead": {
+        "properties": {
+          "flowDirection": {
+            "enum": [
+              "BUY",
+              "SELL",
+              "FLAT",
+              "UNKNOWN"
+            ],
+            "title": "Flowdirection",
+            "type": "string"
+          },
+          "institutionalNet": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Institutionalnet"
+          },
+          "priceBasis": {
+            "title": "Pricebasis",
+            "type": "string"
+          },
+          "priceChange": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pricechange"
+          },
+          "priceDirection": {
+            "enum": [
+              "UP",
+              "DOWN",
+              "FLAT",
+              "UNKNOWN"
+            ],
+            "title": "Pricedirection",
+            "type": "string"
+          },
+          "state": {
+            "title": "State",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "state",
+          "priceDirection",
+          "flowDirection",
+          "priceChange",
+          "institutionalNet",
+          "priceBasis",
+          "status"
+        ],
+        "title": "StockPriceFlowRead",
         "type": "object"
       },
       "StockReadModel": {
@@ -5028,6 +8113,42 @@
           "relationWeight"
         ],
         "title": "StockTopicRelationRead",
+        "type": "object"
+      },
+      "StockUnusualFlowRead": {
+        "properties": {
+          "metric": {
+            "anyOf": [
+              {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Metric"
+          },
+          "reason": {
+            "title": "Reason",
+            "type": "string"
+          },
+          "state": {
+            "title": "State",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "state",
+          "metric",
+          "status",
+          "reason"
+        ],
+        "title": "StockUnusualFlowRead",
         "type": "object"
       },
       "StrategyPerformanceResponse": {
@@ -10156,6 +13277,265 @@
         ]
       }
     },
+    "/api/v2/market/institutional-flow": {
+      "get": {
+        "description": "Return current, previous, rolling-window, and evidence relations.\n\n``from`` is accepted as a consumer-side window assertion.  The endpoint\nreturns one trend envelope, bounded by ``to``/``asOf``; historical rows\nremain available through the same formal persistence contract.",
+        "operationId": "market_institutional_flow_api_v2_market_institutional_flow_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "market",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Market"
+            }
+          },
+          {
+            "in": "query",
+            "name": "asOf",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Asof"
+            }
+          },
+          {
+            "in": "query",
+            "name": "from",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "From"
+            }
+          },
+          {
+            "in": "query",
+            "name": "to",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "To"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 25,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarketInstitutionalFlowResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Read formal daily institutional flows for TPE and TWO",
+        "tags": [
+          "market-data"
+        ]
+      }
+    },
+    "/api/v2/opportunities": {
+      "get": {
+        "operationId": "list_opportunities_api_v2_opportunities_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "asOf",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Asof"
+            }
+          },
+          {
+            "in": "query",
+            "name": "sectionKey",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Sectionkey"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 100,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OpportunityPageRead"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "500": {
+            "description": "Configured provider returned an invalid formal payload"
+          },
+          "503": {
+            "description": "No canonical formal Opportunity provider is configured"
+          }
+        },
+        "summary": "Read the formal Opportunity page",
+        "tags": [
+          "opportunities"
+        ]
+      }
+    },
+    "/api/v2/opportunities/{opportunity_id}": {
+      "get": {
+        "operationId": "opportunity_detail_api_v2_opportunities__opportunity_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "opportunity_id",
+            "required": true,
+            "schema": {
+              "title": "Opportunity Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OpportunityDetailResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "404": {
+            "description": "Opportunity was not found"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "500": {
+            "description": "Configured provider returned an invalid formal payload"
+          },
+          "503": {
+            "description": "No canonical formal Opportunity provider is configured"
+          }
+        },
+        "summary": "Read one formal Opportunity detail",
+        "tags": [
+          "opportunities"
+        ]
+      }
+    },
     "/api/v2/stocks": {
       "get": {
         "operationId": "stocks_api_v2_stocks_get",
@@ -10327,6 +13707,96 @@
           }
         },
         "summary": "Read one formal stock",
+        "tags": [
+          "production-read-model"
+        ]
+      }
+    },
+    "/api/v2/stocks/{symbol}/institutional-flow": {
+      "get": {
+        "operationId": "stock_institutional_flow_api_v2_stocks__symbol__institutional_flow_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "symbol",
+            "required": true,
+            "schema": {
+              "title": "Symbol",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "market",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Market"
+            }
+          },
+          {
+            "in": "query",
+            "name": "asOf",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Asof"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 200,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StockInstitutionalFlowResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          },
+          "503": {
+            "description": "FUND-B storage is unavailable"
+          }
+        },
+        "summary": "Read formal stock-level institutional-flow evidence",
         "tags": [
           "production-read-model"
         ]

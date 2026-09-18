@@ -1,0 +1,30 @@
+{
+  "task_id": "TASK-INT-DAILY-CLOSE-CANONICAL-RELEASE-REPLAY-AND-FORMAL-E2E-CLOSURE-001",
+  "python": "3.12",
+  "focused_remediation_tests": "124 passed",
+  "formal_and_opportunity_tests": "132 passed; 1 registered TOPIC_B2 lifecycle baseline failure",
+  "full_backend_baseline": "807 collected; 739 passed; 59 skipped; 9 registered TOPIC_B2 failures; 0 task-caused; 0 unknown, preserved from canonical validation baseline",
+  "candidate_full_backend": "NOT_PROMOTED_AS_FULL_PASS; initial collection required repository-root PYTHONPATH and corrected impacted suites were run",
+  "quality": {
+    "ruff_check": "PASS",
+    "ruff_format_check": "PASS",
+    "compileall": "PASS",
+    "git_diff_check": "PASS",
+    "conflict_marker_scan": "PASS",
+    "web_tests": "NOT_RUN; no Web files touched",
+    "openapi_generated_client": "PRESERVED; no Web/API schema change"
+  },
+  "governance": {
+    "integration_gate": "PASS at READY_FOR_INTEGRATION transition",
+    "release_gate": "BLOCKED_PROVENANCE",
+    "task_lifecycle": "PASS",
+    "ownership": "PASS",
+    "worktree": "PASS before final evidence commit"
+  },
+  "failure_attribution": {
+    "task_caused": 0,
+    "registered_baseline": 9,
+    "environment": "1 initial collection configuration issue; corrected by adding repository root to PYTHONPATH",
+    "unknown": 0
+  }
+}

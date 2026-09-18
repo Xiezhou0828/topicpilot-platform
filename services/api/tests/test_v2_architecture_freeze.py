@@ -29,6 +29,7 @@ IMPLEMENTED_V2_TABLES = {
     "live_tracking_universe",
     "live_collector_runs",
     "live_collector_attempts",
+    "live_collector_checkpoints",
     "topic_snapshots",
     "topic_score_projections",
     "topic_score_projection_members",
@@ -38,6 +39,8 @@ IMPLEMENTED_V2_TABLES = {
     "home_market_facts",
     "topic_lifecycle_formal_results",
     "topic_authority_activations",
+    "market_institutional_flow_daily",
+    "stock_institutional_flow_daily",
 }
 
 

@@ -1,0 +1,51 @@
+{
+  "task_id": "TASK-FUND-A-MARKET-FLOW-FORMAL-CAPABILITY-001",
+  "workstream": "FUND_A",
+  "execution_mode": "isolated_e_worktree",
+  "canonical_repo": "C:\\Users\\acer\\Desktop\\題材領航\\topicpilot-platform",
+  "canonical_head_at_start": "07b7a73e7cfd070aae39a2d61240bf5050e19e4a",
+  "execution_base_sha": "07b7a73e7cfd070aae39a2d61240bf5050e19e4a",
+  "branch": "codex/task-fund-a-market-flow-formal-capability-001",
+  "worktree": "E:\\topicpilot-worktrees\\fund-a-market-flow-formal-capability-001",
+  "implementation_sha": "b062df38c6cd0bf6f238b849d2ff2600f5c63411",
+  "governance_sha": "a5e54a9d73e57a466325417151beb895f55d1229",
+  "canonicalization_status": "NOT_CANONICALIZED",
+  "production_status": "NOT_RELEASED",
+  "production_mutation": false,
+  "migration_execution": false,
+  "provider_sources": {
+    "TPE": {
+      "provider": "TWSE",
+      "dataset": "fund.BFI82U",
+      "endpoint": "https://www.twse.com.tw/rwd/zh/fund/BFI82U",
+      "unit": "TWD",
+      "scale": 0
+    },
+    "TWO": {
+      "provider": "TPEx",
+      "dataset": "tpex_3insti_summary",
+      "endpoint": "https://www.tpex.org.tw/openapi/v1/tpex_3insti_summary",
+      "unit": "TWD",
+      "scale": 0
+    }
+  },
+  "artifacts": [
+    "docs/reports/TASK-FUND-A-MARKET-FLOW-FORMAL-CAPABILITY-001/canonical-capability-map.md",
+    "docs/reports/TASK-FUND-A-MARKET-FLOW-FORMAL-CAPABILITY-001/provider-provenance.md",
+    "docs/reports/TASK-FUND-A-MARKET-FLOW-FORMAL-CAPABILITY-001/contract-lifecycle-freshness.md",
+    "docs/reports/TASK-FUND-A-MARKET-FLOW-FORMAL-CAPABILITY-001/historical-artifact-disposition.md",
+    "docs/reports/TASK-FUND-A-MARKET-FLOW-FORMAL-CAPABILITY-001/migration-provenance.md",
+    "docs/reports/TASK-FUND-A-MARKET-FLOW-FORMAL-CAPABILITY-001/validation-evidence.md"
+  ],
+  "validation": {
+    "focused_backend_and_home_tests": "PASS: 21",
+    "api_client_tests": "PASS: 5",
+    "web_tests": "PASS: 165",
+    "openapi_generation": "PASS",
+    "ruff": "PASS",
+    "compileall": "PASS",
+    "diff_check": "PASS",
+    "postgres_round_trip": "NOT_RUN_NO_DATABASE_URL",
+    "production_verification": "NOT_PERFORMED"
+  }
+}

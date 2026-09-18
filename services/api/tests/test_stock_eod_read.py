@@ -3,6 +3,10 @@ from __future__ import annotations
 from datetime import UTC, date, datetime
 from decimal import Decimal
 
+import pytest
+
+import topicpilot_api.production_read_model as production_read_model
+from topicpilot_api.problems import ApiProblem
 from topicpilot_api.production_read_model import STOCK_ROWS_SQL, _stock_eod, _stock_item
 from topicpilot_api.schemas import StockEodRead, StockReadModel
 
@@ -170,3 +174,22 @@ def test_stock_eod_query_is_set_based_and_current_observation_safe():
     assert "cv.aggregation_code = 'DAILY_TOTAL'" in sql
     assert "AT TIME ZONE m.timezone" in sql
     assert "daily_price_by_day" in sql
+
+
+def test_symbol_only_formal_detail_fails_closed_for_ambiguous_market_identity(monkeypatch):
+    monkeypatch.setattr(
+        production_read_model,
+        "read_stocks",
+        lambda *args, **kwargs: {
+            "items": [
+                {"symbol": "2330", "market": "TPE"},
+                {"symbol": "2330", "market": "TWO"},
+            ]
+        },
+    )
+
+    with pytest.raises(ApiProblem) as raised:
+        production_read_model.read_stock(object(), "2330")
+
+    assert raised.value.status == 409
+    assert "specify market" in raised.value.detail

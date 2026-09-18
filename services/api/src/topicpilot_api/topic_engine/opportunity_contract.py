@@ -8,7 +8,7 @@ recommendation or asking an LLM to make a decision.
 
 from __future__ import annotations
 
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from datetime import date
 from math import isfinite
@@ -338,6 +338,7 @@ class OpportunityReadModel:
     qualification_policy_version: str | None = None
     qualification_parameter_version: str | None = None
     qualification_class: str = "NOT_QUALIFIED"
+    institutional_evidence: Mapping[str, object] | None = None
 
     def __post_init__(self) -> None:
         if self.contract_version != READ_CONTRACT_VERSION:
@@ -395,6 +396,11 @@ class OpportunityReadModel:
                 "policyVersion": self.qualification_policy_version,
                 "parameterVersion": self.qualification_parameter_version,
             },
+            "institutionalEvidence": (
+                dict(self.institutional_evidence)
+                if self.institutional_evidence is not None
+                else None
+            ),
         }
 
 

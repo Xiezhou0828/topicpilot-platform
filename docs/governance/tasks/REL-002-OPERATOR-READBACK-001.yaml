@@ -1,0 +1,21 @@
+{
+  "task_id": "REL-002-OPERATOR-READBACK-001",
+  "title": "REL-002 Operator Readback",
+  "status": "BLOCKED",
+  "owner_role": "Release operator",
+  "workstream": "RELEASE",
+  "base_sha": "a8357d46194f9669709f184949270e20a7a2546c",
+  "branch": "codex/rel-002-release-candidate-20260913",
+  "worktree": "C:\\Users\\acer\\Desktop\\題材領航\\topicpilot-platform-rel002-20260913",
+  "owned_paths": [".github/workflows/deploy.yml", "render.yaml", "infra/**", "docs/reports/TASK-REL*.md"],
+  "shared_paths": [".github/workflows/ci.yml", "services/api/alembic/versions/**"],
+  "forbidden_paths": ["services/**", "apps/**", "packages/**", "NEXT_TASK"],
+  "dependencies": [],
+  "implementation_commits": ["a8357d46194f9669709f184949270e20a7a2546c"],
+  "governance_commits": [],
+  "migration_scope": "READBACK_ONLY",
+  "production_scope": "OPERATOR_GATED_NO_MUTATION",
+  "owner_decision_required": false,
+  "next_allowed_state": "IN_PROGRESS",
+  "dependency_notes": ["Production API is bf68cc8; exact Web/Worker/DB provenance remains unavailable."]
+}

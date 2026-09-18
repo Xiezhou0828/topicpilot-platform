@@ -4134,3 +4134,5 @@ tbody tr:hover td { background: rgba(86, 198, 189, 0.06); }
   .tp-topic-lifecycle-transition{grid-template-columns:auto minmax(0,1fr)}
   .tp-topic-lifecycle-transition span:nth-of-type(2),.tp-topic-lifecycle-transition span:nth-of-type(3){margin-top:4px}
 }
+
+.tp-commercial-boundary{text-align:center}.tp-commercial-boundary>.tp-data-state{margin-inline:auto}.tp-commercial-boundary>p{margin:0}.tp-commercial-boundary .tp-empty-state{padding-bottom:28px}

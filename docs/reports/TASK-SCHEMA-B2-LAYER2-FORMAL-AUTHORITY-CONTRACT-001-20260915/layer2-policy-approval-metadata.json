@@ -1,0 +1,40 @@
+{
+  "authorityState": "POLICY_APPROVED",
+  "candidateId": "TOPIC_B2_LAYER2_POLICY_V1",
+  "candidateVersion": "v1",
+  "dailyStrength": {
+    "failClosed": true,
+    "status": "PARTIAL_BY_DESIGN"
+  },
+  "lifecycle": {
+    "failClosed": true,
+    "independentFromDailyStrength": true,
+    "independentFromScoreGrade": true,
+    "stages": [
+      "SPROUTING",
+      "FERMENTING",
+      "MAIN_RISE",
+      "MATURE",
+      "DECLINING"
+    ],
+    "status": "APPROVED",
+    "transitionStatus": "PARTIAL_BY_DESIGN"
+  },
+  "limitations": [
+    "Daily Strength exact parameters remain PARTIAL_BY_DESIGN and fail closed.",
+    "Formal DB readback for 107 Leaf / 25 Parent and 1160 roles remains pending.",
+    "A10/A9 remains branch-only/operator-gated; Production activation is not performed."
+  ],
+  "ownerIdentityPresent": true,
+  "policyApproved": true,
+  "policyBundleId": "topic-b2-layer2-policy",
+  "policyBundleVersion": "topic-b2-layer2-policy-v1",
+  "productionActive": false,
+  "publicationState": "BLOCKED",
+  "schemaVersion": "topic-layer2-formal-authority.v1",
+  "scoreGrade": {
+    "legacySchemaVersion": "topic-score-pm-approval.v1",
+    "policyRecordState": "CREATED",
+    "status": "APPROVED_VERIFIED"
+  }
+}

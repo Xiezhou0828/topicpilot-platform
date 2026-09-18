@@ -1,0 +1,118 @@
+{
+  "activationState": "NOT_ACTIVE",
+  "approvalReference": "OWNER_DECISION:TOPIC_B2_LAYER2_POLICY_V1:2026-09-15",
+  "approvalTimestamp": null,
+  "authorityState": "POLICY_APPROVED",
+  "candidateId": "TOPIC_B2_LAYER2_POLICY_V1",
+  "candidateVersion": "v1",
+  "dailyStrength": {
+    "failClosed": true,
+    "parameterProvenance": [
+      {
+        "artifactId": "PHASE_3_7_003F_PM_FORMULA_APPROVAL_BRIEF",
+        "artifactVersion": "v1",
+        "scope": "Topic/B2 Layer 2 formal policy authority",
+        "sha256": "77319ae5fd51470265dd0030f38a5cc9b18ae0214d01a0a508c2b32025b8c8a9",
+        "sourceRef": "repo://PHASE_3_7_003F_PM_FORMULA_APPROVAL_BRIEF",
+        "status": "VERIFIED_IMPLEMENTATION"
+      },
+      {
+        "artifactId": "layer2-daily-strength-unresolved-parameters",
+        "artifactVersion": "v1",
+        "scope": "Topic/B2 Layer 2 formal policy authority",
+        "sha256": null,
+        "sourceRef": "repo://layer2-daily-strength-unresolved-parameters",
+        "status": "UNVERIFIED_PARAMETERS"
+      }
+    ],
+    "status": "PARTIAL_BY_DESIGN",
+    "unverifiedComponents": [
+      "standalone daily strength level/history parameters",
+      "Leader Set artifact binding"
+    ],
+    "verifiedComponents": [
+      "breadth participation boundaries",
+      "consensus modifier bands",
+      "normalization mapping",
+      "weighted aggregation"
+    ]
+  },
+  "effectiveDate": "2026-09-15",
+  "lifecycle": {
+    "failClosed": true,
+    "independentFromDailyStrength": true,
+    "independentFromScoreGrade": true,
+    "stages": [
+      "SPROUTING",
+      "FERMENTING",
+      "MAIN_RISE",
+      "MATURE",
+      "DECLINING"
+    ],
+    "status": "APPROVED",
+    "transitionPolicyRef": null,
+    "transitionProvenance": [
+      {
+        "artifactId": "TASK-TOPIC-B2-LIFECYCLE-HISTORICAL-IMPLEMENTATION-ARCHAEOLOGY-001",
+        "artifactVersion": "v1",
+        "scope": "Topic/B2 Layer 2 formal policy authority",
+        "sha256": null,
+        "sourceRef": "git://topic-b2-lifecycle-archaeology@ff66df999a13fe54ec581c4b298d493895f0a578",
+        "status": "PARTIAL_PROVENANCE"
+      },
+      {
+        "artifactId": "lifecycle-transition-parameters",
+        "artifactVersion": "v1",
+        "scope": "Topic/B2 Layer 2 formal policy authority",
+        "sha256": null,
+        "sourceRef": "repo://lifecycle-transition-parameters",
+        "status": "UNVERIFIED_PARAMETERS"
+      }
+    ],
+    "transitionStatus": "PARTIAL_BY_DESIGN"
+  },
+  "limitations": [
+    "Daily Strength exact parameters remain PARTIAL_BY_DESIGN and fail closed.",
+    "Formal DB readback for 107 Leaf / 25 Parent and 1160 roles remains pending.",
+    "A10/A9 remains branch-only/operator-gated; Production activation is not performed."
+  ],
+  "ownerIdentity": "GOVERNANCE_OWNER:topicpilot-owner",
+  "policyBundleId": "topic-b2-layer2-policy",
+  "policyBundleVersion": "topic-b2-layer2-policy-v1",
+  "publicationState": "BLOCKED",
+  "reviewedProvenance": [
+    {
+      "artifactId": "TASK-TOPIC-B2-LAYER2-FORMAL-POLICY-APPROVAL-001",
+      "artifactVersion": "v1",
+      "scope": "Topic/B2 Layer 2 formal policy authority",
+      "sha256": "4c7bdc60f2ff9c222a0c9f3ac287ab2d29d931f456dcacea3ddd433b5734106b",
+      "sourceRef": "repo://TASK-TOPIC-B2-LAYER2-FORMAL-POLICY-APPROVAL-001",
+      "status": "APPROVED_ARCHITECTURE"
+    },
+    {
+      "artifactId": "PHASE_3_7_003F_PM_FORMULA_APPROVAL_BRIEF",
+      "artifactVersion": "v1",
+      "scope": "Topic/B2 Layer 2 formal policy authority",
+      "sha256": "77319ae5fd51470265dd0030f38a5cc9b18ae0214d01a0a508c2b32025b8c8a9",
+      "sourceRef": "docs/reports/PHASE_3_7_003F_PM_FORMULA_APPROVAL_BRIEF.md",
+      "status": "VERIFIED_IMPLEMENTATION"
+    },
+    {
+      "artifactId": "layer2-runtime-publication-gates",
+      "artifactVersion": "v1",
+      "scope": "Topic/B2 Layer 2 formal policy authority",
+      "sha256": null,
+      "sourceRef": "repo://layer2-runtime-publication-gates",
+      "status": "PARTIAL_PROVENANCE"
+    }
+  ],
+  "schemaVersion": "topic-layer2-formal-authority.v1",
+  "scoreGrade": {
+    "approvalArtifactId": "PHASE_3_7_003F_PM_FORMULA_APPROVAL_BRIEF",
+    "approvalArtifactSha256": "77319ae5fd51470265dd0030f38a5cc9b18ae0214d01a0a508c2b32025b8c8a9",
+    "legacySchemaVersion": "topic-score-pm-approval.v1",
+    "policyRecordSha256": "ed1fbd37ca3294566218c2712287cd623179453efcb352ab8b71ace8538c8c85",
+    "policyRecordState": "CREATED",
+    "status": "APPROVED_VERIFIED"
+  }
+}

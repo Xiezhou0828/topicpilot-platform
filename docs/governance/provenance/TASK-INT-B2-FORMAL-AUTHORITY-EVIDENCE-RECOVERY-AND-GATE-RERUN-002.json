@@ -1,0 +1,151 @@
+{
+  "task_id": "TASK-INT-B2-FORMAL-AUTHORITY-EVIDENCE-RECOVERY-AND-GATE-RERUN-002",
+  "role": "INTEGRATION_OWNER",
+  "mode": "ONE_SHOT_AUTHORITATIVE_EVIDENCE_RECOVERY_CANONICAL_REGISTRATION_AND_GATE_RERUN",
+  "status": "COMPLETE_WITH_EXTERNAL_GATE",
+  "timestamp": "2026-09-15",
+  "stop_reason": "UNRESOLVED_0040_CANONICAL_PROVENANCE_DECISION",
+  "canonical_lineage": {
+    "previous_canonical_base_sha": "48f80c5cc154ae2620b40766351abc9094cbef35",
+    "current_governed_base_sha": "a8357d46194f9669709f184949270e20a7a2546c",
+    "task_execution_base_sha": "48f80c5cc154ae2620b40766351abc9094cbef35",
+    "canonical_integration_sha": "SEE_FINAL_CLOSEOUT_COMMIT",
+    "final_closeout_sha": "SEE_FINAL_CLOSEOUT_COMMIT"
+  },
+  "evidence_precedence": "NEWEST_VERIFIED_REPOSITORY_EVIDENCE_WINS; source hashes and exact source objects outrank prompt-only identifiers",
+  "layer2": {
+    "source_task": "TASK-SCHEMA-B2-LAYER2-FORMAL-AUTHORITY-CONTRACT-001",
+    "source_worktree": "E:\\TopicPilot\\worktrees\\schema-b2-layer2-formal-authority-001-20260915",
+    "source_commits": {
+      "predecessor_implementation": "3011f00fe50e5c397635ef9a25ca3a9282bbd523",
+      "governance_registration": "ee65c530058da5694741e4e5d7c5dcc1895ba9b0",
+      "documentation_closeout": "56fdef52e7e280fb0d753f6e5f756f066a749845",
+      "implementation": "1a4978700391df3e99ebbef263dd1bfe7af35c25",
+      "governance": "06c6836f5acd1f665d8e2927ac6eb64cabdc01f7",
+      "final_closeout": "e0a6eb34139116ebf4d4a0f4d218a799832ea523"
+    },
+    "canonical_replay_commits": [
+      "b31a0f09788609644844883bc6fd7a057716c538",
+      "d1a822c36ed8a04b863950f7c75fbbabb55aa9ff",
+      "c882842415cb292b747f7008628cf728466bc5f3",
+      "17bb8db30ffb69fcaca2f41997dc42a71d1634cc",
+      "abd2866a24a6b9ec1c24c70a9a6f3527911023d5",
+      "a734ae1ef959cb032c0e6c3b185a40b4a1b4e7ae"
+    ],
+    "schema": "topic-layer2-formal-authority.v1",
+    "schema_sha256": "a5e1ec615017d2a2ece2a7ccf47b771afa8560bf3ca554b73cc3c39aef6f84e0",
+    "formal_owner": "GOVERNANCE_OWNER:topicpilot-owner",
+    "legacy_policy_record_sha256": "ed1fbd37ca3294566218c2712287cd623179453efcb352ab8b71ace8538c8c85",
+    "layer2_policy_record_sha256": "7756221d9a0d2bc1641a2d800f7e1585a171f197877cc6beeb00b1a98c30def7",
+    "identity_artifact_sha256": "aac36f3a5329d4c2dd247997aee2ce0f6109b1fb9583619bcb622f3b87fb243c",
+    "identity_registry_sha256": "75eddd4223d70d0fb8297efb204ea483e2d07c4a61a936d2a9361f3655bc6bae",
+    "authority_state": "POLICY_APPROVED",
+    "publication_state": "BLOCKED",
+    "activation_state": "NOT_ACTIVE",
+    "003g": "PASS",
+    "003h": "PASS",
+    "daily_strength": "PARTIAL_BY_DESIGN_FAIL_CLOSED",
+    "score_grade": "APPROVED_VERIFIED",
+    "lifecycle": {
+      "state": "APPROVED_INDEPENDENT",
+      "stages": ["SPROUTING", "FERMENTING", "MAIN_RISE", "MATURE", "DECLINING"],
+      "publication": "BLOCKED_FAIL_CLOSED"
+    }
+  },
+  "formal_db_readback": {
+    "source_task": "TASK-TOPIC-B2-107-25-FORMAL-DB-READBACK-001",
+    "source_evidence_root": "E:\\topicpilot-worktrees\\TASK-TOPIC-B2-107-25-FORMAL-DB-READBACK-001-20260915",
+    "source_continuation_manifest_sha256": "992B8F676C19519B443B3BCDD870AFF577D54E72B302D174B5B1CA73588FFA2F",
+    "source_production_json_sha256": "3D99A36B31D024614C36F8C8160204D934D24B78CC0DEB00E87C9AEFF6D64FFA",
+    "source_query_sql_sha256": "951F4D09E726C921A68F48A881E04F4A3709A3932114F3B8AEDEF5A9DD840EBA",
+    "source_continuation_report_sha256": "EE9F02CDFBFD780B228B125A303511CCE1F644C409DF95881621654C7F06E312",
+    "production_runtime_sha": "bf68cc8bf0a4432d7623db43f42e9219c94d7b6b",
+    "production_db_revision": "0040_task_a10_recovery_checkpoint_observability",
+    "leaves": 107,
+    "parents": 25,
+    "hierarchy_edges": 107,
+    "structural_role_rows": 1160,
+    "topic_identity": "EXACT_MATCH",
+    "hierarchy_identity": "EXACT_MATCH",
+    "structural_role_content": "EXACT_MATCH",
+    "structural_role_provenance": "EXACT_PROVENANCE_MATCH",
+    "b2_db_prerequisite": "SATISFIED",
+    "a9_db_prerequisite": "SATISFIED",
+    "production_mutation": "NONE",
+    "migration": "NOT_PERFORMED",
+    "publication": "NOT_PERFORMED",
+    "registered_mirror": "docs/reports/TASK-INT-B2-FORMAL-AUTHORITY-EVIDENCE-RECOVERY-AND-GATE-RERUN-002-20260915/evidence",
+    "mirror_note": "LF-normalized semantic mirror; source file hashes above are authoritative"
+  },
+  "a10_a9": {
+    "recoverable_a10_candidate_commit": "51dbe48db203adb56e5fbc47da2f44b0e33997d2",
+    "recoverable_a10_content_sha256": "fa435d2dc1e632a0b11e454484adb6f59fa49b0d273845e315500a45ec2d063e",
+    "today_candidate_commit": "c544e2a5a6e3531232fb69e7580c99a0b1a5eef5",
+    "today_content_sha256": "c89647ee3cb593a52caec8c1af97142941f3377b2a484d41c724446d71968da1",
+    "claimed_resolution_commits": [
+      "b5188c44733acc9c33cb0a4059973a5d6c218081",
+      "587ca49a943f50f95518fc61305abc0da16fbec3",
+      "93f6ce85e5e58cf4d9c9ae19443d3df9b6feb476"
+    ],
+    "claimed_resolution_objects_present": false,
+    "migration_0040_collision": "UNRESOLVED",
+    "canonical_provenance": "UNRESOLVED",
+    "production_exact_content_provenance": "UNPROVEN",
+    "a10_1335": "COMPLETE_BRANCH_EVIDENCE",
+    "a10_post_close": "PARTIAL_IMPLEMENTED_NOT_INTEGRATED",
+    "a10_a9_engineering": "PARTIAL",
+    "owner_decision_required": true
+  },
+  "snapshots": {
+    "rows_per_session": 92,
+    "audited_sessions": 6,
+    "audited_rows": 552,
+    "scope_explanation": "92 complete available plus 15 unavailable/incomplete equals frozen 107; 92 is not the denominator",
+    "exact_missing_identity_list": "NOT_INCLUDED_IN_SANITIZED_OPERATOR_BUNDLE",
+    "leader_set_derived": false
+  },
+  "leader_set": {
+    "formal_artifact": null,
+    "version": null,
+    "effective_date": null,
+    "provenance": null,
+    "status": "BLOCKED_NOT_FORMAL"
+  },
+  "gates": {
+    "b2_engineering": "READY_AUTHORITY_CONTRACT_AND_DB_EVIDENCE",
+    "b2_formal_publication": "BLOCKED",
+    "a9_formal_writer": "BLOCKED",
+    "opportunity": "BLOCKED",
+    "stock": "BLOCKED"
+  },
+  "validation": {
+    "layer2_policy_and_authority_tests": "32 passed",
+    "structural_role_lifecycle_selected_tests": "50 passed, 1 registered baseline failure",
+    "ruff": "PASS",
+    "python_compile": "PASS",
+    "diff_check": "PASS",
+    "conflict_marker_scan": "PASS",
+    "manifest": "PASS",
+    "lifecycle": "PASS",
+    "ownership": "PASS",
+    "worktree": "PASS",
+    "integration_gate": "BLOCKED_EXPECTED_OWNER_DECISION_REQUIRED",
+    "task_caused_failures": 0,
+    "unknown_failures": 0
+  },
+  "project_memory": {
+    "root_cause": "UNREGISTERED_PARALLEL_WORKTREE_AND_TASK_LOCAL_EVIDENCE_PLUS_STALE_SHA_FIELDS",
+    "repair": "CANONICAL_REPORT_MANIFEST_PROVENANCE_EVIDENCE_MIRROR_AND_SOURCE_TO_CANONICAL_MAPPING",
+    "recovery_test": "PASS"
+  },
+  "safety": {
+    "c_drive": "UNTOUCHED",
+    "production": "UNTOUCHED",
+    "production_mutation": "NONE",
+    "migration_execution": "NOT_PERFORMED",
+    "push": "NO",
+    "today_changed": false,
+    "opportunity_changed": false,
+    "stock_changed": false
+  }
+}

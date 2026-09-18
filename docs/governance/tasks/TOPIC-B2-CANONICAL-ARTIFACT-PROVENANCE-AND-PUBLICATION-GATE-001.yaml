@@ -1,0 +1,21 @@
+{
+  "task_id": "TOPIC-B2-CANONICAL-ARTIFACT-PROVENANCE-AND-PUBLICATION-GATE-001",
+  "title": "Topic/B2 Canonical Artifact Provenance and Publication Gate",
+  "status": "PLANNED",
+  "owner_role": "WS1 / B2 owner with integration owner",
+  "workstream": "TOPIC_B2",
+  "base_sha": "a8357d46194f9669709f184949270e20a7a2546c",
+  "branch": "codex/topic-b2-canonical-artifact-provenance-and-publication-gate-001-20260914",
+  "worktree": "E:\\topicpilot-worktrees\\topic-b2-canonical-artifact-provenance-and-publication-gate-001",
+  "owned_paths": ["services/api/src/topicpilot_api/topic_engine/**", "services/api/src/topicpilot_api/topic_lifecycle_*.py", "services/api/src/topicpilot_api/topic_snapshot_*.py", "services/api/tests/test_topic*.py", "docs/reports/TASK-TOPIC*.md"],
+  "shared_paths": ["services/api/alembic/versions/**", "services/api/src/topicpilot_api/schemas.py", "packages/api-client/**"],
+  "forbidden_paths": ["services/api/src/topicpilot_api/live/**", "services/api/src/topicpilot_api/home_v2_publication.py", "apps/web/app/components/v2/TodayMarketPage.tsx", "services/api/src/topicpilot_api/opportunity*.py"],
+  "dependencies": ["TASK-TOPIC-REC-002"],
+  "implementation_commits": [],
+  "governance_commits": [],
+  "migration_scope": "INTEGRATION_OWNER_ONLY",
+  "production_scope": "NONE",
+  "owner_decision_required": false,
+  "next_allowed_state": "IN_PROGRESS",
+  "dependency_notes": ["Dry-run metadata only; no Topic semantics or publication is started by GOV-003."]
+}

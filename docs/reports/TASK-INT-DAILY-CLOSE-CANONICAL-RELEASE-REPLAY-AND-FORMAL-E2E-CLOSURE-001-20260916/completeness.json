@@ -1,0 +1,19 @@
+{
+  "task_id": "TASK-INT-DAILY-CLOSE-CANONICAL-RELEASE-REPLAY-AND-FORMAL-E2E-CLOSURE-001",
+  "target_trading_date": "2026-09-15",
+  "status": "NOT_VERIFIED",
+  "historical_incident_status": "FAIL",
+  "expected_universe": 553,
+  "eligible_universe": 553,
+  "attempted_universe": "553 reported outcomes: 347 failed and 206 skipped; exact attempted/excluded split unavailable",
+  "successful_persisted_rows": "NOT_READ_BACK",
+  "failed_universe": 347,
+  "excluded_universe": "206 reported skipped; not proven reference exclusions",
+  "skipped_universe": 206,
+  "duplicates": "NOT_VERIFIED_WITHOUT_AUTHORIZED_REPLAY_READBACK",
+  "stale_rows": "NOT_VERIFIED_WITHOUT_AUTHORIZED_REPLAY_READBACK",
+  "TPE_coverage": "NOT_VERIFIED_PERSISTED; provider-only control 1379 rows",
+  "TWO_coverage": "NOT_VERIFIED_PERSISTED; provider-only control 11358 rows",
+  "formal_date_alignment": "NOT_VERIFIED",
+  "fail_closed_reason": "No authorized replay or protected database readback was available."
+}

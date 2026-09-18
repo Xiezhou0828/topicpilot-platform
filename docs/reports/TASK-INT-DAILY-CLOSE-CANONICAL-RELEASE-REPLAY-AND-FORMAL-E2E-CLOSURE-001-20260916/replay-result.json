@@ -1,0 +1,25 @@
+{
+  "task_id": "TASK-INT-DAILY-CLOSE-CANONICAL-RELEASE-REPLAY-AND-FORMAL-E2E-CLOSURE-001",
+  "target_trading_date": "2026-09-15",
+  "replay_required": true,
+  "replay_performed": false,
+  "status": "BLOCKED_PENDING_DEPLOYMENT_CANARY_AND_OPERATOR_AUTHORITY",
+  "preconditions": {
+    "exact_governed_remediation_deployed": false,
+    "release_provenance_verified": false,
+    "production_canary_passed": false,
+    "replay_authority": false
+  },
+  "prior_incident_counts": {
+    "expected": 553,
+    "successful": 0,
+    "failed": 347,
+    "skipped": 206
+  },
+  "read_only_provider_control": {
+    "TPE": {"http": 200, "stat": "OK", "response_date": "20260915", "market_rows": 1379},
+    "TWO": {"http": 200, "stat": "ok", "response_date": "20260915", "market_rows": 11358}
+  },
+  "persistence_mutation": false,
+  "operator_instruction": "After exact-SHA deployment and canary authorization, run only the governed date-bound 2026-09-15 replay and verify all downstream formal readbacks."
+}

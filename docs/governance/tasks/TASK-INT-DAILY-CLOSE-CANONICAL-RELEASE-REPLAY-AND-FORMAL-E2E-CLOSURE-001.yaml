@@ -1,0 +1,89 @@
+{
+  "task_id": "TASK-INT-DAILY-CLOSE-CANONICAL-RELEASE-REPLAY-AND-FORMAL-E2E-CLOSURE-001",
+  "title": "Daily Close canonical integration, release, replay, and formal E2E closure",
+  "status": "INTEGRATED",
+  "owner_role": "INTEGRATION_RELEASE_RUNTIME_AND_FORMAL_E2E_OWNER",
+  "mode": "ONE_SHOT_CONTINUATION_CANONICAL_INTEGRATION_RELEASE_REPLAY_FORMAL_E2E_AND_OPPORTUNITY_READINESS",
+  "workstream": "INTEGRATION",
+  "base_sha": "277a49382240503fcd0767e9cfb17e2fd974e8a3",
+  "branch": "codex/task-int-daily-close-canonical-release-replay-formal-e2e-001-20260916",
+  "worktree": "E:\\topicpilot-worktrees\\int-daily-close-canonical-release-replay-formal-e2e-20260916",
+  "source_remediation_sha": "3e602119284dd7abe0779a107e5f004052bc0ac1",
+  "current_canonical_base_sha": "277a49382240503fcd0767e9cfb17e2fd974e8a3",
+  "owned_paths": [
+    "services/api/src/topicpilot_api/live/post_close.py",
+    "services/api/src/topicpilot_api/live/persistence.py",
+    "services/api/src/topicpilot_api/market_data/exchange.py",
+    "services/api/src/topicpilot_api/market_data/history.py",
+    "services/api/src/topicpilot_api/market_data/ingestion.py",
+    "services/api/tests/test_post_close_exchange_failure_recovery.py",
+    "docs/governance/tasks/TASK-INT-DAILY-CLOSE-CANONICAL-RELEASE-REPLAY-AND-FORMAL-E2E-CLOSURE-001.yaml",
+    "docs/governance/provenance/TASK-INT-DAILY-CLOSE-CANONICAL-RELEASE-REPLAY-AND-FORMAL-E2E-CLOSURE-001.json",
+    "docs/reports/TASK-INT-DAILY-CLOSE-CANONICAL-RELEASE-REPLAY-AND-FORMAL-E2E-CLOSURE-001-20260916.md",
+    "docs/reports/TASK-INT-DAILY-CLOSE-CANONICAL-RELEASE-REPLAY-AND-FORMAL-E2E-CLOSURE-001/**"
+  ],
+  "shared_paths": [
+    "docs/governance/**",
+    "docs/reports/**",
+    "services/api/alembic/versions/**",
+    "services/api/src/topicpilot_api/schemas.py",
+    "packages/api-client/**",
+    "apps/web/**",
+    "NEXT_TASK*"
+  ],
+  "forbidden_paths": [
+    "services/api/alembic/**",
+    "services/api/src/topicpilot_api/topic_engine/**",
+    "services/api/src/topicpilot_api/opportunity*.py",
+    "apps/web/**",
+    "FUND-A/**",
+    "NEXT_TASK*",
+    "**/*.env",
+    "**/*.secret",
+    "Production*"
+  ],
+  "dependencies": [],
+  "dependency_notes": [
+    "The direct predecessor task is represented by the exact source remediation SHA and continuation evidence; its task manifest is not present on the 277a canonical base.",
+    "Canonical 0040, A10/A9, B2, and release evidence are read from the current governed reports and are not mutated by this task."
+  ],
+  "implementation_commits": [
+    "2cfd954ee68e8bb53571271870dbc99fabc81360"
+  ],
+  "governance_commits": [
+    "5c90702e1dba575c001d35c8d9dfd64e2437ef81"
+  ],
+  "migration_scope": "READ_ONLY_LINEAGE_CHECK; no migration creation, execution, DDL, DML, downgrade, or 0040 mutation",
+  "production_scope": "READ_ONLY until separately authorized; no deployment, canary, replay, publication, scheduler activation, or data mutation",
+  "owner_decision_required": true,
+  "next_allowed_state": "READY_FOR_RELEASE",
+  "shared_surface_policy": "EXPLICIT_RECONCILIATION",
+  "continuation_evidence": [
+    "Direct continuation of TASK-OPS-DAILY-CLOSE-EXCHANGE-NO-DATA-ROOT-CAUSE-AND-RECOVERY-001.",
+    "Source remediation 3e60211 was validated in its isolated worktree; this task reconciles that exact source onto the latest legitimate 277a canonical development base.",
+    "Previous task manifest/report remain evidence inputs and are not duplicated as a new dependency target in the current canonical base."
+  ],
+  "current_c_owner_head": "02d3086183d1c582bb6c66c4c316340ccce3fa97",
+  "current_production_api_sha": "bf68cc8bf0a4432d7623db43f42e9219c94d7b6b",
+  "current_production_web_sha": "UNKNOWN_EXACT_SHA",
+  "current_production_worker_sha": "UNKNOWN_EXACT_SHA",
+  "current_production_db_revision": "0040_task_a10_recovery_checkpoint_observability",
+  "incident_baseline": {
+    "target_trading_date": "2026-09-15",
+    "reported_requested": 553,
+    "reported_success": 0,
+    "reported_failure": 347,
+    "reported_skipped": 206,
+    "reported_retry": 0,
+    "reported_code": "EXCHANGE_NO_DATA"
+  },
+  "safety_invariants": [
+    "Do not claim Production deployment, canary, replay, completeness, freshness, or formal publication without authoritative readback.",
+    "Do not alter 0040 provenance or run migrations.",
+    "Do not weaken B2, A9, Lifecycle, or Opportunity fail-closed gates.",
+    "Do not modify FUND-A, Topic UX, Opportunity strategy, or NEXT_TASK.",
+    "Preserve existing C owner dirty state and all newer legitimate canonical work."
+  ],
+  "integration_decision": "PASS; SOURCE_REMEDIATION_RECONCILED_ON_277A_AS_2CFD954; FOCUSED_VALIDATION_PASS_WITH_REGISTERED_TOPIC_B2_BASELINE",
+  "release_decision": "BLOCKED_EXTERNAL_PROVENANCE_AND_OPERATOR_AUTHORITY_REQUIRED"
+}

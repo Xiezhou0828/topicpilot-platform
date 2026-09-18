@@ -1,0 +1,104 @@
+{
+  "task": "TASK-INT-OPS-LIVE-SESSION-ROLLBACK-CANONICAL-RECONCILIATION-AND-CANARY-001",
+  "role": "INTEGRATION_OWNER_AND_RELEASE_READINESS_OWNER",
+  "mode": "ONE_SHOT_CANONICAL_RECONCILIATION_RELEASE_GATE_AND_AUTHORIZED_CANARY",
+  "result": "COMPLETE_WITH_EXTERNAL_GATE",
+  "source": {
+    "implementation_sha": "00ea8f01a8c6cea408247442576ac6ec8066591d",
+    "governance_sha": "cead9100e1bbab90adcfa17ecdf7b269c7b8f21e",
+    "closeout_sha": "2ce2db1024a6cc9902ec1360ad61040fcc5178f2",
+    "report_sha": "76af2a59b30c62b294abaae13e9111efb1eb5ceb",
+    "semantic_parent_sha": "7a0c9a0193a030c9968965cf00cc78e574212675",
+    "remediation_commit_sha": "6831142b25f38c097b60ceb966a479f0f536d88f"
+  },
+  "canonical": {
+    "current_checkout_sha": "02d3086183d1c582bb6c66c4c316340ccce3fa97",
+    "governed_baseline_sha": "b2eaf33e0ec5f9bb72d936eb0165eb93dac3fa40",
+    "ops_integration_sha": "9d327ea5f828b1afec41235d9fd2f6e554e8e88a",
+    "promotion_status": "PENDING_OWNER_PROMOTION",
+    "canonical_repo_modified": false
+  },
+  "semantic_reconciliation": {
+    "root_cause_remediation_equivalence": "PASS",
+    "transaction_rollback_guarantee": "PASS",
+    "session_poisoning_after_failure": "PASS",
+    "worker_process_survival": "PASS",
+    "next_job_after_failure": "PASS",
+    "post_close_runtime_containment": "PASS",
+    "retry_idempotency": "PASS",
+    "excluded_surfaces": [
+      "Home/B2 overlay from source post_close was not imported",
+      "A10 migration 0040 and historical Today migration were not resurrected",
+      "F6/F7 semantics were not changed",
+      "Production deployment, scheduler activation, database mutation, and push were not performed"
+    ]
+  },
+  "validation": {
+    "focused_affected_tests": "53 passed",
+    "governance_release_tests": "35 passed",
+    "full_backend": "613 passed, 41 skipped, 6 failed",
+    "task_caused_failures": 0,
+    "unknown_failures": 0,
+    "registered_baseline_failures": 6,
+    "registered_baseline_failure_tests": [
+      "tests/test_canonical_observation_implementation.py::test_canonical_revision_is_linear_after_0018",
+      "tests/test_ws3_core_v0_a1_quality_filter_confirmatory_validation.py::ConfirmatoryValidationContractTests::test_candidate_freeze_is_deterministic_and_complete",
+      "tests/test_ws3_core_v0_a1_quality_filter_confirmatory_validation.py::ConfirmatoryValidationContractTests::test_pit_and_outcome_boundaries_are_explicit",
+      "tests/test_ws3_core_v0_a1_quality_filter_confirmatory_validation.py::ConfirmatoryValidationContractTests::test_raw_cohort_authority_is_preserved",
+      "tests/test_ws3_core_v0_a1_quality_filter_confirmatory_validation.py::ConfirmatoryValidationContractTests::test_thresholds_and_operators_are_immutable_freeze_values",
+      "tests/test_ws3_core_v0_a2_entry_breakout_invalidation.py::test_a1_forward_contract_preserves_exact_seven_candidates"
+    ],
+    "static_checks": [
+      "ruff check PASS",
+      "ruff format --check PASS",
+      "compileall PASS",
+      "git diff --check PASS",
+      "conflict marker scan PASS"
+    ],
+    "release_provenance_test": "NOT_RUN_FILE_ABSENT_IN_CURRENT_C_CHECKOUT",
+    "dependency_state": "DIAGNOSTIC_FALLBACK_ONLY_NO_PYTHON_LOCKFILE"
+  },
+  "governance": {
+    "0040_canonical_provenance": "NOT_CANONICAL_BRANCH_ONLY",
+    "a10_engineering": "IN_PROGRESS_BLOCKED_BRANCH_ONLY",
+    "b2_formal_policy_authority": "BLOCKED",
+    "b2_formal_db_107_25_1160": "NOT_VERIFIED_IN_CURRENT_C_AUTHORITY",
+    "f6_f7_canonical": "PRESERVED_UNCHANGED",
+    "repository_hygiene_status": "ACTION_REQUIRED",
+    "repository_hygiene_counts": {
+      "owner_checkout_status_total": 152,
+      "owner_checkout_tracked_or_modified": 1,
+      "owner_checkout_untracked": 151,
+      "worktree_count": 54,
+      "branch_count": 91,
+      "head_origin_main_divergence": "209 95"
+    },
+    "stale_worktree_count": "NOT_DETERMINED_OWNER_REVIEW_REQUIRED",
+    "orphaned_workstream_count": "NOT_DETERMINED_OWNER_REVIEW_REQUIRED"
+  },
+  "release": {
+    "integration_gate": "PASS_WITH_REGISTERED_BASELINE",
+    "release_gate": "BLOCKED_OPERATOR_READBACK_REQUIRED",
+    "reproducible_dependency_state": "DIAGNOSTIC_FALLBACK_ONLY",
+    "production_current_exact_sha": "UNKNOWN_OPERATOR_READBACK_REQUIRED",
+    "canary_exact_sha": "NOT_PERFORMED",
+    "ops_production_canary": "NOT_AUTHORIZED_NOT_PERFORMED",
+    "worker_health": "NOT_READ_BACK",
+    "session_rollback_runtime_readback": "NOT_PERFORMED",
+    "scheduler_survival_runtime_readback": "NOT_PERFORMED",
+    "repeated_exit1_observed": "UNKNOWN_PRODUCTION_NOT_READ",
+    "production_data_integrity": "NOT_READ_BACK",
+    "ready_to_start_daily_close_e2e": "NO",
+    "opportunity_daily_recommendation_ready": "NO"
+  },
+  "control_boundary": {
+    "project_memory_recovery_test": "PASS",
+    "c_drive": "UNTOUCHED",
+    "production": "UNTOUCHED",
+    "migration": "NOT_CHANGED_NOT_RUN",
+    "push": "NO",
+    "owner_decision_required": true,
+    "release_owner_action_required": true,
+    "next_governed_action": "Owner promotes 9d327ea5f828b1afec41235d9fd2f6e554e8e88a into the C checkout and separately authorizes the G4 canary after exact release/operator readback"
+  }
+}

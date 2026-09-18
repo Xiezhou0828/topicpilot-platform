@@ -1,0 +1,118 @@
+{
+  "task_id": "TASK-INT-TODAY-CANONICAL-RECONCILIATION-001",
+  "role": "INTEGRATION_OWNER",
+  "mode": "ONE_SHOT_CANONICAL_RECONCILIATION_AND_CLOSEOUT",
+  "status": "INTEGRATED",
+  "timestamp": "2026-09-15",
+  "current_canonical_base_sha": "c3405736e345c670f2eaa5c1eb34b76f61a58ee7",
+  "previous_governed_base_sha": "2a062d8de8ab637e02aa1021c715b248fdd1322c",
+  "canonical_today_integration_sha": "9ec77e06f4ababa55f9dbf0cd2f8a0d4b83eb104",
+  "integration_commits": [
+    {
+      "sha": "a5730d1fc7b6c6cb4a239ec9b7c9bdce2c5568bc",
+      "source_sha": "1f6286421aee49ea5159effc1bb86fa44b1114e8",
+      "original_implementation_sha": "4bd18505a3db4f0b4edac9da47276f298fddfc36",
+      "scope": "INTEGRATION_SHARED_AND_GENERATED"
+    },
+    {
+      "sha": "9ec77e06f4ababa55f9dbf0cd2f8a0d4b83eb104",
+      "source_sha": "0c08fcb7b495ad9f4f7a2c35a32d5b8802e288b7",
+      "original_implementation_sha": "e4d675453aa03c51bd1c4e198ee3b7cb6742657f",
+      "scope": "TODAY_OWNED_HOME_AND_TEST"
+    }
+  ],
+  "lineage": [
+    "TASK-TODAY-SIGNALS-CONTRACT-PORT-001",
+    "TASK-TODAY-SIGNALS-CANONICAL-RECONCILIATION-002",
+    "TASK-INT-TODAY-SIGNALS-SHARED-CONTRACT-001",
+    "TASK-GOV-TODAY-INTEGRATION-REGISTRATION-001",
+    "TASK-TODAY-SIGNALS-CANONICAL-PROMOTION-003",
+    "TASK-GOV-TODAY-CANONICAL-PROMOTION-REGISTRATION-001",
+    "TASK-INT-TODAY-CANONICAL-RECONCILIATION-001"
+  ],
+  "source_evidence": {
+    "today_source_implementation_sha": "e4d675453aa03c51bd1c4e198ee3b7cb6742657f",
+    "today_reconciliation_sha": "f7ba09dd2ea8dc803d7ecdf97c6a9238d8dc9ad4",
+    "shared_contract_implementation_sha": "4bd18505a3db4f0b4edac9da47276f298fddfc36",
+    "shared_applied_source_sha": "1f6286421aee49ea5159effc1bb86fa44b1114e8",
+    "composition_candidate_sha": "0c08fcb7b495ad9f4f7a2c35a32d5b8802e288b7",
+    "composition_final_report_sha": "439f61e43a5a3caf31b3542b15b870742c433d1b",
+    "governance_registration_sha": "4976ec36fad2549ce810af807e40e04f1499c0aa",
+    "governance_lifecycle_sha": "3cb35d40e300b7f4ac50a90c4e01b50bb3388f33",
+    "governance_report_sha": "12bf6be5bd205d9b1f720149b156d36c12751c36",
+    "final_provenance_binding_sha": "4b2209b6712e05b57e218992b3cfaa4143778b1e"
+  },
+  "recovery_facts": {
+    "first_promotion_blocker": "CROSS_WORKSTREAM_OWNER_REQUIRED: shared schema/OpenAPI/generated surfaces required Integration Owner reconciliation while C: was protected.",
+    "shared_contract_resolution_task": "TASK-INT-TODAY-SIGNALS-SHARED-CONTRACT-001",
+    "governance_registration_task": "TASK-GOV-TODAY-CANONICAL-PROMOTION-REGISTRATION-001",
+    "next_today_action": "None for development; await the separate owner-controlled Release Gate."
+  },
+  "path_partition": {
+    "today_owned": [
+      "services/api/src/topicpilot_api/home_v2_publication.py",
+      "services/api/tests/test_home_v2_publication.py"
+    ],
+    "integration_shared": [
+      "services/api/src/topicpilot_api/schemas.py",
+      "packages/api-client/openapi.json",
+      "packages/api-client/src/schema.d.ts",
+      "apps/web/app/lib/generated-api.d.ts"
+    ],
+    "governance_or_report": [
+      "docs/governance/tasks/TASK-TODAY-SIGNALS-CANONICAL-PROMOTION-003.yaml",
+      "docs/governance/tasks/TASK-INT-TODAY-CANONICAL-RECONCILIATION-001.yaml",
+      "docs/governance/provenance/TASK-INT-TODAY-CANONICAL-RECONCILIATION-001.json",
+      "docs/reports/TASK-INT-TODAY-CANONICAL-RECONCILIATION-001-20260915.md"
+    ],
+    "unauthorized": [],
+    "unknown": []
+  },
+  "ownership": {
+    "today_owned_remains_today_owned": true,
+    "shared_surfaces_remain_integration_owned": true,
+    "ownership_transferred": false
+  },
+  "migration_boundary": {
+    "canonical_0040_owner": "A10",
+    "today_historical_0040_reintroduced": false,
+    "today_migration_created": false
+  },
+  "validation": {
+    "candidate_verification": "PASS",
+    "integration_gate": "PASS",
+    "openapi_drift": "PASS",
+    "generated_client_drift": "PASS",
+    "home_tests": "10 passed",
+    "api_client_tests": "4 passed",
+    "web_tests": "158 passed",
+    "web_typescript": "PASS",
+    "web_lint": "PASS; 0 errors; 1 pre-existing warning",
+    "web_build": "PASS",
+    "ruff": "PASS",
+    "python_compile": "PASS",
+    "governance_tests": "1 passed",
+    "manifest_validation": "PASS",
+    "ownership_validation": "PASS",
+    "lifecycle_validation": "PASS",
+    "conflict_marker_scan": "PASS",
+    "git_diff_check": "PASS",
+    "task_caused_failures": 0,
+    "unknown_failures": 0
+  },
+  "production_boundary": {
+    "production_deployment": "NOT_PERFORMED",
+    "release_gate": "PENDING",
+    "production_untouched": true,
+    "push": false
+  },
+  "c_drive": {
+    "result": "UNTOUCHED",
+    "head": "02d3086183d1c582bb6c66c4c316340ccce3fa97",
+    "branch": "codex/task-ops-023a-p3c-runtime-sha-audit-20260813",
+    "status_entries": 152,
+    "tracked_modified": 1,
+    "staged": 0,
+    "untracked": 151
+  }
+}

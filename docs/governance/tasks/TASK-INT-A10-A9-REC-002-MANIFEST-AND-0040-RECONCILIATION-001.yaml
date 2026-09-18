@@ -1,0 +1,46 @@
+{
+  "task_id": "TASK-INT-A10-A9-REC-002-MANIFEST-AND-0040-RECONCILIATION-001",
+  "title": "A10/A9 REC-002 Manifest, Predecessor Evidence, and 0040 Reconciliation",
+  "status": "PARTIAL",
+  "owner_role": "INTEGRATION_OWNER",
+  "workstream": "INTEGRATION",
+  "base_sha": "c3405736e345c670f2eaa5c1eb34b76f61a58ee7",
+  "branch": "codex/task-int-a10-a9-rec-002-manifest-and-0040-reconciliation-001-20260914",
+  "worktree": "E:\\topicpilot-worktrees\\int-a10-a9-rec-002-manifest-0040-001-20260914",
+  "owned_paths": [
+    "docs/governance/tasks/TASK-INT-A10-A9-REC-002-MANIFEST-AND-0040-RECONCILIATION-001.yaml",
+    "docs/governance/tasks/TASK-A10-A9-REC-002.yaml",
+    "docs/governance/tasks/TASK-A10-POST-CLOSE-CHECKPOINT-RECONCILIATION-002.yaml",
+    "docs/reports/TASK-INT-A10-A9-REC-002-MANIFEST-AND-0040-RECONCILIATION-001-20260914.md"
+  ],
+  "shared_paths": [
+    "services/api/alembic/versions/**",
+    "services/api/src/topicpilot_api/schemas.py",
+    "packages/api-client/**",
+    "PROJECT_CONTEXT.md",
+    "docs/ROADMAP.md",
+    "docs/WORK_ORDERS.md",
+    "docs/DOCUMENTATION_INDEX.md"
+  ],
+  "forbidden_paths": [
+    "services/**",
+    "apps/**",
+    "packages/**",
+    "infra/**",
+    ".github/workflows/**",
+    "NEXT_TASK"
+  ],
+  "dependencies": ["GOV-003"],
+  "implementation_commits": [],
+  "governance_commits": [],
+  "migration_scope": "READ_ONLY_ARCHAEOLOGY_AND_MANIFEST_RECONCILIATION; NO_MIGRATION_EXECUTION_OR_STAMP",
+  "production_scope": "READBACK_EVIDENCE_ONLY; NO_PRODUCTION_WRITE_OR_DEPLOYMENT",
+  "owner_decision_required": true,
+  "next_allowed_state": "OWNER_DECISION_REQUIRED",
+  "dependency_notes": [
+    "Use the qualified GOV-003 runtime and current governed development baseline.",
+    "A10/A9 and Today migration artifacts remain branch-only evidence; no migration is promoted by this task.",
+    "A Schema-owner decision remains required if a future integration would activate 0040."
+  ],
+  "shared_surface_policy": "EXPLICIT_RECONCILIATION"
+}

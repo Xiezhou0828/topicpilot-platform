@@ -1,0 +1,107 @@
+{
+  "baseline": {
+    "governed_base": "a41bbe408529708a1157b51374c86ee10419257f",
+    "prior_canonical_base": "b3094cec79c34052131e3bcfe0e8db1a895788a9",
+    "code_head": "c7025182349f93869eead2017d395b847744c9c9",
+    "daily_close_remediation_commit": "4cba30bed48ea667f975950126f4c8fa7b128f18",
+    "alembic_head": "0042_task_fund_b_stock_institutional_flow_forward",
+    "alembic_single_head": true
+  },
+  "production_provenance": {
+    "api_sha": "bf68cc8bf0a4432d7623db43f42e9219c94d7b6b",
+    "worker_sha": "UNKNOWN_EXACT_SHA",
+    "web_sha": "UNKNOWN_EXACT_SHA",
+    "database_revision": "0040_task_a10_recovery_checkpoint_observability_LAST_PROVEN_CURRENT_UNPROVABLE",
+    "provider_mode": "UNPROVABLE_FOR_WORKER",
+    "config_version": "UNVERSIONED"
+  },
+  "development_provenance": {
+    "daily_close_remediation_present": true,
+    "post_close_remediation_present": true,
+    "worker_session_remediation_present": true,
+    "post_close_boundary": ">=13:35 Asia/Taipei",
+    "poll_interval_seconds": 300
+  },
+  "deployment_drift": {
+    "overall": "PARTIAL",
+    "api": "YES",
+    "worker": "UNPROVABLE",
+    "web": "UNPROVABLE",
+    "database": "PARTIAL",
+    "code": "PROVEN_API_DRIFT",
+    "configuration": "PARTIAL",
+    "migration": "PARTIAL"
+  },
+  "post_close_2026_09_17": {
+    "run_id": "d7d9017d-4641-4f2c-a557-20e536f065e4",
+    "status": "FAILED",
+    "started_at": "2026-09-17T05:36:55.221065Z",
+    "completed_at": "2026-09-17T06:06:37.002221Z",
+    "observed_error": "EXCHANGE_NO_DATA;INVALID_PAYLOAD",
+    "earliest_broken_boundary": "WORKER_OFFICIAL_PROVIDER_DAILY_CLOSE_ATTEMPT"
+  },
+  "failure_counts": {
+    "requested": 553,
+    "success": 0,
+    "failed": 347,
+    "meaning": "old per-instrument attempts raised exceptions; per-instrument subtype mapping unavailable"
+  },
+  "skip_counts": {
+    "skipped": 206,
+    "meaning": "no priced bar and no lifecycle-authorized no-trade evidence",
+    "reference_exclusions_proven": false
+  },
+  "invalid_payload": {
+    "origin": "official exchange adapter/parser",
+    "deployed_conditions": ["non-object JSON envelope", "missing or malformed table/array/row"],
+    "exact_historical_subtype": "UNPROVABLE",
+    "observability": "PARTIAL"
+  },
+  "exchange_no_data": {
+    "origin": "deployed official exchange adapter non-OK provider stat",
+    "combined_error_semantics": "sorted deduplicated run failure-code set, not cause/subcause"
+  },
+  "provider_reproduction": {
+    "fetch_date": "2026-09-18",
+    "contemporaneous_2026_09_17_success": "NOT_PROVEN",
+    "results": [
+      {"value_date":"2026-09-15","market":"TPE","transport":"SUCCESS","parse":"SUCCESS","rows":1379,"classification":"SUCCESS"},
+      {"value_date":"2026-09-15","market":"TWO","transport":"SUCCESS","parse":"SUCCESS","rows":11358,"classification":"SUCCESS"},
+      {"value_date":"2026-09-16","market":"TPE","transport":"SUCCESS","parse":"SUCCESS","rows":1379,"classification":"SUCCESS"},
+      {"value_date":"2026-09-16","market":"TWO","transport":"SUCCESS","parse":"SUCCESS","rows":11415,"classification":"SUCCESS"},
+      {"value_date":"2026-09-17","market":"TPE","transport":"SUCCESS","parse":"SUCCESS","rows":1377,"classification":"SUCCESS"},
+      {"value_date":"2026-09-17","market":"TWO","transport":"SUCCESS","parse":"SUCCESS","rows":11479,"classification":"SUCCESS"}
+    ]
+  },
+  "date_semantics": {"current_defect_reproduced":false,"historical_defect":"UNPROVABLE","timezone":"Asia/Taipei"},
+  "market_mapping": {"current_tpe":"PASS","current_two":"PASS","historical":"UNPROVABLE"},
+  "parser": {"current_canonical_reproduces_failure":false,"current_defect_proven":false,"historical_drift":"UNPROVABLE"},
+  "error_taxonomy": {"current":"TYPED_FIRST_FAILING_LAYER","deployed_api":"COLLAPSED","fail_closed":true},
+  "worker_session": {"recovery_present":true,"focused_tests":"PASS","worker_provenance":"UNPROVABLE"},
+  "daily_close_contract": {"rule":"all date-effective members need accepted price or authorized no-trade evidence","stale_can_publish_fresh":false},
+  "persistence": {"production_2026_09_17_readback":"NOT_PERFORMED","mutation":"NONE"},
+  "idempotency": {"implementation":"PRESENT","production_proof":"PARTIAL_PENDING_AUTHORIZED_REPLAY"},
+  "checkpoint": {"development":"READY","production_2026_09_17":"NOT_READY","partial_claims_complete":false},
+  "today_market_handoff": {"latest_date":"2026-09-09","home_api_defect":false,"web_defect":false},
+  "a9_handoff": {"requires_daily_close_complete":true,"ready_2026_09_17":false},
+  "root_cause": {"primary_class":"MULTIPLE","api_deployment_drift":"PROVEN","worker_drift":"UNPROVABLE","historical_provider_subtype":"UNPROVABLE"},
+  "implementation": {"code_change_required":false,"program_code_changed":false,"reason":"current canonical already contains bounded remediation and current provider controls pass"},
+  "tests": {
+    "focused":{"passed":96,"failed":0},
+    "backend_full":{"passed":775,"failed":9,"skipped":59,"failure_class":"REGISTERED_LIFECYCLE_BASELINE"},
+    "web":{"passed":165,"failed":0,"skipped":0,"build":"PASS","lint":"PASS"},
+    "ruff":"PASS",
+    "compile":"PASS",
+    "alembic":"ONE_HEAD",
+    "task_caused_failures":0,
+    "environment_invocation_failures_corrected":2
+  },
+  "reconciliation": {"source_sha":"a41bbe408529708a1157b51374c86ee10419257f","program_reconciliation":"NOT_REQUIRED","documentation_commit":"9072c46f93acd533d9cd470eddbc29d2681e01cf","governance_closeout_commit":"4d683b097a8dda77a9f18eef9adcf31f49820e4c"},
+  "release_composition": {"api_sha":"a41bbe408529708a1157b51374c86ee10419257f","worker_sha":"a41bbe408529708a1157b51374c86ee10419257f","web_sha":"a41bbe408529708a1157b51374c86ee10419257f_IF_REBUILT","ready":true},
+  "migration_plan": {"required":true,"last_proven_production":"0040_task_a10_recovery_checkpoint_observability","required_revision":"0042_task_fund_b_stock_institutional_flow_forward","executed":false},
+  "canary_plan": {"ready":true,"sequence":["exact API/Worker/DB provenance","read-only TPE/TWO market-day provider control","bounded Daily Close","checkpoint and session readback"]},
+  "replay_plan": {"ready":true,"earliest_date":"2026-09-10","dates":["2026-09-10","2026-09-11","2026-09-14","2026-09-15","2026-09-16","2026-09-17"],"sequential_topic_recovery_required":true,"executed":false},
+  "external_gates": ["operator release authority","migration authority","Production canary authority","sequential replay authority","exact Worker/Web provenance"],
+  "next_action": "Deploy and prove exact API/Worker a41bbe4, migrate/read back 0042, run TPE/TWO provider plus Daily Close canary, then authorize sequential replay",
+  "safety": {"production_mutation":"NONE","deployment":"NONE","replay":"NONE","push":false,"c_drive":"UNTOUCHED","next_task_changed":false}
+}

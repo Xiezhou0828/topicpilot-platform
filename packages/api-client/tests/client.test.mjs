@@ -44,6 +44,27 @@ test("typed client returns the generated HomeResponse contract", async () => {
   assert.equal(home.mainTopics[0].slug, "ai-server");
 });
 
+test("typed client reads the formal institutional-flow route with explicit bounds", async () => {
+  const fetchImpl = async (url, init) => {
+    assert.equal(
+      url,
+      "https://api.example/api/v2/market/institutional-flow?limit=20&market=TPE&asOf=2026-09-15&from=2026-09-01&to=2026-09-15",
+    );
+    assert.equal(init.headers.Accept, "application/json");
+    return new Response(JSON.stringify({ status: "UNAVAILABLE", markets: [] }), { status: 200 });
+  };
+  const client = createTopicPilotClient({ baseUrl: "https://api.example", fetchImpl });
+
+  const flow = await client.getInstitutionalFlow({
+    market: "TPE",
+    asOf: "2026-09-15",
+    from: "2026-09-01",
+    to: "2026-09-15",
+    limit: 20,
+  });
+  assert.equal(flow.status, "UNAVAILABLE");
+});
+
 test("typed client exposes all WS-B Topic catalog read routes", async () => {
   const requests = [];
   const fetchImpl = async (url) => {
@@ -93,4 +114,26 @@ test("typed client raises the normalized problem response", async () => {
       && error.status === 404
       && error.type.endsWith("/not-found"),
   );
+});
+
+test("typed client requests stock institutional-flow evidence with market identity", async () => {
+  const fetchImpl = async (url, init) => {
+    assert.equal(
+      url,
+      "https://api.example/api/v2/stocks/2330/institutional-flow?limit=200&market=TPE&asOf=2026-09-16",
+    );
+    assert.equal(init.headers.Accept, "application/json");
+    return new Response(
+      JSON.stringify({ contractVersion: "fund-b.stock-institutional-flow.v1", status: "OK" }),
+      { status: 200, headers: { "content-type": "application/json" } },
+    );
+  };
+  const client = createTopicPilotClient({ baseUrl: "https://api.example", fetchImpl });
+
+  const response = await client.getStockInstitutionalFlow(
+    "2330",
+    { market: "TPE", asOf: "2026-09-16" },
+  );
+
+  assert.equal(response.status, "OK");
 });

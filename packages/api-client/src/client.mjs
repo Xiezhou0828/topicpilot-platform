@@ -30,6 +30,14 @@ export function createTopicPilotClient({ baseUrl, fetchImpl = globalThis.fetch }
   return Object.freeze({
     getDataStatus: (init) => request("/api/v1/meta/data-status", init),
     getHome: (init) => request("/api/v2/home", init),
+    getInstitutionalFlow: ({ market, asOf, from, to, limit = 25 } = {}, init) => {
+      const query = new URLSearchParams({ limit: String(limit) });
+      if (market) query.set("market", market);
+      if (asOf) query.set("asOf", asOf);
+      if (from) query.set("from", from);
+      if (to) query.set("to", to);
+      return request(`/api/v2/market/institutional-flow?${query.toString()}`, init);
+    },
     getTopicCatalog: ({ asOf, limit = 200, offset = 0 } = {}, init) => {
       const query = new URLSearchParams({ limit: String(limit), offset: String(offset) });
       if (asOf) query.set("asOf", asOf);
@@ -61,6 +69,15 @@ export function createTopicPilotClient({ baseUrl, fetchImpl = globalThis.fetch }
     getStocks: ({ limit = 50, offset = 0 } = {}, init) =>
       request(`/api/v1/stocks?limit=${limit}&offset=${offset}`, init),
     getStock: (code, init) => request(`/api/v1/stocks/${encodeURIComponent(code)}`, init),
+    getStockInstitutionalFlow: (code, { market, asOf, limit = 200 } = {}, init) => {
+      const params = new URLSearchParams({ limit: String(limit) });
+      if (market) params.set("market", market);
+      if (asOf) params.set("asOf", asOf);
+      return request(
+        `/api/v2/stocks/${encodeURIComponent(code)}/institutional-flow?${params.toString()}`,
+        init,
+      );
+    },
     getTopics: ({ limit = 50, offset = 0 } = {}, init) =>
       request(`/api/v1/topics?limit=${limit}&offset=${offset}`, init),
   });

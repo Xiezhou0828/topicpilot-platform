@@ -1,0 +1,62 @@
+{
+  "task_id": "TASK-FUND-A-MARKET-FLOW-FORMAL-CAPABILITY-001",
+  "title": "FUND-A canonical market-level institutional investor flow capability",
+  "status": "READY_FOR_INTEGRATION",
+  "owner_role": "FUND-A capability implementer with serial integration owner",
+  "workstream": "FUND_A",
+  "base_sha": "07b7a73e7cfd070aae39a2d61240bf5050e19e4a",
+  "branch": "codex/task-fund-a-market-flow-formal-capability-001",
+  "worktree": "E:\\topicpilot-worktrees\\fund-a-market-flow-formal-capability-001",
+  "owned_paths": [
+    "services/api/src/topicpilot_api/market_data/institutional_flow.py",
+    "services/api/src/topicpilot_api/market_data/institutional_flow_persistence.py",
+    "services/api/src/topicpilot_api/orm/institutional_flow.py",
+    "services/api/alembic/versions/0041_task_fund_a_market_flow_formal_capability.py",
+    "services/api/src/topicpilot_api/market_institutional_flow_api.py",
+    "services/api/tests/fixtures/institutional_flow/**",
+    "services/api/tests/test_institutional_flow.py",
+    "services/api/tests/test_market_institutional_flow_api.py",
+    "apps/web/app/components/v2/TodayMarketPage.tsx",
+    "apps/web/tests/today-market-institutional-flow.test.mjs",
+    "docs/reports/TASK-FUND-A-MARKET-FLOW-FORMAL-CAPABILITY-001/**"
+  ],
+  "shared_paths": [
+    "services/api/src/topicpilot_api/schemas.py",
+    "services/api/src/topicpilot_api/home_v2_publication.py",
+    "services/api/src/topicpilot_api/main.py",
+    "services/api/src/topicpilot_api/market_data/__init__.py",
+    "services/api/src/topicpilot_api/orm/__init__.py",
+    "packages/api-client/**",
+    "apps/web/app/lib/generated-api.d.ts"
+  ],
+  "forbidden_paths": [
+    "Production infrastructure and databases",
+    "NEXT_TASK and owner-controlled task registries",
+    "C-drive owner checkout changes",
+    "FUND-B stock-level flow implementation",
+    "FUND-C Opportunity implementation",
+    "FUND-E topic-flow implementation",
+    "Today Signals policy redesign",
+    "A10/A9 and B2 workstream changes"
+  ],
+  "dependencies": [
+    "GOV-003",
+    "TASK-OWNER-TOPICPILOT-CANONICAL-PROMOTION-RELEASE-AND-RUNTIME-CLOSURE-001",
+    "TASK-INT-A10-A9-REC-002-MANIFEST-AND-0040-RECONCILIATION-001"
+  ],
+  "implementation_commits": ["b062df38c6cd0bf6f238b849d2ff2600f5c63411"],
+  "governance_commits": ["a5e54a9d73e57a466325417151beb895f55d1229"],
+  "migration_scope": "0041 adds only the replayable FUND-A daily fact table; no migration is executed against Production.",
+  "production_scope": "NONE: no Production read/write, deploy, canary, scheduler activation, or migration execution.",
+  "owner_decision_required": false,
+  "next_allowed_state": "INTEGRATED",
+  "supersedes": null,
+  "disposition_evidence": "docs/reports/TASK-FUND-A-MARKET-FLOW-FORMAL-CAPABILITY-001/historical-artifact-disposition.md",
+  "dependency_notes": [
+    "The task prompt is the execution authorization for FUND-A despite the older FUND-001 initiation packet remaining historical context.",
+    "The canonical V2 baseline is 07b7a73e7cfd070aae39a2d61240bf5050e19e4a.",
+    "The schema and migration dependency is the chain through 0040_task_a10_recovery_checkpoint_observability.",
+    "Shared schema, migration, generated client, and Home surfaces require serial integration review before canonical promotion."
+  ],
+  "shared_surface_policy": "INTEGRATION_OWNER_ONLY"
+}

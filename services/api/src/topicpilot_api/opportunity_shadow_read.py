@@ -454,6 +454,9 @@ def _card(item: OpportunityReadModel, rank: int) -> dict[str, Any]:
         "exclusionFactors": explanation["exclusionFactors"],
         "exclusionCodes": list(item.exclusion_codes),
         "reasonCodes": list(reason_codes),
+        "institutionalEvidence": (
+            dict(item.institutional_evidence) if item.institutional_evidence is not None else None
+        ),
         "explanation": explanation,
         "policyVersion": item.policy_version,
         "parameterVersion": item.qualification_parameter_version or PARAMETER_VERSION,

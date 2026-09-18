@@ -1,0 +1,163 @@
+{
+  "version": 1,
+  "policy": {
+    "unmatched_path": "FAIL",
+    "shared_surface": "SHARED_REQUIRES_RECONCILIATION",
+    "protected_owner_paths": [
+      "C:/Users/acer/Desktop/題材領航/topicpilot-platform",
+      "C:\\Users\\acer\\Desktop\\題材領航\\topicpilot-platform"
+    ]
+  },
+  "shared_surfaces": [
+    {"pattern": "services/api/src/topicpilot_api/schemas.py", "owner": "INTEGRATION_OWNER_ONLY"},
+    {"pattern": "services/api/alembic/versions/**", "owner": "INTEGRATION_OWNER_ONLY"},
+    {"pattern": "packages/api-client/**", "owner": "INTEGRATION_OWNER_ONLY"},
+    {"pattern": "apps/web/app/lib/generated-api.d.ts", "owner": "INTEGRATION_OWNER_ONLY"},
+    {"pattern": ".github/workflows/**", "owner": "INTEGRATION_OWNER_ONLY"},
+    {"pattern": "PROJECT_CONTEXT.md", "owner": "INTEGRATION_OWNER_ONLY"},
+    {"pattern": "docs/ROADMAP.md", "owner": "INTEGRATION_OWNER_ONLY"},
+    {"pattern": "docs/WORK_ORDERS.md", "owner": "INTEGRATION_OWNER_ONLY"},
+    {"pattern": "docs/DOCUMENTATION_INDEX.md", "owner": "INTEGRATION_OWNER_ONLY"}
+  ],
+  "workstreams": {
+    "GOVERNANCE": {
+      "owned": [
+        ".github/copilot-instructions.md",
+        ".github/skills/**",
+        ".github/agents/**",
+        ".github/hooks/**",
+        "scripts/governance/**",
+        "docs/governance/**",
+        "docs/reports/TASK-GOV-003-*.md",
+        "docs/reports/TASK-F1-F9-HISTORICAL-CANONICAL-RECOVERY-001*",
+        "AGENTS.md"
+      ],
+      "shared": [
+        "PROJECT_CONTEXT.md",
+        "docs/ROADMAP.md",
+        "docs/WORK_ORDERS.md",
+        "docs/DOCUMENTATION_INDEX.md"
+      ],
+      "forbidden": [
+        "services/**",
+        "apps/**",
+        "packages/**",
+        "infra/**",
+        "services/api/alembic/**"
+      ]
+    },
+    "TODAY": {
+      "owned": [
+        "services/api/src/topicpilot_api/home_v2_publication.py",
+        "services/api/tests/test_home_v2_publication.py",
+        "apps/web/app/lib/today-home.ts",
+        "apps/web/app/lib/today-mainlines.ts",
+        "apps/web/app/components/v2/TodayMarketPage.tsx",
+        "docs/reports/TASK-TODAY-*.md"
+      ],
+      "shared": [
+        "services/api/src/topicpilot_api/schemas.py",
+        "packages/api-client/**",
+        "apps/web/app/lib/generated-api.d.ts"
+      ],
+      "forbidden": [
+        "services/api/alembic/**",
+        "services/api/src/topicpilot_api/live/**",
+        "services/api/src/topicpilot_api/topic_engine/**",
+        "services/api/src/topicpilot_api/opportunity*.py",
+        "apps/web/app/components/**"
+      ]
+    },
+    "A10_A9": {
+      "owned": [
+        "services/api/src/topicpilot_api/live/post_close.py",
+        "services/api/src/topicpilot_api/live/scheduler.py",
+        "services/api/src/topicpilot_api/live/orchestrator.py",
+        "services/api/src/topicpilot_api/live/persistence.py",
+        "services/api/tests/test_post_close*.py",
+        "services/api/tests/test_live*.py",
+        "docs/reports/TASK-A10*.md"
+      ],
+      "shared": [
+        "services/api/alembic/versions/**",
+        "services/api/src/topicpilot_api/schemas.py",
+        "packages/api-client/**"
+      ],
+      "forbidden": [
+        "services/api/src/topicpilot_api/home_v2_publication.py",
+        "services/api/src/topicpilot_api/topic_engine/**",
+        "apps/web/**",
+        "services/api/src/topicpilot_api/opportunity*.py"
+      ]
+    },
+    "TOPIC_B2": {
+      "owned": [
+        "services/api/src/topicpilot_api/topic_engine/**",
+        "services/api/src/topicpilot_api/topic_lifecycle_*.py",
+        "services/api/src/topicpilot_api/topic_snapshot_*.py",
+        "services/api/tests/test_topic*.py",
+        "services/api/tests/test_structural_role_score_projection.py",
+        "docs/reports/TASK-TOPIC*.md"
+      ],
+      "shared": [
+        "services/api/alembic/versions/**",
+        "services/api/src/topicpilot_api/schemas.py",
+        "packages/api-client/**"
+      ],
+      "forbidden": [
+        "services/api/src/topicpilot_api/live/**",
+        "services/api/src/topicpilot_api/home_v2_publication.py",
+        "apps/web/app/components/v2/TodayMarketPage.tsx",
+        "services/api/src/topicpilot_api/opportunity*.py"
+      ]
+    },
+    "OPPORTUNITY": {
+      "owned": [
+        "services/api/src/topicpilot_api/opportunity*.py",
+        "services/api/src/topicpilot_api/topic_engine/opportunity_*.py",
+        "services/api/tests/test_opportunity*.py",
+        "services/api/tests/test_recommendation*.py",
+        "apps/web/app/opportunities/**",
+        "docs/reports/TASK-OPP*.md"
+      ],
+      "shared": [
+        "services/api/src/topicpilot_api/schemas.py",
+        "packages/api-client/**"
+      ],
+      "forbidden": [
+        "services/api/alembic/**",
+        "services/api/src/topicpilot_api/live/**",
+        "services/api/src/topicpilot_api/home_v2_publication.py",
+        "services/api/src/topicpilot_api/topic_lifecycle_*.py"
+      ]
+    },
+    "RELEASE": {
+      "owned": [
+        ".github/workflows/deploy.yml",
+        "render.yaml",
+        "infra/**",
+        "docs/reports/TASK-REL*.md"
+      ],
+      "shared": [
+        ".github/workflows/ci.yml",
+        "services/api/alembic/versions/**"
+      ],
+      "forbidden": [
+        "services/**",
+        "apps/**",
+        "packages/**"
+      ]
+    },
+    "INTEGRATION": {
+      "owned": [
+        "services/api/src/topicpilot_api/schemas.py",
+        "services/api/alembic/versions/**",
+        "packages/api-client/**",
+        "apps/web/app/lib/generated-api.d.ts",
+        ".github/workflows/**"
+      ],
+      "shared": [],
+      "forbidden": []
+    }
+  }
+}

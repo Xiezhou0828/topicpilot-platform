@@ -1,0 +1,92 @@
+{
+  "task_id": "TASK-INT-FUND-C-OPPORTUNITY-INSTITUTIONAL-EVIDENCE-CANONICAL-RECONCILIATION-001",
+  "title": "FUND-C Opportunity institutional-evidence canonical reconciliation",
+  "status": "INTEGRATED",
+  "owner_role": "INTEGRATION_OWNER",
+  "workstream": "INTEGRATION",
+  "base_sha": "b3094cec79c34052131e3bcfe0e8db1a895788a9",
+  "reported_canonical_base_sha": "18a0428af2988ff65becdf14b09f0fede8d81d0c",
+  "previous_authoritative_canonical_sha": "b3094cec79c34052131e3bcfe0e8db1a895788a9",
+  "branch": "codex/task-int-fund-c-opportunity-evidence-reconciliation-20260917",
+  "worktree": "E:\\topicpilot-worktrees\\int-fund-c-opportunity-evidence-reconciliation-20260917",
+  "owned_paths": [
+    "services/api/src/topicpilot_api/topic_engine/opportunity_institutional_evidence.py",
+    "services/api/src/topicpilot_api/topic_engine/opportunity_contract.py",
+    "services/api/src/topicpilot_api/opportunity_shadow_read.py",
+    "services/api/tests/test_opportunity_institutional_evidence.py",
+    "services/api/src/topicpilot_api/schemas.py",
+    "packages/api-client/openapi.json",
+    "packages/api-client/src/schema.d.ts",
+    "apps/web/app/lib/generated-api.d.ts",
+    "docs/reports/TASK-INT-FUND-C-OPPORTUNITY-INSTITUTIONAL-EVIDENCE-CANONICAL-RECONCILIATION-001/**",
+    "docs/governance/tasks/TASK-INT-FUND-C-OPPORTUNITY-INSTITUTIONAL-EVIDENCE-CANONICAL-RECONCILIATION-001.yaml",
+    "docs/governance/provenance/TASK-INT-FUND-C-OPPORTUNITY-INSTITUTIONAL-EVIDENCE-CANONICAL-RECONCILIATION-001.json"
+  ],
+  "shared_paths": [
+    "services/api/src/topicpilot_api/schemas.py",
+    "packages/api-client/**",
+    "apps/web/app/lib/generated-api.d.ts",
+    "docs/governance/**",
+    "docs/reports/**"
+  ],
+  "forbidden_paths": [
+    "services/api/alembic/**",
+    "services/api/src/topicpilot_api/market_data/stock_institutional_flow.py",
+    "services/api/src/topicpilot_api/stock_institutional_flow_persistence.py",
+    "services/api/src/topicpilot_api/opportunity_api.py",
+    "services/api/src/topicpilot_api/opportunity_strategies.py",
+    "services/api/src/topicpilot_api/topic_engine/opportunity_qualification.py",
+    "services/api/src/topicpilot_api/topic_engine/opportunity_evidence.py",
+    "services/api/src/topicpilot_api/topic_engine/opportunity_shadow.py",
+    "services/api/src/topicpilot_api/topic_engine/opportunity_strategies.py",
+    "services/api/src/topicpilot_api/live/**",
+    "NEXT_TASK*",
+    "PROJECT_CONTEXT.md",
+    "ACTIVE_WORK.md",
+    "CURRENT_PROJECT_STATE.md",
+    "Production*",
+    "**/*.env",
+    "**/*.secret",
+    "FUND-E implementation",
+    "B2 policy redesign",
+    "Opportunity policy redesign",
+    "C-drive owner checkout changes"
+  ],
+  "dependencies": [
+    "GOV-003",
+    "TASK-INT-FUND-DAILYCLOSE-CANONICAL-CONVERGENCE-AND-FUNDB-INTEGRATION-001",
+    "OPP-FORMAL-AUTHORITY-READINESS-001"
+  ],
+  "dependency_notes": [
+    "FUND-C source task TASK-FUND-C-OPPORTUNITY-INSTITUTIONAL-EVIDENCE-FORMAL-CAPABILITY-001 is preserved as commit-level provenance because its isolated source manifest is not part of the current canonical task-manifest set.",
+    "The protected C owner checkout is read-only evidence and is not canonical authority by itself.",
+    "Formal Opportunity provider/publication remains unavailable; this task only integrates the optional evidence read-model extension."
+  ],
+  "implementation_commits": [
+    "f292530da982127fa977209f3700df0ecf352847",
+    "c7025182349f93869eead2017d395b847744c9c9"
+  ],
+  "governance_commits": [],
+  "source_commits": {
+    "implementation": "a0a553613983558b552e2a586bd7444187f3eb4e",
+    "scope_cleanup": "05ae03fa937b73b85807acada7a82be54ef2caec",
+    "governance_closeout": "817c78f1e98832aa892ff91a7f41d26b67b6e083",
+    "final_code_state": "05ae03fa937b73b85807acada7a82be54ef2caec"
+  },
+  "migration_scope": "NONE: FUND-C composes canonical FUND-B evidence dynamically and adds no persistence table, ORM mutation, or migration.",
+  "production_scope": "NONE: no Production read/write, deploy, scheduler activation, migration execution, replay, canary, database mutation, or push.",
+  "owner_decision_required": false,
+  "next_allowed_state": "READY_FOR_RELEASE",
+  "supersedes": null,
+  "disposition_evidence": "docs/reports/TASK-INT-FUND-C-OPPORTUNITY-INSTITUTIONAL-EVIDENCE-CANONICAL-RECONCILIATION-001/canonical-reconciliation-report.md",
+  "shared_surface_policy": "EXPLICIT_RECONCILIATION",
+  "canonical_integration_status": "INTEGRATED",
+  "canonical_integration_sha": "c7025182349f93869eead2017d395b847744c9c9",
+  "post_integration_code_head": "c7025182349f93869eead2017d395b847744c9c9",
+  "lifecycle": {
+    "before": "READY_FOR_INTEGRATION",
+    "after": "INTEGRATED",
+    "canonical_status": "CANONICALIZED_IN_FORWARD_DEVELOPMENT_CANDIDATE",
+    "production_status": "EXTERNAL_GATE"
+  }
+}

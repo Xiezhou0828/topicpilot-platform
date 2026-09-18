@@ -29,6 +29,25 @@
 
 ## Current operations and status
 
+The current owner-controlled canonical closure and external release boundary
+are recorded in the [owner closure report](reports/TASK-OWNER-TOPICPILOT-CANONICAL-PROMOTION-RELEASE-AND-RUNTIME-CLOSURE-001-20260916.md).
+It closes the recovered historical scope while leaving exact Web/Worker
+provenance, canary authorization, POST_CLOSE freshness, and formal Opportunity
+readiness as explicit forward gates.
+
+- [GOV-000 Current Project State Recovery](reports/TASK-GOV-000-CURRENT-PROJECT-STATE-RECOVERY-20260913.md) — dated repository/Git/deployment/runtime reconciliation for the 2026-08-12 through 2026-09-13 state, including parallel workstreams, incomplete work, branch/runtime divergence, and the safe next task.
+- [GOV-001 Canonical Branch, Runtime, and Workstream Reconciliation](reports/TASK-GOV-001-CANONICAL-RECONCILIATION-20260913.md) — follow-on current-state map, exact branch/runtime divergence, formal Opportunity disposition, A10/A9/Today/Topic/FUND blockers, and the bounded next-safe action. It does not replace GOV-000's historical recovery evidence.
+- [REL-001 Exact-SHA Release-Chain and Runtime Readback](reports/TASK-REL-001-EXACT-SHA-RELEASE-CHAIN-READBACK-20260913.md) — clean-candidate checks, migration-line mismatch, API/Web/Worker provenance, production data readback, operator packet, and blocked release gate. It does not promote a release or change `NEXT_TASK`.
+- [REL-002 Release Composition and Operator Readback](reports/TASK-REL-002-RELEASE-COMPOSITION-AND-OPERATOR-READBACK-20260913.md) — main-derived exact candidate `a8357d461...`, bounded formal Opportunity composition, Web SHA observability, branch exclusions, qualification results, public runtime readback, and operator-only release gate. It does not promote a release or change `NEXT_TASK`.
+- [GOV-002 Parallel Workstream Recovery and Branch Hygiene](reports/TASK-GOV-002-PARALLEL-WORKSTREAM-RECOVERY-AND-BRANCH-HYGIENE-20260913.md) — canonical development integration base, branch/worktree recovery, workstream ownership, incomplete work, parallel execution rules, and ready-to-launch task packets; no product implementation or `NEXT_TASK` change.
+- [GOV-003 Agentic Parallel Development Runtime](reports/TASK-GOV-003-AGENTIC-PARALLEL-DEVELOPMENT-RUNTIME-20260914.md) — repo-native project memory, task manifests, ownership/lifecycle/worktree/integration/release guards, bounded agents, hooks, governance CI, and dry-run results; candidate runtime only until owner review and canonical promotion.
+- [Agentic Development Runtime Guide](governance/AGENTIC_DEVELOPMENT.md) — operating contract for memory recovery, task lifecycle, parallel worktrees, incomplete-work audit, integration, release gates, handoff, and ownership boundaries.
+- [Current Project State](../CURRENT_PROJECT_STATE.md) — compact current-state truth and runtime/release boundary.
+- [Active Work](../ACTIVE_WORK.md) — canonical workstream ownership, branch/worktree, dependencies, write sets, and next named tasks.
+- [Incomplete Work Registry](../INCOMPLETE_WORK_REGISTRY.md) — partial, blocked, unknown, branch-only, superseded, and runtime-verification gaps.
+- [Branch Recovery Matrix](../BRANCH_RECOVERY_MATRIX.md) — branch, commit, divergence, worktree, and historical disposition map.
+- [Parallel Execution Matrix](../PARALLEL_EXECUTION_MATRIX.md) — safe parallel groups, serial-only surfaces, sync rules, and integration protocol.
+- [FUND-001 Institution Flow Initiation Packet](work-orders/FUND-001-INSTITUTION-FLOW-INITIATION-PACKET-20260913.md) — proposed owner-decision packet; no institutional provider, schema, scheduler, API, frontend, or Production implementation is authorized yet.
 - [Current project-state cold-start reconciliation](reports/TASK-DOC-CURRENT-PROJECT-STATE-COLD-START-HANDOFF-RECONCILIATION-001.md) — canonical startup/handoff state, evidence ledger, stale-claim disposition, and clean-reader acceptance result.
 - [Stock-004 canonical reconciliation closure](reports/TASK-OPS-STOCK-004-CANONICAL-RECONCILIATION-001.md) — closure evidence for release-hygiene workstream A.
 - [Documentation, fixture, and owner-disposition closure](reports/TASK-OPS-DOCUMENTATION-PROVIDERS-OWNER-DISPOSITION-AND-DB-INTEGRATION-FIXTURE-CLOSURE-001.md) — closure evidence for release-hygiene workstream B.

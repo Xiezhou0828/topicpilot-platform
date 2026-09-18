@@ -1,0 +1,203 @@
+{
+  "task_id": "TASK-INT-FUND-DAILYCLOSE-CANONICAL-CONVERGENCE-AND-FUNDB-INTEGRATION-001",
+  "role": "INTEGRATION_OWNER",
+  "mode": "ONE_SHOT_FORWARD_CANONICAL_CONVERGENCE_FUNDB_RECONCILIATION_AND_CLOSEOUT",
+  "status": "INTEGRATED",
+  "result": "COMPLETE_WITH_EXTERNAL_GATE",
+  "timestamp": "2026-09-17",
+  "previous_authoritative_canonical_sha": "f02ef61e588a8114aea4043128ab207c4f978516",
+  "common_ancestor_sha": "277a49382240503fcd0767e9cfb17e2fd974e8a3",
+  "unified_forward_base_sha": "18a0428af2988ff65becdf14b09f0fede8d81d0c",
+  "unified_canonical_integration_sha": "18a0428af2988ff65becdf14b09f0fede8d81d0c",
+  "integration_record_sha": "FINAL_GOVERNANCE_COMMIT",
+  "current_c_owner_head": "02d3086183d1c582bb6c66c4c316340ccce3fa97",
+  "current_c_owner_status_entries": 152,
+  "source_provenance": {
+    "fund_a": {
+      "source_task": "TASK-INT-FUND-A-MARKET-FLOW-CANONICAL-RECONCILIATION-001",
+      "reported_canonical_integration_sha": "589d33ed9389a418183f1505e221cd62217e3ef4",
+      "final_governance_sha": "f02ef61e588a8114aea4043128ab207c4f978516",
+      "reported_base_sha": "07b7a73e7cfd070aae39a2d61240bf5050e19e4a",
+      "relation_to_unified": "PRESENT_AS_ANCESTOR_OF_CURRENT_AUTHORITATIVE_CANONICAL"
+    },
+    "daily_close": {
+      "source_task": "TASK-INT-DAILY-CLOSE-CANONICAL-RELEASE-REPLAY-AND-FORMAL-E2E-CLOSURE-001",
+      "source_remediation_sha": "3e602119284dd7abe0779a107e5f004052bc0ac1",
+      "reported_canonical_integration_sha": "2cfd954ee68e8bb53571271870dbc99fabc81360",
+      "final_task_head": "2e0eec7f442d092cb6e631c337f65a369e21afeb",
+      "reported_base_sha": "277a49382240503fcd0767e9cfb17e2fd974e8a3",
+      "relation_to_fund_a": "PARALLEL_CANDIDATE_COMMON_ANCESTOR_277A"
+    },
+    "fund_b": {
+      "source_task": "TASK-FUND-B-STOCK-INSTITUTIONAL-FLOW-FORMAL-CAPABILITY-001",
+      "source_worktree": "E:\\topicpilot-worktrees\\fund-b-stock-institutional-flow-formal-capability-001",
+      "source_branch": "codex/task-fund-b-stock-institutional-flow-formal-capability-001",
+      "source_base_sha": "02d3086183d1c582bb6c66c4c316340ccce3fa97",
+      "implementation_sha": "192ec78fd055dc94a167bfa3501f32ccef9576dc",
+      "governance_sha": "3c73631105090b0ceb439b064520d5fd6dd44567",
+      "final_provenance_pin_sha": "73b788db765e48f3d76733a93adf383c1664e80e",
+      "reported_status": "NOT_CANONICALIZED",
+      "reported_disposition": "READY_FOR_CANONICAL_RECONCILIATION"
+    }
+  },
+  "lineage_graph": {
+    "02d_to_277": true,
+    "277_to_07b": true,
+    "07b_to_fund_a_final": true,
+    "fund_a_source_589_to_f02": true,
+    "277_to_daily_close_final": true,
+    "fund_a_source_589_ancestor_of_daily_source_2cfd": false,
+    "daily_source_2cfd_ancestor_of_fund_a_source_589": false,
+    "fund_a_daily_common_ancestor": "277a49382240503fcd0767e9cfb17e2fd974e8a3",
+    "fund_b_source_base_ancestor_of_unified": true
+  },
+  "integration_commits": [
+    {"sha": "4cba30bed48ea667f975950126f4c8fa7b128f18", "source_sha": "2cfd954ee68e8bb53571271870dbc99fabc81360", "scope": "DAILY_CLOSE_REMEDIATION_REPLAY"},
+    {"sha": "e10050ffc83b0d341bfc0d98c27a953f3ed984f9", "source_sha": "5c90702e1dba575c001d35c8d9dfd64e2437ef81", "scope": "DAILY_CLOSE_GOVERNANCE_REPLAY"},
+    {"sha": "048fd8758d9ad072a5daee12b6af4a857f7bd72d", "source_sha": "2e0eec7f442d092cb6e631c337f65a369e21afeb", "scope": "DAILY_CLOSE_FINAL_PROVENANCE_REPLAY"},
+    {"sha": "246ee5c49bebf8c3ff5f677f99c4ab63cd1ce808", "source_sha": "192ec78fd055dc94a167bfa3501f32ccef9576dc", "scope": "FUND_B_PRODUCT_AND_CONTRACT_RECONCILIATION"},
+    {"sha": "18a0428af2988ff65becdf14b09f0fede8d81d0c", "source_sha": null, "scope": "SHARED_IMPORT_ORDER_RECONCILIATION_AND_UNIFIED_FORWARD_CODE_HEAD"}
+  ],
+  "path_partition": {
+    "daily_close_owned": [
+      "services/api/src/topicpilot_api/live/persistence.py",
+      "services/api/src/topicpilot_api/live/post_close.py",
+      "services/api/src/topicpilot_api/market_data/exchange.py",
+      "services/api/src/topicpilot_api/market_data/history.py",
+      "services/api/src/topicpilot_api/market_data/ingestion.py",
+      "services/api/tests/test_post_close_exchange_failure_recovery.py"
+    ],
+    "fund_b_owned": [
+      "services/api/src/topicpilot_api/market_data/stock_institutional_flow.py",
+      "services/api/src/topicpilot_api/orm/stock_institutional_flow.py",
+      "services/api/src/topicpilot_api/stock_institutional_flow_api.py",
+      "services/api/src/topicpilot_api/stock_institutional_flow_persistence.py",
+      "services/api/tests/fixtures/tpex_3insti_daily_trading.json",
+      "services/api/tests/fixtures/twse_t86_stock_flow.json",
+      "services/api/tests/test_stock_institutional_flow.py"
+    ],
+    "stock_consumer": ["apps/web/app/lib/stock-api.ts"],
+    "shared_contract": [
+      "apps/web/app/lib/generated-api.d.ts",
+      "packages/api-client/openapi.json",
+      "packages/api-client/src/client.mjs",
+      "packages/api-client/src/schema.d.ts",
+      "packages/api-client/tests/client.test.mjs",
+      "services/api/src/topicpilot_api/main.py",
+      "services/api/src/topicpilot_api/orm/__init__.py",
+      "services/api/src/topicpilot_api/schemas.py"
+    ],
+    "migration": ["services/api/alembic/versions/0042_task_fund_b_stock_institutional_flow_forward.py"],
+    "integration_contract_tests": [
+      "services/api/tests/test_canonical_observation_implementation.py",
+      "services/api/tests/test_v2_architecture_freeze.py"
+    ],
+    "governance": [
+      "docs/governance/provenance/TASK-INT-DAILY-CLOSE-CANONICAL-RELEASE-REPLAY-AND-FORMAL-E2E-CLOSURE-001.json",
+      "docs/governance/tasks/TASK-INT-DAILY-CLOSE-CANONICAL-RELEASE-REPLAY-AND-FORMAL-E2E-CLOSURE-001.yaml",
+      "docs/reports/TASK-INT-DAILY-CLOSE-CANONICAL-RELEASE-REPLAY-AND-FORMAL-E2E-CLOSURE-001-20260916/**",
+      "docs/reports/TASK-FUND-B-STOCK-INSTITUTIONAL-FLOW-FORMAL-CAPABILITY-001/**"
+    ],
+    "unauthorized": [],
+    "unknown": []
+  },
+  "semantic_reconciliation": {
+    "fund_a": "IDENTICAL_PRESENT",
+    "daily_close": "MISSING_ON_F02_REPLAYED_FROM_VERIFIED_SOURCE",
+    "fund_b_product": "MISSING_ON_F02_SEMANTICALLY_PORTED_FROM_SOURCE",
+    "fund_b_migration": "SUPERSEDED_HISTORICAL_0033_REBASED_AS_0042",
+    "shared_contract": "SEMANTICALLY_EQUIVALENT_WITH_ADDITIVE_ENDPOINTS",
+    "conflicting": [],
+    "superseded": ["0033_task_fund_b_stock_institutional_flow.py"],
+    "missing": [],
+    "policy_invention": false
+  },
+  "fund_b_contract": {
+    "tpe_provider": "Official TWSE fund.T86",
+    "two_provider": "Official TPEx tpex_3insti_daily_trading",
+    "unit": "SHARES",
+    "scale": 0,
+    "tpe_status": "READY",
+    "two_status": "PARTIAL",
+    "two_partial_reason": "Provider is current-snapshot-only; historical session windows cannot be claimed without a persisted capture series.",
+    "two_available_fields": "Current snapshot investor legs, total buy/sell/net, source identity, sourceAsOf, freshness, availability/status reason.",
+    "two_unavailable_fields": "Historical 5D/10D/20D session windows and any derived streak/reversal requiring missing historical sessions.",
+    "two_fail_closed_behavior": "PARTIAL/UNAVAILABLE is preserved; missing historical sessions are not fabricated or converted to zero.",
+    "rolling_windows": ["oneDay", "fiveDay", "tenDay", "twentyDay"],
+    "streaks": ["foreign", "investmentTrust", "dealer", "total"],
+    "flow_reversal": "DETERMINISTIC_EVIDENCE_ONLY",
+    "price_flow_context": "EVIDENCE_ONLY",
+    "divergence": "DETERMINISTIC_EVIDENCE_ONLY",
+    "liquidity_relative_flow": "POSITIVE_VOLUME_DENOMINATOR_ONLY",
+    "composite_score": false,
+    "fund_c_evidence_readiness": "READY"
+  },
+  "migration": {
+    "original_filename": "0033_task_fund_b_stock_institutional_flow.py",
+    "original_revision": "0033_task_fund_b_stock_institutional_flow",
+    "original_down_revision": "0032_task_ws1_topic_lifecycle_contract_gap_closure",
+    "original_branch_labels": null,
+    "original_depends_on": null,
+    "creation_base": "02d3086183d1c582bb6c66c4c316340ccce3fa97",
+    "numeric_0033_already_exists": true,
+    "existing_canonical_0033": "0033_task_ws4_reference_registry_transition_merge",
+    "historical_chain_collision": true,
+    "obsolete_base": true,
+    "equivalent_schema_already_present": false,
+    "disposition": "REBASE_TO_NEW_FORWARD_REVISION",
+    "forward_filename": "0042_task_fund_b_stock_institutional_flow_forward.py",
+    "forward_revision": "0042_task_fund_b_stock_institutional_flow_forward",
+    "forward_down_revision": "0041_task_fund_a_market_flow_formal_capability",
+    "0040_untouched": true,
+    "execution": "NONE"
+  },
+  "validation": {
+    "focused_combined_backend": "39 passed, 1 warning",
+    "daily_close_targeted_focus": "63 passed",
+    "backend_pre_f02_recorded": "744 passed, 14 registered baseline failures, 59 skipped",
+    "backend_post_unified": "762 passed, 14 registered baseline failures, 59 skipped",
+    "backend_test_delta": 18,
+    "backend_delta_reason": "Daily Close and FUND-B capability coverage plus forward-chain contract coverage",
+    "api_client": "6 passed",
+    "web": "165 passed",
+    "web_build": "PASS",
+    "web_lint": "0 errors, 2 pre-existing warnings",
+    "openapi_drift": "PASS",
+    "generated_client_drift": "PASS",
+    "alembic_heads": "0042_task_fund_b_stock_institutional_flow_forward only",
+    "ruff_check": "PASS",
+    "ruff_format": "FUND-B/Daily changed files PASS; shared baseline schemas.py debt reproduced",
+    "compileall": "PASS",
+    "git_diff_check": "PASS",
+    "conflict_marker_scan": "PASS",
+    "postgres_roundtrip": "NOT_RUN_NO_DATABASE_URL",
+    "task_caused_failures": 0,
+    "registered_baseline_failures": 14,
+    "environment_skips": 59,
+    "unknown_failures": 0
+  },
+  "boundaries": {
+    "fund_a_policy_changed": false,
+    "today_signals_policy_changed": false,
+    "topic_ux_changed": false,
+    "b2_policy_changed": false,
+    "opportunity_policy_changed": false,
+    "fund_e_implemented": false,
+    "composite_institutional_score_created": false,
+    "daily_close_production_e2e": "NOT_VERIFIED",
+    "2026_09_15_replay": "NOT_RUN",
+    "b2_formal_publication": "BLOCKED",
+    "opportunity_daily_recommendation_ready": "NO",
+    "production_mutation": false,
+    "migration_execution": false,
+    "c_drive_mutation": false,
+    "push": false
+  },
+  "lifecycle": {
+    "before": "READY_FOR_INTEGRATION",
+    "after": "INTEGRATED",
+    "next_allowed_state": "READY_FOR_RELEASE",
+    "owner_decision_required": false,
+    "development_series": "CLOSED"
+  }
+}

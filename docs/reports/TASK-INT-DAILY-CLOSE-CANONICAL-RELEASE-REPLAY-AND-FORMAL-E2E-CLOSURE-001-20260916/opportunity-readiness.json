@@ -1,0 +1,19 @@
+{
+  "task_id": "TASK-INT-DAILY-CLOSE-CANONICAL-RELEASE-REPLAY-AND-FORMAL-E2E-CLOSURE-001",
+  "OPPORTUNITY_FORMAL_INPUT_READINESS": "BLOCKED",
+  "OPPORTUNITY_DAILY_RECOMMENDATION_READY": "NO",
+  "mandatory_inputs": {
+    "daily_close_completeness": "NOT_VERIFIED",
+    "daily_close_freshness": "NOT_VERIFIED",
+    "A10_POST_CLOSE": "BLOCKED",
+    "A9_FORMAL_WRITER": "BLOCKED",
+    "B2_FORMAL_POLICY": "READY_POLICY_ONLY",
+    "B2_FORMAL_PUBLICATION": "BLOCKED",
+    "DAILY_STRENGTH": "PARTIAL_BY_DESIGN_FAIL_CLOSED",
+    "LIFECYCLE": "BLOCKED",
+    "LEADER_SET": "PRESENT_NOT_FORMAL",
+    "formal_provider_freshness": "NOT_VERIFIED",
+    "composition_contract": "UNCHANGED; no strategy redesign"
+  },
+  "reason": "Formal daily inputs are not trustworthy until authorized replay, persisted completeness/freshness readback, and A10/A9/B2 formal handoff complete."
+}

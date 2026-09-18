@@ -1,0 +1,254 @@
+{
+  "task_id": "TASK-INT-B2-FORMAL-AUTHORITY-CANONICAL-RECONCILIATION-001",
+  "role": "INTEGRATION_OWNER",
+  "mode": "ONE_SHOT_B2_FORMAL_AUTHORITY_CONVERGENCE_AND_CANONICAL_RECONCILIATION",
+  "status": "PARTIAL",
+  "timestamp": "2026-09-15",
+  "stop_reason": "UNRECOVERABLE_REQUIRED_EVIDENCE",
+  "canonical_lineage": {
+    "previous_governed_base_sha": "2a062d8de8ab637e02aa1021c715b248fdd1322c",
+    "current_governed_base_sha": "c3405736e345c670f2eaa5c1eb34b76f61a58ee7",
+    "task_execution_base_sha": "4fc7983f0a83612516bf62973171f9fbc2d497b2",
+    "current_canonical_head_before_task": "4fc7983f0a83612516bf62973171f9fbc2d497b2",
+    "canonical_integration_sha": "THIS_REPORT_COMMIT",
+    "final_closeout_sha": "THIS_REPORT_COMMIT",
+    "today_canonical_integration_sha": "9ec77e06f4ababa55f9dbf0cd2f8a0d4b83eb104",
+    "today_governance_sha": "4fc7983f0a83612516bf62973171f9fbc2d497b2",
+    "today_development": "INTEGRATED",
+    "today_development_series": "CLOSED"
+  },
+  "evidence_precedence": "NEWEST_VERIFIED_REPOSITORY_EVIDENCE_WINS; prompt-only identifiers are not authority",
+  "verified_lineage": {
+    "003f": {
+      "source_task": "TASK-TOPIC-B2-003F-CANONICAL-PROVENANCE-001",
+      "implementation_sha": "05c486674378f1c8807375905ba1eedb84dd1b31",
+      "governance_sha": "34fb7306378395cd6f9ef1aa83343ec79d9c4404",
+      "integration_registration_source_shas": [
+        "8ecbfd32e203179567bd3fb8686453d9ba64a91b",
+        "0d350845e638e9a42fde91a20a5eb2b26261837c"
+      ],
+      "integration_registration_replayed_shas": [
+        "9434645d29489eb8977656e8bf3e066d04c794fa",
+        "b19c0674e532d31c62a06eca47d65a668864a942"
+      ],
+      "authority": "VERIFIED_AT_ARTIFACT_LEVEL",
+      "source_cardinality": {
+        "leaves": 107,
+        "parents": 25,
+        "structural_role_rows": 1160,
+        "distinct_structural_role_leaves": 107,
+        "structural_role_status": "ALL_APPROVED"
+      },
+      "formal_policy_approval_record": "NOT_PRESENT_IN_CURRENT_REPOSITORY_EVIDENCE",
+      "formal_publication": "NOT_ACTIVE"
+    },
+    "003g_003h": {
+      "repository_evidence": "PASS_VERIFIED_IMPLEMENTATION_AND_FOCUSED_TEST_HISTORY",
+      "003g": "PASS",
+      "003h": "PASS",
+      "scope": "approval guard and strict JSON-compatible artifact adapter",
+      "concrete_b2_policy_record": "NOT_RECOVERED"
+    },
+    "structural_role": {
+      "artifact": "config/topic_structural_role_authority/structural-role-authority-20260912.v4.json",
+      "embedded_artifact_sha256": "c35c15911c355766dbaa53e76629ae17c84f8d1bbc98e2053b7e87592c0274bc",
+      "source_master_sha256": "641a1c1dbd1849d70ffd7efa775f24d0bc5f7e35610179e27f0a587834bce188",
+      "rows": 1160,
+      "distinct_leaves": 107,
+      "distribution": {
+        "PRIMARY": 474,
+        "SECONDARY": 686,
+        "CORE": 650,
+        "REPRESENTATIVE": 329,
+        "RELATED": 181
+      },
+      "status": "ALL_APPROVED"
+    },
+    "source_authority_cardinality": {
+      "artifact": "config/topic_authority_v1/lifecycle-formal-scope-20260911.v2.json",
+      "embedded_artifact_sha256": "1100c8bb4f760f6edab6e2ed59f4ee1d3e4776777b63a494d2611990f8c31753",
+      "source_master_sha256": "8f5646f4b9e5f00c9263bf7511911f4520ec2b940af1fc50c778b0d9e83ce2c4",
+      "leaves": 107,
+      "parents": 25,
+      "raw_topic_entries": 132,
+      "status": "SOURCE_AUTHORITY_CONFIRMED; PRODUCTION_READBACK_NOT_CONFIRMED"
+    },
+    "a10_a9": {
+      "integration_source_commits": [
+        "44e69abef508a46223bd6ee6f167c7c83e231835",
+        "da5f783857b67e0613d170011043c952b659811c",
+        "5f6438548246164ccd2e4d4e7de06e34d64ad350"
+      ],
+      "integration_report": "docs/reports/TASK-INT-A10-A9-REC-002-MANIFEST-AND-0040-RECONCILIATION-001-20260914.md",
+      "a10_1335": "IMPLEMENTED_BRANCH_EVIDENCE",
+      "a10_post_close": "IMPLEMENTED_BRANCH_EVIDENCE; NOT_CANONICALLY_PRODUCT_INTEGRATED_BY_THIS_TASK",
+      "a10_a9_engineering": "PARTIAL",
+      "formal_writer": "BLOCKED"
+    }
+  },
+  "unrecovered_required_evidence": {
+    "layer2": {
+      "task": "TASK-SCHEMA-B2-LAYER2-FORMAL-AUTHORITY-CONTRACT-001",
+      "implementation_sha": "1a49787fbd10410333772e218601050186270c72",
+      "governance_sha": "06c68361eac8ad291736aafcf7bf7ec4f099d2aa",
+      "final_closeout_sha": "e0a6eb34139116ebf4d4a0f4d218a799832ea523",
+      "schema_sha256": "a5e1ec615017d2a2ece2a7ccf47b771afa8560bf3ca554b73cc3c39aef6f84e",
+      "policy_record_sha256": "ed1fbd37ca3294566218c2712287cd623179453efcb352ab8b71ace8538c8c85",
+      "layer2_policy_record_sha256": "7756221d9a0d2bc1641a2d800f7e1585a171f197877cc6beeb00b1a98c30def7",
+      "repository_object_presence": false,
+      "status": "NOT_RECOVERABLE"
+    },
+    "formal_db_readback": {
+      "task": "TASK-TOPIC-B2-107-25-FORMAL-DB-READBACK-001",
+      "evidence_manifest_sha256": "992B8F676C19519B443B3BCDD870AFF577D54E72B302D174B5B1CA73588FFA2F",
+      "repository_object_presence": false,
+      "status": "NOT_RECOVERABLE",
+      "current_local_readback_boundary": "older report records 106 active leaves, 24 active parents, and 92 complete snapshot leaves; no 107/25/107/1160 Production count readback is present"
+    },
+    "0040_resolution": {
+      "claimed_canonical_source_commit": "b5188c44733acc9c33cb0a4059973a5d6c218081",
+      "claimed_schema_provenance_commit": "587ca49a943f50f95518fc61305abc0da16fbec3",
+      "claimed_governance_commit": "93f6ce85e5e58cf4d9c9ae19443d3df9b6feb476",
+      "claimed_migration_content_sha256": "fa435d2dc1e632a0b11e454484adb6f59fa49b0d273845e315500a45ec2d063e",
+      "repository_object_presence": false,
+      "current_verified_repository_state": "two branch-only 0040 candidates; duplicate revision identity; byte-distinct; AST-equivalent; provenance unresolved",
+      "status": "NOT_RESOLVED_FROM_RECOVERABLE_EVIDENCE"
+    }
+  },
+  "search_audit": {
+    "git_object_checks": "missing Layer2, DB-readback, and claimed resolved-0040 commit SHAs were checked with git cat-file; no objects found",
+    "local_search_scope": [
+      "E:\\topicpilot-worktrees",
+      "C:\\Users\\acer\\Desktop\\題材領航",
+      "C:\\Users\\acer\\Documents\\Codex",
+      "C:\\Users\\acer\\.codex\\attachments"
+    ],
+    "local_exact_identifier_search": "only the supplied task attachment contains the missing identifiers; no repository artifact or task record recovered",
+    "unreachable_object_scan": "no matching unreachable objects recovered",
+    "advertised_remote_refs": "checked; no refs containing the missing Layer2/DB evidence or claimed resolved commits"
+  },
+  "formal_db_and_snapshot_reconciliation": {
+    "source_reference_authority": {
+      "leaves": 107,
+      "parents": 25,
+      "hierarchy_edges": 107,
+      "structural_role_rows": 1160,
+      "status": "SOURCE_AUTHORITY_ONLY"
+    },
+    "formal_snapshot_table": "topicpilot.topic_snapshots",
+    "formal_snapshot_entity": "topic-level formal daily snapshots",
+    "formal_snapshot_rows_per_audited_session": 92,
+    "formal_snapshot_audited_sessions": 6,
+    "formal_snapshot_total_audited_rows": 552,
+    "formal_snapshot_available_leaves": 92,
+    "formal_snapshot_scope_relation": "92 complete available observations plus 15 unavailable/incomplete leaves equals the 107 frozen scope; 92 is not the authority denominator",
+    "snapshot_fields": [
+      "publication_mode",
+      "publication_state",
+      "snapshot_date",
+      "trading_day_state",
+      "freshness_state",
+      "lineage_hash",
+      "membership_snapshot_id",
+      "membership_snapshot_hash",
+      "snapshot_identity",
+      "supersession/correction metadata"
+    ],
+    "snapshot_lifecycle_metadata": "present in the formal snapshot/read model contract",
+    "snapshot_score_grade": "not present as approved persisted Score/Grade authority in current evidence",
+    "snapshot_structural_role_leader_set_provenance": "not present as an approved Leader Set binding",
+    "snapshot_candidate_status": "available subset; not a complete 107-leaf publication candidate",
+    "snapshot_blocking_effect": "92 itself is not invalid; overall publication remains blocked by authority, DB readback, Leader Set, and 0040 provenance gates"
+  },
+  "leader_set": {
+    "source_artifact": "none approved in current repository evidence",
+    "algorithm": "shadow-only strongest-observed/role-aware proxy in Lifecycle; no formal member-selection algorithm",
+    "authority_lineage": "GovernedLeaderSet is an explicit formal input contract; synthetic test instances exist; no approved production artifact/version/effective-date binding",
+    "consumer": "topic_score_formal.py and runtime_readiness.py require explicit approved GovernedLeaderSet; Lifecycle proxy is separate",
+    "publication_requirement": "required for formal Score/Grade and Leadership paths",
+    "authority_status": "BLOCKED"
+  },
+  "current_canonical_truth": {
+    "formal_owner_identity": "BLOCKED; topicpilot-owner not recoverable as a committed identity registry",
+    "layer2_formal_schema": "NOT_RECOVERABLE",
+    "policy_approval_record": "BLOCKED; PolicyApprovalRecord type/guard exists but no approved concrete record recovered",
+    "daily_strength": "PARTIAL_BY_DESIGN",
+    "daily_strength_fail_closed": true,
+    "lifecycle_policy_authority": "PARTIAL; five-stage product meaning and shadow engine are present, newer Layer2 approval artifact is not recoverable",
+    "lifecycle_stages": ["SPROUTING", "FERMENTING", "MAIN_RISE", "MATURE", "DECLINING"],
+    "daily_strength_and_lifecycle_separate": true,
+    "score_grade_authority": "BLOCKED",
+    "formal_db_107_25_107_1160": "UNKNOWN",
+    "b2_db_prerequisite": "BLOCKED",
+    "migration_0040_provenance": "BLOCKED; current repository collision unresolved",
+    "a10_1335": "COMPLETE at branch evidence boundary",
+    "a10_post_close": "PARTIAL; implemented branch evidence, not canonical product integration",
+    "a10_a9_engineering": "PARTIAL",
+    "a9_formal_writer": "BLOCKED",
+    "b2_engineering_ready": "NO",
+    "b2_formal_publication": "BLOCKED",
+    "b2_formal_publication_active": false,
+    "opportunity_downstream": "BLOCKED",
+    "stock_b2_authority": "BLOCKED",
+    "stock_backend": "BLOCKED",
+    "today_development": "INTEGRATED/CLOSED",
+    "production": "UNTOUCHED",
+    "c_drive": "UNTOUCHED"
+  },
+  "reconciliation_actions": {
+    "imported_governance_only_evidence": [
+      "003F governed registration source commits 8ecbfd3 and 0d35084, replayed as 9434645 and b19c067",
+      "latest locally recoverable A10/A9 governance/report commits 44e69ab, da5f783, and 5f64385, replayed as documentation-only commits"
+    ],
+    "product_code_changed": false,
+    "migration_changed": false,
+    "production_mutation": false,
+    "today_changed": false,
+    "opportunity_changed": false,
+    "stock_changed": false,
+    "f1_f9_changed": false,
+    "fund_001_changed": false,
+    "next_task_changed": false,
+    "push": false
+  },
+  "validation": {
+    "governance_self_test": "PASS",
+    "manifest_validation": "PASS",
+    "lifecycle_validation": "PASS",
+    "worktree_guard": "PASS",
+    "ownership_guard": "PASS; 13 paths",
+    "integration_gate": "BLOCKED_EXPECTED; task is PARTIAL, owner decision required, no implementation commit",
+    "integration_gate_baseline_note": "one registered TOPIC_B2 failure retained as non-blocking for INTEGRATION",
+    "focused_authority_lifecycle_tests": {
+      "passed": 82,
+      "failed": 1,
+      "registered_baseline_failure": "services/api/tests/test_topic_lifecycle_contract_closure.py::test_frozen_stage_contract_has_one_owner_sequence_and_no_legacy_stage",
+      "unknown_failures": 0
+    },
+    "ruff": "PASS for policy approval, formal Score, and runtime readiness modules",
+    "python_compile": "PASS for topic_engine",
+    "git_diff_check": "PASS",
+    "conflict_marker_scan": "PASS",
+    "production_mutation": "NOT_PERFORMED",
+    "migration_execution": "NOT_PERFORMED"
+  },
+  "remaining_actions": {
+    "owner_or_schema_authority": [
+      "publish recoverable Layer2 schema/owner identity/policy approval artifacts and their exact commit SHAs",
+      "provide recoverable formal DB readback evidence for 107 leaves, 25 parents, 107 hierarchy edges, and 1160 approved structural-role rows",
+      "record canonical 0040 content/provenance mapping for the Production revision without executing a migration"
+    ],
+    "integration_owner_after_evidence": [
+      "rerun manifest, provenance, ownership, lifecycle, integration, A9, B2, and release gates",
+      "recompute B2/A9/Opportunity/Stock readiness from the recovered evidence"
+    ],
+    "not_started": [
+      "Production publication",
+      "A9 writer activation",
+      "Opportunity implementation",
+      "Stock implementation",
+      "deployment",
+      "scheduler activation"
+    ]
+  }
+}

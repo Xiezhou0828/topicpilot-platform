@@ -1,0 +1,69 @@
+{
+  "task_id": "TASK-OWNER-TOPICPILOT-CANONICAL-PROMOTION-RELEASE-AND-RUNTIME-CLOSURE-001",
+  "role": "OWNER_CONTROLLED_INTEGRATION_RELEASE_RUNTIME_AND_BASELINE_OWNER",
+  "mode": "ONE_SHOT_END_TO_END_CANONICAL_PROMOTION_RELEASE_RUNTIME_AND_HISTORICAL_CLOSURE",
+  "result": "COMPLETE_WITH_EXTERNAL_GATE",
+  "stop_reason": "EXACT_WEB_AND_WORKER_PROVENANCE_AND_OPERATOR_CANARY_AUTHORITY_UNAVAILABLE; DAILY_CLOSE_FAILED",
+  "observed_at": "2026-09-16T00:00:00+08:00",
+  "source": {
+    "task_id": "TASK-INT-CANONICAL-LINEAGE-CONVERGENCE-AND-RELEASE-BASELINE-001",
+    "unified_baseline_sha": "d6371af5994f0c2d5e0612969f100f6cef26b772",
+    "clean_e_head": "277a49382240503fcd0767e9cfb17e2fd974e8a3",
+    "integration_gate": "PASS",
+    "migration_revision": "0040_task_a10_recovery_checkpoint_observability"
+  },
+  "owner_ref": {
+    "branch": "codex/task-owner-topicpilot-canonical-promotion-release-runtime-closure-001-20260916",
+    "worktree": "E:\\topicpilot-worktrees\\owner-topicpilot-canonical-promotion-release-runtime-closure-20260916",
+    "promotion_sha": "277a49382240503fcd0767e9cfb17e2fd974e8a3",
+    "forward_development_base_sha": "277a49382240503fcd0767e9cfb17e2fd974e8a3",
+    "closure_commit_sha": "05ceb386341618e08ada2aa62ecb99c51a4cd095",
+    "scope": "DOCUMENTATION_AND_GOVERNANCE_CLOSURE_ONLY"
+  },
+  "owner_checkout": {
+    "branch": "codex/task-ops-023a-p3c-runtime-sha-audit-20260813",
+    "head": "02d3086183d1c582bb6c66c4c316340ccce3fa97",
+    "status_entries_before_and_preserved": 152,
+    "mutated": false
+  },
+  "runtime_readback": {
+    "readback_date": "2026-09-15",
+    "api_origin": "https://topicpilot-api.onrender.com",
+    "api_healthz_sha": "bf68cc8bf0a4432d7623db43f42e9219c94d7b6b",
+    "api_readyz_sha": "bf68cc8bf0a4432d7623db43f42e9219c94d7b6b",
+    "web_exact_sha": null,
+    "web_opaque_deployment_version": "318c2e47-a67c-4724-bde0-bf75d8be14c0",
+    "worker_exact_sha": null,
+    "database_revision": "0040_task_a10_recovery_checkpoint_observability",
+    "database_readback_scope": "READ_ONLY_OPERATOR_READBACK"
+  },
+  "post_close": {
+    "session": "2026-09-15 POST_CLOSE",
+    "status": "FAILED",
+    "freshness": "PARTIAL",
+    "failure_code": "EXCHANGE_NO_DATA",
+    "requested": 553,
+    "success": 0,
+    "failure": 347,
+    "skipped": 206,
+    "retry": 0
+  },
+  "historical_closure": {
+    "unknown_historical_implementations": 0,
+    "unknown_provenance_blockers": 0,
+    "unknown_migration_collisions": 0,
+    "orphan_governance_records_task_scoped": 0,
+    "b2_db_counts": {"leaf": 107, "parent": 25, "edges": 107, "structural_rows": 1160},
+    "formal_snapshot_rows": 92,
+    "formal_snapshot_latest_date": "2026-09-09"
+  },
+  "safety": {
+    "production_mutation": false,
+    "migration_execution": false,
+    "deployment": false,
+    "canary": false,
+    "push": false,
+    "next_task_mutation": false
+  },
+  "next_action": "Recover exact Web and Worker provenance, confirm current API and DB readback, authorize governed exact-SHA release and bounded OPS canary, and separately remediate POST_CLOSE freshness before formal Opportunity readiness."
+}

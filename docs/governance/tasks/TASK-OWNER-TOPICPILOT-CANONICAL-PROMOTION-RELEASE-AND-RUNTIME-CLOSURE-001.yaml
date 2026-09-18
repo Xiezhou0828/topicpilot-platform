@@ -1,0 +1,76 @@
+{
+  "task_id": "TASK-OWNER-TOPICPILOT-CANONICAL-PROMOTION-RELEASE-AND-RUNTIME-CLOSURE-001",
+  "title": "TopicPilot Canonical Promotion Release and Runtime Closure",
+  "status": "INTEGRATED",
+  "owner_role": "OWNER_CONTROLLED_INTEGRATION_RELEASE_RUNTIME_AND_BASELINE_OWNER",
+  "workstream": "INTEGRATION",
+  "base_sha": "277a49382240503fcd0767e9cfb17e2fd974e8a3",
+  "branch": "codex/task-owner-topicpilot-canonical-promotion-release-runtime-closure-001-20260916",
+  "worktree": "E:\\topicpilot-worktrees\\owner-topicpilot-canonical-promotion-release-runtime-closure-20260916",
+  "owned_paths": [
+    "docs/governance/**",
+    "docs/reports/**",
+    "PROJECT_CONTEXT.md",
+    "CURRENT_PROJECT_STATE.md",
+    "ACTIVE_WORK.md",
+    "INCOMPLETE_WORK_REGISTRY.md",
+    "BRANCH_RECOVERY_MATRIX.md",
+    "PARALLEL_EXECUTION_MATRIX.md",
+    "docs/ROADMAP.md",
+    "docs/WORK_ORDERS.md",
+    "docs/DOCUMENTATION_INDEX.md"
+  ],
+  "shared_paths": [
+    "PROJECT_CONTEXT.md",
+    "CURRENT_PROJECT_STATE.md",
+    "ACTIVE_WORK.md",
+    "INCOMPLETE_WORK_REGISTRY.md",
+    "BRANCH_RECOVERY_MATRIX.md",
+    "PARALLEL_EXECUTION_MATRIX.md",
+    "docs/ROADMAP.md",
+    "docs/WORK_ORDERS.md",
+    "docs/DOCUMENTATION_INDEX.md",
+    "docs/governance/**",
+    "docs/reports/**"
+  ],
+  "forbidden_paths": [
+    "services/**",
+    "apps/**",
+    "packages/**",
+    "services/api/alembic/**",
+    "NEXT_TASK",
+    "**/*.secret",
+    "**/.env",
+    "**/.env.local"
+  ],
+  "dependencies": [
+    "TASK-INT-CANONICAL-LINEAGE-CONVERGENCE-AND-RELEASE-BASELINE-001"
+  ],
+  "implementation_commits": [
+    "d6371af5994f0c2d5e0612969f100f6cef26b772"
+  ],
+  "governance_commits": [
+    "277a49382240503fcd0767e9cfb17e2fd974e8a3",
+    "05ceb386341618e08ada2aa62ecb99c51a4cd095"
+  ],
+  "migration_scope": "READ_ONLY_LINEAGE_RECONCILIATION; verify 0040 only; no migration execution and no new migration",
+  "production_scope": "READ_ONLY_PROVENANCE; no deploy, canary, mutation, scheduler activation, or publication activation",
+  "owner_decision_required": false,
+  "next_allowed_state": "READY_FOR_RELEASE",
+  "shared_surface_policy": "EXPLICIT_RECONCILIATION",
+  "current_c_owner_head": "02d3086183d1c582bb6c66c4c316340ccce3fa97",
+  "current_c_owner_status_entries": 152,
+  "current_migration_head": "0040_task_a10_recovery_checkpoint_observability",
+  "candidate_release_sha": "277a49382240503fcd0767e9cfb17e2fd974e8a3",
+  "source_unified_baseline": "d6371af5994f0c2d5e0612969f100f6cef26b772",
+  "dependency_notes": [
+    "The source integration task reported Integration Gate PASS, backend 739 passed with 59 environment skips and 9 registered non-task-caused TOPIC_B2 baseline failures, and web/build/type/lint/openapi/generated-client checks passed.",
+    "The owner-controlled ref is a clean documentation-only descendant of the verified unified candidate; no application code, schema, migration, runtime, deploy, or NEXT_TASK change is included.",
+    "The canonical owner checkout remains untouched with its pre-existing tracked and untracked state preserved exactly.",
+    "Exact Production API and protected DB readback are available; exact Web and Worker source SHA and operator canary authority remain unavailable.",
+    "Latest public POST_CLOSE readback is FAILED with PARTIAL freshness and EXCHANGE_NO_DATA; formal Opportunity remains shadow-only and blocked.",
+    "Historical 0040 was reconciled as the canonical migration boundary and was not executed by this task."
+  ],
+  "integration_decision": "CANONICAL_OWNER_CLOSURE_COMPLETE_WITH_EXTERNAL_RELEASE_GATE",
+  "release_decision": "PRODUCTION_OPERATOR_AUTHORITY_AND_EXACT_WEB_WORKER_PROVENANCE_REQUIRED"
+}

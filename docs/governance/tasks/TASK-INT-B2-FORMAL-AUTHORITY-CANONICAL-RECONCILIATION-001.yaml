@@ -1,0 +1,78 @@
+{
+  "task_id": "TASK-INT-B2-FORMAL-AUTHORITY-CANONICAL-RECONCILIATION-001",
+  "title": "B2 Formal Authority Canonical Reconciliation",
+  "status": "PARTIAL",
+  "owner_role": "INTEGRATION_OWNER",
+  "workstream": "INTEGRATION",
+  "base_sha": "4fc7983f0a83612516bf62973171f9fbc2d497b2",
+  "governed_development_base_sha": "c3405736e345c670f2eaa5c1eb34b76f61a58ee7",
+  "previous_governed_base_sha": "2a062d8de8ab637e02aa1021c715b248fdd1322c",
+  "branch": "codex/task-int-b2-formal-authority-canonical-reconciliation-001-20260915",
+  "worktree": "E:\\topicpilot-worktrees\\int-b2-formal-authority-canonical-reconciliation-001-20260915",
+  "owned_paths": [
+    "docs/governance/tasks/TASK-INT-B2-FORMAL-AUTHORITY-CANONICAL-RECONCILIATION-001.yaml",
+    "docs/governance/provenance/TASK-INT-B2-FORMAL-AUTHORITY-CANONICAL-RECONCILIATION-001.json",
+    "docs/reports/TASK-INT-B2-FORMAL-AUTHORITY-CANONICAL-RECONCILIATION-001-20260915.md"
+  ],
+  "shared_paths": [
+    "docs/governance/provenance/**",
+    "docs/governance/tasks/TASK-INT-TOPIC-B2-003F-GOVERNED-REGISTRATION-001.yaml",
+    "docs/governance/tasks/TASK-TOPIC-B2-003F-CANONICAL-PROVENANCE-001.yaml",
+    "docs/governance/tasks/TASK-INT-A10-A9-REC-002-MANIFEST-AND-0040-RECONCILIATION-001.yaml",
+    "docs/governance/tasks/TASK-A10-A9-REC-002.yaml",
+    "docs/governance/tasks/TASK-A10-POST-CLOSE-CHECKPOINT-RECONCILIATION-002.yaml",
+    "docs/governance/tasks/TASK-TOPIC-REC-002.yaml",
+    "docs/governance/tasks/TOPIC-B2-AUTHORITY-RECONCILIATION-001.yaml",
+    "docs/governance/tasks/TOPIC-B2-CANONICAL-ARTIFACT-PROVENANCE-AND-PUBLICATION-GATE-001.yaml",
+    "docs/reports/TASK-INT-TOPIC-B2-003F-GOVERNED-REGISTRATION-001-20260915.md",
+    "docs/reports/TASK-INT-A10-A9-REC-002-MANIFEST-AND-0040-RECONCILIATION-001-20260914.md"
+  ],
+  "forbidden_paths": [
+    "services/**",
+    "apps/**",
+    "packages/**",
+    "infra/**",
+    "services/api/alembic/**",
+    "services/api/src/topicpilot_api/live/**",
+    "services/api/src/topicpilot_api/opportunity*.py",
+    "services/api/src/topicpilot_api/topic_engine/**",
+    "apps/web/app/components/v2/TodayMarketPage.tsx",
+    "F1-F9/**",
+    "FUND-001/**",
+    "NEXT_TASK",
+    "PROJECT_CONTEXT.md",
+    "docs/ROADMAP.md",
+    "docs/WORK_ORDERS.md",
+    "docs/DOCUMENTATION_INDEX.md"
+  ],
+  "dependencies": [
+    "GOV-003",
+    "TASK-INT-TOPIC-B2-003F-GOVERNED-REGISTRATION-001",
+    "TASK-INT-A10-A9-REC-002-MANIFEST-AND-0040-RECONCILIATION-001",
+    "TASK-TOPIC-REC-002",
+    "TOPIC-B2-AUTHORITY-RECONCILIATION-001",
+    "TOPIC-B2-CANONICAL-ARTIFACT-PROVENANCE-AND-PUBLICATION-GATE-001"
+  ],
+  "implementation_commits": [],
+  "governance_commits": [
+    "9434645d29489eb8977656e8bf3e066d04c794fa",
+    "b19c0674e532d31c62a06eca47d65a668864a942",
+    "53dbe5b6d10d769bb0053430041827fda9cbe6f6",
+    "a344447f9b11c1292a14aec08a8cf0363435b4df",
+    "8d713050f9e6042c3acf4b434446f4653a568a40",
+    "642d93103dd8786bd04b50257f7c2af12c30c7c9",
+    "2393f2ac0890c395c870c8877f0039c1ed6c8b79"
+  ],
+  "migration_scope": "NONE; provenance and archaeology only; no migration execution or 0040 reservation",
+  "production_scope": "NONE; readback evidence registration only; no production write, deploy, scheduler, or publication",
+  "owner_decision_required": true,
+  "next_allowed_state": "OWNER_DECISION_REQUIRED",
+  "shared_surface_policy": "EXPLICIT_RECONCILIATION",
+  "dependency_notes": [
+    "Current canonical development head before this task is 4fc7983f0a83612516bf62973171f9fbc2d497b2, descended from the qualified GOV-003 base c3405736e345c670f2eaa5c1eb34b76f61a58ee7.",
+    "003F and the latest locally recoverable A10/A9 governance evidence are registered as documentation-only lineage; no product files are replayed by this task.",
+    "The supplied Layer 2 implementation/governance/closeout SHAs and DB-readback manifest SHA are absent from the repository object store, local worktrees, attachments, and advertised remote refs.",
+    "The current repository A10/A9 report retains the 0040 collision as unresolved and branch-only; the supplied resolved continuation cannot be promoted without recoverable provenance.",
+    "Today remains integrated and closed; Opportunity, Stock, F1-F9, FUND-001, NEXT_TASK, C:, and Production remain outside this task."
+  ]
+}

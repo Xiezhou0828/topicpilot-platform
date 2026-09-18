@@ -1,0 +1,79 @@
+{
+  "schemaVersion": "topicpilot-governed-provenance-registration.v1",
+  "taskId": "TASK-TOPIC-B2-003F-CANONICAL-PROVENANCE-001",
+  "registeredByTask": "TASK-INT-TOPIC-B2-003F-GOVERNED-REGISTRATION-001",
+  "registeredAt": "2026-09-15",
+  "currentGovernedDevelopmentBaseSha": "a8357d46194f9669709f184949270e20a7a2546c",
+  "qualifiedGov003BaselineSha": "2a062d2830dfac4ba2c6c3d25d2c12d0c9fc29b0",
+  "registrationExecutionBaseSha": "c3405736e345c670f2eaa5c1eb34b76f61a58ee7",
+  "historicalSourceTask": {
+    "taskId": "TASK-TOPIC-B2-003F-CANONICAL-PROVENANCE-001",
+    "sourceBaseSha": "bf7f06741bf701ed46a3fb11aed45fa5755af964",
+    "sourceBranch": "codex/topic-b2-003f-canonical-provenance-001-20260914",
+    "sourceWorktree": "E:\\TopicPilot\\worktrees\\b2-003f-prov-001-20260914",
+    "sourceHeadSha": "34fb7306378395cd6f9ef1aa83343ec79d9c4404",
+    "implementationSha": "05c486674378f1c8807375905ba1eedb84dd1b31",
+    "governanceSha": "34fb7306378395cd6f9ef1aa83343ec79d9c4404",
+    "predecessorGateSha": "bf7f06741bf701ed46a3fb11aed45fa5755af964",
+    "authorityImplementationSha": "72101002e18f6ba770ab53d02b6f9c0e4cf3f201",
+    "authorityGovernanceSha": "d41985ae7027d7fd5d4f995544f5f80d9b70e1b3"
+  },
+  "canonicalAuthority": {
+    "artifactId": "phase-3.7-003F-pm-formula-approval",
+    "artifactVersion": "PHASE-3.7 / NEXT-V2",
+    "status": "FORMULA/POLICY APPROVED - ACTIVATION BLOCKED",
+    "manualTopicAuthority": "VERIFIED_AT_ARTIFACT_LEVEL",
+    "formalPublication": "NOT_ACTIVE"
+  },
+  "primaryArtifact": {
+    "sourcePath": "C:\\Users\\acer\\Desktop\\題材領航\\topicpilot-platform\\docs\\reports\\PHASE_3_7_003F_PM_FORMULA_APPROVAL_BRIEF.md",
+    "sourceBytes": 6931,
+    "sourceSha256": "c304032f41bca466b70c5f1919f239b52030e6f1d5d284506c63623f649aaddf",
+    "canonicalPath": "docs/reports/PHASE_3_7_003F_PM_FORMULA_APPROVAL_BRIEF.md",
+    "canonicalBytes": 6930,
+    "canonicalSha256": "77319ae5fd51470265dd0030f38a5cc9b18ae0214d01a0a508c2b32025b8c8a9",
+    "normalization": "UTF-8/LF plus terminal blank-line normalization; substantive equivalence"
+  },
+  "companionWorkOrder": {
+    "path": "docs/work-orders/PHASE_3_7_003F_PM_FORMULA_APPROVAL.md",
+    "bytes": 3777,
+    "sha256": "b901947aa3c3eaecdf58e3ed055a2efe1bd18c5934198821363a8fc883e41f4a"
+  },
+  "b2AuthorityBindings": [
+    {
+      "path": "config/topic_authority_v1/lifecycle-formal-scope-20260911.v2.json",
+      "embeddedArtifactSha256": "1100c8bb4f760f6edab6e2ed59f4ee1d3e4776777b63a494d2611990f8c31753",
+      "sourceMasterSha256": "8f5646f4b9e5f00c9263bf7511911f4520ec2b940af1fc50c778b0d9e83ce2c4",
+      "expectedLeafCount": 107,
+      "expectedParentCount": 25,
+      "rawTopicEntryCount": 132,
+      "status": "CANONICAL_ARTIFACT_PRESENT; FORMAL_READBACK_NOT_PROVEN",
+      "hashSemantics": "builder canonical payload digest excluding the self-referential artifactSha256 field"
+    },
+    {
+      "path": "config/topic_structural_role_authority/structural-role-authority-20260912.v4.json",
+      "embeddedArtifactSha256": "c35c15911c355766dbaa53e76629ae17c84f8d1bbc98e2053b7e87592c0274bc",
+      "sourceMasterSha256": "641a1c1dbd1849d70ffd7efa775f24d0bc5f7e35610179e27f0a587834bce188",
+      "expectedRoleRowCount": 1160,
+      "distinctLeafTopicCount": 107,
+      "relationTypeCounts": {"PRIMARY": 474, "SECONDARY": 686},
+      "roleCounts": {"CORE": 650, "REPRESENTATIVE": 329, "RELATED": 181},
+      "allRowsStatus": "APPROVED",
+      "status": "CANONICAL_ARTIFACT_PRESENT; FORMAL_READBACK_NOT_PROVEN",
+      "hashSemantics": "builder canonical payload digest excluding the self-referential artifactSha256 field"
+    }
+  ],
+  "formalDbReadback": "PENDING_OPERATOR",
+  "downstream": {
+    "a10A9": "WAITING",
+    "threeGThreeH": "SEPARATE_WORKSTREAM",
+    "formalB2Publication": "WAITING",
+    "stock": "WAITING",
+    "opportunity": "WAITING"
+  },
+  "registrationStatus": "COMPLETE_IN_CURRENT_GOVERNED_PROJECT_MEMORY",
+  "seriesClosure": "003F_CLOSED; formal publication not implied",
+  "productionTouched": false,
+  "cDriveTouched": false,
+  "pushPerformed": false
+}

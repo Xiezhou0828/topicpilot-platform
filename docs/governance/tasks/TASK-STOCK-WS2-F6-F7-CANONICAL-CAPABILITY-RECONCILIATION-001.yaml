@@ -1,0 +1,61 @@
+{
+  "task_id": "TASK-STOCK-WS2-F6-F7-CANONICAL-CAPABILITY-RECONCILIATION-001",
+  "title": "Stock / WS2 F6-F7 canonical capability reconciliation",
+  "status": "READY_FOR_INTEGRATION",
+  "owner_role": "Stock / WS2 Capability Reconciliation Owner",
+  "workstream": "INTEGRATION",
+  "base_sha": "1f9dc51409626c1bfc439f974668f5ec85802eb1",
+  "branch": "codex/task-stock-ws2-f6-f7-canonical-reconciliation-20260915",
+  "worktree": "E:\\topicpilot-worktrees\\task-stock-ws2-f6-f7-canonical-reconciliation-20260915",
+  "owned_paths": [
+    "apps/web/app/lib/stock-api.ts",
+    "apps/web/app/lib/commercial-state.mjs",
+    "apps/web/app/lib/commercial-state.d.mts",
+    "apps/web/app/components/v2/StockEncyclopediaDrawer.tsx",
+    "apps/web/app/components/v2/StockExplorerPage.tsx",
+    "apps/web/app/components/v2/StockPriceHistoryPanel.tsx",
+    "apps/web/app/stocks/**",
+    "apps/web/tests/stock-eod-wiring.test.mjs",
+    "apps/web/tests/stock-explorer-query.test.mjs",
+    "apps/web/tests/stock-formal-capability-reconciliation.test.mjs",
+    "apps/web/tests/rendered-html.test.mjs",
+    "apps/web/tests/ux-guidance-empty-state.test.mjs",
+    "services/api/src/topicpilot_api/production_read_model.py",
+    "services/api/tests/test_stock_eod_read.py",
+    "docs/governance/tasks/TASK-STOCK-WS2-F6-F7-CANONICAL-CAPABILITY-RECONCILIATION-001.yaml",
+    "docs/reports/TASK-STOCK-WS2-F6-F7-CANONICAL-CAPABILITY-RECONCILIATION-001-20260915.md",
+    "docs/reports/TASK-STOCK-WS2-F6-F7-CANONICAL-CAPABILITY-RECONCILIATION-001-20260915/**"
+  ],
+  "shared_paths": [],
+  "forbidden_paths": [
+    "C:/Users/acer/Desktop/題材領航/topicpilot-platform/**",
+    "services/api/alembic/versions/0040*",
+    "services/api/src/topicpilot_api/live/**",
+    "apps/web/app/components/v2/TodayMarketPage.tsx",
+    "services/api/src/topicpilot_api/topic_engine/**",
+    "apps/web/app/opportunities/**",
+    "NEXT_TASK*",
+    "Production*",
+    "FUND-001*"
+  ],
+  "dependencies": [],
+  "implementation_commits": [
+    "a47a693e407b012243493b585d6a165cd66e7cea",
+    "f5153cf2d65f7b5deb1a3ffa891340e02429e5f8"
+  ],
+  "governance_commits": [
+    "16a00d44a4ce73d655908b7f1639e849b49b5f03"
+  ],
+  "migration_scope": "NONE",
+  "production_scope": "NONE",
+  "owner_decision_required": false,
+  "next_allowed_state": "INTEGRATED",
+  "supersedes": null,
+  "disposition_evidence": "F6/F7 historical labels are provenance-only; current Stock / WS2 consumers are reconciled against canonical providers.",
+  "dependency_notes": [
+    "Topic/B2 is a read-contract dependency only; mainTopic remains null unless canonical authority publishes it.",
+    "A10/A9, Today, Opportunity, FUND-001, migration 0040, Production and NEXT_TASK are outside scope and unchanged.",
+    "No schema, OpenAPI, generated declaration, or migration change was required; existing generated surfaces passed drift validation."
+  ],
+  "shared_surface_policy": "NO_SHARED_SURFACE_MODIFIED; EXISTING_GENERATED_SURFACES_VALIDATED"
+}

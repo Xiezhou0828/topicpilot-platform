@@ -84,8 +84,8 @@ test("formal eod=null fails closed instead of falling back to top-level or Previ
 test("formal API errors stay unavailable instead of silently switching to Preview", () => {
   assert.match(explorer, /resource\.source === "unavailable"/);
   assert.match(explorer, /<EmptyState title=\{UI\.unavailable\}/);
-  assert.match(drawer, /detailState === "unavailable"/);
-  assert.doesNotMatch(drawer, /detailState === "unavailable"[^}]*fromPreview/);
+  assert.match(drawer, /detailState === "UNAVAILABLE"/);
+  assert.doesNotMatch(drawer, /detailState === "UNAVAILABLE"[^}]*fromPreview/);
 });
 
 test("Preview is explicit and never presented as formal EOD", () => {
@@ -111,6 +111,11 @@ test("EOD status and lineage fields are wired into the Drawer", () => {
   assert.match(explorer, /eod: item\.eod/);
   assert.match(explorer, /selectStockQuote\(stock\)/);
   assert.match(generated, /StockEodRead:/);
+  assert.match(drawer, /目前暫停報價／暫停交易/);
+  assert.match(drawer, /今日報價暫不可用/);
+  for (const field of ["availabilityReason", "availabilityEvidenceId", "lastFormalTradingDate"]) {
+    assert.match(drawer, new RegExp(`eod\\.${field}`));
+  }
 });
 
 test("browser remains render-only for EOD business semantics", () => {

@@ -1,0 +1,92 @@
+{
+  "task_id": "TASK-STOCK-WS2-F6-F7-CANONICAL-CAPABILITY-RECONCILIATION-001",
+  "role": "Stock / WS2 Capability Reconciliation Owner",
+  "mode": "ONE_SHOT_HISTORICAL_TO_CANONICAL_CAPABILITY_RECONCILIATION",
+  "result": "COMPLETE",
+  "current_governed_base_sha": "b2eaf33e0ec5f9bb72d936eb0165eb93dac3fa40",
+  "task_execution_base_sha": "1f9dc51409626c1bfc439f974668f5ec85802eb1",
+  "historical_f4_f9_aggregate_sha": "1501468da8b7b4d8338ae1c2da23996126ee918c",
+  "historical_evidence": {
+    "recovery_report": "docs/reports/TASK-F1-F9-HISTORICAL-CANONICAL-RECOVERY-001.md",
+    "f6_report": "docs/reports/TASK-FE-F6-STOCK-FORMAL-READ-VIEW-UNIFICATION-20260909/formal-closure-report.md",
+    "f7_report": "docs/reports/TASK-FE-F7-STOCK-FORMAL-TECHNICAL-EVIDENCE-CONSUMER-20260909/formal-closure-report.md",
+    "individual_task_shas": "UNRECOVERABLE; aggregate SHA is not an individual F6/F7 implementation SHA"
+  },
+  "dispositions": {
+    "F6": ["MERGE_CAPABILITY", "IMPLEMENT_MISSING", "SUPERSEDE_HISTORICAL"],
+    "F7": ["MERGE_CAPABILITY", "IMPLEMENT_MISSING", "SUPERSEDE_HISTORICAL"]
+  },
+  "canonical_capability": {
+    "stock_formal_read": "RECONCILED",
+    "technical_v0_provider_consumer": "RECONCILED",
+    "main_topic": "FAIL_CLOSED_NULL_WHEN_NOT_PUBLISHED",
+    "preview": "EXPLICIT_ONLY",
+    "legacy_formal_fields": "NOT_USED_BY_F6_F7_CONSUMER"
+  },
+  "canonical_paths": {
+    "stock_provider": [
+      "services/api/src/topicpilot_api/production_read_model.py",
+      "services/api/src/topicpilot_api/production_read_model_api.py",
+      "services/api/src/topicpilot_api/historical_read_model.py"
+    ],
+    "technical_provider": [
+      "services/api/src/topicpilot_api/technical_publication.py",
+      "services/api/src/topicpilot_api/technical_v0_evidence_contract.py",
+      "services/api/src/topicpilot_api/production_read_model_api.py"
+    ],
+    "consumer": [
+      "apps/web/app/lib/stock-api.ts",
+      "apps/web/app/components/v2/StockExplorerPage.tsx",
+      "apps/web/app/components/v2/StockEncyclopediaDrawer.tsx",
+      "apps/web/app/components/v2/StockPriceHistoryPanel.tsx",
+      "apps/web/app/stocks/[code]/page.tsx"
+    ],
+    "generated_surfaces": [
+      "apps/web/app/lib/generated-api.d.ts",
+      "packages/api-client/src/schema.d.ts"
+    ]
+  },
+  "implementation_commits": [
+    "a47a693e407b012243493b585d6a165cd66e7cea",
+    "f5153cf2d65f7b5deb1a3ffa891340e02429e5f8"
+  ],
+  "governance_registration_commit": "16a00d44a4ce73d655908b7f1639e849b49b5f03",
+  "report_commit": "RESOLVED_AT_CLOSEOUT; emitted in final response",
+  "shared_contract": {
+    "schemas_modified": false,
+    "openapi_modified": false,
+    "generated_client_modified": false,
+    "openapi_drift": "PASS",
+    "generated_client_drift": "PASS"
+  },
+  "dependencies": {
+    "B2": "READ_CONTRACT_ONLY",
+    "A10_A9": "NONE",
+    "TODAY": "NONE",
+    "FUND001": "NONE",
+    "production": "NONE",
+    "migration": "NONE",
+    "next_task": "UNCHANGED"
+  },
+  "verification": {
+    "frontend_focused": "44 passed",
+    "web_full": "162 passed, 0 failed",
+    "backend_focused": "40 passed",
+    "backend_broader": "599 passed, 6 known baseline failures, 41 skipped external integrations",
+    "api_client": "3 passed",
+    "production_build": "PASS",
+    "affected_file_lint": "PASS",
+    "typescript": "KNOWN_BASELINE_FAILURE_OUTSIDE_SCOPE",
+    "python310": "KNOWN_BASELINE_COLLECTION_INCOMPATIBILITY; PYTHON312_PASS",
+    "conflict_markers": "NONE",
+    "diff_check": "PASS"
+  },
+  "lifecycle": {
+    "status": "READY_FOR_INTEGRATION",
+    "next_allowed_state": "INTEGRATED",
+    "integration_gate": "READY",
+    "ready_for_integration": true,
+    "production_ready": false,
+    "production_gate": "BLOCKED_OPERATOR_READBACK"
+  }
+}

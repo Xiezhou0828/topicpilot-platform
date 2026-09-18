@@ -5,8 +5,10 @@ from datetime import UTC, date, datetime, timedelta
 from topicpilot_api.home_v2_publication import (
     SectionResult,
     build_daily_focus,
+    build_market_signals,
     calculate_rotation_14d,
     empty_home_v2,
+    normalize_home_publication_for_read,
     rank_formal_topics,
     validate_home_gate,
 )
@@ -116,11 +118,19 @@ def test_rotation_requires_fifteen_sessions_and_excludes_zero_change():
     )
 
 
-def test_daily_focus_is_rule_based_and_fail_closed_without_evidence():
+def test_daily_focus_is_rule_based_and_reports_no_signal_without_triggered_condition():
     overview = {
-        "marketHealth": {"advance": 12, "decline": 4, "flat": 2},
+        "marketHealth": {"status": "AVAILABLE", "advance": 12, "decline": 4, "flat": 2},
         "breadth": [],
-        "indices": [{"indexName": "TWSE", "value": 100, "change": 1}],
+        "indices": [
+            {
+                "market": "TPE",
+                "indexName": "TWSE",
+                "value": 100,
+                "change": 1,
+                "status": "AVAILABLE",
+            }
+        ],
     }
     focus = build_daily_focus(
         market_overview=overview,
@@ -134,7 +144,15 @@ def test_daily_focus_is_rule_based_and_fail_closed_without_evidence():
     assert focus.status == "AVAILABLE"
     assert focus.payload["temporary"] is False
     assert focus.payload["mode"] == "RULE_BASED_V1"
-    assert focus.payload["bullets"]
+    assert focus.payload["headline"] == "今日無異常訊號"
+    assert focus.payload["bullets"] == []
+    assert focus.payload["signals"] == []
+    assert [item["key"] for item in focus.payload["signalCatalog"]] == [
+        "INDEX_DIVERGENCE",
+        "OTC_VOLUME_PRICE_DIVERGENCE",
+        "INSTITUTION_PRICE_DIVERGENCE",
+        "BREADTH_DIVERGENCE",
+    ]
     assert build_daily_focus(
         market_overview={},
         main_topics=[],
@@ -143,6 +161,115 @@ def test_daily_focus_is_rule_based_and_fail_closed_without_evidence():
         data_date=date(2026, 8, 21),
         as_of=None,
     ).status == "UNAVAILABLE"
+
+
+def test_market_signals_emit_index_and_breadth_divergence_in_catalog_order():
+    focus = build_daily_focus(
+        market_overview={
+            "marketHealth": {
+                "status": "AVAILABLE",
+                "advance": 2,
+                "decline": 5,
+                "flat": 1,
+                "breadthEligible": 8,
+            },
+            "indices": [
+                {
+                    "market": "TPE",
+                    "indexName": "TWSE",
+                    "value": 100,
+                    "status": "AVAILABLE",
+                    "change": 1,
+                    "changePct": 1.0,
+                },
+                {
+                    "market": "TWO",
+                    "indexName": "TPEx",
+                    "value": 80,
+                    "status": "AVAILABLE",
+                    "change": -0.5,
+                },
+            ],
+        },
+        main_topics=[{"name": "不要出現在重點中的題材"}],
+        heating_topics=[],
+        cooling_topics=[],
+        data_date=date(2026, 8, 21),
+        as_of=None,
+    )
+
+    assert focus.status == "AVAILABLE"
+    assert [item["key"] for item in focus.payload["signals"]] == [
+        "INDEX_DIVERGENCE",
+        "BREADTH_DIVERGENCE",
+    ]
+    assert "不要出現在重點中的題材" not in " ".join(focus.payload["bullets"])
+
+
+def test_market_signals_are_fail_closed_for_missing_and_non_formal_inputs():
+    assert build_market_signals(
+        {
+            "indices": [
+                {"market": "TPE", "change": 1, "status": "AVAILABLE"},
+                {"market": "TWO", "change": -1, "status": "AVAILABLE"},
+            ],
+            "turnover": [{"market": "TWO", "status": "AVAILABLE", "value": 10}],
+        }
+    ) == [
+        {
+            "key": "INDEX_DIVERGENCE",
+            "name": "大型股／中小型股分化",  # noqa: RUF001
+            "severity": "WATCH",
+            "direction": "Neutral",
+            "evidence": ["加權指數 +1 點", "櫃買指數 -1 點"],
+            "interpretation": "大型股與中小型股走勢明顯分化。",
+        }
+    ]
+    assert build_market_signals(
+        {
+            "indices": [
+                {"market": "TPE", "change": 1, "status": "PREVIEW"},
+                {"market": "TWO", "change": -1, "status": "PREVIEW"},
+            ],
+            "marketHealth": {"status": "PREVIEW", "advance": 1, "decline": 5},
+        }
+    ) == []
+    assert build_market_signals(
+        {
+            "indices": [{"market": "TPE", "change": 1, "status": "AVAILABLE"}],
+            "marketHealth": {"status": "AVAILABLE", "advance": 5, "decline": 4},
+        }
+    ) == []
+
+
+def test_read_normalization_replaces_persisted_legacy_focus_without_changing_facts():
+    payload = {
+        "asOf": "2026-09-09",
+        "publication": {
+            "tradingDate": "2026-09-09",
+            "asOf": "2026-09-09T13:35:00+08:00",
+            "completeness": {"sectionStatuses": {"dailyFocus": {"status": "AVAILABLE"}}},
+        },
+        "marketOverview": {
+            "dataDate": "2026-09-09",
+            "updatedAt": "2026-09-09T13:35:00+08:00",
+            "marketHealth": {"status": "AVAILABLE", "advance": 1, "decline": 1, "flat": 0},
+            "indices": [{"market": "TPE", "change": 1, "status": "AVAILABLE"}],
+        },
+        "dailyFocus": {"headline": "目前主線為 網通。", "bullets": ["legacy narrative"]},
+        "sectionStatuses": {"dailyFocus": {"status": "AVAILABLE"}},
+    }
+
+    result = normalize_home_publication_for_read(payload)
+
+    assert result["dailyFocus"]["headline"] == "今日無異常訊號"
+    assert result["dailyFocus"]["signals"] == []
+    assert result["marketOverview"] == payload["marketOverview"]
+    assert result["sectionStatuses"]["dailyFocus"]["source"] == "HOME_V2_DAILY_FOCUS_RULE_V1"
+    assert (
+        result["publication"]["completeness"]["sectionStatuses"]["dailyFocus"]["source"]
+        == "HOME_V2_DAILY_FOCUS_RULE_V1"
+    )
 
 
 def test_home_gate_requires_formal_market_facts_but_topics_and_focus_are_section_level():
@@ -208,6 +335,13 @@ def test_empty_home_is_typed_and_product_safe_before_first_publication():
     assert payload["marketOverview"]["dataStatus"] == "UNAVAILABLE"
     assert payload["dailyFocus"]["temporary"] is False
     assert payload["dailyFocus"]["bullets"] == []
+    assert payload["dailyFocus"]["signals"] == []
+    assert [item["key"] for item in payload["dailyFocus"]["signalCatalog"]] == [
+        "INDEX_DIVERGENCE",
+        "OTC_VOLUME_PRICE_DIVERGENCE",
+        "INSTITUTION_PRICE_DIVERGENCE",
+        "BREADTH_DIVERGENCE",
+    ]
     assert payload["sectionStatuses"]["marketEvents"]["status"] == "UNAVAILABLE"
 
 

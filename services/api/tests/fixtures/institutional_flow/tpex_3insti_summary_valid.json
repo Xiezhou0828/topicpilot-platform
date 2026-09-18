@@ -1,0 +1,7 @@
+[
+  {"Date": "1150915", "Investor": "外資及陸資(不含自營商)", "PurchaseAmount": "900", "SaleAmount": "1200", "Net": "-300"},
+  {"Date": "1150915", "Investor": "外資及陸資合計", "PurchaseAmount": "900", "SaleAmount": "1200", "Net": "-300"},
+  {"Date": "1150915", "Investor": "投信", "PurchaseAmount": "200", "SaleAmount": "100", "Net": "100"},
+  {"Date": "1150915", "Investor": "自營商合計", "PurchaseAmount": "300", "SaleAmount": "300", "Net": "0"},
+  {"Date": "1150915", "Investor": "三大法人合計*", "PurchaseAmount": "1400", "SaleAmount": "1600", "Net": "-200"}
+]

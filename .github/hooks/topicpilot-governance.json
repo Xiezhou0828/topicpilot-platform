@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "hooks": {
+    "sessionStart": [
+      {
+        "type": "command",
+        "bash": "python scripts/governance/validate_governance.py --session-start",
+        "powershell": "python scripts/governance/validate_governance.py --session-start",
+        "cwd": ".",
+        "timeoutSec": 30
+      }
+    ],
+    "preToolUse": [
+      {
+        "type": "command",
+        "bash": "python scripts/governance/hook_guard.py",
+        "powershell": "python scripts/governance/hook_guard.py",
+        "cwd": ".",
+        "timeoutSec": 10
+      }
+    ]
+  }
+}

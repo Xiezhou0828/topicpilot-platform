@@ -1,0 +1,22 @@
+{
+  "task_id": "TASK-TODAY-SIGNALS-CANONICAL-RECONCILIATION-002",
+  "title": "Today Signals Canonical Reconciliation",
+  "status": "READY_FOR_INTEGRATION",
+  "owner_role": "Today FE/BE owner with integration owner",
+  "workstream": "TODAY",
+  "base_sha": "a8357d46194f9669709f184949270e20a7a2546c",
+  "branch": "codex/task-today-signals-canonical-reconciliation-002-20260913",
+  "worktree": "E:\\topicpilot-worktrees\\today-signals-canonical-reconciliation-002",
+  "owned_paths": ["services/api/src/topicpilot_api/home_v2_publication.py", "services/api/src/topicpilot_api/schemas.py", "services/api/tests/test_home_v2_publication.py", "packages/api-client/**", "apps/web/app/lib/generated-api.d.ts", "docs/reports/TASK-TODAY-SIGNALS-*.md"],
+  "shared_paths": ["services/api/src/topicpilot_api/schemas.py", "packages/api-client/**", "apps/web/app/lib/generated-api.d.ts"],
+  "forbidden_paths": ["services/api/alembic/**", "services/api/src/topicpilot_api/live/**", "services/api/src/topicpilot_api/topic_engine/**", "services/api/src/topicpilot_api/opportunity*.py", "apps/web/app/components/**", ".github/workflows/**"],
+  "dependencies": [],
+  "implementation_commits": ["e4d675453aa03c51bd1c4e198ee3b7cb6742657f"],
+  "governance_commits": ["f7ba09dd2ea8dc803d7ecdf97c6a9238d8dc9ad4"],
+  "migration_scope": "NONE",
+  "production_scope": "NONE",
+  "owner_decision_required": false,
+  "next_allowed_state": "INTEGRATED",
+  "shared_surface_policy": "INTEGRATION_OWNER_ONLY",
+  "dependency_notes": ["Clean-base comparison recorded ten pre-existing other-workstream failures and no Today regression."]
+}

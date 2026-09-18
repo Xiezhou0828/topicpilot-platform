@@ -4,6 +4,7 @@ import argparse
 from datetime import UTC, date, datetime
 from pathlib import Path
 from types import SimpleNamespace
+from urllib.error import HTTPError
 from uuid import uuid4
 
 import pytest
@@ -14,6 +15,7 @@ from topicpilot_api.live.post_close import (
     PostClosePreconditionError,
     PostCloseUpdater,
     _json_safe,
+    _provider_exception_classification,
 )
 from topicpilot_api.market_data.ingestion import HistoricalInstrumentResult
 
@@ -143,6 +145,45 @@ def test_targeted_symbols_can_reach_lifecycle_authorized_no_trade_identity():
     assert normalized == ("TWO:6129",)
 
 
+def test_full_publication_universe_retains_active_suspended_8277():
+    context = SimpleNamespace(
+        universe_rows=(
+            InstrumentUniverseRow(
+                market_code="TWO",
+                instrument_code="8277",
+                instrument_type="EQUITY",
+                is_active=True,
+                lifecycle_events=(
+                    InstrumentLifecycle(
+                        status_code="SUSPENDED",
+                        effective_from=date(2026, 9, 10),
+                        effective_to=date(2026, 9, 18),
+                        evidence_id="TPEX-TWO-8277-SUSPENDED-20260910",
+                    ),
+                ),
+            ),
+        )
+    )
+
+    assert PostCloseUpdater._publication_universe(
+        context, date(2026, 9, 11), {"TPE": ("2330",), "TWO": ("6488",)}
+    ) == {"TPE": ("2330",), "TWO": ("6488", "8277")}
+
+
+@pytest.mark.parametrize(
+    ("error", "classification"),
+    [
+        (TimeoutError("timed out"), "PROVIDER_TIMEOUT"),
+        (ConnectionError("connection refused"), "PROVIDER_CONNECTION_ERROR"),
+        (ValueError("payload parse error"), "PARSE_ERROR"),
+    ],
+)
+def test_provider_failure_classification_uses_stable_operational_names(
+    error, classification
+):
+    assert _provider_exception_classification(error) == classification
+
+
 def test_targeted_finalization_does_not_promote_full_snapshot():
     captured: dict[str, object] = {}
     updater = PostCloseUpdater.__new__(PostCloseUpdater)
@@ -198,7 +239,7 @@ def test_post_close_explicit_recovery_is_date_bound_and_auditable():
     assert "allow_terminal_recovery=args.recover" in cli_source
     assert "allow_terminal_recovery: bool = False" in post_close_source
     assert '"recoveryOfRunId"' in post_close_source
-    assert "if recovery_of_run_id is None:" in post_close_source
+    assert "recovery_of_run_id is not None" in post_close_source
     assert 'metadata_payload["runDate"]' in post_close_source
     assert 'existing_run.failure_code == "POST_CLOSE_FINALIZATION_FAILED"' in post_close_source
     assert "_completed_attempt_summary" in post_close_source
@@ -315,4 +356,104 @@ def test_post_close_batched_outcome_keeps_unknown_missing_data_uncovered():
         "SUCCESS",
         "APPROVED_NO_TRADE",
         None,
+    )
+
+
+@pytest.mark.parametrize(
+    ("error", "classification"),
+    [
+        (TimeoutError("upstream timed out"), "PROVIDER_TIMEOUT"),
+        (ConnectionError("provider connection refused"), "PROVIDER_CONNECTION_ERROR"),
+        (ValueError("invalid OHLC payload"), "PARSE_ERROR"),
+        (
+            HTTPError("https://example.test", 429, "too many requests", {}, None),
+            "RATE_LIMIT",
+        ),
+        (
+            HTTPError("https://example.test", 500, "server error", {}, None),
+            "HTTP_ERROR",
+        ),
+    ],
+)
+def test_post_close_provider_exception_classification_is_typed(error, classification):
+    assert _provider_exception_classification(error) == classification
+
+
+@pytest.mark.parametrize(
+    ("result", "classification"),
+    [
+        (
+            HistoricalInstrumentResult(
+                "2330", "TPE", 0, 0, 0, 0, 1, "UNKNOWN", None
+            ),
+            "OFFICIAL_NO_ROW",
+        ),
+        (
+            HistoricalInstrumentResult(
+                "2330", "TPE", 1, 1, 0, 0, 1, "UNKNOWN", "payload parse failure"
+            ),
+            "PARSE_ERROR",
+        ),
+        (
+            HistoricalInstrumentResult(
+                "2330", "TPE", 1, 1, 1, 1, 0, "ACTIVE", None
+            ),
+            "SUCCESS",
+        ),
+    ],
+)
+def test_post_close_provider_coverage_classification_is_not_retry_count(
+    result, classification
+):
+    assert PostCloseUpdater._history_provider_classification(result) == classification
+
+
+def test_post_close_metadata_checkpoint_is_schema_free_and_resumable():
+    run = SimpleNamespace(
+        id="run-1",
+        metadata_payload={"runDate": "2026-09-14", "scope": "FULL"},
+        heartbeat_at=None,
+        updated_at=None,
+    )
+
+    class Session:
+        def get(self, _model, _run_id):
+            return run
+
+        def commit(self):
+            return None
+
+    updater = PostCloseUpdater.__new__(PostCloseUpdater)
+    updater.session = Session()
+    updater.config = SimpleNamespace(reference_data_version="ref-v1")
+    updater._now = lambda: datetime(2026, 9, 14, 8, 0, tzinfo=UTC)
+
+    updater._persist_progress(
+        "run-1",
+        total_count=2,
+        total_batch_count=1,
+        processed_count=1,
+        succeeded_count=1,
+        failed_count=0,
+        skipped_count=0,
+        retry_count=2,
+        provider_request_count=3,
+        failure_classifications={"SUCCESS": 1},
+        failure_details=(),
+        completed_batch_keys=("TPE:2330",),
+        current_batch=None,
+        next_batch=None,
+    )
+
+    progress = run.metadata_payload["recoveryProgress"]
+    assert progress["RECOVERY_PROCESSED"] == 1
+    assert progress["PROVIDER_REQUESTS"] == 3
+    assert progress["CHECKPOINT"]["runId"] == "run-1"
+    assert progress["CHECKPOINT"]["completedBatchKeys"] == ["TPE:2330"]
+    assert PostCloseUpdater._checkpoint_matches(
+        run,
+        run_date=date(2026, 9, 14),
+        reference_version="ref-v1",
+        scope="FULL",
+        target_symbols=(),
     )

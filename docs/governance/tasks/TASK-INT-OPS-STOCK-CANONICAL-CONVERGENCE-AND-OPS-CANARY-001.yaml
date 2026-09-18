@@ -1,0 +1,79 @@
+{
+  "task_id": "TASK-INT-OPS-STOCK-CANONICAL-CONVERGENCE-AND-OPS-CANARY-001",
+  "title": "Canonical OPS remediation and Stock WS2 convergence with bounded canary disposition",
+  "status": "PARTIAL",
+  "owner_role": "INTEGRATION_OWNER + RELEASE_OWNER",
+  "workstream": "INTEGRATION",
+  "base_sha": "b39c53ae376525c52953634d62d4bb920d2c644a",
+  "branch": "codex/task-int-ops-stock-canonical-convergence-20260915",
+  "worktree": "E:\\topicpilot-worktrees\\task-int-ops-stock-canonical-convergence-20260915",
+  "owned_paths": [
+    "apps/web/app/lib/stock-api.ts",
+    "apps/web/app/lib/commercial-state.mjs",
+    "apps/web/app/lib/commercial-state.d.mts",
+    "apps/web/app/components/v2/StockEncyclopediaDrawer.tsx",
+    "apps/web/app/components/v2/StockExplorerPage.tsx",
+    "apps/web/app/components/v2/StockPriceHistoryPanel.tsx",
+    "apps/web/app/stocks/**",
+    "apps/web/tests/**stock**",
+    "apps/web/tests/rendered-html.test.mjs",
+    "apps/web/tests/ux-guidance-empty-state.test.mjs",
+    "services/api/src/topicpilot_api/production_read_model.py",
+    "services/api/tests/test_stock_eod_read.py",
+    "services/api/src/topicpilot_api/live/**",
+    "services/api/tests/test_live_*.py",
+    "docs/governance/tasks/TASK-STOCK-WS2-F6-F7-CANONICAL-CAPABILITY-RECONCILIATION-001.yaml",
+    "docs/reports/TASK-STOCK-WS2-F6-F7-CANONICAL-CAPABILITY-RECONCILIATION-001-20260915.md",
+    "docs/reports/TASK-STOCK-WS2-F6-F7-CANONICAL-CAPABILITY-RECONCILIATION-001-20260915/provenance.json",
+    "docs/governance/tasks/TASK-INT-OPS-STOCK-CANONICAL-CONVERGENCE-AND-OPS-CANARY-001.yaml",
+    "docs/governance/provenance/TASK-INT-OPS-STOCK-CANONICAL-CONVERGENCE-AND-OPS-CANARY-001.json",
+    "docs/reports/TASK-INT-OPS-STOCK-CANONICAL-CONVERGENCE-AND-OPS-CANARY-001-20260915.md"
+  ],
+  "shared_paths": [
+    "docs/governance/tasks/**",
+    "docs/governance/provenance/**",
+    "docs/reports/**",
+    "scripts/governance/**"
+  ],
+  "forbidden_paths": [
+    "C:/Users/acer/Desktop/題材領航/topicpilot-platform/**",
+    "services/api/alembic/**",
+    "services/api/src/topicpilot_api/topic_engine/**",
+    "services/api/src/topicpilot_api/opportunity*.py",
+    "apps/web/app/components/v2/TodayMarketPage.tsx",
+    "apps/web/app/**opportunity**",
+    "FUND-001/**",
+    "NEXT_TASK*",
+    "Production*",
+    "*.env",
+    "*.secret"
+  ],
+  "dependencies": [
+    "GOV-003",
+    "TASK-INT-A10-A9-REC-002-MANIFEST-AND-0040-RECONCILIATION-001",
+    "TASK-INT-B2-FORMAL-AUTHORITY-EVIDENCE-RECOVERY-AND-GATE-RERUN-002",
+    "TASK-INT-TODAY-CANONICAL-RECONCILIATION-001",
+    "TASK-STOCK-WS2-F6-F7-CANONICAL-CAPABILITY-RECONCILIATION-001"
+  ],
+  "implementation_commits": [
+    "9d32e0cce0c5358f0acd2c6ba448d05e4cf3e9b0",
+    "903551ed903538c81e24ec7c87ebb8f55fa8a281"
+  ],
+  "governance_commits": [
+    "9a5cc544d38cf12913db1b2aa4682ac9f95636fb",
+    "ef34c5b367fe9f75a6bf34b267178a4077ba3fb7"
+  ],
+  "migration_scope": "NONE; no migration, schema, DDL, DML, downgrade, or 0040 execution",
+  "production_scope": "OPS-only canary disposition; no Production deploy, restart, data write, scheduler run, or publication activation",
+  "owner_decision_required": true,
+  "next_allowed_state": "OWNER_DECISION_REQUIRED",
+  "supersedes": null,
+  "disposition_evidence": "This task supersedes only stale B2 wording that treated the 0040 collision as unresolved; it does not supersede the separate unproven historical Production byte-identity fact.",
+  "dependency_notes": [
+    "The latest B2 closeout b39c53a is the canonical evidence starting point; its older 0040 blocker is reconciled against the newer closure claim and exact 0040 source blob hash.",
+    "The OPS source implementation 93218ca86ef3aeff58f1d8795c95b45ed0b4a364 and governance closeout 343cbc984755b3247d7cc535eff9c710c9602b43 were absent from all local refs, worktrees, attachments, and unreachable objects; no OPS code was recreated.",
+    "Stock F6/F7 implementation commits were cherry-picked with -x; the backend commit required one genuine import conflict resolution and preserved the B2 lifecycle read contract.",
+    "F6/F7 canonical integration does not imply Production release. Daily Close E2E and recommendation publication remain separate tasks."
+  ],
+  "shared_surface_policy": "EXPLICIT_RECONCILIATION"
+}

@@ -1,0 +1,104 @@
+{
+  "task_id": "TASK-INT-FUND-A-MARKET-FLOW-CANONICAL-RECONCILIATION-001",
+  "title": "FUND-A Market Flow Canonical Reconciliation and Development-Series Closeout",
+  "status": "INTEGRATED",
+  "owner_role": "INTEGRATION_OWNER",
+  "workstream": "INTEGRATION",
+  "base_sha": "07b7a73e7cfd070aae39a2d61240bf5050e19e4a",
+  "governed_development_base_sha": "07b7a73e7cfd070aae39a2d61240bf5050e19e4a",
+  "previous_governed_base_sha": "277a49382240503fcd0767e9cfb17e2fd974e8a3",
+  "current_canonical_head_before_task": "07b7a73e7cfd070aae39a2d61240bf5050e19e4a",
+  "branch": "codex/task-int-fund-a-market-flow-canonical-reconciliation-001-20260917",
+  "worktree": "E:\\topicpilot-worktrees\\int-fund-a-market-flow-canonical-reconciliation-20260917",
+  "owned_paths": [
+    "services/api/src/topicpilot_api/market_data/institutional_flow.py",
+    "services/api/src/topicpilot_api/market_data/institutional_flow_persistence.py",
+    "services/api/src/topicpilot_api/orm/institutional_flow.py",
+    "services/api/alembic/versions/0041_task_fund_a_market_flow_formal_capability.py",
+    "services/api/src/topicpilot_api/market_institutional_flow_api.py",
+    "services/api/tests/fixtures/institutional_flow/**",
+    "services/api/tests/test_institutional_flow.py",
+    "services/api/tests/test_market_institutional_flow_api.py",
+    "services/api/src/topicpilot_api/schemas.py",
+    "services/api/src/topicpilot_api/main.py",
+    "services/api/src/topicpilot_api/market_data/__init__.py",
+    "services/api/src/topicpilot_api/orm/__init__.py",
+    "packages/api-client/**",
+    "apps/web/app/lib/generated-api.d.ts",
+    "services/api/tests/test_canonical_observation_implementation.py",
+    "services/api/tests/test_v2_architecture_freeze.py",
+    "docs/governance/BASELINE_FAILURE_REGISTRY.yaml",
+    "docs/governance/tasks/TASK-INT-FUND-A-MARKET-FLOW-CANONICAL-RECONCILIATION-001.yaml",
+    "docs/governance/provenance/TASK-INT-FUND-A-MARKET-FLOW-CANONICAL-RECONCILIATION-001.json",
+    "docs/reports/TASK-INT-FUND-A-MARKET-FLOW-CANONICAL-RECONCILIATION-001-20260917.md"
+  ],
+  "shared_paths": [
+    "services/api/src/topicpilot_api/home_v2_publication.py",
+    "apps/web/app/components/v2/TodayMarketPage.tsx",
+    "apps/web/tests/today-market-institutional-flow.test.mjs",
+    "docs/governance/provenance/TASK-FUND-A-MARKET-FLOW-FORMAL-CAPABILITY-001.json",
+    "docs/governance/tasks/TASK-FUND-A-MARKET-FLOW-FORMAL-CAPABILITY-001.yaml",
+    "docs/reports/TASK-FUND-A-MARKET-FLOW-FORMAL-CAPABILITY-001/**"
+  ],
+  "forbidden_paths": [
+    "services/api/src/topicpilot_api/live/**",
+    "services/api/src/topicpilot_api/topic_engine/**",
+    "services/api/src/topicpilot_api/opportunity*.py",
+    "services/api/alembic/versions/0040_task_a10_recovery_checkpoint_observability.py",
+    "NEXT_TASK",
+    "PROJECT_CONTEXT.md",
+    "ACTIVE_WORK.md",
+    "CURRENT_PROJECT_STATE.md",
+    "docs/ROADMAP.md",
+    "docs/WORK_ORDERS.md",
+    "docs/DOCUMENTATION_INDEX.md",
+    "Production infrastructure and databases",
+    "C-drive owner checkout changes",
+    "FUND-B stock-level flow implementation",
+    "Today Signals policy redesign"
+  ],
+  "dependencies": [
+    "GOV-003",
+    "TASK-OWNER-TOPICPILOT-CANONICAL-PROMOTION-RELEASE-AND-RUNTIME-CLOSURE-001",
+    "TASK-FUND-A-MARKET-FLOW-FORMAL-CAPABILITY-001"
+  ],
+  "implementation_commits": [
+    "b062df38c6cd0bf6f238b849d2ff2600f5c63411",
+    "b959c99a2b5f985d910f9ec1420ba9a2432d23a9",
+    "589d33ed9389a418183f1505e221cd62217e3ef4"
+  ],
+  "governance_commits": [
+    "a5e54a9d73e57a466325417151beb895f55d1229",
+    "ee95deae125c19d9d7c2e9970d18fb07365b70df",
+    "1cd5af2f55f7abc715e0d23ee09721767ab662d4",
+    "83851d3fb46ad484b9a533691b3721b880a33027",
+    "574ae46341c843e9312f419ce8390695c90cf234",
+    "cf203d116ae8afbf83603e02170874e1eb87c341"
+  ],
+  "migration_scope": "0041 only; replayable FUND-A daily fact table; 0041 down_revision is 0040_task_a10_recovery_checkpoint_observability; 0040 is untouched; no migration execution.",
+  "production_scope": "NONE: no Production read/write, deploy, canary, scheduler activation, database connection, or migration execution.",
+  "owner_decision_required": false,
+  "next_allowed_state": "READY_FOR_RELEASE",
+  "supersedes": null,
+  "disposition_evidence": "docs/reports/TASK-INT-FUND-A-MARKET-FLOW-CANONICAL-RECONCILIATION-001-20260917.md",
+  "dependency_notes": [
+    "The canonical development base is the clean governed owner-closure head 07b7a73e7cfd070aae39a2d61240bf5050e19e4a; the protected C-drive owner checkout is dirty and was not mutated.",
+    "FUND-A source parent matches the current canonical development base exactly, so the source was replayed with explicit provenance and no semantic conflict resolution was required.",
+    "Shared Home, Today Market, schema, OpenAPI, generated-client, and governance surfaces were reconciled in this isolated integration worktree.",
+    "FUND-B, Daily Close, B2/Opportunity, A10/0040, and production operations remain outside this task."
+  ],
+  "shared_surface_policy": "EXPLICIT_RECONCILIATION",
+  "canonical_integration_status": "INTEGRATED",
+  "canonical_fund_a_integration_sha": "589d33ed9389a418183f1505e221cd62217e3ef4",
+  "canonical_integration_timestamp": "2026-09-17",
+  "source_task_lineage": [
+    "TASK-FUND-A-MARKET-FLOW-FORMAL-CAPABILITY-001",
+    "TASK-OWNER-TOPICPILOT-CANONICAL-PROMOTION-RELEASE-AND-RUNTIME-CLOSURE-001"
+  ],
+  "source_commits": {
+    "implementation": "b062df38c6cd0bf6f238b849d2ff2600f5c63411",
+    "governance_closeout": "a5e54a9d73e57a466325417151beb895f55d1229",
+    "provenance_pin": "ee95deae125c19d9d7c2e9970d18fb07365b70df",
+    "source_final_closeout": "1cd5af2f55f7abc715e0d23ee09721767ab662d4"
+  }
+}
