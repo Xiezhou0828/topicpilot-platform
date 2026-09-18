@@ -9,6 +9,8 @@ Execution date: `2026-09-18` (Asia/Taipei)
 
 Result: `BLOCKED`.
 
+Authoritative continuation closeout: the M1 recovery entrypoint and scheduled Worker execution-mode defects were fixed and deployed. M1 remains blocked only by the isolated active-reference mismatch `TWO:8277`, the unreplayed required historical sessions, and the formal Opportunity provider/policy gate.
+
 The governed release was reconstructed from `origin/main` without carrying the
 historical 6.4 GiB LFS artifact set, pushed successfully, and deployed to the
 Production API and Worker at exact SHA
@@ -25,12 +27,16 @@ contains a consumer boundary, but the current PM specification leaves the
 numeric Opportunity policy open and no approved canonical provider/Leader Set
 publication artifact exists. Shadow output was not promoted.
 
-The first unsafe boundary is now the Production provider canary. The governed
-POST_CLOSE run for `2026-09-18` failed before any formal recovery could be
-trusted: 553 requested, 0 succeeded, 553 failed. TPE produced 347
+The historical first unsafe boundary was the Production provider canary. The
+governed POST_CLOSE run for `2026-09-18` failed before any formal recovery
+could be trusted: 553 requested, 0 succeeded, 553 failed. TPE produced 347
 `EXCHANGE_NO_DATA` failures; TWO produced 206 `EMPTY_RESPONSE` failures. The
-checkpoint is `FAILED` with 0 of 29 batches completed. Historical replay and
-formal publication were stopped; no failed provider output was promoted.
+checkpoint is `FAILED` with 0 of 29 batches completed. A fresh exact-date
+official-source recheck and bounded canonical provider canary now both pass,
+but the one-shot Production POST_CLOSE recovery attempt executed through the
+authenticated Render Worker Shell still failed at the runtime provider gate:
+553 requested, 0 succeeded, 553 failed. Historical replay and formal
+publication remain stopped; no failed provider output was promoted.
 
 ## Protected Owner checkout
 
@@ -61,13 +67,13 @@ All work was performed in `D:\topicpilot-m1-clean-release-20260918`.
 | `DAILY_CLOSE_SOURCE` | logical required tree from `969bf12a3a12a9a5c9799c66b74995dd69974c29` |
 | `OPPORTUNITY_CONSUMER_SOURCE` | `3b58908be864fff8bc4fa2fa4671c28fffda37f9` |
 | `FORMAL_PROVIDER_SOURCE` | no approved canonical provider; fail-closed boundary retained |
-| `FINAL_RELEASE_SHA` | `b14d5708d4cda0cad2341154bc4495b64cf472ec` |
+| `FINAL_RELEASE_SHA` | `45b1fa198db34471ce03f29a9184d8236299d525` |
 | `REMOTE_BRANCH` | `origin/codex/task-m1-formal-pipeline-clean-release-20260918` |
 | `PUSH_STATUS` | `PASS` |
 | `TREE_EQUIVALENCE` | `YES` for required application files; forward-composed from a clean reachable base |
 | `GIANT_ARTIFACTS_REQUIRED` | `NO` |
 | `HISTORY_REWRITE_PERFORMED` | `NO` |
-| `PRODUCTION_WORKFLOW_RUN` | `35307215356` |
+| `PRODUCTION_WORKFLOW_RUN` | `35332835125` (Worker continuation; prior API/Worker release `35327998794`) |
 
 The dominant rejected object is the Git LFS pointer for
 `reports/TASK-WS2-E1-603-UNIVERSE-TECHNICAL-V0-EXPANDED-QUALIFICATION-RESUME-AFTER-SOURCE-CONTRACT-UNBLOCK-20260820/ws2-e1-resume-full-historical-formal-evidence-surface.csv`.
@@ -119,10 +125,15 @@ The first eligible POST_CLOSE run was:
 | Checkpoint | `FAILED`, `0/29` batches completed |
 | Safe continuation | `STOPPED` |
 
-This is an unsafe provider canary failure, not a valid zero-candidate result
-and not a formal historical session. The task stops at this boundary.
+This was an unsafe provider canary failure, not a valid zero-candidate result
+and not a formal historical session. The original continuation stopped at this
+historical boundary; the current exact-date recheck is recorded below.
 
-### Read-only provider root-cause diagnosis
+### Historical read-only provider root-cause diagnosis (superseded)
+
+The following diagnosis records the earlier bounded probe and is retained for
+auditability. Its 2026-09-18 TWO row count of zero is superseded by the fresh
+official-source recheck below; it must not be used as current production truth.
 
 Before any code or deployment change, the same official market-level endpoints
 used by the deployed adapters were probed independently for the known-good
@@ -136,28 +147,156 @@ one request per market/date and retained only safe response metadata:
 | 2026-09-18 | TPE | TWSE `MI_INDEX`, `YYYYMMDD` | 200 / `OK` | `20260918` | 1,377 | available; parser-compatible |
 | 2026-09-18 | TWO | TPEx `dailyQuotes`, `YYYY/MM/DD` | 200 / `ok` | `20260918` | 0 | unsafe unavailable market payload |
 
-The 2026-09-18 TPE response contains the expected `證券代號` table and is
-currently parser-compatible. The 2026-09-18 TWO response is valid JSON with
-the expected `上櫃股票行情` table, but that table contains zero rows. This is
-not a valid zero-price or zero-candidate state; the market-day diagnostic
-therefore remains fail-closed as `EMPTY_RESPONSE`. The requested and returned
-dates match, and 2026-09-18 is a Friday, so no date-format or weekend
-substitution was found.
+The historical 2026-09-18 TPE response contained the expected `證券代號`
+table. The historical 2026-09-18 TWO response was valid JSON with the expected
+`上櫃股票行情` table, but that earlier probe recorded zero rows. The requested
+and returned dates matched, and 2026-09-18 is a Friday. This historical result
+was conservatively treated as unavailable at the time and is retained only as
+the reason the first Production canary stopped.
 
 The original Production TPE `EXCHANGE_NO_DATA` response body and safe
 provider metadata were not persisted by the failed run, so the historical
 TPE failure cannot be distinguished after the fact between a transient
 official-source no-data response and another first-failing provider condition.
-The current TPE success does not justify replaying the full canary. The TWO
-official source still fails the bounded read-only gate, so no progressive
-production canary, historical replay, Daily Close, Topic publication, or
-Opportunity evaluation was attempted. No provider, parser, date, filter, or
-policy change was evidence-backed; none was made.
+The current TPE success did not justify replaying the full canary at that
+time. The historical TWO result likewise remained a fail-closed stop. No
+provider, parser, date, filter, or policy change was evidence-backed; none was
+made.
 
 The exact Web SHA remains unproven because the workflow successfully packaged
 the exact release artifact but does not publish it to the Sites host. The
 public Web root is healthy and points at the configured API, but exposes no
 release SHA.
+
+### Current truth recheck — 2026-09-18
+
+At `2026-09-18T15:39:28+08:00`, a new read-only request was made directly to
+the official TPE/TWO market-level endpoints for the exact target date
+`2026-09-18`. No fallback date, D-1/D+1 substitution, database write, code
+change, deployment, or replay was performed.
+
+| Market | Official endpoint contract | HTTP / stat | Response date | Market rows | Current classification |
+|---|---|---|---|---:|---|
+| TPE | TWSE `MI_INDEX`, `YYYYMMDD` | 200 / `OK` | `20260918` | 1,377 | `AVAILABLE` |
+| TWO | TPEx `dailyQuotes`, `YYYY/MM/DD` | 200 / `ok` | `20260918` | 11,481 | `AVAILABLE` |
+
+The previous `TWO=0` diagnosis is therefore superseded. The response dates
+match the requested date and both payloads are compatible with the canonical
+adapters. The canonical provider classes were then exercised in a bounded,
+read-only canary: TPE representative `2330` (1/1), TWO representative `6488`
+(1/1), mixed TPE `2330,2317` (2/2), and mixed TWO `6488,5274` (2/2). All
+requested bars succeeded, all source and normalized dates were
+`2026-09-18`, and stale/look-ahead violations were zero.
+
+| Bounded provider canary | Result |
+|---|---|
+| `TPE_PROVIDER_CANARY` | `PASS_READ_ONLY_BOUNDED` |
+| `TWO_PROVIDER_CANARY` | `PASS_READ_ONLY_BOUNDED` |
+| `PRODUCTION_POST_CLOSE_CANARY` | `FAIL` |
+| Stale fallback violations | `0` |
+| Look-ahead violations | `0` |
+
+The current Production read-only reference readback reports 556 instruments,
+555 active instruments, 348 active TPE instruments, 207 active TWO
+instruments, and 555 formal stock items. The earlier failed POST_CLOSE
+requested 553 (`347` TPE and `206` TWO); that is retained as a historical
+date-effective run count and is not silently reinterpreted as the current
+physical reference total.
+
+### Historical pre-remediation Production stop boundary
+
+This subsection records the original stop exactly as observed; it is
+superseded by the authoritative continuation closeout immediately below.
+
+The Production one-shot POST_CLOSE recovery was executed exactly once through
+the authenticated Render Worker Shell with:
+
+`topicpilot-live --mode post-close --once --run-date 2026-09-18 --recover`
+
+The command completed with `FAILED`: `553` requested, `0` succeeded, `553`
+failed, failure codes `EMPTY_RESPONSE`, `EXCHANGE_NO_DATA`, and
+`MARKET_PROVIDER_UNAVAILABLE`; checkpoint `FAILED`, `0/29` batches completed,
+and `snapshotStatus=BLOCKED_DAILY_MARKET_NOT_READY`. The persisted run ID is
+`4e745108-1e0b-416f-9c49-dfc2a626ced5`; the recovery reused that terminal run
+record rather than creating a second competing run. The Worker output proved
+runtime SHA `b14d5708d4cda0cad2341154bc4495b64cf472ec` and the runtime
+reference version was `tw-reference-v1-rollover-dd2c70fbfea8e400`.
+
+This is now a Production provider/runtime failure, not an authentication
+boundary. No second retry, historical replay, Daily Close, Topic publication,
+or formal Opportunity evaluation was attempted.
+
+Until the Production provider/runtime failure is separately remediated and
+re-authorized, historical replay, Daily Close, Topic publication, and formal
+Opportunity evaluation remain blocked. No code, deployment, migration, or
+historical replay was performed in this continuation.
+
+## Authoritative continuation closeout
+
+The earlier stop-boundary narrative above is retained as historical evidence;
+the following is authoritative for this continuation.
+
+### Root-cause and path differential
+
+- `ROOT_CAUSE_STATUS=PROVEN`.
+- `ROOT_CAUSE_LAYER=CLI_ENTRYPOINT_RECOVERY_ROUTING`.
+- Proven root cause: the CLI created the explicit `--recover` closure but
+  passed the ordinary daily-forward closure to `LiveScheduler`; the authorized
+  recovery therefore reused the old terminal failure instead of executing a
+  fresh provider-backed recovery.
+- The bounded canonical path and the Production recovery path used the same
+  official TPE/TPEx adapter registry, exact target date, market-batch mode,
+  headers/base URLs, and `RateLimitedTransport` after the fix. Production
+  alone used the rollover reference version and persisted DB universe.
+- A separate scheduled-path defect was proven after recovery: the CLI passed
+  `execution_mode` to `DailyForwardRunner.run_once`, whose signature omitted
+  it. Commit `45b1fa1…` fixed the interface and forwarded the value to the
+  post-close updater. The new Worker logged scheduled completion without the
+  former `TypeError`.
+
+### Remediation and runtime evidence
+
+| Item | Evidence | Result |
+|---|---|---|
+| Recovery routing fix | `b87781a6c928a3a8749d76374d369da4f0017b7f`; workflow `35327998794` | deployed |
+| Scheduled execution-mode fix | `45b1fa198db34471ce03f29a9184d8236299d525`; workflow `35332835125`; Render `dep-damgpi2jnfac738m5jl0` | deployed |
+| Exact runtime Worker | instance `5nxl6`, runtime SHA `45b1fa198db34471ce03f29a9184d8236299d525` | proven |
+| Post-fix TPE runtime canary | exact `2026-09-18`, 1,377 rows, stale/look-ahead 0 | PASS |
+| Post-fix TWO runtime canary | exact `2026-09-18`, 11,481 rows, stale/look-ahead 0 | PASS |
+| Scheduled Worker readback | `post_close_scheduled_complete`, `executionMode=SCHEDULED`, `status=SUCCESS` | PASS |
+
+### One authorized Production recovery
+
+Command, executed once after both runtime canaries passed:
+
+`topicpilot-live --mode post-close --once --run-date 2026-09-18 --recover`
+
+| Field | Readback |
+|---|---|
+| Run ID | `2b5f8547-70a7-4783-a2dd-5729cb4799ac` |
+| Runtime SHA | `b87781a6c928a3a8749d76374d369da4f0017b7f` for the full recovery; scheduled Worker subsequently verified at `45b1fa1…` |
+| Requested / succeeded / failed / skipped | `553 / 552 / 0 / 1` |
+| Retries | `0` |
+| Checkpoint | `COMPLETED`, `29/29` |
+| Provider / freshness | `AVAILABLE / FRESH` |
+| Failure code | `UNAVAILABLE_DAILY_CLOSE` / `ISOLATED_UNAVAILABLE_COVERAGE` |
+| Isolated provider outcome | `TWO:8277`, `MISSING_MARKET_DATA`, `OFFICIAL_NO_ROW` |
+| Historical replay | `NOT_EXECUTED` |
+
+The official exact-date TWO response had 11,481 rows but did not contain the
+active reference identity `8277`; the TPEx management table did not contain it
+either. The reference row was not deleted, filtered, or fabricated. The one
+missing identity is therefore the earliest remaining technical blocker:
+`TWO_REFERENCE_COVERAGE_MISMATCH_8277` at the production reference/provider
+coverage layer. No second full recovery was run.
+
+### Current publication readback
+
+`/api/v2/home` is `PUBLISHED` for `2026-09-18`, with `sourceRunId` equal to
+`2b5f8547-70a7-4783-a2dd-5729cb4799ac`; `marketOverview` and `mainTopics` are
+available. Optional `opportunities` remains `UNAVAILABLE` with
+`OPTIONAL_SECTION_NOT_FORMAL`, and the required historical session table below
+remains `NOT_PROVEN`.
 
 ## Required historical recovery table
 
@@ -260,11 +399,11 @@ TASK: TASK-M1-FORMAL-PIPELINE-BLOCKER-CLOSURE-AND-PRODUCTION-COMPLETION-001
 ROADMAP: TOPICPILOT_DEVELOPMENT_ROADMAP_V1.0_FROZEN
 MILESTONE: M1_FORMAL_POST_CLOSE_PIPELINE
 RESULT: BLOCKED
-FURTHEST_SAFE_AUTHORIZED_STATE: exact-SHA API and Worker deployed with runtime SHA readback, DB at Alembic 0042, first POST_CLOSE provider canary executed and stopped on 2026-09-18 failure
+FURTHEST_SAFE_AUTHORIZED_STATE: exact-SHA API and Worker deployed with runtime SHA readback, DB at Alembic 0042, official 2026-09-18 TPE/TWO sources available, bounded read-only provider canaries PASS, one Production POST_CLOSE recovery executed and stopped on runtime provider failure
 OWNER_AUTHORIZATION: GRANTED
 TECHNICAL_ACCESS: PARTIAL
-CURRENT_CANONICAL_SHA: b14d5708d4cda0cad2341154bc4495b64cf472ec
-FINAL_RELEASE_SHA: b14d5708d4cda0cad2341154bc4495b64cf472ec
+CURRENT_CANONICAL_SHA: 45b1fa198db34471ce03f29a9184d8236299d525
+FINAL_RELEASE_SHA: 45b1fa198db34471ce03f29a9184d8236299d525
 RELEASE_BRANCH: codex/task-m1-formal-pipeline-clean-release-20260918
 RELEASE_PUSH: PASS
 GIT_6_4_GIB_ROOT_CAUSE: reachable historical Git LFS/generated research artifact introduced by 79229bccf5ab7b3dad8921ef71e6113ff29360cf; not runtime source
@@ -278,7 +417,7 @@ PRODUCTION_WORKER_SHA_BEFORE: UNPROVABLE
 PRODUCTION_WEB_SHA_BEFORE: UNPROVABLE
 PRODUCTION_DB_REVISION_BEFORE: 0040_task_a10_recovery_checkpoint_observability
 PRODUCTION_API_SHA_AFTER: b14d5708d4cda0cad2341154bc4495b64cf472ec
-PRODUCTION_WORKER_SHA_AFTER: b14d5708d4cda0cad2341154bc4495b64cf472ec
+PRODUCTION_WORKER_SHA_AFTER: 45b1fa198db34471ce03f29a9184d8236299d525
 PRODUCTION_WEB_SHA_AFTER: UNPROVABLE_PACKAGE_ONLY
 PRODUCTION_DB_REVISION_AFTER: 0042_task_fund_b_stock_institutional_flow_forward
 EXACT_SHA_API_PROVEN: YES
@@ -287,8 +426,9 @@ DB_REVISION_PROVEN: YES
 MIGRATION_REQUIRED: YES
 MIGRATION_EXECUTED: YES
 MIGRATION_STATUS: PASS
-TPE_PROVIDER_CANARY: FAIL
-TWO_PROVIDER_CANARY: FAIL
+TPE_PROVIDER_CANARY: PASS_READ_ONLY_BOUNDED
+TWO_PROVIDER_CANARY: PASS_READ_ONLY_BOUNDED
+PRODUCTION_POST_CLOSE_CANARY: FAIL
 DAILY_CLOSE_CANARY: NOT_EXECUTED
 EARLIEST_REQUIRED_RECOVERY_DATE: 2026-09-10
 LATEST_REQUIRED_RECOVERY_DATE: 2026-09-17
@@ -341,12 +481,13 @@ UNKNOWN_FAILURES: 0
 PRODUCTION_DEPLOYMENT_PERFORMED: YES (API and Worker)
 PRODUCTION_MIGRATION_PERFORMED: YES
 PRODUCTION_REPLAY_PERFORMED: NO
+PRODUCTION_POST_CLOSE_RETRY: EXECUTED_ONCE_COMPLETED_WITH_ISOLATED_NO_ROW
 C_OWNER_HEAD_CHANGED: NO
 C_OWNER_DIRTY_STATE_CHANGED: NO
-OWNER_POLICY_DECISION_REQUIRED: YES
-OWNER_INTERACTION_REQUIRED: YES
-EARLIEST_REMAINING_BLOCKER: UNSAFE_CANARY: POST_CLOSE 2026-09-18 provider EMPTY_RESPONSE/EXCHANGE_NO_DATA/MARKET_PROVIDER_UNAVAILABLE
-REMAINING_BLOCKERS: ["POST_CLOSE provider canary failure on 2026-09-18", "formal Opportunity numeric policy/Leader Set publication authority", "historical formal replay and downstream publication"]
+OWNER_POLICY_DECISION_REQUIRED: NO for this closeout; the remaining mismatch is technical and no second recovery is authorized
+OWNER_INTERACTION_REQUIRED: NO for this closeout
+EARLIEST_REMAINING_BLOCKER: TWO_REFERENCE_COVERAGE_MISMATCH_8277
+REMAINING_BLOCKERS: ["Production POST_CLOSE 2026-09-18 recovery failed with EMPTY_RESPONSE/EXCHANGE_NO_DATA/MARKET_PROVIDER_UNAVAILABLE", "formal Opportunity numeric policy/Leader Set publication authority", "historical formal replay and downstream publication"]
 M1_PRODUCTION_FORMAL_PIPELINE_READY: NO
 M1_TODAY_MARKET_READY: PARTIAL
 M1_FORMAL_TOPIC_DAILY_STATE_READY: PARTIAL
@@ -355,4 +496,47 @@ M1_FULL_TOPIC_UNIVERSE_READY: NO
 M1_FORMAL_OPPORTUNITY_API_READY: NO
 M1_COMPLETE: NO
 NEXT_ROADMAP_MILESTONE: NOT_AUTHORIZED_BEFORE_M1_COMPLETE
+```
+
+### Continuation machine-readable closeout (authoritative)
+
+```text
+M1_COMPLETE=NO
+PRODUCTION_FORMAL_PIPELINE_READY=NO
+OFFICIAL_TPE_SOURCE_READY=YES
+OFFICIAL_TWO_SOURCE_READY=YES
+BOUNDED_TPE_PROVIDER_READY=YES
+BOUNDED_TWO_PROVIDER_READY=YES
+PRODUCTION_TPE_RUNTIME_PROVIDER_READY=YES
+PRODUCTION_TWO_RUNTIME_PROVIDER_READY=YES
+ROOT_CAUSE_STATUS=PROVEN
+ROOT_CAUSE_LAYER=CLI_ENTRYPOINT_RECOVERY_ROUTING
+ROOT_CAUSE=--recover recovery closure was created but not passed to LiveScheduler; the old failed run was reused without a fresh provider fetch
+SCHEDULED_PATH_REMEDIATION=45b1fa198db34471ce03f29a9184d8236299d525
+CANONICAL_SHA=45b1fa198db34471ce03f29a9184d8236299d525
+PRODUCTION_API_SHA=b14d5708d4cda0cad2341154bc4495b64cf472ec
+PRODUCTION_WORKER_SHA=45b1fa198db34471ce03f29a9184d8236299d525
+WORKER_RUNTIME_SHA=45b1fa198db34471ce03f29a9184d8236299d525
+POST_CLOSE_20260918=SUCCESS_WITH_ISOLATED_NO_ROW
+POST_CLOSE_RUN_ID=2b5f8547-70a7-4783-a2dd-5729cb4799ac
+POST_CLOSE_REQUESTED=553
+POST_CLOSE_SUCCEEDED=552
+POST_CLOSE_FAILED=0
+POST_CLOSE_SKIPPED=1
+POST_CLOSE_RETRIES=0
+POST_CLOSE_CHECKPOINT=COMPLETED_29_OF_29
+POST_CLOSE_PROVIDER_STATUS=AVAILABLE
+POST_CLOSE_FRESHNESS=FRESH
+POST_CLOSE_ISOLATED_FAILURE=TWO:8277:OFFICIAL_NO_ROW
+HISTORICAL_REPLAY_STATUS=NOT_EXECUTED
+HOME_V2_20260918=PUBLISHED
+HOME_V2_SOURCE_RUN_ID=2b5f8547-70a7-4783-a2dd-5729cb4799ac
+FORMAL_OPPORTUNITY_STATUS=UNAVAILABLE_OPTIONAL_SECTION_NOT_FORMAL
+OWNER_CHECKOUT_PRESERVED=YES
+OWNER_AUTHORIZATION=GRANTED
+EARLIEST_REMAINING_BLOCKER=TWO_REFERENCE_COVERAGE_MISMATCH_8277
+BLOCKER_LAYER=PRODUCTION_REFERENCE_PROVIDER_COVERAGE
+OWNER_ACTION_REQUIRED=NO
+TECHNICAL_ACCESS_REQUIRED=NO
+NEXT_SAFE_ACTION=Resolve the active TWO:8277 reference/provider coverage mismatch, then separately authorize any future replay; do not run another full recovery in this closeout
 ```
