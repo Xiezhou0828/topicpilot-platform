@@ -103,6 +103,7 @@ class DailyForwardRunner:
         *,
         run_date: date | None = None,
         replay: bool = False,
+        execution_mode: str = "SCHEDULED",
     ) -> DailyForwardRunResult:
         now = self._now()
         local_date = now.astimezone(self.updater.session_clock.timezone).date()
@@ -143,7 +144,10 @@ class DailyForwardRunner:
         if not context.target_date_is_session:
             # Let the existing updater record an explicit MARKET_CLOSED run;
             # its calendar gate prevents any official provider call.
-            result = self.updater.run_once(run_date=target_date)
+            result = self.updater.run_once(
+                run_date=target_date,
+                execution_mode=execution_mode,
+            )
             return DailyForwardRunResult(
                 result.status,
                 target_date,
@@ -163,7 +167,10 @@ class DailyForwardRunner:
                 ("POST_CLOSE_WINDOW_NOT_REACHED",),
             )
 
-        result = self.updater.run_once(run_date=target_date)
+        result = self.updater.run_once(
+            run_date=target_date,
+            execution_mode=execution_mode,
+        )
         return DailyForwardRunResult(
             result.status,
             target_date,

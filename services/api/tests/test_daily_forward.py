@@ -32,8 +32,10 @@ class FakeUpdater:
         self.result_status = result_status
         self.calls: list[date] = []
 
-    def run_once(self, *, run_date: date):
+    def run_once(self, *, run_date: date, execution_mode: str = "SCHEDULED"):
         self.calls.append(run_date)
+        self.execution_modes = getattr(self, "execution_modes", [])
+        self.execution_modes.append(execution_mode)
         return PostCloseRunResult(
             "run-1",
             self.result_status,
@@ -97,6 +99,15 @@ def test_daily_forward_replay_is_bounded_and_uses_existing_post_close_chain():
     assert result.replay is True
     assert result.target_date == date(2026, 8, 28)
     assert updater.calls == [date(2026, 8, 28)]
+
+
+def test_daily_forward_passes_scheduled_execution_mode_to_post_close_chain():
+    runner, updater = _runner(datetime(2026, 8, 31, 8, 0, tzinfo=UTC))
+
+    result = runner.run_once(execution_mode="SCHEDULED")
+
+    assert result.status == "SUCCESS"
+    assert updater.execution_modes == ["SCHEDULED"]
 
 
 def test_daily_forward_preserves_fail_closed_updater_failure():
