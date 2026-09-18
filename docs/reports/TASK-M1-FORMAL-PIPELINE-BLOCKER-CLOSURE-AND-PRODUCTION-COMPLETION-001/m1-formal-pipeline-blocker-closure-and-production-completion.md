@@ -7,13 +7,15 @@ Execution date: `2026-09-18` (Asia/Taipei)
 
 ## Executive result
 
-Result: `COMPLETE_WITH_LIMITATIONS`.
+Result: `BLOCKED`.
 
 The governed release was reconstructed from `origin/main` without carrying the
 historical 6.4 GiB LFS artifact set, pushed successfully, and deployed to the
-Production API at exact SHA `99a5a5206f5a57f8bc45e6811adad5102099d651`.
-The Production API is healthy and the database read-only probe reports the
-single Alembic head `0042_task_fund_b_stock_institutional_flow_forward`.
+Production API and Worker at exact SHA
+`b14d5708d4cda0cad2341154bc4495b64cf472ec`. The Production API is healthy,
+the Worker runtime SHA was read back from a new live run, and the database
+read-only probe reports the single Alembic head
+`0042_task_fund_b_stock_institutional_flow_forward`.
 
 The M1 chain cannot be completed safely beyond this point. The first external
 stop is technical access: the GitHub `production-worker` environment has no
@@ -24,10 +26,12 @@ current PM specification leaves the numeric Opportunity policy open and no
 approved canonical provider/Leader Set publication artifact exists. Shadow
 output was not promoted.
 
-The minimum Owner action to resume this same task is to configure the protected
-`RENDER_DEPLOY_HOOK_URL` secret in GitHub Actions environment
-`production-worker`, targeting the Render service `topicpilot-live`. No secret
-value is recorded here.
+The first unsafe boundary is now the Production provider canary. The governed
+POST_CLOSE run for `2026-09-18` failed before any formal recovery could be
+trusted: 553 requested, 0 succeeded, 553 failed. TPE produced 347
+`EXCHANGE_NO_DATA` failures; TWO produced 206 `EMPTY_RESPONSE` failures. The
+checkpoint is `FAILED` with 0 of 29 batches completed. Historical replay and
+formal publication were stopped; no failed provider output was promoted.
 
 ## Protected Owner checkout
 
@@ -43,11 +47,11 @@ All work was performed in `D:\topicpilot-m1-clean-release-20260918`.
 
 | Blocker | Starting status | Root cause | Action taken | Final status | Evidence | Still blocking M1? |
 |---|---|---|---|---|---|---|
-| A Runtime provenance | API known; Worker/Web/DB incomplete | Worker had no exact runtime readback; DB was last proven at 0040 | Added Worker runtime SHA to the existing `scheduler_decision` event; deployed API; read `/readyz`, `/healthz`, and read-only migration probe | API and DB closed; Worker/Web remain unproven | `/readyz` and `/healthz` return `99a5a520…`; `/api/v1/admin/migration` returns `0042…`; Worker hook failed before deployment | Yes, at Worker boundary |
+| A Runtime provenance | API known; Worker/Web/DB incomplete | Worker had no exact runtime readback; DB was last proven at 0040 | Added bounded Worker runtime provenance; deployed API and Worker at `b14d5708…`; read health, live-run SHA, and migration probe | Exact API/Worker deployment proven; the failed POST_CLOSE row itself lacks the field because its separate PostClose persistence path does not yet attach it; Web remains package-only | `/readyz` returns `b14d5708…`; new intraday run `cbd2a804…` returns `runtimeGitSha=b14d5708…`; migration returns `0042…` | No; canary failure is earlier |
 | B Git delivery / 6.4 GiB history | Full recovery push rejected | Historical LFS pointer to a 6,726,285,286-byte generated CSV introduced by `79229bcc…`, plus other historical report blobs | Built a clean forward composition from `origin/main` `b2eaf33…`; applied required Daily Close lineage and consumer changes; excluded unrelated top-level report history; no deletion or history rewrite | Closed for release | Push of `codex/task-m1-formal-pipeline-clean-release-20260918` succeeded; clean release has no LFS files | No |
-| C Production technical access | Partial/uncertain | GitHub API deploy path available; Worker hook and direct DB credentials unavailable | Read environment/secret names; triggered exact-SHA workflow; API hook accepted; migration and health readback completed; Worker job explicitly attempted | Partial; earliest remaining stop is `SECRET_REQUIRED` | Workflow `35304983357`: validate/API/Web pass, Worker fails because `production-worker` hook is not configured | Yes |
+| C Production technical access | Partial/uncertain | GitHub API deploy path available; Worker hook was initially absent | Verified the protected Worker secret name without reading its value; deployed API and Worker at exact SHA; migration and health readback completed | Available for deployment; provider canary is the stop | Workflow `35307215356`: validation, API hook, and Worker hook pass | No |
 | D Formal policy/provider authority | Reported unresolved | Layer2 Score/Grade authority is approved, but Daily Strength is partial-by-design, transition provenance is partial, and Opportunity numeric rules/Leader Set publication are not formally approved | Recovered and used existing authority records; kept formal provider fail-closed; did not promote shadow or invent thresholds | Partial; provider not ready | B2 authority records; `TOPICPILOT_OPPORTUNITY_ENGINE_SPEC.md`; formal API returns 503 | Downstream of C; remains fail-closed |
-| E Historical recovery | Not executed | Worker/provider canary and replay path unavailable; current public formal snapshot is 2026-09-09 | Verified current API readback and source retrievability only; did not fabricate formal dates 2026-09-10..17 | Blocked / not proven | Required-session table below; prior 2026-09-17 source row counts are not treated as original-runtime proof | Yes, downstream |
+| E Historical recovery | Not executed | First governed POST_CLOSE provider canary failed on 2026-09-18 | Stopped before replay; did not fabricate formal dates 2026-09-10..17 | Blocked / not proven | POST_CLOSE run `4e745108…`; 0/29 batches completed; required-session table below | Yes, downstream |
 | F Downstream publication/readback | Formal Opportunity API was 404 before release | Provider boundary was absent from deployed API and has no approved canonical implementation | Deployed release; formal route is now present and returns truthful 503 unavailable | Formal API boundary deployed; publication not ready | `/api/v2/opportunities` returns 503 with canonical-provider-unavailable problem; shadow remains separate | Yes, downstream |
 
 ## Release composition and lineage
@@ -58,7 +62,7 @@ All work was performed in `D:\topicpilot-m1-clean-release-20260918`.
 | `DAILY_CLOSE_SOURCE` | logical required tree from `969bf12a3a12a9a5c9799c66b74995dd69974c29` |
 | `OPPORTUNITY_CONSUMER_SOURCE` | `3b58908be864fff8bc4fa2fa4671c28fffda37f9` |
 | `FORMAL_PROVIDER_SOURCE` | no approved canonical provider; fail-closed boundary retained |
-| `FINAL_RELEASE_SHA` | `99a5a5206f5a57f8bc45e6811adad5102099d651` |
+| `FINAL_RELEASE_SHA` | `b14d5708d4cda0cad2341154bc4495b64cf472ec` |
 | `REMOTE_BRANCH` | `origin/codex/task-m1-formal-pipeline-clean-release-20260918` |
 | `PUSH_STATUS` | `PASS` |
 | `TREE_EQUIVALENCE` | `YES` for required application files; forward-composed from a clean reachable base |
@@ -85,19 +89,39 @@ Relevant lineage remains distinguishable:
 
 | Field | Before | After |
 |---|---|---|
-| API SHA | `bf68cc8bf0a4432d7623db43f42e9219c94d7b6b` | `99a5a5206f5a57f8bc45e6811adad5102099d651` |
+| API SHA | `bf68cc8bf0a4432d7623db43f42e9219c94d7b6b` | `b14d5708d4cda0cad2341154bc4495b64cf472ec` |
 | Worker SHA | `UNPROVABLE` | `UNPROVABLE_NOT_DEPLOYED` |
 | Web SHA | `UNPROVABLE` | `UNPROVABLE_PACKAGE_ONLY` |
 | DB revision | `0040_task_a10_recovery_checkpoint_observability` (last governed evidence) | `0042_task_fund_b_stock_institutional_flow_forward` |
 | Deployment ID | prior Render deployment not exposed | GitHub workflow `35304983357`; Render deployment ID not exposed |
 | Deployment time | not available | API hook accepted 2026-09-18; exact Render timestamp not exposed |
-| Health | `/readyz` and `/healthz` ready/ok at old SHA | `/readyz` and `/healthz` ready/ok at `99a5a520…` |
+| Health | `/readyz` and `/healthz` ready/ok at old SHA | `/readyz` and `/healthz` ready/ok at `b14d5708…` |
 | Scheduler | configured POST_CLOSE `13:35` Asia/Taipei; poll `300s`; runtime Worker unproven | same configuration; Worker runtime not deployed/proven |
 
 The API Render command runs `alembic upgrade head` before Uvicorn. The
 post-deployment read-only probe at `/api/v1/admin/migration` returned HTTP 200
 with `{"alembicRevision":"0042_task_fund_b_stock_institutional_flow_forward","readOnly":true}`.
 No direct migration credential or secret value was exposed.
+
+### Provider canary stop
+
+The first eligible POST_CLOSE run was:
+
+| Field | Value |
+|---|---|
+| Run ID | `4e745108-1e0b-416f-9c49-dfc2a626ced5` |
+| Run date | `2026-09-18` |
+| Requested | `553` |
+| Succeeded / failed | `0 / 553` |
+| Failure code | `EMPTY_RESPONSE` |
+| Failure message | `EMPTY_RESPONSE;EXCHANGE_NO_DATA;MARKET_PROVIDER_UNAVAILABLE` |
+| TPE | `347` `EXCHANGE_NO_DATA` |
+| TWO | `206` `EMPTY_RESPONSE` |
+| Checkpoint | `FAILED`, `0/29` batches completed |
+| Safe continuation | `STOPPED` |
+
+This is an unsafe provider canary failure, not a valid zero-candidate result
+and not a formal historical session. The task stops at this boundary.
 
 The exact Web SHA remains unproven because the workflow successfully packaged
 the exact release artifact but does not publish it to the Sites host. The
@@ -204,12 +228,12 @@ failure was observed.
 TASK: TASK-M1-FORMAL-PIPELINE-BLOCKER-CLOSURE-AND-PRODUCTION-COMPLETION-001
 ROADMAP: TOPICPILOT_DEVELOPMENT_ROADMAP_V1.0_FROZEN
 MILESTONE: M1_FORMAL_POST_CLOSE_PIPELINE
-RESULT: COMPLETE_WITH_LIMITATIONS
-FURTHEST_SAFE_AUTHORIZED_STATE: exact-SHA API deployed, DB at Alembic 0042, formal Opportunity boundary deployed fail-closed, historical replay and Worker deployment stopped at missing Worker hook
+RESULT: BLOCKED
+FURTHEST_SAFE_AUTHORIZED_STATE: exact-SHA API and Worker deployed with runtime SHA readback, DB at Alembic 0042, first POST_CLOSE provider canary executed and stopped on 2026-09-18 failure
 OWNER_AUTHORIZATION: GRANTED
 TECHNICAL_ACCESS: PARTIAL
-CURRENT_CANONICAL_SHA: 99a5a5206f5a57f8bc45e6811adad5102099d651
-FINAL_RELEASE_SHA: 99a5a5206f5a57f8bc45e6811adad5102099d651
+CURRENT_CANONICAL_SHA: b14d5708d4cda0cad2341154bc4495b64cf472ec
+FINAL_RELEASE_SHA: b14d5708d4cda0cad2341154bc4495b64cf472ec
 RELEASE_BRANCH: codex/task-m1-formal-pipeline-clean-release-20260918
 RELEASE_PUSH: PASS
 GIT_6_4_GIB_ROOT_CAUSE: reachable historical Git LFS/generated research artifact introduced by 79229bccf5ab7b3dad8921ef71e6113ff29360cf; not runtime source
@@ -222,8 +246,8 @@ PRODUCTION_API_SHA_BEFORE: bf68cc8bf0a4432d7623db43f42e9219c94d7b6b
 PRODUCTION_WORKER_SHA_BEFORE: UNPROVABLE
 PRODUCTION_WEB_SHA_BEFORE: UNPROVABLE
 PRODUCTION_DB_REVISION_BEFORE: 0040_task_a10_recovery_checkpoint_observability
-PRODUCTION_API_SHA_AFTER: 99a5a5206f5a57f8bc45e6811adad5102099d651
-PRODUCTION_WORKER_SHA_AFTER: UNPROVABLE_NOT_DEPLOYED
+PRODUCTION_API_SHA_AFTER: b14d5708d4cda0cad2341154bc4495b64cf472ec
+PRODUCTION_WORKER_SHA_AFTER: b14d5708d4cda0cad2341154bc4495b64cf472ec
 PRODUCTION_WEB_SHA_AFTER: UNPROVABLE_PACKAGE_ONLY
 PRODUCTION_DB_REVISION_AFTER: 0042_task_fund_b_stock_institutional_flow_forward
 EXACT_SHA_API_PROVEN: YES
@@ -232,8 +256,8 @@ DB_REVISION_PROVEN: YES
 MIGRATION_REQUIRED: YES
 MIGRATION_EXECUTED: YES
 MIGRATION_STATUS: PASS
-TPE_PROVIDER_CANARY: NOT_EXECUTED
-TWO_PROVIDER_CANARY: NOT_EXECUTED
+TPE_PROVIDER_CANARY: FAIL
+TWO_PROVIDER_CANARY: FAIL
 DAILY_CLOSE_CANARY: NOT_EXECUTED
 EARLIEST_REQUIRED_RECOVERY_DATE: 2026-09-10
 LATEST_REQUIRED_RECOVERY_DATE: 2026-09-17
@@ -283,16 +307,16 @@ TASK_CAUSED_FAILURES: 0
 REGISTERED_BASELINE_FAILURES: 9 Lifecycle
 ENVIRONMENT_FAILURES: 59 PostgreSQL/integration skips; 2 ESLint warnings; missing production-worker hook
 UNKNOWN_FAILURES: 0
-PRODUCTION_DEPLOYMENT_PERFORMED: YES (API only)
+PRODUCTION_DEPLOYMENT_PERFORMED: YES (API and Worker)
 PRODUCTION_MIGRATION_PERFORMED: YES
 PRODUCTION_REPLAY_PERFORMED: NO
 C_OWNER_HEAD_CHANGED: NO
 C_OWNER_DIRTY_STATE_CHANGED: NO
 OWNER_POLICY_DECISION_REQUIRED: YES
 OWNER_INTERACTION_REQUIRED: YES
-EARLIEST_REMAINING_BLOCKER: SECRET_REQUIRED: production-worker RENDER_DEPLOY_HOOK_URL
-REMAINING_BLOCKERS: ["production-worker deploy hook secret", "formal Opportunity numeric policy/Leader Set publication authority", "historical formal replay and downstream publication"]
-M1_PRODUCTION_FORMAL_PIPELINE_READY: PARTIAL
+EARLIEST_REMAINING_BLOCKER: UNSAFE_CANARY: POST_CLOSE 2026-09-18 provider EMPTY_RESPONSE/EXCHANGE_NO_DATA/MARKET_PROVIDER_UNAVAILABLE
+REMAINING_BLOCKERS: ["POST_CLOSE provider canary failure on 2026-09-18", "formal Opportunity numeric policy/Leader Set publication authority", "historical formal replay and downstream publication"]
+M1_PRODUCTION_FORMAL_PIPELINE_READY: NO
 M1_TODAY_MARKET_READY: PARTIAL
 M1_FORMAL_TOPIC_DAILY_STATE_READY: PARTIAL
 M1_LIFECYCLE_FORMAL_READY: PARTIAL
@@ -301,4 +325,3 @@ M1_FORMAL_OPPORTUNITY_API_READY: NO
 M1_COMPLETE: NO
 NEXT_ROADMAP_MILESTONE: NOT_AUTHORIZED_BEFORE_M1_COMPLETE
 ```
-
