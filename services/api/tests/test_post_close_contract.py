@@ -220,6 +220,7 @@ def test_post_close_cli_defers_tracking_mutation_until_after_reference_precondit
     assert "repository.refresh_tracking_universe()" in text
     refresh = text.index("repository.refresh_tracking_universe()")
     assert text.index("session.commit()", refresh) < text.index("collector =", refresh)
+    assert "post_close_runner=post_close_runner" in text
     assert "load_g2_preflight_context" in (
         Path(__file__).parents[1]
         / "src/topicpilot_api/live/post_close.py"

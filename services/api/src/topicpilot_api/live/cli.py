@@ -180,10 +180,7 @@ def main(argv: list[str] | None = None) -> int:
             collector,
             config,
             worker=worker,
-            post_close_runner=lambda: daily_forward.run_once(
-                run_date=args.run_date,
-                replay=args.run_date is not None,
-            ),
+            post_close_runner=post_close_runner,
         )
         try:
             if args.once:
