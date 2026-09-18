@@ -482,7 +482,9 @@ class FormalOpportunityUniverseConsumer:
             if relation.topic_id not in eligible_topics:
                 continue
             if relation.publication_status != FORMAL_PUBLICATION_STATUS:
-                hard_relation_reasons.append(f"RELATION_NOT_FORMALLY_PUBLISHED:{relation.relation_id}")
+                hard_relation_reasons.append(
+                    f"RELATION_NOT_FORMALLY_PUBLISHED:{relation.relation_id}"
+                )
                 continue
             if relation.valid_from > as_of:
                 excluded_reasons["FUTURE_RELATION_NOT_LOOKAHEAD"] += 1
