@@ -290,6 +290,7 @@ class LiveStatusResponse(ApiModel):
     provider_status: str = Field(alias="providerStatus")
     freshness_state: str = Field(alias="freshnessState")
     heartbeat_at: datetime | None = Field(alias="heartbeatAt")
+    runtime_git_sha: str | None = Field(default=None, alias="runtimeGitSha")
     success_count: int = Field(alias="successCount")
     failure_count: int = Field(alias="failureCount")
     retry_count: int = Field(alias="retryCount")

@@ -31,6 +31,7 @@ from topicpilot_api.orm import (
     ObservationTimelineEntry,
     RawMarketObservation,
 )
+from topicpilot_api.release_provenance import runtime_git_sha
 
 from .config import LiveRuntimeConfig
 from .contracts import IntradayBar, IntradayFetchResult, TrackingInstrument
@@ -387,7 +388,11 @@ class LiveRepository:
             requested_count=requested_count,
             freshness_state="UNKNOWN",
             provider_status="CONNECTING",
-            metadata_payload={"interval": self.config.interval, "sourceId": str(source.id)},
+            metadata_payload={
+                "interval": self.config.interval,
+                "sourceId": str(source.id),
+                "runtimeGitSha": runtime_git_sha(),
+            },
         )
         self.session.add(run)
         self.session.flush()
@@ -582,7 +587,9 @@ class LiveRepository:
         run.failure_code = failure_code
         run.failure_message = failure_message
         if metadata_payload is not None:
-            run.metadata_payload = metadata_payload
+            current_metadata = dict(run.metadata_payload or {})
+            current_metadata.update(metadata_payload)
+            run.metadata_payload = current_metadata
         run.completed_at = now or _now()
         run.heartbeat_at = run.completed_at
         run.updated_at = run.completed_at
@@ -600,6 +607,7 @@ def read_live_status(session: Session) -> dict[str, Any]:
             "providerStatus": "UNKNOWN",
             "freshnessState": "UNKNOWN",
             "heartbeatAt": None,
+            "runtimeGitSha": None,
             "successCount": 0,
             "failureCount": 0,
             "retryCount": 0,
@@ -648,6 +656,7 @@ def read_live_status(session: Session) -> dict[str, Any]:
         "providerStatus": run.provider_status,
         "freshnessState": run.freshness_state,
         "heartbeatAt": run.heartbeat_at,
+        "runtimeGitSha": metadata.get("runtimeGitSha"),
         "successCount": run.success_count,
         "failureCount": run.failure_count,
         "retryCount": run.retry_count,
