@@ -17,14 +17,13 @@ the Worker runtime SHA was read back from a new live run, and the database
 read-only probe reports the single Alembic head
 `0042_task_fund_b_stock_institutional_flow_forward`.
 
-The M1 chain cannot be completed safely beyond this point. The first external
-stop is technical access: the GitHub `production-worker` environment has no
-`RENDER_DEPLOY_HOOK_URL`, so the Worker cannot be deployed or its new startup
-SHA log can be observed. The formal Opportunity provider also remains
-correctly unavailable: the repository contains a consumer boundary, but the
-current PM specification leaves the numeric Opportunity policy open and no
-approved canonical provider/Leader Set publication artifact exists. Shadow
-output was not promoted.
+The earlier technical-access stop was cleared: the protected
+`production-worker` environment secret was verified by name only, and the
+exact-SHA Worker deployment and runtime readback completed. The formal
+Opportunity provider also remains correctly unavailable: the repository
+contains a consumer boundary, but the current PM specification leaves the
+numeric Opportunity policy open and no approved canonical provider/Leader Set
+publication artifact exists. Shadow output was not promoted.
 
 The first unsafe boundary is now the Production provider canary. The governed
 POST_CLOSE run for `2026-09-18` failed before any formal recovery could be
@@ -68,7 +67,7 @@ All work was performed in `D:\topicpilot-m1-clean-release-20260918`.
 | `TREE_EQUIVALENCE` | `YES` for required application files; forward-composed from a clean reachable base |
 | `GIANT_ARTIFACTS_REQUIRED` | `NO` |
 | `HISTORY_REWRITE_PERFORMED` | `NO` |
-| `PRODUCTION_WORKFLOW_RUN` | `35304983357` |
+| `PRODUCTION_WORKFLOW_RUN` | `35307215356` |
 
 The dominant rejected object is the Git LFS pointer for
 `reports/TASK-WS2-E1-603-UNIVERSE-TECHNICAL-V0-EXPANDED-QUALIFICATION-RESUME-AFTER-SOURCE-CONTRACT-UNBLOCK-20260820/ws2-e1-resume-full-historical-formal-evidence-surface.csv`.
@@ -90,13 +89,13 @@ Relevant lineage remains distinguishable:
 | Field | Before | After |
 |---|---|---|
 | API SHA | `bf68cc8bf0a4432d7623db43f42e9219c94d7b6b` | `b14d5708d4cda0cad2341154bc4495b64cf472ec` |
-| Worker SHA | `UNPROVABLE` | `UNPROVABLE_NOT_DEPLOYED` |
+| Worker SHA | `UNPROVABLE` | `b14d5708d4cda0cad2341154bc4495b64cf472ec` |
 | Web SHA | `UNPROVABLE` | `UNPROVABLE_PACKAGE_ONLY` |
 | DB revision | `0040_task_a10_recovery_checkpoint_observability` (last governed evidence) | `0042_task_fund_b_stock_institutional_flow_forward` |
-| Deployment ID | prior Render deployment not exposed | GitHub workflow `35304983357`; Render deployment ID not exposed |
+| Deployment ID | prior Render deployment not exposed | GitHub workflow `35307215356`; Render deployment ID not exposed |
 | Deployment time | not available | API hook accepted 2026-09-18; exact Render timestamp not exposed |
 | Health | `/readyz` and `/healthz` ready/ok at old SHA | `/readyz` and `/healthz` ready/ok at `b14d5708…` |
-| Scheduler | configured POST_CLOSE `13:35` Asia/Taipei; poll `300s`; runtime Worker unproven | same configuration; Worker runtime not deployed/proven |
+| Scheduler | configured POST_CLOSE `13:35` Asia/Taipei; poll `300s`; runtime Worker unproven | same configuration; Worker runtime SHA proven from live run `cbd2a804…` |
 
 The API Render command runs `alembic upgrade head` before Uvicorn. The
 post-deployment read-only probe at `/api/v1/admin/migration` returned HTTP 200
@@ -122,6 +121,38 @@ The first eligible POST_CLOSE run was:
 
 This is an unsafe provider canary failure, not a valid zero-candidate result
 and not a formal historical session. The task stops at this boundary.
+
+### Read-only provider root-cause diagnosis
+
+Before any code or deployment change, the same official market-level endpoints
+used by the deployed adapters were probed independently for the known-good
+2026-09-17 control and the failed 2026-09-18 date. The probes were bounded to
+one request per market/date and retained only safe response metadata:
+
+| Date | Market | Official request contract | HTTP / stat | Response date | Market rows | Adapter conclusion |
+|---|---|---|---|---|---:|---|
+| 2026-09-17 | TPE | TWSE `MI_INDEX`, `YYYYMMDD` | 200 / `OK` | `20260917` | 1,377 | available |
+| 2026-09-17 | TWO | TPEx `dailyQuotes`, `YYYY/MM/DD` | 200 / `ok` | `20260917` | 11,479 | available |
+| 2026-09-18 | TPE | TWSE `MI_INDEX`, `YYYYMMDD` | 200 / `OK` | `20260918` | 1,377 | available; parser-compatible |
+| 2026-09-18 | TWO | TPEx `dailyQuotes`, `YYYY/MM/DD` | 200 / `ok` | `20260918` | 0 | unsafe unavailable market payload |
+
+The 2026-09-18 TPE response contains the expected `證券代號` table and is
+currently parser-compatible. The 2026-09-18 TWO response is valid JSON with
+the expected `上櫃股票行情` table, but that table contains zero rows. This is
+not a valid zero-price or zero-candidate state; the market-day diagnostic
+therefore remains fail-closed as `EMPTY_RESPONSE`. The requested and returned
+dates match, and 2026-09-18 is a Friday, so no date-format or weekend
+substitution was found.
+
+The original Production TPE `EXCHANGE_NO_DATA` response body and safe
+provider metadata were not persisted by the failed run, so the historical
+TPE failure cannot be distinguished after the fact between a transient
+official-source no-data response and another first-failing provider condition.
+The current TPE success does not justify replaying the full canary. The TWO
+official source still fails the bounded read-only gate, so no progressive
+production canary, historical replay, Daily Close, Topic publication, or
+Opportunity evaluation was attempted. No provider, parser, date, filter, or
+policy change was evidence-backed; none was made.
 
 The exact Web SHA remains unproven because the workflow successfully packaged
 the exact release artifact but does not publish it to the Sites host. The
@@ -251,7 +282,7 @@ PRODUCTION_WORKER_SHA_AFTER: b14d5708d4cda0cad2341154bc4495b64cf472ec
 PRODUCTION_WEB_SHA_AFTER: UNPROVABLE_PACKAGE_ONLY
 PRODUCTION_DB_REVISION_AFTER: 0042_task_fund_b_stock_institutional_flow_forward
 EXACT_SHA_API_PROVEN: YES
-EXACT_SHA_WORKER_PROVEN: NO
+EXACT_SHA_WORKER_PROVEN: YES
 DB_REVISION_PROVEN: YES
 MIGRATION_REQUIRED: YES
 MIGRATION_EXECUTED: YES

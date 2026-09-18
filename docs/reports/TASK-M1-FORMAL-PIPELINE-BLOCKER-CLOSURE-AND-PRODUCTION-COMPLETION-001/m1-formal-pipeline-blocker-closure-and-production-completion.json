@@ -31,7 +31,7 @@
     "migration_required": "YES",
     "migration_executed": "YES",
     "migration_status": "PASS",
-    "deployment_workflow_run": "35304983357",
+    "deployment_workflow_run": "35307215356",
     "health_after": "ready/ok"
   },
   "canaries": {
@@ -56,6 +56,28 @@
     "total_batches": 29,
     "completed_batches": 0,
     "safe_continuation": "STOPPED"
+  },
+  "provider_diagnosis": {
+    "probe_mode": "READ_ONLY_BOUNDED_OFFICIAL_SOURCE",
+    "probe_scope": "one market-level request per market/date; no database or production write",
+    "calendar_check": {
+      "date": "2026-09-18",
+      "weekday": "FRIDAY",
+      "requested_date_preserved": "YES",
+      "response_date_match": {"TPE": "YES", "TWO": "YES"},
+      "date_substitution": "NO"
+    },
+    "known_good_control": {
+      "TPE": {"http": 200, "stat": "OK", "response_date": "20260917", "market_rows": 1377},
+      "TWO": {"http": 200, "stat": "ok", "response_date": "20260917", "market_rows": 11479}
+    },
+    "target_date": {
+      "TPE": {"http": 200, "stat": "OK", "response_date": "20260918", "market_rows": 1377, "classification": "AVAILABLE"},
+      "TWO": {"http": 200, "stat": "ok", "response_date": "20260918", "market_rows": 0, "classification": "EMPTY_RESPONSE"}
+    },
+    "tpe_original_canary_failure": "NOT_REPRODUCIBLE_WITH_CURRENT_READ_ONLY_PROBE; original response body was not persisted",
+    "repair_decision": "NO_CHANGE; TWO official market-day payload remains unavailable and no parser/date/policy defect was proven",
+    "progressive_canary": "NOT_ATTEMPTED; unsafe TWO gate remains"
   },
   "historical_recovery": {
     "earliest_required_date": "2026-09-10",
