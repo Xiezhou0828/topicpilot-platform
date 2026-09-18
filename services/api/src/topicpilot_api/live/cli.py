@@ -23,6 +23,7 @@ from topicpilot_api.live.scheduler import LiveScheduler
 from topicpilot_api.live.session import MarketSessionClock
 from topicpilot_api.live.transaction import SessionRecoveryError, recover_session
 from topicpilot_api.market_data.registry import build_live_provider_router
+from topicpilot_api.release_provenance import runtime_git_sha
 
 
 def _symbols_argument(value: str) -> tuple[str, ...]:
@@ -120,6 +121,7 @@ def main(argv: list[str] | None = None) -> int:
     log_event(
         logging.getLogger("topicpilot.live.cli"),
         "scheduler_decision",
+        gitSha=runtime_git_sha(),
         mode=decision,
         config=config.as_dict(),
     )

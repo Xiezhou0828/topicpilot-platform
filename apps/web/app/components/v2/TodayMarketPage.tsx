@@ -178,10 +178,11 @@ function InstitutionalFlowSummary({ overview }: { overview: NonNullable<TodayMar
   if (!flow) {
     return <div className="tp-empty-state"><p>法人流向資料尚未提供。</p></div>;
   }
+  const markets = flow.markets ?? [];
   return (
     <div className="tp-home-institutional-flow" data-flow-status={flow.status}>
       <div className="tp-home-secondary-metrics">
-        {flow.markets.map((market) => {
+        {markets.map((market) => {
           const current = market.current;
           const format = (value: string | null) => value === null ? "—" : value.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
           return (
