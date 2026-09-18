@@ -139,7 +139,7 @@
     "formal Opportunity numeric policy and Leader Set publication authority",
     "historical formal replay and downstream publication"
   ],
-  "m1_production_formal_pipeline_ready": "PARTIAL",
+  "m1_production_formal_pipeline_ready": "NO",
   "m1_today_market_ready": "PARTIAL",
   "m1_formal_topic_daily_state_ready": "PARTIAL",
   "m1_lifecycle_formal_ready": "PARTIAL",
