@@ -95,7 +95,7 @@ class TopicScoreProjection(Base, IdentityMixin, CreatedAtMixin):
 
 
 class TopicScoreProjectionMember(Base, IdentityMixin):
-    """An explicitly approved CORE member in one Score projection artifact."""
+    """An explicitly approved formal Topic member in one Score projection."""
 
     __tablename__ = "topic_score_projection_members"
     __table_args__ = (
@@ -105,7 +105,7 @@ class TopicScoreProjectionMember(Base, IdentityMixin):
             name="uq_topic_score_projection_members_member",
         ),
         CheckConstraint(
-            "score_importance IN (0.50, 0.75, 1.00)",
+            "score_importance IN (0.25, 0.75, 1.00)",
             name="ck_topic_score_projection_member_importance",
         ),
     )

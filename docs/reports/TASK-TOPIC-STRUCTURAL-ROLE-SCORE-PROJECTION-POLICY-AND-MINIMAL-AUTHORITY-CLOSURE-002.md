@@ -1,5 +1,11 @@
 # TASK-TOPIC-STRUCTURAL-ROLE-SCORE-PROJECTION-POLICY-AND-MINIMAL-AUTHORITY-CLOSURE-002
 
+> **Historical policy notice:** This report predates and is superseded by
+> `DEC-04=APPROVED_ROLE_BASED_IMPORTANCE_V1` on 2026-09-20. Its former
+> `0.50` value and bounded CORE-only projection describe historical evidence,
+> not the active D001 contract. See Addendum J in the architecture contract
+> and the active DEC-04 M1 report.
+
 ## Closure identity and scope
 
 | Field | Result |

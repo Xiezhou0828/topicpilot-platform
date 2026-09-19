@@ -18,16 +18,16 @@ from .runtime_readiness import GovernedLeaderSet
 from .structural_role_authority import (
     AUTHORITY_READ_CURRENT,
     AUTHORITY_READ_HISTORICAL,
-    STRUCTURAL_ROLE_CORE,
     StructuralRoleAuthorityError,
     StructuralRoleResolution,
+    importance_for_structural_role,
     resolve_structural_role,
 )
 
 SCORE_PROJECTION_APPROVED = "APPROVED"
 SCORE_PROJECTION_READ_CURRENT = AUTHORITY_READ_CURRENT
 SCORE_PROJECTION_READ_HISTORICAL = AUTHORITY_READ_HISTORICAL
-ALLOWED_SCORE_IMPORTANCE = frozenset({Decimal("1.00"), Decimal("0.75"), Decimal("0.50")})
+ALLOWED_SCORE_IMPORTANCE = frozenset({Decimal("1.00"), Decimal("0.75"), Decimal("0.25")})
 
 
 class ScoreProjectionError(ValueError):
@@ -65,6 +65,8 @@ class ScoreProjectionRecord:
     approval_reference: str
     source_structural_role_authority_id: str
     source_structural_role_authority_version: str
+    # Kept as a wire/API compatibility name.  DEC-04 semantics are all formal
+    # Topic members; this is no longer a manually curated CORE subset.
     selected_core_members: tuple[ScoreProjectionMemberRecord, ...]
     projection_lineage: dict[str, Any]
     lineage_hash: str
@@ -116,6 +118,12 @@ class ScoreProjectionResolution:
     @property
     def topic_id(self) -> str:
         return self.record.topic_id
+
+    @property
+    def selected_members(self) -> tuple[ScoreProjectionMemberRecord, ...]:
+        """All formal Topic members carried by the projection."""
+
+        return self.record.selected_core_members
 
 
 def _required_text(value: str | None, field: str) -> str:
@@ -174,7 +182,7 @@ def resolve_score_projection_records(
     *,
     read_mode: str = SCORE_PROJECTION_READ_CURRENT,
 ) -> ScoreProjectionResolution:
-    """Resolve one topic projection and validate every selected CORE member."""
+    """Resolve one topic projection and validate every formal Topic member."""
 
     if read_mode not in {SCORE_PROJECTION_READ_CURRENT, SCORE_PROJECTION_READ_HISTORICAL}:
         raise ScoreProjectionError("read_mode must be CURRENT or HISTORICAL")
@@ -210,7 +218,7 @@ def resolve_score_projection_records(
 
     member_authorities: list[StructuralRoleResolution] = []
     for member in selected.selected_core_members:
-        _validate_importance(member.score_importance)
+        actual_importance = _validate_importance(member.score_importance)
         try:
             authority = authority_resolver(
                 selected.topic_id,
@@ -222,8 +230,9 @@ def resolve_score_projection_records(
             raise ScoreProjectionError(
                 f"STRUCTURAL_ROLE_AUTHORITY_INVALID:{member.instrument_id}"
             ) from exc
-        if authority.structural_role != STRUCTURAL_ROLE_CORE:
-            raise ScoreProjectionError("SCORE_PROJECTION_MEMBER_NOT_CORE")
+        expected_importance = importance_for_structural_role(authority.structural_role)
+        if actual_importance != expected_importance:
+            raise ScoreProjectionError("SCORE_PROJECTION_ROLE_IMPORTANCE_MISMATCH")
         if authority.authority_id != member.structural_role_authority_id:
             raise ScoreProjectionError("SCORE_PROJECTION_MEMBER_AUTHORITY_MISMATCH")
         if authority.record.authority_version != member.structural_role_authority_version:

@@ -268,8 +268,8 @@ def derive_formal_topic_score(
     if not leaders:
         raise FormalTopicScoreAuthorityError("approved Leader Set has no topic members")
     leader_ids = tuple(leader.member_id for leader in leaders)
-    if not set(leader_ids).issubset(set(authority.core_member_ids)):
-        raise FormalTopicScoreAuthorityError("Leader Set contains a non-CORE member")
+    if not set(leader_ids).issubset(set(fact_ids)):
+        raise FormalTopicScoreAuthorityError("Leader Set contains a non-member fact")
 
     observations = tuple(
         ParticipationObservation(

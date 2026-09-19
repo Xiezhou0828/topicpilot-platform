@@ -15,7 +15,7 @@ def test_canonical_revision_is_linear_after_0018():
     config = Config(str(ROOT / "alembic.ini"))
     script = ScriptDirectory.from_config(config)
     assert [head.revision for head in script.get_revisions("heads")] == [
-        "0042_task_fund_b_stock_institutional_flow_forward"
+        "0043_task_m1_role_based_d001_importance"
     ]
 
 

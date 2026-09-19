@@ -14,6 +14,12 @@ does not select Leader Set members, invent a ranking or concentration formula,
 approve provisional Lifecycle thresholds, create a policy approval artifact,
 publish derived values, or start Phase 2B implementation.
 
+> **DEC-04 supersession (2026-09-20):** The historical D001 sections below
+> that describe `0.50` or a bounded CORE-only projection are preserved for
+> audit history but are no longer the active policy. The active contract is
+> Addendum J: `CORE=1.00`, `REPRESENTATIVE=0.75`, `RELATED=0.25`, with all
+> approved formal Topic members in the D001 member universe.
+
 ## 1. Cold-start authority and evidence rule
 
 The audit starts from the committed canonical tree at `SOURCE HEAD`. It does
@@ -1025,3 +1031,31 @@ The companion machine-readable artifact and closure report are:
 
 - `docs/reports/TASK-TOPIC-STRUCTURAL-ROLE-SCORE-PROJECTION-POLICY-AND-MINIMAL-AUTHORITY-CLOSURE-002/authority-readiness.json`
 - `docs/reports/TASK-TOPIC-STRUCTURAL-ROLE-SCORE-PROJECTION-POLICY-AND-MINIMAL-AUTHORITY-CLOSURE-002.md`
+
+## Addendum J - DEC-04 role-based importance V1
+
+`DEC-04=APPROVED_ROLE_BASED_IMPORTANCE_V1` supersedes the prior D001 review
+queue and its `1.00/0.75/0.50` consumer-only semantics. The active mapping is:
+
+| Formal Structural Role | D001 importance |
+| --- | ---: |
+| `CORE` | `1.00` |
+| `REPRESENTATIVE` | `0.75` |
+| `RELATED` | `0.25` |
+
+Importance is a deterministic role projection, not a second hierarchy inside
+CORE. The D001 member universe is all approved, effective, non-superseded
+formal Topic members with a valid Structural Role. There is no manual CORE
+subset, Top-N, fixed minimum, fixed maximum, or analytical ordering rule.
+Stable Topic/instrument/relation identity ordering is permitted only for
+persistence and readback determinism.
+
+The historical candidate TSV remains `PROPOSAL_ONLY_NON_AUTHORITY` and is
+provenance/reconciliation evidence only. Current role authority is the
+approved `structural-role-authority-20260912.v4` artifact. The active machine
+artifact is
+`config/topic_d001_role_importance_authority/d001-role-importance-authority-20260920.v1.json`.
+The runtime resolver validates exact role-to-importance equality, and the
+forward migration refuses stale persisted `0.50` rows instead of rewriting
+them automatically. The complete current implementation and external runtime
+boundary are recorded in the DEC-04 M1 report.

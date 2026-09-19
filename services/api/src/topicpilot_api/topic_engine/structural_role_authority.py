@@ -5,6 +5,7 @@ from __future__ import annotations
 from collections.abc import Iterable
 from dataclasses import dataclass
 from datetime import date
+from decimal import Decimal
 from uuid import UUID
 
 from sqlalchemy import select
@@ -22,6 +23,11 @@ STRUCTURAL_ROLES = frozenset(
         STRUCTURAL_ROLE_RELATED,
     }
 )
+STRUCTURAL_ROLE_IMPORTANCE = {
+    STRUCTURAL_ROLE_CORE: Decimal("1.00"),
+    STRUCTURAL_ROLE_REPRESENTATIVE: Decimal("0.75"),
+    STRUCTURAL_ROLE_RELATED: Decimal("0.25"),
+}
 AUTHORITY_READ_CURRENT = "CURRENT"
 AUTHORITY_READ_HISTORICAL = "HISTORICAL"
 AUTHORITY_APPROVED = "APPROVED"
@@ -133,6 +139,15 @@ def _effective(record: StructuralRoleAuthorityRecord, as_of: date) -> bool:
     )
 
 
+def importance_for_structural_role(role: str) -> Decimal:
+    """Return the DEC-04 deterministic importance projection for one role."""
+
+    try:
+        return STRUCTURAL_ROLE_IMPORTANCE[role]
+    except KeyError as exc:
+        raise StructuralRoleAuthorityError("structural role has no approved importance") from exc
+
+
 def resolve_structural_role_records(
     records: Iterable[StructuralRoleAuthorityRecord],
     topic_id: str | UUID,
@@ -212,11 +227,13 @@ __all__ = [
     "AUTHORITY_READ_HISTORICAL",
     "STRUCTURAL_ROLES",
     "STRUCTURAL_ROLE_CORE",
+    "STRUCTURAL_ROLE_IMPORTANCE",
     "STRUCTURAL_ROLE_RELATED",
     "STRUCTURAL_ROLE_REPRESENTATIVE",
     "StructuralRoleAuthorityError",
     "StructuralRoleAuthorityRecord",
     "StructuralRoleResolution",
+    "importance_for_structural_role",
     "resolve_structural_role",
     "resolve_structural_role_records",
 ]

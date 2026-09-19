@@ -1,4 +1,7 @@
 {
+    "historicalArtifactStatus":  "SUPERSEDED_BY_DEC_04_ROLE_BASED_IMPORTANCE_V1",
+    "activeOwnerReviewQueue":  false,
+    "supersedingAuthorityArtifact":  "config/topic_d001_role_importance_authority/d001-role-importance-authority-20260920.v1.json",
     "schemaVersion":  "topic-score-projection-owner-review-draft.v1",
     "status":  "DRAFT_NOT_FORMAL_AUTHORITY",
     "taskId":  "TASK-M1-FORMAL-AUTHORITY-ACTIVATION-AND-READBACK-002",

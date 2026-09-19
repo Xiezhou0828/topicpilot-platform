@@ -1,0 +1,100 @@
+{
+  "taskId": "TASK-M1-FORMAL-AUTHORITY-ACTIVATION-AND-READBACK-002",
+  "taskStatus": "IMPLEMENTED_AWAITING_PRODUCTION_READBACK",
+  "m1Complete": "NO",
+  "m2Started": "NO",
+  "ownerDecision": "DEC-04=APPROVED_ROLE_BASED_IMPORTANCE_V1",
+  "modelClassification": "MODEL_A",
+  "structuralRoleValues": ["CORE", "REPRESENTATIVE", "RELATED"],
+  "historicalRoleWeightEvidence": {
+    "source": "final_owner_approved_structural_role_authority_candidate_post_c2_20260819.tsv",
+    "sha256": "149ACE2669F2E0575331CEAE66584E7C229F15E266F0CD921B31B7EA9220AF38",
+    "rows": 822,
+    "proposalState": "PROPOSAL_ONLY_NON_AUTHORITY",
+    "finalStructuralRoleCounts": {
+      "CORE": 262,
+      "REPRESENTATIVE": 410,
+      "RELATED": 150
+    },
+    "historicalFinalImportanceCounts": {
+      "0.50": 18,
+      "0.75": 84,
+      "1.00": 199,
+      "blank": 521
+    },
+    "reconciliation": "HISTORICAL_PROVENANCE_ONLY; NOT_PROMOTED; CONFLICTS_WITH_CURRENT_FORMAL_ROLE_AUTHORITY"
+  },
+  "structuralRoleAuthority": {
+    "artifact": "config/topic_structural_role_authority/structural-role-authority-20260912.v4.json",
+    "authorityVersion": "structural-role-authority-20260912.v4",
+    "artifactSha256": "c35c15911c355766dbaa53e76629ae17c84f8d1bbc98e2053b7e87592c0274bc",
+    "fileSha256": "49af09debaafb064400dcde34b5e31cc1b0c7651ad4d419fda59b23a61a7b901",
+    "effectiveDate": "2026-08-24",
+    "approvedRows": 1160,
+    "leafTopics": 107
+  },
+  "importancePolicy": {
+    "CORE": "1.00",
+    "REPRESENTATIVE": "0.75",
+    "RELATED": "0.25",
+    "importanceIsRoleProjection": "YES",
+    "separateCoreSubsetRequired": "NO",
+    "perCoreImportanceRequired": "NO",
+    "orderAffectsScore": "NO",
+    "fixedMinRequiredByFormula": "NO",
+    "fixedMaxRequiredByFormula": "NO",
+    "ordering": "stable Topic/instrument/relation identifier for persistence/readback only"
+  },
+  "requiredSemanticReconciliation": {
+    "STRUCTURAL_ROLE_VALUES": "CORE,REPRESENTATIVE,RELATED",
+    "HISTORICAL_ROLE_WEIGHT_EVIDENCE": "TSV retained as non-authority historical provenance; current Owner decision supplies formal mapping",
+    "LEAD_WEIGHT": "UNPROVEN_NOT_CANONICAL_ROLE",
+    "CORE_WEIGHT": "1.00",
+    "RELATE_WEIGHT": "0.25",
+    "REPRESENTATIVE_WEIGHT": "0.75",
+    "IMPORTANCE_IS_ROLE_PROJECTION": "YES",
+    "D001_SCORE_MEMBER_UNIVERSE": "ALL_FORMAL_TOPIC_MEMBERS_WITH_APPROVED_EFFECTIVE_ROLE",
+    "D001_REQUIRES_SEPARATE_CORE_SUBSET": "NO",
+    "D001_REQUIRES_PER_CORE_IMPORTANCE": "NO",
+    "ORDER_AFFECTS_SCORE": "NO",
+    "FIXED_MIN_REQUIRED_BY_FORMULA": "NO",
+    "FIXED_MAX_REQUIRED_BY_FORMULA": "NO",
+    "MODEL_CLASSIFICATION": "MODEL_A"
+  },
+  "d001AuthorityArtifact": {
+    "path": "config/topic_d001_role_importance_authority/d001-role-importance-authority-20260920.v1.json",
+    "authorityVersion": "d001-role-importance-authority-20260920.v1",
+    "artifactSha256": "4ec1b3d83c419c846697bf34d59d6333e7b030a43211e4c6ac00a93aaa17a04b",
+    "effectiveDate": "2026-09-20",
+    "topics": 107,
+    "members": 1160,
+    "memberUniverse": "ALL_FORMAL_TOPIC_MEMBERS",
+    "manualOwnerRowReview": "NO"
+  },
+  "implementation": {
+    "roleImportanceResolver": "IMPLEMENTED_AND_TESTED",
+    "scoreProjectionResolver": "IMPLEMENTED_AND_TESTED_ALL_THREE_ROLES",
+    "productionLeaderWeightContract": "UPDATED_TO_0.25_0.75_1.00",
+    "scoreProjectionMigration": "0043_task_m1_role_based_d001_importance",
+    "migrationPolicy": "FAILS_CLOSED_ON_EXISTING_0.50; NO_AUTOMATIC_REWRITE",
+    "runtimeMaterializer": "IMPLEMENTED_DRY_RUN_AND_TRANSACTIONAL_READBACK_PATH",
+    "productionMaterialization": "NOT_RUN_NO_PRODUCTION_DATABASE_ACCESS"
+  },
+  "validation": {
+    "focusedTests": "38_PASSED",
+    "artifactHashReadback": "PASS",
+    "roleMappingReadback": "PASS",
+    "orderInvariantScoreTest": "ADDED",
+    "productionReadback": "NOT_RUN",
+    "ownerCheckoutPreserved": "YES",
+    "m2Started": "NO"
+  },
+  "downstream": {
+    "leaderSet": "CAN_CONSUME_ALL_FORMAL_ROLE_MEMBERS_AFTER_PROJECTION_READBACK",
+    "score": "NOT_MATERIALIZED",
+    "grade": "NOT_MATERIALIZED",
+    "lifecycleV13": "NOT_MATERIALIZED",
+    "formalTopicTodayOpportunity": "NOT_MATERIALIZED",
+    "automationProof": "NOT_RUN"
+  }
+}

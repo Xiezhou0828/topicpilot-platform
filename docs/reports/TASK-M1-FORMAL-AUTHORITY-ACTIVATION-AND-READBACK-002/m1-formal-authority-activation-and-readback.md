@@ -1,3 +1,10 @@
+# SUPERSEDED BY DEC-04 ROLE-BASED IMPORTANCE V1
+
+This historical closeout is preserved as audit evidence for the prior Model B
+review boundary. It is not the current D001 policy or runtime status. The
+current reconciliation and implementation state are recorded in
+`docs/reports/TASK-M1-FORMAL-AUTHORITY-ACTIVATION-AND-READBACK-002/dec-04-role-based-importance-v1.md`.
+
 # TASK-M1-FORMAL-AUTHORITY-ACTIVATION-AND-READBACK-002
 
 ## Executive Summary

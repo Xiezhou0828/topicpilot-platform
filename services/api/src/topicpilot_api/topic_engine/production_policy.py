@@ -55,7 +55,7 @@ _NORMALIZATION_KNOTS: Final = (
     (0.5, 75.0),
     (1.0, 100.0),
 )
-_ALLOWED_LEADER_WEIGHTS: Final = frozenset({0.5, 0.75, 1.0})
+_ALLOWED_LEADER_WEIGHTS: Final = frozenset({0.25, 0.75, 1.0})
 _CONSENSUS_MODIFIERS: Final = (
     (-math.inf, -0.75, -10.0),
     (-0.75, -0.50, -5.0),
@@ -181,7 +181,7 @@ class LeaderDefinition:
         if not self.member_id.strip():
             raise ProductionPolicyError("Leader member_id must be non-empty")
         if self.importance not in _ALLOWED_LEADER_WEIGHTS:
-            raise ProductionPolicyError("Leader importance must be 0.50, 0.75, or 1.00")
+            raise ProductionPolicyError("Leader importance must be 0.25, 0.75, or 1.00")
 
 
 @dataclass(frozen=True)

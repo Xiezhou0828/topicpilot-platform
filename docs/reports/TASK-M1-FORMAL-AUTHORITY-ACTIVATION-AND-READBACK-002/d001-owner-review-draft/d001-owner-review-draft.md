@@ -1,3 +1,10 @@
+# SUPERSEDED BY DEC-04 ROLE-BASED IMPORTANCE V1
+
+This draft remains preserved as historical audit evidence only. It is not an
+active Owner review queue. DEC-04 now formally derives importance from the
+approved Structural Role mapping and the current authority artifact is
+`config/topic_d001_role_importance_authority/d001-role-importance-authority-20260920.v1.json`.
+
 # D001 Owner Review Draft
 
 `STATUS=DRAFT_NOT_FORMAL_AUTHORITY`

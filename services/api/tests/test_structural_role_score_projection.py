@@ -16,6 +16,7 @@ from topicpilot_api.topic_engine import (
     SCORE_PROJECTION_READ_HISTORICAL,
     STRUCTURAL_ROLE_CORE,
     STRUCTURAL_ROLE_RELATED,
+    STRUCTURAL_ROLE_REPRESENTATIVE,
     ScoreProjectionError,
     ScoreProjectionMemberRecord,
     ScoreProjectionRecord,
@@ -148,24 +149,26 @@ def test_relation_and_projection_models_expose_formal_read_model_fields():
     }
 
 
-def test_approved_effective_core_resolves_and_related_resolves_but_projection_rejects_related():
-    core = _authority()
-    resolved = resolve_structural_role_records((core,), "topic-1", "instrument-1", AS_OF)
-    assert resolved.structural_role == STRUCTURAL_ROLE_CORE
+@pytest.mark.parametrize(
+    ("role", "importance"),
+    [
+        (STRUCTURAL_ROLE_CORE, Decimal("1.00")),
+        (STRUCTURAL_ROLE_REPRESENTATIVE, Decimal("0.75")),
+        (STRUCTURAL_ROLE_RELATED, Decimal("0.25")),
+    ],
+)
+def test_approved_effective_role_resolves_and_role_projects_to_importance(role, importance):
+    authority = _authority(role=role)
+    resolved = resolve_structural_role_records((authority,), "topic-1", "instrument-1", AS_OF)
+    assert resolved.structural_role == role
     assert resolved.read_mode == AUTHORITY_READ_CURRENT
-
-    related = _authority(role=STRUCTURAL_ROLE_RELATED)
-    related_resolution = resolve_structural_role_records(
-        (related,), "topic-1", "instrument-1", AS_OF
+    resolution = resolve_score_projection_records(
+        (_projection(importance=importance),),
+        "topic-1",
+        AS_OF,
+        _resolve_authority((authority,)),
     )
-    assert related_resolution.structural_role == STRUCTURAL_ROLE_RELATED
-    with pytest.raises(ScoreProjectionError, match="NOT_CORE"):
-        resolve_score_projection_records(
-            (_projection(),),
-            "topic-1",
-            AS_OF,
-            _resolve_authority((related,)),
-        )
+    assert resolution.member_authorities[0].structural_role == role
 
 
 @pytest.mark.parametrize(
@@ -235,6 +238,17 @@ def test_projection_validation_fail_closed(projection, message):
             "topic-1",
             AS_OF,
             _resolve_authority((authority,)),
+        )
+
+
+def test_projection_importance_must_match_formal_role():
+    related = _authority(role=STRUCTURAL_ROLE_RELATED)
+    with pytest.raises(ScoreProjectionError, match="ROLE_IMPORTANCE_MISMATCH"):
+        resolve_score_projection_records(
+            (_projection(importance=Decimal("0.75")),),
+            "topic-1",
+            AS_OF,
+            _resolve_authority((related,)),
         )
 
 

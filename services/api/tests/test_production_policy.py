@@ -25,6 +25,30 @@ from topicpilot_api.topic_intelligence_api import serialize_topic_intelligence
 AS_OF = date(2026, 8, 7)
 
 
+def test_dec04_leader_importance_accepts_related_and_rejects_legacy_half_weight():
+    assert LeaderDefinition("related", 0.25).importance == 0.25
+    with pytest.raises(ProductionPolicyError, match=r"0\.25"):
+        LeaderDefinition("legacy", 0.50)
+
+
+def test_leader_order_does_not_change_score():
+    forward = topic_input(
+        (7.0, 2.0, -2.0),
+        leaders=(
+            LeaderDefinition("s1", 1.0),
+            LeaderDefinition("s2", 0.75),
+            LeaderDefinition("s3", 0.25),
+        ),
+    )
+    reverse = replace(forward, leaders=tuple(reversed(forward.leaders)))
+
+    first = evaluate_production_v1(forward, policy())
+    second = evaluate_production_v1(reverse, policy())
+
+    assert second.score.score == pytest.approx(first.score.score)
+    assert second.score.grade == first.score.grade
+
+
 def policy(
     version: str = "policy.v1", effective_date: date = date(2026, 8, 1)
 ) -> ProductionV1PolicyBundle:
@@ -55,7 +79,7 @@ def topic_input(
     leaders: tuple[LeaderDefinition, ...] = (
         LeaderDefinition("s1", 1.0),
         LeaderDefinition("s2", 0.75),
-        LeaderDefinition("s3", 0.5),
+        LeaderDefinition("s3", 0.25),
     ),
     leader_returns: dict[str, float | None] | None = None,
 ) -> ProductionTopicInput:
