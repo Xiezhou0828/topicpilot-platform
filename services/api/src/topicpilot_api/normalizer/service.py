@@ -34,6 +34,7 @@ class NormalizationService:
         prior = {}
         if entry and entry.supersedes_id:
             candidate_idempotencies = {}
+            candidate_content_hashes = {}
             for candidate in result.candidates:
                 if (
                     candidate.quality_state == "REJECTED"
@@ -47,6 +48,7 @@ class NormalizationService:
                         "paths": candidate.source_paths,
                     }
                 )
+                candidate_content_hashes[candidate.family_code] = content
                 candidate_idempotencies[candidate.family_code] = stable_hash(
                     {
                         "entry": envelope.timeline_entry_id,
@@ -57,13 +59,17 @@ class NormalizationService:
                         "reference": reference.reference_data_version,
                     }
                 )
-            current_idempotencies = {
-                row.family_code: row.idempotency_key
-                for row in self.session.scalars(
+            current_rows = list(
+                self.session.scalars(
                     select(CanonicalObservation).where(
-                        CanonicalObservation.timeline_entry_id == entry.id
+                        CanonicalObservation.timeline_entry_id == entry.id,
+                        CanonicalObservation.quality_state == "ACCEPTED",
                     )
                 )
+            )
+            current_rows_by_family = {row.family_code: row for row in current_rows}
+            current_idempotencies = {
+                row.family_code: row.idempotency_key for row in current_rows
             }
             successor = CanonicalObservation.__table__.alias("successor")
             all_prior = list(
@@ -85,6 +91,11 @@ class NormalizationService:
                 if row.family_code in candidate_families
                 and current_idempotencies.get(row.family_code)
                 != candidate_idempotencies.get(row.family_code)
+                and (
+                    current_rows_by_family.get(row.family_code) is None
+                    or current_rows_by_family[row.family_code].content_hash
+                    != candidate_content_hashes.get(row.family_code)
+                )
                 and self.session.scalar(
                     select(
                         exists(
@@ -123,6 +134,21 @@ class NormalizationService:
                 raise RuntimeError("canonical supersession branch conflict")
             for row in prior_rows:
                 prior.setdefault(row.family_code, row)
+            # A reference-registry rollover can re-normalize the same raw and
+            # timeline entry with a new reference_data_version.  The
+            # idempotency key must change for that lineage, but an unchanged
+            # canonical content hash is not a divergent correction.  Continue
+            # the existing canonical chain from the current successor so the
+            # new reference version explicitly supersedes it instead of
+            # creating a second unlinked current observation.
+            for family_code, row in current_rows_by_family.items():
+                if (
+                    family_code in candidate_families
+                    and current_idempotencies.get(family_code)
+                    != candidate_idempotencies.get(family_code)
+                    and row.content_hash == candidate_content_hashes.get(family_code)
+                ):
+                    prior.setdefault(family_code, row)
         for candidate in result.candidates:
             if candidate.quality_state == "REJECTED" or candidate.quality_state not in PERSISTABLE:
                 continue
