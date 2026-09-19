@@ -1,0 +1,80 @@
+{
+  "TASK_ID": "TASK-M1-FORMAL-PIPELINE-FINAL-CLOSURE-001",
+  "TASK_STATUS": "BLOCKED",
+  "M1_COMPLETE": "NO",
+  "M2_STARTED": "NO",
+  "EARLIEST_REMAINING_BLOCKER": "FORMAL_SCORE_GRADE_AUTHORITY_MISSING",
+  "BLOCKER_LAYER": "FORMAL_AUTHORITY",
+  "OWNER_ACTION_REQUIRED": "YES_PM_AUTHORITY_ARTIFACTS",
+  "TODAY_FORMAL_READY": "PARTIAL",
+  "TODAY_SIGNALS_FORMAL_DEPENDENCIES_COMPLETE": "NO",
+  "A9_READY": "DEFERRED_NOT_SEPARATELY_PERSISTED",
+  "DAILY_STRENGTH_READY": "DEFERRED_NOT_SEPARATELY_PERSISTED",
+  "SCORE_READY": "DEFERRED",
+  "GRADE_READY": "DEFERRED",
+  "LIFECYCLE_READY": "NO;LIFECYCLE_UNAVAILABLE_BASELINE",
+  "FORMAL_TOPIC_PUBLICATION_READY": "YES_THROUGH_20260918",
+  "OPPORTUNITY_FORMAL_DAILY_RECOMMENDATION_READY": "NO;OPTIONAL_SECTION_NOT_FORMAL",
+  "HISTORICAL_REPLAY_STATUS": "CURRENT_THROUGH_20260918",
+  "NEXT_MISSING_TRADING_DAY": "NONE",
+  "PRODUCTION_FORMAL_PIPELINE_READY": "NO_REMAINING_FORMAL_OPPORTUNITY_AUTHORITY_AND_LIFECYCLE_SCORE_BASELINE",
+  "OWNER_CHECKOUT_PRESERVED": "YES",
+  "OWNER_CHECKOUT": {
+    "path": "C:\\Users\\acer\\Desktop\\題材領航\\topicpilot-platform",
+    "head_before": "02d3086183d1c582bb6c66c4c316340ccce3fa97",
+    "head_after": "02d3086183d1c582bb6c66c4c316340ccce3fa97",
+    "dirty_count_before": 153,
+    "dirty_count_after": 153
+  },
+  "GOVERNED_WORKTREE": {
+    "path": "C:\\Users\\acer\\Desktop\\題材領航\\topicpilot-platform-m1-final-closure",
+    "branch": "codex/task-m1-formal-pipeline-final-closure-001",
+    "base_sha": "17ce8896d3b2e4d0c842edd9d847b91d2673a6a3",
+    "candidate_sha": "c4405351f921ddd70089ec00a7c299ea97d9a768",
+    "pushed": true,
+    "deployed": false
+  },
+  "PRODUCTION": {
+    "api_health_status": 200,
+    "api_ready_status": 200,
+    "api_sha": "b14d5708d4cda0cad2341154bc4495b64cf472ec",
+    "worker_sha": "45b1fa198db34471ce03f29a9184d8236299d525",
+    "web_status": 200,
+    "web_sha": "UNPROVEN",
+    "home_data_date": "2026-09-18",
+    "home_market_data_status": "AVAILABLE",
+    "home_tpe_index": "UNAVAILABLE",
+    "home_two_index": "AVAILABLE",
+    "home_institution_flows": "NULL",
+    "home_daily_focus_status": "AVAILABLE_ON_DEPLOYED_SHA",
+    "home_daily_focus_headline": "今日無異常訊號_ON_DEPLOYED_SHA",
+    "opportunity_http_status": 503
+  },
+  "CANDIDATE_CHANGE": {
+    "scope": "Today formal signal dependency gate only",
+    "rules_changed": false,
+    "taxonomy_changed": false,
+    "score_changed": false,
+    "lifecycle_changed": false,
+    "opportunity_provider_added": false,
+    "formal_dependencies": [
+      "TPE_AND_TWO_INDEX_CHANGE",
+      "TWO_TURNOVER_AND_PRIOR_CHANGE",
+      "TPE_FOREIGN_FLOW",
+      "TPE_AND_TWO_BREADTH"
+    ],
+    "new_api_fields": ["formalDependenciesComplete", "formalDependencyStatus"]
+  },
+  "VALIDATION": {
+    "home_focused_tests": "11 passed",
+    "home_schema_tests": "1 passed; 1 PostgreSQL integration skipped",
+    "formal_opportunity_policy_score_lifecycle_tests": "65 passed",
+    "ruff": "PASS",
+    "compileall": "PASS",
+    "git_diff_check": "PASS",
+    "api_client_npm_check": "NOT_RUN_NODE_MODULES_UNAVAILABLE",
+    "full_backend_postgres_regression": "NOT_RUN",
+    "production_deploy_canary": "NOT_RUN"
+  },
+  "NEXT_SAFE_ACTION": "Provide governed formal Score/Grade policy, Leader Set, CORE and observation-as-of authority artifacts; then run formal lifecycle replay and Opportunity provider/readback integration without weakening fail-closed gates."
+}
