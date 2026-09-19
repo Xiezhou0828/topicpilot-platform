@@ -2,40 +2,41 @@
 
 ## Executive Summary
 
-`TASK_STATUS=BLOCKED` and `M1_COMPLETE=NO`. The task was authorized to apply
-DEC-01, DEC-02, and DEC-03, but execution stopped at the first genuine safety
-boundary before any runtime, schema, database, deployment, or Production
-business-state mutation.
+`TASK_STATUS=BLOCKED` and `M1_COMPLETE=NO`. The task applied DEC-01 through
+DEC-04 at the evidence/reconciliation boundary and stopped before any runtime,
+schema, database, deployment, or Production business-state mutation.
 
-The Owner clarification changes the classification of the absent runtime rows:
-the rows do not need to pre-exist. Engineering may materialize them if the
-approved D001 contract deterministically defines the derivation. The recovered
-contract does not define the required member-selection and importance
-derivation semantics. It says `BOUNDED_CORE_SUBSET` and
-`AI_ASSISTED_PROPOSAL_PLUS_OWNER_REVIEW`, prohibits runtime AI and fixed Top-N,
-and permits `1.00/0.75/0.50`, but does not specify which approved CORE members
-enter each Topic's subset or which permitted importance each member receives.
-It also defines no tie-break, minimum/maximum subset size, or deterministic
-ordering rule. Those are formal analytical semantics, not implementation
-convenience.
+DEC-04's required historical reconciliation is complete. The repository's
+formal D001/Score evidence supports `MODEL_B`: approved/effective Structural
+Role `CORE` rows are the candidate universe, while the Score consumer requires
+a separately Owner-reviewed selected CORE subset with per-selected-member
+importance. The formal role namespace is `REPRESENTATIVE/CORE/RELATED`, not
+`LEAD/CORE/RELATE`; no formal `LEAD -> 1.00`, `CORE -> 0.75`, or
+`RELATE -> 0.25` mapping was recovered. The current legal Score-consumer
+values remain `1.00/0.75/0.50`, but they are not applied automatically from
+Structural Role.
 
-Therefore `D001_MATERIALIZATION_CLASS=OWNER_POLICY_GAP` and
-`NEW_OWNER_POLICY_DECISION_REQUIRED=YES`. No materializer, Score writer,
-Lifecycle activation, Opportunity provider, deployment, or Production state was
-attempted. Selecting all CORE, alphabetical order, market data, or arbitrary
-weights would violate the clarification's hard boundary.
+The current Owner position also resolves two prior over-assumptions: member
+order has no product-policy meaning because the recovered Score formula does
+not depend on order, and no additional fixed projection minimum or maximum is
+required by the formula. A canonical stable identifier may be used only for
+deterministic persistence/readback. The generated artifact is therefore an
+Owner Review Draft, not formal runtime authority. All rows remain pending, so
+execution stops at `D001_OWNER_ROW_REVIEW_REQUIRED`.
 
 ## Owner Decisions Applied
 
 | Decision | Applied state | Evidence |
 |---|---|---|
-| DEC-01 | `APPROVED_A`; contract exists, materialization semantics incomplete | Owner clarification says pre-materialized rows are not required. D001 still lacks the exact member-selection and importance derivation needed to generate them deterministically. |
+| DEC-01 | `APPROVED_A`; deterministic materialization permitted only from proven authority | Owner clarification says pre-materialized rows are not required when the approved contract and derivation are deterministic. |
 | DEC-02 | `APPROVED_A`, implementation not reached | Existing Lifecycle V1.3 parameters remain unchanged; no activation was attempted without the blocked Score/Topic input chain. |
 | DEC-03 | `APPROVED_FORMAL_OPPORTUNITY_REMAINS_IN_M1`, implementation not reached | Formal Opportunity remains in M1, but its frozen upstream Topic/Score/Grade/Lifecycle inputs cannot be proven complete. |
+| DEC-04 | `APPROVED_A`; `MODEL_B` reconciliation and draft generation complete | Formal D001 evidence proves a separate selected CORE subset and per-selected-member importance; role-to-weight mapping is not formalized. Review is required before activation. |
 
-No existing decision was reopened. The clarification exposes a new precise
-policy gap inside the already approved D001 contract; no safe engineering
-choice can fill it.
+No existing decision was reopened. The clarification was reconciled against
+the existing D001 contract, Score code, migration/schema, tests, research-only
+Leader Set evidence, and Lifecycle shadow path. The remaining gate is row-level
+Owner review, not a new policy-design decision.
 
 ## Canonical Base / Lineage
 
@@ -72,8 +73,10 @@ the scopes they actually prove:
 - Runtime resolver/schema: migration 0031 and the existing fail-closed
   Structural Role / Score Projection resolvers.
 
-The decisive missing authority is not a pre-generated artifact; it is the
-derivation rule that would make materialization deterministic. The current
+The decisive missing authority is now the Owner-reviewed projection row
+artifact. The repository contract is deterministic enough to enumerate
+formal CORE candidates, but it does not contain explicit approved D001 rows
+or recovered human decisions for inclusion and importance. The current
 evidence explicitly records:
 
 ```text
@@ -89,15 +92,16 @@ D001_CONTRACT_EXISTS=YES
 D001_CONTRACT_FORMALLY_APPROVED=YES
 D001_SCHEMA_EXISTS=YES
 D001_ALLOWED_FORMAL_INPUTS_DEFINED=YES
-D001_MEMBER_SELECTION_RULE_DEFINED=NO
-D001_IMPORTANCE_RULE_DEFINED=NO_FOR_PER_MEMBER_ASSIGNMENT
-D001_TIE_BREAK_RULE_DEFINED=NO
+D001_MEMBER_SELECTION_RULE_DEFINED=YES_OWNER_EXPLICIT_MODEL_B
+D001_IMPORTANCE_RULE_DEFINED=YES_SELECTED_MEMBER_OWNER_REVIEW_ALLOWED_VALUES
+D001_TIE_BREAK_RULE_DEFINED=NO_PRODUCT_POLICY_ORDER_CANONICAL_TECHNICAL_ONLY
 D001_AS_OF_RULE_DEFINED=YES
 D001_MISSING_INPUT_BEHAVIOR_DEFINED=YES_FAIL_CLOSED
 D001_RUNTIME_ARTIFACT_PREEXISTED=NO
 D001_RUNTIME_ARTIFACT_REQUIRED=YES
-D001_MATERIALIZATION_CLASS=OWNER_POLICY_GAP
-NEW_OWNER_POLICY_DECISION_REQUIRED=YES
+D001_MATERIALIZATION_CLASS=OWNER_REVIEW_DRAFT_GENERATION
+D001_OWNER_ROW_REVIEW_REQUIRED=YES
+NEW_OWNER_POLICY_DECISION_REQUIRED=NO
 ```
 
 ## D001 Runtime Projection
@@ -111,10 +115,77 @@ NEW_OWNER_POLICY_DECISION_REQUIRED=YES
 `D001_READBACK_READY=NO`.
 
 The existing `TopicScoreProjection` schema and resolver are suitable for the
-future materialized artifact. They intentionally do not select members. A
-materializer can be implemented only after the Owner defines the missing
-selection/importance semantics or supplies an approved deterministic rule
-artifact; no runtime selector may be introduced.
+future materialized artifact. They intentionally do not select members or
+calculate importance. The generated draft only enumerates approved CORE
+candidates and carries no formal inclusion or importance decisions. No runtime
+selector or Structural Role-to-importance inference was introduced.
+
+## DEC-04 Semantic Reconciliation
+
+The required reconciliation searched the current canonical repository and
+relevant history across Structural Role artifacts/schemas, D001 and Score
+contracts, migrations, tests, research/governance reports, and the Lifecycle
+shadow path.
+
+```text
+STRUCTURAL_ROLE_VALUES=REPRESENTATIVE,CORE,RELATED
+HISTORICAL_ROLE_WEIGHT_EVIDENCE=NO_FORMAL_LEAD_CORE_RELATE_ROLE_WEIGHT_MAPPING_RECOVERED
+LEAD_WEIGHT=UNPROVEN
+CORE_WEIGHT=UNPROVEN
+RELATE_WEIGHT=UNPROVEN
+IMPORTANCE_IS_ROLE_PROJECTION=NO
+D001_SCORE_MEMBER_UNIVERSE=APPROVED_EFFECTIVE_NON_SUPERSEDED_STRUCTURAL_ROLE_CORE_ROWS
+D001_REQUIRES_SEPARATE_CORE_SUBSET=YES
+D001_REQUIRES_PER_CORE_IMPORTANCE=YES_FOR_SELECTED_PROJECTION_MEMBERS
+ORDER_AFFECTS_SCORE=NO
+FIXED_MIN_REQUIRED_BY_FORMULA=NO
+FIXED_MAX_REQUIRED_BY_FORMULA=NO
+MODEL_CLASSIFICATION=MODEL_B
+```
+
+Evidence reconciliation:
+
+| Evidence | Recovered meaning |
+|---|---|
+| `docs/architecture/TOPIC_DERIVED_INTELLIGENCE_DEFINITION_AND_PUBLICATION_AUTHORITY_CLOSURE.md` Addendum G and `docs/reports/TASK-TOPIC-STRUCTURAL-ROLE-SCORE-PROJECTION-POLICY-AND-MINIMAL-AUTHORITY-CLOSURE-002.md` | D001 is canonicalized as approved effective CORE candidates -> an explicit bounded CORE subset -> Score consumer metadata; importance values are `1.00/0.75/0.50` and are explicitly not a Structural Role taxonomy. |
+| `services/api/src/topicpilot_api/topic_engine/production_policy.py`, `score_projection.py`, ORM, migration 0031, and focused tests | Score receives explicit `LeaderDefinition(member_id, importance)` / selected projection members; the validator accepts only `0.50/0.75/1.00`, requires selected members to resolve as CORE, and provides no member selector or role-weight mapping. |
+| `config/topic_structural_role_authority/structural-role-authority-20260912.v4.json` | The formal role values are `REPRESENTATIVE`, `CORE`, and `RELATED`; 650 approved CORE rows are candidates, not D001 INCLUDE decisions. |
+| `C:\Users\acer\.codex\worktrees\c3a0\題材領航\reports\WS1-AUX-507-STOCK-STRUCTURAL-ROLE\final_owner_approved_structural_role_authority_candidate_post_c2_20260819.tsv` | Useful historical candidate evidence, but every row has `proposal_state=PROPOSAL_ONLY_NON_AUTHORITY`; 822 rows include 720 `owner_reviewed=NO`, and its populated final importance contradicts a fixed role mapping (`CORE` has `1.00` and `0.75`; `REPRESENTATIVE` has `1.00`; `RELATED` has `0.50`; no `0.25`). |
+| `docs/research/leader-set-research.v2.md` and `fixtures/research/leader_set_pm_review_shortlist.v1.csv` | `1.00/0.75/0.50` appear as candidate/research proposals, explicitly `CANDIDATE/NEEDS_REVIEW/NOT APPROVED`; no formal `0.25` role-weight mapping is present. |
+| `services/api/src/topicpilot_api/topic_lifecycle_v1.py` and `topic_lifecycle_engine.py` | `LEAD/CORE/RELATED` normalization and `0.70/0.30` breadth authority weights belong to the shadow Lifecycle path; they are not D001 Score authority and do not establish `LEAD -> 1.00`, `CORE -> 0.75`, `RELATE -> 0.25`. |
+| `docs/DAILY_PROGRESS.md` PM-001/PM-002 | CORE population and a semi-static Leader Set are conceptually separated; exact Leader Set weights and mechanics were recorded as `NEEDS PM`, not as a role-to-importance projection. |
+
+Therefore the Owner recollection does not override or contradict the current
+D001 evidence: it is an unproven historical hypothesis for this consumer.
+The adjacent Lifecycle role path is a separate shadow consumer, not a reason
+to create a second CORE hierarchy or map all Structural Roles into Score.
+
+## D001 Owner Review Draft
+
+The draft was generated only after the reconciliation above. It is explicitly
+`DRAFT_NOT_FORMAL_AUTHORITY`; no Score runtime may consume it. Each formal CORE
+candidate remains `PENDING_OWNER_REVIEW` for inclusion and importance, and the
+no-CORE Topic remains fail-closed.
+
+```text
+D001_REVIEW_TOPICS=107
+D001_REVIEW_CANDIDATES=650
+D001_TOPICS_FULLY_RECOVERED_FROM_EXISTING_HUMAN_AUTHORITY=0
+D001_TOPICS_REQUIRING_OWNER_REVIEW=107
+D001_TOPICS_WITH_NO_CORE_CANDIDATES=1
+```
+
+Artifacts:
+
+- `docs/reports/TASK-M1-FORMAL-AUTHORITY-ACTIVATION-AND-READBACK-002/d001-owner-review-draft/d001-owner-review-draft.json`
+- `docs/reports/TASK-M1-FORMAL-AUTHORITY-ACTIVATION-AND-READBACK-002/d001-owner-review-draft/d001-owner-review-draft.csv`
+- `docs/reports/TASK-M1-FORMAL-AUTHORITY-ACTIVATION-AND-READBACK-002/d001-owner-review-draft/d001-owner-review-draft.md`
+
+The draft records no additional Owner-imposed minimum or maximum projection
+size. Canonical identifier ordering is technical persistence/readback only;
+it does not affect importance, Score, Grade, Lifecycle, ranking, or
+Opportunity. Review must set final INCLUDE/EXCLUDE and importance before a
+versioned formal projection can be materialized.
 
 ## Leader Set Runtime Projection
 
@@ -359,8 +430,8 @@ or local artifact was presented as Production readback.
 ## Next Trading Day Automation Proof
 
 Not proven. The existing market post-close path is preserved, but the complete
-authority-to-Opportunity dependency chain cannot run without deterministic D001
-projection derivation semantics.
+authority-to-Opportunity dependency chain cannot run until the D001 Owner
+Review Draft is approved and materialized as formal projection authority.
 
 ## M1 Definition of Done
 
@@ -389,53 +460,25 @@ OWNER_CHECKOUT_PRESERVED=YES
 
 ## Remaining Blocker
 
-Only one earliest blocker is returned. It is a precise Owner policy boundary,
-not a request to manually generate runtime rows:
+Only one earliest blocker is returned. It is a precise Owner row-review
+boundary, not a request to infer or manually edit runtime database rows:
 
 ```text
-EARLIEST_REMAINING_BLOCKER=DEC-01_D001_MEMBER_SELECTION_AND_IMPORTANCE_DERIVATION_UNDEFINED
-BLOCKER_LAYER=FORMAL_AUTHORITY_POLICY_SEMANTICS
-BLOCKER_CAUSE=D001 contract/schema/allowed inputs/as-of/fail-closed behavior exist, but the approved contract does not define per-Topic bounded-subset membership selection, per-member importance assignment, tie-break/order, or minimum/maximum subset size. The existing rule explicitly prohibits runtime AI, fixed Top-N, all-CORE substitution, market-data ranking, and arbitrary weights.
-NEW_OWNER_POLICY_DECISION_REQUIRED=YES
+EARLIEST_REMAINING_BLOCKER=D001_OWNER_ROW_REVIEW_REQUIRED
+BLOCKER_LAYER=FORMAL_AUTHORITY_OWNER_REVIEW
+BLOCKER_CAUSE=DEC-04 proves the current D001 model is a separate Owner-reviewed CORE subset with per-selected-member importance; no explicit approved rows or recovered human decisions exist. All 107 Topics remain pending, and one Topic has no formal CORE candidate. The draft is not runtime authority.
+NEW_OWNER_POLICY_DECISION_REQUIRED=NO
 TECHNICAL_ACCESS=AVAILABLE_FOR_REPOSITORY_WORK; PRODUCTION_DATABASE_AND_DEPLOYMENT_SECRETS_NOT_PRESENT_IN_THIS_ENVIRONMENT
-OWNER_ACTION_REQUIRED=YES_DEFINE_THE_MISSING_D001_DERIVATION_SEMANTICS_OR_SUPPLY_A_FORMALLY_APPROVED_RULE_ARTIFACT
-NEXT_SAFE_ACTION=After the missing D001 semantics are approved, implement the deterministic materializer through existing migration-0031 models, validate Structural Role and as-of lineage, read back projection and Leader Set, then continue Score/Grade/Lifecycle/Topic/Today/Opportunity activation.
+OWNER_ACTION_REQUIRED=YES_REVIEW_AND_APPROVE_OR_EDIT_THE_D001_OWNER_REVIEW_DRAFT
+NEXT_SAFE_ACTION=After Owner row review approval, materialize a versioned formal D001 projection with exact lineage and read back the projection and Leader Set; then continue Score/Grade/Lifecycle/Topic/Today/Opportunity activation.
 ```
 
-### Exact Owner decision required
+### Owner action
 
-1. **Unresolved policy fields:** per-Topic member-selection rule for the
-   bounded CORE subset; per-member importance assignment; deterministic order
-   and tie-break; minimum/maximum subset size. The existing contract already
-   defines the candidate universe, legal importance values, effective dating,
-   versioning, Owner review, no runtime AI, no fixed Top-N, and fail-closed
-   behavior.
-2. **Existing evidence:** D001 is formally approved and canonicalized, but its
-   own text says the bounded subset is not all CORE, has no fixed count, and
-   that the approved artifact contains selected members. The schema/resolver
-   require explicit selected members and importance, while tests only validate
-   the permitted values and lineage; no derivation algorithm exists.
-3. **Option A (recommended):** approve a versioned, Owner-reviewed explicit
-   D001 projection rule/artifact that supplies the selected CORE member IDs and
-   `1.00/0.75/0.50` importance for each Topic and effective interval. This lets
-   engineering materialize rows deterministically without inventing a runtime
-   selector.
-4. **Option B:** approve a new deterministic selection/importance algorithm
-   with explicit subset bounds, ordering, tie-break, and effective-date rules.
-   This requires a new D001 policy version and formal review because the current
-   contract does not contain those semantics.
-5. **Option C:** retain fail-closed behavior and defer D001 runtime activation;
-   M1 remains blocked.
-6. **Engineering recommendation:** Option A, because it preserves the
-   approved bounded-subset meaning and avoids turning runtime engineering into
-   an unapproved selector. If the Owner explicitly wants automated derivation,
-   Option B must be versioned and approved before implementation.
-7. **Consequences:** A unlocks deterministic materialization with no Score
-   formula change; B adds a new governed policy and requires replay/lineage
-   treatment; C changes no semantics but leaves Score, Grade, Lifecycle,
-   Opportunity, Production readback, and automation proof blocked.
-8. **Downstream work unlocked:** D001 projection writer/readback, Leader Set
-   adapter/readback, formal Score/Grade writer and persistence, Lifecycle V1.3
-   activation, targeted Topic/Today reconciliation, Formal Opportunity
-   authority/provider/writer/API, deployment/canary, Production readback, and
-   next-trading-day automation proof.
+Review the machine-readable and human-readable draft. For each formal CORE
+candidate, set final `INCLUDE` or `EXCLUDE`; for included members, set one
+approved importance value from the current D001 contract. Do not map
+importance from Structural Role unless a future Owner decision changes the
+formal model. The reviewed artifact must then receive its own version,
+effective date, approval reference, source authority binding, correction/
+supersession identity, and lineage hash before runtime activation.
