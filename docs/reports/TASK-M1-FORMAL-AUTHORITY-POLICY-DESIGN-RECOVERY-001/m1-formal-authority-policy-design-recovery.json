@@ -1,0 +1,293 @@
+{
+  "task_id": "TASK-M1-FORMAL-AUTHORITY-POLICY-DESIGN-RECOVERY-001",
+  "task_status": "COMPLETE_FOR_RECOVERY_REPORT;M1_BLOCKED",
+  "m1_complete": false,
+  "m2_started": false,
+  "earliest_blocker": "FORMAL_RUNTIME_AUTHORITY_CHAIN_UNPOPULATED_AND_PUBLICATION_GATED",
+  "scope_boundary": {
+    "application_code_changed": false,
+    "schema_or_migration_changed": false,
+    "database_mutation": false,
+    "production_mutation": false,
+    "owner_checkout_modified": false,
+    "policy_invented": false,
+    "production_formal_activation": false
+  },
+  "score": {
+    "engine_exists": true,
+    "policy_exists": true,
+    "formally_approved": "YES_ARTIFACT_LEVEL",
+    "authority_owner": "topicpilot-owner",
+    "version": "topic-b2-layer2-policy-v1",
+    "candidate_id": "TOPIC_B2_LAYER2_POLICY_V1",
+    "effective_date": "2026-09-15",
+    "status": "POLICY_APPROVED_RUNTIME_NOT_READY",
+    "mechanics": {
+      "aggregation": "0.60 breadth + 0.40 final leadership",
+      "breadth_population": "valid observed effective CORE members",
+      "eligibility": "CORE coverage >= 60%; valid observed CORE count >= 3; latest approved fresh observation as-of equals snapshot as-of",
+      "leadership_importance": [1.0, 0.75, 0.5],
+      "publication_state": "UNPUBLISHED"
+    },
+    "blockers": [
+      "EXACT_APPROVED_SCORE_PROJECTION_ROWS_NOT_PROVEN_POPULATED",
+      "FORMAL_SCORE_WRITER_AND_READ_MODEL_MISSING",
+      "FORMAL_DB_READBACK_NOT_RECERTIFIED",
+      "ELIGIBILITY_AUDIT_NOT_CONNECTED_TO_PROVIDER"
+    ]
+  },
+  "grade": {
+    "engine_exists": true,
+    "policy_exists": true,
+    "formally_approved": "YES_ARTIFACT_LEVEL",
+    "authority_owner": "topicpilot-owner",
+    "version": "topic-b2-layer2-policy-v1",
+    "status": "DOWNSTREAM_SCORE_PUBLICATION_BLOCKED",
+    "values": {
+      "S": ">=80.0",
+      "A": ">=65.0",
+      "B": ">=50.0",
+      "D": "<50.0"
+    },
+    "missing_data_behavior": "NULL_OR_UNAVAILABLE; NOT_SYNTHETIC_D",
+    "blockers": [
+      "SCORE_RESULT_NOT_FORMALLY_PUBLISHED",
+      "SCORE_LINEAGE_AND_CORRECTION_WRITER_MISSING"
+    ]
+  },
+  "leader_set": {
+    "exists": true,
+    "derived": true,
+    "persisted": "SCHEMA_EXISTS_ROWS_NOT_PROVEN_POPULATED",
+    "formal": "POLICY_APPROVED_DATA_ARTIFACT_PENDING",
+    "policy": "WS1-P2B-D001 APPROVED_AND_CANONICALIZED; APPROVED_EFFECTIVE_CORE_MEMBERS -> BOUNDED_CORE_SUBSET",
+    "inputs": [
+      "approved effective Structural Role CORE population",
+      "owner-reviewed selected member ids",
+      "score importance 1.00/0.75/0.50",
+      "effective interval",
+      "source authority id/version/hash",
+      "correction and supersession lineage"
+    ],
+    "as_of": "effective-dated and versioned; no daily re-selection",
+    "required_by": ["score", "grade_through_score"],
+    "not_required_as_hard_gate_by": ["lifecycle", "current_formal_opportunity_universe"],
+    "blockers": [
+      "NO_POPULATED_EXACT_PER_TOPIC_SCORE_PROJECTION_ARTIFACT",
+      "FORMAL_RUNTIME_READBACK_PENDING"
+    ]
+  },
+  "core_semantics": [
+    {
+      "id": "CORE-A",
+      "definition": "Structural Role value CORE on InstrumentTopicRelation",
+      "authority_type": "human/formal structural-role-authority-20260912.v4",
+      "human_or_derived": "HUMAN_FORMAL",
+      "persisted": true,
+      "formal": true,
+      "as_of": "effective interval with current/historical supersession",
+      "consumers": ["score population", "lifecycle role-aware evidence", "opportunity metadata"]
+    },
+    {
+      "id": "CORE-B",
+      "definition": "Explicit core_member_ids in one Score evaluation, projected from approved effective CORE",
+      "authority_type": "Score Projection V1 / FormalTopicScoreAuthority",
+      "human_or_derived": "DERIVED_FROM_OWNER_APPROVED_ARTIFACT",
+      "persisted": "intended; current rows not proven populated",
+      "formal": "policy yes; runtime data pending",
+      "as_of": "projection interval and Score snapshot date",
+      "consumers": ["Score Breadth", "Eligibility Audit"]
+    },
+    {
+      "id": "CORE-C",
+      "definition": "Separate CORE V0 research candidate-formation concept",
+      "authority_type": "CORE V0 research workstream",
+      "human_or_derived": "RESEARCH_PROPOSED",
+      "persisted": false,
+      "formal": false,
+      "as_of": "research-specific",
+      "consumers": ["M3 research only"]
+    }
+  ],
+  "core_semantic_collision": true,
+  "score_requires_core": "CORE-A resolved into CORE-B",
+  "lifecycle_requires_core": "formal role evidence if role-aware; not CORE-B",
+  "opportunity_requires_core": "NO_INDEPENDENT_CORE_GATE_IN_CURRENT_FORMAL_UNIVERSE",
+  "as_of_authority": {
+    "status": "DEFINED_IN_CONTRACT_RUNTIME_CHAIN_NOT_READ_BACK",
+    "formal_pit_earliest_date": "2026-08-07",
+    "d_plus_1_allowed": false,
+    "d_minus_1_behavior": "Only explicit prior-session inputs are allowed; missing prior evidence is unavailable/deferred, never zero-filled.",
+    "states": {
+      "daily_close": "accepted DAILY_BAR session date; final materialization; correction creates successor",
+      "daily_strength": "B2 PARTIAL_BY_DESIGN and fail-closed; standalone parameters unresolved",
+      "score": "snapshot_date equals observation binding as_of and session; latest approved and fresh required",
+      "grade": "inherits Score as-of and lineage",
+      "leader_set": "effective interval; no daily automatic selection",
+      "structural_role": "effective_from/effective_to with CURRENT or HISTORICAL resolver",
+      "lifecycle": "evaluation date equals formal snapshot date; prior formal published state only",
+      "topic_snapshot": "PIT_FORMAL, FINAL, PUBLISHED, non-superseded current row",
+      "opportunity": "page as_of must match all nested Topic/member/Lifecycle/Selector/technical fields"
+    },
+    "blockers": [
+      "END_TO_END_WRITER_BINDING",
+      "FORMAL_DB_READBACK",
+      "CORRECTION_AND_SUPERSESSION_OPERATOR_PROOF"
+    ]
+  },
+  "lifecycle": {
+    "engine_exists": true,
+    "policy_exists": true,
+    "formally_approved": "STAGES_AND_INDEPENDENCE_APPROVED_TRANSITION_PARTIAL",
+    "contract_version": "topic-lifecycle-v1.3-formal.v2",
+    "policy_version": "topic-lifecycle-policy.v1",
+    "stages": ["SPROUTING", "FERMENTING", "MAIN_RISE", "MATURE", "DECLINING"],
+    "formal_gate": true,
+    "writer": "FormalLifecyclePublisher exists",
+    "persistence": "migration 0037 formal result table plus correction/supersession lineage",
+    "reader": "read_formal_lifecycle exists",
+    "publication": "BLOCKED_NOT_CONNECTED_TO_POST_CLOSE",
+    "blockers_after_score_grade": [
+      "TRANSITION_POLICY_AUTHORITY_PARTIAL_BY_DESIGN",
+      "FORMAL_SNAPSHOT_AND_MEMBER_FACT_READBACK",
+      "FORMAL_WRITER_NOT_WIRED_TO_POST_CLOSE",
+      "CORRECTION_CHAIN_READBACK_NOT_RECERTIFIED"
+    ]
+  },
+  "opportunity": {
+    "authority_status": "FORMAL_BOUNDARY_READY_PROVIDER_INACTIVE",
+    "formal_topic_universe": "READY_BY_CONTRACT",
+    "topic_eligibility": "PROVIDER_INPUT_REQUIRED",
+    "approved_members_and_dedupe": "READY_BY_CONTRACT",
+    "structural_role_requirement": "METADATA_ONLY_NOT_HARD_GATE",
+    "leader_set_requirement": "NOT_REQUIRED_BY_CURRENT_FORMAL_UNIVERSE",
+    "score_requirement": "BLOCKED_BY_SCORE_PUBLICATION",
+    "grade_requirement": "BLOCKED_BY_SCORE_PUBLICATION",
+    "lifecycle_requirement": "BLOCKED_BY_LIFECYCLE_PUBLICATION",
+    "strategy_selector": "SHADOW_ONLY_NOT_FORMAL",
+    "c1_c5": "FROZEN_BOUNDARY_NOT_EXECUTED",
+    "s1_s2": "FROZEN_BOUNDARY_NOT_EXECUTED",
+    "fund_c": "EVIDENCE_ONLY_NOT_CONSUMED",
+    "formal_provider": "INACTIVE_DEFAULT_503",
+    "formal_persistence": "MISSING",
+    "formal_publication": "MISSING",
+    "blockers_after_lifecycle": [
+      "FORMAL_PROVIDER_POLICY_AND_EFFECTIVE_DATE",
+      "FORMAL_WRITER_AND_PERSISTENCE",
+      "UPSTREAM_SCORE_GRADE_LIFECYCLE_READBACK",
+      "OPERATOR_FRESHNESS_AND_PUBLICATION_GATE"
+    ]
+  },
+  "recovered_policies": [
+    {"policy": "Formal Topic authority and PIT boundary", "authority": "Owner-authorized topic artifact", "version": "topic-authority-activation.v1", "source": "config/topic_authority_v1/lifecycle-formal-scope-20260911.v2.json", "status": "FORMAL_ACTIVE_CONTRACT_LEVEL", "current_consumer": "Topic Snapshot/Lifecycle/Opportunity", "canonical": true, "action_needed": "runtime readback"},
+    {"policy": "Structural Role authority", "authority": "Owner-reviewed role artifact", "version": "structural-role-authority-20260912.v4", "source": "config/topic_structural_role_authority/structural-role-authority-20260912.v4.json", "status": "APPROVED_ARTIFACT_RUNTIME_DISCONNECTED", "current_consumer": "Score/Lifecycle/Opportunity metadata", "canonical": true, "action_needed": "populate/read back"},
+    {"policy": "Production V1 Score mechanics", "authority": "003F/B2 approval record", "version": "topic-b2-layer2-policy-v1", "source": "score-grade-policy-approval-record.json and production_policy.py", "status": "FORMALLY_APPROVED", "current_consumer": "non-activating evaluator", "canonical": true, "action_needed": "writer only"},
+    {"policy": "Grade S/A/B/D thresholds", "authority": "same Score policy", "version": "003F#grade", "source": "B2 approval record and production_policy.py", "status": "FORMALLY_APPROVED", "current_consumer": "Score evaluator", "canonical": true, "action_needed": "publish with Score"},
+    {"policy": "Score Projection / Leader Set direction", "authority": "WS1-P2B-D001", "version": "D001", "source": "architecture Addendum G and authority-readiness.json", "status": "APPROVED_AND_CANONICALIZED", "current_consumer": "projection adapter", "canonical": true, "action_needed": "concrete artifact"},
+    {"policy": "CORE semantic chain", "authority": "Structural Role plus D001", "version": "V4 + D001", "source": "role artifact, D001, topic_score_formal.py", "status": "RECOVERED_BOUNDED", "current_consumer": "Score/Lifecycle", "canonical": true, "action_needed": "no semantic redesign"},
+    {"policy": "Score as-of/correction semantics", "authority": "formal PIT contract", "version": "topic-score-formal.v1", "source": "topic_score_formal.py and Topic Snapshot", "status": "CONTRACT_APPROVED", "current_consumer": "future Score writer", "canonical": true, "action_needed": "end-to-end proof"},
+    {"policy": "Lifecycle stage ontology", "authority": "B2 Layer 2 and V1.3 product contract", "version": "topic-lifecycle-v1.3-formal.v2", "source": "B2 contract and lifecycle modules", "status": "APPROVED", "current_consumer": "formal Lifecycle", "canonical": true, "action_needed": "preserve stages"},
+    {"policy": "Lifecycle transition parameters", "authority": "existing V1.3 implementation", "version": "topic-lifecycle-policy.v1", "source": "topic_lifecycle_v1.py and calibration report", "status": "PROVISIONAL_PARTIAL", "current_consumer": "shadow/formal evaluator code", "canonical": false, "action_needed": "DEC-02"},
+    {"policy": "Opportunity semantic matrix", "authority": "BE-024B PM semantic freeze", "version": "opportunity-qualification.v1.shadow", "source": "Opportunity policy/spec/report", "status": "SHADOW_ONLY", "current_consumer": "shadow strategies", "canonical": false, "action_needed": "DEC-03 if promotion required"},
+    {"policy": "C1-C5 and S1-S2 boundary", "authority": "frozen task/product boundary", "version": "existing", "source": "user-frozen rules and Opportunity docs", "status": "PRESERVE_NOT_EXECUTED_BY_UNIVERSE", "current_consumer": "future formal provider", "canonical": true, "action_needed": "do not tune"},
+    {"policy": "FUND-C V1", "authority": "FUND-C evidence contract", "version": "V1", "source": "FUND-C reports and Opportunity contract", "status": "EVIDENCE_ONLY_NON_GATING", "current_consumer": "diagnostics", "canonical": true, "action_needed": "no promotion"},
+    {"policy": "ZERO vs UNAVAILABLE and no D+1", "authority": "formal availability contracts", "version": "current formal contracts", "source": "Topic state, formal universe and Opportunity API", "status": "APPROVED", "current_consumer": "all formal readers", "canonical": true, "action_needed": "activation tests"}
+  ],
+  "technical_bottlenecks": [
+    {"id": "T-01", "component": "role authority readback", "severity": "CRITICAL", "blocks_m1": true, "engineering_can_resolve_without_owner": true, "owner_decision_required": false, "root_cause": "runtime materialization/readback not proven", "recommended_technical_approach": "idempotent artifact-driven ingestion and cardinality/hash readback", "migration_required": "existing 0031/readback gate", "production_risk": "wrong role population changes Score/Lifecycle"},
+    {"id": "T-02", "component": "Score Projection", "severity": "CRITICAL", "blocks_m1": true, "engineering_can_resolve_without_owner": "after DEC-01", "owner_decision_required": true, "root_cause": "no exact approved per-topic projection rows", "recommended_technical_approach": "populate TopicScoreProjection only from Owner artifact and validate source role version", "migration_required": "existing 0031", "production_risk": "silent member drift"},
+    {"id": "T-03", "component": "Score/Grade writer", "severity": "CRITICAL", "blocks_m1": true, "engineering_can_resolve_without_owner": true, "owner_decision_required": false, "root_cause": "formal envelope is non-persistent", "recommended_technical_approach": "append-only derived publication keyed by snapshot/projection/policy/as-of", "migration_required": "likely additive; authorize separately", "production_risk": "duplicate/stale publication"},
+    {"id": "T-04", "component": "Lifecycle activation lane", "severity": "CRITICAL", "blocks_m1": true, "engineering_can_resolve_without_owner": "after DEC-02", "owner_decision_required": true, "root_cause": "post-close invokes shadow engine", "recommended_technical_approach": "wire FormalLifecyclePublisher after formal snapshot gate", "migration_required": "existing 0037/0039", "production_risk": "shadow-to-formal contamination"},
+    {"id": "T-05", "component": "Lifecycle lineage/readback", "severity": "HIGH", "blocks_m1": true, "engineering_can_resolve_without_owner": true, "owner_decision_required": false, "root_cause": "end-to-end correction proof absent", "recommended_technical_approach": "verify input snapshot lineage, prior state ordering and supersession", "migration_required": "existing schema", "production_risk": "incorrect state after correction"},
+    {"id": "T-06", "component": "Opportunity provider", "severity": "CRITICAL", "blocks_m1": true, "engineering_can_resolve_without_owner": "after DEC-03", "owner_decision_required": true, "root_cause": "canonical provider/effective authority absent", "recommended_technical_approach": "implement only selected formal provider contract; reject shadow/fixture payloads", "migration_required": "unknown until authority package", "production_risk": "provisional recommendation leakage"},
+    {"id": "T-07", "component": "post-close checkpoint/resume", "severity": "HIGH", "blocks_m1": true, "engineering_can_resolve_without_owner": true, "owner_decision_required": false, "root_cause": "formal stages are not fully checkpointed", "recommended_technical_approach": "lane checkpoints by as-of and authority versions; idempotent commits", "migration_required": "usually none", "production_risk": "duplicates/partial publication"},
+    {"id": "T-08", "component": "operator/DB readback", "severity": "HIGH", "blocks_m1": true, "engineering_can_resolve_without_owner": "read-only next task; operator gate for Production", "owner_decision_required": false, "root_cause": "no authorized Production proof in this task", "recommended_technical_approach": "exact counts, hashes, resolver checks and API/scheduler evidence", "migration_required": "existing migrations only", "production_risk": "false readiness"},
+    {"id": "T-09", "component": "readiness/observability", "severity": "MEDIUM", "blocks_m1": true, "engineering_can_resolve_without_owner": true, "owner_decision_required": false, "root_cause": "policy/publication/activation statuses not unified end-to-end", "recommended_technical_approach": "stable lane status and reason codes", "migration_required": "none expected", "production_risk": "operator activates wrong lane"}
+  ],
+  "owner_decisions": [
+    {
+      "id": "DEC-01",
+      "component": "Score Projection / Leader Set",
+      "decision_class": "D2_OWNER_POLICY_CONFIRMATION",
+      "current_state": "D001 approved; exact per-topic projection artifact absent",
+      "question": "Confirm the concrete versioned bounded CORE subset and importance values for each Topic, or keep Score fail-closed.",
+      "options": [
+        {"id": "A", "label": "Preserve D001 bounded CORE subset with Owner review and 1.00/0.75/0.50 importance", "consequence": "enables deterministic projection and Score"},
+        {"id": "B", "label": "Use all effective CORE", "consequence": "reopens D001 and requires a new policy version"},
+        {"id": "C", "label": "Keep artifact absent", "consequence": "M1 remains blocked safely"}
+      ],
+      "engineering_recommendation": "A",
+      "recommendation_rationale": "It is the direct implementation of already approved D001 without silent policy change.",
+      "blocks_m1": true,
+      "owner_decision": "PENDING"
+    },
+    {
+      "id": "DEC-02",
+      "component": "Lifecycle V1.3 transition authority",
+      "decision_class": "D2_OWNER_POLICY_CONFIRMATION",
+      "current_state": "stages approved; transition status PARTIAL_BY_DESIGN; existing policy parameters provisional",
+      "question": "May the exact existing topic-lifecycle-policy.v1 parameter set be promoted unchanged as formal V1.3 authority?",
+      "options": [
+        {"id": "A", "label": "Approve existing parameters unchanged with artifact hash/effective date", "consequence": "formal publisher can be wired"},
+        {"id": "B", "label": "Keep shadow/fail-closed pending replay and a later approved version", "consequence": "Lifecycle and M1 remain blocked"},
+        {"id": "C", "label": "Approve stages only", "consequence": "stage vocabulary exists but no formal transitions"}
+      ],
+      "engineering_recommendation": "A for M1; B if provisional values are not acceptable",
+      "recommendation_rationale": "A promotes existing code values without invention; B is the safe fallback.",
+      "blocks_m1": true,
+      "owner_decision": "PENDING"
+    },
+    {
+      "id": "DEC-03",
+      "component": "Formal Opportunity provider/policy",
+      "decision_class": "D3_OWNER_PRODUCT_POLICY_DESIGN",
+      "current_state": "formal page/universe boundary exists; qualification policy is shadow-only; provider returns 503",
+      "question": "Should the current shadow semantic freeze be promoted through a new explicit formal Opportunity authority package?",
+      "options": [
+        {"id": "A", "label": "Issue explicit formal authority package with provider scope, effective date and gates", "consequence": "provider implementation can proceed after authority registration"},
+        {"id": "B", "label": "Preserve shadow-only and keep provider unavailable", "consequence": "safe boundary; M1 cannot claim formal Opportunity"},
+        {"id": "C", "label": "Limit M1 to Topic/eligibility universe and defer strategy cards", "consequence": "requires explicit M1 boundary/roadmap adjustment"}
+      ],
+      "engineering_recommendation": "B by default; A only when Owner explicitly requires Formal Opportunity in M1",
+      "recommendation_rationale": "Existing docs prohibit silently promoting provisional thresholds or fixtures.",
+      "blocks_m1": true,
+      "owner_decision": "PENDING"
+    }
+  ],
+  "technical_design_recommendations": [
+    {"id": "TD-01", "component": "role ingestion", "recommendation": "idempotent artifact-driven ingestion and cardinality/hash readback", "blocks_m1": true, "migration": "existing 0031"},
+    {"id": "TD-02", "component": "Score Projection", "recommendation": "load only Owner-approved projection rows and validate source role version/lineage", "blocks_m1": true, "migration": "existing 0031"},
+    {"id": "TD-03", "component": "Score/Grade publication", "recommendation": "append-only derived result/read model with snapshot/policy/projection/as-of key and supersession", "blocks_m1": true, "migration": "likely additive; next task"},
+    {"id": "TD-04", "component": "Eligibility Audit", "recommendation": "one shared as-of audit over the complete Topic universe before activation", "blocks_m1": true, "migration": "none expected"},
+    {"id": "TD-05", "component": "Lifecycle", "recommendation": "wire FormalLifecyclePublisher after snapshot gate and keep shadow isolated", "blocks_m1": true, "migration": "existing 0037/0039"},
+    {"id": "TD-06", "component": "Opportunity", "recommendation": "canonical formal provider only after DEC-03; reject shadow/fixture payloads", "blocks_m1": true, "migration": "authority-dependent"},
+    {"id": "TD-07", "component": "post-close", "recommendation": "lane checkpoints keyed by as-of and authority versions with idempotent commit", "blocks_m1": true, "migration": "usually none"},
+    {"id": "TD-08", "component": "operator readback", "recommendation": "exact counts, hashes, resolver/API/scheduler proof before activation", "blocks_m1": true, "migration": "none"},
+    {"id": "TD-09", "component": "readiness", "recommendation": "stable policy/publication/activation status and reason codes", "blocks_m1": true, "migration": "none expected"}
+  ],
+  "deferred_items": [
+    {"id": "DFR-01", "item": "Global Topic Ranking", "target_milestone": "M2", "reason": "separate Owner policy; not required by current Score/Grade/Lifecycle"},
+    {"id": "DFR-02", "item": "Topic Concentration", "target_milestone": "M2", "reason": "no formal definition; not in current critical path"},
+    {"id": "DFR-03", "item": "Opportunity calibration and numeric tuning", "target_milestone": "M2", "reason": "requires canonical history and PM calibration; no fake calibration"},
+    {"id": "DFR-04", "item": "CORE V0 research promotion", "target_milestone": "M3", "reason": "separate research authority; must not become Score CORE"}
+  ],
+  "critical_path_after_decisions": [
+    {"step": 1, "name": "Register selected authority artifacts", "owner_input": "DEC-01/02/03", "production_action": "none"},
+    {"step": 2, "name": "Read back approved roles and Score Projection", "inputs": "role V4 plus D001 artifact", "validation": "1,160 roles; 107 leaves; 25 parents; projection resolver current/historical"},
+    {"step": 3, "name": "Score/Grade writer and readback", "inputs": "formal snapshot/facts/as-of/audit", "validation": "lineage, null behavior, correction, API"},
+    {"step": 4, "name": "Formal Lifecycle replay/publisher", "inputs": "formal snapshots, prior formal state, DEC-02", "validation": "107-leaf coverage, no shadow contamination, correction replay"},
+    {"step": 5, "name": "Formal Opportunity provider", "inputs": "DEC-03 plus upstream formal states", "validation": "same-as-of, dedupe, frozen C1-C5/S1-S2, FUND-C non-gating"},
+    {"step": 6, "name": "Operational proof and M1 acceptance", "inputs": "all lane readbacks", "validation": "idempotency, retry, freshness, scheduler/operator gates"}
+  ],
+  "owner_checkout_preserved": true,
+  "owner_checkout": {
+    "path": "C:\\Users\\acer\\Desktop\\題材領航\\topicpilot-platform",
+    "branch": "codex/task-ops-023a-p3c-runtime-sha-audit-20260813",
+    "head_before": "02d3086183d1c582bb6c66c4c316340ccce3fa97",
+    "head_after": "02d3086183d1c582bb6c66c4c316340ccce3fa97",
+    "dirty_count_before": 153,
+    "dirty_count_after": 153
+  },
+  "next_task_recommendation": "TASK-M1-FORMAL-AUTHORITY-ACTIVATION-AND-READBACK-002",
+  "next_task_scope": "After Owner decisions, register and implement only approved role/projection, Score/Grade publication, formal Lifecycle wiring, and Formal Opportunity provider if explicitly authorized; no M2, no policy tuning, no fixture promotion, no Production mutation before release gate."
+}
