@@ -1,6 +1,6 @@
 {
   "taskId": "TASK-M1-FORMAL-AUTHORITY-ACTIVATION-AND-READBACK-002",
-  "taskStatus": "IMPLEMENTED_AWAITING_PRODUCTION_READBACK",
+  "taskStatus": "NON_PRODUCTION_IMPLEMENTATION_READY_AWAITING_PRODUCTION_ACCESS",
   "m1Complete": "NO",
   "m2Started": "NO",
   "ownerDecision": "DEC-04=APPROVED_ROLE_BASED_IMPORTANCE_V1",
@@ -78,10 +78,18 @@
     "scoreProjectionMigration": "0043_task_m1_role_based_d001_importance",
     "migrationPolicy": "FAILS_CLOSED_ON_EXISTING_0.50; NO_AUTOMATIC_REWRITE",
     "runtimeMaterializer": "IMPLEMENTED_DRY_RUN_AND_TRANSACTIONAL_READBACK_PATH",
-    "productionMaterialization": "NOT_RUN_NO_PRODUCTION_DATABASE_ACCESS"
+    "productionMaterialization": "READY_NOT_RUN_NO_PRODUCTION_DATABASE_ACCESS",
+    "d001OperatorCli": "IMPLEMENTED_VALIDATE_DRY_RUN_MATERIALIZE_READBACK",
+    "d001Readback": "REUSES_FORMAL_SCORE_RESOLVER_FAIL_CLOSED",
+    "legacy050Handling": "MIGRATION_AND_READBACK_FAIL_CLOSED",
+    "formalOpportunityPublicationMigration": "0044_task_m1_formal_opportunity_publication",
+    "formalOpportunityWriter": "IMPLEMENTED_IDEMPOTENT_DUPLICATE_CONFLICT_SAFE",
+    "formalOpportunityProvider": "IMPLEMENTED_RENDER_POSTGRES_MODE",
+    "formalOpportunityApi": "WIRED_TO_PERSISTED_PROVIDER_WHEN_ENABLED"
   },
   "validation": {
-    "focusedTests": "38_PASSED",
+    "focusedTests": "31_PASSED_CURRENT_SLICE;50_PASS_PRIOR_DEC04_FOCUSED_SUITE",
+    "backendRegression": "770_PASSED_59_SKIPPED_36_PREEXISTING_FAILURES",
     "artifactHashReadback": "PASS",
     "roleMappingReadback": "PASS",
     "orderInvariantScoreTest": "ADDED",
@@ -91,10 +99,10 @@
   },
   "downstream": {
     "leaderSet": "CAN_CONSUME_ALL_FORMAL_ROLE_MEMBERS_AFTER_PROJECTION_READBACK",
-    "score": "NOT_MATERIALIZED",
-    "grade": "NOT_MATERIALIZED",
-    "lifecycleV13": "NOT_MATERIALIZED",
-    "formalTopicTodayOpportunity": "NOT_MATERIALIZED",
+    "score": "RESOLVER_READY_PRODUCTION_READBACK_NOT_RUN",
+    "grade": "EXISTING_FORMAL_ENGINE_PRODUCTION_READBACK_NOT_RUN",
+    "lifecycleV13": "EXISTING_FORMAL_PUBLISHER_PRODUCTION_READBACK_NOT_RUN",
+    "formalTopicTodayOpportunity": "FORMAL_PUBLICATION_PATHS_READY_PRODUCTION_READBACK_NOT_RUN",
     "automationProof": "NOT_RUN"
   }
 }

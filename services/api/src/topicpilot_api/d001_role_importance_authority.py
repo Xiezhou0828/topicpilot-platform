@@ -439,6 +439,111 @@ def materialize_d001_projections(
     }
 
 
+def readback_d001_projections(
+    session: Session,
+    artifact: D001RoleImportanceArtifact,
+    *,
+    expected_database: str,
+    as_of: date | None = None,
+    read_mode: str = "CURRENT",
+) -> dict[str, Any]:
+    """Verify persisted D001 projections against the immutable authority.
+
+    Readback deliberately reuses the formal Score projection resolver.  This
+    keeps the production proof on the same as-of, supersession, structural
+    role, and importance checks used by Score itself rather than maintaining a
+    second, weaker read path.
+    """
+
+    from .topic_engine.score_projection import resolve_score_projection
+
+    _target_guard(session, artifact, expected_database)
+    requested_as_of = as_of or artifact.effective_date
+    if requested_as_of < artifact.effective_date:
+        raise D001RoleImportanceAuthorityError("readback as-of precedes D001 effective date")
+    if requested_as_of > date.today():
+        raise D001RoleImportanceAuthorityError("readback as-of cannot use future state")
+
+    expected_by_topic: dict[str, set[tuple[str, str, Decimal]]] = {}
+    for item in artifact.members:
+        relation = session.scalar(
+            select(InstrumentTopicRelation).where(
+                InstrumentTopicRelation.id == UUID(item.relation_id),
+                InstrumentTopicRelation.topic_id == UUID(item.topic_id),
+            )
+        )
+        if relation is None:
+            raise D001RoleImportanceAuthorityError(
+                f"D001 readback identity is missing: {item.topic_id}/{item.relation_id}"
+            )
+        instrument = session.get(Instrument, relation.instrument_id)
+        if instrument is None:
+            raise D001RoleImportanceAuthorityError(
+                f"D001 readback instrument is missing: {item.topic_id}/{item.relation_id}"
+            )
+        expected_by_topic.setdefault(item.topic_id, set()).add(
+            (str(instrument.id), str(relation.id), ROLE_IMPORTANCE[item.structural_role])
+        )
+
+    persisted = session.scalars(
+        select(TopicScoreProjection)
+        .options(selectinload(TopicScoreProjection.members))
+        .where(TopicScoreProjection.projection_version == artifact.authority_version)
+    ).all()
+    if any(
+        Decimal(str(member.score_importance)) == Decimal("0.50")
+        for row in persisted
+        for member in row.members
+    ):
+        raise D001RoleImportanceAuthorityError(
+            "LEGACY_050_D001_STATE_DETECTED; explicit correction is required"
+        )
+    persisted_topic_ids = {str(row.topic_id) for row in persisted}
+    if persisted_topic_ids != set(expected_by_topic):
+        raise D001RoleImportanceAuthorityError("D001 readback Topic universe mismatch")
+
+    checked_topics = 0
+    checked_members = 0
+    for topic_id, expected_members in expected_by_topic.items():
+        resolution = resolve_score_projection(
+            session,
+            topic_id,
+            requested_as_of,
+            read_mode=read_mode,
+        )
+        record = resolution.record
+        if record.projection_version != artifact.authority_version:
+            raise D001RoleImportanceAuthorityError("D001 readback authority version mismatch")
+        if record.projection_lineage.get("artifactSha256") != artifact.artifact_sha256:
+            raise D001RoleImportanceAuthorityError("D001 readback artifact hash mismatch")
+        actual_members = {
+            (
+                member.instrument_id,
+                member.structural_role_authority_id,
+                member.score_importance,
+            )
+            for member in record.selected_members
+        }
+        if actual_members != expected_members:
+            raise D001RoleImportanceAuthorityError(
+                f"D001 readback member mismatch: {topic_id}"
+            )
+        checked_topics += 1
+        checked_members += len(actual_members)
+
+    return {
+        "operation": "D001_READBACK_PASS",
+        "authorityVersion": artifact.authority_version,
+        "artifactSha256": artifact.artifact_sha256,
+        "asOf": requested_as_of.isoformat(),
+        "readMode": read_mode,
+        "topicCount": checked_topics,
+        "memberCount": checked_members,
+        "legacy050Detected": False,
+        "failClosed": True,
+    }
+
+
 __all__ = [
     "ROLE_IMPORTANCE",
     "SCHEMA_VERSION",
@@ -448,4 +553,5 @@ __all__ = [
     "load_artifact",
     "materialize_d001_projections",
     "parse_artifact",
+    "readback_d001_projections",
 ]

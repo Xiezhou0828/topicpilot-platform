@@ -40,11 +40,25 @@ The formal artifact is [d001-role-importance-authority-20260920.v1.json](../../.
 The runtime path now validates role-to-importance equality, accepts all three
 roles, preserves the independent CORE coverage eligibility rule, and provides
 transactional production materialization/readback with exact confirmation.
+The `topicpilot-d001-role-importance` operator entrypoint supports artifact
+validation, dry-run, materialization, and persisted readback. Readback reuses
+the formal Score projection resolver and rejects future as-of dates and legacy
+`0.50` state.
 
 Migration `0043_task_m1_role_based_d001_importance` changes the persisted
 importance check forward-only. It refuses to proceed if existing persisted
 rows still contain `0.50`; no automatic historical rewrite is performed.
 
-Focused validation passed: 38 tests. Production materialization, Score/Grade/Lifecycle/Topic/Today/
-Opportunity readback, and next-trading-day automation were not run because no
-Production database access was available. `M2_STARTED=NO`.
+Formal Opportunity now has a persisted publication envelope (`0044_task_m1_formal_opportunity_publication`), an idempotent writer, and a PostgreSQL provider/readback adapter. The Render API service enables that provider through `TOPICPILOT_FORMAL_OPPORTUNITY_PROVIDER=POSTGRES`; when the envelope has not yet been published, the provider remains fail-closed. The package builder can publish `EMPTY` or `DEFERRED` formal states without inventing frozen downstream Opportunity rules.
+
+Focused validation passed: 27 tests for the current D001/Opportunity slice,
+plus the previously recorded DEC-04 focused suite. Migration offline SQL,
+Ruff, and compile checks passed. Production materialization, Score/Grade/
+Lifecycle/Topic/Today/Opportunity readback, and next-trading-day automation
+were not run because no Production database access was available.
+The repository-wide backend run completed with `770 passed, 59 skipped,
+36 failed`; the failures are pre-existing missing research artifacts and the
+older Lifecycle contract expectations, not this M1 write-set. No new failure
+was introduced by the formal Opportunity migration after its architecture
+freeze allowlist was updated.
+`M2_STARTED=NO`.

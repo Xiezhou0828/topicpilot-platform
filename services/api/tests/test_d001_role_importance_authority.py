@@ -1,10 +1,18 @@
+import copy
+import json
 from decimal import Decimal
 from pathlib import Path
 
+import pytest
+
 from topicpilot_api.d001_role_importance_authority import (
     ROLE_IMPORTANCE,
+    D001RoleImportanceAuthorityError,
+    _hash,
     load_artifact,
+    parse_artifact,
 )
+from topicpilot_api.d001_role_importance_cli import main
 
 ROOT = Path(__file__).resolve().parents[3]
 ARTIFACT = ROOT / (
@@ -33,3 +41,18 @@ def test_dec04_artifact_is_hash_valid_and_covers_all_formal_members():
         Decimal("0.25"),
     }
     assert ROLE_IMPORTANCE["RELATED"] == Decimal("0.25")
+
+
+def test_legacy_050_member_value_is_rejected_without_rewrite():
+    payload = copy.deepcopy(json.loads(ARTIFACT.read_text(encoding="utf-8")))
+    payload["topics"][0]["members"][0]["importance"] = "0.50"
+    payload_without_hash = dict(payload)
+    payload_without_hash.pop("artifactSha256")
+    payload["artifactSha256"] = _hash(payload_without_hash)
+
+    with pytest.raises(D001RoleImportanceAuthorityError, match="outside DEC-04 mapping"):
+        parse_artifact(payload)
+
+
+def test_d001_operator_validation_is_available_without_database():
+    assert main(["--artifact", str(ARTIFACT), "--validate-only"]) == 0

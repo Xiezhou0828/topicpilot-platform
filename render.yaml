@@ -19,6 +19,8 @@ services:
         value: "3"
       - key: TOPICPILOT_LOG_LEVEL
         value: INFO
+      - key: TOPICPILOT_FORMAL_OPPORTUNITY_PROVIDER
+        value: POSTGRES
       - key: TOPICPILOT_CORS_ORIGINS
         sync: false
       - key: TOPICPILOT_LIVE_SESSION_CLOSE

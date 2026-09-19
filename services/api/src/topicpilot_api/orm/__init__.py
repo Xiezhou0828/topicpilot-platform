@@ -3,6 +3,7 @@
 from . import (
     canonical_observations,
     formal_lifecycle,
+    formal_opportunity,
     home,
     identity,
     import_audit,  # noqa: F401
@@ -21,6 +22,7 @@ from . import (
 from .base import Base
 from .canonical_observations import *  # noqa: F403
 from .formal_lifecycle import TopicLifecycleFormalResult
+from .formal_opportunity import FormalOpportunityPublication
 from .home import HomeMarketFact, HomePublication, HomePublicationSection  # noqa: F401
 from .identity import *  # noqa: F403
 from .import_audit import LegacyImportArtifact, LegacyImportRecord, LegacyImportRun
@@ -53,6 +55,7 @@ from .topics import *  # noqa: F403
 
 __all__ = [
     "Base",
+    "FormalOpportunityPublication",
     "LegacyImportArtifact",
     "LegacyImportRecord",
     "LegacyImportRun",
@@ -77,6 +80,7 @@ __all__ = [
 for _module in (
     canonical_observations,
     formal_lifecycle,
+    formal_opportunity,
     home,
     identity,
     institutional_flow,

@@ -7,13 +7,19 @@ fails closed until an approved canonical provider is configured.
 
 from __future__ import annotations
 
+import os
 from collections.abc import Mapping
 from datetime import date
 from typing import Annotated, Any, Protocol
 
 from fastapi import APIRouter, Depends, Query
 from pydantic import ValidationError
+from sqlalchemy.exc import SQLAlchemyError
 
+from topicpilot_api.database import get_session_factory
+from topicpilot_api.formal_opportunity_publication import (
+    read_latest_formal_opportunity_publication,
+)
 from topicpilot_api.problems import ApiProblem, NotFoundProblem
 from topicpilot_api.schemas import (
     OpportunityDetailResponse,
@@ -88,6 +94,108 @@ class CanonicalOpportunityProvider:
             "No approved canonical formal Opportunity provider is configured."
         )
 
+
+class PersistedFormalOpportunityProvider:
+    """Read the governed formal publication envelope from PostgreSQL."""
+
+    publication_status = FORMAL_PUBLICATION_STATUS
+    source_status = FORMAL_SOURCE_STATUS
+
+    def read_page(
+        self,
+        *,
+        as_of: date | None,
+        section_key: str | None,
+        limit: int,
+        offset: int,
+    ) -> Mapping[str, Any]:
+        try:
+            with get_session_factory()() as session:
+                publication = read_latest_formal_opportunity_publication(
+                    session,
+                    as_of=as_of,
+                )
+                if publication is None:
+                    raise FormalOpportunityProviderUnavailable(
+                        "No persisted formal Opportunity publication is available."
+                    )
+                payload = dict(publication.page_payload)
+        except FormalOpportunityProviderUnavailable:
+            raise
+        except SQLAlchemyError as exc:
+            raise FormalOpportunityProviderUnavailable(
+                "Formal Opportunity publication storage is unavailable."
+            ) from exc
+
+        sections = list(payload.get("sections", []))
+        if section_key is not None:
+            sections = [section for section in sections if section.get("sectionKey") == section_key]
+        paged_sections: list[dict[str, Any]] = []
+        remaining = offset
+        remaining_limit = limit
+        for section in sections:
+            opportunities = list(section.get("opportunities", []))
+            if remaining >= len(opportunities):
+                remaining -= len(opportunities)
+                continue
+            opportunities = opportunities[remaining:]
+            remaining = 0
+            if remaining_limit:
+                selected = opportunities[:remaining_limit]
+                remaining_limit -= len(selected)
+                paged_sections.append(
+                    {
+                        **section,
+                        "opportunityCount": len(selected),
+                        "opportunities": selected,
+                    }
+                )
+            if not remaining_limit:
+                break
+        payload["sections"] = paged_sections
+        return payload
+
+    def read_detail(self, opportunity_id: str) -> Mapping[str, Any]:
+        try:
+            with get_session_factory()() as session:
+                publication = read_latest_formal_opportunity_publication(session)
+                if publication is None:
+                    raise FormalOpportunityProviderUnavailable(
+                        "No persisted formal Opportunity publication is available."
+                    )
+                page = dict(publication.page_payload)
+                details = dict(publication.detail_payloads)
+        except FormalOpportunityProviderUnavailable:
+            raise
+        except SQLAlchemyError as exc:
+            raise FormalOpportunityProviderUnavailable(
+                "Formal Opportunity publication storage is unavailable."
+            ) from exc
+
+        if opportunity_id in details:
+            return details[opportunity_id]
+        for section in page.get("sections", []):
+            for opportunity in section.get("opportunities", []):
+                if opportunity.get("opportunityId") == opportunity_id:
+                    return {
+                        **page,
+                        "query": {"opportunityId": opportunity_id},
+                        "opportunity": opportunity,
+                    }
+        if page.get("state") in {"DEFERRED", "UNAVAILABLE", "EMPTY"}:
+            return {
+                "contractVersion": page["contractVersion"],
+                "state": page["state"],
+                "publicationStatus": page["publicationStatus"],
+                "dataStatus": page["dataStatus"],
+                "sourceStatus": page["sourceStatus"],
+                "asOf": page.get("asOf"),
+                "updatedAt": page.get("updatedAt"),
+                "query": {"opportunityId": opportunity_id},
+                "providerLineage": page["providerLineage"],
+                "opportunity": None,
+            }
+        raise NotFoundProblem(f"Formal Opportunity {opportunity_id!r} was not found")
 
 def _unavailable_problem(exc: Exception) -> ApiProblem:
     return ApiProblem(
@@ -333,7 +441,12 @@ class FormalOpportunityReadService:
             raise _invalid_problem(str(exc)) from exc
 
 
-_DEFAULT_SERVICE = FormalOpportunityReadService()
+_DEFAULT_SERVICE = FormalOpportunityReadService(
+    PersistedFormalOpportunityProvider()
+    if os.getenv("TOPICPILOT_FORMAL_OPPORTUNITY_PROVIDER", "UNAVAILABLE").upper()
+    == "POSTGRES"
+    else CanonicalOpportunityProvider()
+)
 
 
 def get_formal_opportunity_read_service() -> FormalOpportunityReadService:
@@ -394,6 +507,7 @@ __all__ = [
     "FormalOpportunityProvider",
     "FormalOpportunityProviderUnavailable",
     "FormalOpportunityReadService",
+    "PersistedFormalOpportunityProvider",
     "get_formal_opportunity_read_service",
     "router",
     "validate_formal_opportunity_detail",

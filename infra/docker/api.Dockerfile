@@ -16,6 +16,7 @@ COPY services/api/ /app/
 COPY fixtures/ /fixtures/
 COPY config/topic_authority_v1/ /app/config/topic_authority_v1/
 COPY config/topic_structural_role_authority/ /app/config/topic_structural_role_authority/
+COPY config/topic_d001_role_importance_authority/ /app/config/topic_d001_role_importance_authority/
 
 RUN if [ -f pyproject.toml ]; then \
       python -m pip install .; \

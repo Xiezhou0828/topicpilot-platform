@@ -126,6 +126,39 @@ The checked-in Render blueprint still has no approved Cron resource. Until an
 operator provisions and verifies the scheduler, production scheduling remains
 `WAITING/BLOCKED`; the CLI is the supported manual execution boundary.
 
+## M1 formal authority activation
+
+The D001 authority artifact is copied into the API/worker image at
+`/app/config/topic_d001_role_importance_authority/`. After the release image
+has passed migration startup, use the worker's protected runtime shell for
+the following secret-free command shapes; do not paste either database URL in
+chat or into a report:
+
+```console
+topicpilot-d001-role-importance \
+  --artifact /app/config/topic_d001_role_importance_authority/d001-role-importance-authority-20260920.v1.json \
+  --validate-only
+
+topicpilot-d001-role-importance \
+  --artifact /app/config/topic_d001_role_importance_authority/d001-role-importance-authority-20260920.v1.json \
+  --dry-run --environment production \
+  --expected-database <exact-neon-database-name> \
+  --operator <protected-operator-id>
+```
+
+The write requires the exact confirmation token printed by the governed
+artifact contract:
+`MATERIALIZE:<authorityVersion>:<artifactSha256>`. After materialization,
+run the same command with `--readback` and then run the existing formal
+downstream reconciliation. The command rejects future as-of dates, stale
+authority, duplicate/conflicting projection rows, and legacy `0.50` state;
+it never rewrites old rows.
+
+Formal Opportunity uses the persisted publication envelope created by
+migration `0044_task_m1_formal_opportunity_publication`. The API enables its
+PostgreSQL provider through `TOPICPILOT_FORMAL_OPPORTUNITY_PROVIDER=POSTGRES`;
+until a formal envelope is written, reads remain explicitly fail-closed.
+
 ## Adapter-v2 deployment and reference preflight (TASK-OPS-023A-P3A)
 
 The official daily adapter lineage is verified locally with a secret-free

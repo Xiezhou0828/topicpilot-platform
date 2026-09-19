@@ -38,6 +38,7 @@ IMPLEMENTED_V2_TABLES = {
     "home_publication_sections",
     "home_market_facts",
     "topic_lifecycle_formal_results",
+    "formal_opportunity_publications",
     "topic_authority_activations",
     "market_institutional_flow_daily",
     "stock_institutional_flow_daily",
