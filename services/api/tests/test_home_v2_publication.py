@@ -118,7 +118,7 @@ def test_rotation_requires_fifteen_sessions_and_excludes_zero_change():
     )
 
 
-def test_daily_focus_is_rule_based_and_reports_no_signal_without_triggered_condition():
+def test_daily_focus_is_fail_closed_when_formal_signal_dependencies_are_incomplete():
     overview = {
         "marketHealth": {"status": "AVAILABLE", "advance": 12, "decline": 4, "flat": 2},
         "breadth": [],
@@ -141,12 +141,14 @@ def test_daily_focus_is_rule_based_and_reports_no_signal_without_triggered_condi
         as_of=datetime(2026, 8, 21, 16, tzinfo=UTC),
     )
 
-    assert focus.status == "AVAILABLE"
+    assert focus.status == "PARTIAL"
     assert focus.payload["temporary"] is False
     assert focus.payload["mode"] == "RULE_BASED_V1"
-    assert focus.payload["headline"] == "今日無異常訊號"
+    assert focus.payload["headline"] == "今日市場訊號尚未完成"
     assert focus.payload["bullets"] == []
     assert focus.payload["signals"] == []
+    assert focus.payload["formalDependenciesComplete"] is False
+    assert "INDEX_DIVERGENCE" in focus.payload["formalDependencyStatus"]["missing"]
     assert [item["key"] for item in focus.payload["signalCatalog"]] == [
         "INDEX_DIVERGENCE",
         "OTC_VOLUME_PRICE_DIVERGENCE",
@@ -161,6 +163,51 @@ def test_daily_focus_is_rule_based_and_reports_no_signal_without_triggered_condi
         data_date=date(2026, 8, 21),
         as_of=None,
     ).status == "UNAVAILABLE"
+
+
+def test_daily_focus_reports_no_signal_only_after_all_formal_dependencies_are_ready():
+    focus = build_daily_focus(
+        market_overview={
+            "dataStatus": "AVAILABLE",
+            "marketHealth": {"status": "AVAILABLE", "advance": 12, "decline": 4, "flat": 2},
+            "breadth": [
+                {
+                    "market": market,
+                    "advance": 6,
+                    "decline": 2,
+                    "coverage": {"status": "AVAILABLE"},
+                }
+                for market in ("TPE", "TWO")
+            ],
+            "indices": [
+                {"market": "TPE", "change": 1, "status": "AVAILABLE"},
+                {"market": "TWO", "change": 0.5, "status": "AVAILABLE"},
+            ],
+            "turnover": [
+                {"market": "TPE", "value": 100, "status": "AVAILABLE"},
+                {"market": "TWO", "value": 80, "changePct": -1, "status": "AVAILABLE"},
+            ],
+            "institutionFlows": {
+                "markets": [
+                    {
+                        "market": "TPE",
+                        "availability": "AVAILABLE",
+                        "current": {"foreign": {"value": 10, "status": "AVAILABLE"}},
+                    }
+                ]
+            },
+        },
+        main_topics=[],
+        heating_topics=[],
+        cooling_topics=[],
+        data_date=date(2026, 8, 21),
+        as_of=None,
+    )
+
+    assert focus.status == "AVAILABLE"
+    assert focus.payload["formalDependenciesComplete"] is True
+    assert focus.payload["headline"] == "今日無異常訊號"
+    assert focus.payload["signals"] == []
 
 
 def test_market_signals_emit_index_and_breadth_divergence_in_catalog_order():
@@ -198,11 +245,10 @@ def test_market_signals_emit_index_and_breadth_divergence_in_catalog_order():
         as_of=None,
     )
 
-    assert focus.status == "AVAILABLE"
-    assert [item["key"] for item in focus.payload["signals"]] == [
-        "INDEX_DIVERGENCE",
-        "BREADTH_DIVERGENCE",
-    ]
+    assert focus.status == "PARTIAL"
+    assert focus.payload["signals"] == []
+    assert focus.payload["formalDependenciesComplete"] is False
+    assert focus.payload["headline"] == "今日市場訊號尚未完成"
     assert "不要出現在重點中的題材" not in " ".join(focus.payload["bullets"])
 
 
@@ -262,8 +308,9 @@ def test_read_normalization_replaces_persisted_legacy_focus_without_changing_fac
 
     result = normalize_home_publication_for_read(payload)
 
-    assert result["dailyFocus"]["headline"] == "今日無異常訊號"
+    assert result["dailyFocus"]["headline"] == "今日市場訊號尚未完成"
     assert result["dailyFocus"]["signals"] == []
+    assert result["dailyFocus"]["formalDependenciesComplete"] is False
     assert result["marketOverview"] == payload["marketOverview"]
     assert result["sectionStatuses"]["dailyFocus"]["source"] == "HOME_V2_DAILY_FOCUS_RULE_V1"
     assert (

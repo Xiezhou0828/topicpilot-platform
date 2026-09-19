@@ -1086,6 +1086,12 @@ export interface components {
             dataDate: string | null;
             /** Headline */
             headline: string;
+            /** Formaldependenciescomplete */
+            formalDependenciesComplete?: boolean;
+            /** Formaldependencystatus */
+            formalDependencyStatus?: {
+                [key: string]: unknown;
+            };
             /** Mode */
             mode: string;
             /** Reasoncode */

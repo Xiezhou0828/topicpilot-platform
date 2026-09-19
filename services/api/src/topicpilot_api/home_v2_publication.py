@@ -49,6 +49,7 @@ USER_MESSAGES = {
     "NO_FORMAL_TOPIC_PUBLICATION": "題材資料尚未完成發布。",
     "INSUFFICIENT_ROTATION_HISTORY": "目前累積的交易日資料不足，尚無法計算 14 日變化。",
     "DAILY_FOCUS_EVIDENCE_INCOMPLETE": "今日市場重點尚未完成。",
+    "TODAY_SIGNALS_FORMAL_DEPENDENCIES_INCOMPLETE": "今日市場訊號尚未完成。",
     "UPSTREAM_SOURCE_UNAVAILABLE": "這項市場資料目前無法提供。",
     "NO_FORMAL_MARKET_BREADTH": "市場廣度資料目前無法提供。",
     "PARTIAL_MARKET_FACTS": "部分市場資料目前無法提供。",
@@ -417,6 +418,100 @@ def build_market_signals(
     return signals
 
 
+def _formal_signal_dependency_status(
+    market_overview: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Validate every formal fact needed to claim that no signal fired.
+
+    A signal list is only meaningful when both positive and negative paths for
+    every catalog rule were observable.  Missing inputs therefore produce a
+    typed partial result instead of being treated as an empty signal list.
+    """
+
+    formal_statuses = {"AVAILABLE", "PUBLISHED", "FORMAL"}
+
+    def _formal(item: Any) -> bool:
+        return isinstance(item, Mapping) and str(item.get("status") or "").upper() in formal_statuses
+
+    def _number(value: Any) -> bool:
+        return isinstance(value, (int, float)) and not isinstance(value, bool)
+
+    indices = {
+        str(item.get("market")): item
+        for item in market_overview.get("indices") or []
+        if isinstance(item, Mapping)
+    }
+    indices_ready = all(
+        _formal(indices.get(market)) and _number((indices.get(market) or {}).get("change"))
+        for market in ("TPE", "TWO")
+    )
+
+    turnover = {
+        str(item.get("market")): item
+        for item in market_overview.get("turnover") or []
+        if isinstance(item, Mapping)
+    }
+    # The OTC rule needs the current turnover and its prior-session change.
+    otc_turnover = turnover.get("TWO") or {}
+    turnover_ready = (
+        _formal(otc_turnover)
+        and _number(otc_turnover.get("value"))
+        and _number(otc_turnover.get("changePct"))
+    )
+
+    institution_flows = market_overview.get("institutionFlows")
+    tpe_flow = None
+    if isinstance(institution_flows, Mapping) and isinstance(institution_flows.get("markets"), list):
+        tpe_flow = next(
+            (
+                item
+                for item in institution_flows["markets"]
+                if isinstance(item, Mapping) and item.get("market") == "TPE"
+            ),
+            None,
+        )
+    current_flow = tpe_flow.get("current") if isinstance(tpe_flow, Mapping) else None
+    foreign_flow = current_flow.get("foreign") if isinstance(current_flow, Mapping) else None
+    institution_ready = (
+        isinstance(tpe_flow, Mapping)
+        and str(tpe_flow.get("availability") or "").upper() in formal_statuses
+        and _formal(foreign_flow)
+        and _number(foreign_flow.get("value"))
+    )
+
+    health = market_overview.get("marketHealth") or {}
+    breadth_rows = {
+        str(item.get("market")): item
+        for item in market_overview.get("breadth") or []
+        if isinstance(item, Mapping)
+    }
+    breadth_ready = (
+        _formal(health)
+        and _number(health.get("advance"))
+        and _number(health.get("decline"))
+        and all(
+            _formal((breadth_rows.get(market) or {}).get("coverage"))
+            and _number((breadth_rows.get(market) or {}).get("advance"))
+            and _number((breadth_rows.get(market) or {}).get("decline"))
+            for market in ("TPE", "TWO")
+        )
+    )
+
+    dependencies = {
+        "INDEX_DIVERGENCE": indices_ready,
+        "OTC_VOLUME_PRICE_DIVERGENCE": indices_ready and turnover_ready,
+        "INSTITUTION_PRICE_DIVERGENCE": indices_ready and institution_ready,
+        "BREADTH_DIVERGENCE": indices_ready and breadth_ready,
+    }
+    missing = [key for key, ready in dependencies.items() if not ready]
+    return {
+        "complete": not missing,
+        "dependencies": dependencies,
+        "missing": missing,
+        "marketDataStatus": str(market_overview.get("dataStatus") or "UNAVAILABLE").upper(),
+    }
+
+
 def build_daily_focus(
     *,
     market_overview: Mapping[str, Any],
@@ -435,7 +530,9 @@ def build_daily_focus(
         or (market_overview.get("marketHealth") or {}).get("breadthEligible")
     )
     signal_catalog = [dict(item) for item in MARKET_SIGNAL_CATALOG]
-    signals = build_market_signals(market_overview) if has_market_evidence else []
+    dependency_status = _formal_signal_dependency_status(market_overview)
+    dependencies_complete = bool(dependency_status["complete"])
+    signals = build_market_signals(market_overview) if dependencies_complete else []
     if not has_market_evidence:
         return _status(
             "UNAVAILABLE",
@@ -451,10 +548,35 @@ def build_daily_focus(
                 "bullets": [],
                 "signals": [],
                 "signalCatalog": signal_catalog,
+                "formalDependenciesComplete": False,
+                "formalDependencyStatus": dependency_status,
                 "dataDate": data_date,
                 "source": DAILY_FOCUS_SOURCE,
                 "reasonCode": "DAILY_FOCUS_EVIDENCE_INCOMPLETE",
                 "userMessage": USER_MESSAGES["DAILY_FOCUS_EVIDENCE_INCOMPLETE"],
+            },
+        )
+    if not dependencies_complete:
+        return _status(
+            "PARTIAL",
+            data_date=data_date,
+            as_of=as_of,
+            source=DAILY_FOCUS_SOURCE,
+            reason_code="TODAY_SIGNALS_FORMAL_DEPENDENCIES_INCOMPLETE",
+            detail="one or more formal market-signal dependencies are unavailable",
+            payload={
+                "mode": "RULE_BASED_V1",
+                "temporary": False,
+                "headline": "今日市場訊號尚未完成",
+                "bullets": [],
+                "signals": [],
+                "signalCatalog": signal_catalog,
+                "formalDependenciesComplete": False,
+                "formalDependencyStatus": dependency_status,
+                "dataDate": data_date,
+                "source": DAILY_FOCUS_SOURCE,
+                "reasonCode": "TODAY_SIGNALS_FORMAL_DEPENDENCIES_INCOMPLETE",
+                "userMessage": USER_MESSAGES["TODAY_SIGNALS_FORMAL_DEPENDENCIES_INCOMPLETE"],
             },
         )
     headline = signals[0]["name"] if signals else "今日無異常訊號"
@@ -470,6 +592,8 @@ def build_daily_focus(
             "bullets": [item["interpretation"] for item in signals[:4]],
             "signals": signals,
             "signalCatalog": signal_catalog,
+            "formalDependenciesComplete": True,
+            "formalDependencyStatus": dependency_status,
             "dataDate": data_date,
             "source": DAILY_FOCUS_SOURCE,
         },
@@ -1428,6 +1552,13 @@ def empty_home_v2(now: datetime, *, tracked_stock_count: int = 0) -> dict[str, A
             "bullets": [],
             "signals": [],
             "signalCatalog": [dict(item) for item in MARKET_SIGNAL_CATALOG],
+            "formalDependenciesComplete": False,
+            "formalDependencyStatus": {
+                "complete": False,
+                "dependencies": {},
+                "missing": [item["key"] for item in MARKET_SIGNAL_CATALOG],
+                "marketDataStatus": "UNAVAILABLE",
+            },
             "dataDate": None,
             "source": DAILY_FOCUS_SOURCE,
             "reasonCode": "DAILY_FOCUS_EVIDENCE_INCOMPLETE",

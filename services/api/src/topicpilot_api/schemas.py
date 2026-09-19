@@ -1525,6 +1525,12 @@ class HomeDailyFocus(ApiModel):
     signal_catalog: list[HomeMarketSignalCatalog] = Field(
         alias="signalCatalog", default_factory=list
     )
+    formal_dependencies_complete: bool = Field(
+        alias="formalDependenciesComplete", default=False
+    )
+    formal_dependency_status: dict[str, Any] = Field(
+        alias="formalDependencyStatus", default_factory=dict
+    )
     data_date: date | None = Field(alias="dataDate")
     source: str
     reason_code: str | None = Field(alias="reasonCode", default=None)
