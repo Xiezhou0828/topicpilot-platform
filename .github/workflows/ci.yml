@@ -79,6 +79,10 @@ jobs:
             exit 0
           fi
           python -m ruff check "${changed_python_files[@]}"
+      - name: System-of-record boundaries
+        run: |
+          python infra/scripts/check_system_of_record_boundaries.py
+          python -m pytest services/api/tests/test_system_of_record_boundaries.py
       - name: Migrate an empty PostgreSQL database
         working-directory: services/api
         run: python -m alembic upgrade head

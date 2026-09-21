@@ -14,6 +14,16 @@ synthetic and safe to publish.
   source of authority and not a permanent parallel repository.
 - Never infer authority from a folder name, branch name, task prompt, or stale
   worktree. Confirm the canonical path, branch, commit, status, and evidence.
+- Conversational memory, prior prompts, summaries, and historical reports are
+  discovery context only. They never establish current repository, runtime,
+  deployment, migration, data, or authority state. Re-read mutable facts from
+  their owning system when needed; if memory conflicts, the system of record
+  wins without guessed reconciliation.
+- Do not copy volatile facts (for example a runtime SHA, migration head,
+  active run, latest formal date, current Topic count, or current blocker) into
+  a long-lived prompt or governance document as authority. Task prompts label
+  such inputs `VERIFIED_CURRENT_FACT`, `HISTORICAL_CONTEXT`, or `MEMORY_HINT`;
+  a `VERIFIED_CURRENT_FACT` must name its live source and verification time.
 - Do not modify application code, schema, migrations, runtime configuration,
   Production data, deploy configuration, or `NEXT_TASK` unless the active task
   explicitly authorizes that exact surface.

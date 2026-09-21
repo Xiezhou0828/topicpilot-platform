@@ -34,6 +34,12 @@ from topicpilot_api.orm import (
     TopicSnapshot,
     TopicSnapshotMemberFact,
 )
+from topicpilot_api.topic_engine.structural_role_authority import (
+    AUTHORITY_READ_HISTORICAL,
+    StructuralRoleAuthorityError,
+    StructuralRoleResolution,
+    resolve_structural_role,
+)
 
 FORMAL_MAPPING_EARLIEST_DATE = date(2026, 8, 7)
 FORMAL_PUBLICATION_MODE = "FORMAL"
@@ -236,6 +242,7 @@ def resolve_formal_membership(
     candidates = list(
         session.execute(
             select(
+                InstrumentTopicRelation.id.label("relation_id"),
                 InstrumentTopicRelation.instrument_id,
                 InstrumentTopicRelation.topic_id,
                 InstrumentTopicRelation.relation_type,
@@ -250,11 +257,6 @@ def resolve_formal_membership(
                 Market.valid_to.label("market_valid_to"),
                 Topic.valid_from.label("topic_valid_from"),
                 Topic.valid_to.label("topic_valid_to"),
-                InstrumentTopicRelation.structural_role,
-                InstrumentTopicRelation.approval_state,
-                InstrumentTopicRelation.authority_version,
-                InstrumentTopicRelation.source_artifact_hash.label("role_authority_hash"),
-                InstrumentTopicRelation.lineage_hash.label("role_lineage_hash"),
             )
             .join(Instrument, Instrument.id == InstrumentTopicRelation.instrument_id)
             .join(Market, Market.id == Instrument.market_id)
@@ -286,18 +288,23 @@ def resolve_formal_membership(
         raise FormalAuthorityUnavailable("topic has no date-valid effective relations")
 
     by_member: dict[tuple[UUID, UUID], list[Any]] = defaultdict(list)
+    role_authorities: dict[tuple[UUID, UUID], StructuralRoleResolution] = {}
     for row in candidates:
-        if (
-            row.structural_role not in {"REPRESENTATIVE", "CORE", "RELATED"}
-            or row.approval_state != "APPROVED"
-            or not row.authority_version
-            or not row.role_authority_hash
-            or not row.role_lineage_hash
-        ):
-            raise FormalAuthorityUnavailable(
-                "STRUCTURAL_ROLE_AUTHORITY_INCOMPLETE"
+        key = (row.instrument_id, row.topic_id)
+        try:
+            authority = resolve_structural_role(
+                session,
+                row.topic_id,
+                row.instrument_id,
+                trading_date,
+                read_mode=AUTHORITY_READ_HISTORICAL,
             )
-        by_member[(row.instrument_id, row.topic_id)].append(row)
+        except StructuralRoleAuthorityError as exc:
+            raise FormalAuthorityUnavailable("STRUCTURAL_ROLE_AUTHORITY_INCOMPLETE") from exc
+        if authority.authority_id != str(row.relation_id):
+            raise FormalAuthorityUnavailable("STRUCTURAL_ROLE_AUTHORITY_CONFLICT")
+        role_authorities[key] = authority
+        by_member[key].append(row)
     duplicate_keys = [key for key, rows in by_member.items() if len(rows) != 1]
     if duplicate_keys:
         rendered = ", ".join(f"{instrument}/{topic}" for instrument, topic in duplicate_keys)
@@ -342,6 +349,7 @@ def resolve_formal_membership(
     sessions: set[str] = set()
     relation_versions: set[str] = set()
     for row in candidates:
+        authority = role_authorities[(row.instrument_id, row.topic_id)]
         lifecycle = lifecycle_by_instrument.get(row.instrument_id, [])
         if lifecycle:
             reason = ";".join(
@@ -368,11 +376,11 @@ def resolve_formal_membership(
                     if row.instrument_id in identity_instruments
                     else "BOUNDED_IMMUTABLE_INSTRUMENT_ID_ONLY"
                 ),
-                structural_role=row.structural_role,
-                role_source=f"FORMAL_ROLE_AUTHORITY:{row.authority_version}",
-                role_authority_version=row.authority_version,
-                role_authority_hash=row.role_authority_hash,
-                role_lineage_hash=row.role_lineage_hash,
+                structural_role=authority.structural_role,
+                role_source=f"FORMAL_ROLE_AUTHORITY:{authority.record.authority_version}",
+                role_authority_version=authority.record.authority_version or "",
+                role_authority_hash=authority.record.source_artifact_hash or "",
+                role_lineage_hash=authority.record.lineage_hash or "",
             )
         )
 
