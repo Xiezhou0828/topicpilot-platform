@@ -46,6 +46,7 @@
 - [Reports](reports/) — implementation, validation, audit, screenshots, and review evidence.
 - [TASK-DATA-HIST-002B canonical reconciliation closure](reports/TASK-DATA-HIST-002B_CANONICAL_RECONCILIATION_CLOSURE.md) — full 507-symbol local six-month OHLCV seed, canonical compatibility, integrity, and safety handoff.
 - [TASK-A2 historical data foundation canonicalization](reports/TASK-A2-HISTORICAL-DATA-FOUNDATION-CANONICALIZATION-001/canonical-history-foundation-report.md) — read-only canonical coverage audit, effective-date gap classification, and operator-safe replay path.
+- [TASK-A2 historical source authority and promotion preflight](reports/TASK-A2-HISTORICAL-SOURCE-AUTHORITY-AND-PROMOTION-PREFLIGHT-002/historical-source-promotion-preflight.md) — committed 603-instrument authority reconciliation, bounded promotable scope, and fail-closed live readback boundary.
 - [Historical persistence authority promotion](reports/TASK-DATA-HIST-PERSISTENCE-AUTHORITY-PROMOTION.md) — V2 canonical observation authority and 63,826-row disposition.
 - [Stock-006A historical bar read publication](reports/TASK-FE-BE-STOCK-006A_HISTORICAL_BAR_READ_PUBLICATION.md) — bounded raw historical bar read authority and deferred derived domains.
 - [Stock Technical V0 policy contract](architecture/STOCK_TECHNICAL_V0_POLICY_CONTRACT.md) — WS2 Phase 2A D1-D4 continuity, candidate indicators, PIT/as-of, and product-boundary policy.

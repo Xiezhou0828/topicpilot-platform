@@ -1,0 +1,10 @@
+scope,reason,count,status,evidence
+live_source_readback,SOURCE_READBACK_UNAVAILABLE_FOR_CURRENT_PREFLIGHT,,BLOCKED,local Docker Compose PostgreSQL target unavailable
+bootstrap_work_items,QUARANTINE,144,PRESERVED,2026-08-19 bootstrap bounded-limitations manifest
+bootstrap_work_items,PROVIDER_NO_DATA,142,PRESERVED,2026-08-19 bootstrap bounded-limitations manifest
+bootstrap_work_items,LIFECYCLE_SKIP,41,PRESERVED,2026-08-19 bootstrap bounded-limitations manifest
+bootstrap_instruments,PROVIDER_OR_UNRESOLVED_GAP,13,PRESERVED,2026-08-19 gap-lifecycle-classification-audit.json
+bootstrap_instruments,PIT_LIMITED,16,PRESERVED,2026-08-20 authority-version-manifest.json
+bootstrap_instruments,CORPORATE_ACTION_UNCERTAIN,603,PRESERVED,adjustment_state=UNKNOWN in authority manifest
+overlap_cells,SOURCE_READBACK_UNAVAILABLE_FOR_CURRENT_PREFLIGHT,,NOT_MEASURED,bootstrap-vs-canonical-dev and bootstrap-vs-production joins were not run
+production_continuation,SOURCE_READBACK_UNAVAILABLE_FOR_CURRENT_PREFLIGHT,,NOT_MEASURED,known Production partial range ends 2026-09-21; no 2026-09-22 evaluation
