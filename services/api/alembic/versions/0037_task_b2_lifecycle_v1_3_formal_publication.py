@@ -1,8 +1,9 @@
 """B2 Lifecycle V1.3 formal publication/readback boundary."""
 
 import sqlalchemy as sa
-from alembic import op
 from sqlalchemy.dialects import postgresql
+
+from alembic import op
 
 revision = "0037_task_b2_lifecycle_v1_3_formal_publication"
 down_revision = "0036_task_ws4_active_reference_daily_projection"
