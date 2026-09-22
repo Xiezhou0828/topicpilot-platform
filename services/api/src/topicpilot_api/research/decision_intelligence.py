@@ -31,7 +31,7 @@ from typing import Any
 
 TASK_ID = "TASK-C1-DECISION-INTELLIGENCE-RESEARCH-FOUNDATION-001"
 CANONICAL_REPOSITORY = "Xiezhou0828/topicpilot-platform"
-CANONICAL_BASE_SHA = "3e513d90d61fc26679a6406bbe84f62d237c1e86"
+CANONICAL_BASE_SHA = "6645ad746315c0c8431f9103ff7b848aca3be68b"
 SOURCE_CLASS = "HISTORICAL_RECONSTRUCTED_RESEARCH"
 RESEARCH_AUTHORITY = "EVIDENCE_ONLY"
 DATASET_START = date(2026, 2, 3)
@@ -1017,7 +1017,7 @@ This candidate was built from a clean isolated worktree based on
 accepted implementation and artifacts are integrated into `main` and re-run at
 the exact integration SHA.
 
-The GitHub Actions CI run `35685732155` for canonical `main` at
+The GitHub Actions CI run `35686958895` for canonical `main` at
 `{CANONICAL_BASE_SHA}` was completed with `failure` only in the backend test
 step: Ruff baseline/no-new-debt, changed-scope Ruff, empty-DB migration,
 rollback smoke, and frontend/secret-scan jobs passed. The backend baseline was
@@ -1133,7 +1133,7 @@ def run_c1(
         },
         "remote_ci_evidence": {
             "main_sha": CANONICAL_BASE_SHA,
-            "workflow_run_id": 35685732155,
+            "workflow_run_id": 35686958895,
             "run_state": "COMPLETED_FAILURE",
             "backend": "FAIL_PREEXISTING_BACKEND_BASELINE_10_FAILURES",
             "backend_passed": 609,

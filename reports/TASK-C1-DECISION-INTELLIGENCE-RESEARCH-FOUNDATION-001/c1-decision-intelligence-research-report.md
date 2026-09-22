@@ -1,7 +1,7 @@
 # C1 Decision Intelligence Research Foundation
 
 **Task:** `TASK-C1-DECISION-INTELLIGENCE-RESEARCH-FOUNDATION-001`
-**Canonical base:** `Xiezhou0828/topicpilot-platform@3e513d90d61fc26679a6406bbe84f62d237c1e86`
+**Canonical base:** `Xiezhou0828/topicpilot-platform@6645ad746315c0c8431f9103ff7b848aca3be68b`
 **Authority:** `EVIDENCE_ONLY`
 **Mode:** deterministic, research-only, no production mutation
 
@@ -108,12 +108,12 @@ research evidence and are not production policy.
 ## Canonical provenance and CI
 
 This candidate was built from a clean isolated worktree based on
-`Xiezhou0828/topicpilot-platform@3e513d90d61fc26679a6406bbe84f62d237c1e86`. It is not canonical until the
+`Xiezhou0828/topicpilot-platform@6645ad746315c0c8431f9103ff7b848aca3be68b`. It is not canonical until the
 accepted implementation and artifacts are integrated into `main` and re-run at
 the exact integration SHA.
 
-The GitHub Actions CI run `35685732155` for canonical `main` at
-`3e513d90d61fc26679a6406bbe84f62d237c1e86` was completed with `failure` only in the backend test
+The GitHub Actions CI run `35686958895` for canonical `main` at
+`6645ad746315c0c8431f9103ff7b848aca3be68b` was completed with `failure` only in the backend test
 step: Ruff baseline/no-new-debt, changed-scope Ruff, empty-DB migration,
 rollback smoke, and frontend/secret-scan jobs passed. The backend baseline was
 `609 passed, 10 failed, 3 skipped, 146 deselected`; the same 10 known lifecycle
