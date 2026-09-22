@@ -1,0 +1,1 @@
+trade_date,expected_instrument_count,observed_instrument_count,priced_instrument_count,covered_instrument_count,missing_instrument_count,market_no_session_instrument_count,coverage_state

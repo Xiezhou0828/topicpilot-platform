@@ -1,0 +1,1 @@
+market_code,instrument_code,instrument_id,requested_from,requested_to,expected_session_count,observed_count,priced_count,covered_count,missing_count,market_no_session_count,first_observation,last_observation,source_codes,ma20_ready,ma60_ready,coverage_state,primary_gap_class
