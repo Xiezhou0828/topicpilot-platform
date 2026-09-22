@@ -114,8 +114,8 @@ This candidate was built from a clean isolated worktree based on
 
 The accepted evidence-only implementation is integrated into canonical `main` at `ec9d8d00a100be3b8a31ea69d8312d747ffa2784`.
 
-The GitHub Actions CI run `35686958895` for canonical `main` at
-`6645ad746315c0c8431f9103ff7b848aca3be68b` was completed with `failure` only in the backend test
+The GitHub Actions CI run `35688098309` for canonical `main` at
+`1dcafdb8cb3908fbbae07d2b7bfe136a62064019` was completed with `failure` only in the backend test
 step: Ruff baseline/no-new-debt, changed-scope Ruff, empty-DB migration,
 rollback smoke, and frontend/secret-scan jobs passed. The backend baseline was
 `609 passed, 10 failed, 3 skipped, 146 deselected`; the same 10 known lifecycle

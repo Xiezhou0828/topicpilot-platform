@@ -32,6 +32,7 @@ from typing import Any
 TASK_ID = "TASK-C1-DECISION-INTELLIGENCE-RESEARCH-FOUNDATION-001"
 CANONICAL_REPOSITORY = "Xiezhou0828/topicpilot-platform"
 CANONICAL_BASE_SHA = "6645ad746315c0c8431f9103ff7b848aca3be68b"
+LATEST_CI_SHA = "1dcafdb8cb3908fbbae07d2b7bfe136a62064019"
 SOURCE_CLASS = "HISTORICAL_RECONSTRUCTED_RESEARCH"
 RESEARCH_AUTHORITY = "EVIDENCE_ONLY"
 DATASET_START = date(2026, 2, 3)
@@ -1030,8 +1031,8 @@ This candidate was built from a clean isolated worktree based on
 
 {canonical_status}
 
-The GitHub Actions CI run `35686958895` for canonical `main` at
-`{CANONICAL_BASE_SHA}` was completed with `failure` only in the backend test
+The GitHub Actions CI run `35688098309` for canonical `main` at
+`{LATEST_CI_SHA}` was completed with `failure` only in the backend test
 step: Ruff baseline/no-new-debt, changed-scope Ruff, empty-DB migration,
 rollback smoke, and frontend/secret-scan jobs passed. The backend baseline was
 `609 passed, 10 failed, 3 skipped, 146 deselected`; the same 10 known lifecycle
@@ -1151,8 +1152,8 @@ def run_c1(
             "market_relative_return": "INSUFFICIENT_FOR_RESEARCH",
         },
         "remote_ci_evidence": {
-            "main_sha": CANONICAL_BASE_SHA,
-            "workflow_run_id": 35686958895,
+            "main_sha": LATEST_CI_SHA,
+            "workflow_run_id": 35688098309,
             "run_state": "COMPLETED_FAILURE",
             "backend": "FAIL_PREEXISTING_BACKEND_BASELINE_10_FAILURES",
             "backend_passed": 609,
