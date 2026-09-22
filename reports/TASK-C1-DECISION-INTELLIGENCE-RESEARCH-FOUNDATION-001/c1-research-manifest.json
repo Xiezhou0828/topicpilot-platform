@@ -1,7 +1,7 @@
 {
   "artifact_sha256": {
     "c1-dataset-coverage-summary.csv": "6bd2730733846ef0267f06f3d1901831ece39601830d7a4aab8b1cdaa7f8e4e3",
-    "c1-decision-intelligence-research-report.md": "78688c9dc2584ef4eaae29e12ecc1e133d4096115f13435ab6d56896a1df67ae",
+    "c1-decision-intelligence-research-report.md": "b4a1a61c5f97b0c1aac868a00f283b90e8341bb3a1bc1b6f409003e93e146a9b",
     "c1-feature-inventory.csv": "064681e43475b184289ca8dbab23cc786ad09c38b1cddb847f9ea585cbd39aa9",
     "c1-grade-lifecycle-expectancy.csv": "c6c69c3bf23e19687f9288f47d27a33e6ebbec1106996900a15acc1463185b30",
     "c1-lifecycle-technical-expectancy.csv": "46dd86112ae4ae6d9a9f6bc1477df18ff9ae381a65c8db8f570e31a4ed4da42b",
@@ -11,7 +11,7 @@
     "c1-robustness-summary.csv": "c57ce18853843d53fa4c5a24f4a0b54e6126defe7dc08dbdf20590077118b21c"
   },
   "canonical_adoption": "NOT_CANONICAL_UNTIL_MAIN_INTEGRATION",
-  "canonical_base": "4a35867a61d7a51051261f1706604fb42d3f5b24",
+  "canonical_base": "3e513d90d61fc26679a6406bbe84f62d237c1e86",
   "canonical_repository": "Xiezhou0828/topicpilot-platform",
   "contracts": {
     "deployment": false,
@@ -27,7 +27,7 @@
   },
   "dataset": {
     "a2_row_count": 5277,
-    "canonical_base_sha": "4a35867a61d7a51051261f1706604fb42d3f5b24",
+    "canonical_base_sha": "3e513d90d61fc26679a6406bbe84f62d237c1e86",
     "canonical_repository": "Xiezhou0828/topicpilot-platform",
     "dataset_end": "2026-08-13",
     "dataset_start": "2026-02-03",
@@ -95,16 +95,36 @@
     "market_relative_return": "INSUFFICIENT_FOR_RESEARCH",
     "structural_role_leader": "UNKNOWN_FOR_HISTORICAL_WINDOW"
   },
-  "implementation_head": "WORKTREE_PENDING_INTEGRATION",
+  "implementation_head": "1f437bfd19c5e647b2859336b247758caca0c891",
   "main_integration_commit": null,
   "remote_ci_evidence": {
-    "backend": "FAIL_RUFF_CHANGED_SCOPE_PRE_EXISTING_MIGRATION_I001",
+    "backend": "FAIL_PREEXISTING_BACKEND_BASELINE_10_FAILURES",
+    "backend_deselected": 146,
+    "backend_failed": 10,
+    "backend_failure_identities": [
+      "test_canonical_observation_implementation.py::test_canonical_revision_is_linear_after_0018",
+      "test_topic_lifecycle_contract_closure.py::test_frozen_stage_contract_has_one_owner_sequence_and_no_legacy_stage",
+      "test_topic_lifecycle_engine.py::test_sprouting_requires_confirmation_and_uses_leader_proxy",
+      "test_topic_lifecycle_engine.py::test_fermenting_is_partial_diffusion_not_main_rise",
+      "test_topic_lifecycle_engine.py::test_main_rise_strong_structure_can_jump_without_two_day_confirmation",
+      "test_topic_lifecycle_engine.py::test_mature_requires_prior_main_rise_and_persistent_divergence",
+      "test_topic_lifecycle_engine.py::test_declining_strong_structural_weakening_can_jump",
+      "test_topic_lifecycle_engine.py::test_reentry_resets_day_n_for_new_main_rise",
+      "test_topic_lifecycle_engine.py::test_trading_day_arithmetic_is_date_sequence_driven",
+      "test_topic_lifecycle_engine.py::test_ordinary_signal_cannot_skip_adjacent_lifecycle_stage"
+    ],
+    "backend_passed": 609,
+    "backend_skipped": 3,
     "canonical_evidence_only": true,
     "frontend": "PASS",
-    "main_sha": "4a35867a61d7a51051261f1706604fb42d3f5b24",
+    "main_sha": "3e513d90d61fc26679a6406bbe84f62d237c1e86",
+    "migration_empty_db": "PASS",
+    "migration_rollback": "PASS",
+    "ruff_baseline_no_new_debt": "PASS",
+    "ruff_changed_scope": "PASS",
     "run_state": "COMPLETED_FAILURE",
     "secret_scan": "PASS",
-    "workflow_run_id": 35684511356
+    "workflow_run_id": 35685732155
   },
   "required_outputs": [
     "c1-feature-inventory.csv",

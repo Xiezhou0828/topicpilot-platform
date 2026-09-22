@@ -31,7 +31,7 @@ from typing import Any
 
 TASK_ID = "TASK-C1-DECISION-INTELLIGENCE-RESEARCH-FOUNDATION-001"
 CANONICAL_REPOSITORY = "Xiezhou0828/topicpilot-platform"
-CANONICAL_BASE_SHA = "4a35867a61d7a51051261f1706604fb42d3f5b24"
+CANONICAL_BASE_SHA = "3e513d90d61fc26679a6406bbe84f62d237c1e86"
 SOURCE_CLASS = "HISTORICAL_RECONSTRUCTED_RESEARCH"
 RESEARCH_AUTHORITY = "EVIDENCE_ONLY"
 DATASET_START = date(2026, 2, 3)
@@ -1017,13 +1017,26 @@ This candidate was built from a clean isolated worktree based on
 accepted implementation and artifacts are integrated into `main` and re-run at
 the exact integration SHA.
 
-The GitHub Actions CI run `35684511356` for canonical `main` at
-`{CANONICAL_BASE_SHA}` was completed with `failure`: the backend Ruff no-new-debt
-gate passed, but the changed-scope gate reported the pre-existing import-order
-finding `I001` in
-`services/api/alembic/versions/0037_task_b2_lifecycle_v1_3_formal_publication.py`;
-the frontend job and secret scan passed. This task does not treat local focused
-tests as a replacement for that remote CI evidence.
+The GitHub Actions CI run `35685732155` for canonical `main` at
+`{CANONICAL_BASE_SHA}` was completed with `failure` only in the backend test
+step: Ruff baseline/no-new-debt, changed-scope Ruff, empty-DB migration,
+rollback smoke, and frontend/secret-scan jobs passed. The backend baseline was
+`609 passed, 10 failed, 3 skipped, 146 deselected`; the same 10 known lifecycle
+and canonical-baseline failures are preserved by the C1 candidate. This task
+does not treat local focused tests as a replacement for that remote CI
+evidence.
+
+The preserved failure identities are:
+`test_canonical_observation_implementation.py::test_canonical_revision_is_linear_after_0018`,
+`test_topic_lifecycle_contract_closure.py::test_frozen_stage_contract_has_one_owner_sequence_and_no_legacy_stage`,
+`test_topic_lifecycle_engine.py::test_sprouting_requires_confirmation_and_uses_leader_proxy`,
+`test_topic_lifecycle_engine.py::test_fermenting_is_partial_diffusion_not_main_rise`,
+`test_topic_lifecycle_engine.py::test_main_rise_strong_structure_can_jump_without_two_day_confirmation`,
+`test_topic_lifecycle_engine.py::test_mature_requires_prior_main_rise_and_persistent_divergence`,
+`test_topic_lifecycle_engine.py::test_declining_strong_structural_weakening_can_jump`,
+`test_topic_lifecycle_engine.py::test_reentry_resets_day_n_for_new_main_rise`,
+`test_topic_lifecycle_engine.py::test_trading_day_arithmetic_is_date_sequence_driven`, and
+`test_topic_lifecycle_engine.py::test_ordinary_signal_cannot_skip_adjacent_lifecycle_stage`.
 
 ## Files and limitations
 
@@ -1120,12 +1133,32 @@ def run_c1(
         },
         "remote_ci_evidence": {
             "main_sha": CANONICAL_BASE_SHA,
-            "workflow_run_id": 35684511356,
+            "workflow_run_id": 35685732155,
             "run_state": "COMPLETED_FAILURE",
-            "backend": "FAIL_RUFF_CHANGED_SCOPE_PRE_EXISTING_MIGRATION_I001",
+            "backend": "FAIL_PREEXISTING_BACKEND_BASELINE_10_FAILURES",
+            "backend_passed": 609,
+            "backend_failed": 10,
+            "backend_skipped": 3,
+            "backend_deselected": 146,
+            "ruff_baseline_no_new_debt": "PASS",
+            "ruff_changed_scope": "PASS",
+            "migration_empty_db": "PASS",
+            "migration_rollback": "PASS",
             "frontend": "PASS",
             "secret_scan": "PASS",
             "canonical_evidence_only": True,
+            "backend_failure_identities": [
+                "test_canonical_observation_implementation.py::test_canonical_revision_is_linear_after_0018",
+                "test_topic_lifecycle_contract_closure.py::test_frozen_stage_contract_has_one_owner_sequence_and_no_legacy_stage",
+                "test_topic_lifecycle_engine.py::test_sprouting_requires_confirmation_and_uses_leader_proxy",
+                "test_topic_lifecycle_engine.py::test_fermenting_is_partial_diffusion_not_main_rise",
+                "test_topic_lifecycle_engine.py::test_main_rise_strong_structure_can_jump_without_two_day_confirmation",
+                "test_topic_lifecycle_engine.py::test_mature_requires_prior_main_rise_and_persistent_divergence",
+                "test_topic_lifecycle_engine.py::test_declining_strong_structural_weakening_can_jump",
+                "test_topic_lifecycle_engine.py::test_reentry_resets_day_n_for_new_main_rise",
+                "test_topic_lifecycle_engine.py::test_trading_day_arithmetic_is_date_sequence_driven",
+                "test_topic_lifecycle_engine.py::test_ordinary_signal_cannot_skip_adjacent_lifecycle_stage",
+            ],
         },
     }
     _write_json(output_dir / "c1-research-manifest.json", manifest)
