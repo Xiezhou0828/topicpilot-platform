@@ -29,6 +29,7 @@ dev = [
 [project.scripts]
 topicpilot-import = "topicpilot_api.cli:main"
 topicpilot-formula-research = "topicpilot_api.research_cli:main"
+topicpilot-c1-research = "topicpilot_api.research.decision_intelligence:main"
 topicpilot-live = "topicpilot_api.live.cli:main"
 topicpilot-provider-lineage = "topicpilot_api.provider_lineage_cli:main"
 topicpilot-provider-preflight = "topicpilot_api.provider_preflight_cli:main"

@@ -1,0 +1,124 @@
+{
+  "artifact_sha256": {
+    "c1-dataset-coverage-summary.csv": "6bd2730733846ef0267f06f3d1901831ece39601830d7a4aab8b1cdaa7f8e4e3",
+    "c1-decision-intelligence-research-report.md": "78688c9dc2584ef4eaae29e12ecc1e133d4096115f13435ab6d56896a1df67ae",
+    "c1-feature-inventory.csv": "064681e43475b184289ca8dbab23cc786ad09c38b1cddb847f9ea585cbd39aa9",
+    "c1-grade-lifecycle-expectancy.csv": "c6c69c3bf23e19687f9288f47d27a33e6ebbec1106996900a15acc1463185b30",
+    "c1-lifecycle-technical-expectancy.csv": "46dd86112ae4ae6d9a9f6bc1477df18ff9ae381a65c8db8f570e31a4ed4da42b",
+    "c1-market-regime-conditional-expectancy.csv": "e8ed9cf5ead5c606ab828e77865d5d01a05e3ba2f2108a2fc0dc19f60d94e1b1",
+    "c1-outcome-label-inventory.csv": "eb50121785f4893c6671aace91a4e33a44f0d0281e723a129e2b501292370fb7",
+    "c1-research-dataset.csv": "46852ca80dea1df688285ee4b93de4a6a62e9e3ed9c80ae5b27409d49e5cae46",
+    "c1-robustness-summary.csv": "c57ce18853843d53fa4c5a24f4a0b54e6126defe7dc08dbdf20590077118b21c"
+  },
+  "canonical_adoption": "NOT_CANONICAL_UNTIL_MAIN_INTEGRATION",
+  "canonical_base": "4a35867a61d7a51051261f1706604fb42d3f5b24",
+  "canonical_repository": "Xiezhou0828/topicpilot-platform",
+  "contracts": {
+    "deployment": false,
+    "duplicate_key": "PASS",
+    "formal_policy_changed": false,
+    "formal_research_separation": "PASS",
+    "future_window_boundary": "PASS",
+    "jev_integration_implemented": false,
+    "jev_integration_ready": true,
+    "migration": false,
+    "no_lookahead": "PASS",
+    "production_mutation": false
+  },
+  "dataset": {
+    "a2_row_count": 5277,
+    "canonical_base_sha": "4a35867a61d7a51051261f1706604fb42d3f5b24",
+    "canonical_repository": "Xiezhou0828/topicpilot-platform",
+    "dataset_end": "2026-08-13",
+    "dataset_start": "2026-02-03",
+    "join_counts": {
+      "a2_outside_window": 3552,
+      "a2_without_current_mapping": 270,
+      "a2_without_l5_topic_date": 14,
+      "joined_exposure_count": 2906,
+      "outcome_10_available": 2677,
+      "outcome_10_unavailable": 229,
+      "outcome_1_available": 2893,
+      "outcome_1_unavailable": 13,
+      "outcome_3_available": 2845,
+      "outcome_3_unavailable": 61,
+      "outcome_5_available": 2804,
+      "outcome_5_unavailable": 102,
+      "topic_relative_target_mismatch": 4
+    },
+    "joined_exposure_count": 2906,
+    "l5_row_count": 16250,
+    "mapping_row_count": 1042,
+    "outcome_label_count": 11624,
+    "pit_semantics": {
+      "formal_history_backfilled": false,
+      "future_features_used": false,
+      "missing_values_inferred_as_zero": false,
+      "taxonomy": "CURRENT_TAXONOMY_FROZEN_RECONSTRUCTION",
+      "taxonomy_pit_safe": false
+    },
+    "research_authority": "EVIDENCE_ONLY",
+    "source_class": "HISTORICAL_RECONSTRUCTED_RESEARCH",
+    "source_files": {
+      "a2_panel": {
+        "path": "reports\\TASK-WS3-P2E-A2-EXPANDED-CONFIRMATORY-VALIDATION-AND-ADVANTAGE-REVALIDATION-20260820\\ws3-p2e-a2-expanded-event-panel.csv",
+        "sha256": "97b131479b90ce64a821f72a6c6cceb58d102aeb49c64eac60ba19dfca71bc52"
+      },
+      "benchmark_not_available": {
+        "path": "reports\\TASK-WS3-A2-LEGACY5-JOINT-SIGNAL-ROBUSTNESS-AND-BENCHMARK-VALIDATION-20260822\\benchmark-not-available.csv",
+        "sha256": "80c45ad4087cf4f33acd5153a0339facfcbea434901829a493029c9ff9771afa"
+      },
+      "institutional_scope": {
+        "path": "reports\\TASK-WS1-TOPIC-LIFECYCLE-STRENGTH-EVIDENCE-CONTRACT-RESEARCH-20260822\\topic-strength-evidence-inventory.csv",
+        "sha256": "5c111695b927a9cc1495e6a445ed55c369712fb8c136cda0646271592ddd6e0a"
+      },
+      "l5_dataset": {
+        "path": "reports\\TASK-WS1-L5-CURRENT-TAXONOMY-HISTORICAL-LIFECYCLE-STRENGTH-RECONSTRUCTION-20260822\\historical-lifecycle-strength-dataset.csv",
+        "sha256": "4e2567025c85c1de51c4ebfe198eae1f39a7e0580d1a019d7a5c981b3c5945bd"
+      },
+      "mapping_dataset": {
+        "path": "fixtures\\research\\topic_universe_mapping.v1.csv",
+        "sha256": "3a222847872c6d4ff21493611528528605821c3cd2a3928061ac3905865403e5"
+      },
+      "regime_not_available": {
+        "path": "reports\\TASK-WS3-A2-LEGACY5-JOINT-SIGNAL-ROBUSTNESS-AND-BENCHMARK-VALIDATION-20260822\\regime-not-available.csv",
+        "sha256": "0a1b318edfc853ec66a1e258d9cdc77993fef4ad492b98490655e987442954b7"
+      }
+    },
+    "topic_count": 130,
+    "trading_session_count": 125
+  },
+  "feature_status": {
+    "grade": "INSUFFICIENT_FOR_RESEARCH",
+    "institutional_flow": "INSUFFICIENT_FOR_RESEARCH",
+    "market_regime": "INSUFFICIENT_FOR_RESEARCH",
+    "market_relative_return": "INSUFFICIENT_FOR_RESEARCH",
+    "structural_role_leader": "UNKNOWN_FOR_HISTORICAL_WINDOW"
+  },
+  "implementation_head": "WORKTREE_PENDING_INTEGRATION",
+  "main_integration_commit": null,
+  "remote_ci_evidence": {
+    "backend": "FAIL_RUFF_CHANGED_SCOPE_PRE_EXISTING_MIGRATION_I001",
+    "canonical_evidence_only": true,
+    "frontend": "PASS",
+    "main_sha": "4a35867a61d7a51051261f1706604fb42d3f5b24",
+    "run_state": "COMPLETED_FAILURE",
+    "secret_scan": "PASS",
+    "workflow_run_id": 35684511356
+  },
+  "required_outputs": [
+    "c1-feature-inventory.csv",
+    "c1-outcome-label-inventory.csv",
+    "c1-dataset-coverage-summary.csv",
+    "c1-grade-lifecycle-expectancy.csv",
+    "c1-lifecycle-technical-expectancy.csv",
+    "c1-market-regime-conditional-expectancy.csv",
+    "c1-robustness-summary.csv",
+    "c1-research-dataset.csv",
+    "c1-decision-intelligence-research-report.md",
+    "c1-research-manifest.json"
+  ],
+  "research_authority": "EVIDENCE_ONLY",
+  "source_class": "HISTORICAL_RECONSTRUCTED_RESEARCH",
+  "task_id": "TASK-C1-DECISION-INTELLIGENCE-RESEARCH-FOUNDATION-001"
+}
