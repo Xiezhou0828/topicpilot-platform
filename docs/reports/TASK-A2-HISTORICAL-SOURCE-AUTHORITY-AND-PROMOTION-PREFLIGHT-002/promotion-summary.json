@@ -1,0 +1,111 @@
+{
+  "task_id": "TASK-A2-HISTORICAL-SOURCE-AUTHORITY-AND-PROMOTION-PREFLIGHT-002",
+  "roadmap_workstream": "A2 Historical Data Foundation",
+  "canonical_base": "origin/main@3e513d90d61fc26679a6406bbe84f62d237c1e86",
+  "repository": "https://github.com/Xiezhou0828/topicpilot-platform",
+  "github_ci": {
+    "run_number": 97,
+    "head_sha": "3e513d90d61fc26679a6406bbe84f62d237c1e86",
+    "conclusion": "failure",
+    "backend_migration_openapi": "failure",
+    "frontend": "success",
+    "secret_scan": "success",
+    "docker_compose_smoke": "skipped"
+  },
+  "primary_backfill_source": {
+    "class": "COMMITTED_AUTHORITY_MANIFEST_BACKED_CANONICAL_NONPRODUCTION_DB",
+    "database_target": "topicpilot / topicpilot / local Docker Compose PostgreSQL",
+    "bootstrap_task_id": "TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-BOOTSTRAP-EXECUTION-20260819",
+    "run_id": "TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-BOOTSTRAP-EXECUTION-20260819-RUN-001",
+    "source_final_canonical_head": "c40aa42e7cac665386009f29c94a8dafce896427",
+    "authority_version": "sdf-603-ohlcv-2y.v1",
+    "reference_version": "sdf-reference-603-v1",
+    "identity_version": "sdf-reference-603-v1 / market:instrument_code",
+    "providers": {
+      "TPE": ["TWSE_OFFICIAL_DAILY", "twse-official-daily.v1", "twse-official-daily.v2"],
+      "TWO": ["TPEX_OFFICIAL_DAILY", "tpex-official-daily.v1", "tpex-official-daily.v2"]
+    },
+    "start_date": "2024-08-13",
+    "end_date": "2026-08-13",
+    "instrument_count": 603,
+    "accepted_ohlcv_rows": 288881,
+    "normalized_surface_sha256": "e803733e796d8f4d8cf00575cd4045f28c9364572fc61b31ef490e8a65ff47a4",
+    "manifest_available": true,
+    "live_db_readback": false
+  },
+  "identity_reconciliation": {
+    "status": "PASS_BY_COMMITTED_AUTHORITY_MANIFEST_LIVE_READBACK_BLOCKED",
+    "bootstrap_instruments": 603,
+    "matched_canonical_identities": 603,
+    "identity_mismatches": 0,
+    "unmapped_instruments": 0,
+    "ambiguous_identities": 0,
+    "lifecycle_conflicts": 0,
+    "new_identity_security_pass": 96,
+    "new_identity_listing_pass": 96
+  },
+  "overlap_reconciliation": {
+    "status": "SOURCE_READBACK_BLOCKED",
+    "bootstrap_vs_canonical_dev": null,
+    "bootstrap_vs_production": null,
+    "match": null,
+    "match_with_metadata_difference": null,
+    "value_conflict": null,
+    "missing_in_bootstrap": null,
+    "missing_in_canonical": null,
+    "identity_conflict": 0,
+    "conflict_count": null
+  },
+  "corporate_action": {
+    "raw_ohlcv_promotion_blocked": false,
+    "adjusted_return_continuity_ready": false,
+    "adjustment_state": "UNKNOWN",
+    "corporate_action_limitation_count": 603,
+    "affected_instrument_count": 603
+  },
+  "promotable_scope": {
+    "authority_manifest_start_date": "2024-08-13",
+    "authority_manifest_end_date": "2026-08-13",
+    "authority_manifest_instruments": 603,
+    "authority_manifest_rows": 288881,
+    "markets": {"TPE": 370, "TWO": 233},
+    "match_rate": null,
+    "new_rows_promoted_in_this_task": 0
+  },
+  "blocked_scope": {
+    "rows": null,
+    "instruments": null,
+    "dates": null,
+    "reason": "SOURCE_READBACK_UNAVAILABLE_FOR_CURRENT_PREFLIGHT",
+    "bounded_exception_counts": {
+      "QUARANTINE": 144,
+      "PROVIDER_NO_DATA": 142,
+      "LIFECYCLE_SKIP": 41,
+      "PROVIDER_OR_UNRESOLVED_GAP_INSTRUMENTS": 13,
+      "PIT_LIMITED_INSTRUMENTS": 16,
+      "ADJUSTMENT_UNKNOWN_INSTRUMENTS": 603
+    }
+  },
+  "historical_to_daily_chain": {
+    "status": "UNVERIFIED_LIVE_READBACK",
+    "canonical_path": "official provider -> request-keyed ingestion -> raw -> timeline -> canonical PRICE/VOLUME -> vw_daily_market_observations",
+    "duplicate_truth_risk": "CONTROLLED_BY_SINGLE_CANONICAL_CHAIN_AND_SUPERSESSION; LIVE_RUNTIME_NOT_RECHECKED",
+    "production_known_partial_end_date": "2026-09-21",
+    "2026_09_22_evaluated": false
+  },
+  "dry_run": {
+    "status": "SOURCE_READBACK_BLOCKED",
+    "source_rows": null,
+    "already_present": null,
+    "new_promotable": null,
+    "conflicts": null,
+    "blocked": "ALL_LIVE_SOURCE_ROWS_UNAVAILABLE",
+    "identity_failures": 0
+  },
+  "promotion_ready": false,
+  "production_write_executed": false,
+  "deployment": false,
+  "migration_added": false,
+  "formal_derived_history_changed": false,
+  "next_task_changed": false
+}
