@@ -59,9 +59,9 @@ __all__ = [
     "ReferenceSession",
     "ReferenceTimezone",
     "ReferenceTradingStatus",
+    "TopicAuthorityActivation",
     "TopicLifecycleFormalResult",
     "TopicLifecycleResult",
-    "TopicAuthorityActivation",
 ]
 for _module in (
     canonical_observations,
