@@ -899,6 +899,7 @@ def _render_report(
     lifecycle_technical: list[dict[str, Any]],
     market_regime: list[dict[str, Any]],
     robustness: list[dict[str, Any]],
+    main_integration_commit: str | None,
 ) -> str:
     available = {h: len(_available_labels(dataset, h)) for h in HORIZONS}
     lifecycle_candidates = [
@@ -906,6 +907,18 @@ def _render_report(
         if row["sample_size"] >= 30 and row["sample_warning"] in {"NONE", "OUTCOME_MISSINGNESS_OVER_20PCT"}
     ]
     candidate_names = sorted({f"{row['lifecycle_stage']} x {row['technical_state']}" for row in lifecycle_candidates})
+    if main_integration_commit:
+        canonical_status = (
+            "`C1_CANONICAL_ADOPTION=CANONICALIZED_RESEARCH_FOUNDATION`\n\n"
+            f"The accepted evidence-only implementation is integrated into canonical `main` at "
+            f"`{main_integration_commit}`."
+        )
+    else:
+        canonical_status = (
+            "`C1_CANONICAL_ADOPTION=NOT_CANONICAL_UNTIL_MAIN_INTEGRATION`\n\n"
+            "This candidate is not canonical until the accepted implementation and artifacts are integrated "
+            "into `main` and re-run at the exact integration SHA."
+        )
     return f"""# C1 Decision Intelligence Research Foundation
 
 **Task:** `{TASK_ID}`
@@ -1013,9 +1026,9 @@ research evidence and are not production policy.
 ## Canonical provenance and CI
 
 This candidate was built from a clean isolated worktree based on
-`{CANONICAL_REPOSITORY}@{CANONICAL_BASE_SHA}`. It is not canonical until the
-accepted implementation and artifacts are integrated into `main` and re-run at
-the exact integration SHA.
+`{CANONICAL_REPOSITORY}@{CANONICAL_BASE_SHA}`.
+
+{canonical_status}
 
 The GitHub Actions CI run `35686958895` for canonical `main` at
 `{CANONICAL_BASE_SHA}` was completed with `failure` only in the backend test
@@ -1059,6 +1072,7 @@ def run_c1(
     *,
     source_root: Path | None = None,
     implementation_head: str = "WORKTREE_PENDING_INTEGRATION",
+    main_integration_commit: str | None = None,
 ) -> ResearchExperimentResult:
     """Run C1 and write all required evidence-only artifacts."""
 
@@ -1078,6 +1092,7 @@ def run_c1(
         lifecycle_technical,
         market_regime,
         robustness,
+        main_integration_commit,
     )
 
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -1105,8 +1120,12 @@ def run_c1(
         "canonical_repository": CANONICAL_REPOSITORY,
         "canonical_base": CANONICAL_BASE_SHA,
         "implementation_head": implementation_head,
-        "main_integration_commit": None,
-        "canonical_adoption": "NOT_CANONICAL_UNTIL_MAIN_INTEGRATION",
+        "main_integration_commit": main_integration_commit,
+        "canonical_adoption": (
+            "CANONICALIZED_RESEARCH_FOUNDATION"
+            if main_integration_commit
+            else "NOT_CANONICAL_UNTIL_MAIN_INTEGRATION"
+        ),
         "source_class": SOURCE_CLASS,
         "research_authority": RESEARCH_AUTHORITY,
         "dataset": dataset.source_metadata,
@@ -1192,6 +1211,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--output-dir", required=True, type=Path)
     parser.add_argument("--source-root", type=Path)
     parser.add_argument("--implementation-head", default="WORKTREE_PENDING_INTEGRATION")
+    parser.add_argument("--main-integration-commit")
     return parser
 
 
@@ -1201,6 +1221,7 @@ def main(argv: list[str] | None = None) -> int:
         args.output_dir,
         source_root=args.source_root,
         implementation_head=args.implementation_head,
+        main_integration_commit=args.main_integration_commit,
     )
     print(json.dumps({
         "task_id": TASK_ID,

@@ -108,9 +108,11 @@ research evidence and are not production policy.
 ## Canonical provenance and CI
 
 This candidate was built from a clean isolated worktree based on
-`Xiezhou0828/topicpilot-platform@6645ad746315c0c8431f9103ff7b848aca3be68b`. It is not canonical until the
-accepted implementation and artifacts are integrated into `main` and re-run at
-the exact integration SHA.
+`Xiezhou0828/topicpilot-platform@6645ad746315c0c8431f9103ff7b848aca3be68b`.
+
+`C1_CANONICAL_ADOPTION=CANONICALIZED_RESEARCH_FOUNDATION`
+
+The accepted evidence-only implementation is integrated into canonical `main` at `ec9d8d00a100be3b8a31ea69d8312d747ffa2784`.
 
 The GitHub Actions CI run `35686958895` for canonical `main` at
 `6645ad746315c0c8431f9103ff7b848aca3be68b` was completed with `failure` only in the backend test

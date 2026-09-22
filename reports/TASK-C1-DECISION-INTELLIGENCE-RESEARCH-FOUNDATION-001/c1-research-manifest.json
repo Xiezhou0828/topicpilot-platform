@@ -1,7 +1,7 @@
 {
   "artifact_sha256": {
     "c1-dataset-coverage-summary.csv": "6bd2730733846ef0267f06f3d1901831ece39601830d7a4aab8b1cdaa7f8e4e3",
-    "c1-decision-intelligence-research-report.md": "86693ebe0705cf4942bac9dce388d0ca294ebf958487a3ec9c754b2f83806607",
+    "c1-decision-intelligence-research-report.md": "084a237809056fffc997a47ef61bdba06b55680288ba9276672002ab52fcf98f",
     "c1-feature-inventory.csv": "064681e43475b184289ca8dbab23cc786ad09c38b1cddb847f9ea585cbd39aa9",
     "c1-grade-lifecycle-expectancy.csv": "c6c69c3bf23e19687f9288f47d27a33e6ebbec1106996900a15acc1463185b30",
     "c1-lifecycle-technical-expectancy.csv": "46dd86112ae4ae6d9a9f6bc1477df18ff9ae381a65c8db8f570e31a4ed4da42b",
@@ -10,7 +10,7 @@
     "c1-research-dataset.csv": "46852ca80dea1df688285ee4b93de4a6a62e9e3ed9c80ae5b27409d49e5cae46",
     "c1-robustness-summary.csv": "c57ce18853843d53fa4c5a24f4a0b54e6126defe7dc08dbdf20590077118b21c"
   },
-  "canonical_adoption": "NOT_CANONICAL_UNTIL_MAIN_INTEGRATION",
+  "canonical_adoption": "CANONICALIZED_RESEARCH_FOUNDATION",
   "canonical_base": "6645ad746315c0c8431f9103ff7b848aca3be68b",
   "canonical_repository": "Xiezhou0828/topicpilot-platform",
   "contracts": {
@@ -96,7 +96,7 @@
     "structural_role_leader": "UNKNOWN_FOR_HISTORICAL_WINDOW"
   },
   "implementation_head": "1f437bfd19c5e647b2859336b247758caca0c891",
-  "main_integration_commit": null,
+  "main_integration_commit": "ec9d8d00a100be3b8a31ea69d8312d747ffa2784",
   "remote_ci_evidence": {
     "backend": "FAIL_PREEXISTING_BACKEND_BASELINE_10_FAILURES",
     "backend_deselected": 146,
