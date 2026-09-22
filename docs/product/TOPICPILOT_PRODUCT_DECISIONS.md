@@ -1,160 +1,158 @@
-# TopicPilot Product Decisions
+# TopicPilot product decisions
 
-**Status:** `CANONICAL / CURRENT DECISIONS`
-**Owner:** PM / Product design
-**Last reviewed:** 2026-08-10
+**Status:** `CANONICAL / ACTIVE`
+**Last reviewed:** `2026-09-22`
 
-This file records decisions that are safe to use as current product direction. It is not a backlog, work order, implementation report, or replacement for the detailed frontend specification. Undecided items remain in `TOPICPILOT_PRODUCT_IDEAS.md` or are marked provisional in the source document.
+This register records settled product principles. It is not a backlog,
+implementation report, or permission to mutate Production. Provisional ideas
+remain in [Product Ideas](TOPICPILOT_PRODUCT_IDEAS.md).
 
-## Decision register
+## Current decision register
 
-### PD-001 — Home is market navigation
+### PD-001 — Home/Today is market navigation
 
-- **Decision:** Home / 今日市場 is a market-navigation workspace, not a stock leaderboard, trading terminal, or complete topic map. It does not contain K-lines, a full topic heatmap/map, or strong/weak stock rankings.
-- **Rationale:** Give the user orientation and the day's market structure before asking them to research an individual stock.
-- **Date:** 2026-08-10 (consolidated from current frontend freeze)
+- **Decision:** Today answers “what is happening in the market?” through
+  backend-owned market facts, events, distribution, flows, and signals.
+- **Boundary:** It is not an Opportunity selector or recommendation surface.
 - **Status:** `COMMITTED`
-- **Source:** [V2 Frontend Design Specification](../architecture/TOPICPILOT_V2_FRONTEND_DESIGN_SPEC.md), sections 2, 5, and Home freeze amendments; [Product Direction Contract](../architecture/PRODUCT_SURFACES_AND_UX_CONTRACT.md)
 
-### PD-002 — Shared desktop header information architecture
+### PD-002 — Topic is the primary thematic intelligence object
 
-- **Decision:** The header is one horizontal workspace bar. The left group is Logo + expanded Primary Nav; the right group is Search + Notification + Account. The desktop hamburger and duplicate utility rows are removed.
-- **Rationale:** Keep navigation and workspace utilities legible and stable across V2 customer routes.
-- **Date:** 2026-08-10
+- **Decision:** Topic owns identity, effective membership, Structural Role,
+  Score, Daily Grade, Lifecycle, ranking, and evidence-backed explanation.
+- **Boundary:** Every field retains explicit provenance and availability.
 - **Status:** `COMMITTED`
-- **Source:** [V2 Frontend Design Specification](../architecture/TOPICPILOT_V2_FRONTEND_DESIGN_SPEC.md), section 3; `TASK-FE-HEADER-002` report
 
-### PD-003 — Visual system and responsive priority
+### PD-003 — Stock is an evidence and drill-down surface
 
-- **Decision:** Light mode is the default and dark mode is fully supported. The product is desktop-first. Brand accent is `#8A7462`; surfaces use warm off-white and white, low shadow, restrained borders, and Taiwan-market red-up/green-down semantics.
-- **Rationale:** Create a calm modern financial workspace with clear market semantics.
-- **Date:** 2026-08-10
+- **Decision:** Stock search, price history, technical evidence, institutional
+  flow, Topic relations, and Opportunity context are consumed from formal
+  backend contracts.
 - **Status:** `COMMITTED`
-- **Source:** [V2 Frontend Design Specification](../architecture/TOPICPILOT_V2_FRONTEND_DESIGN_SPEC.md), sections 23–24; Home and header freeze reports
 
-### PD-004 — Customer information architecture
+### PD-004 — Favorites is user-owned state
 
-- **Decision:** The primary customer surfaces are 今日市場, 題材, 股票, 收藏, 機會, and AI研究室. Each page answers one primary research question. AI研究室 remains in the IA but does not block the initial V2 launch.
-- **Rationale:** Separate orientation, topic intelligence, stock exploration, saved items, recommendations, and future deep research.
-- **Date:** 2026-08-10
-- **Status:** `COMMITTED` (AI研究室 launch scope is deferred)
-- **Source:** [V2 Frontend Design Specification](../architecture/TOPICPILOT_V2_FRONTEND_DESIGN_SPEC.md), sections 3–4
-
-### PD-005 — Topic hierarchy and lifecycle
-
-- **Decision:** Topic pages are theme-first and preserve topic hierarchy. Topic Detail exposes representative/core/related stock roles (`代表股` / `核心股` / `關聯股`) and a topic lifecycle. The browser must not infer lifecycle or business scores when the canonical API/data contract is unavailable.
-- **Rationale:** TopicPilot explains market themes and their evolution rather than presenting an undifferentiated stock list.
-- **Date:** 2026-08-10
-- **Status:** `COMMITTED` for product semantics; lifecycle derivation remains an API/data dependency where not yet contracted
-- **Source:** [V2 Frontend Design Specification](../architecture/TOPICPILOT_V2_FRONTEND_DESIGN_SPEC.md), topic and lifecycle sections; [Product Direction Contract](../architecture/PRODUCT_SURFACES_AND_UX_CONTRACT.md)
-
-### PD-006 — Stock Explorer and Stock Detail interaction
-
-- **Decision:** Stock Explorer and Stock Detail use the shared right-side Stock Drawer with a calm “atlas/catalogue” feel. Stock selection preserves the underlying page; it is not a traditional forced full-page navigation model.
-- **Rationale:** Support comparison and exploration without losing market/topic context.
-- **Date:** 2026-08-10
+- **Decision:** Favorites is a saved-item/watch surface, not an implicit
+  recommendation or model label.
 - **Status:** `COMMITTED`
-- **Source:** [V2 Frontend Design Specification](../architecture/TOPICPILOT_V2_FRONTEND_DESIGN_SPEC.md), stock surface and drawer sections
 
-### PD-007 — 收藏 is user-owned saved items
+### PD-005 — Opportunity is downstream research support
 
-- **Decision:** 收藏 / 我的收藏 is for the user's saved topics and saved stocks, not recommendations. Both entity types coexist, visibly separated as 題材 and 股票. Saved views show factual state/change only and do not invent advice.
-- **Rationale:** Keep personal tracking distinct from system-generated opportunity discovery.
-- **Date:** 2026-08-10
+- **Decision:** Opportunity consumes formal upstream Topic and stock evidence,
+  applies independently governed qualification/strategy contracts, and returns
+  evidence-first states. It does not feed back into Topic Score.
+- **Status:** `COMMITTED`; formal provider/publication remains gated
+
+### PD-006 — V1 is not V2 product authority
+
+- **Decision:** V1 remains a protected legacy bridge until V2 replacement and
+  parity/cutover approval. It is not authority for V2 UI or semantics.
 - **Status:** `COMMITTED`
-- **Source:** [V2 Frontend Design Specification](../architecture/TOPICPILOT_V2_FRONTEND_DESIGN_SPEC.md), sections 22–23
 
-### PD-008 — 機會 is downstream research support
+### PD-007 — Daily Grade and Lifecycle are independent
 
-- **Decision:** 機會 owns recommendation/candidate/technical-validation presentation downstream of Topic Intelligence. It is theme-first, explainable, and reuses the Stock Drawer; it is not a generic buy/sell list.
-- **Rationale:** Recommendations must not redefine Topic Strength or imply unsupported trading advice.
-- **Date:** 2026-08-10
+- **Decision:** Daily Grade is a daily classification and Lifecycle is a
+  state/transition model. They may share governed inputs, but one is not
+  derived from the display value of the other and neither substitutes for the
+  other when unavailable.
+- **Rationale:** Preserve temporal meaning, replayability, and honest partial
+  states.
+- **Date:** 2026-09-22
+- **Status:** `FROZEN PRINCIPLE`
+
+### PD-008 — Structural Role and Leader/importance are owner-curated inputs
+
+- **Decision:** Structural Role (`REPRESENTATIVE`, `CORE`, `RELATED`) and the
+  selected Leader/importance projection are separate, effective-dated formal
+  inputs. Research Leader Set results, member order, or role names cannot be
+  converted into formal importance without owner review.
+- **Rationale:** Formal selection and weighting are business authority, not an
+  inference task.
+- **Date:** 2026-09-22
+- **Status:** `FROZEN PRINCIPLE`
+
+### PD-009 — 107 is not a business constant
+
+- **Decision:** `107` is the observed current formal Topic count for the
+  2026-09-22 reconciliation. Runtime, tests, UI, and reports must resolve the
+  effective Topic universe by as-of date and must not hard-code 107.
+- **Date:** 2026-09-22
+- **Status:** `FROZEN PRINCIPLE`
+
+### PD-010 — Research history is not formal history
+
+- **Decision:** Local bootstrap, research replay, shadow rows, and historical
+  studies may diagnose or validate ideas but cannot backfill formal history
+  without historically effective authority, lineage, and governed publication.
+- **Date:** 2026-09-22
+- **Status:** `FROZEN PRINCIPLE`
+
+### PD-011 — Frontend never recomputes formal business logic
+
+- **Decision:** The frontend may group, format, filter presentation, and follow
+  backend display order. It must not derive Score, Grade, Lifecycle,
+  eligibility, risk, ranking, signals, leaders, or formal availability from raw
+  fields.
+- **Date:** 2026-09-22
+- **Status:** `FROZEN PRINCIPLE`
+
+### PD-012 — Today and Opportunity have different product roles
+
+- **Decision:** Today summarizes market state and attention. Opportunity
+  evaluates downstream Topic/stock candidates under separate qualification and
+  evidence contracts. Today signals are context, not an automatic Opportunity.
+- **Date:** 2026-09-22
+- **Status:** `FROZEN PRINCIPLE`
+
+### PD-013 — Product completion requires canonical main integration
+
+- **Decision:** A completed implementation counts as product-complete only when
+  the accepted implementation and required authority artifacts are committed
+  into canonical `main` and validated there. Release and Production readback
+  remain later, separately proven lifecycle stages.
+- **Date:** 2026-09-22
+- **Status:** `FROZEN GOVERNANCE PRINCIPLE`
+
+### PD-014 — Opportunity evidence uses canonical OHLCV
+
+- **Decision:** Opportunity technical evidence consumes accepted canonical
+  daily OHLCV with explicit trading-date/as-of semantics. Missing values remain
+  unavailable and never pass a gate by default.
 - **Status:** `COMMITTED`
-- **Source:** [V2 Frontend Design Specification](../architecture/TOPICPILOT_V2_FRONTEND_DESIGN_SPEC.md), section 24; [Product Direction Contract](../architecture/PRODUCT_SURFACES_AND_UX_CONTRACT.md)
 
-### PD-009 — V1 is not V2 UI authority
+### PD-015 — Opportunity composition is backend-owned and deterministic
 
-- **Decision:** V1 is a legacy production workflow and research baseline during coexistence. V1 is not the authority for V2 UI, product semantics, or frontend redesign.
-- **Rationale:** V2 is a parallel rebuildable platform with its own governed contracts.
-- **Date:** 2026-08-10
+- **Decision:** Technical, risk, entry-quality, and optional institutional
+  builders produce structured facts. The formal Opportunity composition
+  boundary maps them into versioned states and explanations; the frontend does
+  not infer those semantics.
+- **Status:** `COMMITTED`; formal activation remains gated
+
+### PD-016 — Institutional evidence is non-primary
+
+- **Decision:** Institutional flow is optional confirmation/evidence. Missing
+  data is `UNKNOWN`; it cannot independently bypass a hard gate or create an
+  Opportunity. FUND-C does not create a composite institutional score.
 - **Status:** `COMMITTED`
-- **Source:** [Product Direction Contract](../architecture/PRODUCT_SURFACES_AND_UX_CONTRACT.md), source-of-truth transition; [Project Context](../../PROJECT_CONTEXT.md)
 
-### PD-010 - Opportunity technical evidence uses canonical OHLCV
+### PD-017 — Opportunity strategies remain independent
 
-- **Decision:** Opportunity technical evidence builders consume accepted canonical `DAILY_BAR` OHLCV with explicit trading-date/as-of semantics. Missing values remain unavailable/unknown and are never filled with zero or treated as a pass.
-- **Rationale:** Keep calculations reproducible and aligned with the V2 PostgreSQL/FastAPI data authority while preventing frontend, mock, or future-data inference.
-- **Date:** 2026-08-12
-- **Status:** `COMMITTED` for shadow architecture; production activation is not authorized
-- **Source:** `TASK-BE-020` and [Opportunity Engine Specification](TOPICPILOT_OPPORTUNITY_ENGINE_SPEC.md)
+- **Decision:** Trend Continuation and Catch-up retain independent evidence,
+  ordering, and presentation. There is no global cross-strategy winner and no
+  feedback into Topic Score.
+- **Status:** `COMMITTED`; thresholds remain versioned and governed
 
-### PD-011 - Evidence builders remain separate from the Shadow Composer
+### PD-018 — Missing data fails closed
 
-- **Decision:** Technical, Risk, Entry Quality, and Opportunity input builders calculate structured facts; `opportunity_shadow.py` remains the composition boundary and does not calculate technical patterns. Historical replay is in-memory shadow/test/report scope only.
-- **Rationale:** Preserve evidence provenance, make no-look-ahead checks testable, and avoid silently turning a shadow experiment into production Recommendation semantics.
-- **Date:** 2026-08-12
-- **Status:** `COMMITTED` for shadow architecture; numeric policy remains provisional
-- **Source:** `TASK-BE-020` and [Opportunity Engine Specification](TOPICPILOT_OPPORTUNITY_ENGINE_SPEC.md)
+- **Decision:** Missing or stale formal inputs produce explicit `PARTIAL`,
+  `UNAVAILABLE`, `DEFERRED`, or `UNKNOWN` states. An empty result may be called
+  “none” only when all required formal dependencies are complete.
+- **Date:** 2026-09-22
+- **Status:** `FROZEN PRINCIPLE`
 
-### PD-012 - Chip confirmation is non-primary
+## Explicitly not decided
 
-- **Decision:** Institution/chip signals are an optional confirmation layer. If no formal, fresh canonical chip input exists, the result is `UNKNOWN`; chip data alone cannot pass a primary gate or produce an Opportunity.
-- **Rationale:** Avoid the invalid inference that institution net buying equals a recommendation.
-- **Date:** 2026-08-12
-- **Status:** `COMMITTED` for shadow architecture; confirmation thresholds are open
-- **Source:** `TASK-BE-020` and [Opportunity Engine Specification](TOPICPILOT_OPPORTUNITY_ENGINE_SPEC.md)
-
-### PD-013 - V1 Opportunity strategies are independent shadow paths
-
-- **Decision:** V1 adds `TREND_CONTINUATION` and `CATCH_UP` as independently evaluated and ranked shadow strategies above canonical OHLCV evidence. `EARLY_STRENGTH` and `PULLBACK_ACCEPTANCE` remain future, not implemented. No global cross-strategy winner feeds Topic Score.
-- **Rationale:** Preserve strategy-specific explainability and the downstream Opportunity boundary without converting legacy Recommendation rows or scores into a new production policy.
-- **Date:** 2026-08-12
-- **Status:** `COMMITTED` for shadow architecture; production API/persistence/activation remain separately gated
-- **Source:** `TASK-BE-024` and [Opportunity Engine Specification](TOPICPILOT_OPPORTUNITY_ENGINE_SPEC.md)
-
-### PD-014 - Opportunity decision and read contracts are deterministic shadow contracts
-
-- **Decision:** Trend Continuation and Catch-up retain independent provisional ranking profiles. A deterministic decision contract maps each strategy result to `SELECTED`, `WAITING_RETEST`, `WAITING_CONFIRMATION`, `DEFERRED`, or `EXCLUDED`. A structured `OpportunityExplanation` and provider-neutral `OpportunityReadModel` are the future adapter boundary; the frontend consumes them and does not infer business semantics.
-- **Rationale:** Keep state, evidence, and strategy rationale reproducible while preserving the distinction between internal ranking metadata and user-facing explanation.
-- **Date:** 2026-08-12
-- **Status:** `COMMITTED` for shadow contract; numeric weights/thresholds and production publication remain open/gated
-- **Source:** `TASK-BE-024A` and [Opportunity Engine Specification](TOPICPILOT_OPPORTUNITY_ENGINE_SPEC.md)
-
-### PD-015 - Opportunity Qualification Policy V1 is a semantic shadow freeze
-
-- **Decision:** The existing A/B Opportunity shadow engine now consumes a
-  deterministic Qualification Policy V1. `S/A` form the formal universe; `B`
-  requires warming/improving exception provenance; `D` hard-excludes new
-  Opportunities. Lifecycle is strategy-specific, `Close >= 20MA` is a hard
-  gate, missing 20MA defers, 60MA is never a hard gate, risk precedes ranking,
-  A/B ranking remains independent, and V1 ranks post-close with intraday
-  status-only behavior. Trend presentation is capped at Top 3 and Catch-up at
-  Top 2 while the backend retains complete rankings.
-- **Rationale:** Freeze product semantics and fail-closed ordering without
-  pretending provisional numeric parameters are calibrated or activating a
-  production Opportunity surface.
-- **Date:** 2026-08-12
-- **Status:** `COMMITTED` for the deterministic shadow policy; numeric
-  parameters remain `PROVISIONAL / TUNABLE / VERSIONED`; production API,
-  persistence, scheduler, and publication remain gated.
-- **Source:** [TASK-BE-024B report](../reports/TASK-BE-024B_OPPORTUNITY_QUALIFICATION_POLICY_REPORT.md),
-  [Opportunity Qualification Policy ADR](../architecture/decisions/OPPORTUNITY_QUALIFICATION_POLICY_V1.md)
-
-### PD-016 - Opportunity Shadow Read API is the first integration surface
-
-- **Decision:** The first BE-024C integration surface is a provider-neutral,
-  read-only Shadow API plus frontend adapter. It exposes topic/stock/detail
-  projections, structured evidence, qualification provenance, explicit data
-  states, and version metadata. It does not publish a Recommendation, write
-  production persistence, or let the browser infer business semantics.
-- **Rationale:** Preserve the frozen BE-024B policy while giving Topic, Stock
-  Encyclopedia, and Opportunity surfaces a deterministic contract that can
-  later be backed by canonical production data.
-- **Date:** 2026-08-12
-- **Status:** `COMMITTED` for shadow integration; canonical provider,
-  persistence, replay/calibration, and production activation remain gated.
-- **Source:** TASK-BE-024C report and [V2 Frontend Design Specification](../architecture/TOPICPILOT_V2_FRONTEND_DESIGN_SPEC.md)
-
-## Explicitly not decisions
-
-Exact notification taxonomy/thresholds, exact navigation label variants, exact Home watch-summary placement, and lifecycle API derivation remain provisional or dependency-gated where the source specification says so. Do not promote chat discussion or a work-order prompt into this register without PM approval.
+This reconciliation does not approve a new Score formula, hard-coded Leader
+count, Opportunity threshold/weight, institutional SUPPORT/CONFLICT policy,
+notification taxonomy, formal backfill, Production activation, or release.
+Those require their own owner decision and governed contract.
