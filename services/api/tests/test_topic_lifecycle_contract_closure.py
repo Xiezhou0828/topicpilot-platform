@@ -21,8 +21,9 @@ from topicpilot_api.topic_lifecycle_engine import (
 
 
 def test_frozen_stage_contract_has_one_owner_sequence_and_no_legacy_stage():
-    assert OWNER_LIFECYCLE_STAGES == ("萌芽", "發酵", "主升", "成熟", "衰退")
+    assert OWNER_LIFECYCLE_STAGES == ("築底", "萌芽", "發酵", "主升", "成熟", "衰退")
     assert BACKEND_LIFECYCLE_STAGES == (
+        "BASE",
         "SPROUTING",
         "FERMENTING",
         "MAIN_RISE",
