@@ -15,7 +15,7 @@ def test_canonical_revision_is_linear_after_0018():
     config = Config(str(ROOT / "alembic.ini"))
     script = ScriptDirectory.from_config(config)
     assert [head.revision for head in script.get_revisions("heads")] == [
-        "0039_task_a9_b2_formal_correction_supersession"
+        "0046_task_stock_maint_relation_weight_authority_001d"
     ]
 
 

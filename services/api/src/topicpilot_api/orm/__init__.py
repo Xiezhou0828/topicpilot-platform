@@ -11,6 +11,7 @@ from . import (
     market_data,
     models,  # noqa: F401
     observation_timeline,
+    relation_weights,
     score_projections,
     snapshots,
     topic_authority,
@@ -37,6 +38,7 @@ from .models import (
     ReferenceTradingStatus,
 )
 from .observation_timeline import *  # noqa: F403
+from .relation_weights import *  # noqa: F403
 from .score_projections import *  # noqa: F403
 from .snapshots import *  # noqa: F403
 from .topic_authority import TopicAuthorityActivation
@@ -72,6 +74,7 @@ for _module in (
     lifecycle,
     market_data,
     observation_timeline,
+    relation_weights,
     score_projections,
     snapshots,
     topic_authority,

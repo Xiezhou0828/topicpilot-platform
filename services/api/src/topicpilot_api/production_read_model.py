@@ -372,15 +372,21 @@ TOPIC_RELATIONS_SQL = text(
                   ('關聯股', 'RELATED') THEN '關聯股'
              ELSE NULL
            END AS topic_role,
-           CASE
-             WHEN (r.relationship_metadata ->> 'relationWeight') ~ '^-?[0-9]+(\\.[0-9]+)?$'
-               THEN (r.relationship_metadata ->> 'relationWeight')::numeric
-             WHEN (r.relationship_metadata ->> 'weight') ~ '^-?[0-9]+(\\.[0-9]+)?$'
-               THEN (r.relationship_metadata ->> 'weight')::numeric
-             ELSE NULL
-           END AS relation_weight
+           approved_weight.weight AS relation_weight
     FROM topicpilot.instrument_topic_relations r
     JOIN topicpilot.topics t ON t.id = r.topic_id
+    LEFT JOIN LATERAL (
+        SELECT authority.weight
+        FROM topicpilot.relation_weight_authorities authority
+        WHERE authority.relation_id = r.id
+          AND authority.approval_state = 'APPROVED'
+          AND authority.effective_from <= :as_of_date
+          AND (authority.effective_to IS NULL OR authority.effective_to >= :as_of_date)
+        ORDER BY authority.effective_from DESC,
+                 authority.correction_sequence DESC,
+                 authority.created_at DESC
+        LIMIT 1
+    ) approved_weight ON TRUE
     WHERE r.valid_from <= :as_of_date
       AND (r.valid_to IS NULL OR r.valid_to >= :as_of_date)
       AND t.status NOT IN ('DISABLED', 'RETIRED')
