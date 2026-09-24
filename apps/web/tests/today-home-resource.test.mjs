@@ -80,8 +80,8 @@ test("Today Market consumes backend-owned events through the shared envelope", a
   assert.match(mainlines, /marketEvents: TodayMarketEventsResource/);
   assert.match(mainlines, /mapMarketEvents/);
   assert.match(page, /useTodayMainlines/);
-  assert.match(page, /resource\.marketEvents/);
-  assert.match(page, /event\.description/);
+  assert.doesNotMatch(page, /resource\.marketEvents/);
+  assert.doesNotMatch(page, /event\.description/);
   assert.doesNotMatch(page, /const events = \[/);
   assert.match(mainlines, /opportunities: TodayOpportunityResource/);
   assert.match(mainlines, /mapOpportunities\(resource, previewEnabled\)/);

@@ -897,6 +897,98 @@
         "title": "HomeMarketBreadth",
         "type": "object"
       },
+      "HomeMarketDistribution": {
+        "properties": {
+          "asOf": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Asof"
+          },
+          "buckets": {
+            "items": {
+              "$ref": "#/components/schemas/HomeMarketDistributionBucket"
+            },
+            "title": "Buckets",
+            "type": "array"
+          },
+          "coverage": {
+            "additionalProperties": true,
+            "title": "Coverage",
+            "type": "object"
+          },
+          "eligible": {
+            "title": "Eligible",
+            "type": "integer"
+          },
+          "excluded": {
+            "title": "Excluded",
+            "type": "integer"
+          },
+          "market": {
+            "title": "Market",
+            "type": "string"
+          },
+          "reasonCode": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reasoncode"
+          },
+          "source": {
+            "title": "Source",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "market",
+          "status",
+          "eligible",
+          "excluded",
+          "asOf",
+          "source"
+        ],
+        "title": "HomeMarketDistribution",
+        "type": "object"
+      },
+      "HomeMarketDistributionBucket": {
+        "properties": {
+          "count": {
+            "title": "Count",
+            "type": "integer"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "label",
+          "count"
+        ],
+        "title": "HomeMarketDistributionBucket",
+        "type": "object"
+      },
       "HomeMarketHealth": {
         "properties": {
           "advance": {
@@ -910,6 +1002,28 @@
             ],
             "title": "Advance"
           },
+          "advancePct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Advancepct"
+          },
+          "breadthEligible": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Breadtheligible"
+          },
           "decline": {
             "anyOf": [
               {
@@ -920,6 +1034,17 @@
               }
             ],
             "title": "Decline"
+          },
+          "declinePct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Declinepct"
           },
           "flat": {
             "anyOf": [
@@ -932,9 +1057,42 @@
             ],
             "title": "Flat"
           },
+          "flatPct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Flatpct"
+          },
           "market": {
             "title": "Market",
             "type": "string"
+          },
+          "net": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Net"
+          },
+          "observed": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Observed"
           },
           "status": {
             "title": "Status",
@@ -1204,6 +1362,16 @@
             ],
             "title": "Datastatus",
             "type": "string"
+          },
+          "distribution": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/HomeMarketDistribution"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "indices": {
             "items": {
@@ -2328,32 +2496,6 @@
           "reason"
         ],
         "title": "LiveTrackingResponse",
-        "type": "object"
-      },
-      "MigrationRevisionResponse": {
-        "properties": {
-          "alembicRevision": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Alembicrevision"
-          },
-          "readOnly": {
-            "const": true,
-            "default": true,
-            "title": "Readonly",
-            "type": "boolean"
-          }
-        },
-        "required": [
-          "alembicRevision"
-        ],
-        "title": "MigrationRevisionResponse",
         "type": "object"
       },
       "OpportunityShadowCard": {
@@ -8599,28 +8741,6 @@
           }
         },
         "summary": "Markets",
-        "tags": [
-          "admin"
-        ]
-      }
-    },
-    "/api/v1/admin/migration": {
-      "get": {
-        "description": "Expose the current migration marker through a read-only SELECT probe.",
-        "operationId": "migration_api_v1_admin_migration_get",
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MigrationRevisionResponse"
-                }
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "Migration",
         "tags": [
           "admin"
         ]

@@ -40,8 +40,8 @@ test("V2 Home keeps research content separate from the scan-only Stock Explorer"
     read("components/v2/StockExplorerPage.tsx"),
   ]);
   assert.match(home, /useTodayMainlines/);
-  assert.match(home, /mainlines\.resource\.data\.map/);
-  assert.match(home, /mainlines\.resource\.state === "UNAVAILABLE"/);
+  assert.match(home, /resource\.data\.map/);
+  assert.match(home, /resource\.state === "UNAVAILABLE"/);
   assert.match(home, /href=\{`\/topics\/\$\{topic\.slug\}`\}/);
   assert.match(home, /OpportunityTeaserCard/);
   assert.match(home, /mainlines\.resource\.opportunities/);

@@ -16,10 +16,11 @@ import {
   type TodayHomePublicationState,
   type TodayHomeResource,
 } from "./today-home";
+import { commercialDataState, type CommercialDataState } from "./commercial-state.mjs";
 
 export type { HomeResponse } from "./today-home";
 export { TODAY_MAINLINES_PREVIEW_ENABLED } from "./today-home";
-export type TodaySectionState = Exclude<TodayHomeSectionState, "LOADING">;
+export type TodaySectionState = Exclude<TodayHomeSectionState, "LOADING"> | Exclude<CommercialDataState, "LOADING" | "AVAILABLE" | "PUBLISHED">;
 export type TodayMainlinesState = TodaySectionState;
 
 type TodaySectionMetadata = {
@@ -52,7 +53,7 @@ export type TodayRotationResource = {
 };
 
 export type TodayDailyFocusResource = {
-  state: TodayHomePublicationState | "ERROR";
+  state: TodayHomePublicationState | "ERROR" | "EMPTY" | "PARTIAL" | "STALE" | "NOT_APPLICABLE";
   data: HomeDailyFocus | null;
   dataDate: string | null;
   generatedAt: string | null;
@@ -70,7 +71,7 @@ export type TodayDailyFocusResource = {
 };
 
 export type TodayMarketEventsResource = {
-  state: TodayHomePublicationState | "ERROR";
+  state: TodayHomePublicationState | "ERROR" | "EMPTY" | "PARTIAL" | "STALE" | "NOT_APPLICABLE";
   data: HomeMarketPulseEvent[];
   dataDate: string | null;
   generatedAt: string | null;
@@ -102,7 +103,7 @@ export type TodayOpportunityResource = {
 };
 
 export type TodayMarketOverviewResource = {
-  state: TodayHomePublicationState | "ERROR";
+  state: TodayHomePublicationState | "ERROR" | "EMPTY" | "PARTIAL" | "STALE" | "NOT_APPLICABLE";
   data: HomeMarketOverview | null;
   dataDate: string | null;
   generatedAt: string | null;
@@ -509,6 +510,7 @@ function mapMarketOverview(
   const asOf = data?.updatedAt ?? shared.asOf;
   const source = data?.source ?? shared.source;
   const dataStatus = data?.dataStatus ?? null;
+  const overviewStatus = resource.metadata.sectionStatuses.marketOverview ?? null;
 
   if (resource.transportState === "ERROR") {
     return {
@@ -549,18 +551,36 @@ function mapMarketOverview(
     };
   }
 
+  const mappedOverviewState = commercialDataState({ status: overviewStatus?.status ?? dataStatus, rowCount: 1 }).state;
+  const presentationState: TodaySectionState = state !== "FORMAL"
+    ? state
+    : mappedOverviewState === "AVAILABLE" || mappedOverviewState === "PUBLISHED"
+      ? "FORMAL"
+      : mappedOverviewState === "LOADING" ? "UNAVAILABLE" : mappedOverviewState;
   return {
-    state,
+    state: presentationState,
     data,
     ...shared,
     dataDate,
     asOf,
     source,
     dataStatus,
-    reason: state === "FORMAL"
+    reason: presentationState === "FORMAL"
       ? null
       : resource.metadata.reason ?? "市場概況目前僅供預覽。",
   };
+}
+
+function rotationCommercialState(resource: TodayHomeResource, data: HomeRotationTopic[], section: string): TodayMainlinesState {
+  const mapped = commercialDataState({
+    status: resource.metadata.sectionStatuses[section]?.status,
+    rowCount: data.length,
+    reason: resource.metadata.sectionStatuses[section]?.userMessage,
+    reasonCode: resource.metadata.sectionStatuses[section]?.reasonCode,
+  }).state;
+  return mapped === "EMPTY" || mapped === "PARTIAL" || mapped === "STALE" || mapped === "UNAVAILABLE"
+    ? mapped
+    : stateFromHomeResource(resource, TODAY_MAINLINES_PREVIEW_ENABLED);
 }
 
 function mapRotation(
@@ -573,6 +593,10 @@ function mapRotation(
     ? "UNAVAILABLE"
     : stateFromHomeResource(resource, previewEnabled);
   const section = direction === "heating" ? "heatingTopics" : "coolingTopics";
+  const commercialState = rotationCommercialState(resource, data, section);
+  if (commercialState === "EMPTY") {
+    return { state: "EMPTY", data: [], ...metadata(resource), reason: `${direction === "heating" ? "升溫" : "退潮"}題材目前沒有符合結果。` };
+  }
   const shared = metadata(resource);
 
   if (state === "ERROR") {
@@ -612,7 +636,7 @@ function mapRotation(
   }
 
   return {
-    state,
+    state: commercialState === "PARTIAL" || commercialState === "STALE" ? commercialState : state,
     data,
     ...shared,
     reason: state === "FORMAL"

@@ -13,7 +13,7 @@ test("V2 Home uses the frozen TodayMarket hierarchy", async () => {
   ]);
   assert.match(root, /V2Page path="\/"/);
   assert.match(v2, /<TodayMarketPage \/>/);
-  for (const marker of ["tp-home-overview-card", "market-overview-title", "tp-home-story-card", "mainline-title", "events-title", "rotation-title", "opportunities-title"]) {
+  for (const marker of ["tp-home-overview-card", "market-overview-title", "tp-home-highlights-card", "mainline-title", "topic-pulse-title", "rotation-title", "opportunities-title"]) {
     assert.match(home, new RegExp(marker));
   }
   assert.match(home, /useTodayMainlines/);
@@ -21,19 +21,23 @@ test("V2 Home uses the frozen TodayMarket hierarchy", async () => {
 });
 
 test("V2 Home renders backend-owned Market Overview values without browser aggregation", async () => {
-  const [home, adapter] = await Promise.all([
+  const [home, adapter, fields] = await Promise.all([
     read("components/v2/TodayMarketPage.tsx"),
     read("lib/today-mainlines.ts"),
+    read("lib/today-market-fields.ts"),
   ]);
   assert.match(home, /resource\.marketOverview/);
-  assert.match(home, /overview\.trackedStockCount/);
-  assert.match(home, /overview\.trackedTopicCount/);
+  assert.match(home, /marketIndices\(overview\)/);
+  assert.match(home, /marketTurnover\(overview\)/);
+  assert.match(home, /marketDistribution\(overview\)/);
+  assert.match(fields, /index\.tradingDate|value\.tradingDate/);
+  assert.match(fields, /fact\.unit|value\.unit/);
   assert.match(home, /health\.advance/);
   assert.match(home, /health\.decline/);
   assert.match(home, /health\.flat/);
   assert.match(adapter, /marketOverview: TodayMarketOverviewResource/);
   assert.match(adapter, /mapMarketOverview\(resource, previewEnabled\)/);
-  assert.doesNotMatch(home, /mockMarketMetrics|marketIndices|marketRadar|liveBreadth|useSnapshot/);
+  assert.doesNotMatch(home, /mockMarketMetrics|marketRadar|liveBreadth|useSnapshot|indices\.reduce|turnover\.reduce/);
   assert.doesNotMatch(home, /evidence\.count\s*\/\s*evidence\.denominator/);
 });
 
@@ -45,9 +49,9 @@ test("V2 Home keeps bounded rotation and Opportunity teaser surfaces", async () 
   assert.match(home, /href=\{`\/topics\/\$\{topic\.topicSlug\}`\}/);
   assert.match(home, /OpportunityTeaserCard/);
   assert.match(home, /mainlines\.resource\.opportunities/);
-  assert.match(home, /只顯示具備明確發布狀態的機會資料/);
+  assert.match(home, /Today 只提供正式機會資料的摘要入口/);
   assert.doesNotMatch(home, /const opportunities = \[/);
-  assert.doesNotMatch(home, /href="\/opportunities"/);
+  assert.match(home, /href="\/opportunities"/);
   assert.doesNotMatch(home, /const warmingTopics\s*=/);
   assert.doesNotMatch(home, /const coolingTopics\s*=/);
   assert.doesNotMatch(home, /topWarming|topCooling|topicChange.*sort/);
@@ -101,7 +105,7 @@ test("V2 Home does not expose the legacy strategy candidate drilldown", async ()
     read("components/v2/StockExplorerPage.tsx"),
   ]);
   assert.doesNotMatch(home, /strategyRegistry|strategyCandidates|selectedStrategy|useSearchParams/);
-  assert.match(home, /mainlines\.resource\.data\.map/);
+  assert.match(home, /resource\.data\.map/);
   assert.match(home, /href=\{`\/topics\/\$\{topic\.slug\}`\}/);
   assert.match(stocks, /fetchFormalStocks/);
   assert.match(stocks, /tp-stock-grid/);
@@ -111,11 +115,11 @@ test("V2 Home does not expose the legacy strategy candidate drilldown", async ()
 
 test("V2 Home keeps strategy semantics out of presentation copy", async () => {
   const home = await read("components/v2/TodayMarketPage.tsx");
-  assert.match(home, /mainlines\.resource\.data\.map/);
-  assert.match(home, /GradeChip grade=\{topic\.grade \?\? "—"\}/);
-  assert.match(home, /tp-home-topic-state/);
+  assert.match(home, /resource\.data\.map/);
+  assert.match(home, /topic\.grade && <GradeChip grade=\{topic\.grade\}/);
+  assert.doesNotMatch(home, /topic\.currentState/);
   assert.match(home, /tp-home-topic-detail/);
-  assert.match(home, /只顯示具備明確發布狀態的機會資料/);
+  assert.match(home, /Today 只提供正式機會資料的摘要入口/);
   assert.doesNotMatch(home, /candidate\.sort|strategyId|rankScore|targetPrice/);
 });
 

@@ -42,18 +42,18 @@ test("V2 Home source contains the frozen market workflow and safety boundary", a
   const liveData = await readFile(new URL("../app/lib/live-data.mjs", import.meta.url), "utf8");
   for (const marker of [
     "market-overview-title",
-    "tp-home-story-card",
+    "tp-home-highlights-card",
     "mainline-title",
-    "events-title",
+    "topic-pulse-title",
     "rotation-title",
     "opportunities-title",
     "marketOverview",
-    "市場廣度資料目前不可用",
-    "只顯示具備明確發布狀態的機會資料",
+    "市場廣度目前尚未提供",
+    "Today 只提供正式機會資料的摘要入口",
   ]) assert.match(home, new RegExp(marker));
   assert.match(home, /useTodayMainlines/);
-  assert.match(home, /mainlines\.resource\.data\.map/);
-  assert.match(home, /mainlines\.resource\.state === "UNAVAILABLE"/);
+  assert.match(home, /resource\.data\.map/);
+  assert.match(home, /resource\.state === "UNAVAILABLE"/);
   assert.match(home, /href=\{`\/topics\/\$\{topic\.slug\}`\}/);
   assert.match(liveData, /canShowTradeJudgement/);
   assert.doesNotMatch(home, /Buy|Sell|Strong Buy|stop-loss|Entry Score/);

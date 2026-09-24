@@ -1,74 +1,31 @@
 "use client";
 
 import Link from "next/link";
-import {
-  ArrowDownRight,
-  ChevronRight,
-  TrendingUp,
-} from "lucide-react";
+import { ChevronRight, Info, Pause, Play, TrendingDown, TrendingUp } from "lucide-react";
+import { useState } from "react";
 import {
   useTodayMainlines,
-  type TodayMarketEventsResource,
   type TodayMarketOverviewResource,
   type TodayOpportunityResource,
   type TodayRotationResource,
   type TodaySectionState,
 } from "../../lib/today-mainlines";
 import {
-  Card,
-  GradeChip,
-  PageContainer,
-} from "./V2Foundation";
-
-function formatEventTime(value: string): string {
-  const parsed = new Date(value);
-  if (Number.isNaN(parsed.getTime())) return value;
-  return new Intl.DateTimeFormat("zh-TW", {
-    timeZone: "Asia/Taipei",
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-  }).format(parsed);
-}
-
-function SectionHeading({ id, eyebrow, title, description, link, trailing }: { id?: string; eyebrow?: string; title: string; description?: string; link?: { label: string; href: string }; trailing?: React.ReactNode }) {
-  return (
-    <div className="tp-home-section-heading">
-      <div>
-        {eyebrow && <p className="tp-overline">{eyebrow}</p>}
-        <h2 id={id}>{title}</h2>
-        {description && <p>{description}</p>}
-      </div>
-      {(trailing || link) && <div className="tp-home-section-heading-actions">{trailing}{link && <Link className="tp-home-section-link" href={link.href}>{link.label}<ChevronRight size={16} aria-hidden="true" /></Link>}</div>}
-    </div>
-  );
-}
-
-function MainlinesState({ loading, state, reason, dataDate, section = "Today section" }: { loading: boolean; state: TodaySectionState; reason: string | null; dataDate: string | null; section?: string }) {
-  const labels: Record<TodaySectionState | "LOADING", string> = {
-    LOADING: "讀取中",
-    FORMAL: "正式資料",
-    TEMPORARY: "暫時資料",
-    PREVIEW: "預覽資料",
-    UNAVAILABLE: "尚未提供",
-    ERROR: "讀取失敗",
-  };
-  const effectiveState = loading ? "LOADING" : state;
-  const isError = effectiveState === "ERROR";
-  const temporaryState = state === "TEMPORARY" ? "TEMPORARY" : null;
-  const label = loading ? labels.LOADING : temporaryState ? labels[temporaryState] : labels[state];
-  return (
-    <div
-      className={`tp-home-mainlines-state tp-home-mainlines-state--${effectiveState.toLowerCase()}`}
-      role={isError ? "alert" : "status"}
-      aria-live={isError ? "assertive" : "polite"}
-    >
-      <span className="tp-data-state">{label}</span>
-      <p>{loading ? `正在讀取${section}。` : reason ?? `${section}目前尚未提供。`}</p>
-      {dataDate && <small>資料日：{dataDate}</small>}
-    </div>
-  );
-}
+  formatMarketAsOf,
+  formatMarketDate,
+  formatMarketNumber,
+  formatMarketPercent,
+  formatSignedMarketNumber,
+  formatTurnoverHundredMillion,
+  marketBreadthNet,
+  marketIndexDisplayName,
+  marketDistribution,
+  marketFactIsAvailable,
+  marketIndices,
+  marketTurnover,
+} from "../../lib/today-market-fields";
+import { commercialStateLabel } from "../../lib/commercial-state.mjs";
+import { Card, GradeChip, PageContainer } from "./V2Foundation";
 
 type TodayDisclosureResource = {
   state: TodaySectionState;
@@ -80,38 +37,62 @@ type TodayDisclosureResource = {
   temporarySections: string[];
   missingSections: string[];
   qualityNotes: string[];
+  sectionStatus?: { status: string; dataDate: string | null; asOf: string | null; source?: string | null } | null;
 };
 
-const disclosureSectionLabels: Record<string, string> = {
-  mainTopics: "Main Topics",
-  heatingTopics: "Heating",
-  coolingTopics: "Cooling",
-  dailyFocus: "Daily Focus",
-  marketPulse: "Market Events",
-  marketEvents: "Market Events",
-  marketOverview: "Market Overview",
-  opportunities: "Today Opportunities",
-  [["market", "Indices"].join("")]: "Market indices",
-  [["turn", "over"].join("")]: "Market turnover",
-};
+function stateLabel(state: TodaySectionState | "LOADING"): string {
+  return {
+    LOADING: "讀取中",
+    FORMAL: "已發布",
+    TEMPORARY: "暫時資料",
+    PREVIEW: "預覽資料",
+    UNAVAILABLE: "尚未提供",
+    ERROR: "讀取失敗",
+    EMPTY: "目前沒有結果",
+    PARTIAL: "部分資料",
+    STALE: "資料日期較早",
+    NOT_APPLICABLE: "不適用",
+  }[state] ?? commercialStateLabel(state);
+}
 
-function friendlySectionName(value: string): string {
-  return disclosureSectionLabels[value] ?? "其他區塊";
+function MainlinesState({
+  loading,
+  state,
+  reason,
+  dataDate,
+  section = "Today",
+}: {
+  loading: boolean;
+  state: TodaySectionState;
+  reason: string | null;
+  dataDate: string | null;
+  section?: string;
+}) {
+  const effectiveState = loading ? "LOADING" : state;
+  const isError = effectiveState === "ERROR";
+  return (
+    <div
+      className={`tp-home-mainlines-state tp-home-mainlines-state--${effectiveState.toLowerCase()}`}
+      role={isError ? "alert" : "status"}
+      aria-live={isError ? "assertive" : "polite"}
+    >
+      <span className="tp-data-state">{stateLabel(effectiveState)}</span>
+      <p>{loading ? `正在讀取${section}。` : reason ?? `${section}目前尚未提供。`}</p>
+      {dataDate && <small>資料日：{formatMarketDate(dataDate)}</small>}
+    </div>
+  );
 }
 
 function friendlySourceName(value: string | null): string {
-  if (!value) return "Not disclosed";
+  if (!value) return "尚未提供";
   const normalized = value.trim().toUpperCase();
-  const labels: Record<string, string> = {
-    POSTGRESQL: "正式資料來源",
-    BACKEND: "正式資料來源",
-    TWSE: "TWSE source",
-    TPEX: "TPEx source",
-  };
-  return labels[normalized] ?? "正式資料來源";
+  if (normalized.includes("TWSE")) return "TWSE 正式來源";
+  if (normalized.includes("TPEX")) return "TPEx 正式來源";
+  if (normalized.includes("HOME") || normalized.includes("POSTGRES")) return "TopicPilot 正式資料來源";
+  return "正式資料來源";
 }
 
-function SectionDisclosure({
+function CompactDisclosure({
   loading,
   resource,
   sectionKey,
@@ -122,269 +103,273 @@ function SectionDisclosure({
   sectionKey: string;
   sectionLabel: string;
 }) {
-  const stateLabel: Record<TodaySectionState | "LOADING", string> = {
-    LOADING: "讀取中",
-    FORMAL: "正式資料",
-    TEMPORARY: "暫時資料",
-    PREVIEW: "預覽資料",
-    UNAVAILABLE: "尚未提供",
-    ERROR: "讀取失敗",
-  };
   const effectiveState = loading ? "LOADING" : resource.state;
-  const messages = [
-    resource.temporarySections.includes(sectionKey)
-      ? `${sectionLabel}目前為暫時資料，尚未納入正式發布。`
-      : null,
-    resource.missingSections.includes(sectionKey)
-      ? `${sectionLabel}目前尚未完成發布。`
-      : null,
-    resource.temporarySections.some((value) => value !== sectionKey)
-      ? `其他暫時資料：${resource.temporarySections.filter((value) => value !== sectionKey).map(friendlySectionName).join("、")}。`
-      : null,
-    resource.missingSections.some((value) => value !== sectionKey)
-      ? `其他尚未提供區塊：${resource.missingSections.filter((value) => value !== sectionKey).map(friendlySectionName).join("、")}。`
-      : null,
+  const sectionStatus = resource.sectionStatus?.status ?? (effectiveState === "FORMAL" ? "AVAILABLE" : null);
+  const notes = [
+    resource.temporarySections.includes(sectionKey) ? `${sectionLabel}目前為暫時資料。` : null,
+    resource.missingSections.includes(sectionKey) ? `${sectionLabel}目前尚未完成發布。` : null,
     ...resource.qualityNotes
       .filter((note) => !/public\.|ingestion|Home\.|backend|postgres/i.test(note))
       .map((note) => `資料提示：${note}`),
-  ].filter((message): message is string => Boolean(message));
+  ].filter((value): value is string => Boolean(value));
 
   return (
-    <div className="tp-home-section-disclosure" aria-label={`${sectionLabel} data disclosure`}>
-      <small>
-        狀態：{stateLabel[effectiveState]} · 資料日：{resource.dataDate ?? "尚未提供"} · 截至：{resource.asOf ?? "尚未提供"} · 最近更新：{resource.latestSnapshotTime ?? "尚未提供"} · 產生時間：{resource.generatedAt ?? "尚未提供"} · 來源：{friendlySourceName(resource.source)}
-      </small>
-      {messages.length > 0 && (
-        <ul data-quality-disclosure="true">
-          {messages.map((message) => <li key={message}>{message}</li>)}
-        </ul>
+    <details className="tp-home-compact-disclosure">
+      <summary>
+        <Info size={13} aria-hidden="true" />
+        <span>{resource.asOf ? `資料截至 ${formatMarketAsOf(resource.asOf)}` : "資料截至尚未提供"}</span>
+        <span aria-label={`${sectionLabel} 狀態`}>{stateLabel(effectiveState)}</span>
+      </summary>
+      <div className="tp-home-compact-disclosure-body">
+        <span>發布狀態：{sectionStatus ?? "尚未提供"}</span>
+        <span>來源：{friendlySourceName(resource.sectionStatus?.source ?? resource.source)}</span>
+        {notes.map((note) => <span key={note}>{note}</span>)}
+      </div>
+    </details>
+  );
+}
+
+function SectionHeading({
+  id,
+  eyebrow,
+  title,
+  description,
+  link,
+  trailing,
+}: {
+  id?: string;
+  eyebrow?: string;
+  title: string;
+  description?: string;
+  link?: { label: string; href: string };
+  trailing?: React.ReactNode;
+}) {
+  return (
+    <div className="tp-home-section-heading">
+      <div>
+        {eyebrow && <p className="tp-overline">{eyebrow}</p>}
+        <h2 id={id}>{title}</h2>
+        {description && <p>{description}</p>}
+      </div>
+      {(trailing || link) && (
+        <div className="tp-home-section-heading-actions">
+          {trailing}
+          {link && <Link className="tp-home-section-link" href={link.href}>{link.label}<ChevronRight size={16} aria-hidden="true" /></Link>}
+        </div>
       )}
     </div>
   );
 }
 
-function OverviewValue({ label, value }: { label: string; value: number | string | null }) {
-  const formatted = typeof value === "number" ? value.toLocaleString("en-US") : value ?? "—";
+function OfficialMarketFields({ overview }: { overview: NonNullable<TodayMarketOverviewResource["data"]> }) {
+  const indices = marketIndices(overview);
+  const turnover = marketTurnover(overview);
+  const turnoverByMarket = new Map(turnover.map((fact) => [fact.market, fact]));
+  const turnoverRows = [
+    { market: "TPE", label: "上市" },
+    { market: "TWO", label: "上櫃" },
+  ];
+  const totalTurnover = turnoverByMarket.get("TOTAL");
   return (
-    <div className="tp-home-metric tp-home-metric--neutral">
-      <span className="tp-home-metric-label">{label}</span>
-      <strong>{formatted}</strong>
+    <div className="tp-home-official-market">
+      <div className="tp-home-official-market-heading">
+        <div>
+          <span className="tp-overline">收盤後</span>
+          <h3>大盤指數與成交金額</h3>
+        </div>
+        <span className="tp-home-eod-badge">資料日 {formatMarketDate(overview.dataDate)}</span>
+      </div>
+      <div className="tp-home-market-summary-grid">
+        {indices.map((index) => {
+          const available = marketFactIsAvailable(index.status, index.value);
+          const direction = typeof index.change === "number" && index.change > 0
+            ? "tp-home-market-value--up"
+            : typeof index.change === "number" && index.change < 0 ? "tp-home-market-value--down" : "";
+          return (
+            <article className="tp-home-index-card" key={`${index.market}-${index.indexCode}`}>
+              <div className="tp-home-index-card-topline"><strong>{marketIndexDisplayName(index)}</strong><span>{index.market}</span></div>
+              <strong className={`tp-home-index-value ${direction}`}>{available ? formatMarketNumber(index.value) : "尚未提供"}</strong>
+              <span className={`tp-home-index-change ${direction}`}>
+                {available && index.change !== null
+                  ? `${index.change > 0 ? "▲" : index.change < 0 ? "▼" : "—"} ${formatSignedMarketNumber(index.change)} 點`
+                  : "漲跌點尚未提供"}
+                {available && index.changePct !== null && ` · ${formatMarketPercent(index.changePct)}`}
+              </span>
+              {!available && <span className="tp-home-fact-status">正式指數資料尚未提供</span>}
+            </article>
+          );
+        })}
+        <article className="tp-home-turnover-card tp-home-turnover-card--summary">
+          <div className="tp-home-index-card-topline"><strong>成交金額</strong><span>新台幣</span></div>
+          <div className="tp-home-turnover-breakdown">
+            {turnoverRows.map(({ market, label }) => {
+              const fact = turnoverByMarket.get(market);
+              return <div className="tp-home-turnover-row" key={market}><span>{label}</span><strong>{fact ? formatTurnoverHundredMillion(fact) : "尚未提供"}</strong></div>;
+            })}
+          </div>
+          <div className="tp-home-turnover-total"><span>總成交金額</span><strong>{totalTurnover ? formatTurnoverHundredMillion(totalTurnover) : "尚未提供"}</strong></div>
+          {!totalTurnover && <span className="tp-home-fact-status">正式成交金額合計尚未提供</span>}
+        </article>
+      </div>
     </div>
   );
 }
 
-function OpportunityTeaserCard({
-  loading,
-  resource,
-}: {
-  loading: boolean;
-  resource: TodayOpportunityResource;
-}) {
-  const canRenderData = resource.state === "FORMAL" || resource.state === "PREVIEW";
+function BreadthAndDistribution({ overview }: { overview: NonNullable<TodayMarketOverviewResource["data"]> }) {
+  const health = overview.marketHealth;
+  const distribution = marketDistribution(overview);
+  const net = typeof health?.net === "number" ? health.net : marketBreadthNet(health);
+  const distributionAvailable = distribution?.status === "AVAILABLE" && distribution.eligible > 0;
   return (
-    <Card className="tp-home-opportunities-card">
-      <SectionHeading
-        id="opportunities-title"
-        title="今日機會"
-        description="只顯示具備明確發布狀態的機會資料。"
-      />
-      {loading || !canRenderData ? (
-        <MainlinesState
-          loading={loading}
-          state={resource.state}
-          reason={resource.reason}
-          dataDate={resource.dataDate}
-          section="今日機會"
-        />
+    <div className="tp-home-market-structure">
+      <div className="tp-home-market-structure-heading">
+        <div><span className="tp-overline">收盤後觀察</span><h3>漲跌幅分布與市場廣度</h3></div>
+        <span>{distributionAvailable ? `${distribution.eligible} 檔有完整漲跌幅` : "正式分布尚未提供"}</span>
+      </div>
+      {distributionAvailable ? (
+        <div className="tp-home-distribution-panel">
+          <div className="tp-home-distribution-grid" aria-label="漲跌幅分布">
+            {(distribution.buckets ?? []).map((bucket) => {
+              const share = distribution.eligible > 0 ? Math.max(0, Math.min(100, (bucket.count / distribution.eligible) * 100)) : 0;
+              return <div className="tp-home-distribution-item" key={bucket.key} style={{ "--tp-home-distribution-share": `${share}%` } as React.CSSProperties}><div className="tp-home-distribution-label"><span>{bucket.label}</span><strong>{formatMarketNumber(bucket.count)}</strong></div><div className="tp-home-distribution-bar" aria-hidden="true" /></div>;
+            })}
+          </div>
+          <p className="tp-home-distribution-caption">各區間互斥，合計 {formatMarketNumber(distribution.eligible)} 檔；比例依完整收盤與前收觀測計算。</p>
+        </div>
+      ) : <div className="tp-home-official-empty">正式漲跌幅分布目前尚未提供。</div>}
+      {distribution && distribution.excluded > 0 && <p className="tp-home-structure-note">{formatMarketNumber(distribution.excluded)} 檔因缺少可用的前收／當日報價或受 no-quote 狀態影響，未納入分布；不以 0% 代替。</p>}
+      <div className="tp-home-breadth-panel">
+        <div className="tp-home-breadth-heading"><h4>市場廣度</h4><span>{health?.market ?? "TPE+TWO"}</span></div>
+        {health ? (
+          <div className="tp-home-breadth-metrics">
+            <div className="tp-home-breadth-metric tp-home-breadth-metric--up"><span>上漲</span><strong>{health.advance ?? "尚未提供"}</strong></div>
+            <div className="tp-home-breadth-metric tp-home-breadth-metric--down"><span>下跌</span><strong>{health.decline ?? "尚未提供"}</strong></div>
+            <div className="tp-home-breadth-metric"><span>平盤</span><strong>{health.flat ?? "尚未提供"}</strong></div>
+            <div className="tp-home-breadth-metric"><span>差值</span><strong>{net === null ? "尚未提供" : `${net > 0 ? "▲" : net < 0 ? "▼" : "—"} ${formatSignedMarketNumber(net)}`}</strong></div>
+          </div>
+        ) : <div className="tp-home-official-empty">市場廣度目前尚未提供。</div>}
+        {health?.breadthEligible ? <p className="tp-home-structure-note">以上比例基於 {formatMarketNumber(health.breadthEligible)} 檔具備當日與前收的正式觀測。</p> : null}
+      </div>
+    </div>
+  );
+}
+
+function MarketOverviewCard({ loading, resource }: { loading: boolean; resource: TodayMarketOverviewResource }) {
+  const overview = resource.data;
+  return (
+    <Card className="tp-home-overview-card">
+      <SectionHeading id="market-overview-title" eyebrow="TODAY / MARKET" title="市場概況" description="以收盤後資料掌握大盤方向、成交金額與市場廣度。" />
+      {loading || resource.state === "UNAVAILABLE" || resource.state === "ERROR" ? (
+        <MainlinesState loading={loading} state={resource.state} reason={resource.reason} dataDate={resource.dataDate} section="市場概況" />
+      ) : overview ? (
+        <>
+          {resource.state !== "FORMAL" && <MainlinesState loading={false} state={resource.state} reason={resource.reason} dataDate={resource.dataDate} section="市場概況" />}
+          <OfficialMarketFields overview={overview} />
+          <BreadthAndDistribution overview={overview} />
+        </>
+      ) : <MainlinesState loading={false} state="UNAVAILABLE" reason="市場資料尚未完整。" dataDate={resource.dataDate} section="市場概況" />}
+      <CompactDisclosure loading={loading} resource={resource} sectionKey="marketOverview" sectionLabel="市場概況" />
+    </Card>
+  );
+}
+
+function MarketHighlightsCard({ loading, resource }: { loading: boolean; resource: ReturnType<typeof useTodayMainlines>["resource"]["dailyFocus"] }) {
+  return (
+    <Card className="tp-home-highlights-card">
+      <SectionHeading id="market-highlights-title" title="今日市場重點" description="整理今天已發布的市場變化。" />
+      {loading || resource.state === "UNAVAILABLE" || resource.state === "ERROR" ? (
+        <MainlinesState loading={loading} state={resource.state} reason={resource.reason} dataDate={resource.dataDate} section="今日市場重點" />
+      ) : resource.data && ![resource.data.headline, ...(resource.data.bullets ?? [])].some((value) => /目前主線為|市場偏強|主力|攻擊|需求帶動/.test(value)) ? (
+        <>
+          {resource.state !== "FORMAL" && <MainlinesState loading={false} state={resource.state} reason={resource.reason} dataDate={resource.dataDate} section="今日市場重點" />}
+          <p className="tp-home-highlights-headline">{resource.data.headline}</p>
+          <ul className="tp-home-story-list">{(resource.data.bullets ?? []).map((bullet) => <li key={bullet}>{bullet}</li>)}</ul>
+        </>
+      ) : <MainlinesState loading={false} state="UNAVAILABLE" reason="今日市場重點尚未完成。" dataDate={resource.dataDate} section="今日市場重點" />}
+      <CompactDisclosure loading={loading} resource={resource} sectionKey="dailyFocus" sectionLabel="今日市場重點" />
+    </Card>
+  );
+}
+
+function MainlineCards({ loading, resource }: { loading: boolean; resource: ReturnType<typeof useTodayMainlines>["resource"] }) {
+  return (
+    <section className="tp-home-section" aria-labelledby="mainline-title">
+      <SectionHeading id="mainline-title" title="今日主線" description="最多三個正式題材入口；詳細脈絡請進入題材頁。" link={{ label: "查看全部題材", href: "/topics" }} />
+      {loading || resource.state === "UNAVAILABLE" || resource.state === "ERROR" ? (
+        <MainlinesState loading={loading} state={resource.state} reason={resource.reason} dataDate={resource.dataDate} section="今日主線" />
       ) : (
         <>
-          {resource.state === "PREVIEW" && (
-            <MainlinesState
-              loading={false}
-              state={resource.state}
-              reason={resource.reason}
-              dataDate={resource.dataDate}
-              section="今日機會"
-            />
-          )}
-          <div className="tp-home-opportunity-list" aria-label="Today opportunities">
-            {resource.data.map((opportunity) => (
-              <article key={opportunity.topicSlug}>
-                <div>
-                  <strong>{opportunity.topic}</strong>
-                  <span>{opportunity.summary}</span>
-                </div>
+          {resource.state !== "FORMAL" && <MainlinesState loading={false} state={resource.state} reason={resource.reason} dataDate={resource.dataDate} section="今日主線" />}
+          <div className="tp-home-mainline-grid">
+            {resource.data.map((topic) => (
+              <article className="tp-home-mainline-card" key={topic.slug}>
+                <div className="tp-home-card-topline"><h3>{topic.name}</h3>{topic.grade && <GradeChip grade={topic.grade} />}</div>
+                <p className="tp-home-topic-detail">{topic.summary}</p>
+                <Link href={`/topics/${topic.slug}`} className="tp-home-card-action">進入題材頁 <ChevronRight size={16} aria-hidden="true" /></Link>
               </article>
             ))}
           </div>
         </>
       )}
-      <SectionDisclosure loading={loading} resource={resource} sectionKey="opportunities" sectionLabel="Today Opportunities" />
-    </Card>
+      <CompactDisclosure loading={loading} resource={resource} sectionKey="mainTopics" sectionLabel="今日主線" />
+    </section>
   );
 }
 
-function MarketOverviewCard({
-  loading,
-  resource,
-}: {
-  loading: boolean;
-  resource: TodayMarketOverviewResource;
-}) {
-  const overview = resource.data;
-  const health = overview?.marketHealth ?? null;
+function TopicPulseTicker({ loading, resource }: { loading: boolean; resource: ReturnType<typeof useTodayMainlines>["resource"] }) {
+  const [paused, setPaused] = useState(false);
+  const topics = resource.data;
+  const tickerItems = topics.length > 1 ? [...topics, ...topics] : topics;
+  const tickerState = resource.state === "FORMAL" && topics.length === 0 ? "EMPTY" : resource.state;
   return (
-    <Card className="tp-home-overview-card">
-      <SectionHeading id="market-overview-title" title="市場概況" description="只顯示已完成整理的市場總覽資料。" />
-      {loading || resource.state === "UNAVAILABLE" || resource.state === "ERROR" ? (
-        <MainlinesState
-          loading={loading}
-          state={resource.state}
-          reason={resource.reason}
-          dataDate={resource.dataDate}
-          section="市場概況"
-        />
-      ) : overview ? (
-        <>
-          {resource.state !== "FORMAL" && (
-            <MainlinesState
-              loading={false}
-              state={resource.state}
-              reason={resource.reason}
-              dataDate={resource.dataDate}
-              section="市場概況"
-            />
-          )}
-          <div className="tp-home-primary-metrics">
-            <OverviewValue label="資料狀態" value={overview.dataStatus} />
-            <OverviewValue label="追蹤股票" value={overview.trackedStockCount} />
-            <OverviewValue label="追蹤題材" value={overview.trackedTopicCount} />
-          </div>
-          {health ? (
-            <div className="tp-home-secondary-metrics">
-              <OverviewValue label={`${health.market} 市場狀態`} value={health.status} />
-              <OverviewValue label="市場總數" value={health.totalStocks} />
-              <OverviewValue label="上漲家數" value={health.advance} />
-              <OverviewValue label="下跌家數" value={health.decline} />
-              <OverviewValue label="平盤家數" value={health.flat} />
-              <OverviewValue label="不可用家數" value={health.unavailable} />
+    <section className="tp-home-section" aria-labelledby="topic-pulse-title">
+      <Card className="tp-home-topic-ticker-card">
+        <SectionHeading id="topic-pulse-title" eyebrow="收盤後題材脈動" title="今日題材動態" description="只呈現今天已發布的題材資料。" trailing={topics.length > 0 ? <button className="tp-home-ticker-control" type="button" onClick={() => setPaused((value) => !value)} aria-label={paused ? "播放題材動態" : "暫停題材動態"}>{paused ? <Play size={14} aria-hidden="true" /> : <Pause size={14} aria-hidden="true" />}{paused ? "播放" : "暫停"}</button> : undefined} />
+        {loading || resource.state === "UNAVAILABLE" || resource.state === "ERROR" || topics.length === 0 ? (
+          <MainlinesState loading={loading} state={tickerState} reason={resource.reason} dataDate={resource.dataDate} section="題材動態" />
+        ) : (
+          <div className={`tp-home-topic-ticker-viewport ${paused ? "is-paused" : ""}`}>
+            <div className="tp-home-topic-ticker-track">
+              {tickerItems.map((topic, index) => <Link className="tp-home-topic-ticker-item" href={`/topics/${topic.slug}`} key={`${topic.slug}-${index}`} aria-hidden={index >= topics.length ? "true" : undefined} tabIndex={index >= topics.length ? -1 : undefined}><strong>{topic.name}</strong><span>{topic.summary}</span><ChevronRight size={14} aria-hidden="true" /></Link>)}
             </div>
-          ) : (
-            <div className="tp-empty-state"><p>市場廣度資料目前不可用。</p></div>
-          )}
-        </>
-      ) : (
-        <MainlinesState
-          loading={false}
-          state="UNAVAILABLE"
-          reason="市場資料尚未完整。"
-          dataDate={resource.dataDate}
-          section="市場概況"
-        />
-      )}
-      <SectionDisclosure loading={loading} resource={resource} sectionKey="marketOverview" sectionLabel="Market Overview" />
-    </Card>
+          </div>
+        )}
+        <CompactDisclosure loading={loading} resource={resource} sectionKey="mainTopics" sectionLabel="題材動態" />
+      </Card>
+    </section>
   );
 }
 
-function MarketEventsCard({
-  loading,
-  resource,
-}: {
-  loading: boolean;
-  resource: TodayMarketEventsResource;
-}) {
-  return (
-    <Card className="tp-home-events-card">
-      <SectionHeading id="events-title" title="盤中重要事件" description="只顯示已完成發布的市場事件。" />
-      {loading || resource.state === "UNAVAILABLE" || resource.state === "ERROR" ? (
-        <MainlinesState
-          loading={loading}
-          state={resource.state}
-          reason={resource.reason}
-          dataDate={resource.dataDate}
-          section="盤中重要事件"
-        />
-      ) : (
-        <>
-          {resource.state !== "FORMAL" && (
-            <MainlinesState
-              loading={false}
-              state={resource.state}
-              reason={resource.reason}
-              dataDate={resource.dataDate}
-              section="盤中重要事件"
-            />
-          )}
-          <ol className="tp-home-events">
-            {resource.data.map((event) => (
-              <li key={`${event.eventTime}-${event.topicSlug}-${event.eventType}`}>
-                <time>{formatEventTime(event.eventTime)}</time>
-                <span className="tp-home-event-marker" aria-hidden="true" />
-                <div>
-                  <Link href={`/topics/${event.topicSlug}`}><strong>{event.topic}</strong></Link>
-                  <span>{event.description}</span>
-                  <small>{event.eventType} · {event.severity}</small>
-                </div>
-              </li>
-            ))}
-          </ol>
-        </>
-      )}
-      <SectionDisclosure loading={loading} resource={resource} sectionKey="marketPulse" sectionLabel="Market Events" />
-    </Card>
-  );
-}
-
-function RotationCard({
-  loading,
-  resource,
-  direction,
-}: {
-  loading: boolean;
-  resource: TodayRotationResource;
-  direction: "heating" | "cooling";
-}) {
+function RotationCard({ loading, resource, direction }: { loading: boolean; resource: TodayRotationResource; direction: "heating" | "cooling" }) {
   const isHeating = direction === "heating";
-  const section = isHeating ? "升溫" : "退潮";
+  const section = isHeating ? "快速升溫" : "快速退潮";
+  const availableRows = resource.state === "FORMAL" || resource.state === "PARTIAL" || resource.state === "STALE";
   return (
     <Card className={`tp-home-rotation-card tp-home-rotation-card--${isHeating ? "warming" : "cooling"}`}>
-      <div className="tp-home-rotation-heading">
-        {isHeating ? <TrendingUp size={18} aria-hidden="true" /> : <ArrowDownRight size={18} aria-hidden="true" />}
-        <h3>{isHeating ? "快速升溫" : "快速退潮"}</h3>
-        <span>{resource.data.length} 個題材</span>
-      </div>
-      {loading || resource.state === "UNAVAILABLE" || resource.state === "ERROR" ? (
-        <MainlinesState
-          loading={loading}
-          state={resource.state}
-          reason={resource.reason}
-          dataDate={resource.dataDate}
-          section={section}
-        />
+      <div className="tp-home-rotation-heading">{isHeating ? <TrendingUp size={18} aria-hidden="true" /> : <TrendingDown size={18} aria-hidden="true" />}<h3>{section}</h3>{availableRows && <span>{resource.data.length} 個題材</span>}</div>
+      {loading || resource.state === "UNAVAILABLE" || resource.state === "ERROR" || !availableRows ? (
+        <MainlinesState loading={loading} state={resource.state} reason={resource.reason} dataDate={resource.dataDate} section={section} />
+      ) : resource.data.length === 0 ? (
+        <MainlinesState loading={false} state="EMPTY" reason={`${section}目前沒有符合結果。`} dataDate={resource.dataDate} section={section} />
       ) : (
-        <>
-          {resource.state !== "FORMAL" && (
-            <MainlinesState
-              loading={false}
-              state={resource.state}
-              reason={resource.reason}
-              dataDate={resource.dataDate}
-              section={section}
-            />
-          )}
-          <div className="tp-home-topic-list">
-            {resource.data.map((topic) => (
-              <Link href={`/topics/${topic.topicSlug}`} key={topic.topicSlug}>
-                <span><b>{topic.topic}</b><small>{topic.summary}</small></span>
-                <GradeChip grade={topic.currentGrade} />
-                <ChevronRight size={16} aria-hidden="true" />
-              </Link>
-            ))}
-          </div>
-        </>
+        <div className="tp-home-topic-list">{resource.data.map((topic) => <Link href={`/topics/${topic.topicSlug}`} key={topic.topicSlug}><span><b>{topic.topic}</b><small>{topic.summary}</small></span>{topic.currentGrade && <GradeChip grade={topic.currentGrade} />}<ChevronRight size={16} aria-hidden="true" /></Link>)}</div>
       )}
-      <SectionDisclosure loading={loading} resource={resource} sectionKey={isHeating ? "heatingTopics" : "coolingTopics"} sectionLabel={section} />
+      <CompactDisclosure loading={loading} resource={resource} sectionKey={isHeating ? "heatingTopics" : "coolingTopics"} sectionLabel={section} />
+    </Card>
+  );
+}
+
+function OpportunityTeaserCard({ loading, resource }: { loading: boolean; resource: TodayOpportunityResource }) {
+  const formal = resource.state === "FORMAL";
+  return (
+    <Card className="tp-home-opportunities-card">
+      <SectionHeading id="opportunities-title" title="今日機會" description="Today 只提供正式機會資料的摘要入口；完整內容維持在機會頁。" link={{ label: "探索今日機會", href: "/opportunities" }} />
+      {loading || !formal ? (
+        <MainlinesState loading={loading} state={resource.state} reason={resource.reason ?? "正式機會資料尚未發布。"} dataDate={resource.dataDate} section="今日機會" />
+      ) : (
+        <div className="tp-home-opportunity-summary"><strong>正式機會資料已發布</strong><span>{resource.data.length} 個題材入口可供進一步研究。</span><Link className="tp-button tp-button--primary" href="/opportunities">探索今日機會 <ChevronRight size={16} aria-hidden="true" /></Link></div>
+      )}
+      <CompactDisclosure loading={loading} resource={resource} sectionKey="opportunities" sectionLabel="今日機會" />
     </Card>
   );
 }
@@ -394,99 +379,12 @@ export default function TodayMarketPage() {
   return (
     <PageContainer className="tp-home-page-container" title="今日市場" hideHeader>
       <div className="tp-home-content">
-        <section className="tp-home-section" aria-labelledby="market-overview-title">
-          <MarketOverviewCard loading={mainlines.loading} resource={mainlines.resource.marketOverview} />
-        </section>
-
-        <section className="tp-home-section" aria-labelledby="market-story-title">
-          <Card className="tp-home-story-card">
-            <SectionHeading id="market-story-title" title="今日市場重點" />
-            {mainlines.loading || mainlines.resource.dailyFocus.state === "UNAVAILABLE" || mainlines.resource.dailyFocus.state === "ERROR" ? (
-              <MainlinesState
-                loading={mainlines.loading}
-                state={mainlines.resource.dailyFocus.state}
-                reason={mainlines.resource.dailyFocus.reason}
-                dataDate={mainlines.resource.dailyFocus.dataDate}
-                section="市場焦點"
-              />
-            ) : (
-              <>
-                {mainlines.resource.dailyFocus.state !== "FORMAL" && (
-                  <MainlinesState
-                    loading={false}
-                    state={mainlines.resource.dailyFocus.state}
-                    reason={mainlines.resource.dailyFocus.reason}
-                    dataDate={mainlines.resource.dailyFocus.dataDate}
-                    section="市場焦點"
-                  />
-                )}
-                {mainlines.resource.dailyFocus.data && (
-                  <>
-                    <ul className="tp-home-story-list">
-                      {mainlines.resource.dailyFocus.data.bullets?.map((bullet) => <li key={bullet}>{bullet}</li>)}
-                    </ul>
-                    <div className="tp-home-one-line"><span>今日一句話</span><strong>{mainlines.resource.dailyFocus.data.headline}</strong></div>
-                      <small>規則式整理{mainlines.resource.dailyFocus.dataDate && ` · 資料日：${mainlines.resource.dailyFocus.dataDate}`}</small>
-                  </>
-                )}
-              </>
-            )}
-            <SectionDisclosure loading={mainlines.loading} resource={mainlines.resource.dailyFocus} sectionKey="dailyFocus" sectionLabel="Daily Focus" />
-          </Card>
-        </section>
-
-        <section className="tp-home-section" aria-labelledby="mainline-title">
-          <SectionHeading id="mainline-title" title="今日主線" description="先看最值得深入研究的三個題材，再進入題材頁查看完整脈絡。" link={{ label: "查看全部題材", href: "/topics" }} />
-          {mainlines.loading || mainlines.resource.state === "UNAVAILABLE" || mainlines.resource.state === "ERROR" ? (
-            <MainlinesState
-              loading={mainlines.loading}
-              state={mainlines.resource.state}
-              reason={mainlines.resource.reason}
-              dataDate={mainlines.resource.dataDate}
-            />
-          ) : (
-            <>
-              {(mainlines.resource.state === "PREVIEW" || mainlines.resource.state === "TEMPORARY") && (
-                <MainlinesState
-                  loading={false}
-                  state={mainlines.resource.state}
-                  reason={mainlines.resource.reason}
-                  dataDate={mainlines.resource.dataDate}
-                />
-              )}
-              <div className="tp-home-mainline-grid">
-                {mainlines.resource.data.map((topic) => (
-                  <article className="tp-home-mainline-card" key={topic.slug}>
-                    <div className="tp-home-card-topline">
-                      <h3>{topic.name}</h3>
-                      <GradeChip grade={topic.grade ?? "—"} />
-                    </div>
-                    <p className="tp-home-topic-state">{topic.currentState ?? "狀態待後端提供"}</p>
-                    <p className="tp-home-topic-detail">{topic.summary || "摘要待後端提供"}</p>
-                    <Link href={`/topics/${topic.slug}`} className="tp-home-card-action">進入題材頁 <ChevronRight size={16} aria-hidden="true" /></Link>
-                  </article>
-                ))}
-              </div>
-            </>
-          )}
-          <SectionDisclosure loading={mainlines.loading} resource={mainlines.resource} sectionKey="mainTopics" sectionLabel="Main Topics" />
-        </section>
-
-        <section className="tp-home-section" aria-labelledby="events-title">
-          <MarketEventsCard loading={mainlines.loading} resource={mainlines.resource.marketEvents} />
-        </section>
-
-        <section className="tp-home-section" aria-labelledby="rotation-title">
-          <SectionHeading id="rotation-title" title="快速升溫／快速退潮" description="用精簡清單看資金正在往哪裡移動。" />
-          <div className="tp-home-rotation-grid">
-            <RotationCard loading={mainlines.loading} resource={mainlines.resource.heating} direction="heating" />
-            <RotationCard loading={mainlines.loading} resource={mainlines.resource.cooling} direction="cooling" />
-          </div>
-        </section>
-
-        <section className="tp-home-section" aria-labelledby="opportunities-title">
-          <OpportunityTeaserCard loading={mainlines.loading} resource={mainlines.resource.opportunities} />
-        </section>
+        <section className="tp-home-section" aria-labelledby="market-overview-title"><MarketOverviewCard loading={mainlines.loading} resource={mainlines.resource.marketOverview} /></section>
+        <section className="tp-home-section" aria-labelledby="market-highlights-title"><MarketHighlightsCard loading={mainlines.loading} resource={mainlines.resource.dailyFocus} /></section>
+        <MainlineCards loading={mainlines.loading} resource={mainlines.resource} />
+        <TopicPulseTicker loading={mainlines.loading} resource={mainlines.resource} />
+        <section className="tp-home-section" aria-labelledby="rotation-title"><SectionHeading id="rotation-title" title="快速升溫／快速退潮" description="僅在正式 14 個交易日資料可用時列出結果。" /><div className="tp-home-rotation-grid"><RotationCard loading={mainlines.loading} resource={mainlines.resource.heating} direction="heating" /><RotationCard loading={mainlines.loading} resource={mainlines.resource.cooling} direction="cooling" /></div></section>
+        <section className="tp-home-section" aria-labelledby="opportunities-title"><OpportunityTeaserCard loading={mainlines.loading} resource={mainlines.resource.opportunities} /></section>
       </div>
     </PageContainer>
   );

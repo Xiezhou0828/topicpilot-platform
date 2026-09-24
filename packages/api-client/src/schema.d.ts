@@ -106,26 +106,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/admin/migration": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Migration
-         * @description Expose the current migration marker through a read-only SELECT probe.
-         */
-        get: operations["migration_api_v1_admin_migration_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/v1/admin/relations": {
         parameters: {
             query?: never;
@@ -1066,16 +1046,60 @@ export interface components {
             /** Unavailable */
             unavailable: number;
         };
+        /** HomeMarketDistribution */
+        HomeMarketDistribution: {
+            /** Asof */
+            asOf: string | null;
+            /** Buckets */
+            buckets?: components["schemas"]["HomeMarketDistributionBucket"][];
+            /** Coverage */
+            coverage?: {
+                [key: string]: unknown;
+            };
+            /** Eligible */
+            eligible: number;
+            /** Excluded */
+            excluded: number;
+            /** Market */
+            market: string;
+            /** Reasoncode */
+            reasonCode?: string | null;
+            /** Source */
+            source: string;
+            /** Status */
+            status: string;
+        };
+        /** HomeMarketDistributionBucket */
+        HomeMarketDistributionBucket: {
+            /** Count */
+            count: number;
+            /** Key */
+            key: string;
+            /** Label */
+            label: string;
+        };
         /** HomeMarketHealth */
         HomeMarketHealth: {
             /** Advance */
             advance: number | null;
+            /** Advancepct */
+            advancePct?: number | null;
+            /** Breadtheligible */
+            breadthEligible?: number | null;
             /** Decline */
             decline: number | null;
+            /** Declinepct */
+            declinePct?: number | null;
             /** Flat */
             flat: number | null;
+            /** Flatpct */
+            flatPct?: number | null;
             /** Market */
             market: string;
+            /** Net */
+            net?: number | null;
+            /** Observed */
+            observed?: number | null;
             /** Status */
             status: string;
             /** Totalstocks */
@@ -1136,6 +1160,7 @@ export interface components {
              * @enum {string}
              */
             dataStatus: "AVAILABLE" | "PARTIAL" | "UNAVAILABLE";
+            distribution?: components["schemas"]["HomeMarketDistribution"] | null;
             /** Indices */
             indices?: components["schemas"]["HomeMarketIndex"][];
             /** Latestsnapshottime */
@@ -1438,17 +1463,6 @@ export interface components {
             updateMode: string;
             /** Updatedat */
             updatedAt: string | null;
-        };
-        /** MigrationRevisionResponse */
-        MigrationRevisionResponse: {
-            /** Alembicrevision */
-            alembicRevision: string | null;
-            /**
-             * Readonly
-             * @default true
-             * @constant
-             */
-            readOnly: true;
         };
         /** OpportunityShadowCard */
         OpportunityShadowCard: {
@@ -3364,26 +3378,6 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    migration_api_v1_admin_migration_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["MigrationRevisionResponse"];
                 };
             };
         };

@@ -15,7 +15,7 @@ test("Today Market Events reuse the single Home resource and the generated marke
   assert.match(adapter, /HomeMarketPulseEvent/);
   assert.match(adapter, /marketEvents: TodayMarketEventsResource/);
   assert.match(adapter, /mapMarketEvents\(resource, previewEnabled\)/);
-  assert.match(page, /mainlines\.resource\.marketEvents/);
+  assert.doesNotMatch(page, /mainlines\.resource\.marketEvents/);
   assert.equal((home.match(/client\.getHome\(/g) ?? []).length, 1);
 });
 
@@ -26,10 +26,10 @@ test("Today Market Events preserve backend order and event authority", async () 
   ]);
   for (const field of ["eventTime", "topic", "eventType", "description", "severity", "topicSlug"]) {
     assert.match(adapter, new RegExp(`value\\.${field}`));
-    assert.match(page, new RegExp(`event\\.${field}`));
+    assert.match(adapter, new RegExp(`value\\.${field}`));
   }
   assert.match(adapter, /value\.source/);
-  assert.match(page, /resource\.data\.map\(\(event\)/);
+  assert.doesNotMatch(page, /resource\.data\.map\(\(event\)/);
   assert.doesNotMatch(`${adapter}\n${page}`, /marketEvents[\s\S]{0,1200}\.sort\(/);
   assert.doesNotMatch(page, /const events = \[/);
   assert.doesNotMatch(`${adapter}\n${page}`, /severity calculation|event derivation|ranking/i);

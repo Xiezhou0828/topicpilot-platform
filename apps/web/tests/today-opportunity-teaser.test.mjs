@@ -29,8 +29,8 @@ test("Today Opportunity maps empty, incomplete, Shadow, Preview, and transport s
   assert.match(adapter, /resource\.publicationState !== "UNAVAILABLE" && previewEnabled/);
   assert.match(adapter, /今日機會資料尚未完成正式驗證/);
   assert.match(adapter, /今日機會目前尚未提供正式資料/);
-  assert.match(page, /resource\.state === "FORMAL" \|\| resource\.state === "PREVIEW"/);
-  assert.match(page, /resource\.state === "PREVIEW"/);
+  assert.match(page, /const formal = resource\.state === "FORMAL"/);
+  assert.doesNotMatch(page, /resource\.state === "PREVIEW"/);
 });
 
 test("Today Opportunity removes the static teaser and browser-side recommendation derivation", async () => {
@@ -42,7 +42,8 @@ test("Today Opportunity removes the static teaser and browser-side recommendatio
   const source = `${home}\n${adapter}\n${page}`;
 
   assert.doesNotMatch(page, /const opportunities = \[/);
-  assert.doesNotMatch(page, /href="\/opportunities"/);
+  assert.match(page, /href="\/opportunities"/);
+  assert.match(page, /正式機會資料已發布/);
   assert.doesNotMatch(page, /validatedStocks|strength|score|ranking|ranked|favorite|favorites/i);
   assert.doesNotMatch(source, /mock|fixture fallback|static teaser|snapshot fallback/i);
   assert.equal((home.match(/client\.getHome\(/g) ?? []).length, 1);

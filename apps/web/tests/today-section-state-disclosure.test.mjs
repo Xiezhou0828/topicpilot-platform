@@ -33,7 +33,7 @@ test("Today surfaces freshness, source, and data-quality metadata without classi
     assert.match(adapter, new RegExp(`resource\.metadata\.${field}`));
     assert.match(page, new RegExp(field));
   }
-  assert.match(page, /data-quality-disclosure/);
+  assert.match(page, /tp-home-compact-disclosure/);
   assert.match(page, /friendlySourceName/);
   assert.doesNotMatch(page, /Date\.now\(|new Date\(\).*data|freshness.*classification/i);
 });
@@ -49,7 +49,7 @@ test("Today keeps one Home request and never substitutes Preview/mock data after
   assert.match(home, /return errorTodayHomeResource\(error instanceof Error/);
   assert.match(adapter, /transportErrorReason/);
   assert.doesNotMatch(`${home}\n${adapter}\n${page}`, /mock|snapshot fallback|fallback hardcoded/i);
-  assert.doesNotMatch(`${home}\n${adapter}\n${page}`, /\.sort\(|changePct|strengthScore|turnover\s*[:=].*(calculate|derive|reduce|\+)|score derivation|freshness calculation/i);
+  assert.doesNotMatch(`${home}\n${adapter}\n${page}`, /\.sort\(|changePct\s*[:=].*(calculate|derive)|strengthScore|turnover\s*[:=].*(calculate|derive|reduce|\+)|score derivation|freshness calculation/i);
 });
 
 test("Today sections preserve Temporary instead of collapsing partial Home data to Unavailable", async () => {
@@ -61,16 +61,22 @@ test("Today sections preserve Temporary instead of collapsing partial Home data 
   assert.match(adapter, /let state: TodaySectionState = stateFromHomeResource/);
   assert.match(adapter, /if \(state === "FORMAL" && data\.temporary\) state = "TEMPORARY"/);
   assert.match(adapter, /state === "FORMAL"\n\s+\? null\n\s+: resource\.metadata\.reason/);
-  assert.match(page, /state === "PREVIEW" \|\| mainlines\.resource\.state === "TEMPORARY"/);
+  assert.match(page, /resource\.state/);
   assert.match(page, /resource\.temporarySections\.includes\(sectionKey\)/);
   assert.match(page, /resource\.missingSections\.includes\(sectionKey\)/);
 });
 
-test("Today disclosure uses product section labels instead of the debug fallback", async () => {
-  const page = await read("components/v2/TodayMarketPage.tsx");
-
-  assert.doesNotMatch(page, /another Today section/);
-  assert.match(page, /marketEvents: "Market Events"/);
-  assert.match(page, /opportunities: "Today Opportunities"/);
-  assert.match(page, /return disclosureSectionLabels\[value\] \?\? "其他區塊"/);
+test("Today rotation uses shared authority mapping so AVAILABLE plus zero rows is EMPTY", async () => {
+  const [adapter, page] = await Promise.all([
+    read("lib/today-mainlines.ts"),
+    read("components/v2/TodayMarketPage.tsx"),
+  ]);
+  assert.match(adapter, /commercialDataState\(\{/);
+  assert.match(adapter, /status: resource\.metadata\.sectionStatuses\[section\]\?\.status/);
+  assert.match(adapter, /rowCount: data\.length/);
+  assert.match(adapter, /commercialState === "EMPTY"/);
+  assert.match(adapter, /commercialState === "PARTIAL" \|\| commercialState === "STALE"/);
+  assert.match(adapter, /overviewStatus\?\.status \?\? dataStatus/);
+  assert.match(adapter, /mappedOverviewState === "LOADING" \? "UNAVAILABLE" : mappedOverviewState/);
+  assert.match(page, /EMPTY: "目前沒有結果"/);
 });

@@ -1,0 +1,13 @@
+REQUIREMENT,OWNER_DESIRED,CURRENT_CANONICAL,MATCH,NOTES
+市場概況,市場概況置於 Today 首屏並優先呈現指數／成交金額／廣度,Official indices turnover breadth distribution render from Home marketOverview; unavailable facts stay explicit,MATCH,前端改為讀取 canonical Home fields；缺資料時使用尚未提供而不補值；舊差異分類 FRONTEND_LAYOUT_DIFFERENT/API_DATA_EMPTY
+今日市場重點,投資人可讀的簡短重點且工程 metadata 次要,今日市場重點保留 backend headline/bullets；狀態與來源收進 compact disclosure,MATCH,資料不足時顯示正式資料尚未完成而不虛構；舊差異分類 FRONTEND_LAYOUT_DIFFERENT/FORMAL_DATA_PARTIAL
+今日主線,主線區塊位於重點之後並顯示正式題材入口,今日主線沿用 shared Home resource 並維持 backend order,MATCH,不在瀏覽器排序或推導
+Top 3 cards,恰好三張 compact mainline cards,production Home response mainTopics count is 3 and UI maps backend data,MATCH,第三方 API readback 2026-09-24 confirmed 3
+Grade badge,正式 grade badge 且只在 grade 存在時顯示,GradeChip renders only topic.grade,MATCH,沒有 grade 時不以假值代替
+Topic navigation,每張卡可進入 canonical topic route,Each card links to /topics/{topic.slug},MATCH,保留 Topic hierarchy and slug authority
+compact first viewport,三段核心內容以 compact rhythm 進入第一個 meaningful viewport,compact section/card CSS and secondary disclosure preserve first-screen density,MATCH,移除 redundant snapshot/ordinal presentation；未恢復舊 mock composition
+investor-first hierarchy,Investor-facing content precedes provenance/debug metadata,headline/index/turnover/breadth/mainline content precedes details summary,MATCH,source/status/date are disclosure-level metadata
+no 01/02/03 labels,不得顯示不必要 ordinal labels,TodayMarketPage has no ordinal card labels,MATCH,unused legacy CSS selector remains inert and does not render labels
+no redundant 盤中快照,不得重複顯示盤中快照,TodayMarketPage contains no 盤中快照 surface,MATCH,收盤後 official fields use explicit EOD wording
+partial-data handling,正式依賴不完整時 fail closed 並讓 investor content仍可讀,FORMAL/PARTIAL/TEMPORARY/UNAVAILABLE states remain explicit and metadata is secondary,MATCH,不將 PARTIAL 伪裝成完整正式資料；cause FORMAL_DATA_PARTIAL is disclosed
+update time,顯示 data date/as-of/update context但不搶主內容,Data date/as-of appears in compact disclosure and official market heading,MATCH,沒有 data date 時顯示尚未提供

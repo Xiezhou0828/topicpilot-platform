@@ -20,21 +20,28 @@ test("Today Market Overview reuses the single Home resource and generated contra
   assert.equal((home.match(/client\.getHome\(/g) ?? []).length, 1);
 });
 
-test("Today Market Overview renders backend fields without market aggregation", async () => {
-  const [adapter, page] = await Promise.all([
+test("Today Market Overview renders backend-owned official index and turnover fields", async () => {
+  const [adapter, page, fields] = await Promise.all([
     read("lib/today-mainlines.ts"),
     read("components/v2/TodayMarketPage.tsx"),
+    read("lib/today-market-fields.ts"),
   ]);
   for (const field of ["dataStatus", "trackedStockCount", "trackedTopicCount", "marketHealth", "source"]) {
     const pattern = field === "marketHealth"
       ? /value\?\.marketHealth/
-      : new RegExp(`value\\.${field}|data\\?\\.${field}`);
+      : new RegExp(`value\\.${field}|data\?\\.${field}`);
     assert.match(adapter, pattern);
   }
-  for (const field of ["advance", "decline", "flat", "unavailable"]) {
+  assert.match(fields, /overview\.indices/);
+  assert.match(fields, /overview\.turnover/);
+  for (const field of ["advance", "decline", "flat", "net"]) {
     assert.match(page, new RegExp(`health\\.${field}`));
   }
-  assert.doesNotMatch(`${adapter}\n${page}`, /marketIndices|marketRadar|aggregate instruments|market scoring|bullish|bearish|market narrative/i);
+  assert.doesNotMatch(page, /health\.unavailable/);
+  for (const field of ["indexCode", "indexName", "changePct", "tradingDate", "asOf", "currency", "unit", "scale"]) {
+    assert.match(`${adapter}\n${page}\n${fields}`, new RegExp(field));
+  }
+  assert.doesNotMatch(`${adapter}\n${page}\n${fields}`, /marketRadar|aggregate instruments|market scoring|bullish|bearish|market narrative|indices\\.reduce|turnover\\.reduce/i);
   assert.doesNotMatch(page, /mockMarketMetrics|useSnapshot|liveBreadth/);
 });
 
@@ -48,6 +55,6 @@ test("Today Market Overview preserves publication states and fails closed", asyn
   assert.match(adapter, /state === "PREVIEW" && !previewEnabled/);
   assert.match(adapter, /state === "UNAVAILABLE"/);
   assert.match(page, /resource\.state !== "FORMAL"/);
-  assert.match(page, /市場廣度資料目前不可用/);
+  assert.match(page, /市場廣度目前尚未提供/);
   assert.doesNotMatch(`${adapter}\n${page}`, /API error[\s\S]{0,120}mock|fallback hardcoded/i);
 });
