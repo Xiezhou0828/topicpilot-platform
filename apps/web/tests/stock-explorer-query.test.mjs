@@ -21,8 +21,8 @@ test("topic filter uses the backend topic identifier", () => {
 
 test("topic options come from the formal topic catalog, not stock relation rows", () => {
   assert.match(page, /fetchTopics/);
-  assert.match(page, /const topicOptions = topicResource\?\.data \?\? \[\]/);
-  assert.match(topicApi, /\/api\/v2\/topics\?limit=200&offset=0/);
+  assert.match(page, /const topicOptions = \(topicResource\?\.data \?\? \[\]\)\.filter\(\(item\) => item\.kind === "LEAF"\)/);
+  assert.match(topicApi, /\/api\/v2\/topic-catalog\?limit=500&offset=0/);
   assert.equal(page.includes("baseRows.forEach((row) => row.topics"), false);
 });
 

@@ -377,7 +377,7 @@ export default function StockExplorerPage() {
   const topicOptionsUnavailable = topicResource?.source === "unavailable";
   const topicOptionsLoading = topicResource === null;
   const topicOptionsDisabled = topicOptionsLoading || topicOptionsUnavailable;
-  const topicOptions = topicResource?.data ?? [];
+  const topicOptions = (topicResource?.data ?? []).filter((item) => item.kind === "LEAF");
   const topicPlaceholder = topicOptionsLoading
     ? UI.topicLoading
     : topicOptionsUnavailable

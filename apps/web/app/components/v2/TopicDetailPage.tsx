@@ -226,6 +226,17 @@ function HistoricalSection({ preview, publication }: { preview: TopicPreview | n
   return <Card className="tp-topic-detail-card tp-topic-history-placeholder"><TopicSectionHeading title="歷史走勢與輪動" description="Historical/timeline read model 尚未接入；L5 retrospective reconstruction artifact 不直接發布到 production frontend。" preview={Boolean(preview)} /><div className="tp-topic-publication-row"><PublicationDisclosure disclosure={preview ? previewDisclosure("events", "Preview 不提供正式歷史序列。") : publication.events} /><PublicationDisclosure disclosure={preview ? previewDisclosure("heatmap", "Preview 不提供正式 rotation visualization。") : publication.heatmap} /><PublicationDisclosure disclosure={preview ? previewDisclosure("opportunity", "Preview 不提供正式 opportunity。") : publication.opportunity} /></div><EmptyState title="歷史資料待接入／累積中" description="目前只保留未來 history/timeline read-model 介面；不把 retrospective reconstruction 顯示成 Forward Shadow 或 PIT historical truth。" /></Card>;
 }
 
+function TopicHierarchySection({ topic }: { topic: TopicData }) {
+  const parents = topic.hierarchy.parents ?? [];
+  const children = topic.hierarchy.children ?? [];
+  const links = (items: typeof parents) => items.map((item) => <Link href={`/topics/${item.slug}`} className="tp-topic-related-card" key={item.slug}><div><strong>{item.name}</strong><span>{item.slug}</span></div><ChevronRight size={18} aria-hidden="true" /></Link>);
+  return <Card className="tp-topic-detail-card tp-topic-hierarchy-card"><TopicSectionHeading title="題材階層" description="Identity 與 Parent/Leaf hierarchy 直接來自 Topic Catalog；前端不以名稱或 groupName 推導關係。" /><div className="tp-topic-publication-row"><span className="tp-chip">Kind: {topic.kind}</span><span className="tp-chip">Parents: {parents.length}</span><span className="tp-chip">Children: {children.length}</span></div><div className="tp-topic-hierarchy-columns"><section><h3>Parents</h3>{parents.length ? <div className="tp-topic-related-grid">{links(parents)}</div> : <p className="tp-muted">—</p>}</section><section><h3>Children</h3>{children.length ? <div className="tp-topic-related-grid">{links(children)}</div> : <p className="tp-muted">—</p>}</section></div></Card>;
+}
+
+function ParentTopicState({ publication }: { publication: ReturnType<typeof getTopicPublication> }) {
+  return <Card className="tp-topic-detail-card tp-topic-parent-state-card"><TopicSectionHeading title="Parent Topic 狀態" description="Parent Topic 是 canonical hierarchy node，不是 market Leaf Topic；不需要 daily snapshot，也不顯示 Score、Grade 或 Lifecycle。" /><div className="tp-topic-publication-row"><PublicationDisclosure disclosure={publication.snapshot} /><PublicationDisclosure disclosure={publication.score} /><PublicationDisclosure disclosure={publication.grade} /><PublicationDisclosure disclosure={publication.lifecycle} /></div><div className="tp-topic-lifecycle-status"><strong>Snapshot NOT_APPLICABLE</strong><span>正式 Snapshot、Score、Grade、Lifecycle 均維持未適用；不由前端補值。</span></div></Card>;
+}
+
 function stockDrawerItem(topic: TopicData, stock: TopicConstituent, source: TopicResource<TopicData>): StockDrawerItem {
   return {
     code: stock.code,
@@ -270,19 +281,22 @@ export default function TopicDetailPage({ slug }: { slug: string }) {
       <header className="tp-topic-identity">
         <nav className="tp-topic-breadcrumb" aria-label="題材階層"><Link href="/topics">題材</Link><span aria-hidden="true">›</span>{topic.groupName && <><span>{topic.groupName}</span><span aria-hidden="true">›</span></>}<strong>{topic.name}</strong></nav>
         <div className="tp-topic-title-row"><div><p className="tp-overline">題材研究工作台 · {sourceLabel(resource.source)} <PublicationDisclosure disclosure={publication.source} /></p><h1>{topic.name}</h1></div><button type="button" className={`tp-topic-favorite ${favorite ? "is-active" : ""}`} aria-label={favorite ? `取消收藏 ${topic.name}` : `收藏 ${topic.name}`} aria-pressed={favorite} onClick={() => toggleTopicFavorite(slug, { displayLabel: topic.name })}><Star size={18} fill={favorite ? "currentColor" : "none"} aria-hidden="true" />{favorite ? "已收藏題材" : "收藏題材"}</button></div>
-        <div className="tp-topic-meta-row"><span className="tp-topic-identity-disclosure"><PublicationDisclosure disclosure={publication.identity} /><PublicationDisclosure disclosure={publication.hierarchy} /></span>{topic.grade ? <GradeChip grade={topic.grade} /> : <PublicationDisclosure disclosure={publication.grade} />}<span><b>題材強度</b> {topic.score === null ? <PublicationDisclosure disclosure={publication.score} /> : scoreLabel(topic.score)}</span><span><b>目前狀態</b> {topic.strengthState ? topic.readableState : <PublicationDisclosure disclosure={publication.snapshot} />}</span><span><b>股票數</b> {topic.constituentCount} 檔</span></div>
+        <div className="tp-topic-meta-row"><span className="tp-topic-identity-disclosure"><PublicationDisclosure disclosure={publication.identity} /><PublicationDisclosure disclosure={publication.hierarchy} /></span>{topic.kind === "PARENT" ? <span className="tp-chip">Parent Topic · {topic.hierarchy.children.length} children</span> : <>{topic.grade ? <GradeChip grade={topic.grade} /> : <PublicationDisclosure disclosure={publication.grade} />}<span><b>題材強度</b> {topic.score === null ? <PublicationDisclosure disclosure={publication.score} /> : scoreLabel(topic.score)}</span><span><b>目前狀態</b> {topic.strengthState ? topic.readableState : <PublicationDisclosure disclosure={publication.snapshot} />}</span><span><b>股票數</b> {topic.constituentCount === null ? "—" : `${topic.constituentCount} 檔`}</span></>}</div>
       </header>
 
       <div className="tp-topic-content tp-topic-research-workspace">
-        <TodayStatusSection topic={topic} preview={preview} publication={publication} />
-        <TopicStatusSection topic={topic} preview={preview} publication={publication} />
-        <ConstituentsSection stocks={stocks} publication={publication} onSelect={setSelectedStock} />
-        {selectedStock && <StockEncyclopediaDrawer presentation="inline" stock={stockDrawerItem(topic, selectedStock, resource)} onClose={() => setSelectedStock(null)} />}
-        <FormalLifecycle lifecycle={topic.lifecycle} disclosure={publication?.lifecycle ?? { field: "lifecycle", state: "UNAVAILABLE", note: "正式 Lifecycle 尚未提供。" }} />
-        <StrengthEvidenceSection lifecycle={topic.lifecycle} disclosure={publication?.lifecycle ?? { field: "lifecycle", state: "UNAVAILABLE", note: "Strength raw evidence 尚未提供。" }} />
-        <DescriptionSection preview={preview} publication={publication} />
-        <RelatedTopicsSection preview={preview} publication={publication} />
-        <HistoricalSection preview={preview} publication={publication} />
+        <TopicHierarchySection topic={topic} />
+        {topic.kind === "PARENT" ? <ParentTopicState publication={publication} /> : <>
+          <TodayStatusSection topic={topic} preview={preview} publication={publication} />
+          <TopicStatusSection topic={topic} preview={preview} publication={publication} />
+          <ConstituentsSection stocks={stocks} publication={publication} onSelect={setSelectedStock} />
+          {selectedStock && <StockEncyclopediaDrawer presentation="inline" stock={stockDrawerItem(topic, selectedStock, resource)} onClose={() => setSelectedStock(null)} />}
+          {topic.lifecycle && <FormalLifecycle lifecycle={topic.lifecycle} disclosure={publication.lifecycle} />}
+          {topic.lifecycle && <StrengthEvidenceSection lifecycle={topic.lifecycle} disclosure={publication.lifecycle} />}
+          <DescriptionSection preview={preview} publication={publication} />
+          <RelatedTopicsSection preview={preview} publication={publication} />
+          <HistoricalSection preview={preview} publication={publication} />
+        </>}
       </div>
     </>}
   </div></PageContainer></AppShell>;

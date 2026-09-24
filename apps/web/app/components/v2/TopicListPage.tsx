@@ -12,6 +12,7 @@ import { useTopicFavoritesState } from "../FavoriteButton";
 type DirectionFilter = "全部" | "轉強" | "轉弱";
 type GradeFilter = "全部" | TopicGrade;
 type OverviewTopic = TopicSummary & { meta: TopicOverviewMeta; source: TopicSource };
+type TopicGroupRow = { parent: TopicSummary | null; topics: OverviewTopic[] };
 type LifecycleTopic = { topic: OverviewTopic; lifecycle: { stage: DisplayLifecycleStage; day: number | null; status: TopicLifecycle["dataStatus"]; transition: string | null } };
 
 const GRADE_LANES: Array<{ grade: TopicGrade; label: string }> = [
@@ -45,8 +46,8 @@ function gradeClass(grade: string | null): string {
   return `tp-grade-${(grade ?? "unknown").toLowerCase()}`;
 }
 
-function isMarketTopic(topic: TopicSummary): boolean {
-  return topic.topicType !== "MAJOR_GROUP";
+function isLeafTopic(topic: TopicSummary): boolean {
+  return topic.kind === "LEAF";
 }
 
 function filterByDirection(topic: OverviewTopic, filter: DirectionFilter): boolean {
@@ -172,9 +173,10 @@ export default function TopicListPage() {
     return () => { active = false; };
   }, []);
 
-  const overviewTopics = useMemo<OverviewTopic[]>(() => (resource?.data ?? [])
-    .filter(isMarketTopic)
-    .map((topic) => ({ ...topic, source: resource?.source ?? "unavailable", meta: getTopicOverviewMeta(topic, resource?.source !== "api") })), [resource]);
+  const catalogTopics = useMemo(() => resource?.data ?? [], [resource?.data]);
+  const overviewTopics = useMemo<OverviewTopic[]>(() => catalogTopics
+    .filter(isLeafTopic)
+    .map((topic) => ({ ...topic, source: resource?.source ?? "unavailable", meta: getTopicOverviewMeta(topic, resource?.source !== "api") })), [catalogTopics, resource?.source]);
   const marketTopics = useMemo(() => overviewTopics.filter((topic) => filterByDirection(topic, directionFilter)), [directionFilter, overviewTopics]);
   const normalizedQuery = query.trim().toLocaleLowerCase("zh-TW");
   const filteredTopics = useMemo(() => overviewTopics.filter((topic) => {
@@ -182,14 +184,22 @@ export default function TopicListPage() {
     return (!normalizedQuery || text.includes(normalizedQuery)) && (gradeFilter === "全部" || topic.meta.laneGrade === gradeFilter);
   }), [gradeFilter, normalizedQuery, overviewTopics]);
   const lanes = useMemo(() => GRADE_LANES.map((lane) => ({ ...lane, topics: marketTopics.filter((topic) => topic.meta.laneGrade === lane.grade) })), [marketTopics]);
-  const groupRows = useMemo(() => {
-    const groups = new Map<string, OverviewTopic[]>();
-    overviewTopics.forEach((topic) => {
-      const group = topic.meta.groupName ?? "其他題材";
-      groups.set(group, [...(groups.get(group) ?? []), topic]);
-    });
-    return Array.from(groups.entries()).sort(([a], [b]) => a.localeCompare(b, "zh-TW"));
-  }, [overviewTopics]);
+  const groupRows = useMemo<TopicGroupRow[]>(() => {
+    const leafBySlug = new Map(overviewTopics.map((topic) => [topic.slug, topic]));
+    const attached = new Set<string>();
+    const rows = catalogTopics
+      .filter((topic) => topic.kind === "PARENT")
+      .map((parent) => {
+        const topics = parent.hierarchy.children
+          .map((child) => leafBySlug.get(child.slug))
+          .filter((topic): topic is OverviewTopic => Boolean(topic));
+        topics.forEach((topic) => attached.add(topic.slug));
+        return { parent, topics };
+      })
+      .sort((a, b) => a.parent.name.localeCompare(b.parent.name, "zh-TW"));
+    const ungrouped = overviewTopics.filter((topic) => !attached.has(topic.slug) && topic.hierarchy.parents.length === 0);
+    return ungrouped.length ? [...rows, { parent: null, topics: ungrouped }] : rows;
+  }, [catalogTopics, overviewTopics]);
  const previewMode = resource?.source !== "api";
   const publication = overviewTopics[0] ? getTopicPublication(overviewTopics[0].source, overviewTopics[0]) : null;
 
@@ -217,17 +227,17 @@ export default function TopicListPage() {
 
       <section className="tp-topic-groups-section" aria-labelledby="topic-groups-title">
         <div className="tp-topic-section-heading"><div><h2 id="topic-groups-title">依大族群瀏覽</h2></div></div>
-        <div className="tp-topic-group-grid">{groupRows.map(([group, topics]) => { const isOpen = openGroups.has(group); return <section className={`tp-topic-group-card ${isOpen ? "is-open" : ""}`} key={group}>
-          <button type="button" className="tp-topic-group-toggle" aria-expanded={isOpen} onClick={() => toggleGroup(group)}><span><Layers3 size={18} aria-hidden="true" /><strong>{group}</strong><small>{topics.length} 個題材</small></span><ChevronDown size={18} aria-hidden="true" /></button>
-          {isOpen && <div className="tp-topic-group-children">{topics.map((topic) => { const gradeDisclosure = getTopicPublication(topic.source, topic).grade; return <Link href={`/topics/${topic.slug}`} className="tp-topic-group-child" key={topic.slug}><span><b>{topic.name}</b><small>{topic.meta.directionLabel}</small></span><span className="tp-topic-group-child-score">{scoreLabel(topic.score)}</span><span className={`tp-chip tp-grade-chip ${gradeClass(topic.meta.laneGrade)}`}>{topic.meta.laneGrade ?? <PublicationDisclosure disclosure={gradeDisclosure} />}</span><ChevronRight size={15} aria-hidden="true" /></Link>; })}</div>}
+        <div className="tp-topic-group-grid">{groupRows.map(({ parent, topics }) => { const group = parent?.slug ?? "__ungrouped__"; const isOpen = openGroups.has(group); return <section className={`tp-topic-group-card ${isOpen ? "is-open" : ""}`} key={group}>
+          <button type="button" className="tp-topic-group-toggle" aria-expanded={isOpen} onClick={() => toggleGroup(group)}><span><Layers3 size={18} aria-hidden="true" /><strong>{parent?.name ?? "未分層題材"}</strong><small>{topics.length} 個 Leaf 題材</small></span><ChevronDown size={18} aria-hidden="true" /></button>
+          {isOpen && <div className="tp-topic-group-children">{parent && <Link href={`/topics/${parent.slug}`} className="tp-topic-group-child tp-topic-group-parent-link" key={`${parent.slug}-parent`}><span><b>{parent.name}</b><small>Parent Topic · children {parent.hierarchy.children.length}</small></span><span className="tp-chip">PARENT</span><ChevronRight size={15} aria-hidden="true" /></Link>}{topics.map((topic) => { const gradeDisclosure = getTopicPublication(topic.source, topic).grade; return <Link href={`/topics/${topic.slug}`} className="tp-topic-group-child" key={topic.slug}><span><b>{topic.name}</b><small>{topic.meta.directionLabel}</small></span><span className="tp-topic-group-child-score">{scoreLabel(topic.score)}</span><span className={`tp-chip tp-grade-chip ${gradeClass(topic.meta.laneGrade)}`}>{topic.meta.laneGrade ?? <PublicationDisclosure disclosure={gradeDisclosure} />}</span><ChevronRight size={15} aria-hidden="true" /></Link>; })}</div>}
         </section>; })}</div>
       </section>
 
       <section className="tp-topic-overview-list-section" aria-labelledby="topic-list-title">
-        <div className="tp-topic-section-heading"><div><h2 id="topic-list-title">全部題材</h2><p>完整正式題材目錄；尚無分數、等級或生命週期的題材仍會保留顯示。</p>{publication && <span className="tp-topic-publication-summary"><PublicationDisclosure disclosure={publication.identity} /> <PublicationDisclosure disclosure={publication.relations} /> <PublicationDisclosure disclosure={publication.grade} /> <PublicationDisclosure disclosure={publication.lifecycle} /></span>}</div><span>{overviewTopics.length} 個題材</span></div>
+        <div className="tp-topic-section-heading"><div><h2 id="topic-list-title">全部題材（Leaf 題材）</h2><p>此清單只列可承載正式市場狀態的 Leaf Topics；Parent Topics 僅在「依大族群瀏覽」中作為 canonical hierarchy nodes 顯示。</p>{publication && <span className="tp-topic-publication-summary"><PublicationDisclosure disclosure={publication.identity} /> <PublicationDisclosure disclosure={publication.relations} /> <PublicationDisclosure disclosure={publication.grade} /> <PublicationDisclosure disclosure={publication.lifecycle} /></span>}</div><span>{overviewTopics.length} 個 Leaf 題材</span></div>
         <Card className="tp-topic-overview-list-card"><div className="tp-topic-overview-list-controls"><label className="tp-search-input"><Search size={17} aria-hidden="true" /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="搜尋題材名稱或代號" /></label><div className="tp-topic-grade-filters" role="group" aria-label="等級篩選">{(["全部", "S", "A", "B", "D"] as GradeFilter[]).map((item) => <button type="button" key={item} className={gradeFilter === item ? "is-active" : ""} onClick={() => setGradeFilter(item)}>{item === "全部" ? "全部" : item}</button>)}</div></div>
-          <div className="tp-topic-overview-list-head" aria-hidden="true"><span>題材名稱</span><span>大族群</span><span>等級</span><span>今日分數</span><span>今日方向</span><span>股票數</span><span>收藏</span></div>
-          <div className="tp-topic-overview-list-items">{filteredTopics.map((topic) => { const gradeDisclosure = getTopicPublication(topic.source, topic).grade; const lifecycle = topic.lifecycle; const lifecycleStage = lifecycle && lifecycleStageAvailable(lifecycle.dataStatus) ? formalLifecycleStage(lifecycle.currentStage) : null; return <div className="tp-topic-overview-list-row" key={topic.slug}><Link href={`/topics/${topic.slug}`} className="tp-topic-overview-list-link"><span className="tp-topic-overview-name"><b>{topic.name}</b><small>{topic.slug}</small><small className="tp-topic-overview-lifecycle" data-lifecycle-status={lifecycle?.dataStatus}>{lifecycleStage ?? (lifecycle ? lifecycleStatusLabel(lifecycle.dataStatus) : "Lifecycle unavailable")}{lifecycle?.transitionDecision ? ` · ${lifecycle.transitionDecision}` : ""}</small></span><span>{topic.meta.groupName ?? "其他題材"}</span><span className={`tp-chip tp-grade-chip ${gradeClass(topic.meta.laneGrade)}`}>{topic.meta.laneGrade ?? <PublicationDisclosure disclosure={gradeDisclosure} />}</span><strong className="tp-topic-overview-score">{scoreLabel(topic.score)}</strong><span className={`tp-topic-overview-direction tp-topic-direction--${topic.meta.direction}`}><span>{topic.meta.directionSymbol}</span>{topic.meta.directionLabel}</span><span className="tp-topic-overview-count">{topic.constituentCount} 檔</span><ChevronRight size={16} aria-hidden="true" /></Link><button type="button" className={`tp-topic-row-star ${favorites.has(topic.slug) ? "is-active" : ""}`} aria-label={favorites.has(topic.slug) ? `取消收藏 ${topic.name}` : `收藏 ${topic.name}`} aria-pressed={favorites.has(topic.slug)} onClick={() => toggleTopicFavorite(topic.slug)}><Star size={18} fill={favorites.has(topic.slug) ? "currentColor" : "none"} aria-hidden="true" /></button></div>; })}</div>
+          <div className="tp-topic-overview-list-head" aria-hidden="true"><span>Leaf 題材名稱</span><span>Parent 群組</span><span>等級</span><span>今日分數</span><span>今日方向</span><span>股票數</span><span>收藏</span></div>
+          <div className="tp-topic-overview-list-items">{filteredTopics.map((topic) => { const gradeDisclosure = getTopicPublication(topic.source, topic).grade; const lifecycle = topic.lifecycle; const lifecycleStage = lifecycle && lifecycleStageAvailable(lifecycle.dataStatus) ? formalLifecycleStage(lifecycle.currentStage) : null; return <div className="tp-topic-overview-list-row" key={topic.slug}><Link href={`/topics/${topic.slug}`} className="tp-topic-overview-list-link"><span className="tp-topic-overview-name"><b>{topic.name}</b><small>{topic.slug}</small><small className="tp-topic-overview-lifecycle" data-lifecycle-status={lifecycle?.dataStatus}>{lifecycleStage ?? (lifecycle ? lifecycleStatusLabel(lifecycle.dataStatus) : "Lifecycle unavailable")}{lifecycle?.transitionDecision ? ` · ${lifecycle.transitionDecision}` : ""}</small></span><span>{topic.meta.groupName ?? "未分層"}</span><span className={`tp-chip tp-grade-chip ${gradeClass(topic.meta.laneGrade)}`}>{topic.meta.laneGrade ?? <PublicationDisclosure disclosure={gradeDisclosure} />}</span><strong className="tp-topic-overview-score">{scoreLabel(topic.score)}</strong><span className={`tp-topic-overview-direction tp-topic-direction--${topic.meta.direction}`}><span>{topic.meta.directionSymbol}</span>{topic.meta.directionLabel}</span><span className="tp-topic-overview-count">{topic.constituentCount === null ? "—" : `${topic.constituentCount} 檔`}</span><ChevronRight size={16} aria-hidden="true" /></Link><button type="button" className={`tp-topic-row-star ${favorites.has(topic.slug) ? "is-active" : ""}`} aria-label={favorites.has(topic.slug) ? `取消收藏 ${topic.name}` : `收藏 ${topic.name}`} aria-pressed={favorites.has(topic.slug)} onClick={() => toggleTopicFavorite(topic.slug)}><Star size={18} fill={favorites.has(topic.slug) ? "currentColor" : "none"} aria-hidden="true" /></button></div>; })}</div>
           {filteredTopics.length === 0 && <EmptyState title="找不到符合條件的題材" description="調整搜尋文字或篩選條件後再試一次。" />}
         </Card>
       </section>

@@ -27,5 +27,5 @@ test("topic detail displays backend lifecycle/shadow data and has explicit pendi
   assert.match(page, /leader_change_pct/);
   assert.match(page, /<EmptyState title=/);
   assert.match(page, /canonical backend Lifecycle read model/);
-  assert.match(page, /publication\?\.lifecycle/);
+  assert.match(page, /publication\.lifecycle/);
 });

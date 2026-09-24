@@ -1,0 +1,52 @@
+{
+  "taskId": "TASK-TOPIC-FRONTEND-CANONICAL-HIERARCHY-RECONCILIATION-001",
+  "taskStatus": "COMPLETE",
+  "canonicalBase": "origin/main",
+  "originMainHead": "46e1096d6d63c6d6356103f9183f31c62ef3c43a",
+  "worktreePath": "E:\\topicpilot-worktrees\\TASK-TOPIC-FRONTEND-CANONICAL-HIERARCHY-RECONCILIATION-001",
+  "branchName": "codex/topic-frontend-canonical-hierarchy-reconciliation-001",
+  "storageDrive": "E:",
+  "cDriveNewWorkspaceCreated": false,
+  "topicCatalogBackendIntroCommit": "163723a807a7008e2ea3e37d864fc7b5a94dde1a",
+  "currentFrontendTopicSourceIntroCommit": "6eb554594040c9a9451d6b4a8922465ddcf2b5d6",
+  "priorFrontendTopicCatalogIntegrationFound": false,
+  "priorReusableCommitOrBranch": null,
+  "likelyRegressionPoint": "Topic Catalog backend was introduced while the frontend remained on the legacy flat /api/v2/topics source; the frontend lacked Catalog-first identity/hierarchy integration.",
+  "dynamicCatalog": {
+    "asOf": "2026-09-24",
+    "total": 132,
+    "parentCount": 25,
+    "leafCount": 107,
+    "parentChildEdges": 107,
+    "leafParentEdges": 107,
+    "legacyLeafStateRows": 107,
+    "missingLeafStateRows": 0,
+    "parentStateRows": 0,
+    "parentsWithoutChildren": 0
+  },
+  "contractRules": {
+    "catalogOwnsIdentityAndHierarchy": true,
+    "legacyStateIsOptionalLeafJoin": true,
+    "parentState": "NOT_APPLICABLE",
+    "noHierarchyInferenceFromGroupName": true,
+    "parentVisibleWithoutSnapshot": true,
+    "noBrowserScoreOrGradeDerivation": true
+  },
+  "validation": {
+    "frontendTests": "162/162 passed",
+    "frontendTypecheck": "passed",
+    "frontendBuild": "passed",
+    "backendFocusedTests": "35/35 passed on Python 3.12",
+    "apiClientContractCheck": "passed",
+    "apiClientTests": "4/4 passed",
+    "gitDiffCheck": "passed",
+    "browserVisualValidation": "not run: browser control tool unavailable"
+  },
+  "github": {
+    "connectorStatus": "target repository not exposed in this session",
+    "localGitFallbackUsed": true,
+    "pullRequestCreated": false,
+    "pushMergeDeployPerformed": false
+  },
+  "productionMutation": false
+}

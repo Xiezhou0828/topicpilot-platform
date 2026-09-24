@@ -1,11 +1,22 @@
 import rawSnapshotJson from "./web_snapshot.json";
 import type { RawSnapshot, RawStock, RawTopic } from "./types";
+import type { components } from "./generated-api";
 import type { LifecycleAvailability } from "./topic-lifecycle-contract";
 import { getPreviewTopicIdentities, getPreviewTopicIdentity, getPreviewTopicRotation, groupNameLabel, PREVIEW_LABEL, readableFreshness, readableTopicState, topicNameLabel, type TopicDirection, type TopicRotationEvent } from "./topic-preview";
 
 export type TopicSource = "api" | "synthetic-snapshot" | "unavailable";
 
-export type TopicPublicationState = "FORMAL" | "FORMAL_NOT_WIRED" | "SHADOW" | "TEMPORARY" | "PREVIEW" | "DEFERRED" | "UNAVAILABLE" | "CONTRACT_GAP";
+export type TopicKind = "PARENT" | "LEAF";
+export type TopicHierarchyNode = components["schemas"]["TopicHierarchyNodeRead"];
+export type TopicHierarchy = Omit<components["schemas"]["TopicHierarchyRead"], "parents" | "children"> & {
+  parents: TopicHierarchyNode[];
+  children: TopicHierarchyNode[];
+};
+export type TopicCatalogNode = components["schemas"]["TopicMinimumRead"];
+export type TopicCatalogPage = components["schemas"]["TopicMinimumReadPage"];
+export type TopicAvailabilityState = components["schemas"]["TopicAvailabilityRead"]["state"];
+
+export type TopicPublicationState = "FORMAL" | "FORMAL_NOT_WIRED" | "SHADOW" | "TEMPORARY" | "PREVIEW" | "DEFERRED" | "UNAVAILABLE" | "NOT_APPLICABLE" | "CONTRACT_GAP";
 
 export type TopicPublicationField =
   | "identity"
@@ -33,9 +44,35 @@ export type TopicPublicationDisclosure = {
 
 export type TopicPublication = Record<TopicPublicationField, TopicPublicationDisclosure>;
 
+export type TopicLeafState = {
+  topicId: string;
+  slug: string;
+  dataDate: string | null;
+  score: number | null;
+  grade: string | null;
+  direction: string | null;
+  strengthState: string | null;
+  readableState: string;
+  coveragePct: number | null;
+  constituentCount: number;
+  status: TopicStatus[];
+  lifecycle: TopicLifecycle;
+  publication?: Record<string, unknown>;
+  quality?: Record<string, unknown>;
+  lineage?: Record<string, unknown>;
+};
+
 export type TopicSummary = {
+  topicId: string;
   slug: string;
   name: string;
+  kind: TopicKind;
+  hierarchy: TopicHierarchy;
+  /** Canonical identity payload. Null only for explicitly enabled local Preview data. */
+  catalog: TopicCatalogNode | null;
+  leafState: TopicLeafState | null;
+  snapshotAvailability: TopicAvailabilityState;
+  snapshotAvailabilityReason: string | null;
   groupName: string | null;
   topicType: string;
   enabled: boolean;
@@ -45,7 +82,7 @@ export type TopicSummary = {
   strengthState: string | null;
   readableState: string;
   coveragePct: number | null;
-  constituentCount: number;
+  constituentCount: number | null;
   direction: string | null;
   status?: TopicStatus[];
   lifecycle?: TopicLifecycle;
@@ -117,7 +154,7 @@ export type TopicConstituent = {
 export type TopicDetail = TopicSummary & {
   constituents: TopicConstituent[];
   status: TopicStatus[];
-  lifecycle: TopicLifecycle;
+  lifecycle?: TopicLifecycle;
 };
 
 export type TopicResource<T> = {
@@ -128,46 +165,9 @@ export type TopicResource<T> = {
 
 export type TopicRotationResource = TopicResource<TopicRotationEvent[]>;
 
-type ApiTopicSummary = {
-  topicId: string;
-  slug: string;
-  name: string;
-  groupName: string | null;
-  topicType: string;
-  enabled: boolean;
-  dataDate: string | null;
-  score: number | null;
-  grade: string | null;
-  direction: string | null;
-  strengthState: string | null;
-  readableState: string;
-  coveragePct: number | null;
-  constituentCount: number;
-  status: TopicStatus[];
-  lifecycle: TopicLifecycle;
-  publication?: Record<string, unknown>;
-  quality?: Record<string, unknown>;
-  lineage?: Record<string, unknown>;
-  constituents?: ApiTopicConstituent[];
-};
-
-type ApiTopicConstituent = {
-  instrumentId: string;
-  symbol: string;
-  code: string;
-  name: string | null;
-  role: TopicConstituent["role"];
-  relationWeight: number | null;
-  price: number | null;
-  changePct: number | null;
-  observedAt: string | null;
-  updateMode: string;
-  freshness: string;
-  technicalState: string | null;
-  relativeTopicState: string | null;
-};
-
-type ApiTopicDetail = ApiTopicSummary & { constituents: ApiTopicConstituent[] };
+type ApiTopicSummary = components["schemas"]["TopicReadModel"];
+type ApiTopicConstituent = components["schemas"]["TopicConstituentRead"];
+type ApiTopicDetail = ApiTopicSummary;
 
 type ApiTopicRotation = {
   change: number | null;
@@ -221,15 +221,97 @@ function roleFor(value: string | null | undefined): "代表股" | "核心股" | 
   return ROLE_LABELS[(value ?? "").trim().toUpperCase()] ?? null;
 }
 
-function summaryFromApi(item: ApiTopicSummary): TopicSummary {
+function normalizeHierarchy(catalog: TopicCatalogNode): TopicHierarchy {
   return {
-    ...item,
-    // Formal catalog identity is authoritative. Never replace an unfamiliar
-    // production name/group with a preview label.
-    name: item.name,
-    groupName: item.groupName,
-    readableState: readableState(item.strengthState),
+    kind: catalog.kind,
+    parents: catalog.hierarchy.parents ?? [],
+    children: catalog.hierarchy.children ?? [],
+  };
+}
+
+function normalizeStatus(items: components["schemas"]["TopicStatusRead"][] | undefined): TopicStatus[] {
+  const allowed = new Set<TopicStatus["key"]>(["族群表現", "領漲核心", "動能擴散"]);
+  return (items ?? [])
+    .filter((item): item is components["schemas"]["TopicStatusRead"] & { key: TopicStatus["key"] } => allowed.has(item.key as TopicStatus["key"]))
+    .map((item) => ({ key: item.key, state: item.state, evidence: item.evidence ?? {} }));
+}
+
+function normalizeLifecycle(item: ApiTopicSummary): TopicLifecycle {
+  return {
+    ...item.lifecycle,
+    history: (item.lifecycle.history ?? []).map((segment) => ({
+      stage: segment.stage,
+      enteredAt: segment.enteredAt,
+      exitedAt: segment.exitedAt,
+      tradingDays: segment.tradingDays,
+      current: segment.current,
+    })),
+  };
+}
+
+function leafStateFromApi(item: ApiTopicSummary): TopicLeafState {
+  return {
+    topicId: item.topicId,
+    slug: item.slug,
+    dataDate: item.dataDate,
+    score: item.score,
+    grade: item.grade,
     direction: item.direction,
+    strengthState: item.strengthState,
+    readableState: item.readableState || readableState(item.strengthState),
+    coveragePct: item.coveragePct,
+    constituentCount: item.constituentCount,
+    status: normalizeStatus(item.status),
+    lifecycle: normalizeLifecycle(item),
+    publication: item.publication,
+    quality: item.quality,
+    lineage: item.lineage,
+  };
+}
+
+function snapshotLeafState(catalog: TopicCatalogNode): Pick<TopicSummary, "dataDate" | "score" | "grade" | "direction" | "coveragePct" | "constituentCount"> {
+  const snapshot = catalog.currentFormalSnapshot.snapshot;
+  return {
+    dataDate: snapshot?.snapshotDate ?? null,
+    score: snapshot?.topicScore ?? null,
+    grade: snapshot?.marketGrade ?? null,
+    direction: snapshot?.topicDirection ?? null,
+    coveragePct: snapshot?.coveragePct ?? null,
+    constituentCount: catalog.kind === "LEAF" ? snapshot?.stockCount ?? catalog.members?.length ?? null : null,
+  };
+}
+
+function summaryFromCatalog(catalog: TopicCatalogNode, state: ApiTopicSummary | null): TopicSummary {
+  const hierarchy = normalizeHierarchy(catalog);
+  const snapshotState = snapshotLeafState(catalog);
+  const leafState = state ? leafStateFromApi(state) : null;
+  const groupName = hierarchy.parents[0]?.name ?? null;
+  return {
+    topicId: catalog.topicId,
+    slug: catalog.slug,
+    name: catalog.name,
+    kind: catalog.kind,
+    hierarchy,
+    catalog,
+    leafState,
+    snapshotAvailability: catalog.currentFormalSnapshot.availability.state,
+    snapshotAvailabilityReason: catalog.currentFormalSnapshot.availability.reason ?? null,
+    groupName,
+    topicType: catalog.kind,
+    enabled: catalog.enabled,
+    dataDate: leafState?.dataDate ?? snapshotState.dataDate,
+    score: leafState?.score ?? snapshotState.score,
+    grade: leafState?.grade ?? snapshotState.grade,
+    strengthState: catalog.kind === "LEAF" ? leafState?.strengthState ?? null : null,
+    readableState: catalog.kind === "LEAF" ? leafState?.readableState ?? readableState(null) : "Parent Topic",
+    coveragePct: leafState?.coveragePct ?? snapshotState.coveragePct,
+    constituentCount: catalog.kind === "LEAF" ? leafState?.constituentCount ?? snapshotState.constituentCount : null,
+    direction: catalog.kind === "LEAF" ? leafState?.direction ?? snapshotState.direction : null,
+    status: catalog.kind === "LEAF" ? leafState?.status ?? [] : [],
+    lifecycle: catalog.kind === "LEAF" ? leafState?.lifecycle : undefined,
+    publication: leafState?.publication,
+    quality: leafState?.quality,
+    lineage: leafState?.lineage,
   };
 }
 
@@ -270,6 +352,26 @@ export function lifecycleStatusLabel(status: LifecycleAvailability | null | unde
 }
 
 export function getTopicPublication(source: TopicSource, topic: TopicSummary | TopicDetail): TopicPublication {
+  if (topic.kind === "PARENT") {
+    return {
+      identity: sourceDisclosure("identity", source, "FORMAL", "正式 Topic Catalog identity。"),
+      hierarchy: sourceDisclosure("hierarchy", source, "FORMAL", "正式 Parent → children hierarchy。"),
+      relations: disclosure("relations", "NOT_APPLICABLE", "Parent Topic 不承擔 Leaf market membership semantics。"),
+      score: disclosure("score", "NOT_APPLICABLE", "Parent Topic 不顯示正式 Score。"),
+      grade: disclosure("grade", "NOT_APPLICABLE", "Parent Topic 不進入 Grade lanes。"),
+      snapshot: disclosure("snapshot", "NOT_APPLICABLE", "Parent Topic 不需要 formal daily snapshot。"),
+      participation: disclosure("participation", "NOT_APPLICABLE", "Parent Topic 不顯示 Leaf participation state。"),
+      lifecycle: disclosure("lifecycle", "NOT_APPLICABLE", "Parent Topic 不進入 Lifecycle lanes。"),
+      leaderCore: disclosure("leaderCore", "NOT_APPLICABLE", "Parent Topic 不具備正式 Leader/Core member semantics。"),
+      technicalRelative: disclosure("technicalRelative", "NOT_APPLICABLE", "Parent Topic 不顯示 Leaf technical state。"),
+      events: disclosure("events", "CONTRACT_GAP", "Topic events 尚未提供 formal Topic Detail contract。"),
+      news: disclosure("news", "CONTRACT_GAP", "Topic news/context 尚未提供 formal Topic Detail contract。"),
+      heatmap: disclosure("heatmap", "NOT_APPLICABLE", "Parent Topic 不進入 Leaf market heatmap。"),
+      summary: disclosure("summary", "CONTRACT_GAP", "Formal summary/narrative 尚未提供。"),
+      opportunity: disclosure("opportunity", "DEFERRED", "Opportunity 為下游 deferred/shadow boundary。"),
+      source: sourceDisclosure("source", source, "FORMAL", "Identity/hierarchy 由 Topic Catalog 提供。"),
+    };
+  }
   const snapshotReady = Boolean(topic.dataDate) && (topic.direction !== null || topic.strengthState !== null || topic.coveragePct !== null);
   const statusReady = Boolean(topic.dataDate) && (topic.status ?? []).length === 3 && (topic.status ?? []).every((item) => item.state !== null);
   const lifecycleState = lifecyclePublicationState(topic.lifecycle?.dataStatus);
@@ -281,11 +383,11 @@ export function getTopicPublication(source: TopicSource, topic: TopicSummary | T
 
   return {
     identity: sourceDisclosure("identity", source, "FORMAL", "正式 Topic Catalog identity。"),
-    hierarchy: sourceDisclosure("hierarchy", source, topic.groupName ? "FORMAL" : "FORMAL_NOT_WIRED", topic.groupName ? "正式 hierarchy/group projection。" : "正式 hierarchy 欄位尚未回傳。"),
+    hierarchy: sourceDisclosure("hierarchy", source, topic.hierarchy.parents.length || topic.hierarchy.children.length ? "FORMAL" : "FORMAL_NOT_WIRED", topic.hierarchy.parents.length || topic.hierarchy.children.length ? "正式 hierarchy projection。" : "正式 hierarchy 尚未回傳 edge。"),
     relations: sourceDisclosure("relations", source, "FORMAL", "正式 effective-dated relation/read route。"),
     score: sourceDisclosure("score", source, topic.score === null ? "DEFERRED" : "FORMAL", topic.score === null ? "正式 score 尚未發布；前端不自行計算。" : "正式 API 已回傳 score。"),
     grade: sourceDisclosure("grade", source, topic.grade === null ? "DEFERRED" : "FORMAL", topic.grade === null ? "正式 grade 尚未發布；不推導 S/A/B/D。" : "正式 API 已回傳 grade。"),
-    snapshot: sourceDisclosure("snapshot", source, snapshotReady ? "FORMAL" : "FORMAL_NOT_WIRED", snapshotReady ? "Topic Snapshot 欄位已有可用 evidence。" : "Snapshot-backed 欄位尚未有完整 published evidence。"),
+    snapshot: sourceDisclosure("snapshot", source, topic.snapshotAvailability === "AVAILABLE" && snapshotReady ? "FORMAL" : "UNAVAILABLE", topic.snapshotAvailability === "AVAILABLE" && snapshotReady ? "Topic Catalog current formal snapshot 已提供。" : topic.snapshotAvailabilityReason ?? "正式 Topic Snapshot 尚未發布；前端不自行補值。"),
     participation: sourceDisclosure("participation", source, statusReady ? "FORMAL" : "FORMAL_NOT_WIRED", statusReady ? "三個 participation status 均由 API 回傳。" : "participation/leadership/diffusion 尚未有完整 published evidence。"),
     lifecycle: sourceDisclosure("lifecycle", source, lifecycleState, lifecycleNote),
     leaderCore: sourceDisclosure("leaderCore", source, "CONTRACT_GAP", "Leader/Core formal contract 尚未提供。"),
@@ -307,9 +409,17 @@ function rawTopicSlug(topic: RawTopic): string | null {
 function rawTopicSummary(topic: RawTopic): TopicSummary | null {
   const slug = rawTopicSlug(topic);
   if (!slug) return null;
+  const hierarchy: TopicHierarchy = { kind: "LEAF", parents: [], children: [] };
   return {
+    topicId: slug,
     slug,
     name: topicNameLabel(slug, topic.name),
+    kind: "LEAF",
+    hierarchy,
+    catalog: null,
+    leafState: null,
+    snapshotAvailability: "UNAVAILABLE",
+    snapshotAvailabilityReason: "PREVIEW_DATA",
     groupName: groupNameLabel(topic.group ?? null),
     topicType: topic.type ?? "UNKNOWN",
     enabled: true,
@@ -336,8 +446,15 @@ function syntheticTopics(): TopicSummary[] {
   const previewTopics = getPreviewTopicIdentities()
     .filter(([slug]) => !known.has(slug))
     .map(([slug, item]) => ({
+      topicId: slug,
       slug,
       name: item.name,
+      kind: "LEAF" as const,
+      hierarchy: { kind: "LEAF" as const, parents: [], children: [] },
+      catalog: null,
+      leafState: null,
+      snapshotAvailability: "UNAVAILABLE" as const,
+      snapshotAvailabilityReason: "PREVIEW_DATA",
       groupName: item.groupName,
       topicType: "PREVIEW",
       enabled: true,
@@ -415,6 +532,55 @@ async function request<T>(path: string): Promise<TopicResource<T>> {
   }
 }
 
+function constituentFromApi(item: ApiTopicConstituent, dataDate: string | null): TopicConstituent {
+  return {
+    code: item.code,
+    name: item.name ?? item.code,
+    relationType: item.role ?? "FORMAL",
+    role: roleFor(item.role),
+    weight: item.relationWeight,
+    price: item.price,
+    changePct: item.changePct,
+    dataDate,
+    dataFreshness: item.freshness,
+    technicalState: item.technicalState,
+    relativeTopicState: item.relativeTopicState,
+  };
+}
+
+function constituentsFromCatalog(catalog: TopicCatalogNode): TopicConstituent[] {
+  if (catalog.kind === "PARENT") return [];
+  return (catalog.members ?? []).map((item) => ({
+    code: item.code,
+    name: item.name ?? item.code,
+    relationType: item.relationType,
+    role: roleFor(item.relationType),
+    weight: null,
+    price: null,
+    changePct: null,
+    dataDate: null,
+    dataFreshness: "UNAVAILABLE",
+    technicalState: null,
+    relativeTopicState: null,
+  }));
+}
+
+function detailFromCatalog(catalog: TopicCatalogNode, state: ApiTopicDetail | null): TopicDetail {
+  const summary = summaryFromCatalog(catalog, state);
+  const stateConstituents = state?.constituents ?? [];
+  const constituents = catalog.kind === "PARENT"
+    ? []
+    : stateConstituents.length > 0
+      ? stateConstituents.map((item) => constituentFromApi(item, state?.dataDate ?? null))
+      : constituentsFromCatalog(catalog);
+  return {
+    ...summary,
+    constituents,
+    status: summary.status ?? [],
+    lifecycle: summary.lifecycle,
+  };
+}
+
 export async function fetchTopics(): Promise<TopicResource<TopicSummary[]>> {
   const base = apiBaseUrl();
   if (!base) {
@@ -423,10 +589,20 @@ export async function fetchTopics(): Promise<TopicResource<TopicSummary[]>> {
       ? { source: "synthetic-snapshot", data, error: null }
       : { source: "unavailable", data: null, error: "尚未設定正式 FastAPI API origin；production 不使用 Preview 題材清單替代。" };
   }
-  const result = await request<{ items: ApiTopicSummary[] }>("/api/v2/topics?limit=200&offset=0");
-  return result.source === "api"
-    ? { source: "api", data: (result.data?.items ?? []).map(summaryFromApi), error: null }
-    : { source: result.source, data: null, error: result.error };
+  const [catalogResult, stateResult] = await Promise.all([
+    request<TopicCatalogPage>("/api/v2/topic-catalog?limit=500&offset=0"),
+    request<{ items: ApiTopicSummary[] }>("/api/v2/topics?limit=500&offset=0"),
+  ]);
+  if (catalogResult.source !== "api" || !catalogResult.data) {
+    return { source: "unavailable", data: null, error: catalogResult.error ?? "Topic Catalog identity read model is unavailable." };
+  }
+  const stateBySlug = new Map((stateResult.data?.items ?? []).map((item) => [item.slug, item]));
+  const data = catalogResult.data.items.map((catalog) => summaryFromCatalog(catalog, stateBySlug.get(catalog.slug) ?? null));
+  return {
+    source: "api",
+    data,
+    error: stateResult.source === "unavailable" ? stateResult.error : null,
+  };
 }
 
 export async function fetchTopic(slug: string): Promise<TopicResource<TopicDetail>> {
@@ -437,34 +613,17 @@ export async function fetchTopic(slug: string): Promise<TopicResource<TopicDetai
       ? { source: "synthetic-snapshot", data, error: null }
       : { source: "unavailable", data: null, error: "此 slug 不在公開合成 snapshot，且尚未設定 FastAPI API origin。" };
   }
-  const result = await request<ApiTopicDetail>(`/api/v2/topics/${encodeURIComponent(slug)}`);
-  if (result.source !== "api" || !result.data) return { source: result.source, data: null, error: result.error };
-  const detail = result.data;
+  const [catalogResult, stateResult] = await Promise.all([
+    request<TopicCatalogNode>(`/api/v2/topic-catalog/${encodeURIComponent(slug)}`),
+    request<ApiTopicDetail>(`/api/v2/topics/${encodeURIComponent(slug)}`),
+  ]);
+  if (catalogResult.source !== "api" || !catalogResult.data) {
+    return { source: "unavailable", data: null, error: catalogResult.error ?? "Topic Catalog identity read model is unavailable." };
+  }
   return {
     source: "api",
-    error: null,
-    data: {
-      ...detail,
-      name: detail.name,
-      groupName: detail.groupName,
-      readableState: detail.readableState || readableState(detail.strengthState),
-      direction: detail.direction,
-      status: detail.status,
-      lifecycle: detail.lifecycle,
-      constituents: detail.constituents.map((item) => ({
-        code: item.code,
-        name: item.name ?? item.code,
-        relationType: "FORMAL",
-        role: item.role,
-        weight: item.relationWeight,
-        price: item.price,
-        changePct: item.changePct,
-        dataDate: detail.dataDate,
-        dataFreshness: item.freshness,
-        technicalState: item.technicalState,
-        relativeTopicState: item.relativeTopicState,
-      })),
-    },
+    error: stateResult.source === "unavailable" ? stateResult.error : null,
+    data: detailFromCatalog(catalogResult.data, stateResult.data ?? null),
   };
 }
 

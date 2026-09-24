@@ -63,7 +63,8 @@ test("V2 topic and stock surfaces use formal adapters without parsing rule text"
   assert.match(topics, /fetchTopics\(\)/);
   assert.match(topics, /resource\?\.source === "unavailable"/);
   assert.match(topics, /PreviewBadge/);
-  assert.match(topicApi, /\/api\/v2\/topics\?limit=200&offset=0/);
+  assert.match(topicApi, /\/api\/v2\/topic-catalog\?limit=500&offset=0/);
+  assert.match(topicApi, /\/api\/v2\/topics\?limit=500&offset=0/);
   assert.match(stocks, /fetchFormalStocks/);
   assert.match(stockApi, /\/api\/v2\/stocks/);
   assert.match(adapter, /toMarketDecision/);

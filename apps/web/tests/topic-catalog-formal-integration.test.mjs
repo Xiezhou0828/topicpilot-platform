@@ -12,16 +12,20 @@ test("production topic catalog fails closed without a formal API origin", async 
   assert.match(source, /production 不使用 Preview 題材清單替代/);
 });
 
-test("formal topic identity is preserved and all-catalog UI does not grade-filter by default", async () => {
+test("Topic Catalog owns identity and all-catalog UI is explicitly Leaf-only", async () => {
   const [source, page] = await Promise.all([
     read("lib/topic-api.ts"),
     read("components/v2/TopicListPage.tsx"),
   ]);
-  assert.match(source, /name: item\.name/);
-  assert.match(source, /groupName: item\.groupName/);
-  assert.match(source, /\/api\/v2\/topics\?limit=200&offset=0/);
+  assert.match(source, /export type TopicCatalogNode/);
+  assert.match(source, /export type TopicLeafState/);
+  assert.match(source, /\/api\/v2\/topic-catalog\?limit=500&offset=0/);
+  assert.match(source, /\/api\/v2\/topics\?limit=500&offset=0/);
+  assert.match(source, /summaryFromCatalog/);
   assert.match(page, /useState<GradeFilter>\("全部"\)/);
-  assert.match(page, /完整正式題材目錄/);
+  assert.match(page, /全部題材（Leaf 題材）/);
+  assert.match(page, /filter\(isLeafTopic\)/);
+  assert.match(page, /parent\.hierarchy\.children/);
   assert.match(page, /overviewTopics\.length/);
 });
 
