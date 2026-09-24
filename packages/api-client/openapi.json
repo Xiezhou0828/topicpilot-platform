@@ -2498,6 +2498,32 @@
         "title": "LiveTrackingResponse",
         "type": "object"
       },
+      "MigrationRevisionResponse": {
+        "properties": {
+          "alembicRevision": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Alembicrevision"
+          },
+          "readOnly": {
+            "const": true,
+            "default": true,
+            "title": "Readonly",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "alembicRevision"
+        ],
+        "title": "MigrationRevisionResponse",
+        "type": "object"
+      },
       "OpportunityShadowCard": {
         "properties": {
           "asOf": {
@@ -8741,6 +8767,28 @@
           }
         },
         "summary": "Markets",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
+    "/api/v1/admin/migration": {
+      "get": {
+        "description": "Expose the current migration marker through a read-only SELECT probe.",
+        "operationId": "migration_api_v1_admin_migration_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MigrationRevisionResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Migration",
         "tags": [
           "admin"
         ]
