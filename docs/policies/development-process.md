@@ -2,8 +2,8 @@
 
 **Status:** Process v2; effective immediately upon merge to canonical `main`.
 The canonical merge timestamp is the effective point.
-**Owner approval:** Decisions A–O recorded in the TopicPilot development-process interview,
-2026-09-25
+**Owner approval:** Decisions A–O and `PROCESS_V2_EFFECTIVE_SCOPE`, recorded in the
+TopicPilot development-process interview, 2026-09-25
 **Scope:** Task definition, execution, interruption, validation, canonicalization, release
 boundaries, documentation ownership, parallel work, and worktree lifecycle.
 
