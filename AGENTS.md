@@ -83,11 +83,15 @@ handoff and the old task-doc-001 documentation set are historical inputs only.
 ## Owner-approved task execution policy
 
 [Owner-approved development process](docs/policies/development-process.md) is the
-canonical detailed policy for task declarations, task-specific terminal states,
-closure fields, interruption/resumption, release authority, parallel work, and
-worktree classifications. At task start, declare `TASK_TYPE` and
-`REQUIRED_TERMINAL_STATE`; at closure, report the policy's required completion
-and provenance fields. This summary does not override that policy.
+canonical detailed Process v2 policy for task declarations, task-specific terminal
+states, closure fields, interruption/resumption, release authority, parallel work, and
+worktree classifications. Process v2 applies to tasks created after its effective
+timestamp and to existing tasks only when they cross a defined natural boundary.
+Existing `ACTIVE` / `WAITING` tasks may continue under their original contract; do not
+reopen historical tasks or invalidate accepted evidence solely for Process v2. For a
+task operating under Process v2, declare `TASK_TYPE` and `REQUIRED_TERMINAL_STATE` at
+the applicable phase start and report the required completion and provenance fields
+at closure. This summary does not override that policy.
 
 ## SDLC lifecycle and canonicalization authority
 
@@ -307,9 +311,10 @@ task-specific policy artifact is not checked out.
 
 ## Required handoff report
 
-Every closure must include `TASK_TYPE`, `REQUIRED_TERMINAL_STATE`,
-`ACHIEVED_TERMINAL_STATE`, `TASK_COMPLETE`, `FOLLOW_UP_REQUIRED`, and
-`FOLLOW_UP_REASON`, plus the compact manifest (`TASK_ID`, `CANONICAL_SHA`,
+Every closure for a task operating under Process v2 must include
+`TASK_TYPE`, `REQUIRED_TERMINAL_STATE`, `ACHIEVED_TERMINAL_STATE`, `TASK_COMPLETE`,
+`FOLLOW_UP_REQUIRED`, and `FOLLOW_UP_REASON`, plus the compact manifest
+(`TASK_ID`, `CANONICAL_SHA`,
 `SOURCE_SHA`, `MIGRATION_HEAD`, `FILES_CHANGED`, `SEMANTICS_CHANGED`,
 `PRODUCTION_DEPENDENCY`, `WORKTREE_STATUS`). See the
 [Owner-approved development process](docs/policies/development-process.md) for

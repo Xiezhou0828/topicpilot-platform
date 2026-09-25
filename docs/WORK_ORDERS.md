@@ -1,9 +1,12 @@
 # Work orders
 
-New task definitions and closures follow the
-[Owner-approved development process](policies/development-process.md). A newly
-started task must declare `TASK_TYPE` and `REQUIRED_TERMINAL_STATE`; historical
-entries are not retroactively rewritten. The register's status labels below are
+New task definitions and closures follow Process v2 in the
+[Owner-approved development process](policies/development-process.md) when created
+after its effective timestamp. Existing `ACTIVE` / `WAITING` tasks may continue under
+their original governance contract and switch to Process v2 only at a natural boundary
+listed in that policy. Historical tasks and entries are not reopened or retroactively
+rewritten solely for Process v2; previously accepted evidence remains valid unless
+repository evidence shows it is incorrect. The register's status labels below are
 routing/evidence labels, not task terminal states or proof of completion.
 
 | TASK-DATA-HIST-002B | PASS / CANONICAL COMPLETE | Reconcile the full approved 507-symbol local six-month official OHLCV seed, canonical V2 historical-provider compatibility, lifecycle/lineage/idempotence evidence, and owner-document status without Production mutation or scheduler activation. | `docs/reports/TASK-DATA-HIST-002B_CANONICAL_RECONCILIATION_CLOSURE.md`, canonical `services/api/src/topicpilot_api/market_data/`, reference bundle, owner docs; isolated plain-table runner remains predecessor evidence and is not copied as a duplicate V2 path | Local read-only reconciliation: 507 symbols, 63,826 rows, 0 extra/invalid/duplicate/lineage/unexplained gaps; canonical focused tests 16 passed; source contract tests 9 passed; reference bundle validated; migration upgrade intentionally not run because local DB is at 0017 while canonical head is 0029 |

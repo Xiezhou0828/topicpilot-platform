@@ -1,6 +1,7 @@
 # Owner-approved development process
 
-**Status:** Canonical process policy; effective after merge to canonical `main`
+**Status:** Process v2; effective immediately upon merge to canonical `main`.
+The canonical merge timestamp is the effective point.
 **Owner approval:** Decisions A–O recorded in the TopicPilot development-process interview,
 2026-09-25
 **Scope:** Task definition, execution, interruption, validation, canonicalization, release
@@ -10,10 +11,33 @@ This file is the detailed source of truth for the approved process decisions. `A
 contains only the operational entry points and non-negotiable reminders; `PROJECT_CONTEXT.md` and
 `docs/DOCUMENTATION_INDEX.md` route readers here. Do not create competing copies of these rules.
 
+## 0. Process v2 effective scope and transition
+
+The effective point for Process v2 is the timestamp when this policy is merged into
+canonical `main`:
+
+- Tasks created after that point must follow Process v2.
+- A task already `ACTIVE` or `WAITING` at that point may continue under its original
+  governance contract. It switches to Process v2 only at a natural boundary: resumption
+  after a blocker, canonical promotion, release, or the start of a new implementation
+  phase.
+- A transition applies prospectively from that boundary. Do not reopen or rewrite a
+  historical task solely to satisfy Process v2.
+- The transition itself does not invalidate previously accepted evidence. Preserve and
+  reuse it unless repository evidence shows that it is incorrect; independently apply
+  the existing impact-based revalidation rule when a relevant SHA, environment,
+  configuration, dependency, fixture, or authority boundary has changed. Such
+  revalidation assesses evidence for the changed scope; it does not erase or invalidate
+  the previously accepted evidence for its original scope.
+
+At transition, keep the existing task identity and record that its remaining work now
+uses Process v2. Do not retroactively change the task's earlier status or evidence.
+
 ## 1. Declare the task outcome before work starts
 
-Every task declares its type and required terminal state at the beginning, before
-implementation or research begins:
+Every new task in Process v2, and every existing task that transitions to Process v2,
+declares its type and required terminal state at the beginning of its applicable work
+phase, before implementation or research begins:
 
 ```text
 TASK_TYPE=<research | analysis | documentation | implementation | release>
