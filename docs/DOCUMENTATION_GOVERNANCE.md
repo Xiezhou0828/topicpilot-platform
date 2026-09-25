@@ -6,7 +6,11 @@
 ## Authority hierarchy
 
 1. Explicit PM-approved product contracts and decision records.
-2. Canonical architecture, data contract, source strategy, API, frontend design, operations, and product documents listed in [DOCUMENTATION_INDEX.md](DOCUMENTATION_INDEX.md).
+2. Canonical architecture, data contract, source strategy, API, frontend design,
+   operations, and product documents listed in
+   [DOCUMENTATION_INDEX.md](DOCUMENTATION_INDEX.md), together with the
+   [Owner-approved development process](policies/development-process.md) for
+   task, release, and worktree governance.
 3. Current roadmap/status and active work orders.
 4. Reports, task prompts, worklogs, screenshots, and validation artifacts as historical evidence.
 5. Chat messages and uncommitted drafts are context only.

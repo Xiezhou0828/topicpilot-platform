@@ -36,7 +36,7 @@ jobs:
       TOPICPILOT_LOG_LEVEL: INFO
       OPENAPI_APP: topicpilot_api.main:app
       RUFF_BASELINE_REF: 50c7b176bf59058cddc1de58b28441076fc6dfe8
-      RUFF_CHANGED_SCOPE_REF: a3c4bc2c1e3592ad486043243a57963544544cbf
+      RUFF_CHANGED_SCOPE_REF: ${{ github.event.pull_request.base.sha || github.event.before }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -48,6 +48,8 @@ jobs:
           cache-dependency-path: services/api/pyproject.toml
       - name: Install API and development dependencies
         run: python -m pip install -e "services/api[dev]"
+      - name: Validate Alembic revision graph
+        run: python infra/scripts/check_alembic_graph.py
       - name: Ruff baseline and no-new-debt gate
         run: |
           set -euo pipefail

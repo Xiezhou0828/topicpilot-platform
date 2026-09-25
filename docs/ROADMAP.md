@@ -8,6 +8,9 @@ This document owns execution sequence, dependency routing, and current status.
 Product intent belongs in [the product roadmap](product/TOPICPILOT_PRODUCT_ROADMAP.md),
 and settled semantics belong in [the decision register](product/TOPICPILOT_PRODUCT_DECISIONS.md).
 Work orders and reports remain detailed evidence, not competing roadmaps.
+Task-specific terminal-state selection, authority boundaries, and closure
+reporting follow the
+[Owner-approved development process](policies/development-process.md).
 
 ## Execution principles
 
