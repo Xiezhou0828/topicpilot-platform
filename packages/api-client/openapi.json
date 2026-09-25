@@ -2047,6 +2047,18 @@
             ],
             "title": "Asof"
           },
+          "averageDailyChange": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Averagedailychange"
+          },
           "currentGrade": {
             "anyOf": [
               {
@@ -2074,6 +2086,18 @@
             "additionalProperties": true,
             "title": "Rotationevidence",
             "type": "object"
+          },
+          "observedStockCount": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Observedstockcount"
           },
           "strengthDelta": {
             "title": "Strengthdelta",

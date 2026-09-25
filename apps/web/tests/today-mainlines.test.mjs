@@ -55,7 +55,7 @@ test("Today mainline cards navigate with the backend topic slug and preserve nul
   const page = await read("components/v2/TodayMarketPage.tsx");
   assert.match(page, /key=\{topic\.slug\}/);
   assert.match(page, /topic\.grade && <GradeChip grade=\{topic\.grade\}/);
-  assert.doesNotMatch(page, /topic\.currentState/);
+  assert.match(page, /topic\.currentState/);
   assert.match(page, /href=\{`\/topics\/\$\{topic\.slug\}`\}/);
 });
 

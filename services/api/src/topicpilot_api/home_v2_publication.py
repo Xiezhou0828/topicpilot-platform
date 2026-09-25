@@ -275,6 +275,8 @@ def calculate_rotation_14d(
             "topicSlug": current["topic_slug"],
             "strengthDelta": delta,
             "currentGrade": current.get("market_grade"),
+            "averageDailyChange": _number(current.get("average_change")),
+            "observedStockCount": int(current["observed_stock_count"]),
             "summary": (
                 f"近 14 個交易日的平均日變化差異為 {_number(delta)}。"
             ),

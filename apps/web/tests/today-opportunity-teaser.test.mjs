@@ -40,11 +40,12 @@ test("Today Opportunity removes the static teaser and browser-side recommendatio
     read("lib/today-home.ts"),
   ]);
   const source = `${home}\n${adapter}\n${page}`;
+  const opportunity = page.slice(page.indexOf("function OpportunityTeaserCard"));
 
   assert.doesNotMatch(page, /const opportunities = \[/);
   assert.match(page, /href="\/opportunities"/);
   assert.match(page, /正式機會資料已發布/);
-  assert.doesNotMatch(page, /validatedStocks|strength|score|ranking|ranked|favorite|favorites/i);
+  assert.doesNotMatch(opportunity, /validatedStocks|strength|score|ranking|ranked|favorite|favorites/i);
   assert.doesNotMatch(source, /mock|fixture fallback|static teaser|snapshot fallback/i);
   assert.equal((home.match(/client\.getHome\(/g) ?? []).length, 1);
 });

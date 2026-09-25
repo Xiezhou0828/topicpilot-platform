@@ -113,11 +113,11 @@ test("V2 Home does not expose the legacy strategy candidate drilldown", async ()
   assert.doesNotMatch(home, /Buy|Sell|Strong Buy|Entry Score|stop-loss/);
 });
 
-test("V2 Home keeps strategy semantics out of presentation copy", async () => {
+test("V2 Home renders formal topic state without browser-derived strategy semantics", async () => {
   const home = await read("components/v2/TodayMarketPage.tsx");
   assert.match(home, /resource\.data\.map/);
   assert.match(home, /topic\.grade && <GradeChip grade=\{topic\.grade\}/);
-  assert.doesNotMatch(home, /topic\.currentState/);
+  assert.match(home, /topic\.currentState/);
   assert.match(home, /tp-home-topic-detail/);
   assert.match(home, /Today 只提供正式機會資料的摘要入口/);
   assert.doesNotMatch(home, /candidate\.sort|strategyId|rankScore|targetPrice/);

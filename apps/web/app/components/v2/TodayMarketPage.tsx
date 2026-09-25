@@ -380,6 +380,16 @@ function MarketOverviewCard({ loading, resource }: { loading: boolean; resource:
 }
 
 function MainlineCards({ loading, resource }: { loading: boolean; resource: ReturnType<typeof useTodayMainlines>["resource"] }) {
+  const evidenceNumber = (topic: typeof resource.data[number], key: string): number | null => {
+    const value = topic.rankingEvidence?.[key];
+    return typeof value === "number" && Number.isFinite(value) ? value : null;
+  };
+  const topicStateLabel = (state: string | null): string => ({
+    WARMING: "升溫",
+    COOLING: "退潮",
+    FLAT: "持平",
+  }[state ?? ""] ?? state ?? "狀態尚未提供");
+  const topicStateClass = (state: string | null): string => state?.toLowerCase() ?? "unknown";
   return (
     <section className="tp-home-section" aria-labelledby="mainline-title">
       <SectionHeading id="mainline-title" title="今日主線" description="最多三個正式題材入口；詳細脈絡請進入題材頁。" link={{ label: "查看全部題材", href: "/topics" }} />
@@ -392,6 +402,11 @@ function MainlineCards({ loading, resource }: { loading: boolean; resource: Retu
             {resource.data.map((topic) => (
               <article className="tp-home-mainline-card" key={topic.slug}>
                 <div className="tp-home-card-topline"><h3>{topic.name}</h3>{topic.grade && <GradeChip grade={topic.grade} />}</div>
+                <div className="tp-home-mainline-meta" aria-label={`${topic.name} 今日主線指標`}>
+                  <span className={`tp-home-topic-state tp-home-topic-state--${topicStateClass(topic.currentState)}`}>{topicStateLabel(topic.currentState)}</span>
+                  <span><small>平均日變化</small><strong>{formatMarketPercent(evidenceNumber(topic, "averageChange"))}</strong></span>
+                  <span><small>觀測檔數</small><strong>{evidenceNumber(topic, "observedStockCount") === null ? "尚未提供" : formatMarketNumber(evidenceNumber(topic, "observedStockCount"))}</strong></span>
+                </div>
                 <p className="tp-home-topic-detail">{topic.summary}</p>
                 <Link href={`/topics/${topic.slug}`} className="tp-home-card-action">進入題材頁 <ChevronRight size={16} aria-hidden="true" /></Link>
               </article>
@@ -418,7 +433,11 @@ function TopicPulseTicker({ loading, resource }: { loading: boolean; resource: R
         ) : (
           <div className={`tp-home-topic-ticker-viewport ${paused ? "is-paused" : ""}`}>
             <div className="tp-home-topic-ticker-track">
-              {tickerItems.map((topic, index) => <Link className="tp-home-topic-ticker-item" href={`/topics/${topic.slug}`} key={`${topic.slug}-${index}`} aria-hidden={index >= topics.length ? "true" : undefined} tabIndex={index >= topics.length ? -1 : undefined}><strong>{topic.name}</strong><span>{topic.summary}</span><ChevronRight size={14} aria-hidden="true" /></Link>)}
+              {tickerItems.map((topic, index) => {
+                const average = topic.rankingEvidence?.averageChange;
+                const state = topic.currentState === "WARMING" ? "升溫" : topic.currentState === "COOLING" ? "退潮" : topic.currentState ?? "狀態尚未提供";
+                return <Link className="tp-home-topic-ticker-item" href={`/topics/${topic.slug}`} key={`${topic.slug}-${index}`} aria-hidden={index >= topics.length ? "true" : undefined} tabIndex={index >= topics.length ? -1 : undefined}><strong>{topic.name}</strong><span className={`tp-home-topic-ticker-direction tp-home-topic-ticker-direction--${topic.currentState?.toLowerCase() ?? "unknown"}`}>{state}</span><span>{typeof average === "number" && Number.isFinite(average) ? `平均日變化 ${formatMarketPercent(average)}` : "平均日變化尚未提供"}</span><small>資料日 {formatMarketDate(topic.dataDate)}</small><ChevronRight size={14} aria-hidden="true" /></Link>;
+              })}
             </div>
           </div>
         )}
@@ -440,7 +459,7 @@ function RotationCard({ loading, resource, direction }: { loading: boolean; reso
       ) : resource.data.length === 0 ? (
         <MainlinesState loading={false} state="EMPTY" reason={`${section}目前沒有符合結果。`} dataDate={resource.dataDate} section={section} />
       ) : (
-        <div className="tp-home-topic-list">{resource.data.map((topic) => <Link href={`/topics/${topic.topicSlug}`} key={topic.topicSlug}><span><b>{topic.topic}</b><small>{topic.summary}</small></span>{topic.currentGrade && <GradeChip grade={topic.currentGrade} />}<ChevronRight size={16} aria-hidden="true" /></Link>)}</div>
+        <div className="tp-home-topic-list">{resource.data.map((topic) => <Link href={`/topics/${topic.topicSlug}`} key={topic.topicSlug}><span><b>{topic.topic}</b><small>{topic.summary}</small><span className="tp-home-topic-list-meta"><span>平均日變化 <strong>{formatMarketPercent(topic.averageDailyChange)}</strong></span><span>觀測檔數 <strong>{topic.observedStockCount === null ? "尚未提供" : formatMarketNumber(topic.observedStockCount)}</strong></span><span>14 日差異 <strong>{formatSignedMarketNumber(topic.strengthDelta)}</strong></span></span></span>{topic.currentGrade && <GradeChip grade={topic.currentGrade} />}<ChevronRight size={16} aria-hidden="true" /></Link>)}</div>
       )}
       <CompactDisclosure loading={loading} resource={resource} sectionKey={isHeating ? "heatingTopics" : "coolingTopics"} sectionLabel={section} />
     </Card>

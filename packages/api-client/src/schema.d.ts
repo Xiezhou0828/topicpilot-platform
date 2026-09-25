@@ -1349,6 +1349,8 @@ export interface components {
         HomeRotationTopic: {
             /** Asof */
             asOf?: string | null;
+            /** Averagedailychange */
+            averageDailyChange?: number | null;
             /** Currentgrade */
             currentGrade: string | null;
             /** Datadate */
@@ -1357,6 +1359,8 @@ export interface components {
             rotationEvidence?: {
                 [key: string]: unknown;
             };
+            /** Observedstockcount */
+            observedStockCount?: number | null;
             /** Strengthdelta */
             strengthDelta: number;
             /** Summary */

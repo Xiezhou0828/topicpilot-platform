@@ -105,6 +105,8 @@ def test_rotation_requires_fifteen_sessions_and_excludes_zero_change():
     assert [item["topicSlug"] for item in cooling] == ["cooling"]
     assert heating[0]["strengthDelta"] == 3.0
     assert cooling[0]["strengthDelta"] == -2.0
+    assert heating[0]["averageDailyChange"] == 4.0
+    assert heating[0]["observedStockCount"] == 5
     assert heating[0]["rotationEvidence"]["referenceDate"] == dates[0]
 
     short_rows = [row for row in rows if row["snapshot_date"] != dates[0]]

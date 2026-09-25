@@ -1181,6 +1181,8 @@ class HomeRotationTopic(ApiModel):
     topic_slug: str = Field(alias="topicSlug")
     strength_delta: float = Field(alias="strengthDelta")
     current_grade: str | None = Field(alias="currentGrade")
+    average_daily_change: float | None = Field(default=None, alias="averageDailyChange")
+    observed_stock_count: int | None = Field(default=None, alias="observedStockCount")
     summary: str
     data_date: date | None = Field(alias="dataDate", default=None)
     as_of: datetime | None = Field(alias="asOf", default=None)

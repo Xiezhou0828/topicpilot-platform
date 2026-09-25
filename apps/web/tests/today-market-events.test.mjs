@@ -24,6 +24,7 @@ test("Today Market Events preserve backend order and event authority", async () 
     read("lib/today-mainlines.ts"),
     read("components/v2/TodayMarketPage.tsx"),
   ]);
+  const eventAdapter = adapter.slice(adapter.indexOf("function mapMarketEvents"), adapter.indexOf("function isHomeOpportunityStock"));
   for (const field of ["eventTime", "topic", "eventType", "description", "severity", "topicSlug"]) {
     assert.match(adapter, new RegExp(`value\\.${field}`));
     assert.match(adapter, new RegExp(`value\\.${field}`));
@@ -32,7 +33,7 @@ test("Today Market Events preserve backend order and event authority", async () 
   assert.doesNotMatch(page, /resource\.data\.map\(\(event\)/);
   assert.doesNotMatch(`${adapter}\n${page}`, /marketEvents[\s\S]{0,1200}\.sort\(/);
   assert.doesNotMatch(page, /const events = \[/);
-  assert.doesNotMatch(`${adapter}\n${page}`, /severity calculation|event derivation|ranking/i);
+  assert.doesNotMatch(eventAdapter, /severity calculation|event derivation|ranking/i);
 });
 
 test("Today Market Events fail closed and preserve publication semantics", async () => {
