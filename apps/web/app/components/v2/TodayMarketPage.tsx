@@ -162,6 +162,10 @@ function SectionHeading({
 }
 
 function OfficialMarketFields({ overview }: { overview: NonNullable<TodayMarketOverviewResource["data"]> }) {
+  const targetIndexLabels = {
+    TPE: "加權指數",
+    TWO: "櫃買指數",
+  } as const;
   const indices = marketIndices(overview);
   const turnover = marketTurnover(overview);
   const turnoverByMarket = new Map(turnover.map((fact) => [fact.market, fact]));
@@ -187,7 +191,7 @@ function OfficialMarketFields({ overview }: { overview: NonNullable<TodayMarketO
             : typeof index.change === "number" && index.change < 0 ? "tp-home-market-value--down" : "";
           return (
             <article className="tp-home-index-card" key={`${index.market}-${index.indexCode}`}>
-              <div className="tp-home-index-card-topline"><strong>{marketIndexDisplayName(index)}</strong><span>{index.market}</span></div>
+              <div className="tp-home-index-card-topline"><strong>{targetIndexLabels[index.market as keyof typeof targetIndexLabels] ?? marketIndexDisplayName(index)}</strong><span>{index.market}</span></div>
               <strong className={`tp-home-index-value ${direction}`}>{available ? formatMarketNumber(index.value) : "尚未提供"}</strong>
               <span className={`tp-home-index-change ${direction}`}>
                 {available && index.change !== null
@@ -254,6 +258,107 @@ function BreadthAndDistribution({ overview }: { overview: NonNullable<TodayMarke
   );
 }
 
+function formatInstitutionalNet(value: string | number | null | undefined): string {
+  const numeric = typeof value === "number" ? value : typeof value === "string" && value.trim() ? Number(value) : null;
+  return typeof numeric === "number" && Number.isFinite(numeric)
+    ? formatMarketNumber(numeric)
+    : "尚未提供";
+}
+
+function InstitutionalFlowSummary({ overview }: { overview: NonNullable<TodayMarketOverviewResource["data"]> }) {
+  const flow = overview.institutionFlows;
+  const markets = flow?.markets ?? [];
+  const marketLabels = new Map([["TPE", "上市"], ["TWO", "上櫃"]]);
+
+  return (
+    <div className="tp-home-institutional-flow" data-flow-status={flow?.status ?? "UNAVAILABLE"}>
+      <div className="tp-home-institutional-flow-heading">
+        <div><span className="tp-overline">正式法人資料</span><h3>三大法人買賣超</h3></div>
+        <span>{flow?.asOfDate ? `資料日 ${formatMarketDate(flow.asOfDate)}` : "資料日尚未提供"}</span>
+      </div>
+      {markets.length > 0 ? (
+        <div className="tp-home-institutional-flow-grid">
+          {markets.map((market) => {
+            const current = market.current;
+            const rows = [
+              ["外資", current?.foreign?.net],
+              ["投信", current?.investmentTrust?.net],
+              ["自營商", current?.dealer?.net],
+              ["三大法人合計", current?.total?.net],
+            ] as const;
+            return (
+              <article className="tp-home-institutional-flow-market" key={market.market}>
+                <div className="tp-home-institutional-flow-market-heading">
+                  <strong>{marketLabels.get(market.market) ?? market.market}</strong>
+                  <span>{market.freshness === "CURRENT" ? "當日" : "正式資料"}</span>
+                </div>
+                <div className="tp-home-institutional-flow-values">
+                  {rows.map(([label, value]) => (
+                    <div className="tp-home-institutional-flow-value" key={label}>
+                      <span>{label}</span>
+                      <strong>{formatInstitutionalNet(value)}</strong>
+                    </div>
+                  ))}
+                </div>
+                {market.statusReason && <span className="tp-home-fact-status">{market.statusReason}</span>}
+              </article>
+            );
+          })}
+        </div>
+      ) : (
+        <div className="tp-home-official-empty">正式法人流向目前尚未提供；不以 0 代替缺少的買賣超資料。</div>
+      )}
+      {flow && flow.status !== "AVAILABLE" && <p className="tp-home-structure-note">法人流向狀態：{flow.status}，僅呈現目前正式可用的市場資料。</p>}
+    </div>
+  );
+}
+
+function signalDisplayName(key: string, formalName: string): string {
+  return {
+    INSTITUTION_PRICE_DIVERGENCE: "法人逆勢",
+    INDEX_DIVERGENCE: "上市櫃分化",
+    OTC_VOLUME_PRICE_DIVERGENCE: "櫃買量能放大",
+    BREADTH_DIVERGENCE: "市場廣度異常",
+  }[key] ?? formalName;
+}
+
+function MarketSignalCards({ loading, resource }: { loading: boolean; resource: ReturnType<typeof useTodayMainlines>["resource"]["dailyFocus"] }) {
+  const signals = resource.data?.signals ?? [];
+  const data = resource.data;
+  return (
+    <Card className="tp-home-signals-card" data-signal-count={signals.length}>
+      <SectionHeading id="market-signals-title" title="今日市場訊號" description="只呈現正式市場資料觸發的訊號規則。" />
+      {loading || resource.state === "UNAVAILABLE" || resource.state === "ERROR" ? (
+        <MainlinesState loading={loading} state={resource.state} reason={resource.reason} dataDate={resource.dataDate} section="今日市場訊號" />
+      ) : data ? (
+        <>
+          {resource.state !== "FORMAL" && <MainlinesState loading={false} state={resource.state} reason={resource.reason} dataDate={resource.dataDate} section="今日市場訊號" />}
+          {signals.length > 0 ? (
+            <div className="tp-home-signal-grid" data-flow-status="formal">
+              {signals.map((signal) => (
+                <article className={`tp-home-signal-card tp-home-signal-card--${signal.severity.toLowerCase()}`} key={signal.key}>
+                  <div className="tp-home-signal-card-heading"><span>{signalDisplayName(signal.key, signal.name)}</span><b>{signal.severity === "WARNING" ? "注意" : signal.severity === "WATCH" ? "觀察" : "訊息"}</b></div>
+                  {signalDisplayName(signal.key, signal.name) !== signal.name && <small>{signal.name}</small>}
+                  <p>{signal.interpretation}</p>
+                  <ul>{(signal.evidence ?? []).map((item) => <li key={item}>{item}</li>)}</ul>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <div className="tp-home-signal-empty" data-flow-status="formal-no-triggered-signal">
+              <strong>{data.headline}</strong>
+              {(data.bullets ?? []).length > 0 ? (
+                <ul>{(data.bullets ?? []).map((bullet) => <li key={bullet}>{bullet}</li>)}</ul>
+              ) : <p>目前沒有符合正式規則的市場訊號。</p>}
+            </div>
+          )}
+        </>
+      ) : <MainlinesState loading={false} state="UNAVAILABLE" reason="今日市場訊號尚未完成。" dataDate={resource.dataDate} section="今日市場訊號" />}
+      <CompactDisclosure loading={loading} resource={resource} sectionKey="dailyFocus" sectionLabel="今日市場訊號" />
+    </Card>
+  );
+}
+
 function MarketOverviewCard({ loading, resource }: { loading: boolean; resource: TodayMarketOverviewResource }) {
   const overview = resource.data;
   return (
@@ -265,28 +370,11 @@ function MarketOverviewCard({ loading, resource }: { loading: boolean; resource:
         <>
           {resource.state !== "FORMAL" && <MainlinesState loading={false} state={resource.state} reason={resource.reason} dataDate={resource.dataDate} section="市場概況" />}
           <OfficialMarketFields overview={overview} />
+          <InstitutionalFlowSummary overview={overview} />
           <BreadthAndDistribution overview={overview} />
         </>
       ) : <MainlinesState loading={false} state="UNAVAILABLE" reason="市場資料尚未完整。" dataDate={resource.dataDate} section="市場概況" />}
       <CompactDisclosure loading={loading} resource={resource} sectionKey="marketOverview" sectionLabel="市場概況" />
-    </Card>
-  );
-}
-
-function MarketHighlightsCard({ loading, resource }: { loading: boolean; resource: ReturnType<typeof useTodayMainlines>["resource"]["dailyFocus"] }) {
-  return (
-    <Card className="tp-home-highlights-card">
-      <SectionHeading id="market-highlights-title" title="今日市場重點" description="整理今天已發布的市場變化。" />
-      {loading || resource.state === "UNAVAILABLE" || resource.state === "ERROR" ? (
-        <MainlinesState loading={loading} state={resource.state} reason={resource.reason} dataDate={resource.dataDate} section="今日市場重點" />
-      ) : resource.data && ![resource.data.headline, ...(resource.data.bullets ?? [])].some((value) => /目前主線為|市場偏強|主力|攻擊|需求帶動/.test(value)) ? (
-        <>
-          {resource.state !== "FORMAL" && <MainlinesState loading={false} state={resource.state} reason={resource.reason} dataDate={resource.dataDate} section="今日市場重點" />}
-          <p className="tp-home-highlights-headline">{resource.data.headline}</p>
-          <ul className="tp-home-story-list">{(resource.data.bullets ?? []).map((bullet) => <li key={bullet}>{bullet}</li>)}</ul>
-        </>
-      ) : <MainlinesState loading={false} state="UNAVAILABLE" reason="今日市場重點尚未完成。" dataDate={resource.dataDate} section="今日市場重點" />}
-      <CompactDisclosure loading={loading} resource={resource} sectionKey="dailyFocus" sectionLabel="今日市場重點" />
     </Card>
   );
 }
@@ -380,7 +468,7 @@ export default function TodayMarketPage() {
     <PageContainer className="tp-home-page-container" title="今日市場" hideHeader>
       <div className="tp-home-content">
         <section className="tp-home-section" aria-labelledby="market-overview-title"><MarketOverviewCard loading={mainlines.loading} resource={mainlines.resource.marketOverview} /></section>
-        <section className="tp-home-section" aria-labelledby="market-highlights-title"><MarketHighlightsCard loading={mainlines.loading} resource={mainlines.resource.dailyFocus} /></section>
+        <section className="tp-home-section" aria-labelledby="market-signals-title"><MarketSignalCards loading={mainlines.loading} resource={mainlines.resource.dailyFocus} /></section>
         <MainlineCards loading={mainlines.loading} resource={mainlines.resource} />
         <TopicPulseTicker loading={mainlines.loading} resource={mainlines.resource} />
         <section className="tp-home-section" aria-labelledby="rotation-title"><SectionHeading id="rotation-title" title="快速升溫／快速退潮" description="僅在正式 14 個交易日資料可用時列出結果。" /><div className="tp-home-rotation-grid"><RotationCard loading={mainlines.loading} resource={mainlines.resource.heating} direction="heating" /><RotationCard loading={mainlines.loading} resource={mainlines.resource.cooling} direction="cooling" /></div></section>

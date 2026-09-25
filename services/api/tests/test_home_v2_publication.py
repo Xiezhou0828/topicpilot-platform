@@ -5,6 +5,8 @@ from datetime import UTC, date, datetime, timedelta
 from topicpilot_api.home_v2_publication import (
     SectionResult,
     build_daily_focus,
+    build_market_distribution,
+    build_market_signals,
     calculate_rotation_14d,
     empty_home_v2,
     rank_formal_topics,
@@ -143,6 +145,44 @@ def test_daily_focus_is_rule_based_and_fail_closed_without_evidence():
         data_date=date(2026, 8, 21),
         as_of=None,
     ).status == "UNAVAILABLE"
+
+
+def test_market_signals_use_formal_index_and_breadth_facts_only():
+    signals = build_market_signals(
+        {
+            "indices": [
+                {"market": "TPE", "status": "AVAILABLE", "change": 1.2, "changePct": 0.5},
+                {"market": "TWO", "status": "AVAILABLE", "change": -0.4, "changePct": -0.2},
+            ],
+            "turnover": [],
+            "marketHealth": {
+                "status": "AVAILABLE",
+                "advance": 12,
+                "decline": 20,
+                "flat": 3,
+            },
+        }
+    )
+
+    assert [item["key"] for item in signals] == ["INDEX_DIVERGENCE", "BREADTH_DIVERGENCE"]
+    assert all(item["evidence"] for item in signals)
+
+
+def test_market_distribution_excludes_missing_price_pairs_without_zero_filling():
+    distribution = build_market_distribution(
+        [
+            {"instrument_id": "a", "status_code": "NORMAL", "close": 110, "previous_close": 100},
+            {"instrument_id": "b", "status_code": "NORMAL", "close": 100, "previous_close": 100},
+            {"instrument_id": "c", "status_code": "NO_TRADE", "close": None, "previous_close": 100},
+        ],
+        eligible_count=3,
+        as_of=None,
+    )
+
+    assert distribution["status"] == "AVAILABLE"
+    assert distribution["eligible"] == 2
+    assert distribution["excluded"] == 1
+    assert sum(bucket["count"] for bucket in distribution["buckets"]) == 2
 
 
 def test_home_gate_requires_formal_market_facts_but_topics_and_focus_are_section_level():

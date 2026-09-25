@@ -42,7 +42,8 @@ test("V2 Home source contains the frozen market workflow and safety boundary", a
   const liveData = await readFile(new URL("../app/lib/live-data.mjs", import.meta.url), "utf8");
   for (const marker of [
     "market-overview-title",
-    "tp-home-highlights-card",
+    "tp-home-signals-card",
+    "market-signals-title",
     "mainline-title",
     "topic-pulse-title",
     "rotation-title",

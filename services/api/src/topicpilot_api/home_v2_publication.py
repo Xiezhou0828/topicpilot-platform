@@ -16,7 +16,7 @@ from collections import defaultdict
 from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
 from datetime import UTC, date, datetime
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 from typing import Any
 
 from sqlalchemy import text
@@ -38,6 +38,53 @@ SECTION_KEYS = (
     "coolingTopics",
     "marketEvents",
     "opportunities",
+)
+
+MARKET_DISTRIBUTION_SOURCE = "topicpilot.vw_daily_market_observations"
+_NO_TRADE_STATUS_CODES = frozenset(
+    {"SUSPENDED", "NO_TRADE", "EXCHANGE_CONFIRMED_NO_DATA", "DELISTED", "TERMINATED"}
+)
+MARKET_DISTRIBUTION_BUCKETS = (
+    ("PCT_GE_10", "漲幅 ≥10%（未確認漲停）"),
+    ("PCT_7_TO_10", "漲幅 7% 至未滿 10%"),
+    ("PCT_3_TO_7", "漲幅 3% 至未滿 7%"),
+    ("PCT_0_TO_3", "漲幅 0% 至未滿 3%"),
+    ("FLAT", "平盤"),
+    ("PCT_NEG_0_TO_3", "跌幅 0% 至未滿 3%"),
+    ("PCT_NEG_3_TO_7", "跌幅 3% 至未滿 7%"),
+    ("PCT_NEG_7_TO_10", "跌幅 7% 至未滿 10%"),
+    ("PCT_LE_NEG_10", "跌幅 ≥10%（未確認跌停）"),
+)
+
+MARKET_SIGNAL_CATALOG = (
+    {
+        "key": "INDEX_DIVERGENCE",
+        "name": "大型股／中小型股分化",
+        "condition": "TSE 與 TWO 報酬方向相反",
+        "direction": "Neutral / Watch",
+        "description": "大型股與中小型股走勢分歧。",
+    },
+    {
+        "key": "OTC_VOLUME_PRICE_DIVERGENCE",
+        "name": "櫃買量價背離",
+        "condition": "TWO 下跌且上櫃成交金額較前一交易日增加",
+        "direction": "Bearish / Warning",
+        "description": "中小型股成交熱度升高但價格走弱。",
+    },
+    {
+        "key": "INSTITUTION_PRICE_DIVERGENCE",
+        "name": "法人與價格背離",
+        "condition": "指數上漲且外資淨賣超",
+        "direction": "Watch",
+        "description": "價格與外資籌碼方向不一致。",
+    },
+    {
+        "key": "BREADTH_DIVERGENCE",
+        "name": "市場廣度背離",
+        "condition": "指數上漲且下跌家數高於上漲家數",
+        "direction": "Watch",
+        "description": "指數上漲但市場參與度不足。",
+    },
 )
 
 USER_MESSAGES = {
@@ -245,6 +292,144 @@ def calculate_rotation_14d(
     return heating[:limit], cooling[:limit], None
 
 
+def _signal_change_text(item: Mapping[str, Any], label: str) -> str:
+    change = item.get("change")
+    if not isinstance(change, (int, float)) or isinstance(change, bool):
+        return f"{label}漲跌點尚未提供"
+    change_text = f"{change:+g} 點"
+    change_pct = item.get("changePct")
+    if isinstance(change_pct, (int, float)) and not isinstance(change_pct, bool):
+        change_text += f"（{change_pct:+g}%）"
+    return f"{label} {change_text}"
+
+
+def build_market_signals(market_overview: Mapping[str, Any]) -> list[dict[str, Any]]:
+    """Return only triggered signals from formal, published market facts."""
+
+    health = market_overview.get("marketHealth") or {}
+    formal_statuses = {"AVAILABLE", "PUBLISHED", "FORMAL"}
+    indices = {
+        str(item.get("market")): item
+        for item in market_overview.get("indices") or []
+        if isinstance(item, Mapping)
+        and str(item.get("status") or "").upper() in formal_statuses
+        and isinstance(item.get("change"), (int, float))
+        and not isinstance(item.get("change"), bool)
+    }
+    signals: list[dict[str, Any]] = []
+    tpe = indices.get("TPE")
+    two = indices.get("TWO")
+    if tpe is not None and two is not None:
+        tpe_change = tpe["change"]
+        two_change = two["change"]
+        if (tpe_change > 0 and two_change < 0) or (tpe_change < 0 and two_change > 0):
+            signals.append(
+                {
+                    "key": "INDEX_DIVERGENCE",
+                    "name": "大型股／中小型股分化",
+                    "severity": "WATCH",
+                    "direction": "Neutral",
+                    "evidence": [
+                        _signal_change_text(tpe, "加權指數"),
+                        _signal_change_text(two, "櫃買指數"),
+                    ],
+                    "interpretation": "大型股與中小型股走勢明顯分化。",
+                }
+            )
+
+    turnover = {
+        str(item.get("market")): item
+        for item in market_overview.get("turnover") or []
+        if isinstance(item, Mapping)
+    }
+    two_turnover = turnover.get("TWO")
+    two_change_pct = two_turnover.get("changePct") if isinstance(two_turnover, Mapping) else None
+    if (
+        two is not None
+        and two["change"] < 0
+        and two_turnover is not None
+        and str(two_turnover.get("status") or "").upper() in formal_statuses
+        and isinstance(two_change_pct, (int, float))
+        and not isinstance(two_change_pct, bool)
+        and two_change_pct > 0
+    ):
+        signals.append(
+            {
+                "key": "OTC_VOLUME_PRICE_DIVERGENCE",
+                "name": "櫃買量價背離",
+                "severity": "WARNING",
+                "direction": "Bearish",
+                "evidence": [
+                    _signal_change_text(two, "櫃買指數"),
+                    f"上櫃成交金額 {two_change_pct:+g}%（較前一交易日）",
+                ],
+                "interpretation": "中小型股成交熱度升高但價格走弱。",
+            }
+        )
+
+    institution_flows = market_overview.get("institutionFlows")
+    tpe_flow = None
+    if isinstance(institution_flows, Mapping) and isinstance(institution_flows.get("markets"), list):
+        tpe_flow = next(
+            (
+                item
+                for item in institution_flows["markets"]
+                if isinstance(item, Mapping) and item.get("market") == "TPE"
+            ),
+            None,
+        )
+    current = tpe_flow.get("current") if isinstance(tpe_flow, Mapping) else None
+    foreign = current.get("foreign") if isinstance(current, Mapping) else None
+    foreign_value = foreign.get("value") if isinstance(foreign, Mapping) else None
+    foreign_status = str(foreign.get("status") or "").upper() if isinstance(foreign, Mapping) else ""
+    if (
+        tpe is not None
+        and tpe["change"] > 0
+        and foreign_status in formal_statuses
+        and isinstance(foreign_value, (int, float))
+        and not isinstance(foreign_value, bool)
+        and foreign_value < 0
+    ):
+        signals.append(
+            {
+                "key": "INSTITUTION_PRICE_DIVERGENCE",
+                "name": "法人與價格背離",
+                "severity": "WATCH",
+                "direction": "Watch",
+                "evidence": [
+                    _signal_change_text(tpe, "加權指數"),
+                    f"外資淨賣超 {foreign_value:g}",
+                ],
+                "interpretation": "價格與外資籌碼方向不一致。",
+            }
+        )
+
+    advance = health.get("advance")
+    decline = health.get("decline")
+    if (
+        tpe is not None
+        and tpe["change"] > 0
+        and str(health.get("status") or "").upper() in formal_statuses
+        and isinstance(advance, int)
+        and isinstance(decline, int)
+        and decline > advance
+    ):
+        signals.append(
+            {
+                "key": "BREADTH_DIVERGENCE",
+                "name": "市場廣度背離",
+                "severity": "WATCH",
+                "direction": "Watch",
+                "evidence": [
+                    _signal_change_text(tpe, "加權指數"),
+                    f"上漲家數 {advance}、下跌家數 {decline}",
+                ],
+                "interpretation": "指數上漲但市場參與度不足。",
+            }
+        )
+    return signals
+
+
 def build_daily_focus(
     *,
     market_overview: Mapping[str, Any],
@@ -254,57 +439,38 @@ def build_daily_focus(
     data_date: date | None,
     as_of: datetime | None,
 ) -> SectionResult:
-    """Build formal Daily Focus from published facts only."""
+    """Build formal market signals from published facts only."""
 
-    health = market_overview.get("marketHealth") or {}
-    breadth = market_overview.get("breadth") or []
-    evidence: list[str] = []
-    if health.get("advance") is not None and health.get("decline") is not None:
-        evidence.append(
-            f"市場上漲 {health['advance']} 家、下跌 {health['decline']} 家，"
-            f"平盤 {health.get('flat', '—')} 家。"
-        )
-    elif breadth:
-        observed = sum(int(item.get("observed") or 0) for item in breadth)
-        evidence.append(f"目前已觀測 {observed} 家上市櫃股票的市場廣度。")
-    if market_overview.get("indices"):
-        available = [item for item in market_overview["indices"] if item.get("value") is not None]
-        if available:
-            first = available[0]
-            direction = "上漲" if (first.get("change") or 0) > 0 else "下跌" if (first.get("change") or 0) < 0 else "持平"
-            evidence.append(f"{first['indexName']} {direction}，收盤 {first['value']}。")
-    if main_topics:
-        evidence.append(f"目前主線為 {main_topics[0]['name']}。")
-    if heating_topics:
-        evidence.append(f"升溫題材以 {heating_topics[0]['topic']} 為首。")
-    if cooling_topics:
-        evidence.append(f"降溫題材以 {cooling_topics[0]['topic']} 為首。")
-    if not evidence:
+    has_market_evidence = bool(
+        (market_overview.get("indices") or [])
+        or (market_overview.get("turnover") or [])
+        or (market_overview.get("breadth") or [])
+        or (market_overview.get("marketHealth") or {}).get("breadthEligible")
+    )
+    signal_catalog = [dict(item) for item in MARKET_SIGNAL_CATALOG]
+    signals = build_market_signals(market_overview) if has_market_evidence else []
+    if not has_market_evidence:
         return _status(
             "UNAVAILABLE",
             data_date=data_date,
             as_of=as_of,
             source=DAILY_FOCUS_SOURCE,
             reason_code="DAILY_FOCUS_EVIDENCE_INCOMPLETE",
-            detail="formal Home inputs did not contain a meaningful market or topic fact",
+            detail="formal Home inputs did not contain a meaningful market fact",
             payload={
                 "mode": "RULE_BASED_V1",
                 "temporary": False,
-                "headline": "今日市場重點尚未完成",
+                "headline": "今日市場訊號尚未完成",
                 "bullets": [],
+                "signals": [],
+                "signalCatalog": signal_catalog,
                 "dataDate": data_date,
                 "source": DAILY_FOCUS_SOURCE,
                 "reasonCode": "DAILY_FOCUS_EVIDENCE_INCOMPLETE",
                 "userMessage": USER_MESSAGES["DAILY_FOCUS_EVIDENCE_INCOMPLETE"],
             },
         )
-    headline = (
-        "市場偏強，今日主線值得留意。"
-        if (health.get("advance") or 0) > (health.get("decline") or 0)
-        else "市場偏弱，今日主線仍需觀察。"
-        if (health.get("decline") or 0) > (health.get("advance") or 0)
-        else f"今日市場焦點：{main_topics[0]['name']}。"
-    )
+    headline = signals[0]["name"] if signals else "今日無異常訊號"
     return _status(
         "AVAILABLE",
         data_date=data_date,
@@ -314,7 +480,9 @@ def build_daily_focus(
             "mode": "RULE_BASED_V1",
             "temporary": False,
             "headline": headline,
-            "bullets": evidence[:4],
+            "bullets": [item["interpretation"] for item in signals[:4]] or ["目前沒有符合正式規則的市場訊號。"],
+            "signals": signals,
+            "signalCatalog": signal_catalog,
             "dataDate": data_date,
             "source": DAILY_FOCUS_SOURCE,
         },
@@ -367,59 +535,165 @@ def _latest_canonical_date(session: Session) -> date | None:
     ).scalar_one_or_none()
 
 
-def _breadth(session: Session, trading_date: date) -> tuple[list[dict[str, Any]], datetime | None]:
-    rows = session.execute(
-        text(
-            """
-            WITH universe AS (
-                SELECT i.id, m.code AS market
-                FROM topicpilot.instruments i
-                JOIN topicpilot.markets m ON m.id = i.market_id
-                WHERE i.is_active = true AND m.is_active = true
-                  AND i.instrument_type = 'EQUITY'
-                  AND m.code IN ('TPE', 'TWO')
-                  AND (i.valid_from IS NULL OR i.valid_from <= :trading_date)
-                  AND (i.valid_to IS NULL OR i.valid_to >= :trading_date)
-                  AND (m.valid_from IS NULL OR m.valid_from <= :trading_date)
-                  AND (m.valid_to IS NULL OR m.valid_to >= :trading_date)
-            ), observations AS (
-                SELECT DISTINCT ON (current.instrument_id)
-                    current.instrument_id, current.market_code, current.close,
-                    current.status_code, current.observed_at, previous.close AS previous_close
-                FROM topicpilot.vw_daily_market_observations current
-                LEFT JOIN LATERAL (
-                    SELECT prior.close
-                    FROM topicpilot.vw_daily_market_observations prior
-                    WHERE prior.instrument_id = current.instrument_id
-                      AND prior.trade_date < current.trade_date
-                    ORDER BY prior.trade_date DESC, prior.observed_at DESC,
-                             prior.canonical_observation_id DESC
-                    LIMIT 1
-                ) previous ON true
-                WHERE current.trade_date = :trading_date
-                ORDER BY current.instrument_id, current.observed_at DESC,
-                         current.canonical_observation_id DESC
-            )
-            SELECT
-                u.market,
-                count(*)::integer AS eligible,
-                count(o.instrument_id)::integer AS observed,
-                count(o.instrument_id) FILTER (WHERE o.close IS NOT NULL AND o.close > 0)::integer AS priced,
-                count(o.instrument_id) FILTER (WHERE o.close IS NOT NULL AND o.previous_close IS NOT NULL AND o.close > o.previous_close)::integer AS advance,
-                count(o.instrument_id) FILTER (WHERE o.close IS NOT NULL AND o.previous_close IS NOT NULL AND o.close < o.previous_close)::integer AS decline,
-                count(o.instrument_id) FILTER (WHERE o.close IS NOT NULL AND o.previous_close IS NOT NULL AND o.close = o.previous_close)::integer AS flat,
-                count(o.instrument_id) FILTER (WHERE o.close IS NULL AND o.status_code IN ('NO_TRADE', 'SUSPENDED', 'EXCHANGE_CONFIRMED_NO_DATA', 'DELISTED', 'TERMINATED'))::integer AS unavailable,
-                max(o.observed_at) AS as_of
-            FROM universe u
-            LEFT JOIN observations o ON o.instrument_id = u.id
-            GROUP BY u.market
-            ORDER BY u.market
-            """
-        ),
-        {"trading_date": trading_date},
-    ).mappings().all()
-    as_of = max((row["as_of"] for row in rows if row["as_of"] is not None), default=None)
-    return [dict(row) for row in rows], as_of
+def _distribution_bucket(change_pct: Decimal) -> str:
+    if change_pct >= Decimal("10"):
+        return "PCT_GE_10"
+    if change_pct >= Decimal("7"):
+        return "PCT_7_TO_10"
+    if change_pct >= Decimal("3"):
+        return "PCT_3_TO_7"
+    if change_pct > 0:
+        return "PCT_0_TO_3"
+    if change_pct == 0:
+        return "FLAT"
+    if change_pct > Decimal("-3"):
+        return "PCT_NEG_0_TO_3"
+    if change_pct > Decimal("-7"):
+        return "PCT_NEG_3_TO_7"
+    if change_pct > Decimal("-10"):
+        return "PCT_NEG_7_TO_10"
+    return "PCT_LE_NEG_10"
+
+
+def build_market_distribution(
+    observations: Iterable[Mapping[str, Any]],
+    *,
+    eligible_count: int,
+    as_of: datetime | None,
+    source: str = MARKET_DISTRIBUTION_SOURCE,
+) -> dict[str, Any]:
+    """Aggregate canonical EOD observations without turning missing data into 0%."""
+
+    counts = {key: 0 for key, _label in MARKET_DISTRIBUTION_BUCKETS}
+    for row in observations:
+        if row.get("instrument_id") is None:
+            continue
+        if str(row.get("status_code") or "UNKNOWN").upper() in _NO_TRADE_STATUS_CODES:
+            continue
+        try:
+            close = Decimal(str(row.get("close")))
+            previous_close = Decimal(str(row.get("previous_close")))
+        except (InvalidOperation, TypeError, ValueError):
+            continue
+        if not close.is_finite() or not previous_close.is_finite() or previous_close <= 0:
+            continue
+        change_pct = (close - previous_close) / previous_close * Decimal("100")
+        counts[_distribution_bucket(change_pct)] += 1
+
+    eligible = sum(counts.values())
+    return {
+        "market": "TPE+TWO",
+        "status": "AVAILABLE" if eligible else "UNAVAILABLE",
+        "eligible": eligible,
+        "excluded": max(0, int(eligible_count) - eligible),
+        "buckets": [
+            {"key": key, "label": label, "count": counts[key]}
+            for key, label in MARKET_DISTRIBUTION_BUCKETS
+        ],
+        "coverage": {
+            "denominator": "active date-effective EQUITY instruments in TPE/TWO",
+            "eligibleUniverse": int(eligible_count),
+            "percentageEligible": round(eligible / int(eligible_count) * 100, 4)
+            if int(eligible_count)
+            else 0,
+        },
+        "asOf": as_of,
+        "source": source,
+        "reasonCode": None if eligible else "NO_PERCENT_CHANGE_OBSERVATIONS",
+    }
+
+
+def _breadth(
+    session: Session, trading_date: date
+) -> tuple[list[dict[str, Any]], datetime | None, list[dict[str, Any]]]:
+    observations = [
+        dict(row)
+        for row in session.execute(
+            text(
+                """
+                WITH universe AS (
+                    SELECT i.id, m.code AS market
+                    FROM topicpilot.instruments i
+                    JOIN topicpilot.markets m ON m.id = i.market_id
+                    WHERE i.is_active = true AND m.is_active = true
+                      AND i.instrument_type = 'EQUITY'
+                      AND m.code IN ('TPE', 'TWO')
+                      AND (i.valid_from IS NULL OR i.valid_from <= :trading_date)
+                      AND (i.valid_to IS NULL OR i.valid_to >= :trading_date)
+                      AND (m.valid_from IS NULL OR m.valid_from <= :trading_date)
+                      AND (m.valid_to IS NULL OR m.valid_to >= :trading_date)
+                ), current_observations AS (
+                    SELECT DISTINCT ON (current.instrument_id)
+                        current.instrument_id, current.close, current.status_code,
+                        current.observed_at, previous.close AS previous_close
+                    FROM topicpilot.vw_daily_market_observations current
+                    LEFT JOIN LATERAL (
+                        SELECT prior.close
+                        FROM topicpilot.vw_daily_market_observations prior
+                        WHERE prior.instrument_id = current.instrument_id
+                          AND prior.trade_date < current.trade_date
+                        ORDER BY prior.trade_date DESC, prior.observed_at DESC,
+                                 prior.canonical_observation_id DESC
+                        LIMIT 1
+                    ) previous ON true
+                    WHERE current.trade_date = :trading_date
+                    ORDER BY current.instrument_id, current.observed_at DESC,
+                             current.canonical_observation_id DESC
+                )
+                SELECT u.market, u.id AS universe_instrument_id,
+                       o.instrument_id, o.close, o.previous_close,
+                       o.status_code, o.observed_at
+                FROM universe u
+                LEFT JOIN current_observations o ON o.instrument_id = u.id
+                ORDER BY u.market, u.id
+                """
+            ),
+            {"trading_date": trading_date},
+        ).mappings().all()
+    ]
+    aggregate: dict[str, dict[str, Any]] = {}
+    for row in observations:
+        market = str(row["market"])
+        item = aggregate.setdefault(
+            market,
+            {
+                "market": market,
+                "eligible": 0,
+                "observed": 0,
+                "priced": 0,
+                "advance": 0,
+                "decline": 0,
+                "flat": 0,
+                "unavailable": 0,
+                "as_of": None,
+            },
+        )
+        item["eligible"] += 1
+        if row["instrument_id"] is None:
+            continue
+        item["observed"] += 1
+        if row["observed_at"] is not None and (
+            item["as_of"] is None or row["observed_at"] > item["as_of"]
+        ):
+            item["as_of"] = row["observed_at"]
+        status_code = str(row["status_code"] or "UNKNOWN").upper()
+        if status_code in _NO_TRADE_STATUS_CODES:
+            item["unavailable"] += 1
+            continue
+        if row["close"] is not None and row["close"] > 0:
+            item["priced"] += 1
+        if row["close"] is not None and row["previous_close"] is not None:
+            if row["close"] > row["previous_close"]:
+                item["advance"] += 1
+            elif row["close"] < row["previous_close"]:
+                item["decline"] += 1
+            else:
+                item["flat"] += 1
+    as_of = max(
+        (row["as_of"] for row in aggregate.values() if row["as_of"] is not None),
+        default=None,
+    )
+    return [aggregate[key] for key in sorted(aggregate)], as_of, observations
 
 
 def _formal_topic_rows(session: Session, trading_date: date) -> list[dict[str, Any]]:
@@ -540,6 +814,289 @@ def _turnover_payload(item: MarketTurnoverFact | Mapping[str, Any]) -> dict[str,
     }
 
 
+def _derived_total_turnover(
+    turnover: Sequence[Mapping[str, Any]],
+) -> dict[str, Any] | None:
+    """Derive a total only from two matching formal TWD close facts."""
+
+    by_market = {str(item.get("market")): item for item in turnover}
+    records = [by_market.get("TPE"), by_market.get("TWO")]
+    if any(item is None for item in records):
+        return None
+    if any(
+        str(item.get("status") or "").upper() not in {"AVAILABLE", "PUBLISHED", "FORMAL"}
+        for item in records
+    ):
+        return None
+    if {str(item.get("currency") or "").strip().upper() for item in records} != {"TWD"}:
+        return None
+    if {str(item.get("unit") or "").strip().upper() for item in records} != {"TWD"}:
+        return None
+    if {item.get("scale") for item in records} != {0}:
+        return None
+    try:
+        values = [Decimal(str(item["value"])) for item in records]
+    except (KeyError, InvalidOperation, TypeError, ValueError):
+        return None
+    if any(not value.is_finite() for value in values):
+        return None
+    first = records[0]
+    return {
+        "market": "TOTAL",
+        "tradingDate": first.get("tradingDate"),
+        "session": first.get("session", "CLOSE"),
+        "value": _number(values[0] + values[1]),
+        "currency": "TWD",
+        "unit": "TWD",
+        "scale": 0,
+        "asOf": max((item.get("asOf") for item in records if item.get("asOf")), default=None),
+        "source": "HOME_V2_FORMAL_TURNOVER_TOTAL",
+        "lineage": "deterministic sum of matching TPE/TWO formal close facts",
+        "status": "AVAILABLE",
+        "reasonCode": None,
+    }
+
+
+def _as_date(value: Any) -> date | None:
+    if isinstance(value, date) and not isinstance(value, datetime):
+        return value
+    if isinstance(value, str):
+        try:
+            return date.fromisoformat(value[:10])
+        except ValueError:
+            return None
+    return None
+
+
+def _as_datetime(value: Any) -> datetime | None:
+    if isinstance(value, datetime):
+        return value
+    if isinstance(value, str):
+        try:
+            return datetime.fromisoformat(value.replace("Z", "+00:00"))
+        except ValueError:
+            return None
+    return None
+
+
+def normalize_home_publication_for_read(payload: Mapping[str, Any]) -> dict[str, Any]:
+    """Rebuild persisted Daily Focus from the current formal market facts."""
+
+    result = dict(payload)
+    market_overview = result.get("marketOverview")
+    if not isinstance(market_overview, Mapping):
+        return result
+    overview = dict(market_overview)
+    health = overview.get("marketHealth")
+    if isinstance(health, Mapping):
+        health_copy = dict(health)
+        advance = health_copy.get("advance")
+        decline = health_copy.get("decline")
+        flat = health_copy.get("flat")
+        if (
+            isinstance(advance, (int, float))
+            and not isinstance(advance, bool)
+            and isinstance(decline, (int, float))
+            and not isinstance(decline, bool)
+        ):
+            health_copy["net"] = advance - decline
+            if (
+                isinstance(flat, (int, float))
+                and not isinstance(flat, bool)
+                and health_copy.get("breadthEligible") is None
+            ):
+                health_copy["breadthEligible"] = advance + decline + flat
+            overview["marketHealth"] = health_copy
+    turnover = overview.get("turnover")
+    if isinstance(turnover, list) and not any(
+        isinstance(item, Mapping) and item.get("market") == "TOTAL" for item in turnover
+    ):
+        total_turnover = _derived_total_turnover(
+            [item for item in turnover if isinstance(item, Mapping)]
+        )
+        if total_turnover is not None:
+            overview["turnover"] = [*turnover, total_turnover]
+    result["marketOverview"] = overview
+
+    data_date = _as_date(
+        overview.get("dataDate")
+        or (result.get("publication") or {}).get("tradingDate")
+        or result.get("asOf")
+    )
+    as_of = _as_datetime(
+        overview.get("updatedAt")
+        or overview.get("latestSnapshotTime")
+        or (result.get("publication") or {}).get("asOf")
+    )
+    normalized = build_daily_focus(
+        market_overview=overview,
+        main_topics=(),
+        heating_topics=(),
+        cooling_topics=(),
+        data_date=data_date,
+        as_of=as_of,
+    )
+    result["dailyFocus"] = normalized.payload
+    statuses = result.get("sectionStatuses")
+    if isinstance(statuses, Mapping):
+        result["sectionStatuses"] = {
+            **statuses,
+            "dailyFocus": normalized.status_payload(),
+        }
+    publication = result.get("publication")
+    if isinstance(publication, Mapping) and isinstance(publication.get("completeness"), Mapping):
+        publication_copy = dict(publication)
+        publication_copy["completeness"] = {
+            **publication["completeness"],
+            "sectionStatuses": result.get("sectionStatuses", statuses),
+        }
+        result["publication"] = publication_copy
+    return result
+
+
+def _flow_leg(row: Mapping[str, Any], prefix: str) -> dict[str, Any] | None:
+    net = row.get(f"{prefix}_net")
+    if net is None:
+        return None
+    return {
+        "buy": _number(row.get(f"{prefix}_buy")),
+        "sell": _number(row.get(f"{prefix}_sell")),
+        "net": _number(net),
+        "value": _number(net),
+        "unit": row.get("unit") or "TWD",
+        "scale": int(row.get("scale") or 0),
+        "status": row.get("availability") or "UNKNOWN",
+    }
+
+
+def _flow_daily_payload(row: Mapping[str, Any]) -> dict[str, Any]:
+    return {
+        "market": row.get("market"),
+        "tradingDate": row.get("trading_date"),
+        "foreign": _flow_leg(row, "foreign"),
+        "investmentTrust": _flow_leg(row, "investment_trust"),
+        "dealer": _flow_leg(row, "dealer"),
+        "total": _flow_leg(row, "total"),
+        "sourceProvider": row.get("source_provider"),
+        "sourceIdentity": row.get("source_identity"),
+        "sourceDataset": row.get("source_dataset"),
+        "sourceEndpoint": row.get("source_endpoint"),
+        "adapterVersion": row.get("adapter_version"),
+        "sourceAsOf": row.get("source_as_of"),
+        "publishedAt": row.get("published_at"),
+        "retrievedAt": row.get("retrieved_at"),
+        "availability": row.get("availability") or "UNKNOWN",
+        "freshness": row.get("freshness") or "UNKNOWN",
+        "statusReason": row.get("status_reason"),
+        "lineage": row.get("lineage") or "formal market institutional flow table",
+        "responseContentHash": row.get("response_content_hash"),
+    }
+
+
+def _read_home_institutional_flow(
+    session: Session, trading_date: date | None
+) -> dict[str, Any] | None:
+    if trading_date is None:
+        return None
+    try:
+        rows = [
+            dict(row)
+            for row in session.execute(
+                text(
+                    """
+                    SELECT DISTINCT ON (market)
+                           market, trading_date, source_provider, source_identity,
+                           source_dataset, source_endpoint, adapter_version,
+                           source_as_of, published_at, retrieved_at, unit, scale,
+                           foreign_buy, foreign_sell, foreign_net,
+                           investment_trust_buy, investment_trust_sell, investment_trust_net,
+                           dealer_buy, dealer_sell, dealer_net,
+                           total_buy, total_sell, total_net,
+                           availability, freshness, status_reason, lineage,
+                           response_content_hash
+                    FROM topicpilot.market_institutional_flow_daily
+                    WHERE trading_date <= :trading_date
+                    ORDER BY market, trading_date DESC, source_as_of DESC NULLS LAST,
+                             published_at DESC NULLS LAST, id DESC
+                    """
+                ),
+                {"trading_date": trading_date},
+            ).mappings()
+        ]
+    except SQLAlchemyError:
+        session.rollback()
+        return None
+    if not rows:
+        return None
+
+    markets: list[dict[str, Any]] = []
+    for row in rows:
+        current = _flow_daily_payload(row)
+        availability = str(row.get("availability") or "UNKNOWN")
+        market = str(row.get("market") or "")
+        markets.append(
+            {
+                "market": market,
+                "asOfDate": row.get("trading_date"),
+                "availability": availability,
+                "freshness": row.get("freshness") or "UNKNOWN",
+                "current": current,
+                "previous": None,
+                "rolling5Session": {
+                    "requiredSessions": 5,
+                    "observedSessions": 1,
+                    "complete": False,
+                    "foreignNet": None,
+                    "investmentTrustNet": None,
+                    "dealerNet": None,
+                    "totalNet": None,
+                    "unit": row.get("unit") or "TWD",
+                    "scale": int(row.get("scale") or 0),
+                },
+                "rolling20Session": {
+                    "requiredSessions": 20,
+                    "observedSessions": 1,
+                    "complete": False,
+                    "foreignNet": None,
+                    "investmentTrustNet": None,
+                    "dealerNet": None,
+                    "totalNet": None,
+                    "unit": row.get("unit") or "TWD",
+                    "scale": int(row.get("scale") or 0),
+                },
+                "streaks": {},
+                "acceleration": {},
+                "priceFlowRelation": {
+                    "market": market,
+                    "indexChange": None,
+                    "flowNet": _number(row.get("total_net")),
+                    "marketDirection": "UNKNOWN",
+                    "flowDirection": "UNKNOWN",
+                    "directionRelation": "UNKNOWN",
+                    "availability": availability,
+                },
+                "sourceAsOf": row.get("source_as_of"),
+                "source": row.get("source_provider"),
+                "statusReason": row.get("status_reason"),
+            }
+        )
+    available = [item for item in markets if item["availability"] == "AVAILABLE"]
+    status = "AVAILABLE" if len(available) == len(markets) else "PARTIAL" if available else "UNAVAILABLE"
+    freshness_values = {str(item.get("freshness") or "UNKNOWN") for item in markets}
+    freshness = "CURRENT" if freshness_values == {"CURRENT"} else "STALE" if "STALE" in freshness_values else "UNKNOWN"
+    return {
+        "contractVersion": "market-institutional-flow.formal.v1",
+        "asOfDate": max((item.get("asOfDate") for item in markets if item.get("asOfDate")), default=None),
+        "status": status,
+        "freshness": freshness,
+        "markets": markets,
+        "sourceAsOf": max((item.get("sourceAsOf") for item in markets if item.get("sourceAsOf")), default=None),
+        "source": ";".join(sorted({str(row.get("source_provider")) for row in rows if row.get("source_provider")})) or None,
+        "unit": rows[0].get("unit") or "TWD",
+        "scale": int(rows[0].get("scale") or 0),
+    }
+
+
 def _aggregate_fact_input(item: Any) -> dict[str, Any]:
     """Map a typed official aggregate result without losing NULL evidence."""
 
@@ -613,6 +1170,8 @@ def materialize_home_v2(
     turnover_inputs = [_turnover_payload(item) for item in turnover_facts]
     aggregate_inputs = [_aggregate_fact_input(item) for item in market_aggregate_facts]
     aggregate_by_market = {item.get("market"): item for item in aggregate_inputs}
+    breadth_observations: list[dict[str, Any]] = []
+    distribution_as_of: datetime | None = None
     if aggregate_inputs:
         breadth_payload = []
         for market in ("TPE", "TWO"):
@@ -645,8 +1204,13 @@ def materialize_home_v2(
             default=None,
         )
         breadth_rows = []
+        try:
+            _canonical_rows, distribution_as_of, breadth_observations = _breadth(session, trading_date)
+        except SQLAlchemyError:
+            session.rollback()
     else:
-        breadth_rows, breadth_as_of = _breadth(session, trading_date)
+        breadth_rows, breadth_as_of, breadth_observations = _breadth(session, trading_date)
+        distribution_as_of = breadth_as_of
         breadth_payload = [
             {
                 "market": row["market"],
@@ -676,13 +1240,32 @@ def materialize_home_v2(
     total_eligible = sum(item["eligible"] for item in breadth_payload)
     total_observed = sum(item["observed"] for item in breadth_payload)
     total_unavailable = sum(item["unavailable"] for item in breadth_payload)
+    advance = sum(int(item.get("advance") or 0) for item in breadth_payload)
+    decline = sum(int(item.get("decline") or 0) for item in breadth_payload)
+    flat = sum(int(item.get("flat") or 0) for item in breadth_payload)
+    breadth_eligible = advance + decline + flat
+
+    def _percentage(value: int) -> float | None:
+        return round(value / breadth_eligible * 100, 4) if breadth_eligible else None
+
+    distribution_payload = build_market_distribution(
+        breadth_observations,
+        eligible_count=total_eligible,
+        as_of=distribution_as_of,
+    )
     market_health = {
         "market": "TPE+TWO",
         "status": "AVAILABLE" if total_observed else "UNAVAILABLE",
         "totalStocks": total_eligible,
-        "advance": sum(int(item.get("advance") or 0) for item in breadth_payload),
-        "decline": sum(int(item.get("decline") or 0) for item in breadth_payload),
-        "flat": sum(int(item.get("flat") or 0) for item in breadth_payload),
+        "observed": total_observed,
+        "breadthEligible": breadth_eligible,
+        "advance": advance,
+        "decline": decline,
+        "flat": flat,
+        "net": advance - decline if breadth_eligible else None,
+        "advancePct": _percentage(advance),
+        "declinePct": _percentage(decline),
+        "flatPct": _percentage(flat),
         "unavailable": total_unavailable,
     }
     indices = [_market_index_payload(item) for item in index_inputs]
@@ -750,6 +1333,9 @@ def materialize_home_v2(
             },
         )
     turnover = [turnover_by_market[market] for market in ("TPE", "TWO")]
+    total_turnover = _derived_total_turnover(turnover)
+    if total_turnover is not None:
+        turnover.append(total_turnover)
     available_indices = [item for item in indices if item.get("status") == "AVAILABLE" and item.get("value") is not None]
     available_turnover = [item for item in turnover if item.get("status") == "AVAILABLE" and item.get("value") is not None]
     if aggregate_inputs:
@@ -780,7 +1366,9 @@ def materialize_home_v2(
         "trackedTopicCount": 0,
         "latestSnapshotTime": breadth_as_of,
         "marketHealth": market_health,
+        "institutionFlows": None,
         "breadth": breadth_payload,
+        "distribution": distribution_payload,
         "indices": indices,
         "turnover": turnover,
         "limits": limits_payload,
@@ -1118,7 +1706,30 @@ def read_latest_home_publication(session: Session) -> dict[str, Any] | None:
         ).mappings().one_or_none()
     except SQLAlchemyError:
         return None
-    return dict(row["payload"]) if row else None
+    if not row:
+        return None
+    payload = dict(row["payload"])
+    market_overview = payload.get("marketOverview")
+    if isinstance(market_overview, Mapping):
+        enriched_overview = dict(market_overview)
+        trading_date = _as_date(enriched_overview.get("dataDate"))
+        if not enriched_overview.get("institutionFlows"):
+            flow_payload = _read_home_institutional_flow(session, trading_date)
+            if flow_payload is not None:
+                enriched_overview["institutionFlows"] = flow_payload
+        if not enriched_overview.get("distribution") and trading_date is not None:
+            try:
+                breadth_rows, breadth_as_of, observations = _breadth(session, trading_date)
+                eligible_count = sum(int(item.get("eligible") or 0) for item in breadth_rows)
+                enriched_overview["distribution"] = build_market_distribution(
+                    observations,
+                    eligible_count=eligible_count,
+                    as_of=breadth_as_of,
+                )
+            except SQLAlchemyError:
+                session.rollback()
+        payload["marketOverview"] = enriched_overview
+    return normalize_home_publication_for_read(payload)
 
 
 def empty_home_v2(now: datetime, *, tracked_stock_count: int = 0) -> dict[str, Any]:
@@ -1175,7 +1786,9 @@ def empty_home_v2(now: datetime, *, tracked_stock_count: int = 0) -> dict[str, A
             "trackedTopicCount": 0,
             "latestSnapshotTime": None,
             "marketHealth": None,
+            "institutionFlows": None,
             "breadth": [],
+            "distribution": None,
             "indices": [],
             "turnover": [],
             "limits": None,
@@ -1214,11 +1827,17 @@ def empty_home_v2(now: datetime, *, tracked_stock_count: int = 0) -> dict[str, A
 __all__ = [
     "DAILY_FOCUS_SOURCE",
     "HOME_PUBLICATION_VERSION",
+    "MARKET_DISTRIBUTION_BUCKETS",
+    "MARKET_DISTRIBUTION_SOURCE",
+    "MARKET_SIGNAL_CATALOG",
     "MarketTurnoverFact",
     "build_daily_focus",
+    "build_market_distribution",
+    "build_market_signals",
     "calculate_rotation_14d",
     "empty_home_v2",
     "materialize_home_v2",
+    "normalize_home_publication_for_read",
     "rank_formal_topics",
     "read_latest_home_publication",
     "validate_home_gate",

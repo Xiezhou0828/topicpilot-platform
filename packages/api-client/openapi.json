@@ -684,18 +684,44 @@
       },
       "HomeDailyFocus": {
         "properties": {
+          "mode": {
+            "type": "string",
+            "title": "Mode"
+          },
+          "temporary": {
+            "type": "boolean",
+            "title": "Temporary"
+          },
+          "headline": {
+            "type": "string",
+            "title": "Headline"
+          },
           "bullets": {
             "items": {
               "type": "string"
             },
-            "title": "Bullets",
-            "type": "array"
+            "type": "array",
+            "title": "Bullets"
+          },
+          "signals": {
+            "items": {
+              "$ref": "#/components/schemas/HomeMarketSignal"
+            },
+            "type": "array",
+            "title": "Signals"
+          },
+          "signalCatalog": {
+            "items": {
+              "$ref": "#/components/schemas/HomeMarketSignalCatalog"
+            },
+            "type": "array",
+            "title": "Signalcatalog"
           },
           "dataDate": {
             "anyOf": [
               {
-                "format": "date",
-                "type": "string"
+                "type": "string",
+                "format": "date"
               },
               {
                 "type": "null"
@@ -703,13 +729,9 @@
             ],
             "title": "Datadate"
           },
-          "headline": {
-            "title": "Headline",
-            "type": "string"
-          },
-          "mode": {
-            "title": "Mode",
-            "type": "string"
+          "source": {
+            "type": "string",
+            "title": "Source"
           },
           "reasonCode": {
             "anyOf": [
@@ -721,14 +743,6 @@
               }
             ],
             "title": "Reasoncode"
-          },
-          "source": {
-            "title": "Source",
-            "type": "string"
-          },
-          "temporary": {
-            "title": "Temporary",
-            "type": "boolean"
           },
           "userMessage": {
             "anyOf": [
@@ -742,6 +756,7 @@
             "title": "Usermessage"
           }
         },
+        "type": "object",
         "required": [
           "mode",
           "temporary",
@@ -749,8 +764,7 @@
           "dataDate",
           "source"
         ],
-        "title": "HomeDailyFocus",
-        "type": "object"
+        "title": "HomeDailyFocus"
       },
       "HomeDataQuality": {
         "properties": {
@@ -899,11 +913,39 @@
       },
       "HomeMarketDistribution": {
         "properties": {
+          "market": {
+            "type": "string",
+            "title": "Market"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "eligible": {
+            "type": "integer",
+            "title": "Eligible"
+          },
+          "excluded": {
+            "type": "integer",
+            "title": "Excluded"
+          },
+          "buckets": {
+            "items": {
+              "$ref": "#/components/schemas/HomeMarketDistributionBucket"
+            },
+            "type": "array",
+            "title": "Buckets"
+          },
+          "coverage": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Coverage"
+          },
           "asOf": {
             "anyOf": [
               {
-                "format": "date-time",
-                "type": "string"
+                "type": "string",
+                "format": "date-time"
               },
               {
                 "type": "null"
@@ -911,29 +953,9 @@
             ],
             "title": "Asof"
           },
-          "buckets": {
-            "items": {
-              "$ref": "#/components/schemas/HomeMarketDistributionBucket"
-            },
-            "title": "Buckets",
-            "type": "array"
-          },
-          "coverage": {
-            "additionalProperties": true,
-            "title": "Coverage",
-            "type": "object"
-          },
-          "eligible": {
-            "title": "Eligible",
-            "type": "integer"
-          },
-          "excluded": {
-            "title": "Excluded",
-            "type": "integer"
-          },
-          "market": {
-            "title": "Market",
-            "type": "string"
+          "source": {
+            "type": "string",
+            "title": "Source"
           },
           "reasonCode": {
             "anyOf": [
@@ -945,16 +967,9 @@
               }
             ],
             "title": "Reasoncode"
-          },
-          "source": {
-            "title": "Source",
-            "type": "string"
-          },
-          "status": {
-            "title": "Status",
-            "type": "string"
           }
         },
+        "type": "object",
         "required": [
           "market",
           "status",
@@ -963,116 +978,42 @@
           "asOf",
           "source"
         ],
-        "title": "HomeMarketDistribution",
-        "type": "object"
+        "title": "HomeMarketDistribution"
       },
       "HomeMarketDistributionBucket": {
         "properties": {
-          "count": {
-            "title": "Count",
-            "type": "integer"
-          },
           "key": {
-            "title": "Key",
-            "type": "string"
+            "type": "string",
+            "title": "Key"
           },
           "label": {
-            "title": "Label",
-            "type": "string"
+            "type": "string",
+            "title": "Label"
+          },
+          "count": {
+            "type": "integer",
+            "title": "Count"
           }
         },
+        "type": "object",
         "required": [
           "key",
           "label",
           "count"
         ],
-        "title": "HomeMarketDistributionBucket",
-        "type": "object"
+        "title": "HomeMarketDistributionBucket"
       },
       "HomeMarketHealth": {
         "properties": {
-          "advance": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Advance"
-          },
-          "advancePct": {
-            "anyOf": [
-              {
-                "type": "number"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Advancepct"
-          },
-          "breadthEligible": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Breadtheligible"
-          },
-          "decline": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Decline"
-          },
-          "declinePct": {
-            "anyOf": [
-              {
-                "type": "number"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Declinepct"
-          },
-          "flat": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Flat"
-          },
-          "flatPct": {
-            "anyOf": [
-              {
-                "type": "number"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Flatpct"
-          },
           "market": {
-            "title": "Market",
-            "type": "string"
+            "type": "string",
+            "title": "Market"
           },
-          "net": {
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "totalStocks": {
             "anyOf": [
               {
                 "type": "integer"
@@ -1081,7 +1022,7 @@
                 "type": "null"
               }
             ],
-            "title": "Net"
+            "title": "Totalstocks"
           },
           "observed": {
             "anyOf": [
@@ -1094,11 +1035,7 @@
             ],
             "title": "Observed"
           },
-          "status": {
-            "title": "Status",
-            "type": "string"
-          },
-          "totalStocks": {
+          "breadthEligible": {
             "anyOf": [
               {
                 "type": "integer"
@@ -1107,7 +1044,84 @@
                 "type": "null"
               }
             ],
-            "title": "Totalstocks"
+            "title": "Breadtheligible"
+          },
+          "advance": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Advance"
+          },
+          "decline": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Decline"
+          },
+          "flat": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Flat"
+          },
+          "net": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Net"
+          },
+          "advancePct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Advancepct"
+          },
+          "declinePct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Declinepct"
+          },
+          "flatPct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Flatpct"
           },
           "unavailable": {
             "anyOf": [
@@ -1121,6 +1135,7 @@
             "title": "Unavailable"
           }
         },
+        "type": "object",
         "required": [
           "market",
           "status",
@@ -1130,8 +1145,7 @@
           "flat",
           "unavailable"
         ],
-        "title": "HomeMarketHealth",
-        "type": "object"
+        "title": "HomeMarketHealth"
       },
       "HomeMarketIndex": {
         "properties": {
@@ -1335,18 +1349,11 @@
       },
       "HomeMarketOverview": {
         "properties": {
-          "breadth": {
-            "items": {
-              "$ref": "#/components/schemas/HomeMarketBreadth"
-            },
-            "title": "Breadth",
-            "type": "array"
-          },
           "dataDate": {
             "anyOf": [
               {
-                "format": "date",
-                "type": "string"
+                "type": "string",
+                "format": "date"
               },
               {
                 "type": "null"
@@ -1354,14 +1361,73 @@
             ],
             "title": "Datadate"
           },
+          "updatedAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updatedat"
+          },
           "dataStatus": {
+            "type": "string",
             "enum": [
               "AVAILABLE",
               "PARTIAL",
               "UNAVAILABLE"
             ],
-            "title": "Datastatus",
-            "type": "string"
+            "title": "Datastatus"
+          },
+          "trackedStockCount": {
+            "type": "integer",
+            "title": "Trackedstockcount"
+          },
+          "trackedTopicCount": {
+            "type": "integer",
+            "title": "Trackedtopiccount"
+          },
+          "latestSnapshotTime": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latestsnapshottime"
+          },
+          "marketHealth": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/HomeMarketHealth"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "institutionFlows": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/HomeInstitutionalFlow"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "breadth": {
+            "items": {
+              "$ref": "#/components/schemas/HomeMarketBreadth"
+            },
+            "type": "array",
+            "title": "Breadth"
           },
           "distribution": {
             "anyOf": [
@@ -1377,20 +1443,15 @@
             "items": {
               "$ref": "#/components/schemas/HomeMarketIndex"
             },
-            "title": "Indices",
-            "type": "array"
+            "type": "array",
+            "title": "Indices"
           },
-          "latestSnapshotTime": {
-            "anyOf": [
-              {
-                "format": "date-time",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Latestsnapshottime"
+          "turnover": {
+            "items": {
+              "$ref": "#/components/schemas/HomeMarketTurnover"
+            },
+            "type": "array",
+            "title": "Turnover"
           },
           "limits": {
             "anyOf": [
@@ -1402,48 +1463,12 @@
               }
             ]
           },
-          "marketHealth": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/HomeMarketHealth"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
           "source": {
-            "title": "Source",
-            "type": "string"
-          },
-          "trackedStockCount": {
-            "title": "Trackedstockcount",
-            "type": "integer"
-          },
-          "trackedTopicCount": {
-            "title": "Trackedtopiccount",
-            "type": "integer"
-          },
-          "turnover": {
-            "items": {
-              "$ref": "#/components/schemas/HomeMarketTurnover"
-            },
-            "title": "Turnover",
-            "type": "array"
-          },
-          "updatedAt": {
-            "anyOf": [
-              {
-                "format": "date-time",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Updatedat"
+            "type": "string",
+            "title": "Source"
           }
         },
+        "type": "object",
         "required": [
           "dataDate",
           "updatedAt",
@@ -1454,8 +1479,7 @@
           "marketHealth",
           "source"
         ],
-        "title": "HomeMarketOverview",
-        "type": "object"
+        "title": "HomeMarketOverview"
       },
       "HomeMarketPulseEvent": {
         "properties": {
@@ -8404,6 +8428,673 @@
         ],
         "title": "ValidationError",
         "type": "object"
+      },
+      "HomeInstitutionalFlow": {
+        "properties": {
+          "contractVersion": {
+            "type": "string",
+            "title": "Contractversion"
+          },
+          "asOfDate": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Asofdate"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "AVAILABLE",
+              "PARTIAL",
+              "UNAVAILABLE"
+            ],
+            "title": "Status"
+          },
+          "freshness": {
+            "type": "string",
+            "title": "Freshness"
+          },
+          "markets": {
+            "items": {
+              "$ref": "#/components/schemas/MarketInstitutionalFlowTrendRead"
+            },
+            "type": "array",
+            "title": "Markets"
+          },
+          "sourceAsOf": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sourceasof"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source"
+          },
+          "unit": {
+            "type": "string",
+            "title": "Unit"
+          },
+          "scale": {
+            "type": "integer",
+            "title": "Scale"
+          }
+        },
+        "type": "object",
+        "required": [
+          "contractVersion",
+          "asOfDate",
+          "status",
+          "freshness",
+          "sourceAsOf",
+          "source",
+          "unit",
+          "scale"
+        ],
+        "title": "HomeInstitutionalFlow"
+      },
+      "HomeMarketSignal": {
+        "properties": {
+          "key": {
+            "type": "string",
+            "title": "Key"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "INFO",
+              "WATCH",
+              "WARNING"
+            ],
+            "title": "Severity"
+          },
+          "direction": {
+            "type": "string",
+            "title": "Direction"
+          },
+          "evidence": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Evidence"
+          },
+          "interpretation": {
+            "type": "string",
+            "title": "Interpretation"
+          }
+        },
+        "type": "object",
+        "required": [
+          "key",
+          "name",
+          "severity",
+          "direction",
+          "interpretation"
+        ],
+        "title": "HomeMarketSignal"
+      },
+      "HomeMarketSignalCatalog": {
+        "properties": {
+          "key": {
+            "type": "string",
+            "title": "Key"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "condition": {
+            "type": "string",
+            "title": "Condition"
+          },
+          "direction": {
+            "type": "string",
+            "title": "Direction"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          }
+        },
+        "type": "object",
+        "required": [
+          "key",
+          "name",
+          "condition",
+          "direction",
+          "description"
+        ],
+        "title": "HomeMarketSignalCatalog"
+      },
+      "MarketFlowLegRead": {
+        "properties": {
+          "buy": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Buy"
+          },
+          "sell": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sell"
+          },
+          "net": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Net"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value"
+          },
+          "unit": {
+            "type": "string",
+            "title": "Unit"
+          },
+          "scale": {
+            "type": "integer",
+            "title": "Scale"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          }
+        },
+        "type": "object",
+        "required": [
+          "buy",
+          "sell",
+          "net",
+          "unit",
+          "scale",
+          "status"
+        ],
+        "title": "MarketFlowLegRead"
+      },
+      "MarketInstitutionalFlowDailyRead": {
+        "properties": {
+          "market": {
+            "type": "string",
+            "title": "Market"
+          },
+          "tradingDate": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tradingdate"
+          },
+          "foreign": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MarketFlowLegRead"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "investmentTrust": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MarketFlowLegRead"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "dealer": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MarketFlowLegRead"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "total": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MarketFlowLegRead"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "sourceProvider": {
+            "type": "string",
+            "title": "Sourceprovider"
+          },
+          "sourceIdentity": {
+            "type": "string",
+            "title": "Sourceidentity"
+          },
+          "sourceDataset": {
+            "type": "string",
+            "title": "Sourcedataset"
+          },
+          "sourceEndpoint": {
+            "type": "string",
+            "title": "Sourceendpoint"
+          },
+          "adapterVersion": {
+            "type": "string",
+            "title": "Adapterversion"
+          },
+          "sourceAsOf": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sourceasof"
+          },
+          "publishedAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Publishedat"
+          },
+          "retrievedAt": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Retrievedat"
+          },
+          "availability": {
+            "type": "string",
+            "title": "Availability"
+          },
+          "freshness": {
+            "type": "string",
+            "title": "Freshness"
+          },
+          "statusReason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Statusreason"
+          },
+          "lineage": {
+            "type": "string",
+            "title": "Lineage"
+          },
+          "responseContentHash": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Responsecontenthash"
+          }
+        },
+        "type": "object",
+        "required": [
+          "market",
+          "tradingDate",
+          "foreign",
+          "investmentTrust",
+          "dealer",
+          "total",
+          "sourceProvider",
+          "sourceIdentity",
+          "sourceDataset",
+          "sourceEndpoint",
+          "adapterVersion",
+          "sourceAsOf",
+          "publishedAt",
+          "retrievedAt",
+          "availability",
+          "freshness",
+          "statusReason",
+          "lineage",
+          "responseContentHash"
+        ],
+        "title": "MarketInstitutionalFlowDailyRead"
+      },
+      "MarketFlowWindowRead": {
+        "properties": {
+          "requiredSessions": {
+            "type": "integer",
+            "title": "Requiredsessions"
+          },
+          "observedSessions": {
+            "type": "integer",
+            "title": "Observedsessions"
+          },
+          "complete": {
+            "type": "boolean",
+            "title": "Complete"
+          },
+          "foreignNet": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Foreignnet"
+          },
+          "investmentTrustNet": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Investmenttrustnet"
+          },
+          "dealerNet": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dealernet"
+          },
+          "totalNet": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Totalnet"
+          },
+          "unit": {
+            "type": "string",
+            "title": "Unit"
+          },
+          "scale": {
+            "type": "integer",
+            "title": "Scale"
+          }
+        },
+        "type": "object",
+        "required": [
+          "requiredSessions",
+          "observedSessions",
+          "complete",
+          "foreignNet",
+          "investmentTrustNet",
+          "dealerNet",
+          "totalNet",
+          "unit",
+          "scale"
+        ],
+        "title": "MarketFlowWindowRead"
+      },
+      "MarketPriceFlowRelationRead": {
+        "properties": {
+          "market": {
+            "type": "string",
+            "title": "Market"
+          },
+          "indexChange": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Indexchange"
+          },
+          "flowNet": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Flownet"
+          },
+          "marketDirection": {
+            "type": "string",
+            "title": "Marketdirection"
+          },
+          "flowDirection": {
+            "type": "string",
+            "title": "Flowdirection"
+          },
+          "directionRelation": {
+            "type": "string",
+            "title": "Directionrelation"
+          },
+          "availability": {
+            "type": "string",
+            "title": "Availability"
+          }
+        },
+        "type": "object",
+        "required": [
+          "market",
+          "indexChange",
+          "flowNet",
+          "marketDirection",
+          "flowDirection",
+          "directionRelation",
+          "availability"
+        ],
+        "title": "MarketPriceFlowRelationRead"
+      },
+      "MarketInstitutionalFlowTrendRead": {
+        "properties": {
+          "market": {
+            "type": "string",
+            "title": "Market"
+          },
+          "asOfDate": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Asofdate"
+          },
+          "availability": {
+            "type": "string",
+            "title": "Availability"
+          },
+          "freshness": {
+            "type": "string",
+            "title": "Freshness"
+          },
+          "current": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MarketInstitutionalFlowDailyRead"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "previous": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MarketInstitutionalFlowDailyRead"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "rolling5Session": {
+            "$ref": "#/components/schemas/MarketFlowWindowRead"
+          },
+          "rolling20Session": {
+            "$ref": "#/components/schemas/MarketFlowWindowRead"
+          },
+          "streaks": {
+            "additionalProperties": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "object",
+            "title": "Streaks"
+          },
+          "acceleration": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Acceleration"
+          },
+          "priceFlowRelation": {
+            "$ref": "#/components/schemas/MarketPriceFlowRelationRead"
+          },
+          "sourceAsOf": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sourceasof"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source"
+          },
+          "statusReason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Statusreason"
+          }
+        },
+        "type": "object",
+        "required": [
+          "market",
+          "asOfDate",
+          "availability",
+          "freshness",
+          "current",
+          "previous",
+          "rolling5Session",
+          "rolling20Session",
+          "streaks",
+          "acceleration",
+          "priceFlowRelation",
+          "sourceAsOf",
+          "source",
+          "statusReason"
+        ],
+        "title": "MarketInstitutionalFlowTrendRead"
       }
     }
   },

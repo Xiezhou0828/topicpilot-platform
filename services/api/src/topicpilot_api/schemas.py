@@ -989,10 +989,134 @@ class HomeMarketHealth(ApiModel):
     market: str
     status: str
     total_stocks: int | None = Field(alias="totalStocks")
+    observed: int | None = None
+    breadth_eligible: int | None = Field(alias="breadthEligible", default=None)
     advance: int | None
     decline: int | None
     flat: int | None
+    net: int | None = None
+    advance_pct: float | None = Field(alias="advancePct", default=None)
+    decline_pct: float | None = Field(alias="declinePct", default=None)
+    flat_pct: float | None = Field(alias="flatPct", default=None)
     unavailable: int | None
+
+
+class HomeMarketDistributionBucket(ApiModel):
+    key: str
+    label: str
+    count: int
+
+
+class HomeMarketDistribution(ApiModel):
+    market: str
+    status: str
+    eligible: int
+    excluded: int
+    buckets: list[HomeMarketDistributionBucket] = Field(default_factory=list)
+    coverage: dict[str, Any] = Field(default_factory=dict)
+    as_of: datetime | None = Field(alias="asOf")
+    source: str
+    reason_code: str | None = Field(alias="reasonCode", default=None)
+
+
+class HomeMarketSignal(ApiModel):
+    key: str
+    name: str
+    severity: Literal["INFO", "WATCH", "WARNING"]
+    direction: str
+    evidence: list[str] = Field(default_factory=list)
+    interpretation: str
+
+
+class HomeMarketSignalCatalog(ApiModel):
+    key: str
+    name: str
+    condition: str
+    direction: str
+    description: str
+
+
+class MarketFlowLegRead(ApiModel):
+    buy: Decimal | None
+    sell: Decimal | None
+    net: Decimal | None
+    value: Decimal | None = None
+    unit: str
+    scale: int
+    status: str
+
+
+class MarketInstitutionalFlowDailyRead(ApiModel):
+    market: str
+    trading_date: date | None = Field(alias="tradingDate")
+    foreign: MarketFlowLegRead | None
+    investment_trust: MarketFlowLegRead | None = Field(alias="investmentTrust")
+    dealer: MarketFlowLegRead | None
+    total: MarketFlowLegRead | None
+    source_provider: str = Field(alias="sourceProvider")
+    source_identity: str = Field(alias="sourceIdentity")
+    source_dataset: str = Field(alias="sourceDataset")
+    source_endpoint: str = Field(alias="sourceEndpoint")
+    adapter_version: str = Field(alias="adapterVersion")
+    source_as_of: datetime | None = Field(alias="sourceAsOf")
+    published_at: datetime | None = Field(alias="publishedAt")
+    retrieved_at: datetime = Field(alias="retrievedAt")
+    availability: str
+    freshness: str
+    status_reason: str | None = Field(alias="statusReason")
+    lineage: str
+    response_content_hash: str | None = Field(alias="responseContentHash")
+
+
+class MarketFlowWindowRead(ApiModel):
+    required_sessions: int = Field(alias="requiredSessions")
+    observed_sessions: int = Field(alias="observedSessions")
+    complete: bool
+    foreign_net: Decimal | None = Field(alias="foreignNet")
+    investment_trust_net: Decimal | None = Field(alias="investmentTrustNet")
+    dealer_net: Decimal | None = Field(alias="dealerNet")
+    total_net: Decimal | None = Field(alias="totalNet")
+    unit: str
+    scale: int
+
+
+class MarketPriceFlowRelationRead(ApiModel):
+    market: str
+    index_change: Decimal | None = Field(alias="indexChange")
+    flow_net: Decimal | None = Field(alias="flowNet")
+    market_direction: str = Field(alias="marketDirection")
+    flow_direction: str = Field(alias="flowDirection")
+    direction_relation: str = Field(alias="directionRelation")
+    availability: str
+
+
+class MarketInstitutionalFlowTrendRead(ApiModel):
+    market: str
+    as_of_date: date | None = Field(alias="asOfDate")
+    availability: str
+    freshness: str
+    current: MarketInstitutionalFlowDailyRead | None
+    previous: MarketInstitutionalFlowDailyRead | None
+    rolling_5_session: MarketFlowWindowRead = Field(alias="rolling5Session")
+    rolling_20_session: MarketFlowWindowRead = Field(alias="rolling20Session")
+    streaks: dict[str, dict[str, Any]]
+    acceleration: dict[str, Any]
+    price_flow_relation: MarketPriceFlowRelationRead = Field(alias="priceFlowRelation")
+    source_as_of: datetime | None = Field(alias="sourceAsOf")
+    source: str | None
+    status_reason: str | None = Field(alias="statusReason")
+
+
+class HomeInstitutionalFlow(ApiModel):
+    contract_version: str = Field(alias="contractVersion")
+    as_of_date: date | None = Field(alias="asOfDate")
+    status: Literal["AVAILABLE", "PARTIAL", "UNAVAILABLE"]
+    freshness: str
+    markets: list[MarketInstitutionalFlowTrendRead] = Field(default_factory=list)
+    source_as_of: datetime | None = Field(alias="sourceAsOf")
+    source: str | None
+    unit: str
+    scale: int
 
 
 class HomeMarketOverview(ApiModel):
@@ -1003,7 +1127,11 @@ class HomeMarketOverview(ApiModel):
     tracked_topic_count: int = Field(alias="trackedTopicCount")
     latest_snapshot_time: datetime | None = Field(alias="latestSnapshotTime")
     market_health: HomeMarketHealth | None = Field(alias="marketHealth")
+    institution_flows: HomeInstitutionalFlow | None = Field(
+        default=None, alias="institutionFlows"
+    )
     breadth: list[HomeMarketBreadth] = Field(default_factory=list)
+    distribution: HomeMarketDistribution | None = None
     indices: list[HomeMarketIndex] = Field(default_factory=list)
     turnover: list[HomeMarketTurnover] = Field(default_factory=list)
     limits: HomeMarketLimits | None = None
@@ -1015,6 +1143,10 @@ class HomeDailyFocus(ApiModel):
     temporary: bool
     headline: str
     bullets: list[str] = Field(default_factory=list)
+    signals: list[HomeMarketSignal] = Field(default_factory=list)
+    signal_catalog: list[HomeMarketSignalCatalog] = Field(
+        alias="signalCatalog", default_factory=list
+    )
     data_date: date | None = Field(alias="dataDate")
     source: str
     reason_code: str | None = Field(alias="reasonCode", default=None)

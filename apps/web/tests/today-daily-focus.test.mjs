@@ -28,8 +28,8 @@ test("Daily Focus headline and bullets remain backend-owned and ordered", async 
   ]);
   assert.match(adapter, /data: HomeDailyFocus \| null/);
   assert.match(adapter, /const data = resource\.sections\.dailyFocus/);
-  assert.match(page, /resource\.data\.headline/);
-  assert.match(page, /resource\.data\.bullets \?\? \[\]\)\.map/);
+  assert.match(page, /data\.headline/);
+  assert.match(page, /data\.bullets \?\? \[\]\)\.map/);
   assert.doesNotMatch(`${adapter}\n${page}`, /dailyFocus[\s\S]{0,500}\.sort\(/);
   assert.doesNotMatch(page, /dailyFocus[^;\n]*(?:new Date|toLocaleString|reduce|sort)/i);
 });

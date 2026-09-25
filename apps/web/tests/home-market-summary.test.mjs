@@ -13,7 +13,7 @@ test("V2 Home uses the frozen TodayMarket hierarchy", async () => {
   ]);
   assert.match(root, /V2Page path="\/"/);
   assert.match(v2, /<TodayMarketPage \/>/);
-  for (const marker of ["tp-home-overview-card", "market-overview-title", "tp-home-highlights-card", "mainline-title", "topic-pulse-title", "rotation-title", "opportunities-title"]) {
+  for (const marker of ["tp-home-overview-card", "market-overview-title", "tp-home-signals-card", "market-signals-title", "mainline-title", "topic-pulse-title", "rotation-title", "opportunities-title"]) {
     assert.match(home, new RegExp(marker));
   }
   assert.match(home, /useTodayMainlines/);

@@ -8,7 +8,7 @@ const read = (path) => readFile(new URL(path, app), "utf8");
 test("Today commercial surface is EOD-first and excludes mockup values", async () => {
   const page = await read("components/v2/TodayMarketPage.tsx");
 
-  for (const marker of ["市場概況", "今日市場重點", "今日主線", "今日題材動態", "快速升溫", "快速退潮", "今日機會"]) {
+  for (const marker of ["市場概況", "加權指數", "櫃買指數", "成交金額", "三大法人買賣超", "漲跌幅分布與市場廣度", "今日市場訊號", "今日主線", "今日題材動態", "快速升溫", "快速退潮", "今日機會"]) {
     assert.match(page, new RegExp(marker));
   }
   assert.match(page, /收盤後/);
@@ -25,6 +25,9 @@ test("Today distribution, ticker, and opportunity entry remain backend-owned", a
 
   assert.match(page, /marketDistribution\(overview\)/);
   assert.match(page, /distribution\.buckets/);
+  assert.match(page, /overview\.institutionFlows/);
+  assert.match(page, /resource\.data\?\.signals/);
+  assert.match(page, /法人逆勢|上市櫃分化|櫃買量能放大/);
   assert.doesNotMatch(page, /indices\.reduce|turnover\.reduce|distribution.*sort|changePct.*calculate/i);
   assert.match(page, /暫停題材動態/);
   assert.match(page, /href="\/opportunities"/);
