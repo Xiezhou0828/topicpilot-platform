@@ -85,7 +85,8 @@ handoff and the old task-doc-001 documentation set are historical inputs only.
 [Owner-approved development process](docs/policies/development-process.md) is the
 canonical detailed Process v2 policy for task declarations, task-specific terminal
 states, closure fields, interruption/resumption, release authority, parallel work, and
-worktree classifications. Process v2 applies to tasks created after its effective
+worktree classifications, and attribution of pre-existing validation-gate debt.
+Process v2 applies to tasks created after its effective
 timestamp and to existing tasks only when they cross a defined natural boundary.
 Existing `ACTIVE` / `WAITING` tasks may continue under their original contract; do not
 reopen historical tasks or invalidate accepted evidence solely for Process v2. For a

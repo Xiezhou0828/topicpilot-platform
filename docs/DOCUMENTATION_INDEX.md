@@ -37,8 +37,9 @@
 - [Execution roadmap](ROADMAP.md) — implementation sequence and milestone context.
 - [Work Orders](WORK_ORDERS.md) — scope/status index; individual work orders are not architecture authority.
 - [Owner-approved development process](policies/development-process.md) —
-  task-specific terminal states, authority boundaries, parallel work, release
-  envelope, and worktree lifecycle.
+  Process v2 effective scope, task-specific terminal states, baseline-debt
+  attribution, authority boundaries, parallel work, release envelope, and
+  worktree lifecycle.
 - [Operations runbook](operations/runbook.md)
 - [Deployment](operations/deployment.md)
 - [G2 official provider preflight](operations/provider-preflight.md)

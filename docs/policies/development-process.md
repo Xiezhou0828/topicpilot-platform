@@ -116,6 +116,26 @@ in the same task by default. Stop short only for a specific blocker, unresolved
 authority, collision, or dependency; record the reason and next authority boundary. A
 local commit alone does not satisfy `CANONICALIZED`.
 
+### Attribute existing validation-gate debt before expanding scope
+
+A failing candidate gate is not by itself evidence that the candidate introduced a
+regression. Before changing an unrelated artifact to clear an existing gate:
+
+1. Record the exact `BASELINE_SHA`, `CANDIDATE_SHA`, gate command, and relevant
+   environment, dependencies, configuration, and fixtures.
+2. Run the same gate in isolated baseline and candidate checkouts under equivalent
+   conditions. Compare exit status, failure signature, and relevant generated output or
+   machine-readable diff.
+3. Classify `PREEXISTING_BASELINE_DEBT` only when the baseline reproduces the failure
+   and the candidate has the same failure signature without new relevant output drift.
+   Classify `INTRODUCED_REGRESSION` when the candidate adds a failure or relevant drift;
+   use `UNKNOWN` when isolation or equivalence is insufficient.
+4. Keep a pre-existing failed gate visible. This attribution does not make the gate
+   pass or authorize a merge. Do not suppress or weaken the gate, regenerate an
+   unrelated canonical artifact, or change unrelated product semantics solely to make
+   the candidate green. Record the evidence and the separate follow-up/authority
+   boundary for resolving the debt.
+
 Migration integration uses a serial lane: first reconcile against canonical `main` and
 the latest verified Production migration revision; then finalize the migration on the
 latest canonical head. CI rejects duplicate revision identifiers, unresolved or
