@@ -1,5 +1,6 @@
 import { AppShell, Card, DataState, EmptyState, Freshness, PageContainer, SegmentedControl, Tabs } from "./V2Foundation";
 import TodayMarketPage from "./TodayMarketPage";
+import OpportunityMarketPage from "./OpportunityMarketPage";
 import TopicListPage from "./TopicListPage";
 
 const pageCopy: Record<string, { title: string; description: string; eyebrow: string }> = {
@@ -15,6 +16,7 @@ export default function V2Page({ path }: { path: string }) {
   if (path === "/") {
     return <AppShell currentPath={path}><TodayMarketPage /></AppShell>;
   }
+  if (path === "/opportunities") return <AppShell currentPath={path}><OpportunityMarketPage /></AppShell>;
   if (path === "/topics") return <TopicListPage />;
   const copy = pageCopy[path] ?? pageCopy["/"];
   return <AppShell currentPath={path}><PageContainer eyebrow={copy.eyebrow} title={copy.title} description={copy.description}><div className="tp-page-tools"><Freshness /><DataState state="資料待更新" /></div>{path !== "/ai-studio" && <Tabs items={["總覽", "最新變化", "研究清單"]} />}<div className="tp-foundation-grid"><Card><div className="tp-card-heading"><div><p className="tp-overline">Foundation preview</p><h2>{path === "/ai-studio" ? "研究入口已準備" : "內容區域已準備"}</h2></div><SegmentedControl items={["列表", "摘要"]} /></div><EmptyState title="尚未接入頁面資料" description="這是 V2 shared foundation 的 placeholder；本階段不加入商業內容或資料計算。" /></Card><Card className="tp-side-card"><p className="tp-overline">共用資料狀態</p><h2>一致的更新語意</h2><div className="tp-state-list"><DataState state="AVAILABLE" /><DataState state="STALE" /><DataState state="PROVIDER_ERROR" /></div></Card></div></PageContainer></AppShell>;
