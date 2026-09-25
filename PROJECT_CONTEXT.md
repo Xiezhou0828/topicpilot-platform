@@ -15,6 +15,7 @@ only the facts needed to resume work; it does not duplicate detailed reports.
 4. [Product decisions](docs/product/TOPICPILOT_PRODUCT_DECISIONS.md)
 5. [Architecture authority map](docs/architecture/README.md)
 6. [Documentation governance](docs/DOCUMENTATION_GOVERNANCE.md)
+7. [Owner-approved development process](docs/policies/development-process.md)
 
 ## Canonical boundary
 

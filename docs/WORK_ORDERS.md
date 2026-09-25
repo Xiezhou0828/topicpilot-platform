@@ -1,5 +1,11 @@
 # Work orders
 
+New task definitions and closures follow the
+[Owner-approved development process](policies/development-process.md). A newly
+started task must declare `TASK_TYPE` and `REQUIRED_TERMINAL_STATE`; historical
+entries are not retroactively rewritten. The register's status labels below are
+routing/evidence labels, not task terminal states or proof of completion.
+
 | TASK-DATA-HIST-002B | PASS / CANONICAL COMPLETE | Reconcile the full approved 507-symbol local six-month official OHLCV seed, canonical V2 historical-provider compatibility, lifecycle/lineage/idempotence evidence, and owner-document status without Production mutation or scheduler activation. | `docs/reports/TASK-DATA-HIST-002B_CANONICAL_RECONCILIATION_CLOSURE.md`, canonical `services/api/src/topicpilot_api/market_data/`, reference bundle, owner docs; isolated plain-table runner remains predecessor evidence and is not copied as a duplicate V2 path | Local read-only reconciliation: 507 symbols, 63,826 rows, 0 extra/invalid/duplicate/lineage/unexplained gaps; canonical focused tests 16 passed; source contract tests 9 passed; reference bundle validated; migration upgrade intentionally not run because local DB is at 0017 while canonical head is 0029 |
 
 | TASK-FE-BE-STOCK-005C | PASS / COMPLETE — FORMAL EOD FRONTEND VERTICAL | Wire the canonical StockEodRead projection into the V2 Stock Explorer and shared Drawer with render-only browser behavior, explicit null/status/Preview semantics, and preserved Drawer/topic-filter interactions. | `apps/web/app/components/v2/StockExplorerPage.tsx`, `apps/web/app/components/v2/StockEncyclopediaDrawer.tsx`, `apps/web/app/lib/stock-eod-presenter.mjs`, focused frontend tests, formal report, and concise owner-doc checkpoints; no backend, OpenAPI, generated client, provider, historical, Today, Topic, recommendation, Production, or `NEXT_TASK` change | Focused EOD tests 8 passed; full frontend tests 104 passed; TypeScript; changed-file ESLint; production frontend build; `git diff --check`; G1/G2/G3/Post-Close Canary preserved |
@@ -21,7 +27,20 @@
 
 ## Governing references
 
-This register owns work scope, status, modification whitelists, and validation evidence only. Permanent product rules are governed by the [Product Direction and Surfaces Contract](architecture/PRODUCT_SURFACES_AND_UX_CONTRACT.md); accepted decision context is preserved in [ADR-003](architecture/ADR-003_TOPICPILOT_PRODUCT_POSITIONING.md); milestone sequence belongs to the [Roadmap](ROADMAP.md); generation rules belong to [generation-model.md](architecture/generation-model.md).
+This register owns work scope, status, modification whitelists, and validation
+evidence only. Permanent product rules are governed by the
+[Product Direction and Surfaces Contract](architecture/PRODUCT_SURFACES_AND_UX_CONTRACT.md);
+accepted decision context is preserved in
+[ADR-003](architecture/ADR-003_TOPICPILOT_PRODUCT_POSITIONING.md); milestone
+sequence belongs to the [Roadmap](ROADMAP.md); generation rules belong to
+[generation-model.md](architecture/generation-model.md). Task-specific terminal
+states, authority boundaries, required declarations/closures, and worktree
+lifecycle belong to the [Owner-approved development process](policies/development-process.md).
+
+The allowed statuses below describe work-order routing/evidence only; they do
+not define an SDLC terminal state. A `BLOCKED` row is not successful task
+completion, and `PASS` alone does not prove the task reached its declared
+terminal state.
 
 Allowed statuses: `PLANNED`, `IN_PROGRESS`, `IMPLEMENTED / NOT VERIFIED`, `READY FOR PM REVIEW`, `PASS`, `FAIL`, `BLOCKED`, `NEEDS_PM_DECISION`.
 

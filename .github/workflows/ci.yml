@@ -48,6 +48,8 @@ jobs:
           cache-dependency-path: services/api/pyproject.toml
       - name: Install API and development dependencies
         run: python -m pip install -e "services/api[dev]"
+      - name: Validate Alembic revision graph
+        run: python infra/scripts/check_alembic_graph.py
       - name: Ruff baseline and no-new-debt gate
         run: |
           set -euo pipefail

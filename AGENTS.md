@@ -71,6 +71,7 @@ large status block into another document.
 | `docs/architecture/README.md` | Architecture authority map and four-layer documentation governance |
 | `docs/architecture/PRODUCT_SURFACES_AND_UX_CONTRACT.md` | Accepted product vision, surfaces, and frozen semantic boundaries |
 | `docs/DOCUMENTATION_INDEX.md` | Repository documentation index and historical/evidence navigation |
+| `docs/policies/development-process.md` | Owner-approved task outcomes, authority boundaries, parallel work, release envelope, and worktree lifecycle |
 
 Task reports, worklogs, screenshots, old handoffs, and task prompts are
 historical evidence. They may prove what happened, but do not override the
@@ -78,6 +79,15 @@ current owners above. This checkout has no `docs/DOCUMENTATION_AUTHORITY_INDEX.m
 or `docs/handoffs/TOPICPILOT_CURRENT_HANDOFF.md`; do not create duplicate
 authority files merely to satisfy an old task prompt. The 2026-08-13 chat
 handoff and the old task-doc-001 documentation set are historical inputs only.
+
+## Owner-approved task execution policy
+
+[Owner-approved development process](docs/policies/development-process.md) is the
+canonical detailed policy for task declarations, task-specific terminal states,
+closure fields, interruption/resumption, release authority, parallel work, and
+worktree classifications. At task start, declare `TASK_TYPE` and
+`REQUIRED_TERMINAL_STATE`; at closure, report the policy's required completion
+and provenance fields. This summary does not override that policy.
 
 ## SDLC lifecycle and canonicalization authority
 
@@ -222,6 +232,13 @@ or framework discovery change requires explicit provenance.
 
 ## Worktree lifecycle policy
 
+Use the classifications and retention/cleanup gates in the
+[Owner-approved development process](docs/policies/development-process.md).
+Commit, promotion, task completion, and archival do not by themselves authorize
+automatic worktree deletion. Once exact-target checks pass and no preservation
+need remains, route `CLEANUP_ELIGIBLE` worktrees through an explicit cleanup
+step or bounded cleanup pass; preserve unrelated or unattributed Owner state.
+
 Use the following lifecycle for every isolated task:
 
 1. Create an isolated worktree only when isolation is needed.
@@ -289,6 +306,14 @@ task-specific policy artifact is not checked out.
   paths or create a parallel version when a canonical file already exists.
 
 ## Required handoff report
+
+Every closure must include `TASK_TYPE`, `REQUIRED_TERMINAL_STATE`,
+`ACHIEVED_TERMINAL_STATE`, `TASK_COMPLETE`, `FOLLOW_UP_REQUIRED`, and
+`FOLLOW_UP_REASON`, plus the compact manifest (`TASK_ID`, `CANONICAL_SHA`,
+`SOURCE_SHA`, `MIGRATION_HEAD`, `FILES_CHANGED`, `SEMANTICS_CHANGED`,
+`PRODUCTION_DEPENDENCY`, `WORKTREE_STATUS`). See the
+[Owner-approved development process](docs/policies/development-process.md) for
+field semantics and start-of-task declaration.
 
 After a task, report:
 
