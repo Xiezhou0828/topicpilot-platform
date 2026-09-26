@@ -599,6 +599,9 @@ def build_market_distribution(
         ],
         "coverage": {
             "denominator": "active date-effective EQUITY instruments in TPE/TWO",
+            "universeLabel": (
+                "上市＋上櫃活躍、具日期效力的 EQUITY；分布僅納入正式收盤與前收完整者"
+            ),
             "eligibleUniverse": int(eligible_count),
             "percentageEligible": round(eligible / int(eligible_count) * 100, 4)
             if int(eligible_count)
@@ -775,6 +778,9 @@ def _market_index_payload(fact: Mapping[str, Any]) -> dict[str, Any]:
         "tradingDate": fact.get("tradingDate"),
         "session": fact.get("session"),
         "value": _number(fact.get("value")),
+        "open": _number(fact.get("open")),
+        "high": _number(fact.get("high")),
+        "low": _number(fact.get("low")),
         "previousClose": _number(fact.get("previousClose")),
         "change": _number(fact.get("change")),
         "changePct": _number(fact.get("changePct")),
@@ -800,6 +806,9 @@ def _index_fact_input(item: Any) -> dict[str, Any]:
             "tradingDate": getattr(item, "trading_date", None),
             "session": "CLOSE",
             "value": getattr(item, "value", None),
+            "open": getattr(item, "open", None),
+            "high": getattr(item, "high", None),
+            "low": getattr(item, "low", None),
             "previousClose": getattr(item, "previous_close", None),
             "change": getattr(item, "change", None),
             "changePct": getattr(item, "change_pct", None),
@@ -871,6 +880,116 @@ def _derived_total_turnover(
         "status": "AVAILABLE",
         "reasonCode": None,
     }
+
+
+def _read_previous_session_turnover(
+    session: Session, trading_date: date | None
+) -> dict[str, Any] | None:
+    """Read the latest prior formal close session without using calendar dates."""
+
+    if trading_date is None:
+        return None
+    try:
+        rows = [
+            dict(row)
+            for row in session.execute(
+                text(
+                    """
+                    SELECT f.market, f.trading_date AS "tradingDate",
+                           f.session, f.value, f.currency, f.unit, f.scale,
+                           f.as_of_at AS "asOf", f.source, f.lineage,
+                           f.publication_state AS status, f.reason_code AS "reasonCode",
+                           p.published_at AS "publishedAt"
+                    FROM topicpilot.home_market_facts f
+                    JOIN topicpilot.home_publications p ON p.id = f.publication_id
+                    WHERE f.fact_type = 'TURNOVER'
+                      AND f.market IN ('TPE', 'TWO')
+                      AND f.trading_date < :trading_date
+                      AND p.publication_state = 'PUBLISHED'
+                      AND f.publication_state IN ('MATERIALIZED', 'VALIDATED', 'PUBLISHED')
+                    ORDER BY f.trading_date DESC, p.published_at DESC NULLS LAST,
+                             f.created_at DESC, f.market
+                    """
+                ),
+                {"trading_date": trading_date},
+            ).mappings()
+        ]
+    except SQLAlchemyError:
+        session.rollback()
+        return None
+
+    by_date: dict[date, list[dict[str, Any]]] = defaultdict(list)
+    for row in rows:
+        row_date = _as_date(row.get("tradingDate"))
+        if row_date is not None:
+            by_date[row_date].append(row)
+    for candidate_date in sorted(by_date, reverse=True):
+        total = _derived_total_turnover(by_date[candidate_date])
+        if total is not None:
+            return total
+    return None
+
+
+def _turnover_comparison(
+    current: Mapping[str, Any], previous: Mapping[str, Any] | None
+) -> dict[str, Any] | None:
+    """Build a formal current-vs-prior-session comparison, or stay unavailable."""
+
+    if previous is None:
+        return None
+    try:
+        current_value = Decimal(str(current.get("value")))
+        previous_value = Decimal(str(previous.get("value")))
+    except (InvalidOperation, TypeError, ValueError):
+        return None
+    if (
+        not current_value.is_finite()
+        or not previous_value.is_finite()
+        or previous_value <= 0
+        or str(current.get("status") or "").upper()
+        not in {"AVAILABLE", "PUBLISHED", "FORMAL"}
+        or str(previous.get("status") or "").upper()
+        not in {"AVAILABLE", "PUBLISHED", "FORMAL"}
+        or str(current.get("currency") or "").upper() != "TWD"
+        or str(previous.get("currency") or "").upper() != "TWD"
+        or str(current.get("unit") or "").upper() != "TWD"
+        or str(previous.get("unit") or "").upper() != "TWD"
+        or current.get("scale") != 0
+        or previous.get("scale") != 0
+    ):
+        return None
+    absolute_change = current_value - previous_value
+    return {
+        "tradingDate": previous.get("tradingDate"),
+        "session": previous.get("session", "CLOSE"),
+        "value": _number(previous_value),
+        "absoluteChange": _number(absolute_change),
+        "changePct": _number(absolute_change / previous_value * Decimal("100")),
+        "currency": "TWD",
+        "unit": "TWD",
+        "scale": 0,
+        "asOf": previous.get("asOf"),
+        "source": previous.get("source"),
+        "lineage": "formal prior published trading session; deterministic TPE/TWO total",
+        "status": "AVAILABLE",
+        "reasonCode": None,
+    }
+
+
+def _attach_turnover_comparison(
+    turnover: Sequence[Mapping[str, Any]], previous: Mapping[str, Any] | None
+) -> list[dict[str, Any]]:
+    """Attach prior-session comparison to the formal TOTAL row only."""
+
+    result = [dict(item) for item in turnover]
+    for index, item in enumerate(result):
+        if item.get("market") == "TOTAL":
+            result[index] = {
+                **item,
+                "previousSession": _turnover_comparison(item, previous),
+            }
+            break
+    return result
 
 
 def _as_date(value: Any) -> date | None:
@@ -1281,6 +1400,7 @@ def materialize_home_v2(
                     "unavailable": int(fact["unavailable"] or 0) if available else 0,
                     "coverage": {
                         "denominator": "official whole-market stock aggregate",
+                        "universeLabel": "TWSE／TPEx 官方全市場股票彙總的正式廣度觀測",
                         "eligible": fact.get("eligible"),
                         "observed": fact.get("observed"),
                         "authority": fact.get("source"),
@@ -1315,6 +1435,9 @@ def materialize_home_v2(
                 "unavailable": int(row["unavailable"] or 0),
                 "coverage": {
                     "denominator": "active date-effective EQUITY instruments in TPE/TWO",
+                    "universeLabel": (
+                        "上市＋上櫃活躍、具日期效力的 EQUITY 之正式日線觀測"
+                    ),
                     "eligible": int(row["eligible"] or 0),
                     "observed": int(row["observed"] or 0),
                 },
@@ -1429,6 +1552,9 @@ def materialize_home_v2(
     total_turnover = _derived_total_turnover(turnover)
     if total_turnover is not None:
         turnover.append(total_turnover)
+    turnover = _attach_turnover_comparison(
+        turnover, _read_previous_session_turnover(session, trading_date)
+    )
     available_indices = [item for item in indices if item.get("status") == "AVAILABLE" and item.get("value") is not None]
     available_turnover = [item for item in turnover if item.get("status") == "AVAILABLE" and item.get("value") is not None]
     if aggregate_inputs:
@@ -1821,6 +1947,21 @@ def read_latest_home_publication(session: Session) -> dict[str, Any] | None:
                 )
             except SQLAlchemyError:
                 session.rollback()
+        turnover = enriched_overview.get("turnover")
+        if isinstance(turnover, list):
+            if not any(
+                isinstance(item, Mapping) and item.get("market") == "TOTAL"
+                for item in turnover
+            ):
+                total_turnover = _derived_total_turnover(
+                    [item for item in turnover if isinstance(item, Mapping)]
+                )
+                if total_turnover is not None:
+                    turnover = [*turnover, total_turnover]
+            enriched_overview["turnover"] = _attach_turnover_comparison(
+                [item for item in turnover if isinstance(item, Mapping)],
+                _read_previous_session_turnover(session, trading_date),
+            )
         payload["marketOverview"] = enriched_overview
     return normalize_home_publication_for_read(payload)
 

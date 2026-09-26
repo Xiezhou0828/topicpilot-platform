@@ -940,6 +940,9 @@ class HomeMarketIndex(ApiModel):
     trading_date: date | None = Field(alias="tradingDate")
     session: str | None = None
     value: float | None
+    open: float | None = None
+    high: float | None = None
+    low: float | None = None
     previous_close: float | None = Field(alias="previousClose")
     change: float | None
     change_pct: float | None = Field(alias="changePct")
@@ -955,6 +958,25 @@ class HomeMarketTurnover(ApiModel):
     trading_date: date | None = Field(alias="tradingDate")
     session: str | None = None
     value: float | None
+    currency: str | None
+    unit: str | None
+    scale: int | None
+    as_of: datetime | None = Field(alias="asOf")
+    source: str | None = None
+    lineage: str | None = None
+    status: str
+    reason_code: str | None = Field(alias="reasonCode", default=None)
+    previous_session: HomeMarketTurnoverPreviousSession | None = Field(
+        alias="previousSession", default=None
+    )
+
+
+class HomeMarketTurnoverPreviousSession(ApiModel):
+    trading_date: date | None = Field(alias="tradingDate")
+    session: str | None = None
+    value: float | None
+    absolute_change: float | None = Field(alias="absoluteChange")
+    change_pct: float | None = Field(alias="changePct")
     currency: str | None
     unit: str | None
     scale: int | None

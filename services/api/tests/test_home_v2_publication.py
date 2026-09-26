@@ -5,6 +5,7 @@ from datetime import UTC, date, datetime, timedelta
 from topicpilot_api.home_v2_publication import (
     SectionResult,
     _aggregate_home_institutional_flow,
+    _turnover_comparison,
     build_daily_focus,
     build_market_distribution,
     build_market_signals,
@@ -235,6 +236,35 @@ def test_home_institutional_flow_aggregate_requires_matching_exchange_facts():
     assert aggregate["foreign"]["sell"] == 20
     assert aggregate["foreign"]["net"] == -1
     assert aggregate["total"]["net"] == -1
+
+
+def test_turnover_comparison_uses_formal_prior_session_and_fails_closed_for_missing_data():
+    current = {
+        "tradingDate": date(2026, 8, 24),
+        "value": 1_000,
+        "currency": "TWD",
+        "unit": "TWD",
+        "scale": 0,
+        "status": "AVAILABLE",
+    }
+    previous = {
+        "tradingDate": date(2026, 8, 21),
+        "session": "CLOSE",
+        "value": 800,
+        "currency": "TWD",
+        "unit": "TWD",
+        "scale": 0,
+        "status": "AVAILABLE",
+    }
+
+    comparison = _turnover_comparison(current, previous)
+
+    assert comparison is not None
+    assert comparison["tradingDate"] == date(2026, 8, 21)
+    assert comparison["value"] == 800
+    assert comparison["absoluteChange"] == 200
+    assert comparison["changePct"] == 25
+    assert _turnover_comparison(current, None) is None
 
 
 def test_home_gate_requires_formal_market_facts_but_topics_and_focus_are_section_level():

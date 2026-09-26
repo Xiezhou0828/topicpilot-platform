@@ -3,6 +3,7 @@ import type { components } from "./generated-api";
 export type HomeMarketOverview = components["schemas"]["HomeMarketOverview"];
 export type HomeMarketIndex = components["schemas"]["HomeMarketIndex"];
 export type HomeMarketTurnover = components["schemas"]["HomeMarketTurnover"];
+export type HomeMarketTurnoverPreviousSession = components["schemas"]["HomeMarketTurnoverPreviousSession"];
 export type HomeMarketDistribution = components["schemas"]["HomeMarketDistribution"];
 
 export type MarketFactState = "AVAILABLE" | "PARTIAL" | "UNAVAILABLE";
@@ -69,11 +70,18 @@ export function marketIndexDisplayName(index: HomeMarketIndex): string {
 }
 
 export function formatTurnoverHundredMillion(fact: HomeMarketTurnover): string {
-  if (!marketFactIsAvailable(fact.status, fact.value) || !finiteNumber(fact.value)) return "尚未提供";
-  const currency = fact.currency?.trim().toUpperCase();
-  const unit = fact.unit?.trim().toUpperCase();
-  if (currency !== "TWD" || unit !== "TWD") return "單位尚未確認";
-  return `${formatMarketNumber(fact.value / 100_000_000)} 億`;
+  return formatTurnoverHundredMillionValue(fact.value, fact.currency, fact.unit, fact.status);
+}
+
+export function formatTurnoverHundredMillionValue(
+  value: number | null | undefined,
+  currency: string | null | undefined,
+  unit: string | null | undefined,
+  status: string | null | undefined,
+): string {
+  if (!marketFactIsAvailable(status, value) || !finiteNumber(value)) return "尚未提供";
+  if (currency?.trim().toUpperCase() !== "TWD" || unit?.trim().toUpperCase() !== "TWD") return "單位尚未確認";
+  return `${formatMarketNumber(value / 100_000_000)} 億`;
 }
 
 export function marketBreadthNet(
@@ -119,7 +127,21 @@ export function formatMarketPercent(value: number | null | undefined): string {
 }
 
 export function formatMarketShare(value: number | null | undefined): string {
-  return finiteNumber(value) ? `${formatMarketNumber(value)}%` : "尚未提供";
+  return finiteNumber(value) ? `${value.toFixed(1)}%` : "尚未提供";
+}
+
+export function formatMarketDistributionLabel(key: string, fallback: string): string {
+  return {
+    PCT_GE_10: "漲幅 ≥10%",
+    PCT_7_TO_10: "+7~10%",
+    PCT_3_TO_7: "+3~7%",
+    PCT_0_TO_3: "0~3%",
+    FLAT: "平盤",
+    PCT_NEG_0_TO_3: "-3~0%",
+    PCT_NEG_3_TO_7: "-7~-3%",
+    PCT_NEG_7_TO_10: "-10~-7%",
+    PCT_LE_NEG_10: "跌幅 ≥10%",
+  }[key] ?? fallback;
 }
 
 export function formatMarketDate(value: string | null | undefined): string {

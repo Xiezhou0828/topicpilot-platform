@@ -27,11 +27,13 @@ import {
 import {
   formatMarketAsOf,
   formatMarketDate,
+  formatMarketDistributionLabel,
   formatMarketNumber,
   formatMarketPercent as formatMarketPercentValue,
   formatMarketShare,
   formatSignedMarketNumber,
   formatTurnoverHundredMillion,
+  formatTurnoverHundredMillionValue,
   marketBreadthNet,
   marketDistribution,
   marketFactIsAvailable,
@@ -102,16 +104,19 @@ function DatePanel({ dataDate, updatedAt }: { dataDate: string | null; updatedAt
   return <div className="tp-home-date-panel"><CalendarDays size={22} aria-hidden="true" /><div><strong>{dataDate ? `${formatMarketDate(dataDate)}（收盤）` : "資料日尚未提供"}</strong><span>收盤後 · 資料更新時間：{updatedAt ? formatMarketAsOf(updatedAt) : "尚未提供"}</span></div><Info size={18} aria-hidden="true" /></div>;
 }
 
-function IndexFactCard({ label, market, value, change, changePct, status }: { label: string; market: string; value: number | null; change: number | null; changePct: number | null; status: string }) {
+function IndexFactCard({ label, market, value, open, high, low, change, changePct, status }: { label: string; market: string; value: number | null; open?: number | null; high?: number | null; low?: number | null; change: number | null; changePct: number | null; status: string }) {
   const available = marketFactIsAvailable(status, value);
   const direction = typeof change === "number" && change > 0 ? "up" : typeof change === "number" && change < 0 ? "down" : "flat";
-  return <article className={`tp-home-target-fact-card tp-home-target-index-card tp-home-target-${direction}`}><div className="tp-home-target-card-title"><strong>{label}</strong><span>{market}</span></div><strong className="tp-home-target-index-value">{available ? formatMarketNumber(value) : "尚未提供"}</strong><span className="tp-home-target-index-change">{available && change !== null ? `${change > 0 ? "▲" : change < 0 ? "▼" : "—"} ${formatSignedMarketNumber(change)} 點` : "漲跌點尚未提供"}{available && changePct !== null && ` · ${formatMarketPercent(changePct)}`}</span></article>;
+  return <article className={`tp-home-target-fact-card tp-home-target-index-card tp-home-target-${direction}`}><div className="tp-home-target-card-title"><strong>{label}</strong><span>{market}</span></div><strong className="tp-home-target-index-value">{available ? formatMarketNumber(value) : "尚未提供"}</strong><span className="tp-home-target-index-change" aria-label={available && change !== null ? `漲跌 ${formatSignedMarketNumber(change)} 點${changePct !== null ? `，${formatMarketPercent(changePct)}` : ""}` : "漲跌點尚未提供"}>{available && change !== null ? `${change > 0 ? "▲" : change < 0 ? "▼" : "—"} ${formatSignedMarketNumber(change)} 點` : "漲跌點尚未提供"}{available && changePct !== null && ` · ${formatMarketPercent(changePct)}`}</span><div className="tp-home-target-index-stats" aria-label={`${label}日內 OHLC`}><div><span>開盤</span><strong>{formatMarketNumber(open)}</strong></div><div><span>最高</span><strong>{formatMarketNumber(high)}</strong></div><div><span>最低</span><strong>{formatMarketNumber(low)}</strong></div></div></article>;
 }
 
 function TurnoverFactCard({ overview }: { overview: NonNullable<TodayMarketOverviewResource["data"]> }) {
   const turnoverByMarket = new Map(marketTurnover(overview).map((fact) => [fact.market, fact]));
   const total = turnoverByMarket.get("TOTAL");
-  return <article className="tp-home-target-fact-card tp-home-target-turnover-card"><div className="tp-home-target-card-title"><strong>成交金額</strong><span><Coins size={18} aria-hidden="true" /> 新台幣</span></div><div className="tp-home-target-turnover-main"><strong>{total ? formatTurnoverHundredMillion(total) : "尚未提供"}</strong><span>總成交金額</span></div><div className="tp-home-target-turnover-rows"><div><span>上市</span><strong>{turnoverByMarket.get("TPE") ? formatTurnoverHundredMillion(turnoverByMarket.get("TPE")!) : "尚未提供"}</strong></div><div><span>上櫃</span><strong>{turnoverByMarket.get("TWO") ? formatTurnoverHundredMillion(turnoverByMarket.get("TWO")!) : "尚未提供"}</strong></div></div></article>;
+  const comparison = total?.previousSession;
+  const comparisonAvailable = comparison?.status === "AVAILABLE";
+  const comparisonTone = typeof comparison?.absoluteChange === "number" && comparison.absoluteChange > 0 ? "is-up" : typeof comparison?.absoluteChange === "number" && comparison.absoluteChange < 0 ? "is-down" : "is-flat";
+  return <article className="tp-home-target-fact-card tp-home-target-turnover-card"><div className="tp-home-target-card-title"><strong>成交金額</strong><span><Coins size={18} aria-hidden="true" /> 新台幣</span></div><div className="tp-home-target-turnover-main"><strong>{total ? formatTurnoverHundredMillion(total) : "尚未提供"}</strong><span>總成交金額</span></div><div className="tp-home-target-turnover-rows"><div><span>上市</span><strong>{turnoverByMarket.get("TPE") ? formatTurnoverHundredMillion(turnoverByMarket.get("TPE")!) : "尚未提供"}</strong></div><div><span>上櫃</span><strong>{turnoverByMarket.get("TWO") ? formatTurnoverHundredMillion(turnoverByMarket.get("TWO")!) : "尚未提供"}</strong></div></div><div className={`tp-home-target-turnover-compare ${comparisonAvailable ? comparisonTone : "is-unavailable"}`} aria-label="較前一交易日成交金額變化"><span>較前一交易日</span><strong>{comparisonAvailable ? formatTurnoverHundredMillionValue(comparison.absoluteChange, comparison.currency, comparison.unit, comparison.status) : "尚未提供"}</strong><b>{comparisonAvailable && typeof comparison.changePct === "number" ? `${comparison.changePct > 0 ? "+" : ""}${comparison.changePct.toFixed(2)}%` : "百分比尚未提供"}</b><small>{comparisonAvailable ? `前一交易日總成交 ${formatTurnoverHundredMillionValue(comparison.value, comparison.currency, comparison.unit, comparison.status)} · ${formatMarketDate(comparison.tradingDate)}` : "前一交易日正式成交金額尚未提供"}</small></div></article>;
 }
 
 function InstitutionalFactCard({ overview }: { overview: NonNullable<TodayMarketOverviewResource["data"]> }) {
@@ -133,16 +138,22 @@ function InstitutionalFactCard({ overview }: { overview: NonNullable<TodayMarket
 function DistributionCard({ overview }: { overview: NonNullable<TodayMarketOverviewResource["data"]> }) {
   const distribution = marketDistribution(overview);
   const available = distribution?.status === "AVAILABLE" && distribution.eligible > 0;
-  return <article aria-label="漲跌幅分布與市場廣度" className="tp-home-target-distribution-card"><div className="tp-home-target-subheading"><h3>漲跌幅分布（上市＋上櫃）</h3><Info size={17} aria-hidden="true" />{available && <strong>總家數 {formatMarketNumber(distribution.eligible)}</strong>}</div>{available ? <div className="tp-home-target-bars">{(distribution.buckets ?? []).map((bucket) => <div className="tp-home-target-bar-item" key={bucket.key}><span>{bucket.label}</span><strong>{formatMarketNumber(bucket.count)} · {formatMarketShare(bucket.percentage)}</strong><i style={{ height: `${Math.max(3, Math.min(90, bucket.percentage ?? 0))}px` }} /></div>)}</div> : <div className="tp-home-target-empty">正式漲跌幅分布目前尚未提供。</div>}</article>;
+  const coverage = distribution?.coverage ?? {};
+  const distributionUniverse = typeof coverage.universeLabel === "string" ? coverage.universeLabel : typeof coverage.denominator === "string" ? coverage.denominator : "正式分布統計範圍尚未提供";
+  const maxPercentage = available ? Math.max(...(distribution.buckets ?? []).map((bucket) => bucket.percentage ?? 0), 1) : 1;
+  return <article aria-label="漲跌幅分布與市場廣度" className="tp-home-target-distribution-card"><div className="tp-home-target-subheading"><div><h3>漲跌幅分布（上市＋上櫃）</h3><span className="tp-home-target-helper">完整收盤／前收資料 · 排除未成交或缺值</span></div><span className="tp-home-target-info" title={distributionUniverse} aria-label={`分布統計範圍：${distributionUniverse}`}><Info size={17} aria-hidden="true" /></span>{available && <strong>總家數 {formatMarketNumber(distribution.eligible)}</strong>}</div>{available ? <div className="tp-home-target-bars">{(distribution.buckets ?? []).map((bucket) => <div className="tp-home-target-bar-item" key={bucket.key}><span title={bucket.label}>{formatMarketDistributionLabel(bucket.key, bucket.label)}</span><strong>{formatMarketNumber(bucket.count)} · {formatMarketShare(bucket.percentage)}</strong><i style={{ height: `${Math.max(5, Math.round(((bucket.percentage ?? 0) / maxPercentage) * 62))}px` }} /></div>)}</div> : <div className="tp-home-target-empty">正式漲跌幅分布目前尚未提供。</div>}</article>;
 }
 
 function BreadthCard({ overview }: { overview: NonNullable<TodayMarketOverviewResource["data"]> }) {
   const health = overview.marketHealth;
+  const breadthCoverage = (overview.breadth ?? []).find((item) => item.coverage?.universeLabel || item.coverage?.denominator)?.coverage ?? {};
+  const breadthUniverse = typeof breadthCoverage.universeLabel === "string" ? breadthCoverage.universeLabel : typeof breadthCoverage.denominator === "string" ? breadthCoverage.denominator : "正式廣度統計範圍尚未提供";
   const advance = health && health.advance;
   const decline = health && health.decline;
   const flat = health && health.flat;
   const net = typeof health?.net === "number" ? health.net : marketBreadthNet(health);
-  return <article className="tp-home-target-breadth-card"><div className="tp-home-target-subheading"><h3>市場廣度</h3><Info size={17} aria-hidden="true" /></div><div className="tp-home-target-breadth-rows"><div className="up"><ArrowUp size={20} aria-hidden="true" /><span>上漲家數</span><strong>{advance ?? "尚未提供"}</strong></div><div className="down"><ArrowDown size={20} aria-hidden="true" /><span>下跌家數</span><strong>{decline ?? "尚未提供"}</strong></div><div><span className="tp-home-target-flat-mark">—</span><span>平盤家數</span><strong>{flat ?? "尚未提供"}</strong></div></div>{net !== null ? <small>差值 {formatSignedMarketNumber(net)}</small> : <span className="tp-home-target-unavailable-note">市場廣度目前尚未提供</span>}</article>;
+  const total = typeof health?.breadthEligible === "number" ? health.breadthEligible : advance !== null && decline !== null && flat !== null ? (advance ?? 0) + (decline ?? 0) + (flat ?? 0) : null;
+  return <article className="tp-home-target-breadth-card"><div className="tp-home-target-subheading"><div><h3>市場廣度</h3><span className="tp-home-target-helper">官方全市場廣度彙總</span></div><span className="tp-home-target-info" title={breadthUniverse} aria-label={`廣度統計範圍：${breadthUniverse}`}><Info size={17} aria-hidden="true" /></span></div><div className="tp-home-target-breadth-rows"><div className="up"><ArrowUp size={20} aria-hidden="true" /><span>上漲家數</span><strong>{advance ?? "尚未提供"}</strong></div><div className="down"><ArrowDown size={20} aria-hidden="true" /><span>下跌家數</span><strong>{decline ?? "尚未提供"}</strong></div><div><span className="tp-home-target-flat-mark">—</span><span>平盤家數</span><strong>{flat ?? "尚未提供"}</strong></div><div className="tp-home-target-breadth-total"><span aria-hidden="true">Σ</span><span>總家數</span><strong>{total ?? "尚未提供"}</strong></div></div>{net !== null ? <small>差值 {formatSignedMarketNumber(net)}</small> : <span className="tp-home-target-unavailable-note">市場廣度目前尚未提供</span>}</article>;
 }
 
 function MarketOverviewCard({ loading, resource }: { loading: boolean; resource: TodayMarketOverviewResource }) {

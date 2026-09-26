@@ -1287,6 +1287,17 @@
             ],
             "title": "Changepct"
           },
+          "high": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "High"
+          },
           "indexCode": {
             "title": "Indexcode",
             "type": "string"
@@ -1306,9 +1317,31 @@
             ],
             "title": "Lineage"
           },
+          "low": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Low"
+          },
           "market": {
             "title": "Market",
             "type": "string"
+          },
+          "open": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Open"
           },
           "previousClose": {
             "anyOf": [
@@ -1747,6 +1780,16 @@
             "title": "Market",
             "type": "string"
           },
+          "previousSession": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/HomeMarketTurnoverPreviousSession"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "reasonCode": {
             "anyOf": [
               {
@@ -1841,6 +1884,161 @@
           "status"
         ],
         "title": "HomeMarketTurnover",
+        "type": "object"
+      },
+      "HomeMarketTurnoverPreviousSession": {
+        "properties": {
+          "absoluteChange": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Absolutechange"
+          },
+          "asOf": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Asof"
+          },
+          "changePct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Changepct"
+          },
+          "currency": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Currency"
+          },
+          "lineage": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lineage"
+          },
+          "reasonCode": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reasoncode"
+          },
+          "scale": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Scale"
+          },
+          "session": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Session"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "tradingDate": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tradingdate"
+          },
+          "unit": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value"
+          }
+        },
+        "required": [
+          "tradingDate",
+          "value",
+          "absoluteChange",
+          "changePct",
+          "currency",
+          "unit",
+          "scale",
+          "asOf",
+          "status"
+        ],
+        "title": "HomeMarketTurnoverPreviousSession",
         "type": "object"
       },
       "HomeOpportunityStock": {

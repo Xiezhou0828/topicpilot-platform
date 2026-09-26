@@ -1186,14 +1186,20 @@ export interface components {
             change: number | null;
             /** Changepct */
             changePct: number | null;
+            /** High */
+            high?: number | null;
             /** Indexcode */
             indexCode: string;
             /** Indexname */
             indexName: string;
             /** Lineage */
             lineage?: string | null;
+            /** Low */
+            low?: number | null;
             /** Market */
             market: string;
+            /** Open */
+            open?: number | null;
             /** Previousclose */
             previousClose: number | null;
             /** Reasoncode */
@@ -1311,6 +1317,36 @@ export interface components {
             lineage?: string | null;
             /** Market */
             market: string;
+            previousSession?: components["schemas"]["HomeMarketTurnoverPreviousSession"] | null;
+            /** Reasoncode */
+            reasonCode?: string | null;
+            /** Scale */
+            scale: number | null;
+            /** Session */
+            session?: string | null;
+            /** Source */
+            source?: string | null;
+            /** Status */
+            status: string;
+            /** Tradingdate */
+            tradingDate: string | null;
+            /** Unit */
+            unit: string | null;
+            /** Value */
+            value: number | null;
+        };
+        /** HomeMarketTurnoverPreviousSession */
+        HomeMarketTurnoverPreviousSession: {
+            /** Absolutechange */
+            absoluteChange: number | null;
+            /** Asof */
+            asOf: string | null;
+            /** Changepct */
+            changePct: number | null;
+            /** Currency */
+            currency: string | null;
+            /** Lineage */
+            lineage?: string | null;
             /** Reasoncode */
             reasonCode?: string | null;
             /** Scale */
