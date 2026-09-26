@@ -1042,6 +1042,24 @@ def normalize_home_publication_for_read(payload: Mapping[str, Any]) -> dict[str,
             ):
                 health_copy["breadthEligible"] = advance + decline + flat
             overview["marketHealth"] = health_copy
+    breadth = overview.get("breadth")
+    if isinstance(breadth, list):
+        overview["breadth"] = [
+            {
+                **item,
+                "coverage": {
+                    **(item.get("coverage") or {}),
+                    "universeLabel": (
+                        item.get("coverage", {}).get("universeLabel")
+                        if isinstance(item.get("coverage"), Mapping)
+                        and item.get("coverage", {}).get("universeLabel")
+                        else "TWSE／TPEx 官方全市場股票彙總的正式廣度觀測"
+                    ),
+                },
+            }
+            for item in breadth
+            if isinstance(item, Mapping)
+        ]
     turnover = overview.get("turnover")
     if isinstance(turnover, list) and not any(
         isinstance(item, Mapping) and item.get("market") == "TOTAL" for item in turnover
