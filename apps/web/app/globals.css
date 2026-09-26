@@ -4283,3 +4283,44 @@ tbody tr:hover td { background: rgba(86, 198, 189, 0.06); }
 @media (max-width:760px){.tp-opportunity-page{padding:18px 16px 42px}.tp-opportunity-heading{display:grid;gap:14px}.tp-opportunity-heading h1{font-size:28px}.tp-opportunity-heading-actions{align-items:flex-start;flex-direction:column;gap:10px}.tp-opportunity-heading-actions .tp-button{width:100%;justify-content:center}.tp-opportunity-summary-grid{grid-template-columns:1fr}.tp-opportunity-topic-grid{grid-template-columns:1fr}.tp-opportunity-table{overflow-x:auto}.tp-opportunity-row{width:760px}.tp-opportunity-footer{align-items:flex-start;flex-direction:column}}
 
 .tp-home-target-mini-trend{width:82px;height:24px;margin-left:auto;overflow:visible}.tp-home-target-mini-trend path{fill:none;stroke:#ed6168;stroke-width:2;stroke-linecap:round}.tp-home-target-mini-trend--down path{stroke:#36ad83}.tp-home-target-mini-trend--flat path{stroke:#938c84}.tp-home-target-mainline-card .tp-grade-chip{display:none}
+.tp-home-target-overview-card{padding:20px 22px 12px}
+.tp-home-target-top-grid{gap:10px;margin-top:10px}
+.tp-home-target-fact-card{min-height:180px;padding:15px 17px}
+.tp-home-target-card-title strong{font-size:17px}
+.tp-home-target-index-value{margin-top:14px;font-size:35px}
+.tp-home-target-index-change{margin-top:10px;font-size:14px}
+.tp-home-target-turnover-main,.tp-home-target-turnover-rows{margin-top:14px}
+.tp-home-target-turnover-main strong{font-size:29px}
+.tp-home-target-turnover-rows{gap:10px}
+.tp-home-target-institution-card{padding-bottom:12px}
+.tp-home-target-institution-rows{gap:5px;margin-top:12px}
+.tp-home-target-institution-rows div:last-child{padding-top:8px}
+.tp-home-target-institution-rows span{font-size:14px}
+.tp-home-target-institution-rows strong{font-size:15px}
+.tp-home-target-institution-rows strong.is-up{color:#d72e32}
+.tp-home-target-institution-rows strong.is-down{color:#159563}
+.tp-home-target-institution-rows strong.is-flat,.tp-home-target-institution-rows strong.is-unavailable{color:var(--tp-color-text-secondary)}
+.tp-home-target-flow-meta{display:block;margin-top:8px;color:var(--tp-color-text-secondary);font-size:10px;line-height:1.4}
+.tp-home-target-unavailable-note{margin-top:9px;font-size:10px;line-height:1.4}
+.tp-home-target-bottom-grid{gap:10px;margin-top:10px}
+.tp-home-target-distribution-card,.tp-home-target-breadth-card{padding:14px 17px}
+.tp-home-target-subheading h3{font-size:19px}
+.tp-home-target-subheading>strong{font-size:14px}
+.tp-home-target-bars{gap:10px;height:130px;margin-top:14px}
+.tp-home-target-bar-item{grid-template-rows:auto 90px auto;gap:4px}
+.tp-home-target-bar-item span{font-size:10px}
+.tp-home-target-bar-item strong{font-size:11px;white-space:nowrap}
+.tp-home-target-bar-item i{min-height:3px}
+.tp-home-target-empty{min-height:120px;margin-top:12px}
+.tp-home-target-breadth-rows{gap:13px;margin-top:22px}
+.tp-home-target-breadth-rows span{font-size:14px}
+.tp-home-target-breadth-rows strong{font-size:18px}
+.tp-home-target-breadth-card>small{margin-top:12px;font-size:10px}
+@media (max-width:1100px){
+  .tp-home-target-turnover-card,.tp-home-target-institution-card{min-height:180px}
+  .tp-home-target-bars{height:120px}
+}
+@media (max-width:760px){
+  .tp-home-target-fact-card{min-height:0}
+}
+
