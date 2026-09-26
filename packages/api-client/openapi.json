@@ -6078,6 +6078,190 @@
         "title": "StrategyResponse",
         "type": "object"
       },
+      "StructuralRoleAuthorityReadItem": {
+        "properties": {
+          "approval_reference": {
+            "title": "Approval Reference",
+            "type": "string"
+          },
+          "approval_state": {
+            "const": "APPROVED",
+            "title": "Approval State",
+            "type": "string"
+          },
+          "authority_version": {
+            "title": "Authority Version",
+            "type": "string"
+          },
+          "correction_sequence": {
+            "title": "Correction Sequence",
+            "type": "integer"
+          },
+          "effective_from": {
+            "format": "date",
+            "title": "Effective From",
+            "type": "string"
+          },
+          "effective_to": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Effective To"
+          },
+          "instrument_code": {
+            "title": "Instrument Code",
+            "type": "string"
+          },
+          "instrument_id": {
+            "title": "Instrument Id",
+            "type": "string"
+          },
+          "lineage_hash": {
+            "title": "Lineage Hash",
+            "type": "string"
+          },
+          "market_code": {
+            "title": "Market Code",
+            "type": "string"
+          },
+          "relation_id": {
+            "title": "Relation Id",
+            "type": "string"
+          },
+          "relation_type": {
+            "enum": [
+              "PRIMARY",
+              "SECONDARY"
+            ],
+            "title": "Relation Type",
+            "type": "string"
+          },
+          "source_artifact_hash": {
+            "title": "Source Artifact Hash",
+            "type": "string"
+          },
+          "source_artifact_id": {
+            "title": "Source Artifact Id",
+            "type": "string"
+          },
+          "structural_role": {
+            "enum": [
+              "REPRESENTATIVE",
+              "CORE",
+              "RELATED"
+            ],
+            "title": "Structural Role",
+            "type": "string"
+          },
+          "superseded_by_authority_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Superseded By Authority Id"
+          },
+          "supersedes_authority_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Supersedes Authority Id"
+          },
+          "topic_id": {
+            "title": "Topic Id",
+            "type": "string"
+          },
+          "topic_slug": {
+            "title": "Topic Slug",
+            "type": "string"
+          }
+        },
+        "required": [
+          "relation_id",
+          "instrument_id",
+          "instrument_code",
+          "market_code",
+          "topic_id",
+          "topic_slug",
+          "relation_type",
+          "structural_role",
+          "approval_state",
+          "authority_version",
+          "effective_from",
+          "effective_to",
+          "source_artifact_id",
+          "source_artifact_hash",
+          "approval_reference",
+          "correction_sequence",
+          "supersedes_authority_id",
+          "superseded_by_authority_id",
+          "lineage_hash"
+        ],
+        "title": "StructuralRoleAuthorityReadItem",
+        "type": "object"
+      },
+      "StructuralRoleAuthorityReadPage": {
+        "properties": {
+          "as_of_date": {
+            "format": "date",
+            "title": "As Of Date",
+            "type": "string"
+          },
+          "has_more": {
+            "title": "Has More",
+            "type": "boolean"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/StructuralRoleAuthorityReadItem"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "limit": {
+            "title": "Limit",
+            "type": "integer"
+          },
+          "offset": {
+            "title": "Offset",
+            "type": "integer"
+          },
+          "read_only": {
+            "const": true,
+            "default": true,
+            "title": "Read Only",
+            "type": "boolean"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "limit",
+          "offset",
+          "has_more",
+          "as_of_date"
+        ],
+        "title": "StructuralRoleAuthorityReadPage",
+        "type": "object"
+      },
       "TechnicalEvidence": {
         "properties": {
           "actualObservationCount": {
@@ -9581,6 +9765,63 @@
           }
         },
         "summary": "Relations",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
+    "/api/v1/admin/relations/structural-role-authority": {
+      "get": {
+        "description": "Expose the current formal role authority without deriving or mutating it.",
+        "operationId": "structural_role_authority_api_v1_admin_relations_structural_role_authority_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 100,
+              "maximum": 500,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StructuralRoleAuthorityReadPage"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Read current persisted structural-role authority",
         "tags": [
           "admin"
         ]

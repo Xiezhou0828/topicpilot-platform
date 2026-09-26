@@ -143,6 +143,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/admin/relations/structural-role-authority": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Read current persisted structural-role authority
+         * @description Expose the current formal role authority without deriving or mutating it.
+         */
+        get: operations["structural_role_authority_api_v1_admin_relations_structural_role_authority_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/admin/schema": {
         parameters: {
             query?: never;
@@ -2522,6 +2542,83 @@ export interface components {
             /** Strategykey */
             strategyKey: string;
         };
+        /** StructuralRoleAuthorityReadItem */
+        StructuralRoleAuthorityReadItem: {
+            /** Approval Reference */
+            approval_reference: string;
+            /**
+             * Approval State
+             * @constant
+             */
+            approval_state: "APPROVED";
+            /** Authority Version */
+            authority_version: string;
+            /** Correction Sequence */
+            correction_sequence: number;
+            /**
+             * Effective From
+             * Format: date
+             */
+            effective_from: string;
+            /** Effective To */
+            effective_to: string | null;
+            /** Instrument Code */
+            instrument_code: string;
+            /** Instrument Id */
+            instrument_id: string;
+            /** Lineage Hash */
+            lineage_hash: string;
+            /** Market Code */
+            market_code: string;
+            /** Relation Id */
+            relation_id: string;
+            /**
+             * Relation Type
+             * @enum {string}
+             */
+            relation_type: "PRIMARY" | "SECONDARY";
+            /** Source Artifact Hash */
+            source_artifact_hash: string;
+            /** Source Artifact Id */
+            source_artifact_id: string;
+            /**
+             * Structural Role
+             * @enum {string}
+             */
+            structural_role: "REPRESENTATIVE" | "CORE" | "RELATED";
+            /** Superseded By Authority Id */
+            superseded_by_authority_id: string | null;
+            /** Supersedes Authority Id */
+            supersedes_authority_id: string | null;
+            /** Topic Id */
+            topic_id: string;
+            /** Topic Slug */
+            topic_slug: string;
+        };
+        /** StructuralRoleAuthorityReadPage */
+        StructuralRoleAuthorityReadPage: {
+            /**
+             * As Of Date
+             * Format: date
+             */
+            as_of_date: string;
+            /** Has More */
+            has_more: boolean;
+            /** Items */
+            items: components["schemas"]["StructuralRoleAuthorityReadItem"][];
+            /** Limit */
+            limit: number;
+            /** Offset */
+            offset: number;
+            /**
+             * Read Only
+             * @default true
+             * @constant
+             */
+            read_only: true;
+            /** Total */
+            total: number;
+        };
         /** TechnicalEvidence */
         TechnicalEvidence: {
             /** Actualobservationcount */
@@ -3648,6 +3745,38 @@ export interface operations {
                     "application/json": {
                         [key: string]: unknown;
                     };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    structural_role_authority_api_v1_admin_relations_structural_role_authority_get: {
+        parameters: {
+            query?: {
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StructuralRoleAuthorityReadPage"];
                 };
             };
             /** @description Validation Error */

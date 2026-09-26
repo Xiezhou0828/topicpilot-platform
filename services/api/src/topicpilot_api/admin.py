@@ -2,7 +2,9 @@
 from __future__ import annotations
 
 import uuid
+from datetime import datetime
 from typing import Annotated, Any
+from zoneinfo import ZoneInfo
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import func, select, text
@@ -20,6 +22,11 @@ from .orm import (
     TopicHierarchy,
 )
 from .schemas import MigrationRevisionResponse
+from .structural_role_read_boundary import (
+    StructuralRoleAuthorityReadError,
+    StructuralRoleAuthorityReadPage,
+    read_current_structural_role_authority,
+)
 
 router = APIRouter(prefix="/api/v1/admin", tags=["admin"])
 DbSession = Annotated[Session, Depends(get_db)]
@@ -118,6 +125,34 @@ def relations(session: DbSession, limit: int = Query(100, ge=1, le=500), offset:
     total = session.scalar(select(func.count()).select_from(InstrumentTopicRelation)) or 0
     rows = session.scalars(select(InstrumentTopicRelation).order_by(InstrumentTopicRelation.created_at.desc()).offset(offset).limit(limit)).all()
     return _page([{ "id": _id(x.id), "instrument_id": _id(x.instrument_id), "topic_id": _id(x.topic_id), "relation_type": x.relation_type, "relation_version": x.relation_version } for x in rows], total, limit, offset)
+
+
+@router.get(
+    "/relations/structural-role-authority",
+    response_model=StructuralRoleAuthorityReadPage,
+    summary="Read current persisted structural-role authority",
+)
+def structural_role_authority(
+    session: DbSession,
+    limit: int = Query(100, ge=1, le=500),
+    offset: int = Query(0, ge=0),
+) -> StructuralRoleAuthorityReadPage:
+    """Expose the current formal role authority without deriving or mutating it."""
+
+    as_of_date = datetime.now(ZoneInfo("Asia/Taipei")).date()
+    try:
+        items = read_current_structural_role_authority(session, as_of_date)
+    except StructuralRoleAuthorityReadError as exc:
+        session.rollback()
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
+    return StructuralRoleAuthorityReadPage(
+        items=items[offset : offset + limit],
+        total=len(items),
+        limit=limit,
+        offset=offset,
+        has_more=offset + limit < len(items),
+        as_of_date=as_of_date,
+    )
 
 @router.get("/imports")
 def imports(session: DbSession, limit: int = Query(50, ge=1, le=200), offset: int = Query(0, ge=0)) -> dict[str, Any]:
