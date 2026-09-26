@@ -6276,6 +6276,483 @@
         "title": "StrategyResponse",
         "type": "object"
       },
+      "StructuralRoleAuthorityAuditItem": {
+        "properties": {
+          "approval_reference": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Approval Reference"
+          },
+          "approval_state": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Approval State"
+          },
+          "authority_status_bucket": {
+            "enum": [
+              "CURRENT_ACTIVE",
+              "HISTORICAL_SUPERSEDED",
+              "FUTURE_EFFECTIVE",
+              "INACTIVE",
+              "PROPOSED",
+              "OTHER"
+            ],
+            "title": "Authority Status Bucket",
+            "type": "string"
+          },
+          "authority_version": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Authority Version"
+          },
+          "correction_sequence": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Correction Sequence"
+          },
+          "current_effective": {
+            "title": "Current Effective",
+            "type": "boolean"
+          },
+          "effective_from": {
+            "format": "date",
+            "title": "Effective From",
+            "type": "string"
+          },
+          "effective_to": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Effective To"
+          },
+          "instrument_active": {
+            "title": "Instrument Active",
+            "type": "boolean"
+          },
+          "instrument_code": {
+            "title": "Instrument Code",
+            "type": "string"
+          },
+          "instrument_id": {
+            "title": "Instrument Id",
+            "type": "string"
+          },
+          "instrument_type": {
+            "title": "Instrument Type",
+            "type": "string"
+          },
+          "instrument_valid_from": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Instrument Valid From"
+          },
+          "instrument_valid_to": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Instrument Valid To"
+          },
+          "invalid_role_category": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Invalid Role Category"
+          },
+          "invalid_role_value": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Invalid Role Value"
+          },
+          "lineage_hash": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lineage Hash"
+          },
+          "lineage_issue": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lineage Issue"
+          },
+          "market_active": {
+            "title": "Market Active",
+            "type": "boolean"
+          },
+          "market_code": {
+            "title": "Market Code",
+            "type": "string"
+          },
+          "relation_id": {
+            "title": "Relation Id",
+            "type": "string"
+          },
+          "relation_type": {
+            "title": "Relation Type",
+            "type": "string"
+          },
+          "role_status": {
+            "enum": [
+              "VALID",
+              "NULL",
+              "INVALID"
+            ],
+            "title": "Role Status",
+            "type": "string"
+          },
+          "source_artifact_hash": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Artifact Hash"
+          },
+          "source_artifact_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Artifact Id"
+          },
+          "structural_role": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Structural Role"
+          },
+          "superseded_by_authority_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Superseded By Authority Id"
+          },
+          "supersedes_authority_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Supersedes Authority Id"
+          },
+          "supersession_issue": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Supersession Issue"
+          },
+          "topic_id": {
+            "title": "Topic Id",
+            "type": "string"
+          },
+          "topic_slug": {
+            "title": "Topic Slug",
+            "type": "string"
+          },
+          "topic_status": {
+            "title": "Topic Status",
+            "type": "string"
+          },
+          "topic_valid_from": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Topic Valid From"
+          },
+          "topic_valid_to": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Topic Valid To"
+          }
+        },
+        "required": [
+          "relation_id",
+          "instrument_id",
+          "instrument_code",
+          "instrument_type",
+          "instrument_active",
+          "instrument_valid_from",
+          "instrument_valid_to",
+          "market_code",
+          "market_active",
+          "topic_id",
+          "topic_slug",
+          "topic_status",
+          "topic_valid_from",
+          "topic_valid_to",
+          "relation_type",
+          "structural_role",
+          "role_status",
+          "invalid_role_value",
+          "invalid_role_category",
+          "approval_state",
+          "authority_version",
+          "effective_from",
+          "effective_to",
+          "authority_status_bucket",
+          "current_effective",
+          "supersedes_authority_id",
+          "superseded_by_authority_id",
+          "source_artifact_id",
+          "source_artifact_hash",
+          "approval_reference",
+          "correction_sequence",
+          "lineage_hash",
+          "supersession_issue",
+          "lineage_issue"
+        ],
+        "title": "StructuralRoleAuthorityAuditItem",
+        "type": "object"
+      },
+      "StructuralRoleAuthorityAuditPage": {
+        "properties": {
+          "has_more": {
+            "title": "Has More",
+            "type": "boolean"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/StructuralRoleAuthorityAuditItem"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "limit": {
+            "title": "Limit",
+            "type": "integer"
+          },
+          "offset": {
+            "title": "Offset",
+            "type": "integer"
+          },
+          "read_only": {
+            "const": true,
+            "default": true,
+            "title": "Read Only",
+            "type": "boolean"
+          },
+          "summary": {
+            "$ref": "#/components/schemas/StructuralRoleAuthorityAuditSummary"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "limit",
+          "offset",
+          "has_more",
+          "summary"
+        ],
+        "title": "StructuralRoleAuthorityAuditPage",
+        "type": "object"
+      },
+      "StructuralRoleAuthorityAuditSummary": {
+        "properties": {
+          "as_of_date": {
+            "format": "date",
+            "title": "As Of Date",
+            "type": "string"
+          },
+          "current_relation_type_counts": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "Current Relation Type Counts",
+            "type": "object"
+          },
+          "current_relation_type_x_structural_role": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "Current Relation Type X Structural Role",
+            "type": "object"
+          },
+          "current_structural_role_counts": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "Current Structural Role Counts",
+            "type": "object"
+          },
+          "database_constraint": {
+            "additionalProperties": true,
+            "title": "Database Constraint",
+            "type": "object"
+          },
+          "duplicate_active_authority_rows": {
+            "title": "Duplicate Active Authority Rows",
+            "type": "integer"
+          },
+          "invalid_role_rows": {
+            "title": "Invalid Role Rows",
+            "type": "integer"
+          },
+          "invalid_role_values": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Invalid Role Values",
+            "type": "array"
+          },
+          "lineage_inconsistency_rows": {
+            "title": "Lineage Inconsistency Rows",
+            "type": "integer"
+          },
+          "null_role_rows": {
+            "title": "Null Role Rows",
+            "type": "integer"
+          },
+          "status_counts": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "Status Counts",
+            "type": "object"
+          },
+          "supersession_conflict_rows": {
+            "title": "Supersession Conflict Rows",
+            "type": "integer"
+          },
+          "total_rows_scanned": {
+            "title": "Total Rows Scanned",
+            "type": "integer"
+          },
+          "unknown_role_rows": {
+            "title": "Unknown Role Rows",
+            "type": "integer"
+          },
+          "valid_role_rows": {
+            "title": "Valid Role Rows",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "as_of_date",
+          "total_rows_scanned",
+          "valid_role_rows",
+          "invalid_role_rows",
+          "null_role_rows",
+          "unknown_role_rows",
+          "duplicate_active_authority_rows",
+          "supersession_conflict_rows",
+          "lineage_inconsistency_rows",
+          "status_counts",
+          "invalid_role_values",
+          "current_relation_type_counts",
+          "current_structural_role_counts",
+          "current_relation_type_x_structural_role",
+          "database_constraint"
+        ],
+        "title": "StructuralRoleAuthorityAuditSummary",
+        "type": "object"
+      },
       "StructuralRoleAuthorityReadItem": {
         "properties": {
           "approval_reference": {
@@ -10020,6 +10497,63 @@
           }
         },
         "summary": "Read current persisted structural-role authority",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
+    "/api/v1/admin/relations/structural-role-authority/audit": {
+      "get": {
+        "description": "Expose complete operator diagnostics without weakening formal reads.",
+        "operationId": "structural_role_authority_audit_api_v1_admin_relations_structural_role_authority_audit_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 5000,
+              "maximum": 10000,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "default": 0,
+              "minimum": 0,
+              "title": "Offset",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StructuralRoleAuthorityAuditPage"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Audit all persisted structural-role authority history",
         "tags": [
           "admin"
         ]

@@ -12,9 +12,9 @@ from sqlalchemy import Select, select
 from sqlalchemy.orm import Session
 
 from .orm.models import Instrument, InstrumentTopicRelation, Market, Topic
+from .structural_role_contract import ALLOWED_STRUCTURAL_ROLES
 
 ALLOWED_RELATION_TYPES = frozenset({"PRIMARY", "SECONDARY"})
-ALLOWED_STRUCTURAL_ROLES = frozenset({"REPRESENTATIVE", "CORE", "RELATED"})
 APPROVED_STATE = "APPROVED"
 
 

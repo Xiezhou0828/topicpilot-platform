@@ -163,6 +163,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/admin/relations/structural-role-authority/audit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Audit all persisted structural-role authority history
+         * @description Expose complete operator diagnostics without weakening formal reads.
+         */
+        get: operations["structural_role_authority_audit_api_v1_admin_relations_structural_role_authority_audit_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/admin/schema": {
         parameters: {
             query?: never;
@@ -2578,6 +2598,154 @@ export interface components {
             /** Strategykey */
             strategyKey: string;
         };
+        /** StructuralRoleAuthorityAuditItem */
+        StructuralRoleAuthorityAuditItem: {
+            /** Approval Reference */
+            approval_reference: string | null;
+            /** Approval State */
+            approval_state: string | null;
+            /**
+             * Authority Status Bucket
+             * @enum {string}
+             */
+            authority_status_bucket: "CURRENT_ACTIVE" | "HISTORICAL_SUPERSEDED" | "FUTURE_EFFECTIVE" | "INACTIVE" | "PROPOSED" | "OTHER";
+            /** Authority Version */
+            authority_version: string | null;
+            /** Correction Sequence */
+            correction_sequence: number | null;
+            /** Current Effective */
+            current_effective: boolean;
+            /**
+             * Effective From
+             * Format: date
+             */
+            effective_from: string;
+            /** Effective To */
+            effective_to: string | null;
+            /** Instrument Active */
+            instrument_active: boolean;
+            /** Instrument Code */
+            instrument_code: string;
+            /** Instrument Id */
+            instrument_id: string;
+            /** Instrument Type */
+            instrument_type: string;
+            /** Instrument Valid From */
+            instrument_valid_from: string | null;
+            /** Instrument Valid To */
+            instrument_valid_to: string | null;
+            /** Invalid Role Category */
+            invalid_role_category: string | null;
+            /** Invalid Role Value */
+            invalid_role_value: string | null;
+            /** Lineage Hash */
+            lineage_hash: string | null;
+            /** Lineage Issue */
+            lineage_issue: string | null;
+            /** Market Active */
+            market_active: boolean;
+            /** Market Code */
+            market_code: string;
+            /** Relation Id */
+            relation_id: string;
+            /** Relation Type */
+            relation_type: string;
+            /**
+             * Role Status
+             * @enum {string}
+             */
+            role_status: "VALID" | "NULL" | "INVALID";
+            /** Source Artifact Hash */
+            source_artifact_hash: string | null;
+            /** Source Artifact Id */
+            source_artifact_id: string | null;
+            /** Structural Role */
+            structural_role: string | null;
+            /** Superseded By Authority Id */
+            superseded_by_authority_id: string | null;
+            /** Supersedes Authority Id */
+            supersedes_authority_id: string | null;
+            /** Supersession Issue */
+            supersession_issue: string | null;
+            /** Topic Id */
+            topic_id: string;
+            /** Topic Slug */
+            topic_slug: string;
+            /** Topic Status */
+            topic_status: string;
+            /** Topic Valid From */
+            topic_valid_from: string | null;
+            /** Topic Valid To */
+            topic_valid_to: string | null;
+        };
+        /** StructuralRoleAuthorityAuditPage */
+        StructuralRoleAuthorityAuditPage: {
+            /** Has More */
+            has_more: boolean;
+            /** Items */
+            items: components["schemas"]["StructuralRoleAuthorityAuditItem"][];
+            /** Limit */
+            limit: number;
+            /** Offset */
+            offset: number;
+            /**
+             * Read Only
+             * @default true
+             * @constant
+             */
+            read_only: true;
+            summary: components["schemas"]["StructuralRoleAuthorityAuditSummary"];
+            /** Total */
+            total: number;
+        };
+        /** StructuralRoleAuthorityAuditSummary */
+        StructuralRoleAuthorityAuditSummary: {
+            /**
+             * As Of Date
+             * Format: date
+             */
+            as_of_date: string;
+            /** Current Relation Type Counts */
+            current_relation_type_counts: {
+                [key: string]: number;
+            };
+            /** Current Relation Type X Structural Role */
+            current_relation_type_x_structural_role: {
+                [key: string]: number;
+            };
+            /** Current Structural Role Counts */
+            current_structural_role_counts: {
+                [key: string]: number;
+            };
+            /** Database Constraint */
+            database_constraint: {
+                [key: string]: unknown;
+            };
+            /** Duplicate Active Authority Rows */
+            duplicate_active_authority_rows: number;
+            /** Invalid Role Rows */
+            invalid_role_rows: number;
+            /** Invalid Role Values */
+            invalid_role_values: {
+                [key: string]: unknown;
+            }[];
+            /** Lineage Inconsistency Rows */
+            lineage_inconsistency_rows: number;
+            /** Null Role Rows */
+            null_role_rows: number;
+            /** Status Counts */
+            status_counts: {
+                [key: string]: number;
+            };
+            /** Supersession Conflict Rows */
+            supersession_conflict_rows: number;
+            /** Total Rows Scanned */
+            total_rows_scanned: number;
+            /** Unknown Role Rows */
+            unknown_role_rows: number;
+            /** Valid Role Rows */
+            valid_role_rows: number;
+        };
         /** StructuralRoleAuthorityReadItem */
         StructuralRoleAuthorityReadItem: {
             /** Approval Reference */
@@ -3813,6 +3981,38 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["StructuralRoleAuthorityReadPage"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    structural_role_authority_audit_api_v1_admin_relations_structural_role_authority_audit_get: {
+        parameters: {
+            query?: {
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StructuralRoleAuthorityAuditPage"];
                 };
             };
             /** @description Validation Error */

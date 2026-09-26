@@ -22,6 +22,10 @@ from .orm import (
     TopicHierarchy,
 )
 from .schemas import MigrationRevisionResponse
+from .structural_role_audit import (
+    StructuralRoleAuthorityAuditPage,
+    read_structural_role_authority_audit,
+)
 from .structural_role_read_boundary import (
     StructuralRoleAuthorityReadError,
     StructuralRoleAuthorityReadPage,
@@ -152,6 +156,30 @@ def structural_role_authority(
         offset=offset,
         has_more=offset + limit < len(items),
         as_of_date=as_of_date,
+    )
+
+
+@router.get(
+    "/relations/structural-role-authority/audit",
+    response_model=StructuralRoleAuthorityAuditPage,
+    summary="Audit all persisted structural-role authority history",
+)
+def structural_role_authority_audit(
+    session: DbSession,
+    limit: int = Query(5000, ge=1, le=10000),
+    offset: int = Query(0, ge=0),
+) -> StructuralRoleAuthorityAuditPage:
+    """Expose complete operator diagnostics without weakening formal reads."""
+
+    as_of_date = datetime.now(ZoneInfo("Asia/Taipei")).date()
+    items, summary = read_structural_role_authority_audit(session, as_of_date)
+    return StructuralRoleAuthorityAuditPage(
+        items=items[offset : offset + limit],
+        total=len(items),
+        limit=limit,
+        offset=offset,
+        has_more=offset + limit < len(items),
+        summary=summary,
     )
 
 @router.get("/imports")

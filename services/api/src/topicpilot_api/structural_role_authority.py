@@ -15,9 +15,13 @@ from sqlalchemy import select, text
 from sqlalchemy.orm import Session
 
 from topicpilot_api.orm.models import Instrument, InstrumentTopicRelation, Market, Topic
+from topicpilot_api.structural_role_contract import (
+    ALLOWED_STRUCTURAL_ROLES,
+    validate_structural_role,
+)
 
 SCHEMA_VERSION = "topic-structural-role-authority.v1"
-ALLOWED_ROLES = frozenset({"REPRESENTATIVE", "CORE", "RELATED"})
+ALLOWED_ROLES = ALLOWED_STRUCTURAL_ROLES
 RELATION_NAMESPACE = uuid.UUID("da995966-4275-5fe0-9c45-8dc84ad2c3c1")
 
 
@@ -76,8 +80,10 @@ def parse_artifact(payload: dict[str, Any]) -> StructuralRoleArtifact:
         )
         if not all(identity) or identity in identities:
             raise StructuralRoleAuthorityError("duplicate or incomplete relation identity")
-        if row.get("structuralRole") not in ALLOWED_ROLES:
-            raise StructuralRoleAuthorityError("invalid structural role")
+        try:
+            validate_structural_role(row.get("structuralRole"), allow_null=False)
+        except ValueError as exc:
+            raise StructuralRoleAuthorityError("invalid structural role") from exc
         if row.get("approvalState") != "APPROVED":
             raise StructuralRoleAuthorityError("every role must be explicitly APPROVED")
         relation_version = str(row.get("relationVersion", ""))
@@ -236,6 +242,128 @@ def activate(
         "leafCount": 107,
         "rowsChanged": changed,
         "transactional": True,
+    }
+
+
+def reconcile_deterministic_corrections(
+    session: Session,
+    artifact: StructuralRoleArtifact,
+    relation_ids: tuple[str, ...],
+    *,
+    dry_run: bool,
+    environment: str,
+    expected_database: str,
+    operator: str,
+    confirmation: str | None,
+) -> dict[str, Any]:
+    """Correct only explicitly planned invalid rows in one transaction."""
+
+    _target_guard(session, artifact, environment, expected_database)
+    if not operator.strip():
+        raise StructuralRoleAuthorityError("operator identity is required")
+    if not relation_ids:
+        raise StructuralRoleAuthorityError("correction plan is empty")
+    required = (
+        f"RECONCILE:{artifact.authority_version}:{artifact.artifact_sha256}:"
+        f"{len(relation_ids)}"
+    )
+    if not dry_run and confirmation != required:
+        raise StructuralRoleAuthorityError("exact reconciliation confirmation is required")
+    artifact_by_id = {
+        str(item["relationId"]): item for item in artifact.rows
+    }
+    if len(artifact_by_id) != len(artifact.rows):
+        raise StructuralRoleAuthorityError("artifact contains duplicate relation IDs")
+    if any(relation_id not in artifact_by_id for relation_id in relation_ids):
+        raise StructuralRoleAuthorityError("correction plan relation is absent from artifact")
+    if session.in_transaction():
+        session.rollback()
+    with session.begin():
+        changed = []
+        for relation_id in relation_ids:
+            item = artifact_by_id[relation_id]
+            relation = session.scalar(
+                select(InstrumentTopicRelation)
+                .where(InstrumentTopicRelation.id == UUID(relation_id))
+                .with_for_update()
+            )
+            if relation is None:
+                raise StructuralRoleAuthorityError(
+                    f"correction relation does not resolve: {relation_id}"
+                )
+            if relation.relation_type != item["relationType"]:
+                raise StructuralRoleAuthorityError(
+                    f"correction would change relation type: {relation_id}"
+                )
+            if relation.valid_from != artifact.effective_date or (
+                relation.valid_to is not None and relation.valid_to < artifact.effective_date
+            ):
+                raise StructuralRoleAuthorityError(
+                    f"correction effective date is not applicable: {relation_id}"
+                )
+            if relation.structural_role in ALLOWED_ROLES:
+                raise StructuralRoleAuthorityError(
+                    f"correction plan row is no longer invalid: {relation_id}"
+                )
+            if item["structuralRole"] not in ALLOWED_ROLES:
+                raise StructuralRoleAuthorityError(
+                    f"artifact role is invalid: {relation_id}"
+                )
+            previous = {
+                "structuralRole": relation.structural_role,
+                "approvalState": relation.approval_state,
+                "authorityVersion": relation.authority_version,
+                "sourceArtifactId": relation.source_artifact_id,
+                "sourceArtifactHash": relation.source_artifact_hash,
+                "lineageHash": relation.lineage_hash,
+                "correctionSequence": relation.correction_sequence or 0,
+            }
+            correction_sequence = (relation.correction_sequence or 0) + 1
+            relation.structural_role = item["structuralRole"]
+            relation.approval_state = "APPROVED"
+            relation.authority_version = artifact.authority_version
+            relation.source_artifact_id = (
+                f"structural-role-authority:{artifact.authority_version}"
+            )
+            relation.source_artifact_hash = artifact.artifact_sha256
+            relation.approval_reference = artifact.approval_reference
+            relation.correction_sequence = correction_sequence
+            relation.lineage_hash = _hash(
+                {
+                    "artifactSha256": artifact.artifact_sha256,
+                    "approvalReference": artifact.approval_reference,
+                    "correctionSequence": correction_sequence,
+                    "previous": previous,
+                    "relationId": relation_id,
+                    "role": item["structuralRole"],
+                }
+            )
+            changed.append(relation_id)
+        session.flush()
+        if not dry_run:
+            for relation_id in changed:
+                readback = session.scalar(
+                    select(InstrumentTopicRelation).where(
+                        InstrumentTopicRelation.id == UUID(relation_id)
+                    )
+                )
+                item = artifact_by_id[relation_id]
+                if readback is None or readback.structural_role != item["structuralRole"]:
+                    raise StructuralRoleAuthorityError(
+                        f"post-correction readback mismatch: {relation_id}"
+                    )
+        else:
+            session.rollback()
+    return {
+        "operation": "CORRECTION_DRY_RUN_PASS" if dry_run else "DETERMINISTIC_CORRECTIONS_APPLIED",
+        "authorityVersion": artifact.authority_version,
+        "artifactSha256": artifact.artifact_sha256,
+        "rowsRequested": len(relation_ids),
+        "rowsCorrected": 0 if dry_run else len(relation_ids),
+        "rowsSkipped": 0,
+        "rowsFailed": 0,
+        "transactional": True,
+        "correctionModel": "IN_PLACE_ALLOWED_WITH_CORRECTION_SEQUENCE_AND_LINEAGE",
     }
 
 

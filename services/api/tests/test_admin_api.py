@@ -54,6 +54,15 @@ def test_structural_role_authority_boundary_is_documented_and_read_only():
     assert properties["$ref"].endswith("StructuralRoleAuthorityReadPage")
 
 
+def test_structural_role_authority_audit_is_operator_read_only():
+    operation = create_app().openapi()["paths"][
+        "/api/v1/admin/relations/structural-role-authority/audit"
+    ]["get"]
+    assert "post" not in operation
+    properties = operation["responses"]["200"]["content"]["application/json"]["schema"]
+    assert properties["$ref"].endswith("StructuralRoleAuthorityAuditPage")
+
+
 def test_migration_probe_is_select_only_and_uses_public_alembic_table():
     statements: list[str] = []
 
