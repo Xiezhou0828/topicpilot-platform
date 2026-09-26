@@ -786,6 +786,8 @@ def _market_index_payload(fact: Mapping[str, Any]) -> dict[str, Any]:
         "changePct": _number(fact.get("changePct")),
         "asOf": fact.get("asOf"),
         "source": fact.get("source"),
+        "sourceDataset": fact.get("sourceDataset"),
+        "sourceEndpoint": fact.get("sourceEndpoint"),
         "lineage": fact.get("lineage"),
         "status": fact.get("status", "AVAILABLE"),
         "reasonCode": fact.get("reasonCode"),
@@ -814,6 +816,8 @@ def _index_fact_input(item: Any) -> dict[str, Any]:
             "changePct": getattr(item, "change_pct", None),
             "asOf": getattr(item, "as_of", None),
             "source": getattr(item, "source_identity", None),
+            "sourceDataset": getattr(item, "source_dataset", None),
+            "sourceEndpoint": getattr(item, "source_endpoint", None),
             "lineage": getattr(item, "lineage", None),
             "status": status,
             "reasonCode": getattr(item, "status_reason", None),
@@ -833,6 +837,8 @@ def _turnover_payload(item: MarketTurnoverFact | Mapping[str, Any]) -> dict[str,
         "scale": raw.get("scale"),
         "asOf": raw.get("as_of", raw.get("asOf")),
         "source": raw.get("source"),
+        "sourceDataset": raw.get("source_dataset", raw.get("sourceDataset")),
+        "sourceEndpoint": raw.get("source_endpoint", raw.get("sourceEndpoint")),
         "lineage": raw.get("lineage"),
         "status": raw.get("status", "AVAILABLE"),
         "reasonCode": raw.get("reason_code", raw.get("reasonCode")),
@@ -1146,6 +1152,38 @@ def _flow_daily_payload(row: Mapping[str, Any]) -> dict[str, Any]:
     }
 
 
+def _flow_window(rows: Sequence[Mapping[str, Any]], required_sessions: int) -> dict[str, Any]:
+    """Sum the latest complete official sessions, preserving partial coverage."""
+
+    available = [
+        row
+        for row in rows
+        if str(row.get("availability") or "").upper() == "AVAILABLE"
+        and all(row.get(f"{prefix}_net") is not None for prefix in (
+            "foreign",
+            "investment_trust",
+            "dealer",
+            "total",
+        ))
+    ][:required_sessions]
+    unit = rows[0].get("unit") if rows else "TWD"
+    scale = int(rows[0].get("scale") or 0) if rows else 0
+    complete = len(available) == required_sessions
+    return {
+        "requiredSessions": required_sessions,
+        "observedSessions": len(available),
+        "complete": complete,
+        "foreignNet": _number(sum(row["foreign_net"] for row in available)) if complete else None,
+        "investmentTrustNet": (
+            _number(sum(row["investment_trust_net"] for row in available)) if complete else None
+        ),
+        "dealerNet": _number(sum(row["dealer_net"] for row in available)) if complete else None,
+        "totalNet": _number(sum(row["total_net"] for row in available)) if complete else None,
+        "unit": unit or "TWD",
+        "scale": scale,
+    }
+
+
 def _aggregate_home_institutional_flow(
     markets: Sequence[Mapping[str, Any]],
 ) -> dict[str, Any] | None:
@@ -1233,8 +1271,7 @@ def _read_home_institutional_flow(
             for row in session.execute(
                 text(
                     """
-                    SELECT DISTINCT ON (market)
-                           market, trading_date, source_provider, source_identity,
+                    SELECT market, trading_date, source_provider, source_identity,
                            source_dataset, source_endpoint, adapter_version,
                            source_as_of, published_at, retrieved_at, unit, scale,
                            foreign_buy, foreign_sell, foreign_net,
@@ -1258,11 +1295,23 @@ def _read_home_institutional_flow(
     if not rows:
         return None
 
-    markets: list[dict[str, Any]] = []
+    rows_by_market: dict[str, dict[date, dict[str, Any]]] = defaultdict(dict)
     for row in rows:
-        current = _flow_daily_payload(row)
-        availability = str(row.get("availability") or "UNKNOWN")
         market = str(row.get("market") or "")
+        row_date = _as_date(row.get("trading_date"))
+        if market and row_date is not None:
+            rows_by_market[market].setdefault(row_date, row)
+
+    markets: list[dict[str, Any]] = []
+    for market in sorted(rows_by_market):
+        ordered_rows = [
+            rows_by_market[market][row_date]
+            for row_date in sorted(rows_by_market[market], reverse=True)
+        ]
+        row = ordered_rows[0]
+        current = _flow_daily_payload(row)
+        previous = _flow_daily_payload(ordered_rows[1]) if len(ordered_rows) > 1 else None
+        availability = str(row.get("availability") or "UNKNOWN")
         markets.append(
             {
                 "market": market,
@@ -1270,29 +1319,9 @@ def _read_home_institutional_flow(
                 "availability": availability,
                 "freshness": row.get("freshness") or "UNKNOWN",
                 "current": current,
-                "previous": None,
-                "rolling5Session": {
-                    "requiredSessions": 5,
-                    "observedSessions": 1,
-                    "complete": False,
-                    "foreignNet": None,
-                    "investmentTrustNet": None,
-                    "dealerNet": None,
-                    "totalNet": None,
-                    "unit": row.get("unit") or "TWD",
-                    "scale": int(row.get("scale") or 0),
-                },
-                "rolling20Session": {
-                    "requiredSessions": 20,
-                    "observedSessions": 1,
-                    "complete": False,
-                    "foreignNet": None,
-                    "investmentTrustNet": None,
-                    "dealerNet": None,
-                    "totalNet": None,
-                    "unit": row.get("unit") or "TWD",
-                    "scale": int(row.get("scale") or 0),
-                },
+                "previous": previous,
+                "rolling5Session": _flow_window(ordered_rows, 5),
+                "rolling20Session": _flow_window(ordered_rows, 20),
                 "streaks": {},
                 "acceleration": {},
                 "priceFlowRelation": {
@@ -1842,6 +1871,13 @@ def materialize_home_v2(
                 lineage=item.get("lineage") or "typed market index input",
                 publication_state="PUBLISHED" if item.get("value") is not None else "UNAVAILABLE",
                 reason_code=item.get("reasonCode"),
+                coverage={
+                    "open": _number(item.get("open")),
+                    "high": _number(item.get("high")),
+                    "low": _number(item.get("low")),
+                    "sourceDataset": item.get("sourceDataset"),
+                    "sourceEndpoint": item.get("sourceEndpoint"),
+                },
             )
         )
     for item in turnover:

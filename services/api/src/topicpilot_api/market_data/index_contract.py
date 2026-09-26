@@ -1,11 +1,12 @@
 """Typed, provider-neutral contracts for official market index payloads.
 
-This module is deliberately limited to parsing and mapping the two official
-broad-market index sources identified by TASK-FE-BE-TODAY-005B0.  It does not
-fetch data, persist facts, expose FastAPI routes, or map turnover.  Invalid or
+This module parses and maps the official TWSE/TPEx broad-market index
+reports. TWSE publishes close/change in ``MI_INDEX`` and daily OHLC in
+``MI_5MINS_HIST``; TPEx publishes OHLC and change in ``tpex_index``. It does
+not persist facts, expose FastAPI routes, or map turnover. Invalid or
 incomplete provider payloads become ``UNAVAILABLE`` results; they never fall
-back to Preview and never coerce missing numbers to zero. The optional fetch
-helper below keeps transport injection at the runtime boundary.
+back to Preview and never coerce missing numbers to zero. The fetch helper
+keeps transport injection at the runtime boundary.
 """
 
 from __future__ import annotations
@@ -14,7 +15,7 @@ import hashlib
 import json
 import unicodedata
 from collections.abc import Callable, Mapping, Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import date, datetime
 from decimal import Decimal, InvalidOperation
 from enum import StrEnum
@@ -30,25 +31,35 @@ TWSE_MARKET_INDEX_DISPLAY_NAME: Final = "Taiwan Stock Exchange Capitalization We
 TWSE_MARKET_INDEX_RAW_NAME: Final = "發行量加權股價指數"
 TWSE_MARKET_INDEX_DATASET: Final = "exchangeReport.MI_INDEX"
 TWSE_MARKET_INDEX_ENDPOINT: Final = "https://openapi.twse.com.tw/v1/exchangeReport/MI_INDEX"
+TWSE_MARKET_INDEX_OHLC_DATASET: Final = "indicesReport.MI_5MINS_HIST"
+TWSE_MARKET_INDEX_OHLC_ENDPOINT: Final = (
+    "https://www.twse.com.tw/indicesReport/MI_5MINS_HIST"
+)
 TWSE_INDEX_DATE_FIELD: Final = "日期"
 TWSE_INDEX_VALUE_FIELD: Final = "收盤指數"
 TWSE_INDEX_SIGN_FIELD: Final = "漲跌"
 TWSE_INDEX_CHANGE_FIELD: Final = "漲跌點數"
 TWSE_INDEX_CHANGE_PCT_FIELD: Final = "漲跌百分比"
 TWSE_INDEX_VALUE_PATH: Final = "$.<row where 指數 == '發行量加權股價指數'>.收盤指數"
+TWSE_INDEX_OHLC_FIELDS: Final = ("開盤指數", "最高指數", "最低指數", "收盤指數")
+TWSE_INDEX_OHLC_VALUE_PATH: Final = (
+    "$.data[<row where 日期 == target>].[開盤指數,最高指數,最低指數,收盤指數]"
+)
 
 TPEX_MARKET_AGGREGATE_SOURCE_IDENTITY: Final = "TPEX_OFFICIAL_MARKET_AGGREGATE"
 TPEX_MARKET_AGGREGATE_ADAPTER_VERSION: Final = "tpex-official-market-aggregate.v1"
 TPEX_MARKET_INDEX_IDENTITY: Final = "TPEX:TPEx"
 TPEX_MARKET_INDEX_DISPLAY_NAME: Final = "TPEx Exchange Capitalization Weighted Stock Index"
-TPEX_MARKET_INDEX_DATASET: Final = "tpex_daily_trading_index"
-TPEX_MARKET_INDEX_ENDPOINT: Final = "https://www.tpex.org.tw/openapi/v1/tpex_daily_trading_index"
+TPEX_MARKET_INDEX_DATASET: Final = "tpex_index"
+TPEX_MARKET_INDEX_ENDPOINT: Final = "https://www.tpex.org.tw/openapi/v1/tpex_index"
 TPEX_INDEX_CROSSCHECK_DATASET: Final = "tpex_index"
 TPEX_INDEX_CROSSCHECK_ENDPOINT: Final = "https://www.tpex.org.tw/openapi/v1/tpex_index"
 TPEX_INDEX_DATE_FIELD: Final = "Date"
 TPEX_INDEX_VALUE_FIELD: Final = "TPExIndex"
 TPEX_INDEX_CHANGE_FIELD: Final = "Change"
-TPEX_INDEX_VALUE_PATH: Final = "$.value[].TPExIndex"
+TPEX_INDEX_VALUE_PATH: Final = "$.<row where Date == target>.Close"
+TPEX_INDEX_OHLC_FIELDS: Final = ("Open", "High", "Low", "Close")
+TPEX_INDEX_OHLC_VALUE_PATH: Final = "$.<row where Date == target>.[Open,High,Low,Close]"
 
 SOURCE_PUBLICATION_DAILY: Final = "DAILY_RESPONSE_AS_PUBLISHED"
 FINALITY_NOT_EXPLICIT: Final = "NOT_EXPLICITLY_DECLARED_BY_SOURCE"
@@ -82,6 +93,9 @@ class MarketIndexResult:
     display_name: str
     trading_date: date | None
     value: Decimal | None
+    open: Decimal | None
+    high: Decimal | None
+    low: Decimal | None
     previous_close: Decimal | None
     change: Decimal | None
     change_pct: Decimal | None
@@ -112,6 +126,9 @@ class MarketIndexResult:
             "displayName": self.display_name,
             "tradingDate": self.trading_date.isoformat() if self.trading_date else None,
             "value": str(self.value) if self.value is not None else None,
+            "open": str(self.open) if self.open is not None else None,
+            "high": str(self.high) if self.high is not None else None,
+            "low": str(self.low) if self.low is not None else None,
             "previousClose": (
                 str(self.previous_close) if self.previous_close is not None else None
             ),
@@ -201,6 +218,16 @@ def _gregorian_date(value: object, field: str) -> date:
         raise IndexContractError("INVALID_DATE", f"{field} is not a valid date") from exc
 
 
+def _market_index_date(value: object, field: str) -> date:
+    raw = str(value or "").strip()
+    compact = raw.replace("/", "").replace("-", "")
+    if len(compact) == 7:
+        return _roc_date(raw, field)
+    if len(compact) == 8:
+        return _gregorian_date(compact, field)
+    raise IndexContractError("INVALID_DATE", f"{field} must be ROC or Gregorian date")
+
+
 def _signed_change(sign: object, magnitude: object) -> Decimal:
     parsed = _decimal(magnitude, "change", non_negative=True)
     marker = unicodedata.normalize("NFKC", str(sign).strip())
@@ -240,7 +267,10 @@ def _source_metadata(market: str) -> dict[str, str]:
             "source_endpoint": TWSE_MARKET_INDEX_ENDPOINT,
             "source_field_path": TWSE_INDEX_VALUE_PATH,
             "adapter_version": TWSE_MARKET_AGGREGATE_ADAPTER_VERSION,
-            "lineage": "TWSE -> MI_INDEX -> TAIEX row selector -> market index contract",
+            "lineage": (
+                "TWSE -> MI_INDEX + MI_5MINS_HIST -> TAIEX row selectors "
+                "-> market index OHLC contract"
+            ),
         }
     if market == "TWO":
         return {
@@ -252,7 +282,7 @@ def _source_metadata(market: str) -> dict[str, str]:
             "source_endpoint": TPEX_MARKET_INDEX_ENDPOINT,
             "source_field_path": TPEX_INDEX_VALUE_PATH,
             "adapter_version": TPEX_MARKET_AGGREGATE_ADAPTER_VERSION,
-            "lineage": "TPEx -> tpex_daily_trading_index -> TPExIndex -> market index contract",
+            "lineage": "TPEx -> tpex_index -> TPExIndex OHLC row -> market index contract",
         }
     raise IndexContractError("INVALID_MARKET", f"unsupported market: {market}")
 
@@ -273,6 +303,9 @@ def _unavailable(
         display_name=metadata["display_name"],
         trading_date=None,
         value=None,
+        open=None,
+        high=None,
+        low=None,
         previous_close=None,
         change=None,
         change_pct=None,
@@ -353,6 +386,9 @@ def parse_twse_market_index(
             display_name=metadata["display_name"],
             trading_date=trading_date,
             value=value,
+            open=None,
+            high=None,
+            low=None,
             previous_close=previous_close,
             change=change,
             change_pct=change_pct,
@@ -396,6 +432,89 @@ def parse_twse_market_index(
         )
 
 
+def parse_twse_market_index_ohlc(
+    payload: object,
+    *,
+    retrieved_at: datetime,
+    as_of: datetime,
+    target_date: date | None = None,
+) -> MarketIndexResult:
+    """Parse the official TWSE daily TAIEX OHLC history report."""
+
+    content_hash = _content_hash(payload)
+    raw_date: str | None = None
+    try:
+        if not isinstance(payload, Mapping):
+            raise IndexContractError("INVALID_PAYLOAD", "TWSE OHLC payload must be an object")
+        rows = payload.get("data")
+        if not isinstance(rows, list):
+            raise IndexContractError("INVALID_PAYLOAD", "TWSE OHLC data must be an array")
+        candidates = [
+            row
+            for row in rows
+            if isinstance(row, Sequence)
+            and not isinstance(row, (str, bytes, bytearray))
+            and len(row) >= 5
+            and (target_date is None or _market_index_date(row[0], "日期") == target_date)
+        ]
+        if len(candidates) != 1:
+            raise IndexContractError(
+                "TARGET_INDEX_ROW_MISSING" if not candidates else "TARGET_INDEX_ROW_AMBIGUOUS",
+                "TWSE OHLC target row is missing or ambiguous",
+            )
+        row = candidates[0]
+        raw_date = str(row[0])
+        trading_date = _market_index_date(row[0], "日期")
+        open_ = _decimal(row[1], "開盤指數", non_negative=True)
+        high = _decimal(row[2], "最高指數", non_negative=True)
+        low = _decimal(row[3], "最低指數", non_negative=True)
+        value = _decimal(row[4], "收盤指數", non_negative=True)
+        if not low <= min(open_, high, value) or max(open_, low, value) > high:
+            raise IndexContractError("INVALID_OHLC", "TWSE OHLC values violate high/low bounds")
+        metadata = _source_metadata("TPE")
+        return MarketIndexResult(
+            market="TPE",
+            index_identity=metadata["index_identity"],
+            display_name=metadata["display_name"],
+            trading_date=trading_date,
+            value=value,
+            open=open_,
+            high=high,
+            low=low,
+            previous_close=None,
+            change=None,
+            change_pct=None,
+            source_provider="TWSE",
+            source_identity=metadata["source_identity"],
+            source_dataset=TWSE_MARKET_INDEX_OHLC_DATASET,
+            source_endpoint=TWSE_MARKET_INDEX_OHLC_ENDPOINT,
+            source_field_path=TWSE_INDEX_OHLC_VALUE_PATH,
+            raw_provider_date=raw_date,
+            retrieved_at=retrieved_at,
+            as_of=as_of,
+            data_status=IndexDataStatus.AVAILABLE,
+            quality_status="SOURCE_FIELDS_VALID_OHLC",
+            source_publication=SOURCE_PUBLICATION_DAILY,
+            finality=FINALITY_NOT_EXPLICIT,
+            correction_evidence=CORRECTION_EVIDENCE,
+            lineage=(
+                "TWSE -> indicesReport/MI_5MINS_HIST -> TAIEX OHLC row "
+                "-> market index contract"
+            ),
+            adapter_version=TWSE_MARKET_AGGREGATE_ADAPTER_VERSION,
+            response_content_hash=content_hash,
+        )
+    except IndexContractError as exc:
+        return _unavailable(
+            "TPE",
+            retrieved_at=retrieved_at,
+            as_of=as_of,
+            reason=exc.code,
+            raw_provider_date=raw_date,
+            response_content_hash=content_hash,
+        )
+
+
 def parse_tpex_market_index(
     payload: object,
     *,
@@ -414,7 +533,7 @@ def parse_tpex_market_index(
         elif target_date is not None:
             candidates = []
             for candidate in rows:
-                candidate_date = _roc_date(
+                candidate_date = _market_index_date(
                     candidate.get(TPEX_INDEX_DATE_FIELD), TPEX_INDEX_DATE_FIELD
                 )
                 if candidate_date == target_date:
@@ -444,10 +563,25 @@ def parse_tpex_market_index(
                 reason="TARGET_INDEX_ROW_AMBIGUOUS" if rows else "TARGET_INDEX_ROW_MISSING",
                 response_content_hash=content_hash,
             )
+        value_field = "Close" if row.get("Close") is not None else TPEX_INDEX_VALUE_FIELD
         raw_date = str(row.get(TPEX_INDEX_DATE_FIELD, ""))
-        trading_date = _roc_date(raw_date, TPEX_INDEX_DATE_FIELD)
-        value = _decimal(row.get(TPEX_INDEX_VALUE_FIELD), TPEX_INDEX_VALUE_FIELD, non_negative=True)
+        if value_field == TPEX_INDEX_VALUE_FIELD and not raw_date.isdigit():
+            raise IndexContractError("INVALID_DATE", f"{TPEX_INDEX_DATE_FIELD} is invalid")
+        trading_date = _market_index_date(raw_date, TPEX_INDEX_DATE_FIELD)
+        value = _decimal(row.get(value_field), value_field, non_negative=True)
         change = _decimal(row.get(TPEX_INDEX_CHANGE_FIELD), TPEX_INDEX_CHANGE_FIELD)
+        has_ohlc = all(row.get(field) is not None for field in TPEX_INDEX_OHLC_FIELDS)
+        open_ = _decimal(row.get("Open"), "Open", non_negative=True) if has_ohlc else None
+        high = _decimal(row.get("High"), "High", non_negative=True) if has_ohlc else None
+        low = _decimal(row.get("Low"), "Low", non_negative=True) if has_ohlc else None
+        if has_ohlc and (not low <= min(open_, high, value) or max(open_, low, value) > high):
+            raise IndexContractError("INVALID_OHLC", "TPEx OHLC values violate high/low bounds")
+        previous_close = value - change if has_ohlc else None
+        change_pct = (
+            change / previous_close * Decimal("100")
+            if previous_close is not None and previous_close > 0
+            else None
+        )
         metadata = _source_metadata("TWO")
         return MarketIndexResult(
             market="TWO",
@@ -455,9 +589,12 @@ def parse_tpex_market_index(
             display_name=metadata["display_name"],
             trading_date=trading_date,
             value=value,
-            previous_close=None,
+            open=open_,
+            high=high,
+            low=low,
+            previous_close=previous_close,
             change=change,
-            change_pct=None,
+            change_pct=change_pct,
             source_provider=metadata["source_provider"],
             source_identity=metadata["source_identity"],
             source_dataset=metadata["source_dataset"],
@@ -467,7 +604,11 @@ def parse_tpex_market_index(
             retrieved_at=retrieved_at,
             as_of=as_of,
             data_status=IndexDataStatus.AVAILABLE,
-            quality_status="SOURCE_FIELDS_VALID_PREVIOUS_CLOSE_DERIVATION_BLOCKED",
+            quality_status=(
+                "SOURCE_FIELDS_VALID_OHLC_BACKEND_PREVIOUS_CLOSE_DERIVED"
+                if has_ohlc
+                else "SOURCE_FIELDS_VALID_PREVIOUS_CLOSE_DERIVATION_BLOCKED"
+            ),
             source_publication=SOURCE_PUBLICATION_DAILY,
             finality=FINALITY_NOT_EXPLICIT,
             correction_evidence=CORRECTION_EVIDENCE,
@@ -521,6 +662,43 @@ def parse_tpex_index_crosscheck(payload: object) -> tuple[TpexIndexCrossCheck, .
     return tuple(points)
 
 
+def _merge_twse_index_ohlc(
+    close_fact: MarketIndexResult,
+    ohlc_fact: MarketIndexResult,
+) -> MarketIndexResult:
+    """Join TWSE's close/change report with its official OHLC report."""
+
+    if close_fact.data_status is not IndexDataStatus.AVAILABLE:
+        return close_fact
+    if (
+        ohlc_fact.data_status is not IndexDataStatus.AVAILABLE
+        or ohlc_fact.trading_date != close_fact.trading_date
+    ):
+        return replace(
+            close_fact,
+            quality_status="SOURCE_CLOSE_VALID_OHLC_UNAVAILABLE",
+            status_reason=ohlc_fact.status_reason or "OHLC_SOURCE_UNAVAILABLE",
+        )
+    combined_hash = hashlib.sha256(
+        f"{close_fact.response_content_hash or ''}:{ohlc_fact.response_content_hash or ''}".encode()
+    ).hexdigest()
+    return replace(
+        close_fact,
+        open=ohlc_fact.open,
+        high=ohlc_fact.high,
+        low=ohlc_fact.low,
+        source_dataset=f"{TWSE_MARKET_INDEX_DATASET}+{TWSE_MARKET_INDEX_OHLC_DATASET}",
+        source_endpoint=f"{TWSE_MARKET_INDEX_ENDPOINT};{TWSE_MARKET_INDEX_OHLC_ENDPOINT}",
+        source_field_path=f"{TWSE_INDEX_VALUE_PATH};{TWSE_INDEX_OHLC_VALUE_PATH}",
+        quality_status="SOURCE_FIELDS_VALID_OHLC_AND_CLOSE",
+        lineage=(
+            "TWSE -> exchangeReport.MI_INDEX + indicesReport.MI_5MINS_HIST "
+            "-> TAIEX close/change and OHLC rows -> market index contract"
+        ),
+        response_content_hash=combined_hash,
+    )
+
+
 def fetch_official_market_indexes(
     *,
     target_date: date,
@@ -536,37 +714,58 @@ def fetch_official_market_indexes(
     """
 
     results: list[MarketIndexResult] = []
-    for market, endpoint, parser in (
-        ("TPE", TWSE_MARKET_INDEX_ENDPOINT, parse_twse_market_index),
-        ("TWO", TPEX_MARKET_INDEX_ENDPOINT, parse_tpex_market_index),
+
+    try:
+        close_payload = json.loads(transport(TWSE_MARKET_INDEX_ENDPOINT, timeout).decode("utf-8"))
+        close_fact = parse_twse_market_index(
+            close_payload,
+            retrieved_at=retrieved_at,
+            as_of=as_of,
+        )
+    except Exception:
+        close_fact = unavailable_market_index(
+            "TPE", retrieved_at=retrieved_at, as_of=as_of, reason="PROVIDER_REQUEST_FAILED"
+        )
+    if (
+        close_fact.data_status is IndexDataStatus.AVAILABLE
+        and close_fact.trading_date != target_date
     ):
-        try:
-            payload = json.loads(transport(endpoint, timeout).decode("utf-8"))
-            parser_kwargs = {"target_date": target_date} if market == "TWO" else {}
-            result = parser(
-                payload,
-                retrieved_at=retrieved_at,
-                as_of=as_of,
-                **parser_kwargs,
-            )
-            if (
-                result.trading_date != target_date
-                and result.data_status == IndexDataStatus.AVAILABLE
-            ):
-                result = unavailable_market_index(
-                    market,
-                    retrieved_at=retrieved_at,
-                    as_of=as_of,
-                    reason="PROVIDER_DATE_MISMATCH",
-                )
-        except Exception:
+        close_fact = unavailable_market_index(
+            "TPE", retrieved_at=retrieved_at, as_of=as_of, reason="PROVIDER_DATE_MISMATCH"
+        )
+
+    try:
+        ohlc_endpoint = f"{TWSE_MARKET_INDEX_OHLC_ENDPOINT}?date={target_date:%Y%m%d}&response=json"
+        ohlc_payload = json.loads(transport(ohlc_endpoint, timeout).decode("utf-8"))
+        ohlc_fact = parse_twse_market_index_ohlc(
+            ohlc_payload,
+            retrieved_at=retrieved_at,
+            as_of=as_of,
+            target_date=target_date,
+        )
+    except Exception:
+        ohlc_fact = unavailable_market_index(
+            "TPE", retrieved_at=retrieved_at, as_of=as_of, reason="OHLC_PROVIDER_REQUEST_FAILED"
+        )
+    results.append(_merge_twse_index_ohlc(close_fact, ohlc_fact))
+
+    try:
+        payload = json.loads(transport(TPEX_MARKET_INDEX_ENDPOINT, timeout).decode("utf-8"))
+        result = parse_tpex_market_index(
+            payload,
+            retrieved_at=retrieved_at,
+            as_of=as_of,
+            target_date=target_date,
+        )
+        if result.trading_date != target_date and result.data_status is IndexDataStatus.AVAILABLE:
             result = unavailable_market_index(
-                market,
-                retrieved_at=retrieved_at,
-                as_of=as_of,
-                reason="PROVIDER_REQUEST_FAILED",
+                "TWO", retrieved_at=retrieved_at, as_of=as_of, reason="PROVIDER_DATE_MISMATCH"
             )
-        results.append(result)
+    except Exception:
+        result = unavailable_market_index(
+            "TWO", retrieved_at=retrieved_at, as_of=as_of, reason="PROVIDER_REQUEST_FAILED"
+        )
+    results.append(result)
     return tuple(results)
 
 
@@ -579,6 +778,8 @@ __all__ = [
     "TPEX_INDEX_CROSSCHECK_DATASET",
     "TPEX_INDEX_CROSSCHECK_ENDPOINT",
     "TPEX_INDEX_DATE_FIELD",
+    "TPEX_INDEX_OHLC_FIELDS",
+    "TPEX_INDEX_OHLC_VALUE_PATH",
     "TPEX_INDEX_VALUE_FIELD",
     "TPEX_INDEX_VALUE_PATH",
     "TPEX_MARKET_AGGREGATE_ADAPTER_VERSION",
@@ -590,6 +791,8 @@ __all__ = [
     "TWSE_INDEX_CHANGE_FIELD",
     "TWSE_INDEX_CHANGE_PCT_FIELD",
     "TWSE_INDEX_DATE_FIELD",
+    "TWSE_INDEX_OHLC_FIELDS",
+    "TWSE_INDEX_OHLC_VALUE_PATH",
     "TWSE_INDEX_SIGN_FIELD",
     "TWSE_INDEX_VALUE_FIELD",
     "TWSE_INDEX_VALUE_PATH",
@@ -599,6 +802,8 @@ __all__ = [
     "TWSE_MARKET_INDEX_DISPLAY_NAME",
     "TWSE_MARKET_INDEX_ENDPOINT",
     "TWSE_MARKET_INDEX_IDENTITY",
+    "TWSE_MARKET_INDEX_OHLC_DATASET",
+    "TWSE_MARKET_INDEX_OHLC_ENDPOINT",
     "TWSE_MARKET_INDEX_RAW_NAME",
     "IndexContractError",
     "IndexDataStatus",
@@ -608,5 +813,6 @@ __all__ = [
     "parse_tpex_index_crosscheck",
     "parse_tpex_market_index",
     "parse_twse_market_index",
+    "parse_twse_market_index_ohlc",
     "unavailable_market_index",
 ]

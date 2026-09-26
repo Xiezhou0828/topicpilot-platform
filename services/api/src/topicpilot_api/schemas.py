@@ -948,6 +948,8 @@ class HomeMarketIndex(ApiModel):
     change_pct: float | None = Field(alias="changePct")
     as_of: datetime | None = Field(alias="asOf")
     source: str | None = None
+    source_dataset: str | None = Field(alias="sourceDataset", default=None)
+    source_endpoint: str | None = Field(alias="sourceEndpoint", default=None)
     lineage: str | None = None
     status: str
     reason_code: str | None = Field(alias="reasonCode", default=None)

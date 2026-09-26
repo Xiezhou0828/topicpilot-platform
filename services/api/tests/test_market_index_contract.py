@@ -15,6 +15,7 @@ from topicpilot_api.market_data.index_contract import (
     parse_tpex_index_crosscheck,
     parse_tpex_market_index,
     parse_twse_market_index,
+    parse_twse_market_index_ohlc,
     unavailable_market_index,
 )
 
@@ -56,6 +57,41 @@ def test_twse_ignores_non_target_index_rows():
 
     assert result.display_name == "Taiwan Stock Exchange Capitalization Weighted Stock Index"
     assert result.value != Decimal("51102.16")
+
+
+def test_twse_official_ohlc_history_maps_daily_bar_without_inventing_change():
+    result = parse_twse_market_index_ohlc(
+        _fixture("twse_mi_5mins_hist_valid.json"),
+        retrieved_at=RETRIEVED_AT,
+        as_of=AS_OF,
+        target_date=date(2026, 9, 24),
+    )
+
+    assert result.data_status is IndexDataStatus.AVAILABLE
+    assert result.trading_date == date(2026, 9, 24)
+    assert result.open == Decimal("48075.39")
+    assert result.high == Decimal("48117.54")
+    assert result.low == Decimal("47754.72")
+    assert result.value == Decimal("48024.60")
+    assert result.change is None
+
+
+def test_tpex_official_index_maps_ohlc_and_derives_previous_close_from_change():
+    result = parse_tpex_market_index(
+        _fixture("tpex_index_ohlc_valid.json"),
+        retrieved_at=RETRIEVED_AT,
+        as_of=AS_OF,
+        target_date=date(2026, 9, 24),
+    )
+
+    assert result.data_status is IndexDataStatus.AVAILABLE
+    assert result.trading_date == date(2026, 9, 24)
+    assert result.open == Decimal("413.22")
+    assert result.high == Decimal("413.61")
+    assert result.low == Decimal("410.64")
+    assert result.value == Decimal("412.99")
+    assert result.previous_close == Decimal("413.76")
+    assert result.change_pct is not None and result.change_pct < 0
 
 
 def test_twse_negative_fixtures_fail_closed_without_zero_or_preview_fallback():

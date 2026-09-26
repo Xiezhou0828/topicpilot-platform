@@ -1387,6 +1387,28 @@
             ],
             "title": "Source"
           },
+          "sourceDataset": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sourcedataset"
+          },
+          "sourceEndpoint": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sourceendpoint"
+          },
           "status": {
             "title": "Status",
             "type": "string"
@@ -6464,6 +6486,17 @@
             "title": "Role Status",
             "type": "string"
           },
+          "root_cause": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Root Cause"
+          },
           "source_artifact_hash": {
             "anyOf": [
               {
@@ -6587,6 +6620,7 @@
           "role_status",
           "invalid_role_value",
           "invalid_role_category",
+          "root_cause",
           "approval_state",
           "authority_version",
           "effective_from",

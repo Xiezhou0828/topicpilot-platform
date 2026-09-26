@@ -1228,6 +1228,10 @@ export interface components {
             session?: string | null;
             /** Source */
             source?: string | null;
+            /** Sourcedataset */
+            sourceDataset?: string | null;
+            /** Sourceendpoint */
+            sourceEndpoint?: string | null;
             /** Status */
             status: string;
             /** Tradingdate */
@@ -2655,6 +2659,8 @@ export interface components {
              * @enum {string}
              */
             role_status: "VALID" | "NULL" | "INVALID";
+            /** Root Cause */
+            root_cause: string | null;
             /** Source Artifact Hash */
             source_artifact_hash: string | null;
             /** Source Artifact Id */

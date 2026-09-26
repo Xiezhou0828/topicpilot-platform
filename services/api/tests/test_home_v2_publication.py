@@ -5,6 +5,7 @@ from datetime import UTC, date, datetime, timedelta
 from topicpilot_api.home_v2_publication import (
     SectionResult,
     _aggregate_home_institutional_flow,
+    _flow_window,
     _turnover_comparison,
     build_daily_focus,
     build_market_distribution,
@@ -236,6 +237,30 @@ def test_home_institutional_flow_aggregate_requires_matching_exchange_facts():
     assert aggregate["foreign"]["sell"] == 20
     assert aggregate["foreign"]["net"] == -1
     assert aggregate["total"]["net"] == -1
+
+
+def test_institutional_flow_windows_sum_only_complete_official_sessions():
+    rows = [
+        {
+            "availability": "AVAILABLE",
+            "foreign_net": 10,
+            "investment_trust_net": 20,
+            "dealer_net": 30,
+            "total_net": 60,
+            "unit": "TWD",
+            "scale": 0,
+        }
+        for _ in range(5)
+    ]
+
+    rolling = _flow_window(rows, 5)
+
+    assert rolling["complete"] is True
+    assert rolling["observedSessions"] == 5
+    assert rolling["foreignNet"] == 50
+    assert rolling["investmentTrustNet"] == 100
+    assert rolling["dealerNet"] == 150
+    assert rolling["totalNet"] == 300
 
 
 def test_turnover_comparison_uses_formal_prior_session_and_fails_closed_for_missing_data():

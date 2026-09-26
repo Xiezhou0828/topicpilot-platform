@@ -32,6 +32,7 @@ from .index_contract import (
     parse_tpex_index_crosscheck,
     parse_tpex_market_index,
     parse_twse_market_index,
+    parse_twse_market_index_ohlc,
     unavailable_market_index,
 )
 from .ingestion import (
@@ -111,6 +112,7 @@ __all__ = [
     "parse_twse_institutional_flow",
     "parse_twse_market_aggregate",
     "parse_twse_market_index",
+    "parse_twse_market_index_ohlc",
     "persist_market_institutional_flows",
     "probe_history_availability",
     "unavailable_market_index",
