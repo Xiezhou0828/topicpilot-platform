@@ -15,8 +15,22 @@ from pathlib import Path
 from typing import Any
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
+SRC_ROOT = REPO_ROOT / "services" / "api" / "src"
+if str(SRC_ROOT) not in sys.path:
+    sys.path.insert(0, str(SRC_ROOT))
+
+from topicpilot_api.database_maintenance_sources import (
+    CANONICAL_MIGRATION_HEAD,
+    SourceProbeError,
+    migration_schema_status,
+    snapshot_from_database,
+)
+
 DEFAULT_ARTIFACT_DIR = Path(r"E:\topicpilot-artifacts\database-maintenance-excel")
 DEFAULT_TEMP_DIR = Path(r"E:\topicpilot-temp\database-maintenance-excel")
+LEGACY_LOCAL_DATABASE_URL = (
+    "postgresql+psycopg://topicpilot:topicpilot_local_only@127.0.0.1:5432/topicpilot"
+)
 AS_OF_DATE = datetime.now().astimezone().date()
 
 
@@ -34,6 +48,10 @@ def _unavailable(note: str) -> dict[str, Any]:
         "environment": "UNAVAILABLE",
         "timestamp": datetime.now().astimezone().isoformat(timespec="seconds"),
         "as_of_date": AS_OF_DATE.isoformat(),
+        "source_migration_head": None,
+        "canonical_migration_head": CANONICAL_MIGRATION_HEAD,
+        "source_schema_status": "UNKNOWN",
+        "relation_weight_available": False,
         "counts": {"instruments": 0, "topics": 0, "relations": 0},
         "markets": ["TPE", "TWO"],
         "instruments": [],
@@ -43,113 +61,20 @@ def _unavailable(note: str) -> dict[str, Any]:
     }
 
 
-def _snapshot_from_db(database_url: str) -> dict[str, Any]:
-    from sqlalchemy import create_engine, text
-
-    engine = create_engine(database_url, pool_pre_ping=True)
+def _api_request(base_url: str, path: str) -> dict[str, Any]:
+    headers = {"Accept": "application/json"}
+    token = os.environ.get("TOPICPILOT_ADMIN_API_TOKEN")
+    if token:
+        headers["Authorization"] = f"Bearer {token}"
+    request = urllib.request.Request(f"{base_url.rstrip('/')}{path}", headers=headers)
     try:
-        with engine.connect() as connection:
-            if connection.dialect.name == "postgresql":
-                connection.execute(text("SET TRANSACTION READ ONLY"))
-            markets = [
-                dict(row._mapping)
-                for row in connection.execute(
-                    text("""
-                SELECT id, code, name, exchange_code, timezone, calendar_code,
-                       valid_from, valid_to, is_active
-                FROM topicpilot.markets
-                ORDER BY code, id
-            """)
-                )
-            ]
-            instruments = [
-                dict(row._mapping)
-                for row in connection.execute(
-                    text("""
-                SELECT i.id, i.instrument_code, i.name, m.code AS market,
-                       i.instrument_type, i.currency, i.is_active,
-                       i.valid_from, i.valid_to, i.created_at, i.updated_at
-                FROM topicpilot.instruments i
-                JOIN topicpilot.markets m ON m.id = i.market_id
-                ORDER BY m.code, i.instrument_code, i.id
-            """)
-                )
-            ]
-            topics = [
-                dict(row._mapping)
-                for row in connection.execute(
-                    text("""
-                SELECT id, slug, name, description, status, dictionary_version,
-                       valid_from, valid_to, display_metadata
-                FROM topicpilot.topics
-                ORDER BY slug, id
-            """)
-                )
-            ]
-            relations = [
-                dict(row._mapping)
-                for row in connection.execute(
-                    text("""
-                SELECT r.id, i.instrument_code, i.name AS instrument_name,
-                       m.code AS market, r.topic_id, t.slug AS topic_slug,
-                       t.name AS topic_name, r.relation_type, r.relation_version,
-                       r.valid_from, r.valid_to, r.structural_role,
-                       r.approval_state, r.source_artifact_id,
-                       r.source_artifact_hash, r.updated_at,
-                       rwa.weight AS relation_weight,
-                       rwa.approval_state AS weight_approval_state
-                FROM topicpilot.instrument_topic_relations r
-                JOIN topicpilot.instruments i ON i.id = r.instrument_id
-                JOIN topicpilot.markets m ON m.id = i.market_id
-                JOIN topicpilot.topics t ON t.id = r.topic_id
-                LEFT JOIN LATERAL (
-                    SELECT weight, approval_state
-                    FROM topicpilot.relation_weight_authorities
-                    WHERE relation_id = r.id
-                      AND approval_state = 'APPROVED'
-                      AND effective_from <= :as_of
-                      AND (effective_to IS NULL OR effective_to >= :as_of)
-                    ORDER BY effective_from DESC, correction_sequence DESC, created_at DESC
-                    LIMIT 1
-                ) rwa ON TRUE
-                ORDER BY m.code, i.instrument_code, t.slug, r.relation_type, r.id
-            """),
-                    {"as_of": AS_OF_DATE},
-                )
-            ]
-    finally:
-        engine.dispose()
-    snapshot = {
-        "source": "DATABASE_READ_ONLY",
-        "environment": "DATABASE",
-        "timestamp": datetime.now().astimezone().isoformat(timespec="seconds"),
-        "as_of_date": AS_OF_DATE.isoformat(),
-        "markets": [row["code"] for row in markets if row.get("is_active")],
-        "markets_current": [
-            {key: _json_value(value) for key, value in row.items()} for row in markets
-        ],
-        "instruments": [
-            {key: _json_value(value) for key, value in row.items()}
-            for row in instruments
-        ],
-        "topics": [
-            {
-                **{key: _json_value(value) for key, value in row.items()},
-                "hierarchy": None,
-            }
-            for row in topics
-        ],
-        "relations": [
-            {key: _json_value(value) for key, value in row.items()} for row in relations
-        ],
-    }
-    snapshot["counts"] = {
-        "instruments": len(snapshot["instruments"]),
-        "topics": len(snapshot["topics"]),
-        "relations": len(snapshot["relations"]),
-    }
-    snapshot["snapshot_note"] = "Read-only PostgreSQL snapshot; no writes were issued."
-    return snapshot
+        with urllib.request.urlopen(request, timeout=15) as response:
+            payload = json.load(response)
+    except Exception as exc:
+        raise SourceProbeError(f"admin API probe failed: {type(exc).__name__}") from exc
+    if not isinstance(payload, dict):
+        raise SourceProbeError("admin API returned a non-object payload")
+    return payload
 
 
 def _fetch_api_page(base_url: str, resource: str) -> list[dict[str, Any]]:
@@ -157,11 +82,7 @@ def _fetch_api_page(base_url: str, resource: str) -> list[dict[str, Any]]:
     offset = 0
     while True:
         query = urllib.parse.urlencode({"limit": 200, "offset": offset})
-        request = urllib.request.Request(
-            f"{base_url.rstrip('/')}/api/v1/admin/{resource}?{query}"
-        )
-        with urllib.request.urlopen(request, timeout=10) as response:
-            payload = json.load(response)
+        payload = _api_request(base_url, f"/api/v1/admin/{resource}?{query}")
         page = payload.get("items", [])
         items.extend(page)
         if not payload.get("has_more") or not page:
@@ -169,7 +90,11 @@ def _fetch_api_page(base_url: str, resource: str) -> list[dict[str, Any]]:
         offset += len(page)
 
 
-def _snapshot_from_api(api_url: str) -> dict[str, Any]:
+def _snapshot_from_api(api_url: str, *, source: str, environment: str) -> dict[str, Any]:
+    migration = _api_request(api_url, "/api/v1/admin/migration")
+    source_head = migration.get("alembicRevision") or migration.get("alembic_revision")
+    if not source_head:
+        raise SourceProbeError("admin API did not expose a migration marker")
     markets = _fetch_api_page(api_url, "markets")
     instruments = _fetch_api_page(api_url, "instruments")
     topics = _fetch_api_page(api_url, "topics")
@@ -178,10 +103,15 @@ def _snapshot_from_api(api_url: str) -> dict[str, Any]:
     instrument_by_id = {row.get("id"): row for row in instruments}
     topic_by_id = {row.get("id"): row for row in topics}
     snapshot = {
-        "source": "ADMIN_API_READ_ONLY",
-        "environment": "ADMIN_API",
+        "source": f"{source}_ADMIN_API_READ_ONLY",
+        "source_type": source,
+        "environment": environment,
         "timestamp": datetime.now().astimezone().isoformat(timespec="seconds"),
         "as_of_date": AS_OF_DATE.isoformat(),
+        "source_migration_head": str(source_head),
+        "canonical_migration_head": CANONICAL_MIGRATION_HEAD,
+        "source_schema_status": migration_schema_status(str(source_head)),
+        "relation_weight_available": False,
         "markets": [row.get("code") for row in markets if row.get("is_active", True)],
         "markets_current": markets,
         "instruments": [
@@ -250,10 +180,10 @@ Topic lists and weight lists use the literal `|` delimiter. Position N in a topi
 ## Commands
 
 ```text
-python scripts/admin/export_database_maintenance_workbook.py
-python scripts/admin/database_maintenance_import.py --input <normalized.tsv> --validate-only
-python scripts/admin/database_maintenance_import.py --input <normalized.tsv> --dry-run
-python scripts/admin/database_maintenance_import.py --input <normalized.tsv> --apply --environment development
+python scripts/admin/export_database_maintenance_workbook.py --source production
+python scripts/admin/database_maintenance_import.py --input <normalized.tsv> --snapshot-json E:\\topicpilot-temp\\database-maintenance-excel\\snapshot.json --validate-only
+python scripts/admin/database_maintenance_import.py --input <normalized.tsv> --snapshot-json E:\\topicpilot-temp\\database-maintenance-excel\\snapshot.json --dry-run
+TOPICPILOT_ALLOW_MAINTENANCE_APPLY=1 python scripts/admin/database_maintenance_import.py --input <normalized.tsv> --snapshot-json E:\\topicpilot-temp\\database-maintenance-excel\\snapshot.json --apply --environment development
 ```
 """,
         encoding="utf-8",
@@ -268,12 +198,24 @@ def _write_report(
     reason: str = "",
 ) -> None:
     counts = snapshot.get("counts", {})
-    report = f"""# Database maintenance workbook tooling report
+    report = f"""# Database source report
 
-**Task:** `TASK-DATABASE-MAINTENANCE-EXCEL-001`  
-**Terminal state:** `CANONICALIZED`  
-**Snapshot source:** `{snapshot.get("source")}`  
-**Snapshot note:** {snapshot.get("snapshot_note", "")}
+**Task:** `TASK-DATABASE-MAINTENANCE-DATA-SOURCE-AND-DOCKER-CLOSURE-002`
+**Data source:** `{snapshot.get("source")}`
+**Environment:** `{snapshot.get("environment")}`
+**Snapshot timestamp:** `{snapshot.get("timestamp")}`
+**Source migration head:** `{snapshot.get("source_migration_head") or "UNKNOWN"}`
+**Canonical migration head:** `{snapshot.get("canonical_migration_head", CANONICAL_MIGRATION_HEAD)}`
+**Source schema status:** `{snapshot.get("source_schema_status", "UNKNOWN")}`
+**Read mode:** `READ_ONLY`
+
+## Source verification
+
+{snapshot.get("snapshot_note", "")}
+
+Production is never inferred from the local Docker stack. `--source production`
+requires an explicit Production database URL or Production admin API URL and a
+readable migration marker. An unverified source fails closed.
 
 ## Result
 
@@ -290,52 +232,116 @@ def _write_report(
 
 Relations are modeled as 0..N PRIMARY and 0..N SECONDARY per instrument. Each relation has its own `TOPIC_MEMBERSHIP_IMPORTANCE` weight: PRIMARY `0.5..2.0` inclusive and SECONDARY `0.3..0.8` inclusive. The tooling does not infer a Representative Topic and does not map relation weight into Score, Heating/Cooling, Grade, Lifecycle, Leader, Today, or Opportunity.
 
-The repository's existing `AGENTS.md`/`PROJECT_CONTEXT` point to a stale C-drive canonical path. This task explicitly names `E:\\TopicPilot\\topicpilot-platform` and GitHub `Xiezhou0828/topicpilot-platform` on `main`; the implementation follows that task-specific authority without creating a C-drive workspace.
-
-## Verification boundary
-
-The local Docker engine was unavailable during the read-only precheck, and no database URL was present in the repository environment. Therefore the workbook is marked `{snapshot.get("source")}` and can be refreshed later with the command in the README. No production write or migration was attempted.
+The canonical repository is `E:\\TopicPilot\\topicpilot-platform` and GitHub is
+`Xiezhou0828/topicpilot-platform` on `main`. No production write or migration
+was attempted.
 """
     if reason:
         report += f"\nBuild note: `{reason}`\n"
     (artifact_dir / "database-maintenance-tooling-report.md").write_text(
         report, encoding="utf-8"
     )
+    (artifact_dir / "database-source-report.md").write_text(report, encoding="utf-8")
+
+
+def _source_database_url(source: str, explicit: str | None) -> str | None:
+    if explicit:
+        return explicit
+    if source == "production":
+        return os.environ.get("TOPICPILOT_PRODUCTION_DATABASE_URL")
+    if source == "local":
+        return os.environ.get("TOPICPILOT_LOCAL_DATABASE_URL") or os.environ.get(
+            "DATABASE_URL"
+        )
+    if source == "legacy-local":
+        return os.environ.get("TOPICPILOT_LEGACY_LOCAL_DATABASE_URL") or LEGACY_LOCAL_DATABASE_URL
+    return None
+
+
+def _api_url(source: str, explicit: str | None) -> str | None:
+    if explicit:
+        return explicit
+    if source == "production":
+        return os.environ.get("TOPICPILOT_PRODUCTION_ADMIN_API_URL")
+    if source == "local":
+        return os.environ.get("TOPICPILOT_ADMIN_API_URL")
+    return None
+
+
+def _source_snapshot(args: argparse.Namespace) -> dict[str, Any]:
+    source = args.source
+    environment = {
+        "production": "PRODUCTION",
+        "local": "LOCAL",
+        "legacy-local": "LEGACY_LOCAL",
+    }[source]
+    database_url = _source_database_url(source, args.database_url)
+    api_url = _api_url(source, args.api_url)
+    if source == "legacy-local" and args.api_url:
+        raise SystemExit("--source legacy-local does not accept --api-url")
+
+    if database_url:
+        note = {
+            "production": "Read-only PostgreSQL snapshot from the explicitly configured Production source.",
+            "local": "Read-only PostgreSQL snapshot from the explicitly selected local source.",
+            "legacy-local": "Read-only snapshot from the known legacy Docker PostgreSQL source; this is not Production authority.",
+        }[source]
+        try:
+            return snapshot_from_database(
+                database_url,
+                source=(
+                    "PRODUCTION_READ_ONLY"
+                    if source == "production"
+                    else "LOCAL_READ_ONLY"
+                    if source == "local"
+                    else "LEGACY_LOCAL"
+                ),
+                environment=environment,
+                as_of=AS_OF_DATE,
+                snapshot_note=note,
+            )
+        except SourceProbeError as exc:
+            if not api_url:
+                raise SystemExit(f"SOURCE_UNAVAILABLE={source}: {exc}") from exc
+            if args.database_url:
+                raise SystemExit(f"SOURCE_UNAVAILABLE={source}: {exc}") from exc
+
+    if api_url:
+        try:
+            return _snapshot_from_api(
+                api_url,
+                source=("PRODUCTION" if source == "production" else "LOCAL"),
+                environment=environment,
+            )
+        except SourceProbeError as exc:
+            raise SystemExit(f"SOURCE_UNAVAILABLE={source}: {exc}") from exc
+
+    raise SystemExit(
+        f"SOURCE_UNAVAILABLE={source}: no explicit source URL or verified read path was configured"
+    )
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--source",
+        choices=("production", "local", "legacy-local"),
+        required=True,
+        help="Explicit source authority; production never falls back to legacy-local.",
+    )
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_ARTIFACT_DIR)
     parser.add_argument("--temp-dir", type=Path, default=DEFAULT_TEMP_DIR)
     parser.add_argument(
         "--database-url",
-        default=os.environ.get("TOPICPILOT_DATABASE_URL")
-        or os.environ.get("DATABASE_URL"),
+        help="Explicit read-only database URL for the selected source.",
     )
-    parser.add_argument("--api-url", default=os.environ.get("TOPICPILOT_ADMIN_API_URL"))
+    parser.add_argument("--api-url", help="Explicit read-only admin API URL for the selected source.")
     parser.add_argument("--builder-python", default=sys.executable)
     args = parser.parse_args()
 
     args.output_dir.mkdir(parents=True, exist_ok=True)
     args.temp_dir.mkdir(parents=True, exist_ok=True)
-    snapshot_error = ""
-    snapshot: dict[str, Any]
-    if args.database_url:
-        try:
-            snapshot = _snapshot_from_db(args.database_url)
-        except Exception as exc:  # noqa: BLE001 - read-only probe degrades explicitly
-            snapshot_error = f"database probe failed: {type(exc).__name__}: {exc}"
-            snapshot = _unavailable(snapshot_error)
-    elif args.api_url:
-        try:
-            snapshot = _snapshot_from_api(args.api_url)
-        except Exception as exc:  # noqa: BLE001 - read-only probe degrades explicitly
-            snapshot_error = f"admin API probe failed: {type(exc).__name__}: {exc}"
-            snapshot = _unavailable(snapshot_error)
-    else:
-        snapshot = _unavailable(
-            "No DATABASE_URL/TOPICPILOT_DATABASE_URL or TOPICPILOT_ADMIN_API_URL was available."
-        )
+    snapshot = _source_snapshot(args)
 
     snapshot_path = args.temp_dir / "snapshot.json"
     snapshot_path.write_text(
@@ -371,8 +377,15 @@ def main() -> None:
         args.output_dir,
         snapshot,
         build_result,
-        reason=snapshot_error or build_result.get("artifact_tool_error", ""),
+        reason=build_result.get("artifact_tool_error", ""),
     )
+    counts = snapshot["counts"]
+    print(f"SOURCE={snapshot.get('source')}")
+    print(f"MIGRATION_HEAD={snapshot.get('source_migration_head')}")
+    print(f"INSTRUMENTS={counts.get('instruments', 0)}")
+    print(f"TOPICS={counts.get('topics', 0)}")
+    print(f"RELATIONS={counts.get('relations', 0)}")
+    print(f"OUTPUT={workbook_path}")
     print(
         json.dumps(
             {
