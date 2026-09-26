@@ -91,6 +91,26 @@ def _effective(row: StructuralRoleAuthorityCandidate, as_of: date) -> bool:
     )
 
 
+def _is_formal_authority_candidate(row: StructuralRoleAuthorityCandidate) -> bool:
+    """Keep legacy relation rows out of the formal authority resolver."""
+
+    return any(
+        value is not None
+        for value in (
+            row.structural_role,
+            row.approval_state,
+            row.authority_version,
+            row.source_artifact_id,
+            row.source_artifact_hash,
+            row.approval_reference,
+            row.correction_sequence,
+            row.supersedes_authority_id,
+            row.superseded_by_authority_id,
+            row.lineage_hash,
+        )
+    )
+
+
 def _validate_authority(row: StructuralRoleAuthorityCandidate) -> None:
     if row.relation_type not in ALLOWED_RELATION_TYPES:
         raise StructuralRoleAuthorityReadError(
@@ -172,7 +192,7 @@ def resolve_current_structural_role_authority(
             )
     grouped: dict[tuple[str, str], list[StructuralRoleAuthorityCandidate]] = defaultdict(list)
     for row in rows:
-        if _effective(row, as_of):
+        if _effective(row, as_of) and _is_formal_authority_candidate(row):
             grouped[(row.instrument_id, row.topic_id)].append(row)
 
     resolved: list[StructuralRoleAuthorityCandidate] = []

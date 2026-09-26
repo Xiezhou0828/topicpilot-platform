@@ -74,6 +74,24 @@ def test_topic_role_is_not_a_structural_role_fallback() -> None:
         resolve_current_structural_role_authority((row,), AS_OF)
 
 
+def test_legacy_nonformal_null_role_is_not_treated_as_formal_authority() -> None:
+    row = make_row("PRIMARY", None)
+    row = row.__class__(
+        **{
+            **row.__dict__,
+            "approval_state": None,
+            "authority_version": None,
+            "source_artifact_id": None,
+            "source_artifact_hash": None,
+            "approval_reference": None,
+            "correction_sequence": None,
+            "lineage_hash": None,
+        }
+    )
+
+    assert resolve_current_structural_role_authority((row,), AS_OF) == []
+
+
 def test_duplicate_active_authority_fails_closed() -> None:
     rows = (
         make_row("PRIMARY", "REPRESENTATIVE", relation_id="relation-1"),
