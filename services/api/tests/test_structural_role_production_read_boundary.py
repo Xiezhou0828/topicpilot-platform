@@ -84,7 +84,7 @@ def test_legacy_nonformal_null_role_is_not_treated_as_formal_authority() -> None
             "source_artifact_id": None,
             "source_artifact_hash": None,
             "approval_reference": None,
-            "correction_sequence": None,
+            "correction_sequence": 0,
             "lineage_hash": None,
         }
     )

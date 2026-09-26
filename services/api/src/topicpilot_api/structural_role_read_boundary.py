@@ -103,7 +103,7 @@ def _is_formal_authority_candidate(row: StructuralRoleAuthorityCandidate) -> boo
             row.source_artifact_id,
             row.source_artifact_hash,
             row.approval_reference,
-            row.correction_sequence,
+            row.correction_sequence if row.correction_sequence not in (None, 0) else None,
             row.supersedes_authority_id,
             row.superseded_by_authority_id,
             row.lineage_hash,
