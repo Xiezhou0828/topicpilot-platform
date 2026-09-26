@@ -51,7 +51,7 @@ def catalog_from_snapshot(path: Path) -> MaintenanceCatalog:
                 market=market,
                 instrument_type=row.get("instrument_type") or "EQUITY",
                 currency=row.get("currency"),
-                is_active=bool(row.get("is_active", True)),
+                active=bool(row.get("is_active", True)),
                 valid_from=_date(row.get("valid_from")),
                 valid_to=_date(row.get("valid_to")),
             )
