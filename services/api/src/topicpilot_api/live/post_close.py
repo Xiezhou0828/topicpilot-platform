@@ -13,7 +13,7 @@ from urllib.request import Request, urlopen
 from uuid import UUID
 
 from sqlalchemy import and_, or_, select
-from sqlalchemy.exc import DBAPIError
+from sqlalchemy.exc import DBAPIError, SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from topicpilot_api.daily_market import DailyMarketReconciliation, reconcile_daily_market
@@ -29,6 +29,10 @@ from topicpilot_api.market_data.ingestion import (
     HistoricalInstrumentResult,
     HistoricalSourceRegistration,
     ingest_historical,
+)
+from topicpilot_api.market_data.institutional_flow_contract import (
+    fetch_official_market_institutional_flows,
+    persist_market_institutional_flows,
 )
 from topicpilot_api.market_data.rate_limit import RateLimitedTransport
 from topicpilot_api.market_data.registry import build_historical_provider_registry
@@ -1249,6 +1253,12 @@ class PostCloseUpdater:
                         as_of=self._now(),
                         transport=_official_transport,
                     ),
+                    market_institutional_flow_facts=fetch_official_market_institutional_flows(
+                        target_date=local_date,
+                        retrieved_at=self._now(),
+                        as_of=self._now(),
+                        transport=_official_transport,
+                    ),
                 )
                 if reconciliation.downstream_ready
                 else {
@@ -1351,6 +1361,7 @@ class PostCloseUpdater:
         source_run_id: str | None = None,
         market_index_facts: Collection[Any] = (),
         market_aggregate_facts: Collection[Any] = (),
+        market_institutional_flow_facts: Collection[Any] = (),
     ) -> dict[str, Any]:
         try:
             result = TopicSnapshotEngine(self.session).run_once(
@@ -1402,6 +1413,19 @@ class PostCloseUpdater:
                 else:
                     result["lifecycle"] = {"status": "WAITING_FOR_FORMAL_SNAPSHOT"}
                 try:
+                    if market_institutional_flow_facts:
+                        try:
+                            result["marketInstitutionalFlow"] = persist_market_institutional_flows(
+                                self.session,
+                                tuple(market_institutional_flow_facts),
+                                ingested_at=self._now(),
+                            )
+                        except SQLAlchemyError as exc:
+                            self.session.rollback()
+                            result["marketInstitutionalFlow"] = {
+                                "status": "PERSISTENCE_UNAVAILABLE",
+                                "error": type(exc).__name__,
+                            }
                     result["homePublication"] = materialize_home_v2(
                         self.session,
                         trading_date=snapshot_date,
