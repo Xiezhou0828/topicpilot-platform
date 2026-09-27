@@ -134,6 +134,22 @@ def test_scheduler_decides_wait_intraday_and_post_close():
     assert scheduler.decide(datetime(2026, 8, 9, 1, 0, tzinfo=UTC)) == "WAIT"
 
 
+def test_scheduler_waits_on_weekend_even_after_post_close_start():
+    repository = FakeRepository(_item())
+    collector = LiveCollector(repository, RetryProvider(), _config())
+    scheduler = LiveScheduler(collector, _config())
+
+    assert scheduler.decide(datetime(2026, 8, 9, 6, 0, tzinfo=UTC)) == "WAIT"
+
+
+def test_scheduler_waits_on_configured_closed_date_after_post_close_start():
+    config = LiveRuntimeConfig(closed_dates=frozenset({date(2026, 8, 10)}))
+    collector = LiveCollector(FakeRepository(_item()), RetryProvider(), config)
+    scheduler = LiveScheduler(collector, config)
+
+    assert scheduler.decide(datetime(2026, 8, 10, 6, 0, tzinfo=UTC)) == "WAIT"
+
+
 def test_scheduler_allows_after_midnight_daily_schedule():
     config = LiveRuntimeConfig(post_close_start="04:30")
     collector = LiveCollector(

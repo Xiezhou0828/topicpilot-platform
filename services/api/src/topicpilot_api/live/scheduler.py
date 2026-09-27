@@ -48,6 +48,8 @@ class LiveScheduler:
         status = self.session_clock.status(now or self.clock())
         if status.state == SessionState.OPEN:
             return "INTRADAY"
+        if status.reason in {"WEEKEND", "CONFIGURED_CLOSED_DATE"}:
+            return "WAIT"
         local = status.local_time
         if self.post_close_start <= local.time():
             return "POST_CLOSE"
