@@ -1,0 +1,59 @@
+{
+  "artifactVersion": "topic-strength-historical-calibration.v1.candidate",
+  "status": "INSUFFICIENT_DATA",
+  "productionActive": false,
+  "parameters": [
+    {
+      "parameterName": "absolute_grade_boundaries",
+      "system": "ABSOLUTE",
+      "status": "INSUFFICIENT_DATA",
+      "candidateValue": null,
+      "sampleCount": 0,
+      "method": "DESCRIPTIVE_PIT_NO_LOOKAHEAD_PENDING",
+      "limitations": [
+        "Candidate fitting is blocked until strict PIT rows are available."
+      ],
+      "ownerApprovalRequired": true,
+      "productionActive": false
+    },
+    {
+      "parameterName": "absolute_d_negative_evidence_guard",
+      "system": "ABSOLUTE",
+      "status": "INSUFFICIENT_DATA",
+      "candidateValue": null,
+      "sampleCount": 0,
+      "method": "DESCRIPTIVE_PIT_NO_LOOKAHEAD_PENDING",
+      "limitations": [
+        "Candidate fitting is blocked until strict PIT rows are available."
+      ],
+      "ownerApprovalRequired": true,
+      "productionActive": false
+    },
+    {
+      "parameterName": "relative_grade_boundaries",
+      "system": "RELATIVE",
+      "status": "INSUFFICIENT_DATA",
+      "candidateValue": null,
+      "sampleCount": 0,
+      "method": "DESCRIPTIVE_PIT_NO_LOOKAHEAD_PENDING",
+      "limitations": [
+        "Candidate fitting is blocked until strict PIT rows are available."
+      ],
+      "ownerApprovalRequired": true,
+      "productionActive": false
+    },
+    {
+      "parameterName": "relative_d_underperformance_guard",
+      "system": "RELATIVE",
+      "status": "INSUFFICIENT_DATA",
+      "candidateValue": null,
+      "sampleCount": 0,
+      "method": "DESCRIPTIVE_PIT_NO_LOOKAHEAD_PENDING",
+      "limitations": [
+        "Candidate fitting is blocked until strict PIT rows are available."
+      ],
+      "ownerApprovalRequired": true,
+      "productionActive": false
+    }
+  ]
+}

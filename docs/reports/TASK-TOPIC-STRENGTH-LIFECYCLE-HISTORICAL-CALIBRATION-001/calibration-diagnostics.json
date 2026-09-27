@@ -1,0 +1,63 @@
+{
+  "artifactVersion": "topic-strength-historical-calibration.v1.candidate",
+  "status": "NOT_RUN_INSUFFICIENT_DATA",
+  "productionActive": false,
+  "diagnostics": [
+    {
+      "name": "score_distribution",
+      "status": "NOT_RUN_INSUFFICIENT_DATA"
+    },
+    {
+      "name": "grade_distribution",
+      "status": "NOT_RUN_INSUFFICIENT_DATA"
+    },
+    {
+      "name": "role_contribution_distribution",
+      "status": "NOT_RUN_INSUFFICIENT_DATA"
+    },
+    {
+      "name": "topic_size_sensitivity",
+      "status": "NOT_RUN_INSUFFICIENT_DATA"
+    },
+    {
+      "name": "market_sensitivity",
+      "status": "NOT_RUN_INSUFFICIENT_DATA"
+    },
+    {
+      "name": "outlier_sensitivity",
+      "status": "NOT_RUN_INSUFFICIENT_DATA"
+    },
+    {
+      "name": "missing_data_sensitivity",
+      "status": "NOT_RUN_INSUFFICIENT_DATA"
+    },
+    {
+      "name": "regime_sensitivity",
+      "status": "NOT_RUN_INSUFFICIENT_DATA"
+    },
+    {
+      "name": "transition_frequency",
+      "status": "NOT_RUN_INSUFFICIENT_DATA"
+    },
+    {
+      "name": "lifecycle_dwell_times",
+      "status": "NOT_RUN_INSUFFICIENT_DATA"
+    },
+    {
+      "name": "stage_whipsaw_frequency",
+      "status": "NOT_RUN_INSUFFICIENT_DATA"
+    },
+    {
+      "name": "direct_transition_frequency",
+      "status": "NOT_RUN_INSUFFICIENT_DATA"
+    },
+    {
+      "name": "d_false_neutral_false_weak_review",
+      "status": "NOT_RUN_INSUFFICIENT_DATA"
+    },
+    {
+      "name": "s_saturation_frequency",
+      "status": "NOT_RUN_INSUFFICIENT_DATA"
+    }
+  ]
+}

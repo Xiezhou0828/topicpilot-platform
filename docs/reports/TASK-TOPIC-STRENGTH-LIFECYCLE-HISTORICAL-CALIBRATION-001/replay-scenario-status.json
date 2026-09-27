@@ -1,0 +1,95 @@
+{
+  "artifactVersion": "topic-strength-historical-calibration.v1.candidate",
+  "status": "NOT_RUN_INSUFFICIENT_DATA",
+  "productionActive": false,
+  "scenarios": [
+    {
+      "scenario": "neutral_topic",
+      "status": "NOT_RUN_INSUFFICIENT_DATA"
+    },
+    {
+      "scenario": "mild_positive_topic",
+      "status": "NOT_RUN_INSUFFICIENT_DATA"
+    },
+    {
+      "scenario": "clear_a_like_topic",
+      "status": "NOT_RUN_INSUFFICIENT_DATA"
+    },
+    {
+      "scenario": "high_a_topic",
+      "status": "NOT_RUN_INSUFFICIENT_DATA"
+    },
+    {
+      "scenario": "s_like_broad_topic",
+      "status": "NOT_RUN_INSUFFICIENT_DATA"
+    },
+    {
+      "scenario": "confirmed_weak_topic",
+      "status": "NOT_RUN_INSUFFICIENT_DATA"
+    },
+    {
+      "scenario": "absolute_weak_relative_strong",
+      "status": "NOT_RUN_INSUFFICIENT_DATA"
+    },
+    {
+      "scenario": "absolute_strong_relative_weak",
+      "status": "NOT_RUN_INSUFFICIENT_DATA"
+    },
+    {
+      "scenario": "rep_strong_core_weak",
+      "status": "NOT_RUN_INSUFFICIENT_DATA"
+    },
+    {
+      "scenario": "rep_weak_core_broad_strong",
+      "status": "NOT_RUN_INSUFFICIENT_DATA"
+    },
+    {
+      "scenario": "core_strong_related_weak",
+      "status": "NOT_RUN_INSUFFICIENT_DATA"
+    },
+    {
+      "scenario": "core_strong_related_broad",
+      "status": "NOT_RUN_INSUFFICIENT_DATA"
+    },
+    {
+      "scenario": "single_outlier_core",
+      "status": "NOT_RUN_INSUFFICIENT_DATA"
+    },
+    {
+      "scenario": "broad_synchronized_core",
+      "status": "NOT_RUN_INSUFFICIENT_DATA"
+    },
+    {
+      "scenario": "related_only_surge",
+      "status": "NOT_RUN_INSUFFICIENT_DATA"
+    },
+    {
+      "scenario": "sprouting_pattern",
+      "status": "NOT_RUN_INSUFFICIENT_DATA"
+    },
+    {
+      "scenario": "direct_base_to_fermenting",
+      "status": "NOT_RUN_INSUFFICIENT_DATA"
+    },
+    {
+      "scenario": "fermenting_pattern",
+      "status": "NOT_RUN_INSUFFICIENT_DATA"
+    },
+    {
+      "scenario": "main_rise_pattern",
+      "status": "NOT_RUN_INSUFFICIENT_DATA"
+    },
+    {
+      "scenario": "mature_late_diffusion",
+      "status": "NOT_RUN_INSUFFICIENT_DATA"
+    },
+    {
+      "scenario": "persistent_declining",
+      "status": "NOT_RUN_INSUFFICIENT_DATA"
+    },
+    {
+      "scenario": "one_day_pullback_non_decline",
+      "status": "NOT_RUN_INSUFFICIENT_DATA"
+    }
+  ]
+}
