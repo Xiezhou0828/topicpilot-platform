@@ -440,13 +440,17 @@ jobs:
           effective_from = os.environ["EFFECTIVE_FROM"]
           plan = json.loads((root / "dry-run-result.json").read_text(encoding="utf-8"))
 
+          def blocked(message, **details):
+              print(json.dumps({"status": "FAIL", "blocking_reason": message, **details}, ensure_ascii=False, indent=2))
+              raise SystemExit(message)
+
           def get(path):
               request = urllib.request.Request(base + path, headers={"Accept": "application/json"})
               try:
                   with urllib.request.urlopen(request, timeout=120) as response:
                       return json.load(response)
               except (urllib.error.HTTPError, urllib.error.URLError, TimeoutError) as exc:
-                  raise SystemExit(f"BLOCKED_POST_APPLY_READ: {type(exc).__name__}") from exc
+                  blocked(f"BLOCKED_POST_APPLY_READ: {type(exc).__name__}")
 
           def page(path, limit=500):
               rows = []
@@ -461,7 +465,7 @@ jobs:
 
           migration = get("/api/v1/admin/migration")
           if migration.get("alembicRevision") != canonical_head or migration.get("readOnly") is not True:
-              raise SystemExit("BLOCKED_POST_APPLY_READ: migration marker changed")
+              blocked("BLOCKED_POST_APPLY_READ: migration marker changed")
           audit = get("/api/v1/admin/relations/structural-role-authority/audit?limit=10000&offset=0")
           summary = audit.get("summary", {})
           formal_rows, formal_page = page("/api/v1/admin/relations/structural-role-authority")
@@ -486,22 +490,22 @@ jobs:
           relation_identity.sort(key=lambda row: tuple(row[field] for field in relation_fields))
           relation_hash = hashlib.sha256(("\n".join(json.dumps(row, sort_keys=True, separators=(",", ":")) for row in relation_identity) + "\n").encode()).hexdigest()
           if after_hash != expected_hash:
-              raise SystemExit("BLOCKED_STRUCTURAL_ROLE_MUTATION: BEFORE and AFTER structural-role hashes differ")
+              blocked("BLOCKED_STRUCTURAL_ROLE_MUTATION: BEFORE and AFTER structural-role hashes differ", before_hash=expected_hash, after_hash=after_hash)
           if relation_hash != before["relation_identity_hash"]:
-              raise SystemExit("BLOCKED_RELATION_MUTATION: relation identity/type hash changed")
+              blocked("BLOCKED_RELATION_MUTATION: relation identity/type hash changed", before_hash=before["relation_identity_hash"], after_hash=relation_hash)
           if len(formal_rows) != 1160 or len(relation_rows) != 1568:
-              raise SystemExit("BLOCKED_RELATION_COUNT_CHANGE: Production relation counts changed")
+              blocked("BLOCKED_RELATION_COUNT_CHANGE: Production relation counts changed", formal_rows=len(formal_rows), relation_rows=len(relation_rows))
           if any(summary.get(name) != 0 for name in ("invalid_role_rows", "duplicate_active_authority_rows", "supersession_conflict_rows", "lineage_inconsistency_rows")):
-              raise SystemExit("BLOCKED_STRUCTURAL_ROLE_AUDIT: post-apply audit is not clean")
+              blocked("BLOCKED_STRUCTURAL_ROLE_AUDIT: post-apply audit is not clean", audit_summary={name: summary.get(name) for name in ("invalid_role_rows", "duplicate_active_authority_rows", "supersession_conflict_rows", "lineage_inconsistency_rows")})
           formal_type_counts = Counter(row.get("relation_type") for row in formal_rows)
           formal_role_counts = Counter(row.get("structural_role") for row in formal_rows)
           formal_cross_counts = Counter(
               f"{row.get('relation_type')} x {row.get('structural_role')}" for row in formal_rows
           )
           if dict(sorted(formal_type_counts.items())) != {"PRIMARY": 474, "SECONDARY": 686}:
-              raise SystemExit("BLOCKED_RELATION_TYPE_CHANGE: formal relation-type counts changed")
+              blocked("BLOCKED_RELATION_TYPE_CHANGE: formal relation-type counts changed", counts=dict(formal_type_counts))
           if dict(sorted(formal_role_counts.items())) != {"CORE": 650, "RELATED": 181, "REPRESENTATIVE": 329}:
-              raise SystemExit("BLOCKED_STRUCTURAL_ROLE_MUTATION: formal role counts changed")
+              blocked("BLOCKED_STRUCTURAL_ROLE_MUTATION: formal role counts changed", counts=dict(formal_role_counts))
           if dict(sorted(formal_cross_counts.items())) != {
               "PRIMARY x CORE": 269,
               "PRIMARY x RELATED": 45,
@@ -510,7 +514,7 @@ jobs:
               "SECONDARY x RELATED": 136,
               "SECONDARY x REPRESENTATIVE": 169,
           }:
-              raise SystemExit("BLOCKED_STRUCTURAL_ROLE_MUTATION: formal relation-type/role cross-tab changed")
+              blocked("BLOCKED_STRUCTURAL_ROLE_MUTATION: formal relation-type/role cross-tab changed", counts=dict(formal_cross_counts))
 
           engine = create_engine(os.environ["TOPICPILOT_PRODUCTION_DATABASE_URL"], pool_pre_ping=True)
           try:
@@ -541,13 +545,13 @@ jobs:
           finally:
               engine.dispose()
           if revision != canonical_head or total != 1551 or current != 1551 or invalid != 0:
-              raise SystemExit("BLOCKED_RELATION_WEIGHT_AUTHORITY: populated authority rows do not match policy")
+              blocked("BLOCKED_RELATION_WEIGHT_AUTHORITY: populated authority rows do not match policy", revision=revision, total=total, current_approved=current, invalid=invalid)
           grouped_json = [{key: (int(value) if key == "row_count" else str(value)) for key, value in row.items()} for row in grouped]
           if grouped_json != [
               {"relation_type": "PRIMARY", "weight": "1.0", "approval_state": "APPROVED", "row_count": 474},
               {"relation_type": "SECONDARY", "weight": "0.5", "approval_state": "APPROVED", "row_count": 1077},
           ]:
-              raise SystemExit("BLOCKED_RELATION_WEIGHT_AUTHORITY: weight distribution mismatch")
+              blocked("BLOCKED_RELATION_WEIGHT_AUTHORITY: weight distribution mismatch", groups=grouped_json)
 
           with (root / "post-apply-structural-role-snapshot.csv").open("w", newline="", encoding="utf-8") as handle:
               writer = csv.DictWriter(handle, fieldnames=list(fields))
@@ -753,6 +757,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: relation-weight-initial-authority-bootstrap-${{ github.run_number }}
-          path: ${{ github.workspace }}/.relation-weight-initial-authority-bootstrap-001
+          path: ${{ github.workspace }}/relation-weight-initial-authority-bootstrap-001
           if-no-files-found: warn
           retention-days: 14
