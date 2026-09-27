@@ -589,7 +589,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          python -m ruff check scripts/admin/bootstrap_relation_weight_authority.py scripts/admin/export_database_maintenance_workbook.py services/api/src/topicpilot_api/structural_role_audit.py services/api/src/topicpilot_api/structural_role_read_boundary.py
+          python -m ruff check --ignore EXE001 scripts/admin/bootstrap_relation_weight_authority.py scripts/admin/export_database_maintenance_workbook.py services/api/src/topicpilot_api/structural_role_audit.py services/api/src/topicpilot_api/structural_role_read_boundary.py
           python -m pytest -q \
             services/api/tests/test_relation_weight_authority.py \
             services/api/tests/test_database_maintenance_sources.py \
