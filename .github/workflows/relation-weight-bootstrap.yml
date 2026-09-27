@@ -315,10 +315,10 @@ jobs:
           root = Path(os.environ["ARTIFACT_ROOT"])
           result = json.loads((root / "dry-run-result.json").read_text(encoding="utf-8"))
           expected = {
-              "eligible_rows": 1160,
+              "eligible_rows": 1551,
               "primary_eligible": 474,
-              "secondary_eligible": 686,
-              "create_initial_authority": 1160,
+              "secondary_eligible": 1077,
+              "create_initial_authority": 1551,
               "skip_existing_authority": 0,
               "existing_authority_rows": 0,
               "migration_head": os.environ["CANONICAL_MIGRATION_HEAD"],
@@ -395,7 +395,7 @@ jobs:
           result = json.loads((Path(os.environ["ARTIFACT_ROOT"]) / "apply-result.json").read_text(encoding="utf-8"))
           if result.get("status") not in {"APPLIED", "NOOP_IDEMPOTENT"}:
               raise SystemExit("BLOCKED_BOOTSTRAP_APPLY: unexpected apply status")
-          if result.get("rows_created") != 1160 or result.get("rows_skipped_existing") != 0:
+          if result.get("rows_created") != 1551 or result.get("rows_skipped_existing") != 0:
               raise SystemExit("BLOCKED_BOOTSTRAP_APPLY: bounded row count did not match the dry-run")
           print(json.dumps({"status": result["status"], "rows_created": result["rows_created"], "rows_skipped_existing": result["rows_skipped_existing"], "plan_hash": result["plan_hash"]}, ensure_ascii=False))
           PY
@@ -528,12 +528,12 @@ jobs:
                   """), {"authority_version": "relation-weight-authority-20260924.v1", "effective_from": effective_from}).scalar_one())
           finally:
               engine.dispose()
-          if revision != canonical_head or total != 1160 or current != 1160 or invalid != 0:
+          if revision != canonical_head or total != 1551 or current != 1551 or invalid != 0:
               raise SystemExit("BLOCKED_RELATION_WEIGHT_AUTHORITY: populated authority rows do not match policy")
           grouped_json = [{key: (int(value) if key == "row_count" else str(value)) for key, value in row.items()} for row in grouped]
           if grouped_json != [
               {"relation_type": "PRIMARY", "weight": "1.0", "approval_state": "APPROVED", "row_count": 474},
-              {"relation_type": "SECONDARY", "weight": "0.5", "approval_state": "APPROVED", "row_count": 686},
+              {"relation_type": "SECONDARY", "weight": "0.5", "approval_state": "APPROVED", "row_count": 1077},
           ]:
               raise SystemExit("BLOCKED_RELATION_WEIGHT_AUTHORITY: weight distribution mismatch")
 
@@ -639,9 +639,9 @@ jobs:
           index = {header: relation_headers.index(header) for header in ("relation_type", "structural_role", "relation_weight")}
           role_counts = Counter(row[index["structural_role"]] for row in rows if row[index["structural_role"]] is not None)
           weight_counts = Counter((row[index["relation_type"]], str(row[index["relation_weight"]])) for row in rows)
-          if len(rows) != 1160 or role_counts != Counter({"CORE": 650, "RELATED": 181, "REPRESENTATIVE": 329}):
+          if len(rows) != 1568 or role_counts != Counter({"CORE": 650, "RELATED": 181, "REPRESENTATIVE": 329}):
               raise SystemExit("BLOCKED_WORKBOOK_CONTRACT: Relations_Current structural-role values changed")
-          if weight_counts != Counter({("PRIMARY", "1"): 474, ("SECONDARY", "0.5"): 686}):
+          if weight_counts != Counter({("PRIMARY", "1"): 474, ("SECONDARY", "0.5"): 1077, ("SECONDARY", "None"): 17}):
               raise SystemExit(f"BLOCKED_WORKBOOK_CONTRACT: relation weights are not fully populated: {weight_counts!r}")
           result = {
               "status": "PASS",
@@ -732,6 +732,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: relation-weight-initial-authority-bootstrap-${{ github.run_number }}
-          path: ${{ runner.temp }}/relation-weight-initial-authority-bootstrap-001
+          path: ${{ github.workspace }}/.relation-weight-initial-authority-bootstrap-001
           if-no-files-found: warn
           retention-days: 14
