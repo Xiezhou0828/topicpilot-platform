@@ -15,6 +15,7 @@ on:
         options:
           - dry-run
           - apply
+          - verify-existing
         default: apply
       expected_before_hash:
         description: Previously approved structural-role state hash
@@ -57,7 +58,7 @@ jobs:
       EXPECTED_BEFORE_HASH: ${{ inputs.expected_before_hash }}
       EFFECTIVE_FROM: ${{ inputs.effective_from }}
       WORKFLOW_MODE: ${{ inputs.mode }}
-      ARTIFACT_ROOT: ${{ github.workspace }}/.relation-weight-initial-authority-bootstrap-001
+      ARTIFACT_ROOT: ${{ github.workspace }}/relation-weight-initial-authority-bootstrap-001
 
     steps:
       - name: Checkout exact canonical SHA
@@ -314,15 +315,26 @@ jobs:
 
           root = Path(os.environ["ARTIFACT_ROOT"])
           result = json.loads((root / "dry-run-result.json").read_text(encoding="utf-8"))
-          expected = {
-              "eligible_rows": 1551,
-              "primary_eligible": 474,
-              "secondary_eligible": 1077,
-              "create_initial_authority": 1551,
-              "skip_existing_authority": 0,
-              "existing_authority_rows": 0,
-              "migration_head": os.environ["CANONICAL_MIGRATION_HEAD"],
-          }
+          if os.environ["WORKFLOW_MODE"] == "verify-existing":
+              expected = {
+                  "eligible_rows": 1551,
+                  "primary_eligible": 474,
+                  "secondary_eligible": 1077,
+                  "create_initial_authority": 0,
+                  "skip_existing_authority": 1551,
+                  "existing_authority_rows": 1551,
+                  "migration_head": os.environ["CANONICAL_MIGRATION_HEAD"],
+              }
+          else:
+              expected = {
+                  "eligible_rows": 1551,
+                  "primary_eligible": 474,
+                  "secondary_eligible": 1077,
+                  "create_initial_authority": 1551,
+                  "skip_existing_authority": 0,
+                  "existing_authority_rows": 0,
+                  "migration_head": os.environ["CANONICAL_MIGRATION_HEAD"],
+              }
           for key, value in expected.items():
               if result.get(key) != value:
                   raise SystemExit(f"BLOCKED_BOOTSTRAP_PLAN: {key}={result.get(key)!r}, expected {value!r}")
@@ -401,7 +413,7 @@ jobs:
           PY
 
       - name: Immediately re-read Production and verify all invariants
-        if: ${{ inputs.mode == 'apply' }}
+        if: ${{ inputs.mode != 'dry-run' }}
         shell: bash
         env:
           TOPICPILOT_PRODUCTION_DATABASE_URL: ${{ secrets.TOPICPILOT_PRODUCTION_DATABASE_URL }}
@@ -569,7 +581,7 @@ jobs:
           fi
 
       - name: Run validation and dry-run test suite
-        if: ${{ inputs.mode == 'apply' }}
+        if: ${{ inputs.mode != 'dry-run' }}
         shell: bash
         run: |
           set -euo pipefail
@@ -582,7 +594,7 @@ jobs:
             services/api/tests/test_structural_role_production_read_boundary.py
 
       - name: Refresh the Production maintenance workbook
-        if: ${{ inputs.mode == 'apply' }}
+        if: ${{ inputs.mode != 'dry-run' }}
         shell: bash
         env:
           TOPICPILOT_PRODUCTION_DATABASE_URL: ${{ secrets.TOPICPILOT_PRODUCTION_DATABASE_URL }}
@@ -606,7 +618,7 @@ jobs:
           rm -f "$RUNNER_TEMP/workbook-refresh.stderr"
 
       - name: Verify Relations_Current visibility and edit boundaries
-        if: ${{ inputs.mode == 'apply' }}
+        if: ${{ inputs.mode != 'dry-run' }}
         shell: bash
         run: |
           set -euo pipefail
@@ -659,7 +671,7 @@ jobs:
           PY
 
       - name: Produce final Production verification artifacts
-        if: ${{ inputs.mode == 'apply' }}
+        if: ${{ inputs.mode != 'dry-run' }}
         shell: bash
         run: |
           set -euo pipefail
@@ -672,7 +684,16 @@ jobs:
           root = Path(os.environ["ARTIFACT_ROOT"])
           post = json.loads((root / "post-apply-verification.json").read_text(encoding="utf-8"))
           workbook = json.loads((root / "workbook-verification.json").read_text(encoding="utf-8"))
-          apply_result = json.loads((root / "apply-result.json").read_text(encoding="utf-8"))
+          apply_path = root / "apply-result.json"
+          apply_result = (
+              json.loads(apply_path.read_text(encoding="utf-8"))
+              if apply_path.exists()
+              else {
+                  "status": "VERIFICATION_ONLY",
+                  "rows_created": 0,
+                  "rows_skipped_existing": 1551,
+              }
+          )
           dry_run = json.loads((root / "dry-run-verification.json").read_text(encoding="utf-8"))
           if post.get("status") != "PASS" or workbook.get("status") != "PASS":
               raise SystemExit("BLOCKED_FINAL_ARTIFACTS: required verification did not pass")
