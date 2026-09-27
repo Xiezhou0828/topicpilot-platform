@@ -619,6 +619,8 @@ jobs:
             failure_class="${failure_class:-UNKNOWN}"
             printf '{"status":"FAIL","exception_class":"%s"}\n' "$failure_class" > "$ARTIFACT_ROOT/workbook-refresh-failure.json"
             echo "WORKBOOK_REFRESH_ERROR_CLASS=$failure_class"
+            failure_message="$(grep -E 'ValueError:|Exception:|Error:' "$RUNNER_TEMP/workbook-refresh.stderr" | tail -n 1 | sed -E 's#(postgres(ql)?(\+[[:alnum:]]+)?://)[^ ]+#\1[REDACTED_DB_URL]#g' || true)"
+            echo "WORKBOOK_REFRESH_ERROR_MESSAGE=$failure_message"
             rm -f "$RUNNER_TEMP/workbook-refresh.stderr"
             echo "BLOCKED_WORKBOOK_REFRESH: Production workbook refresh failed." >&2
             exit "$status"
