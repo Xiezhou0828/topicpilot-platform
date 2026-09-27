@@ -57,7 +57,7 @@ jobs:
       EXPECTED_BEFORE_HASH: ${{ inputs.expected_before_hash }}
       EFFECTIVE_FROM: ${{ inputs.effective_from }}
       WORKFLOW_MODE: ${{ inputs.mode }}
-      ARTIFACT_ROOT: ${{ runner.temp }}/relation-weight-initial-authority-bootstrap-001
+      ARTIFACT_ROOT: ${{ github.workspace }}/.relation-weight-initial-authority-bootstrap-001
 
     steps:
       - name: Checkout exact canonical SHA
