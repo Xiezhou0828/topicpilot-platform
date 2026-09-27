@@ -4347,3 +4347,11 @@ tbody tr:hover td { background: rgba(86, 198, 189, 0.06); }
 .tp-home-target-breadth-card{padding-left:18px}.tp-home-target-breadth-rows{gap:9px;margin-top:14px}.tp-home-target-breadth-rows>div{grid-template-columns:23px minmax(0,1fr) auto;gap:7px}.tp-home-target-breadth-rows span{font-size:13px}.tp-home-target-breadth-rows strong{font-size:17px}.tp-home-target-breadth-total{margin-top:2px;padding-top:8px;border-top:1px solid var(--tp-color-border)}.tp-home-target-breadth-total>span:first-child{color:var(--tp-color-text-secondary);font-size:16px}.tp-home-target-breadth-card>small{margin-top:8px;font-size:10px}
 @media (max-width:1100px){.tp-home-target-fact-card{min-height:198px}.tp-home-target-bars{height:108px}.tp-home-target-bar-item{grid-template-rows:auto 60px auto}}
 @media (max-width:760px){.tp-home-target-fact-card{min-height:0}.tp-home-target-index-stats{margin-top:12px}.tp-home-target-turnover-compare{grid-template-columns:auto 1fr;}.tp-home-target-turnover-compare b{grid-column:2}.tp-home-target-turnover-compare small{grid-column:1/-1}.tp-home-target-bars{height:auto;min-height:196px}.tp-home-target-bar-item{grid-template-rows:auto 52px auto}}
+
+/* TASK-TODAY-OFFICIAL-SOURCE-WORKER-ACTIVATION-009: bounded price-distribution display refinement. */
+.tp-home-target-subheading h3{font-size:17px;font-weight:650;letter-spacing:-.02em}
+.tp-home-target-bar-item{grid-template-rows:auto 64px auto}
+.tp-home-target-bar-count{white-space:nowrap}
+.tp-home-target-bar-label{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media (max-width:1100px){.tp-home-target-bar-item{grid-template-rows:auto 60px auto}}
+@media (max-width:760px){.tp-home-target-bar-item{grid-template-rows:auto 52px auto}}

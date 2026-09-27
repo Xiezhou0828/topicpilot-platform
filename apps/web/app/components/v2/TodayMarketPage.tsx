@@ -30,7 +30,6 @@ import {
   formatMarketDistributionLabel,
   formatMarketNumber,
   formatMarketPercent as formatMarketPercentValue,
-  formatMarketShare,
   formatSignedMarketNumber,
   formatTurnoverHundredMillion,
   formatTurnoverHundredMillionValue,
@@ -141,7 +140,7 @@ function DistributionCard({ overview }: { overview: NonNullable<TodayMarketOverv
   const coverage = distribution?.coverage ?? {};
   const distributionUniverse = typeof coverage.universeLabel === "string" ? coverage.universeLabel : typeof coverage.denominator === "string" ? coverage.denominator : "正式分布統計範圍尚未提供";
   const maxPercentage = available ? Math.max(...(distribution.buckets ?? []).map((bucket) => bucket.percentage ?? 0), 1) : 1;
-  return <article aria-label="漲跌幅分布與市場廣度" className="tp-home-target-distribution-card"><div className="tp-home-target-subheading"><div><h3>漲跌幅分布（上市＋上櫃）</h3><span className="tp-home-target-helper">完整收盤／前收資料 · 排除未成交或缺值</span></div><span className="tp-home-target-info" title={distributionUniverse} aria-label={`分布統計範圍：${distributionUniverse}`}><Info size={17} aria-hidden="true" /></span>{available && <strong>總家數 {formatMarketNumber(distribution.eligible)}</strong>}</div>{available ? <div className="tp-home-target-bars">{(distribution.buckets ?? []).map((bucket) => <div className="tp-home-target-bar-item" key={bucket.key}><span title={bucket.label}>{formatMarketDistributionLabel(bucket.key, bucket.label)}</span><strong>{formatMarketNumber(bucket.count)} · {formatMarketShare(bucket.percentage)}</strong><i style={{ height: `${Math.max(5, Math.round(((bucket.percentage ?? 0) / maxPercentage) * 62))}px` }} /></div>)}</div> : <div className="tp-home-target-empty">正式漲跌幅分布目前尚未提供。</div>}</article>;
+  return <article aria-label="漲跌幅分布與市場廣度" className="tp-home-target-distribution-card"><div className="tp-home-target-subheading"><div><h3>漲跌幅分布（上市＋上櫃）</h3><span className="tp-home-target-helper">完整收盤／前收資料 · 排除未成交或缺值</span></div><span className="tp-home-target-info" title={distributionUniverse} aria-label={`分布統計範圍：${distributionUniverse}`}><Info size={17} aria-hidden="true" /></span>{available && <strong>總家數 {formatMarketNumber(distribution.eligible)}</strong>}</div>{available ? <div className="tp-home-target-bars">{(distribution.buckets ?? []).map((bucket) => <div className="tp-home-target-bar-item" key={bucket.key}><strong className="tp-home-target-bar-count">{formatMarketNumber(bucket.count)}</strong><i aria-hidden="true" style={{ height: `${Math.max(5, Math.round(((bucket.percentage ?? 0) / maxPercentage) * 62))}px` }} /><span className="tp-home-target-bar-label" title={bucket.label}>{formatMarketDistributionLabel(bucket.key, bucket.label)}</span></div>)}</div> : <div className="tp-home-target-empty">正式漲跌幅分布目前尚未提供。</div>}</article>;
 }
 
 function BreadthCard({ overview }: { overview: NonNullable<TodayMarketOverviewResource["data"]> }) {
