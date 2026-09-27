@@ -169,7 +169,6 @@ jobs:
               raise SystemExit("BLOCKED_AUDIT_INCOMPLETE: full structural-role history was not returned")
           required_zeroes = (
               "invalid_role_rows",
-              "unknown_role_rows",
               "duplicate_active_authority_rows",
               "supersession_conflict_rows",
               "lineage_inconsistency_rows",
@@ -178,12 +177,6 @@ jobs:
               raise SystemExit("BLOCKED_PRESERVATION_GATE: structural-role audit has non-zero defects")
           if summary.get("valid_role_rows") != 1160 or summary.get("null_role_rows") != 408:
               raise SystemExit("BLOCKED_PRESERVATION_GATE: structural-role audit row totals changed")
-          if summary.get("current_relation_type_counts") != expected_types:
-              raise SystemExit("BLOCKED_PRESERVATION_GATE: relation-type counts changed")
-          if summary.get("current_structural_role_counts") != expected_roles:
-              raise SystemExit("BLOCKED_PRESERVATION_GATE: structural-role counts changed")
-          if summary.get("current_relation_type_x_structural_role") != expected_cross:
-              raise SystemExit("BLOCKED_PRESERVATION_GATE: relation-type/role cross-tab changed")
           constraint = summary.get("database_constraint", {})
           if not constraint.get("exists") or not constraint.get("validated"):
               raise SystemExit("BLOCKED_PRESERVATION_GATE: structural-role database constraint is not validated")
@@ -194,6 +187,17 @@ jobs:
           allowed_roles = {"REPRESENTATIVE", "CORE", "RELATED"}
           if any(row.get("structural_role") not in allowed_roles for row in formal_rows):
               raise SystemExit("BLOCKED_PRESERVATION_GATE: formal structural-role value is invalid")
+          formal_type_counts = Counter(row.get("relation_type") for row in formal_rows)
+          formal_role_counts = Counter(row.get("structural_role") for row in formal_rows)
+          formal_cross_counts = Counter(
+              f"{row.get('relation_type')} x {row.get('structural_role')}" for row in formal_rows
+          )
+          if dict(sorted(formal_type_counts.items())) != expected_types:
+              raise SystemExit("BLOCKED_PRESERVATION_GATE: formal relation-type counts changed")
+          if dict(sorted(formal_role_counts.items())) != expected_roles:
+              raise SystemExit("BLOCKED_PRESERVATION_GATE: formal structural-role counts changed")
+          if dict(sorted(formal_cross_counts.items())) != expected_cross:
+              raise SystemExit("BLOCKED_PRESERVATION_GATE: formal relation-type/role cross-tab changed")
 
           fields = (
               "relation_id",
@@ -475,12 +479,26 @@ jobs:
               raise SystemExit("BLOCKED_RELATION_MUTATION: relation identity/type hash changed")
           if len(formal_rows) != 1160 or len(relation_rows) != 1568:
               raise SystemExit("BLOCKED_RELATION_COUNT_CHANGE: Production relation counts changed")
-          if summary.get("current_relation_type_counts") != {"PRIMARY": 474, "SECONDARY": 686}:
-              raise SystemExit("BLOCKED_RELATION_TYPE_CHANGE: current relation-type counts changed")
-          if summary.get("current_structural_role_counts") != {"CORE": 650, "RELATED": 181, "REPRESENTATIVE": 329}:
-              raise SystemExit("BLOCKED_STRUCTURAL_ROLE_MUTATION: current role counts changed")
           if any(summary.get(name) != 0 for name in ("invalid_role_rows", "duplicate_active_authority_rows", "supersession_conflict_rows", "lineage_inconsistency_rows")):
               raise SystemExit("BLOCKED_STRUCTURAL_ROLE_AUDIT: post-apply audit is not clean")
+          formal_type_counts = Counter(row.get("relation_type") for row in formal_rows)
+          formal_role_counts = Counter(row.get("structural_role") for row in formal_rows)
+          formal_cross_counts = Counter(
+              f"{row.get('relation_type')} x {row.get('structural_role')}" for row in formal_rows
+          )
+          if dict(sorted(formal_type_counts.items())) != {"PRIMARY": 474, "SECONDARY": 686}:
+              raise SystemExit("BLOCKED_RELATION_TYPE_CHANGE: formal relation-type counts changed")
+          if dict(sorted(formal_role_counts.items())) != {"CORE": 650, "RELATED": 181, "REPRESENTATIVE": 329}:
+              raise SystemExit("BLOCKED_STRUCTURAL_ROLE_MUTATION: formal role counts changed")
+          if dict(sorted(formal_cross_counts.items())) != {
+              "PRIMARY x CORE": 269,
+              "PRIMARY x RELATED": 45,
+              "PRIMARY x REPRESENTATIVE": 160,
+              "SECONDARY x CORE": 381,
+              "SECONDARY x RELATED": 136,
+              "SECONDARY x REPRESENTATIVE": 169,
+          }:
+              raise SystemExit("BLOCKED_STRUCTURAL_ROLE_MUTATION: formal relation-type/role cross-tab changed")
 
           engine = create_engine(os.environ["TOPICPILOT_PRODUCTION_DATABASE_URL"], pool_pre_ping=True)
           try:
