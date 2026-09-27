@@ -37,14 +37,14 @@ periods were guessed. All candidate values remain `null` with status
 
 ## Current versus calibrated candidate
 
-| Area | Frozen product semantic | Candidate result | Evidence | Remaining gap |
-|---|---|---|---|---|
-| Absolute REP | Bounded, monotonic, nonlinear, earlier/smoother than CORE, saturating. | No knots. | 0 strict PIT REP rows. | Approved role authority and member returns. |
-| Absolute CORE | Primary group curve; broad coordinated strength dominates outliers. | No knots. | 0 strict PIT CORE rows. | Approved role authority and member returns. |
-| Absolute RELATED | 0–10 breadth plus magnitude quality, no negative daily points. | No mapping. | 0 strict PIT RELATED rows. | Approved related rows and a transparent magnitude calibration sample. |
-| Absolute Grade | S/A/B/D; B neutral, D confirmed weakness. | No bands or D guard. | No strict score distribution. | Calibrated role scores plus negative-direction evidence. |
-| Relative | Member-level excess return; TWSE→TAIEX, TPEx→TPEx Index; separate curve. | No neutral band, curves, grades, or D guard. | 0 benchmark-eligible rows. | Same-date official benchmark export and PIT member rows. |
-| Lifecycle | Role diffusion; Absolute primary; Relative confirmation only; hysteresis retained. | No thresholds or persistence values. | 0 strictly reconstructable topic-day cells. | Multi-session PIT role evidence with lineage. |
+| Area | FROZEN_PRODUCT_SEMANTIC | CURRENT_REPO_POLICY | CALIBRATED_CANDIDATE | EVIDENCE | REMAINING_GAP | OWNER_DECISION_REQUIRED |
+|---|---|---|---|---|---|---|
+| Absolute REP | Bounded, monotonic, nonlinear, earlier/smoother than CORE, saturating. | Boundary contract only; no formal knots. | No knots; `INSUFFICIENT_DATA`. | 0 strict PIT REP rows. | Approved role authority and member returns. | No semantic decision; data export authority required. |
+| Absolute CORE | Primary group curve; broad coordinated strength dominates outliers. | Boundary contract only; no formal knots. | No knots; `INSUFFICIENT_DATA`. | 0 strict PIT CORE rows. | Approved role authority and member returns. | No semantic decision; data export authority required. |
+| Absolute RELATED | 0–10 breadth plus magnitude quality, no negative daily points. | Boundary contract only; mapping open. | No mapping; `INSUFFICIENT_DATA`. | 0 strict PIT RELATED rows. | Approved related rows and a transparent magnitude calibration sample. | No semantic decision; data export authority required. |
+| Absolute Grade | S/A/B/D; B neutral, D confirmed weakness. | Provisional fixture exists but is not calibration truth. | No bands or D guard; `INSUFFICIENT_DATA`. | No strict score distribution. | Calibrated role scores plus negative-direction evidence. | Later Owner policy approval. |
+| Relative | Member-level excess return; TWSE→TAIEX, TPEx→TPEx Index; separate curve. | Contract exists; no benchmark-backed candidate. | No neutral band, curves, grades, or D guard; `INSUFFICIENT_DATA`. | 0 benchmark-eligible rows. | Same-date official benchmark export and PIT member rows. | No semantic decision; data export authority required. |
+| Lifecycle | Role diffusion; Absolute primary; Relative confirmation only; hysteresis retained. | Provisional thresholds remain non-active. | No thresholds or persistence values; `INSUFFICIENT_DATA`. | 0 strictly reconstructable topic-day cells. | Multi-session PIT role evidence with lineage. | Later Owner policy approval. |
 
 ## Replay and diagnostics
 
