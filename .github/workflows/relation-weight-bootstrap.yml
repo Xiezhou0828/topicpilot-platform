@@ -615,20 +615,10 @@ jobs:
           status=$?
           set -e
           if [[ "$status" -ne 0 ]]; then
-            python - <<'PY'
-            import json
-            import os
-            import re
-            from pathlib import Path
-
-            error_path = Path(os.environ["RUNNER_TEMP"]) / "workbook-refresh.stderr"
-            lines = [line.strip() for line in error_path.read_text(encoding="utf-8", errors="replace").splitlines() if line.strip()]
-            last = lines[-1] if lines else ""
-            match = re.search(r"([A-Za-z_][A-Za-z0-9_]*(?:Error|Exception|Problem))", last)
-            result = {"status": "FAIL", "exception_class": match.group(1) if match else "UNKNOWN", "stderr_line_count": len(lines)}
-            (Path(os.environ["ARTIFACT_ROOT"]) / "workbook-refresh-failure.json").write_text(json.dumps(result, indent=2), encoding="utf-8")
-            print(json.dumps(result))
-            PY
+            failure_class="$(grep -Eo '[[:alnum:]_]+(Error|Exception|Problem)' "$RUNNER_TEMP/workbook-refresh.stderr" | head -n 1 || true)"
+            failure_class="${failure_class:-UNKNOWN}"
+            printf '{"status":"FAIL","exception_class":"%s"}\n' "$failure_class" > "$ARTIFACT_ROOT/workbook-refresh-failure.json"
+            echo "WORKBOOK_REFRESH_ERROR_CLASS=$failure_class"
             rm -f "$RUNNER_TEMP/workbook-refresh.stderr"
             echo "BLOCKED_WORKBOOK_REFRESH: Production workbook refresh failed." >&2
             exit "$status"
