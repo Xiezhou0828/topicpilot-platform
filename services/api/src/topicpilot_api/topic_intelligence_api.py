@@ -128,6 +128,10 @@ def _serialize_score(result: TopicIntelligenceRuntimeResult, score: Any) -> dict
         "score": _optional_number(score.score, "score"),
         "grade": _optional_identity(score.grade, "grade"),
         "strength": _optional_identity(score.strength, "strength"),
+        "absoluteStrength": _optional_number(score.absolute_strength, "absolute strength"),
+        "absoluteGrade": _optional_identity(score.absolute_grade, "absolute grade"),
+        "relativeStrength": _optional_number(score.relative_strength, "relative strength"),
+        "relativeGrade": _optional_identity(score.relative_grade, "relative grade"),
         "confidence": _optional_number(score.confidence, "confidence"),
         "components": [
             {

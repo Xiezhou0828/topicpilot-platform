@@ -1,0 +1,22 @@
+{
+  "version": "topic-strength-calibration-register.v1",
+  "status": "CALIBRATION_REQUIRED",
+  "noLookahead": true,
+  "sourceRequirement": "CANONICAL_HISTORICAL",
+  "parameters": [
+    {"name": "absolute_representative_response_knots", "status": "CALIBRATION_REQUIRED"},
+    {"name": "absolute_core_response_knots", "status": "CALIBRATION_REQUIRED"},
+    {"name": "related_breadth_magnitude_mapping", "status": "CALIBRATION_REQUIRED"},
+    {"name": "absolute_grade_bands", "status": "CALIBRATION_REQUIRED"},
+    {"name": "relative_neutral_band", "status": "CALIBRATION_REQUIRED"},
+    {"name": "relative_representative_response_knots", "status": "CALIBRATION_REQUIRED"},
+    {"name": "relative_core_response_knots", "status": "CALIBRATION_REQUIRED"},
+    {"name": "relative_related_diffusion_mapping", "status": "CALIBRATION_REQUIRED"},
+    {"name": "relative_grade_bands", "status": "CALIBRATION_REQUIRED"},
+    {"name": "lifecycle_role_breadth_thresholds", "status": "CALIBRATION_REQUIRED"},
+    {"name": "lifecycle_role_magnitude_thresholds", "status": "CALIBRATION_REQUIRED"},
+    {"name": "lifecycle_confirmation_days", "status": "CALIBRATION_REQUIRED"},
+    {"name": "mature_persistence_parameters", "status": "CALIBRATION_REQUIRED"},
+    {"name": "declining_deterioration_parameters", "status": "CALIBRATION_REQUIRED"}
+  ]
+}

@@ -117,9 +117,10 @@ def test_fermenting_failure_returns_to_base_and_never_sprouting():
 def test_mature_renewed_strength_stays_mature():
     result = evaluate_formal_lifecycle(
         _input(
-            [8, 7, 6, 5, 5, 4, 4, 3, 3, 2],
+            [8, 7, 6, 5, 5, 4, 4, 3, 3, 2, 2, 2],
             previous=MATURE,
             memory={"mainRiseSegment": 1, "mainRiseAncestry": True},
+            roles=["REPRESENTATIVE"] + ["CORE"] * 9 + ["RELATED"] * 2,
         )
     )
 

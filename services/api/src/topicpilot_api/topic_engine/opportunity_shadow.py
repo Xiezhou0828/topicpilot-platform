@@ -115,6 +115,10 @@ class TopicOpportunityContext:
     qualification: StageAssessment
     grade: str | None = None
     lifecycle: str | None = None
+    absolute_strength: float | None = None
+    absolute_grade: str | None = None
+    relative_strength: float | None = None
+    relative_grade: str | None = None
     warming_candidate: bool = False
 
     def __post_init__(self) -> None:
@@ -124,6 +128,20 @@ class TopicOpportunityContext:
             raise OpportunityShadowError("warming_candidate must be a boolean")
         if self.grade is not None:
             _require_text(self.grade, "grade")
+        if self.absolute_grade is not None:
+            _require_text(self.absolute_grade, "absolute_grade")
+        if self.relative_grade is not None:
+            _require_text(self.relative_grade, "relative_grade")
+        if (
+            self.grade is not None
+            and self.absolute_grade is not None
+            and self.grade != self.absolute_grade
+        ):
+            raise OpportunityShadowError("grade and absolute_grade aliases disagree")
+        if self.absolute_grade is None and self.grade is not None:
+            object.__setattr__(self, "absolute_grade", self.grade)
+        elif self.grade is None and self.absolute_grade is not None:
+            object.__setattr__(self, "grade", self.absolute_grade)
         if self.lifecycle is not None:
             _require_text(self.lifecycle, "lifecycle")
 

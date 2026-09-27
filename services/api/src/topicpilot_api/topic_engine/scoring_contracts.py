@@ -59,7 +59,12 @@ class ScoringInput:
 
 @dataclass(frozen=True)
 class TopicScore:
-    """Deferred score result; business values remain null until PM approval."""
+    """Topic score envelope with explicit absolute/relative semantics.
+
+    ``score`` and ``grade`` remain compatibility aliases for the legacy
+    single-view contract.  New producers must populate the explicit fields so
+    an Absolute B cannot be confused with a Relative B.
+    """
 
     topic_id: str
     as_of: date
@@ -76,6 +81,10 @@ class TopicScore:
     components: tuple[tuple[str, float | None], ...] = ()
     confidence: float | None = None
     eligibility: str = "UNKNOWN"
+    absolute_strength: float | None = None
+    absolute_grade: str | None = None
+    relative_strength: float | None = None
+    relative_grade: str | None = None
 
 
 def scoring_input(aggregate: FeatureAggregate, *, runtime_version: str) -> ScoringInput:

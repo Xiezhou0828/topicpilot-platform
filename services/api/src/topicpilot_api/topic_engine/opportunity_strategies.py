@@ -318,6 +318,12 @@ class ThemeContext:
     warming_candidate: bool | None = None
     warming_evidence: tuple[Evidence, ...] = ()
     exception_provenance: tuple[str, ...] = ()
+    # Explicit Design Freeze views.  ``grade`` remains a compatibility alias
+    # for absolute_grade and is normalized below; no view is recomputed here.
+    absolute_strength: float | None = None
+    absolute_grade: str | None = None
+    relative_strength: float | None = None
+    relative_grade: str | None = None
 
     def __post_init__(self) -> None:
         for name in ("topic_id", "topic_name"):
@@ -326,6 +332,28 @@ class ThemeContext:
                 raise ValueError(f"{name} must be a trimmed non-empty string")
         if self.grade is not None and (not isinstance(self.grade, str) or not self.grade.strip()):
             raise ValueError("grade must be text or null")
+        if self.absolute_grade is not None and (
+            not isinstance(self.absolute_grade, str) or not self.absolute_grade.strip()
+        ):
+            raise ValueError("absolute_grade must be text or null")
+        if self.relative_grade is not None and (
+            not isinstance(self.relative_grade, str) or not self.relative_grade.strip()
+        ):
+            raise ValueError("relative_grade must be text or null")
+        if self.absolute_strength is not None and not _finite(self.absolute_strength):
+            raise ValueError("absolute_strength must be finite or null")
+        if self.relative_strength is not None and not _finite(self.relative_strength):
+            raise ValueError("relative_strength must be finite or null")
+        if (
+            self.grade is not None
+            and self.absolute_grade is not None
+            and self.grade != self.absolute_grade
+        ):
+            raise ValueError("grade and absolute_grade aliases disagree")
+        if self.absolute_grade is None and self.grade is not None:
+            object.__setattr__(self, "absolute_grade", self.grade)
+        elif self.grade is None and self.absolute_grade is not None:
+            object.__setattr__(self, "grade", self.absolute_grade)
         if self.lifecycle is not None and (
             not isinstance(self.lifecycle, str) or not self.lifecycle.strip()
         ):

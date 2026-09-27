@@ -734,6 +734,10 @@ class TopicIntelligenceTopic(ApiModel):
     score: float | None
     grade: str | None
     strength: str | None
+    absolute_strength: float | None = Field(default=None, alias="absoluteStrength")
+    absolute_grade: str | None = Field(default=None, alias="absoluteGrade")
+    relative_strength: float | None = Field(default=None, alias="relativeStrength")
+    relative_grade: str | None = Field(default=None, alias="relativeGrade")
     confidence: float | None
     components: list[TopicIntelligenceComponent]
     evidence: TopicIntelligenceEvidence
