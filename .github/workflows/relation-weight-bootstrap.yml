@@ -1,0 +1,719 @@
+name: Protected relation-weight bootstrap
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_ref:
+        description: Exact current canonical main SHA to check out
+        required: true
+        type: string
+        default: 75d271ed32f37e8bdd170967dd20671ad4990a5a
+      mode:
+        description: Run the bounded bootstrap dry-run only, or dry-run then apply
+        required: true
+        type: choice
+        options:
+          - dry-run
+          - apply
+        default: apply
+      expected_before_hash:
+        description: Previously approved structural-role state hash
+        required: true
+        type: string
+        default: 751e69d8c9669005126005fbfca93eaf72af34c8b75c9741406ad4127dcd96a7
+      effective_from:
+        description: Effective date for the original bootstrap authority rows
+        required: true
+        type: string
+        default: "2026-09-27"
+      approval_reference:
+        description: Owner approval reference for the original bootstrap task
+        required: false
+        type: string
+        default: TASK-RELATION-WEIGHT-INITIAL-AUTHORITY-BOOTSTRAP-001_OWNER_APPROVAL_20260927
+      owner_approval_confirmation:
+        description: Exact governed confirmation required by the original bootstrap script
+        required: false
+        type: string
+        default: APPROVED_TO_CREATE_INITIAL_RELATION_WEIGHT_AUTHORITY_ROWS
+
+permissions:
+  contents: read
+
+concurrency:
+  group: production-relation-weight-bootstrap
+  cancel-in-progress: false
+
+jobs:
+  bootstrap:
+    name: Audit, bootstrap, and verify Production relation weights
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment: production-db-maintenance
+    env:
+      API_BASE: https://topicpilot-api.onrender.com
+      CANONICAL_MIGRATION_HEAD: 0046_task_stock_maint_relation_weight_authority_001d
+      RELEASE_REF: ${{ inputs.release_ref }}
+      EXPECTED_BEFORE_HASH: ${{ inputs.expected_before_hash }}
+      EFFECTIVE_FROM: ${{ inputs.effective_from }}
+      WORKFLOW_MODE: ${{ inputs.mode }}
+      ARTIFACT_ROOT: ${{ runner.temp }}/relation-weight-initial-authority-bootstrap-001
+
+    steps:
+      - name: Checkout exact canonical SHA
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.release_ref }}
+          fetch-depth: 0
+
+      - name: Require exact current canonical main SHA
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! [[ "$RELEASE_REF" =~ ^[0-9a-fA-F]{40}$ ]]; then
+            echo "BLOCKED_CANONICAL_SHA: release_ref must be an exact 40-character SHA." >&2
+            exit 1
+          fi
+          checked_out_sha="$(git rev-parse HEAD)"
+          requested_sha="$(printf '%s' "$RELEASE_REF" | tr '[:upper:]' '[:lower:]')"
+          if [[ "$checked_out_sha" != "$requested_sha" ]]; then
+            echo "BLOCKED_CANONICAL_SHA: checkout does not match release_ref." >&2
+            exit 1
+          fi
+          current_main_sha="$(git ls-remote origin refs/heads/main | awk 'NR == 1 {print $1}')"
+          if [[ "$current_main_sha" != "$requested_sha" ]]; then
+            echo "BLOCKED_CANONICAL_SHA: current origin/main differs from release_ref; no Production write attempted." >&2
+            exit 1
+          fi
+          echo "CANONICAL_SHA=$checked_out_sha"
+
+      - name: Install API and validation dependencies
+        run: |
+          python -m pip install --disable-pip-version-check -q -e "services/api[dev]"
+          python -m pip install --disable-pip-version-check -q openpyxl
+
+      - name: Run the full read-only structural-role Production audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$ARTIFACT_ROOT/audit-pre"
+          python scripts/admin/audit_structural_role_authority.py \
+            --source production \
+            --base-url "$API_BASE" \
+            --output-dir "$ARTIFACT_ROOT/audit-pre" \
+            > "$ARTIFACT_ROOT/audit-pre/audit-command-output.json"
+
+      - name: Verify migration, preservation gate, and approved BEFORE hash
+        shell: bash
+        run: |
+          set -euo pipefail
+          export PYTHONUNBUFFERED=1
+          python - <<'PY'
+          import csv
+          import hashlib
+          import json
+          import os
+          import urllib.error
+          import urllib.request
+          from collections import Counter
+          from pathlib import Path
+
+          base = os.environ["API_BASE"].rstrip("/")
+          artifact_root = Path(os.environ["ARTIFACT_ROOT"])
+          expected_hash = os.environ["EXPECTED_BEFORE_HASH"]
+          canonical_head = os.environ["CANONICAL_MIGRATION_HEAD"]
+          expected_types = {"PRIMARY": 474, "SECONDARY": 686}
+          expected_roles = {"CORE": 650, "RELATED": 181, "REPRESENTATIVE": 329}
+          expected_cross = {
+              "PRIMARY x CORE": 269,
+              "PRIMARY x RELATED": 45,
+              "PRIMARY x REPRESENTATIVE": 160,
+              "SECONDARY x CORE": 381,
+              "SECONDARY x RELATED": 136,
+              "SECONDARY x REPRESENTATIVE": 169,
+          }
+
+          def get(path):
+              request = urllib.request.Request(
+                  base + path, headers={"Accept": "application/json"}
+              )
+              try:
+                  with urllib.request.urlopen(request, timeout=120) as response:
+                      return json.load(response)
+              except urllib.error.HTTPError as exc:
+                  raise SystemExit(f"BLOCKED_PRODUCTION_READ: HTTP {exc.code} for {path}") from exc
+              except (urllib.error.URLError, TimeoutError) as exc:
+                  raise SystemExit(f"BLOCKED_PRODUCTION_READ: {type(exc).__name__} for {path}") from exc
+
+          def page(path, limit=500):
+              rows = []
+              offset = 0
+              while True:
+                  payload = get(f"{path}?limit={limit}&offset={offset}")
+                  page_rows = payload.get("items", [])
+                  rows.extend(page_rows)
+                  if not page_rows or not payload.get("has_more"):
+                      return rows, payload
+                  offset += len(page_rows)
+
+          ready = get("/readyz")
+          if ready.get("status") != "ready":
+              raise SystemExit("BLOCKED_PRODUCTION_READ: /readyz is not ready")
+          migration = get("/api/v1/admin/migration")
+          if migration.get("alembicRevision") != canonical_head or migration.get("readOnly") is not True:
+              raise SystemExit("BLOCKED_MIGRATION_REQUIRED: Production migration head/read-only marker mismatch")
+
+          audit = get("/api/v1/admin/relations/structural-role-authority/audit?limit=10000&offset=0")
+          summary = audit.get("summary", {})
+          if audit.get("total") != 1568 or len(audit.get("items", [])) != 1568:
+              raise SystemExit("BLOCKED_AUDIT_INCOMPLETE: full structural-role history was not returned")
+          required_zeroes = (
+              "invalid_role_rows",
+              "unknown_role_rows",
+              "duplicate_active_authority_rows",
+              "supersession_conflict_rows",
+              "lineage_inconsistency_rows",
+          )
+          if any(summary.get(name) != 0 for name in required_zeroes):
+              raise SystemExit("BLOCKED_PRESERVATION_GATE: structural-role audit has non-zero defects")
+          if summary.get("valid_role_rows") != 1160 or summary.get("null_role_rows") != 408:
+              raise SystemExit("BLOCKED_PRESERVATION_GATE: structural-role audit row totals changed")
+          if summary.get("current_relation_type_counts") != expected_types:
+              raise SystemExit("BLOCKED_PRESERVATION_GATE: relation-type counts changed")
+          if summary.get("current_structural_role_counts") != expected_roles:
+              raise SystemExit("BLOCKED_PRESERVATION_GATE: structural-role counts changed")
+          if summary.get("current_relation_type_x_structural_role") != expected_cross:
+              raise SystemExit("BLOCKED_PRESERVATION_GATE: relation-type/role cross-tab changed")
+          constraint = summary.get("database_constraint", {})
+          if not constraint.get("exists") or not constraint.get("validated"):
+              raise SystemExit("BLOCKED_PRESERVATION_GATE: structural-role database constraint is not validated")
+
+          formal_rows, formal_page = page("/api/v1/admin/relations/structural-role-authority")
+          if len(formal_rows) != 1160 or formal_page.get("read_only") is not True:
+              raise SystemExit("BLOCKED_PRESERVATION_GATE: formal structural-role read boundary changed")
+          allowed_roles = {"REPRESENTATIVE", "CORE", "RELATED"}
+          if any(row.get("structural_role") not in allowed_roles for row in formal_rows):
+              raise SystemExit("BLOCKED_PRESERVATION_GATE: formal structural-role value is invalid")
+
+          fields = (
+              "relation_id",
+              "relation_type",
+              "structural_role",
+              "approval_state",
+              "authority_version",
+              "effective_from",
+              "effective_to",
+              "source_artifact_id",
+              "source_artifact_hash",
+              "lineage_hash",
+          )
+          normalized = [
+              {field: "" if row.get(field) is None else str(row.get(field)) for field in fields}
+              for row in formal_rows
+          ]
+          normalized.sort(key=lambda row: tuple(row[field] for field in fields))
+          hash_payload = (
+              "\n".join(json.dumps(row, ensure_ascii=False, sort_keys=True, separators=(",", ":")) for row in normalized)
+              + "\n"
+          ).encode("utf-8")
+          before_hash = hashlib.sha256(hash_payload).hexdigest()
+          if before_hash != expected_hash:
+              raise SystemExit(
+                  "BLOCKED_PRESERVATION_BASELINE_DRIFT: current structural-role hash differs from approved baseline"
+              )
+
+          relation_rows, _ = page("/api/v1/admin/relations")
+          relation_identity_fields = ("id", "instrument_id", "topic_id", "relation_type", "relation_version")
+          relation_identity = [
+              {field: "" if row.get(field) is None else str(row.get(field)) for field in relation_identity_fields}
+              for row in relation_rows
+          ]
+          relation_identity.sort(key=lambda row: tuple(row[field] for field in relation_identity_fields))
+          relation_identity_hash = hashlib.sha256(
+              ("\n".join(json.dumps(row, sort_keys=True, separators=(",", ":")) for row in relation_identity) + "\n").encode()
+          ).hexdigest()
+
+          canonical_path = Path("config/topic_structural_role_authority/structural-role-authority-20260912.v4.json")
+          canonical = json.loads(canonical_path.read_text(encoding="utf-8"))
+          canonical_roles = sorted({row.get("structuralRole") for row in canonical.get("rows", [])})
+          if canonical_roles != ["CORE", "RELATED", "REPRESENTATIVE"] or len(canonical.get("rows", [])) != 1160:
+              raise SystemExit("BLOCKED_PRESERVATION_GATE: canonical structural-role artifact changed")
+
+          write_region = Path("scripts/admin/bootstrap_relation_weight_authority.py").read_text(encoding="utf-8")
+          insert_start = write_region.index("def _apply_insert")
+          insert_end = write_region.index("def run_apply")
+          write_region = write_region[insert_start:insert_end]
+          if "INSERT INTO topicpilot.relation_weight_authorities" not in write_region:
+              raise SystemExit("BLOCKED_WRITE_SET: bootstrap insert target is not relation_weight_authorities")
+          if any(token in write_region for token in ("UPDATE topicpilot.", "DELETE FROM topicpilot.", "instrument_topic_relations", "structural_role", "topic_authorit")):
+              raise SystemExit("BLOCKED_WRITE_SET: bootstrap write region contains an out-of-scope mutation")
+
+          pre = {
+              "status": "PASS",
+              "preservation_gate": "PASS",
+              "bootstrap_resume_authorized": True,
+              "migration": migration,
+              "audit_summary": summary,
+              "formal_rows": len(formal_rows),
+              "relation_history_rows": len(relation_rows),
+              "relation_identity_hash": relation_identity_hash,
+              "structural_role_state_hash_before": before_hash,
+              "expected_before_hash": expected_hash,
+              "canonical_structural_role_artifact": str(canonical_path),
+              "write_set_table": "relation_weight_authorities",
+              "structural_role_columns_in_write_set": False,
+              "normal_maintenance_import": "NOT_RUN",
+          }
+          artifact_root.mkdir(parents=True, exist_ok=True)
+          (artifact_root / "pre-apply-verification.json").write_text(json.dumps(pre, ensure_ascii=False, indent=2), encoding="utf-8")
+          with (artifact_root / "pre-apply-structural-role-snapshot.csv").open("w", newline="", encoding="utf-8") as handle:
+              writer = csv.DictWriter(handle, fieldnames=list(fields))
+              writer.writeheader()
+              writer.writerows(normalized)
+          (artifact_root / "pre-apply-relation-identity.csv").write_text(
+              "\n".join(",".join(row[field] for field in relation_identity_fields) for row in relation_identity) + "\n",
+              encoding="utf-8",
+          )
+          print(json.dumps({"status": "PASS", "migration_head": migration["alembicRevision"], "formal_rows": len(formal_rows), "structural_role_state_hash_before": before_hash}, ensure_ascii=False))
+          PY
+
+      - name: Run the original bootstrap dry-run
+        shell: bash
+        env:
+          TOPICPILOT_PRODUCTION_DATABASE_URL: ${{ secrets.TOPICPILOT_PRODUCTION_DATABASE_URL }}
+        run: |
+          set -euo pipefail
+          if [[ -z "${TOPICPILOT_PRODUCTION_DATABASE_URL:-}" ]]; then
+            echo "BLOCKED_PRODUCTION_DB_SECRET: production-db-maintenance secret is unavailable." >&2
+            exit 1
+          fi
+          mkdir -p "$ARTIFACT_ROOT"
+          set +e
+          python scripts/admin/bootstrap_relation_weight_authority.py \
+            --dry-run \
+            --artifact-root "$ARTIFACT_ROOT" \
+            --effective-from "$EFFECTIVE_FROM" \
+            > "$ARTIFACT_ROOT/dry-run-result.json" \
+            2> "$RUNNER_TEMP/bootstrap-dry-run.stderr"
+          status=$?
+          set -e
+          if [[ "$status" -ne 0 ]]; then
+            rm -f "$RUNNER_TEMP/bootstrap-dry-run.stderr"
+            echo "BLOCKED_BOOTSTRAP_DRY_RUN: original bootstrap dry-run failed." >&2
+            exit "$status"
+          fi
+          rm -f "$RUNNER_TEMP/bootstrap-dry-run.stderr"
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          root = Path(os.environ["ARTIFACT_ROOT"])
+          result = json.loads((root / "dry-run-result.json").read_text(encoding="utf-8"))
+          expected = {
+              "eligible_rows": 1160,
+              "primary_eligible": 474,
+              "secondary_eligible": 686,
+              "create_initial_authority": 1160,
+              "skip_existing_authority": 0,
+              "existing_authority_rows": 0,
+              "migration_head": os.environ["CANONICAL_MIGRATION_HEAD"],
+          }
+          for key, value in expected.items():
+              if result.get(key) != value:
+                  raise SystemExit(f"BLOCKED_BOOTSTRAP_PLAN: {key}={result.get(key)!r}, expected {value!r}")
+          if result.get("existing_authority_conflict"):
+              raise SystemExit("BLOCKED_BOOTSTRAP_PLAN: existing-authority conflict requires owner decision")
+          if not result.get("plan_hash") or not result.get("plan_path"):
+              raise SystemExit("BLOCKED_BOOTSTRAP_PLAN: dry-run did not produce a plan hash/path")
+          (root / "dry-run-verification.json").write_text(
+              json.dumps({"status": "PASS", "checks": expected, "result": result}, ensure_ascii=False, indent=2),
+              encoding="utf-8",
+          )
+          print(json.dumps({"status": "PASS", "eligible_rows": result["eligible_rows"], "primary": result["primary_eligible"], "secondary": result["secondary_eligible"], "plan_hash": result["plan_hash"]}, ensure_ascii=False))
+          PY
+
+      - name: Stop after dry-run when requested
+        if: ${{ inputs.mode == 'dry-run' }}
+        run: echo "DRY_RUN_ONLY=PASS"
+
+      - name: Validate apply authorization and original bootstrap scope
+        if: ${{ inputs.mode == 'apply' }}
+        shell: bash
+        env:
+          OWNER_APPROVAL_REFERENCE: ${{ inputs.approval_reference }}
+          OWNER_APPROVAL_CONFIRMATION: ${{ inputs.owner_approval_confirmation }}
+        run: |
+          set -euo pipefail
+          if [[ -z "$OWNER_APPROVAL_REFERENCE" ]]; then
+            echo "BLOCKED_APPROVAL_REFERENCE: approval_reference is required for apply." >&2
+            exit 1
+          fi
+          if [[ "$OWNER_APPROVAL_CONFIRMATION" != "APPROVED_TO_CREATE_INITIAL_RELATION_WEIGHT_AUTHORITY_ROWS" ]]; then
+            echo "BLOCKED_OWNER_APPROVAL_CONFIRMATION: exact governed confirmation is required." >&2
+            exit 1
+          fi
+          test -s "$ARTIFACT_ROOT/bootstrap-plan.csv"
+          grep -q ',PRIMARY,' "$ARTIFACT_ROOT/bootstrap-plan.csv"
+          grep -q ',SECONDARY,' "$ARTIFACT_ROOT/bootstrap-plan.csv"
+
+      - name: Apply only the bounded original relation-weight bootstrap
+        if: ${{ inputs.mode == 'apply' }}
+        shell: bash
+        env:
+          TOPICPILOT_PRODUCTION_DATABASE_URL: ${{ secrets.TOPICPILOT_PRODUCTION_DATABASE_URL }}
+          OWNER_APPROVAL_REFERENCE: ${{ inputs.approval_reference }}
+          OWNER_APPROVAL_CONFIRMATION: ${{ inputs.owner_approval_confirmation }}
+        run: |
+          set -euo pipefail
+          set +e
+          python scripts/admin/bootstrap_relation_weight_authority.py \
+            --apply \
+            --plan "$ARTIFACT_ROOT/bootstrap-plan.csv" \
+            --effective-from "$EFFECTIVE_FROM" \
+            --approval-reference "$OWNER_APPROVAL_REFERENCE" \
+            --owner-approval-confirmation "$OWNER_APPROVAL_CONFIRMATION" \
+            > "$ARTIFACT_ROOT/apply-result.json" \
+            2> "$RUNNER_TEMP/bootstrap-apply.stderr"
+          status=$?
+          set -e
+          if [[ "$status" -ne 0 ]]; then
+            rm -f "$RUNNER_TEMP/bootstrap-apply.stderr"
+            echo "BLOCKED_BOOTSTRAP_APPLY: original bounded bootstrap failed and verification did not proceed." >&2
+            exit "$status"
+          fi
+          rm -f "$RUNNER_TEMP/bootstrap-apply.stderr"
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          result = json.loads((Path(os.environ["ARTIFACT_ROOT"]) / "apply-result.json").read_text(encoding="utf-8"))
+          if result.get("status") not in {"APPLIED", "NOOP_IDEMPOTENT"}:
+              raise SystemExit("BLOCKED_BOOTSTRAP_APPLY: unexpected apply status")
+          if result.get("rows_created") != 1160 or result.get("rows_skipped_existing") != 0:
+              raise SystemExit("BLOCKED_BOOTSTRAP_APPLY: bounded row count did not match the dry-run")
+          print(json.dumps({"status": result["status"], "rows_created": result["rows_created"], "rows_skipped_existing": result["rows_skipped_existing"], "plan_hash": result["plan_hash"]}, ensure_ascii=False))
+          PY
+
+      - name: Immediately re-read Production and verify all invariants
+        if: ${{ inputs.mode == 'apply' }}
+        shell: bash
+        env:
+          TOPICPILOT_PRODUCTION_DATABASE_URL: ${{ secrets.TOPICPILOT_PRODUCTION_DATABASE_URL }}
+        run: |
+          set -euo pipefail
+          set +e
+          python - <<'PY' > "$ARTIFACT_ROOT/post-apply-verification.json" 2> "$RUNNER_TEMP/post-apply.stderr"
+          import csv
+          import hashlib
+          import json
+          import os
+          import urllib.error
+          import urllib.request
+          from collections import Counter
+          from pathlib import Path
+
+          from sqlalchemy import create_engine, text
+
+          base = os.environ["API_BASE"].rstrip("/")
+          root = Path(os.environ["ARTIFACT_ROOT"])
+          before = json.loads((root / "pre-apply-verification.json").read_text(encoding="utf-8"))
+          expected_hash = before["structural_role_state_hash_before"]
+          canonical_head = os.environ["CANONICAL_MIGRATION_HEAD"]
+          effective_from = os.environ["EFFECTIVE_FROM"]
+          plan = json.loads((root / "dry-run-result.json").read_text(encoding="utf-8"))
+
+          def get(path):
+              request = urllib.request.Request(base + path, headers={"Accept": "application/json"})
+              try:
+                  with urllib.request.urlopen(request, timeout=120) as response:
+                      return json.load(response)
+              except (urllib.error.HTTPError, urllib.error.URLError, TimeoutError) as exc:
+                  raise SystemExit(f"BLOCKED_POST_APPLY_READ: {type(exc).__name__}") from exc
+
+          def page(path, limit=500):
+              rows = []
+              offset = 0
+              while True:
+                  payload = get(f"{path}?limit={limit}&offset={offset}")
+                  page_rows = payload.get("items", [])
+                  rows.extend(page_rows)
+                  if not page_rows or not payload.get("has_more"):
+                      return rows, payload
+                  offset += len(page_rows)
+
+          migration = get("/api/v1/admin/migration")
+          if migration.get("alembicRevision") != canonical_head or migration.get("readOnly") is not True:
+              raise SystemExit("BLOCKED_POST_APPLY_READ: migration marker changed")
+          audit = get("/api/v1/admin/relations/structural-role-authority/audit?limit=10000&offset=0")
+          summary = audit.get("summary", {})
+          formal_rows, formal_page = page("/api/v1/admin/relations/structural-role-authority")
+          relation_rows, _ = page("/api/v1/admin/relations")
+          fields = (
+              "relation_id", "relation_type", "structural_role", "approval_state",
+              "authority_version", "effective_from", "effective_to", "source_artifact_id",
+              "source_artifact_hash", "lineage_hash",
+          )
+          normalized = [
+              {field: "" if row.get(field) is None else str(row.get(field)) for field in fields}
+              for row in formal_rows
+          ]
+          normalized.sort(key=lambda row: tuple(row[field] for field in fields))
+          state_payload = ("\n".join(json.dumps(row, ensure_ascii=False, sort_keys=True, separators=(",", ":")) for row in normalized) + "\n").encode()
+          after_hash = hashlib.sha256(state_payload).hexdigest()
+          relation_fields = ("id", "instrument_id", "topic_id", "relation_type", "relation_version")
+          relation_identity = [
+              {field: "" if row.get(field) is None else str(row.get(field)) for field in relation_fields}
+              for row in relation_rows
+          ]
+          relation_identity.sort(key=lambda row: tuple(row[field] for field in relation_fields))
+          relation_hash = hashlib.sha256(("\n".join(json.dumps(row, sort_keys=True, separators=(",", ":")) for row in relation_identity) + "\n").encode()).hexdigest()
+          if after_hash != expected_hash:
+              raise SystemExit("BLOCKED_STRUCTURAL_ROLE_MUTATION: BEFORE and AFTER structural-role hashes differ")
+          if relation_hash != before["relation_identity_hash"]:
+              raise SystemExit("BLOCKED_RELATION_MUTATION: relation identity/type hash changed")
+          if len(formal_rows) != 1160 or len(relation_rows) != 1568:
+              raise SystemExit("BLOCKED_RELATION_COUNT_CHANGE: Production relation counts changed")
+          if summary.get("current_relation_type_counts") != {"PRIMARY": 474, "SECONDARY": 686}:
+              raise SystemExit("BLOCKED_RELATION_TYPE_CHANGE: current relation-type counts changed")
+          if summary.get("current_structural_role_counts") != {"CORE": 650, "RELATED": 181, "REPRESENTATIVE": 329}:
+              raise SystemExit("BLOCKED_STRUCTURAL_ROLE_MUTATION: current role counts changed")
+          if any(summary.get(name) != 0 for name in ("invalid_role_rows", "duplicate_active_authority_rows", "supersession_conflict_rows", "lineage_inconsistency_rows")):
+              raise SystemExit("BLOCKED_STRUCTURAL_ROLE_AUDIT: post-apply audit is not clean")
+
+          engine = create_engine(os.environ["TOPICPILOT_PRODUCTION_DATABASE_URL"], pool_pre_ping=True)
+          try:
+              with engine.connect() as connection:
+                  revision = str(connection.execute(text("SELECT version_num FROM public.alembic_version LIMIT 1")).scalar_one())
+                  grouped = connection.execute(text("""
+                      SELECT relation_type, weight::text AS weight, approval_state, COUNT(*) AS row_count
+                      FROM topicpilot.relation_weight_authorities
+                      WHERE authority_version=:authority_version AND effective_from=:effective_from
+                      GROUP BY relation_type, weight, approval_state
+                      ORDER BY relation_type, weight, approval_state
+                  """), {"authority_version": "relation-weight-authority-20260924.v1", "effective_from": effective_from}).mappings().all()
+                  total = int(connection.execute(text("""
+                      SELECT COUNT(*) FROM topicpilot.relation_weight_authorities
+                      WHERE authority_version=:authority_version AND effective_from=:effective_from
+                  """), {"authority_version": "relation-weight-authority-20260924.v1", "effective_from": effective_from}).scalar_one())
+                  current = int(connection.execute(text("""
+                      SELECT COUNT(*) FROM topicpilot.relation_weight_authorities
+                      WHERE authority_version=:authority_version AND effective_from=:effective_from
+                        AND effective_to IS NULL AND approval_state='APPROVED'
+                  """), {"authority_version": "relation-weight-authority-20260924.v1", "effective_from": effective_from}).scalar_one())
+                  invalid = int(connection.execute(text("""
+                      SELECT COUNT(*) FROM topicpilot.relation_weight_authorities
+                      WHERE authority_version=:authority_version AND effective_from=:effective_from
+                        AND ((relation_type='PRIMARY' AND weight <> 1.0) OR (relation_type='SECONDARY' AND weight <> 0.5)
+                             OR relation_type NOT IN ('PRIMARY', 'SECONDARY') OR approval_state <> 'APPROVED')
+                  """), {"authority_version": "relation-weight-authority-20260924.v1", "effective_from": effective_from}).scalar_one())
+          finally:
+              engine.dispose()
+          if revision != canonical_head or total != 1160 or current != 1160 or invalid != 0:
+              raise SystemExit("BLOCKED_RELATION_WEIGHT_AUTHORITY: populated authority rows do not match policy")
+          grouped_json = [{key: (int(value) if key == "row_count" else str(value)) for key, value in row.items()} for row in grouped]
+          if grouped_json != [
+              {"relation_type": "PRIMARY", "weight": "1.0", "approval_state": "APPROVED", "row_count": 474},
+              {"relation_type": "SECONDARY", "weight": "0.5", "approval_state": "APPROVED", "row_count": 686},
+          ]:
+              raise SystemExit("BLOCKED_RELATION_WEIGHT_AUTHORITY: weight distribution mismatch")
+
+          with (root / "post-apply-structural-role-snapshot.csv").open("w", newline="", encoding="utf-8") as handle:
+              writer = csv.DictWriter(handle, fieldnames=list(fields))
+              writer.writeheader()
+              writer.writerows(normalized)
+          result = {
+              "status": "PASS",
+              "migration_head": revision,
+              "structural_role_state_hash_before": expected_hash,
+              "structural_role_state_hash_after": after_hash,
+              "structural_role_hashes_match": True,
+              "relation_identity_hash_before": before["relation_identity_hash"],
+              "relation_identity_hash_after": relation_hash,
+              "relation_identity_hashes_match": True,
+              "formal_structural_role_rows": len(formal_rows),
+              "relation_history_rows": len(relation_rows),
+              "relation_type_counts_unchanged": True,
+              "structural_role_counts_unchanged": True,
+              "relation_weight_authorities": {"total": total, "current_approved": current, "invalid": invalid, "groups": grouped_json},
+              "relation_weight_plan_hash": plan.get("plan_hash"),
+              "normal_maintenance_import": "NOT_RUN",
+          }
+          print(json.dumps(result, ensure_ascii=False, indent=2))
+          PY
+          status=$?
+          set -e
+          rm -f "$RUNNER_TEMP/post-apply.stderr"
+          if [[ "$status" -ne 0 ]]; then
+            echo "BLOCKED_POST_APPLY_VERIFICATION: Production invariants did not pass." >&2
+            exit "$status"
+          fi
+
+      - name: Run validation and dry-run test suite
+        if: ${{ inputs.mode == 'apply' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m ruff check scripts/admin/bootstrap_relation_weight_authority.py scripts/admin/export_database_maintenance_workbook.py services/api/src/topicpilot_api/structural_role_audit.py services/api/src/topicpilot_api/structural_role_read_boundary.py
+          python -m pytest -q \
+            services/api/tests/test_relation_weight_authority.py \
+            services/api/tests/test_database_maintenance_sources.py \
+            services/api/tests/test_database_maintenance_tooling.py \
+            services/api/tests/test_structural_role_authority_audit.py \
+            services/api/tests/test_structural_role_production_read_boundary.py
+
+      - name: Refresh the Production maintenance workbook
+        if: ${{ inputs.mode == 'apply' }}
+        shell: bash
+        env:
+          TOPICPILOT_PRODUCTION_DATABASE_URL: ${{ secrets.TOPICPILOT_PRODUCTION_DATABASE_URL }}
+        run: |
+          set -euo pipefail
+          mkdir -p "$ARTIFACT_ROOT/workbook" "$ARTIFACT_ROOT/workbook-temp"
+          set +e
+          python scripts/admin/export_database_maintenance_workbook.py \
+            --source production \
+            --output-dir "$ARTIFACT_ROOT/workbook" \
+            --temp-dir "$ARTIFACT_ROOT/workbook-temp" \
+            > "$ARTIFACT_ROOT/workbook/export-result.json" \
+            2> "$RUNNER_TEMP/workbook-refresh.stderr"
+          status=$?
+          set -e
+          if [[ "$status" -ne 0 ]]; then
+            rm -f "$RUNNER_TEMP/workbook-refresh.stderr"
+            echo "BLOCKED_WORKBOOK_REFRESH: Production workbook refresh failed." >&2
+            exit "$status"
+          fi
+          rm -f "$RUNNER_TEMP/workbook-refresh.stderr"
+
+      - name: Verify Relations_Current visibility and edit boundaries
+        if: ${{ inputs.mode == 'apply' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          import os
+          from collections import Counter
+          from pathlib import Path
+
+          from openpyxl import load_workbook
+
+          root = Path(os.environ["ARTIFACT_ROOT"])
+          workbook_path = root / "workbook" / "TopicPilot_Database_Maintenance.xlsx"
+          workbook = load_workbook(workbook_path, read_only=True, data_only=True)
+          if "Relations_Current" not in workbook.sheetnames or "Maintenance_Input" not in workbook.sheetnames:
+              raise SystemExit("BLOCKED_WORKBOOK_CONTRACT: required sheets are missing")
+          relations = workbook["Relations_Current"]
+          input_sheet = workbook["Maintenance_Input"]
+          relation_headers = [cell.value for cell in next(relations.iter_rows(max_row=1))]
+          input_headers = [cell.value for cell in next(input_sheet.iter_rows(max_row=1))]
+          for header in ("relation_type", "structural_role", "relation_weight"):
+              if header not in relation_headers:
+                  raise SystemExit(f"BLOCKED_WORKBOOK_CONTRACT: Relations_Current missing {header}")
+          if "structural_role" in input_headers:
+              raise SystemExit("BLOCKED_WORKBOOK_CONTRACT: structural_role is editable in Maintenance_Input")
+          for header in ("PRIMARY_WEIGHTS", "SECONDARY_WEIGHTS"):
+              if header not in input_headers:
+                  raise SystemExit(f"BLOCKED_WORKBOOK_CONTRACT: independently maintainable {header} is missing")
+          rows = list(relations.iter_rows(min_row=2, values_only=True))
+          index = {header: relation_headers.index(header) for header in ("relation_type", "structural_role", "relation_weight")}
+          role_counts = Counter(row[index["structural_role"]] for row in rows if row[index["structural_role"]] is not None)
+          weight_counts = Counter((row[index["relation_type"]], str(row[index["relation_weight"]])) for row in rows)
+          if len(rows) != 1160 or role_counts != Counter({"CORE": 650, "RELATED": 181, "REPRESENTATIVE": 329}):
+              raise SystemExit("BLOCKED_WORKBOOK_CONTRACT: Relations_Current structural-role values changed")
+          if weight_counts != Counter({("PRIMARY", "1"): 474, ("SECONDARY", "0.5"): 686}):
+              raise SystemExit(f"BLOCKED_WORKBOOK_CONTRACT: relation weights are not fully populated: {weight_counts!r}")
+          result = {
+              "status": "PASS",
+              "workbook": str(workbook_path),
+              "sheet": "Relations_Current",
+              "visible_headers": ["relation_type", "structural_role", "relation_weight"],
+              "structural_role_read_only": True,
+              "relation_weight_independently_maintainable": True,
+              "rows": len(rows),
+              "role_counts": dict(role_counts),
+              "weight_counts": {f"{key[0]}={key[1]}": value for key, value in weight_counts.items()},
+          }
+          (root / "workbook-verification.json").write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
+          print(json.dumps(result, ensure_ascii=False))
+          PY
+
+      - name: Produce final Production verification artifacts
+        if: ${{ inputs.mode == 'apply' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import hashlib
+          import json
+          import os
+          from pathlib import Path
+
+          root = Path(os.environ["ARTIFACT_ROOT"])
+          post = json.loads((root / "post-apply-verification.json").read_text(encoding="utf-8"))
+          workbook = json.loads((root / "workbook-verification.json").read_text(encoding="utf-8"))
+          apply_result = json.loads((root / "apply-result.json").read_text(encoding="utf-8"))
+          dry_run = json.loads((root / "dry-run-verification.json").read_text(encoding="utf-8"))
+          if post.get("status") != "PASS" or workbook.get("status") != "PASS":
+              raise SystemExit("BLOCKED_FINAL_ARTIFACTS: required verification did not pass")
+          summary = {
+              "task_id": "TASK-RELATION-WEIGHT-INITIAL-AUTHORITY-BOOTSTRAP-001",
+              "task_status": "COMPLETE_RELATION_WEIGHT_INITIAL_AUTHORITY_BOOTSTRAP",
+              "workflow": "Protected relation-weight bootstrap",
+              "canonical_sha": os.environ["RELEASE_REF"].lower(),
+              "environment": "production-db-maintenance",
+              "production_migration_head": post["migration_head"],
+              "preservation_gate": "PASS",
+              "bootstrap_resume_authorized": True,
+              "bootstrap_mode": os.environ["WORKFLOW_MODE"],
+              "rows_created": apply_result["rows_created"],
+              "rows_skipped_existing": apply_result["rows_skipped_existing"],
+              "primary_weight": "1.0",
+              "secondary_weight": "0.5",
+              "dry_run": dry_run,
+              "post_apply": post,
+              "workbook": workbook,
+              "normal_maintenance_import": "NOT_RUN",
+              "new_migration": "NOT_CREATED",
+              "replacement_bootstrap_lineage": "NOT_CREATED",
+              "production_credential_exposed": False,
+          }
+          (root / "final-production-verification.json").write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
+          (root / "final-production-verification.md").write_text(
+              "# Production relation-weight bootstrap verification\n\n"
+              f"- Task: `{summary['task_id']}`\n"
+              f"- Status: `{summary['task_status']}`\n"
+              f"- Canonical SHA: `{summary['canonical_sha']}`\n"
+              f"- Migration head: `{summary['production_migration_head']}`\n"
+              "- Preservation gate: `PASS`\n"
+              f"- Rows created: `{summary['rows_created']}` (`PRIMARY=1.0`, `SECONDARY=0.5`)\n"
+              f"- BEFORE structural-role hash: `{post['structural_role_state_hash_before']}`\n"
+              f"- AFTER structural-role hash: `{post['structural_role_state_hash_after']}`\n"
+              "- Structural-role hash equality: `PASS`\n"
+              "- Relation identity/type equality: `PASS`\n"
+              "- Structural Role: visible in `Relations_Current`, read-only\n"
+              "- Relation Weight: visible in `Relations_Current`, independently maintainable through the governed maintenance input\n"
+              "- Normal maintenance import: `NOT_RUN`\n"
+              "- New migration: `NOT_CREATED`\n"
+              "- Replacement bootstrap lineage: `NOT_CREATED`\n"
+              "- Production credential value: not printed, logged, exposed, or persisted by this workflow\n",
+              encoding="utf-8",
+          )
+          manifest_lines = []
+          for path in sorted(root.rglob("*")):
+              if path.is_file() and path.name != "SHA256SUMS.txt":
+                  manifest_lines.append(f"{hashlib.sha256(path.read_bytes()).hexdigest()}  {path.relative_to(root).as_posix()}")
+          (root / "SHA256SUMS.txt").write_text("\n".join(manifest_lines) + "\n", encoding="utf-8")
+          print(json.dumps({"status": summary["task_status"], "rows_created": summary["rows_created"], "structural_role_hashes_match": post["structural_role_hashes_match"], "workbook": workbook["status"]}, ensure_ascii=False))
+          PY
+
+      - name: Upload final Production verification artifacts
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: relation-weight-initial-authority-bootstrap-${{ github.run_number }}
+          path: ${{ runner.temp }}/relation-weight-initial-authority-bootstrap-001
+          if-no-files-found: warn
+          retention-days: 14
