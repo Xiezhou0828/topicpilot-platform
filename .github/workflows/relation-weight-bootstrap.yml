@@ -642,6 +642,9 @@ jobs:
             echo "WORKBOOK_REFRESH_ERROR_CLASS=$failure_class"
             failure_message="$(grep -E 'ValueError:|Exception:|Error:' "$RUNNER_TEMP/workbook-refresh.stderr" | tail -n 1 | sed -E 's#(postgres(ql)?(\+[[:alnum:]]+)?://)[^ ]+#\1[REDACTED_DB_URL]#g' || true)"
             echo "WORKBOOK_REFRESH_ERROR_MESSAGE=$failure_message"
+            echo "WORKBOOK_REFRESH_TRACE_TAIL_BEGIN"
+            tail -n 40 "$RUNNER_TEMP/workbook-refresh.stderr" | sed -E 's#(postgres(ql)?(\+[[:alnum:]]+)?://)[^ ]+#\1[REDACTED_DB_URL]#g'
+            echo "WORKBOOK_REFRESH_TRACE_TAIL_END"
             rm -f "$RUNNER_TEMP/workbook-refresh.stderr"
             echo "BLOCKED_WORKBOOK_REFRESH: Production workbook refresh failed." >&2
             exit "$status"
