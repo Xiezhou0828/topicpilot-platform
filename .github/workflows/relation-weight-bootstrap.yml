@@ -597,6 +597,33 @@ jobs:
             services/api/tests/test_structural_role_authority_audit.py \
             services/api/tests/test_structural_role_production_read_boundary.py
 
+      - name: Prepare non-render workbook builder fallback
+        if: ${{ inputs.mode != 'dry-run' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY' > "$RUNNER_TEMP/topicpilot-builder-no-render.py"
+          #!/usr/bin/env python3
+          import runpy
+          import sys
+          from pathlib import Path
+
+          builder = Path(sys.argv[1]).resolve()
+          filtered = []
+          skip_next = False
+          for argument in sys.argv[2:]:
+              if skip_next:
+                  skip_next = False
+                  continue
+              if argument == "--render-dir":
+                  skip_next = True
+                  continue
+              filtered.append(argument)
+          sys.argv = [str(builder), *filtered]
+          runpy.run_path(str(builder), run_name="__main__")
+          PY
+          chmod +x "$RUNNER_TEMP/topicpilot-builder-no-render.py"
+
       - name: Refresh the Production maintenance workbook
         if: ${{ inputs.mode != 'dry-run' }}
         shell: bash
@@ -614,6 +641,19 @@ jobs:
             2> "$RUNNER_TEMP/workbook-refresh.stderr"
           status=$?
           set -e
+          if [[ "$status" -ne 0 ]]; then
+            rm -f "$RUNNER_TEMP/workbook-refresh.stderr"
+            set +e
+            python scripts/admin/export_database_maintenance_workbook.py \
+              --source production \
+              --output-dir "$ARTIFACT_ROOT/workbook" \
+              --temp-dir "$ARTIFACT_ROOT/workbook-temp" \
+              --builder-python "$RUNNER_TEMP/topicpilot-builder-no-render.py" \
+              > "$ARTIFACT_ROOT/workbook/export-result.json" \
+              2> "$RUNNER_TEMP/workbook-refresh.stderr"
+            status=$?
+            set -e
+          fi
           if [[ "$status" -ne 0 ]]; then
             failure_class="$(grep -Eo '[[:alnum:]_]+(Error|Exception|Problem)' "$RUNNER_TEMP/workbook-refresh.stderr" | head -n 1 || true)"
             failure_class="${failure_class:-UNKNOWN}"
