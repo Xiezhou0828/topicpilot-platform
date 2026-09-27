@@ -548,8 +548,8 @@ jobs:
               blocked("BLOCKED_RELATION_WEIGHT_AUTHORITY: populated authority rows do not match policy", revision=revision, total=total, current_approved=current, invalid=invalid)
           grouped_json = [{key: (int(value) if key == "row_count" else str(value)) for key, value in row.items()} for row in grouped]
           if grouped_json != [
-              {"relation_type": "PRIMARY", "weight": "1.0", "approval_state": "APPROVED", "row_count": 474},
-              {"relation_type": "SECONDARY", "weight": "0.5", "approval_state": "APPROVED", "row_count": 1077},
+              {"relation_type": "PRIMARY", "weight": "1.0000", "approval_state": "APPROVED", "row_count": 474},
+              {"relation_type": "SECONDARY", "weight": "0.5000", "approval_state": "APPROVED", "row_count": 1077},
           ]:
               blocked("BLOCKED_RELATION_WEIGHT_AUTHORITY: weight distribution mismatch", groups=grouped_json)
 
