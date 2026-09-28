@@ -10,10 +10,10 @@ from datetime import time as clock_time
 from decimal import Decimal
 from typing import Any
 from urllib.request import Request, urlopen
-from uuid import UUID
+from uuid import NAMESPACE_URL, UUID, uuid5
 
-from sqlalchemy import and_, or_, select
-from sqlalchemy.exc import DBAPIError, SQLAlchemyError
+from sqlalchemy import and_, or_, select, text
+from sqlalchemy.exc import DBAPIError, IntegrityError, SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from topicpilot_api.daily_market import DailyMarketReconciliation, reconcile_daily_market
@@ -39,8 +39,10 @@ from topicpilot_api.market_data.registry import build_historical_provider_regist
 from topicpilot_api.normalizer import HISTORICAL_MAPPING_POLICY_VERSION, MappingPolicy
 from topicpilot_api.normalizer.contracts import stable_hash
 from topicpilot_api.orm import (
+    HomePublication,
     Instrument,
     LiveCollectorAttempt,
+    LiveCollectorCheckpoint,
     LiveCollectorRun,
     Market,
     TopicSnapshot,
@@ -53,6 +55,22 @@ from topicpilot_api.topic_snapshot_engine import TopicSnapshotEngine
 from .config import LiveRuntimeConfig
 from .persistence import LiveRepository
 from .session import MarketSessionClock
+
+POST_CLOSE_PHASE_MODEL = (
+    "SESSION_VALIDATION",
+    "INPUT_READINESS",
+    "FORMAL_MARKET_FACTS",
+    "A9_B2_FORMAL_PROCESSING",
+    "FINAL_PUBLICATION",
+    "COMPLETION",
+)
+_CHECKPOINT_BATCH_NUMBERS = {
+    "SESSION_VALIDATION": 0,
+    "INPUT_READINESS": 1,
+    "A9_B2_FORMAL_PROCESSING": 2,
+    "FINAL_PUBLICATION": 3,
+    "COMPLETION": 4,
+}
 
 
 def _official_transport(url: str, timeout: float) -> bytes:
@@ -328,6 +346,172 @@ class PostCloseUpdater:
             for market_code, codes in grouped.items()
         }
 
+    def _execution_key(
+        self,
+        run_date: date,
+        *,
+        target_symbols: Collection[str] | None = None,
+    ) -> str:
+        """Return the one durable identity for one session/scope execution."""
+
+        scope = "FULL" if target_symbols is None else "TARGETED"
+        scope_suffix = (
+            ""
+            if target_symbols is None
+            else f":{stable_hash(tuple(target_symbols))[:32]}"
+        )
+        return (
+            f"post-close:{self.config.reference_data_version}:"
+            f"{self.config.calendar_code}:{run_date.isoformat()}:"
+            f"{scope}{scope_suffix}"
+        )
+
+    @staticmethod
+    def _checkpoint_key(phase: str, suffix: str | None = None) -> str:
+        value = phase if suffix is None else f"{phase}:{suffix}"
+        if len(value) > 128:
+            raise ValueError("POST_CLOSE_CHECKPOINT_KEY_TOO_LONG")
+        return value
+
+    def _latest_checkpoint(
+        self,
+        run_id: Any,
+        batch_key: str,
+    ) -> LiveCollectorCheckpoint | None:
+        return self.session.scalar(
+            select(LiveCollectorCheckpoint)
+            .where(
+                LiveCollectorCheckpoint.run_id == run_id,
+                LiveCollectorCheckpoint.batch_key == batch_key,
+            )
+            .order_by(
+                LiveCollectorCheckpoint.attempt_number.desc(),
+                LiveCollectorCheckpoint.created_at.desc(),
+                LiveCollectorCheckpoint.id.desc(),
+            )
+            .limit(1)
+        )
+
+    def _checkpoint_event(
+        self,
+        *,
+        run_id: Any,
+        batch_key: str,
+        status: str,
+        batch_number: int | None = None,
+        processed_count: int = 0,
+        succeeded_count: int = 0,
+        failed_count: int = 0,
+        skipped_count: int = 0,
+        retry_count: int = 0,
+        provider_request_count: int = 0,
+        provider_failure_count: int = 0,
+        metadata: Mapping[str, Any] | None = None,
+    ) -> LiveCollectorCheckpoint:
+        """Append one immutable checkpoint event and make it durable."""
+
+        if not hasattr(self, "session") or self.session is None:
+            return None  # type: ignore[return-value]
+        if status not in {"IN_PROGRESS", "COMPLETED", "PARTIAL", "FAILED"}:
+            raise ValueError("invalid POST_CLOSE checkpoint status")
+        latest = self._latest_checkpoint(run_id, batch_key)
+        attempt_number = (latest.attempt_number + 1) if latest else 1
+        resolved_batch_number = (
+            batch_number
+            if batch_number is not None
+            else _CHECKPOINT_BATCH_NUMBERS.get(batch_key, 1000)
+        )
+        payload = _json_safe(
+            {
+                "runId": str(run_id),
+                "batchKey": batch_key,
+                "batchNumber": resolved_batch_number,
+                "attemptNumber": attempt_number,
+                "status": status,
+                "processedCount": processed_count,
+                "succeededCount": succeeded_count,
+                "failedCount": failed_count,
+                "skippedCount": skipped_count,
+                "retryCount": retry_count,
+                "providerRequestCount": provider_request_count,
+                "providerFailureCount": provider_failure_count,
+                "metadata": metadata or {},
+            }
+        )
+        checkpoint = LiveCollectorCheckpoint(
+            run_id=run_id,
+            batch_number=resolved_batch_number,
+            batch_key=batch_key,
+            attempt_number=attempt_number,
+            status=status,
+            processed_count=processed_count,
+            succeeded_count=succeeded_count,
+            failed_count=failed_count,
+            skipped_count=skipped_count,
+            retry_count=retry_count,
+            provider_request_count=provider_request_count,
+            provider_failure_count=provider_failure_count,
+            checkpoint_hash=stable_hash(payload),
+            metadata_payload=payload["metadata"],
+        )
+        self.session.add(checkpoint)
+        self.session.commit()
+        return checkpoint
+
+    def _completed_market_checkpoint_totals(self, run_id: Any) -> dict[str, int]:
+        rows = self.session.scalars(
+            select(LiveCollectorCheckpoint)
+            .where(
+                LiveCollectorCheckpoint.run_id == run_id,
+                LiveCollectorCheckpoint.batch_key.like("FORMAL_MARKET_FACTS:%"),
+            )
+            .order_by(
+                LiveCollectorCheckpoint.batch_key,
+                LiveCollectorCheckpoint.attempt_number,
+                LiveCollectorCheckpoint.created_at,
+            )
+        ).all()
+        latest: dict[str, LiveCollectorCheckpoint] = {}
+        for row in rows:
+            latest[row.batch_key] = row
+        completed = [row for row in latest.values() if row.status == "COMPLETED"]
+        return {
+            "success_count": sum(row.succeeded_count for row in completed),
+            "failure_count": sum(row.failed_count for row in completed),
+            "skipped_count": sum(row.skipped_count for row in completed),
+            "retry_count": sum(row.retry_count for row in completed),
+            "point_count": sum(row.provider_request_count for row in completed),
+        }
+
+    def _mark_run_for_resume(self, run: LiveCollectorRun, now: datetime) -> None:
+        metadata = dict(run.metadata_payload or {})
+        metadata["resumeCount"] = int(metadata.get("resumeCount", 0) or 0) + 1
+        metadata["lastResumeAt"] = now
+        run.status = "RUNNING"
+        run.completed_at = None
+        run.heartbeat_at = now
+        run.updated_at = now
+        run.provider_status = "CONNECTING"
+        run.failure_code = None
+        run.failure_message = None
+        run.metadata_payload = _json_safe(metadata)
+        self.session.commit()
+
+    def _acquire_session_claim_lock(self, run_date: date) -> None:
+        """Serialize first-claim races without adding a second lock table."""
+
+        if self.session.get_bind().dialect.name != "postgresql":
+            return
+        self.session.execute(
+            text("SELECT pg_advisory_xact_lock(hashtext(:lock_key)::bigint)"),
+            {
+                "lock_key": (
+                    f"topicpilot:post-close-session:{self.config.reference_data_version}:"
+                    f"{self.config.calendar_code}:{run_date.isoformat()}"
+                )
+            },
+        )
+
     def _runs_for_date(self, run_date: date) -> list[LiveCollectorRun]:
         """Load POST_CLOSE runs for the requested market date.
 
@@ -372,8 +556,15 @@ class PostCloseUpdater:
     ) -> LiveCollectorRun | None:
         wanted_scope = "TARGETED" if target_symbols is not None else "FULL"
         wanted_symbols = tuple(target_symbols or ())
+        wanted_execution_key = self._execution_key(
+            run_date,
+            target_symbols=wanted_symbols if target_symbols is not None else None,
+        )
+        fallback: LiveCollectorRun | None = None
         for run in self._runs_for_date(run_date):
             metadata = run.metadata_payload or {}
+            if metadata.get("executionKey") == wanted_execution_key:
+                return run
             scope = str(metadata.get("scope", "FULL")).upper()
             if scope != wanted_scope:
                 continue
@@ -381,8 +572,8 @@ class PostCloseUpdater:
                 recorded = tuple(str(item) for item in metadata.get("targetSymbols", ()))
                 if recorded != wanted_symbols:
                     continue
-            return run
-        return None
+            fallback = fallback or run
+        return fallback
 
     def _completed_attempt_summary(
         self,
@@ -482,11 +673,25 @@ class PostCloseUpdater:
         target_symbols: Collection[str] = (),
         execution_mode: str = "MANUAL",
     ) -> LiveCollectorRun:
+        execution_key = self._execution_key(
+            run_date,
+            target_symbols=target_symbols if scope == "TARGETED" else None,
+        )
         metadata = {
             "runType": "POST_CLOSE",
             "runDate": run_date.isoformat(),
             "targetDate": run_date.isoformat(),
             "scope": scope,
+            "executionKey": execution_key,
+            "sessionIdentity": {
+                "sessionDate": run_date.isoformat(),
+                "timezone": self.config.timezone_name,
+                "sessionCode": self.config.session_code,
+                "calendarCode": self.config.calendar_code,
+                "authority": "ACTIVE_REFERENCE_PREFLIGHT",
+            },
+            "checkpointAuthority": "topicpilot.live_collector_checkpoints",
+            "phaseModel": list(POST_CLOSE_PHASE_MODEL),
             "forwardRunKey": (
                 f"post-close:{self.config.reference_data_version}:"
                 f"{self.config.calendar_code}:{run_date.isoformat()}"
@@ -506,7 +711,10 @@ class PostCloseUpdater:
             metadata["targetSymbols"] = list(target_symbols)
         if recovery_of_run_id is not None:
             metadata["recoveryOfRunId"] = str(recovery_of_run_id)
+        if recovery_of_run_id is None:
+            metadata["recoveryStrategy"] = "IN_PLACE_SESSION_RUN"
         run = LiveCollectorRun(
+            id=uuid5(NAMESPACE_URL, f"topicpilot:{execution_key}"),
             run_type="POST_CLOSE",
             status="RUNNING",
             provider_code="OFFICIAL_DAILY_ROUTER",
@@ -533,6 +741,44 @@ class PostCloseUpdater:
         self.session.flush()
         self.session.commit()
         return run
+
+    def _create_or_get_run(
+        self,
+        requested_count: int,
+        started_at: datetime,
+        *,
+        run_date: date,
+        scope: str,
+        target_symbols: Collection[str],
+        execution_mode: str,
+    ) -> tuple[LiveCollectorRun, bool]:
+        """Create one deterministic run row, or converge on a concurrent creator."""
+
+        try:
+            return (
+                self._create_run(
+                    requested_count,
+                    started_at,
+                    run_date=run_date,
+                    scope=scope,
+                    target_symbols=target_symbols,
+                    execution_mode=execution_mode,
+                ),
+                True,
+            )
+        except IntegrityError:
+            self.session.rollback()
+            execution_key = self._execution_key(
+                run_date,
+                target_symbols=target_symbols if scope == "TARGETED" else None,
+            )
+            existing = self.session.get(
+                LiveCollectorRun,
+                uuid5(NAMESPACE_URL, f"topicpilot:{execution_key}"),
+            )
+            if existing is None:
+                raise
+            return existing, False
 
     def _idempotent_result(self, run_date: date) -> PostCloseRunResult | None:
         run_key = (
@@ -639,6 +885,128 @@ class PostCloseUpdater:
             )
         )
 
+    def _stale_after_seconds(self) -> int:
+        """Use the existing bounded provider/worker budget as the lease bound."""
+
+        return max(
+            self.config.poll_interval_seconds * 2,
+            int(self.config.provider_timeout_seconds)
+            * max(1, self.config.history_batch_size)
+            * (self.config.history_max_retries + 1),
+        )
+
+    def _ensure_completed_checkpoint(
+        self,
+        *,
+        run_id: Any,
+        batch_key: str,
+        metadata: Mapping[str, Any] | None = None,
+    ) -> None:
+        if not hasattr(self, "session") or self.session is None:
+            return
+        latest = self._latest_checkpoint(run_id, batch_key)
+        if latest is not None and latest.status == "COMPLETED":
+            return
+        self._checkpoint_event(
+            run_id=run_id,
+            batch_key=batch_key,
+            status="COMPLETED",
+            metadata=metadata,
+        )
+
+    def _prepare_run(
+        self,
+        *,
+        run_date: date,
+        now: datetime,
+        requested_count: int,
+        target_symbols: Collection[str],
+        is_targeted: bool,
+        allow_terminal_recovery: bool,
+        execution_mode: str,
+        context: Any,
+    ) -> tuple[LiveCollectorRun, bool, dict[str, int]]:
+        """Claim the session run and return durable progress totals.
+
+        New and recovered executions share one deterministic run identity.  A
+        stale RUNNING row is resumed in place; a recent RUNNING row remains an
+        active lease and blocks a duplicate worker.
+        """
+
+        self._acquire_session_claim_lock(run_date)
+        existing_run = self._find_existing_run(
+            run_date,
+            target_symbols=target_symbols if is_targeted else None,
+        )
+        active_other_scope = next(
+            (
+                run
+                for run in self._runs_for_date(run_date)
+                if run.status == "RUNNING"
+                and (existing_run is None or run.id != existing_run.id)
+            ),
+            None,
+        )
+        if active_other_scope is not None:
+            raise PostClosePreconditionError("POST_CLOSE_RUN_IN_PROGRESS")
+
+        if existing_run is not None:
+            existing_run = self.session.scalar(
+                select(LiveCollectorRun)
+                .where(LiveCollectorRun.id == existing_run.id)
+                .with_for_update()
+            ) or existing_run
+            metadata = existing_run.metadata_payload or {}
+            forward_status = (metadata.get("forwardAutomation") or {}).get("status")
+            safely_complete = (
+                existing_run.status == "SUCCESS" and forward_status == "SUCCESS"
+            ) or (
+                existing_run.status == "MARKET_CLOSED"
+                and not context.target_date_is_session
+            )
+            if safely_complete or (
+                existing_run.status in {"SUCCESS", "PARTIAL", "FAILED", "MARKET_CLOSED"}
+                and not allow_terminal_recovery
+            ):
+                return existing_run, True, {}
+            if existing_run.status == "RUNNING" and self._is_recent_run(
+                existing_run,
+                now,
+                stale_after=self._stale_after_seconds(),
+            ):
+                raise PostClosePreconditionError("POST_CLOSE_RUN_IN_PROGRESS")
+            if existing_run.failure_code == "POST_CLOSE_FINALIZATION_FAILED":
+                # Preserve the existing recovery diagnostic while resuming the
+                # same deterministic run identity and checkpoint stream.
+                metadata = dict(existing_run.metadata_payload or {})
+                metadata["resumeReason"] = "POST_CLOSE_FINALIZATION_FAILED"
+                existing_run.metadata_payload = _json_safe(metadata)
+                self.session.commit()
+            self._mark_run_for_resume(existing_run, now)
+            return (
+                existing_run,
+                True,
+                self._completed_market_checkpoint_totals(existing_run.id),
+            )
+
+        run, created = self._create_or_get_run(
+            requested_count,
+            now,
+            run_date=run_date,
+            scope="TARGETED" if is_targeted else "FULL",
+            target_symbols=target_symbols,
+            execution_mode=execution_mode,
+        )
+        if not created:
+            if run.status == "RUNNING":
+                raise PostClosePreconditionError("POST_CLOSE_RUN_IN_PROGRESS")
+            if run.status in {"SUCCESS", "PARTIAL", "FAILED", "MARKET_CLOSED"}:
+                if not allow_terminal_recovery:
+                    return run, True, {}
+                self._mark_run_for_resume(run, now)
+                return run, True, self._completed_market_checkpoint_totals(run.id)
+        return run, False, {}
+
     def run_once(
         self,
         *,
@@ -681,139 +1049,42 @@ class PostCloseUpdater:
         idempotent = None if is_targeted else self._idempotent_result(local_date)
         if idempotent is not None:
             return idempotent
-        existing_run = self._find_existing_run(
-            local_date,
-            target_symbols=normalized_target_symbols if is_targeted else None,
-        )
-        active_other_scope = next(
-            (
-                run
-                for run in self._runs_for_date(local_date)
-                if run.status == "RUNNING"
-                and (existing_run is None or run.id != existing_run.id)
-            ),
-            None,
-        )
-        if active_other_scope is not None:
-            raise PostClosePreconditionError("POST_CLOSE_RUN_IN_PROGRESS")
-        recovery_of_run_id = None
-        if existing_run is not None:
-            if existing_run.status in {"SUCCESS", "MARKET_CLOSED"}:
-                metadata = existing_run.metadata_payload or {}
-                forward_status = (metadata.get("forwardAutomation") or {}).get("status")
-                safely_complete = (
-                    existing_run.status == "SUCCESS" and forward_status == "SUCCESS"
-                ) or (
-                    existing_run.status == "MARKET_CLOSED"
-                    and not context.target_date_is_session
-                )
-                if safely_complete or not allow_terminal_recovery:
-                    return self._existing_result(existing_run, run_date=local_date)
-                recovery_of_run_id = existing_run.id
-            if existing_run.status in {"PARTIAL", "FAILED"}:
-                if not allow_terminal_recovery:
-                    return self._existing_result(existing_run, run_date=local_date)
-                recovery_of_run_id = existing_run.id
-            attempt_summary = self._completed_attempt_summary(
-                existing_run.id,
-                eligible_instrument_ids,
-            )
-            if (
-                recovery_of_run_id is not None
-                and existing_run.failure_code == "POST_CLOSE_FINALIZATION_FAILED"
-                and attempt_summary is not None
-            ):
-                if is_targeted:
-                    return self._finalize_targeted_run(
-                        run_id=existing_run.id,
-                        local_date=local_date,
-                        requested_count=len(eligible_instrument_ids),
-                        success_count=attempt_summary["success_count"],
-                        failure_count=attempt_summary["failure_count"],
-                        skipped_count=attempt_summary["skipped_count"],
-                        retry_count=attempt_summary["retry_count"],
-                        point_count=int(
-                            (existing_run.metadata_payload or {}).get(
-                                "providerPointCount", 0
-                            )
-                            or 0
-                        ),
-                        failure_codes=attempt_summary["failure_codes"],
-                    )
-                return self._finalize_collected_run(
-                    run_id=existing_run.id,
-                    local_date=local_date,
-                    eligible_instrument_ids=eligible_instrument_ids,
-                    success_count=attempt_summary["success_count"],
-                    failure_count=attempt_summary["failure_count"],
-                    skipped_count=attempt_summary["skipped_count"],
-                    retry_count=attempt_summary["retry_count"],
-                    point_count=int(
-                        (existing_run.metadata_payload or {}).get("providerPointCount", 0)
-                        or 0
-                    ),
-                    failure_codes=attempt_summary["failure_codes"],
-                )
-            if (
-                recovery_of_run_id is None
-                and attempt_summary is not None
-                and not self._is_recent_run(
-                    existing_run,
-                    now,
-                    stale_after=max(
-                        self.config.poll_interval_seconds * 2,
-                        int(self.config.provider_timeout_seconds)
-                        * max(1, self.config.history_batch_size)
-                        * (self.config.history_max_retries + 1),
-                    ),
-                )
-            ):
-                if is_targeted:
-                    return self._finalize_targeted_run(
-                        run_id=existing_run.id,
-                        local_date=local_date,
-                        requested_count=len(eligible_instrument_ids),
-                        success_count=attempt_summary["success_count"],
-                        failure_count=attempt_summary["failure_count"],
-                        skipped_count=attempt_summary["skipped_count"],
-                        retry_count=attempt_summary["retry_count"],
-                        point_count=int(
-                            (existing_run.metadata_payload or {}).get(
-                                "providerPointCount", 0
-                            )
-                            or 0
-                        ),
-                        failure_codes=attempt_summary["failure_codes"],
-                    )
-                return self._finalize_collected_run(
-                    run_id=existing_run.id,
-                    local_date=local_date,
-                    eligible_instrument_ids=eligible_instrument_ids,
-                    success_count=attempt_summary["success_count"],
-                    failure_count=attempt_summary["failure_count"],
-                    skipped_count=attempt_summary["skipped_count"],
-                    retry_count=attempt_summary["retry_count"],
-                    point_count=int(
-                        (existing_run.metadata_payload or {}).get("providerPointCount", 0)
-                        or 0
-                    ),
-                    failure_codes=attempt_summary["failure_codes"],
-                )
-            if recovery_of_run_id is None:
-                raise PostClosePreconditionError("POST_CLOSE_RUN_IN_PROGRESS")
-
-        run = self._create_run(
-            len(instruments),
-            now,
+        run, reused, recovered_counts = self._prepare_run(
             run_date=local_date,
-            recovery_of_run_id=recovery_of_run_id,
-            scope="TARGETED" if is_targeted else "FULL",
+            now=now,
+            requested_count=len(instruments),
             target_symbols=normalized_target_symbols,
+            is_targeted=is_targeted,
+            allow_terminal_recovery=allow_terminal_recovery,
             execution_mode=execution_mode,
+            context=context,
         )
+        if reused and run.status not in {"RUNNING"}:
+            return self._existing_result(run, run_date=local_date)
         run_id = run.id
         failure_codes: list[str] = []
-        success_count = failure_count = skipped_count = retry_count = point_count = 0
+        success_count = recovered_counts.get("success_count", 0)
+        failure_count = recovered_counts.get("failure_count", 0)
+        skipped_count = recovered_counts.get("skipped_count", 0)
+        retry_count = recovered_counts.get("retry_count", 0)
+        point_count = recovered_counts.get("point_count", 0)
+        self._ensure_completed_checkpoint(
+            run_id=run_id,
+            batch_key="SESSION_VALIDATION",
+            metadata={
+                "sessionDate": local_date,
+                "targetDateIsSession": context.target_date_is_session,
+                "targetDateReason": context.target_date_reason,
+            },
+        )
+        self._ensure_completed_checkpoint(
+            run_id=run_id,
+            batch_key="INPUT_READINESS",
+            metadata={
+                "instrumentCount": len(instruments),
+                "scope": "TARGETED" if is_targeted else "FULL",
+            },
+        )
 
         session_status = self.session_clock.status(
             datetime.combine(local_date, clock_time(13, 30), tzinfo=self.session_clock.timezone)
@@ -835,6 +1106,16 @@ class PostCloseUpdater:
                 "topicCount": 0,
                 "status": "NOT_RUN_MARKET_CLOSED",
             }
+            self._checkpoint_event(
+                run_id=run_id,
+                batch_key="FINAL_PUBLICATION",
+                status="COMPLETED",
+                metadata={
+                    "outcome": "MARKET_CLOSED",
+                    "publication": "NOT_RUN",
+                    "reason": context.target_date_reason or session_status.reason,
+                },
+            )
             self._finish(
                 run_id,
                 status=status,
@@ -847,6 +1128,12 @@ class PostCloseUpdater:
                 snapshot_result=snapshot_result,
                 reconciliation=reconciliation,
                 now=now,
+            )
+            self._checkpoint_event(
+                run_id=run_id,
+                batch_key="COMPLETION",
+                status="COMPLETED",
+                metadata={"runStatus": status, "formalReadback": "NOT_APPLICABLE"},
             )
             return PostCloseRunResult(
                 str(run_id),
@@ -898,8 +1185,30 @@ class PostCloseUpdater:
                     ]
                 )
 
-        for batch in market_batches:
+        for batch_index, batch in enumerate(market_batches, start=1):
             market = batch[0][1]
+            batch_key = self._checkpoint_key(
+                "FORMAL_MARKET_FACTS", f"{market.code}:{batch_index}"
+            )
+            previous_checkpoint = self._latest_checkpoint(run_id, batch_key)
+            if previous_checkpoint is not None and previous_checkpoint.status == "COMPLETED":
+                success_count += previous_checkpoint.succeeded_count
+                failure_count += previous_checkpoint.failed_count
+                skipped_count += previous_checkpoint.skipped_count
+                retry_count += previous_checkpoint.retry_count
+                point_count += previous_checkpoint.provider_request_count
+                continue
+            self._checkpoint_event(
+                run_id=run_id,
+                batch_key=batch_key,
+                batch_number=100 + batch_index,
+                status="IN_PROGRESS",
+                metadata={
+                    "market": market.code,
+                    "symbols": [instrument.instrument_code for instrument, _ in batch],
+                    "sessionDate": local_date,
+                },
+            )
             registration = registry.for_market(market.code)[0]
             batch_started = self._now()
             retries_before = transport.retry_count
@@ -970,6 +1279,18 @@ class PostCloseUpdater:
                 skipped_count += batch_skipped_count
                 point_count += batch_point_count
                 retry_count += batch_retry_count
+                self._checkpoint_event(
+                    run_id=run_id,
+                    batch_key=batch_key,
+                    batch_number=100 + batch_index,
+                    status="COMPLETED" if batch_skipped_count == 0 else "PARTIAL",
+                    processed_count=len(batch),
+                    succeeded_count=batch_success_count,
+                    skipped_count=batch_skipped_count,
+                    retry_count=batch_retry_count,
+                    provider_request_count=batch_point_count,
+                    metadata={"market": market.code, "sessionDate": local_date},
+                )
             except Exception:
                 batch_retry_count = transport.retry_count - retries_before
                 retry_count += batch_retry_count
@@ -1053,6 +1374,26 @@ class PostCloseUpdater:
                 skipped_count += fallback_skipped_count
                 failure_count += fallback_failure_count
                 point_count += fallback_point_count
+                self._checkpoint_event(
+                    run_id=run_id,
+                    batch_key=batch_key,
+                    batch_number=100 + batch_index,
+                    status=(
+                        "COMPLETED"
+                        if fallback_failure_count == 0 and fallback_skipped_count == 0
+                        else "PARTIAL"
+                        if fallback_success_count or fallback_skipped_count
+                        else "FAILED"
+                    ),
+                    processed_count=len(batch),
+                    succeeded_count=fallback_success_count,
+                    failed_count=fallback_failure_count,
+                    skipped_count=fallback_skipped_count,
+                    retry_count=batch_retry_count,
+                    provider_request_count=fallback_point_count,
+                    provider_failure_count=fallback_failure_count,
+                    metadata={"market": market.code, "sessionDate": local_date},
+                )
             self._heartbeat(run_id, self._now())
 
         if is_targeted:
@@ -1177,6 +1518,14 @@ class PostCloseUpdater:
             "topicCount": 0,
             "status": "NOT_RUN_TARGETED",
         }
+        self._ensure_completed_checkpoint(
+            run_id=run_id,
+            batch_key="FINAL_PUBLICATION",
+            metadata={
+                "outcome": "TARGETED_NOT_APPLICABLE",
+                "publication": "NOT_RUN",
+            },
+        )
         self._finish_with_retry(
             run_id,
             status=status,
@@ -1189,6 +1538,12 @@ class PostCloseUpdater:
             snapshot_result=snapshot_result,
             reconciliation=None,
             now=self._now(),
+        )
+        self._checkpoint_event(
+            run_id=run_id,
+            batch_key="COMPLETION",
+            status="COMPLETED" if status == "SUCCESS" else "PARTIAL",
+            metadata={"runStatus": status, "formalReadback": "NOT_APPLICABLE"},
         )
         return PostCloseRunResult(
             str(run_id),
@@ -1236,8 +1591,52 @@ class PostCloseUpdater:
                 now=self._now(),
                 eligible_instrument_ids=eligible_instrument_ids,
             )
-            snapshot_result = (
-                self._run_snapshot(
+            snapshot_result: dict[str, Any]
+            formal_readback = self._formal_publication_readback(
+                local_date,
+                run_id=run_id,
+            )
+            formal_phase_key = "A9_B2_FORMAL_PROCESSING"
+            formal_phase = self._latest_checkpoint(run_id, formal_phase_key)
+            if (
+                reconciliation.downstream_ready
+                and formal_phase is not None
+                and formal_phase.status in {"IN_PROGRESS", "COMPLETED"}
+                and formal_readback["status"] == "PASS"
+            ):
+                # Publication already committed before a prior worker stopped.
+                # Read it back and converge without invoking the writers again.
+                run_metadata = self.session.get(LiveCollectorRun, run_id)
+                snapshot_result = dict(
+                    (run_metadata.metadata_payload if run_metadata else {}).get(
+                        "topicSnapshot", {}
+                    )
+                )
+                snapshot_result.setdefault("snapshotDate", local_date.isoformat())
+                snapshot_result.setdefault(
+                    "topicCount", formal_readback["topicSnapshot"]["rowCount"]
+                )
+                snapshot_result.setdefault("status", "SUCCESS")
+                snapshot_result.setdefault(
+                    "formalTopicDailyState",
+                    {"status": "SUCCESS", "statusReason": "READBACK_REUSED"},
+                )
+                snapshot_result["formalTopicSnapshotReadback"] = formal_readback[
+                    "topicSnapshot"
+                ]
+                snapshot_result["formalPublicationReadback"] = formal_readback
+            elif reconciliation.downstream_ready:
+                self._checkpoint_event(
+                    run_id=run_id,
+                    batch_key=formal_phase_key,
+                    status="IN_PROGRESS",
+                    metadata={
+                        "sessionDate": local_date,
+                        "a9B2Boundary": "PRESERVED",
+                        "publicationAuthority": "topicpilot.topic_snapshots",
+                    },
+                )
+                snapshot_result = self._run_snapshot(
                     local_date,
                     eligible_instrument_ids=eligible_instrument_ids,
                     source_run_id=str(run_id),
@@ -1260,15 +1659,51 @@ class PostCloseUpdater:
                         transport=_official_transport,
                     ),
                 )
-                if reconciliation.downstream_ready
-                else {
+                formal_readback = self._formal_publication_readback(
+                    local_date,
+                    run_id=run_id,
+                )
+                snapshot_result["formalPublicationReadback"] = formal_readback
+            else:
+                snapshot_result = {
                     "snapshotDate": local_date.isoformat(),
                     "topicCount": 0,
                     "status": "BLOCKED_DAILY_MARKET_NOT_READY",
+                    "formalPublicationReadback": formal_readback,
                 }
-            )
+            formal_ready = self._formal_snapshot_ready(snapshot_result)
+            if formal_ready:
+                self._ensure_completed_checkpoint(
+                    run_id=run_id,
+                    batch_key="A9_B2_FORMAL_PROCESSING",
+                    metadata={
+                        "readback": formal_readback,
+                        "semanticsChanged": False,
+                    },
+                )
+                self._ensure_completed_checkpoint(
+                    run_id=run_id,
+                    batch_key="FINAL_PUBLICATION",
+                    metadata={
+                        "formalPublication": formal_readback,
+                        "homePublication": formal_readback["homePublication"],
+                    },
+                )
+            else:
+                self._checkpoint_event(
+                    run_id=run_id,
+                    batch_key="A9_B2_FORMAL_PROCESSING",
+                    status="FAILED",
+                    failed_count=1,
+                    metadata={
+                        "errorCode": "CHECKPOINT_PUBLICATION_MISMATCH"
+                        if formal_phase is not None and formal_phase.status == "COMPLETED"
+                        else "FORMAL_TOPIC_SNAPSHOT_NOT_READY",
+                        "readback": formal_readback,
+                    },
+                )
             final_failure_codes = tuple(sorted(set(failure_codes)))
-            if status == "SUCCESS" and not self._formal_snapshot_ready(snapshot_result):
+            if status == "SUCCESS" and not formal_ready:
                 status = "PARTIAL"
                 final_failure_codes = tuple(
                     sorted({*final_failure_codes, "FORMAL_TOPIC_SNAPSHOT_NOT_READY"})
@@ -1289,6 +1724,17 @@ class PostCloseUpdater:
                 reconciliation=reconciliation,
                 now=self._now(),
             )
+            if status in {"SUCCESS", "PARTIAL", "FAILED"}:
+                self._checkpoint_event(
+                    run_id=run_id,
+                    batch_key="COMPLETION",
+                    status="COMPLETED" if status == "SUCCESS" else "PARTIAL",
+                    metadata={
+                        "runStatus": status,
+                        "formalReadback": formal_readback,
+                        "failureCodes": final_failure_codes,
+                    },
+                )
         except Exception as exc:
             self._mark_finalization_failure(run_id, exc)
             raise
@@ -1350,6 +1796,40 @@ class PostCloseUpdater:
             "publicationMode": "FORMAL",
             "publicationState": "PUBLISHED",
             "membershipMode": "PIT_FORMAL",
+        }
+
+    def _formal_publication_readback(
+        self,
+        snapshot_date: date,
+        *,
+        run_id: Any | None = None,
+    ) -> dict[str, Any]:
+        """Read the authoritative outputs used by the completion gate."""
+
+        topic = self._formal_snapshot_readback(snapshot_date)
+        home = None
+        if run_id is not None:
+            home = self.session.scalar(
+                select(HomePublication)
+                .where(
+                    HomePublication.trading_date == snapshot_date,
+                    HomePublication.source_run_id == str(run_id),
+                    HomePublication.publication_state.in_(
+                        ("PUBLISHED", "UNAVAILABLE")
+                    ),
+                )
+                .order_by(HomePublication.generated_at.desc(), HomePublication.id.desc())
+                .limit(1)
+            )
+        return {
+            "status": "PASS" if topic["status"] == "PASS" else "FAIL",
+            "topicSnapshot": topic,
+            "homePublication": {
+                "status": "PASS" if home is not None else "NOT_FOUND",
+                "publicationId": str(home.id) if home is not None else None,
+                "publicationState": home.publication_state if home is not None else None,
+                "authority": "topicpilot.home_publications",
+            },
         }
 
     def _run_snapshot(

@@ -316,3 +316,194 @@ def test_post_close_batched_outcome_keeps_unknown_missing_data_uncovered():
         "APPROVED_NO_TRADE",
         None,
     )
+
+
+def test_post_close_execution_key_is_session_and_scope_bound():
+    updater = PostCloseUpdater.__new__(PostCloseUpdater)
+    updater.config = SimpleNamespace(
+        reference_data_version="tw-reference-v1",
+        calendar_code="TW_MARKET",
+    )
+
+    full = updater._execution_key(date(2026, 9, 3))
+    targeted = updater._execution_key(
+        date(2026, 9, 3), target_symbols=("TPE:2330", "TWO:6129")
+    )
+
+    assert full == "post-close:tw-reference-v1:TW_MARKET:2026-09-03:FULL"
+    assert targeted != full
+    assert targeted == updater._execution_key(
+        date(2026, 9, 3), target_symbols=("TPE:2330", "TWO:6129")
+    )
+
+
+def test_checkpoint_events_are_append_only_and_increment_attempt_number():
+    class FakeSession:
+        latest = None
+
+        def scalar(self, _query):
+            return self.latest
+
+        def add(self, value):
+            self.added = value
+
+        def commit(self):
+            return None
+
+    updater = PostCloseUpdater.__new__(PostCloseUpdater)
+    updater.session = FakeSession()
+    first = updater._checkpoint_event(
+        run_id=uuid4(),
+        batch_key="FORMAL_MARKET_FACTS:TPE:1",
+        batch_number=101,
+        status="IN_PROGRESS",
+        metadata={"sessionDate": date(2026, 9, 3)},
+    )
+    assert first.attempt_number == 1
+    assert first.status == "IN_PROGRESS"
+    assert first.checkpoint_hash
+
+    updater.session.latest = SimpleNamespace(attempt_number=first.attempt_number)
+    second = updater._checkpoint_event(
+        run_id=first.run_id,
+        batch_key=first.batch_key,
+        batch_number=first.batch_number,
+        status="COMPLETED",
+        processed_count=20,
+    )
+    assert second.attempt_number == 2
+    assert second.status == "COMPLETED"
+
+
+def test_publication_readback_reuses_committed_output_after_checkpoint_interrupt(monkeypatch):
+    monkeypatch.setattr(
+        "topicpilot_api.live.post_close.reconcile_daily_market",
+        lambda *_args, **_kwargs: SimpleNamespace(
+            downstream_ready=True,
+            reason_codes=(),
+        ),
+    )
+    captured: dict[str, object] = {}
+    snapshot = {
+        "snapshotDate": "2026-09-03",
+        "topicCount": 2,
+        "status": "SUCCESS",
+        "formalTopicDailyState": {"status": "SUCCESS"},
+        "formalTopicSnapshotReadback": {"status": "PASS"},
+    }
+
+    class FakeSession:
+        def get(self, _model, _run_id):
+            return SimpleNamespace(metadata_payload={"topicSnapshot": snapshot})
+
+    updater = PostCloseUpdater.__new__(PostCloseUpdater)
+    updater.session = FakeSession()
+    updater._refresh_tracking_universe_with_retry = lambda **_kwargs: 0
+    updater._now = lambda: datetime(2026, 9, 3, 8, 0, tzinfo=UTC)
+    updater._latest_checkpoint = lambda _run_id, key: (
+        SimpleNamespace(status="IN_PROGRESS")
+        if key == "A9_B2_FORMAL_PROCESSING"
+        else None
+    )
+    updater._formal_publication_readback = lambda *_args, **_kwargs: {
+        "status": "PASS",
+        "topicSnapshot": {"status": "PASS", "rowCount": 2},
+        "homePublication": {"status": "PASS"},
+    }
+    updater._finish_with_retry = lambda _run_id, **values: captured.update(values)
+    updater._ensure_completed_checkpoint = lambda **kwargs: captured.setdefault(
+        "completed_checkpoints", []
+    ).append(kwargs)
+    updater._checkpoint_event = lambda **kwargs: captured.setdefault(
+        "events", []
+    ).append(kwargs)
+
+    def should_not_republish(*_args, **_kwargs):
+        raise AssertionError("formal writer was re-entered after a passing readback")
+
+    updater._run_snapshot = should_not_republish
+    result = updater._finalize_collected_run(
+        run_id="run-1",
+        local_date=date(2026, 9, 3),
+        eligible_instrument_ids=(uuid4(),),
+        success_count=1,
+        failure_count=0,
+        skipped_count=0,
+        retry_count=0,
+        point_count=1,
+        failure_codes=(),
+    )
+
+    assert result.status == "SUCCESS"
+    assert captured["snapshot_result"]["formalPublicationReadback"]["status"] == "PASS"
+
+
+def test_completed_checkpoint_with_missing_publication_fails_closed(monkeypatch):
+    monkeypatch.setattr(
+        "topicpilot_api.live.post_close.reconcile_daily_market",
+        lambda *_args, **_kwargs: SimpleNamespace(
+            downstream_ready=True,
+            reason_codes=(),
+        ),
+    )
+    captured: dict[str, object] = {}
+    readbacks = iter(
+        [
+            {
+                "status": "FAIL",
+                "topicSnapshot": {"status": "FAIL", "rowCount": 0},
+                "homePublication": {"status": "NOT_FOUND"},
+            },
+            {
+                "status": "FAIL",
+                "topicSnapshot": {"status": "FAIL", "rowCount": 0},
+                "homePublication": {"status": "NOT_FOUND"},
+            },
+        ]
+    )
+
+    class FakeSession:
+        def get(self, _model, _run_id):
+            return SimpleNamespace(metadata_payload={})
+
+    updater = PostCloseUpdater.__new__(PostCloseUpdater)
+    updater.session = FakeSession()
+    updater._refresh_tracking_universe_with_retry = lambda **_kwargs: 0
+    updater._now = lambda: datetime(2026, 9, 3, 8, 0, tzinfo=UTC)
+    updater._latest_checkpoint = lambda _run_id, key: (
+        SimpleNamespace(status="COMPLETED")
+        if key == "A9_B2_FORMAL_PROCESSING"
+        else None
+    )
+    updater._formal_publication_readback = lambda *_args, **_kwargs: next(readbacks)
+    updater._run_snapshot = lambda *_args, **_kwargs: {
+        "snapshotDate": "2026-09-03",
+        "topicCount": 0,
+        "status": "SUCCESS",
+        "formalTopicDailyState": {"status": "SUCCESS"},
+        "formalTopicSnapshotReadback": {"status": "FAIL"},
+    }
+    updater._finish_with_retry = lambda _run_id, **values: captured.update(values)
+    updater._checkpoint_event = lambda **kwargs: captured.setdefault(
+        "events", []
+    ).append(kwargs)
+    updater._ensure_completed_checkpoint = lambda **_kwargs: None
+
+    result = updater._finalize_collected_run(
+        run_id="run-2",
+        local_date=date(2026, 9, 3),
+        eligible_instrument_ids=(uuid4(),),
+        success_count=1,
+        failure_count=0,
+        skipped_count=0,
+        retry_count=0,
+        point_count=1,
+        failure_codes=(),
+    )
+
+    assert result.status == "PARTIAL"
+    assert "FORMAL_TOPIC_SNAPSHOT_NOT_READY" in result.failure_codes
+    assert any(
+        event.get("metadata", {}).get("errorCode") == "CHECKPOINT_PUBLICATION_MISMATCH"
+        for event in captured["events"]
+    )

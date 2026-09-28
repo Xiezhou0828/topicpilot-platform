@@ -5,7 +5,7 @@ from __future__ import annotations
 import argparse
 import logging
 import signal
-from datetime import date
+from datetime import date, datetime
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
@@ -18,7 +18,7 @@ from topicpilot_api.live.logging import log_event
 from topicpilot_api.live.orchestrator import PersistentQuoteWorker
 from topicpilot_api.live.persistence import LiveRepository
 from topicpilot_api.live.post_close import PostClosePreconditionError, PostCloseUpdater
-from topicpilot_api.live.scheduler import LiveScheduler
+from topicpilot_api.live.scheduler import LiveScheduler, decide_runtime_mode
 from topicpilot_api.live.session import MarketSessionClock
 from topicpilot_api.market_data.registry import build_live_provider_router
 
@@ -81,6 +81,23 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
+def resolve_decision(
+    mode: str,
+    config: LiveRuntimeConfig,
+    scheduler_clock: MarketSessionClock,
+    *,
+    now: datetime | None = None,
+) -> str:
+    """Resolve CLI AUTO through the same frozen scheduler boundary."""
+
+    decision = mode.upper().replace("-", "_")
+    if decision == "DAILY_FORWARD":
+        return "POST_CLOSE"
+    if decision == "AUTO":
+        return decide_runtime_mode(scheduler_clock, config.post_close_start, now)
+    return decision
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
@@ -102,19 +119,7 @@ def main(argv: list[str] | None = None) -> int:
         config.session_close,
         config.closed_dates,
     )
-    decision = args.mode.upper().replace("-", "_")
-    if decision == "DAILY_FORWARD":
-        decision = "POST_CLOSE"
-    if decision == "AUTO":
-        state = scheduler_clock.status()
-        decision = (
-            "INTRADAY"
-            if state.state == "OPEN"
-            else "POST_CLOSE"
-            if state.reason not in {"WEEKEND", "CONFIGURED_CLOSED_DATE"}
-            and state.local_time.time() >= scheduler_clock.close_time
-            else "WAIT"
-        )
+    decision = resolve_decision(args.mode, config, scheduler_clock)
     log_event(
         logging.getLogger("topicpilot.live.cli"),
         "scheduler_decision",
