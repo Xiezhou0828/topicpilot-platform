@@ -1,0 +1,15 @@
+gap_id,category,count,denominator,count_unit,status,evidence
+FOUNDATION-001,missing_historical_topic_membership_authority,126,126,price_trading_session,BLOCKED,Formal committed artifact starts 2026-08-24; price evidence ends 2026-08-13.
+FOUNDATION-002,missing_historical_structural_role_authority,126,126,price_trading_session,BLOCKED,No effective formal role artifact is visible on the price window.
+FOUNDATION-003,missing_effective_date_coverage,126,126,price_trading_session,BLOCKED,Authority effective date is after the latest committed price date.
+FOUNDATION-004,missing_approval_state,0,1160,formal_authority_row,PASS_FOR_CURRENT_ARTIFACT,All current artifact rows are APPROVED; this does not create historical coverage.
+FOUNDATION-005,supersession_ambiguity,0,1160,formal_authority_row,PASS_FOR_CURRENT_ARTIFACT,No conflicting or superseded rows were present in the committed artifact.
+FOUNDATION-006,stale_or_non_formal_authority,460,460,prior_runtime_topic_day_row,EXCLUDED_FAIL_CLOSED,Prior bounded runtime snapshots are not materialized as committed PIT authority.
+FOUNDATION-007,missing_score_importance_authority,1160,1160,formal_authority_row,SEPARATE_READINESS_GAP,Structural role artifact does not carry historical Score Importance.
+FOUNDATION-008,missing_benchmark,0,252,official_benchmark_row,PASS,Official same-session benchmark exports are checked independently from member joins.
+FOUNDATION-009,missing_price,,,member_day,NOT_SEPARATELY_COUNTABLE,Committed price evidence has totals but no member/date row export.
+FOUNDATION-010,missing_previous_close,0,252,official_benchmark_row,PASS,Warm-up month is fetched before the target window.
+FOUNDATION-011,market_identity_mismatch,0,252,official_benchmark_row,PASS,TPE resolves only to TAIEX and TWO only to TPEx Index.
+FOUNDATION-012,same_date_mismatch,0,252,official_benchmark_row,PASS,Rows are retained only with their source trading_date; no nearest-date join is used.
+FOUNDATION-013,insufficient_role_member_count,,,topic_day,NOT_SEPARATELY_COUNTABLE,No strict topic-day role set exists in the committed overlap.
+FOUNDATION-014,price_adjustment_provenance_unknown,63826,63826,canonical_price_row,PARTIAL_LIMITATION,Prior A2 evidence preserves adjustment_state UNKNOWN; no economic adjustment is invented.

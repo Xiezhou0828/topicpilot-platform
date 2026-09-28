@@ -1,0 +1,10 @@
+{
+  "artifactVersion": "topic-strength-historical-calibration.v1.candidate",
+  "inputPath": null,
+  "sourceReadinessPath": "docs\\reports\\TASK-TOPIC-CALIBRATION-DATA-FOUNDATION-CLOSURE-002\\strict-calibration-readiness.json",
+  "inputRowCount": 0,
+  "readOnly": true,
+  "noLookahead": true,
+  "productionActive": false,
+  "migrationApplied": false
+}

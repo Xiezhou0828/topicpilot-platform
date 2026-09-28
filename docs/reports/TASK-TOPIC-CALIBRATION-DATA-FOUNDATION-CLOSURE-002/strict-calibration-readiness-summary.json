@@ -1,0 +1,100 @@
+{
+  "authority_window": {
+    "end": null,
+    "row_count": 1160,
+    "start": "2026-08-24",
+    "topic_count": 107
+  },
+  "benchmark_alignment_status": "READY_MARKET_SESSION_LEVEL_MEMBER_JOIN_NOT_COMPUTABLE_FROM_COMMITTED_PRICE_SUMMARY",
+  "benchmark_member_day_coverage": null,
+  "benchmark_member_day_coverage_reason": "Committed price evidence has totals but no member/date export; no member-level coverage is guessed.",
+  "benchmark_window": {
+    "end": "2026-08-13",
+    "start": "2026-02-02",
+    "taiex_session_count": 126,
+    "tpex_index_session_count": 126
+  },
+  "data_quality_metrics": {
+    "benchmark_coverage": {
+      "covered": 126,
+      "denominator": 126,
+      "percent": 100.0,
+      "taiex": {
+        "covered": 126,
+        "denominator": 126
+      },
+      "tpex_index": {
+        "covered": 126,
+        "denominator": 126
+      },
+      "unit": "same-session-market-pair"
+    },
+    "membership_authority_coverage": {
+      "covered": 0,
+      "denominator": 126,
+      "percent": 0.0,
+      "unit": "price_trading_session"
+    },
+    "price_coverage": {
+      "covered": 63826,
+      "denominator": 63826,
+      "percent": 100.0,
+      "scope": "committed_evidence_only; intended-universe completeness is unknown",
+      "unit": "committed_canonical_price_row"
+    },
+    "strict_member_day_readiness": {
+      "covered": 0,
+      "denominator": 4235,
+      "percent": 0.0,
+      "scope": "prior bounded runtime evidence; excluded from PIT authority",
+      "unit": "prior_runtime_closure_member_fact"
+    },
+    "strict_topic_day_readiness": {
+      "covered": 0,
+      "denominator": 460,
+      "percent": 0.0,
+      "scope": "prior bounded runtime evidence; excluded from PIT authority",
+      "unit": "prior_runtime_topic_day_row"
+    },
+    "structural_role_authority_coverage": {
+      "covered": 0,
+      "denominator": 126,
+      "percent": 0.0,
+      "unit": "price_trading_session"
+    }
+  },
+  "formal_runtime_evidence_not_materialized": {
+    "closure_rows": 4235,
+    "expected_member_facts": 4240,
+    "observed_member_facts": 4236,
+    "status": "BOUNDED_PRIOR_RUNTIME_EVIDENCE_NOT_USED_AS_PIT_AUTHORITY",
+    "topic_count": 92,
+    "topic_day_rows": 460
+  },
+  "overlap_matrix": {
+    "benchmark_sessions": 126,
+    "membership_authority_sessions": 0,
+    "price_sessions": 126,
+    "strict_intersection_sessions": 0,
+    "structural_role_authority_sessions": 0
+  },
+  "price_window": {
+    "end": "2026-08-13",
+    "instrument_count": 507,
+    "market_split": {
+      "TPE": {
+        "instrument_count": 314,
+        "row_count": 39523
+      },
+      "TWO": {
+        "instrument_count": 193,
+        "row_count": 24303
+      }
+    },
+    "row_count": 63826,
+    "start": "2026-02-02"
+  },
+  "strict_date_range": null,
+  "strict_member_day_count": 0,
+  "strict_topic_day_count": 0
+}

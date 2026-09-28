@@ -1,0 +1,26 @@
+{
+  "authority_row_count": 1160,
+  "authority_topic_count": 107,
+  "authority_version": "structural-role-authority-20260912.v4",
+  "canonical_base_sha": "c3542a900d6c46e07bc4243804e9705475023316",
+  "current_vs_historical_resolver": "SEPARATED; NO_CURRENT_BACKFILL",
+  "effective_date": "2026-08-24",
+  "generated_at": "2026-09-29T04:12:08+08:00",
+  "generator_version": "run_calibration_data_foundation.py.v1",
+  "historical_query_before_effective_date": "UNAVAILABLE_FAIL_CLOSED",
+  "historical_query_on_or_after_effective_date": "DETERMINISTIC_FROM_FORMAL_ARTIFACT",
+  "missing_authority_components": [
+    "pre-2026-08-24 effective membership/role rows",
+    "historical correction lineage before the committed artifact",
+    "historical Score Importance authority"
+  ],
+  "prior_bounded_runtime_evidence": {
+    "closure_rows": 4235,
+    "observed_member_facts": 4236,
+    "topic_day_rows": 460,
+    "used_as_calibration_authority": false
+  },
+  "schema_version": "topic-strength-pit-authority-audit.v1",
+  "source_artifact": "config\\topic_structural_role_authority\\structural-role-authority-20260912.v4.json",
+  "status": "READY_BOUNDED_AFTER_PRICE_WINDOW"
+}
