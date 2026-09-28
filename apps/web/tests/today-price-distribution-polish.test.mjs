@@ -33,12 +33,17 @@ test("PRICE_DISTRIBUTION_LABELS_BELOW_BARS=PASS", async () => {
   assert.ok(chart.indexOf("tp-home-target-bar-count") < chart.indexOf("<i aria-hidden"));
   assert.ok(chart.indexOf("<i aria-hidden") < chart.indexOf("tp-home-target-bar-label"));
   assert.match(css, /\.tp-home-target-bar-item\{grid-template-rows:auto 64px auto\}/);
+  assert.match(css, /\.tp-home-target-bar-item\{display:flex;flex-direction:column;align-items:stretch;justify-content:flex-end;gap:3px;height:100%\}/);
+  assert.match(css, /\.tp-home-target-bar-item \.tp-home-target-bar-label\{order:3;margin-top:0;font-size:12px/);
+  assert.match(css, /\.tp-home-target-bottom-grid\{align-items:stretch\}/);
+  assert.match(css, /\.tp-home-target-distribution-card\{display:flex;flex-direction:column\}/);
+  assert.match(css, /\.tp-home-target-distribution-card \.tp-home-target-bars\{margin-top:auto\}/);
 });
 
 test("PRICE_DISTRIBUTION_LABEL_ORDER=PASS", async () => {
   const { fields } = await distributionSources();
   const labels = [
-    'PCT_GE_10: "漲幅 ≥10%"',
+    'PCT_GE_10: "漲停"',
     'PCT_7_TO_10: "+7~10%"',
     'PCT_3_TO_7: "+3~7%"',
     'PCT_0_TO_3: "0~3%"',
@@ -46,7 +51,7 @@ test("PRICE_DISTRIBUTION_LABEL_ORDER=PASS", async () => {
     'PCT_NEG_0_TO_3: "-3~0%"',
     'PCT_NEG_3_TO_7: "-7~-3%"',
     'PCT_NEG_7_TO_10: "-10~-7%"',
-    'PCT_LE_NEG_10: "跌幅 ≥10%"',
+    'PCT_LE_NEG_10: "跌停"',
   ];
   let previousIndex = -1;
   for (const label of labels) {
@@ -72,8 +77,8 @@ test("PRICE_DISTRIBUTION_UNIVERSE_HELPER_PRESERVED=PASS", async () => {
 
 test("Today price distribution keeps the formal semantic edge labels", async () => {
   const { fields } = await distributionSources();
-  assert.doesNotMatch(fields, /PCT_GE_10:\s*"漲停"/);
-  assert.doesNotMatch(fields, /PCT_LE_NEG_10:\s*"跌停"/);
-  assert.match(fields, /PCT_GE_10: "漲幅 ≥10%"/);
-  assert.match(fields, /PCT_LE_NEG_10: "跌幅 ≥10%"/);
+  assert.match(fields, /PCT_GE_10:\s*"漲停"/);
+  assert.match(fields, /PCT_LE_NEG_10:\s*"跌停"/);
+  assert.doesNotMatch(fields, /PCT_GE_10:\s*"漲幅 ≥10%"/);
+  assert.doesNotMatch(fields, /PCT_LE_NEG_10:\s*"跌幅 ≥10%"/);
 });

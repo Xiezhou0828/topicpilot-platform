@@ -1302,8 +1302,21 @@ def _read_home_institutional_flow(
         if market and row_date is not None:
             rows_by_market[market].setdefault(row_date, row)
 
+    # The visible Today card is a same-date whole-market fact.  Historical
+    # rows remain available for rolling windows, but they must never be used
+    # as a silent carry-forward when either exchange has no current session.
+    current_rows = [
+        rows_by_market.get(market, {}).get(trading_date)
+        for market in ("TPE", "TWO")
+    ]
+    if any(
+        row is None or row.get("availability") != "AVAILABLE"
+        for row in current_rows
+    ):
+        return None
+
     markets: list[dict[str, Any]] = []
-    for market in sorted(rows_by_market):
+    for market in ("TPE", "TWO"):
         ordered_rows = [
             rows_by_market[market][row_date]
             for row_date in sorted(rows_by_market[market], reverse=True)

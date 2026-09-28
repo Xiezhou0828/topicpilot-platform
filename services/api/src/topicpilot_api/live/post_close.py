@@ -1236,36 +1236,41 @@ class PostCloseUpdater:
                 now=self._now(),
                 eligible_instrument_ids=eligible_instrument_ids,
             )
+            market_index_facts = fetch_official_market_indexes(
+                target_date=local_date,
+                retrieved_at=self._now(),
+                as_of=self._now(),
+                transport=_official_transport,
+            )
+            market_aggregate_facts = fetch_official_market_aggregates(
+                target_date=local_date,
+                retrieved_at=self._now(),
+                as_of=self._now(),
+                transport=_official_transport,
+            )
+            market_institutional_flow_facts = fetch_official_market_institutional_flows(
+                target_date=local_date,
+                retrieved_at=self._now(),
+                as_of=self._now(),
+                transport=_official_transport,
+            )
             snapshot_result = (
                 self._run_snapshot(
                     local_date,
                     eligible_instrument_ids=eligible_instrument_ids,
                     source_run_id=str(run_id),
-                    market_index_facts=fetch_official_market_indexes(
-                        target_date=local_date,
-                        retrieved_at=self._now(),
-                        as_of=self._now(),
-                        transport=_official_transport,
-                    ),
-                    market_aggregate_facts=fetch_official_market_aggregates(
-                        target_date=local_date,
-                        retrieved_at=self._now(),
-                        as_of=self._now(),
-                        transport=_official_transport,
-                    ),
-                    market_institutional_flow_facts=fetch_official_market_institutional_flows(
-                        target_date=local_date,
-                        retrieved_at=self._now(),
-                        as_of=self._now(),
-                        transport=_official_transport,
-                    ),
+                    market_index_facts=market_index_facts,
+                    market_aggregate_facts=market_aggregate_facts,
+                    market_institutional_flow_facts=market_institutional_flow_facts,
                 )
                 if reconciliation.downstream_ready
-                else {
-                    "snapshotDate": local_date.isoformat(),
-                    "topicCount": 0,
-                    "status": "BLOCKED_DAILY_MARKET_NOT_READY",
-                }
+                else self._publish_market_facts_only(
+                    local_date,
+                    source_run_id=str(run_id),
+                    market_index_facts=market_index_facts,
+                    market_aggregate_facts=market_aggregate_facts,
+                    market_institutional_flow_facts=market_institutional_flow_facts,
+                )
             )
             final_failure_codes = tuple(sorted(set(failure_codes)))
             if status == "SUCCESS" and not self._formal_snapshot_ready(snapshot_result):
@@ -1308,6 +1313,67 @@ class PostCloseUpdater:
             snapshot_result.get("status", "FAILED"),
             local_date.isoformat(),
         )
+
+    def _publish_market_facts_only(
+        self,
+        snapshot_date: date,
+        *,
+        source_run_id: str,
+        market_index_facts: Collection[Any],
+        market_aggregate_facts: Collection[Any],
+        market_institutional_flow_facts: Collection[Any],
+    ) -> dict[str, Any]:
+        """Publish formal exchange-level facts without bypassing stock gates.
+
+        A missing stock bar blocks stock-dependent topic work, but it must not
+        suppress independently sourced whole-market index, breadth, turnover,
+        or institutional facts.  Each of those inputs remains typed and
+        fail-closed, so an unavailable provider fact cannot become a zero or a
+        single-market Taiwan total.
+        """
+
+        result: dict[str, Any] = {
+            "snapshotDate": snapshot_date.isoformat(),
+            "topicCount": 0,
+            "status": "BLOCKED_DAILY_MARKET_NOT_READY",
+            "marketFactsOnly": True,
+        }
+        try:
+            if market_institutional_flow_facts:
+                try:
+                    result["marketInstitutionalFlow"] = persist_market_institutional_flows(
+                        self.session,
+                        tuple(market_institutional_flow_facts),
+                        ingested_at=self._now(),
+                    )
+                except SQLAlchemyError as exc:
+                    self.session.rollback()
+                    result["marketInstitutionalFlow"] = {
+                        "status": "PERSISTENCE_UNAVAILABLE",
+                        "error": type(exc).__name__,
+                    }
+            result["homePublication"] = materialize_home_v2(
+                self.session,
+                trading_date=snapshot_date,
+                source_run_id=source_run_id,
+                market_index_facts=tuple(market_index_facts),
+                market_aggregate_facts=tuple(market_aggregate_facts),
+            )
+            result["marketFactsPublication"] = {
+                "status": "SUCCESS",
+                "institutionalFlow": result.get("marketInstitutionalFlow"),
+            }
+        except Exception as exc:
+            self.session.rollback()
+            result["homePublication"] = {
+                "status": "HOME_PUBLICATION_UNAVAILABLE",
+                "error": type(exc).__name__,
+            }
+            result["marketFactsPublication"] = {
+                "status": "UNAVAILABLE",
+                "error": type(exc).__name__,
+            }
+        return result
 
     @staticmethod
     def _formal_snapshot_ready(snapshot_result: Mapping[str, Any]) -> bool:
