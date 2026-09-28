@@ -132,7 +132,7 @@ export function formatMarketShare(value: number | null | undefined): string {
 
 export function formatMarketDistributionLabel(key: string, fallback: string): string {
   return {
-    PCT_GE_10: "漲幅 ≥10%",
+    PCT_GE_10: "漲停",
     PCT_7_TO_10: "+7~10%",
     PCT_3_TO_7: "+3~7%",
     PCT_0_TO_3: "0~3%",
@@ -140,7 +140,7 @@ export function formatMarketDistributionLabel(key: string, fallback: string): st
     PCT_NEG_0_TO_3: "-3~0%",
     PCT_NEG_3_TO_7: "-7~-3%",
     PCT_NEG_7_TO_10: "-10~-7%",
-    PCT_LE_NEG_10: "跌幅 ≥10%",
+    PCT_LE_NEG_10: "跌停",
   }[key] ?? fallback;
 }
 

@@ -34,9 +34,10 @@ test("Today Market Overview renders backend-owned official index and turnover fi
   }
   assert.match(fields, /overview\.indices/);
   assert.match(fields, /overview\.turnover/);
-  for (const field of ["advance", "decline", "flat", "net"]) {
+  for (const field of ["advance", "decline", "flat", "breadthEligible"]) {
     assert.match(page, new RegExp(`health\\.${field}`));
   }
+  assert.doesNotMatch(page, /health\.net/);
   assert.doesNotMatch(page, /health\.unavailable/);
   for (const field of ["indexCode", "indexName", "changePct", "tradingDate", "asOf", "currency", "unit", "scale"]) {
     assert.match(`${adapter}\n${page}\n${fields}`, new RegExp(field));
@@ -55,6 +56,24 @@ test("Today Market Overview preserves publication states and fails closed", asyn
   assert.match(adapter, /state === "PREVIEW" && !previewEnabled/);
   assert.match(adapter, /state === "UNAVAILABLE"/);
   assert.match(page, /resource\.state !== "FORMAL"/);
-  assert.match(page, /市場廣度目前尚未提供/);
+  assert.match(page, /官方全市場廣度彙總/);
   assert.doesNotMatch(`${adapter}\n${page}`, /API error[\s\S]{0,120}mock|fallback hardcoded/i);
+});
+
+test("Today Market Overview keeps the owner-approved compact card semantics", async () => {
+  const [page, fields, css] = await Promise.all([
+    read("components/v2/TodayMarketPage.tsx"),
+    read("lib/today-market-fields.ts"),
+    read("globals.css"),
+  ]);
+  assert.match(page, /加權指數 \(TPE\)/);
+  assert.match(page, /櫃買指數 \(TWO\)/);
+  assert.doesNotMatch(page, /加權指數（TSE）|櫃買指數（TWO）/);
+  assert.match(page, /ohlcAvailable/);
+  assert.match(page, /tp-home-target-index-card--compact/);
+  assert.doesNotMatch(page, /health\.net/);
+  assert.match(fields, /PCT_GE_10: "漲停"/);
+  assert.match(fields, /PCT_LE_NEG_10: "跌停"/);
+  assert.match(css, /tp-home-target-index-card--compact/);
+  assert.match(css, /tp-home-target-bottom-grid\{grid-template-columns:minmax\(0,3fr\) minmax\(240px,1\.05fr\)\}/);
 });

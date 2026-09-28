@@ -49,7 +49,7 @@ test("V2 Home source contains the frozen market workflow and safety boundary", a
     "rotation-title",
     "opportunities-title",
     "marketOverview",
-    "市場廣度目前尚未提供",
+    "官方全市場廣度彙總",
     "Today 只提供正式機會資料的摘要入口",
   ]) assert.match(home, new RegExp(marker));
   assert.match(home, /useTodayMainlines/);
