@@ -343,8 +343,7 @@ class TaishinTechnicalAnalysisProvider:
             raise ValueError("username and password are required without an injected client")
         self.timeout = timeout
         self.start_date = start_date or date.today()
-        # The private Taishin runtime currently requires Python 3.10 support;
-        # keep the cross-version spelling instead of datetime.UTC.
+        # The project runtime is Python 3.12; keep the provider clock explicit.
         self.clock = clock or (lambda: datetime.now(timezone.utc))  # noqa: UP017
         self.client = client or _VendorTaishinHistoryClient(
             username or "", password or "", self.start_date, timeout

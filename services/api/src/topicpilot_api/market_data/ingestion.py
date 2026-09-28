@@ -640,7 +640,7 @@ def ingest_historical(
 
     batch.status = "COMPLETED"
     batch.coverage_status = "COMPLETE" if all_covered else "SPARSE"
-    # Keep Python 3.10 compatibility for the private provider runtime.
+    # Keep the Python 3.12 project runtime's timezone spelling explicit.
     batch.completed_at = (clock or (lambda: datetime.now(timezone.utc)))()  # noqa: UP017
     session.flush()
     return HistoricalIngestionResult(
