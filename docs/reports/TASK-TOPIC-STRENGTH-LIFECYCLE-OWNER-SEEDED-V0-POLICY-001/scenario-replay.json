@@ -1,0 +1,1735 @@
+{
+  "historicalReplay": false,
+  "policyHash": "5d29d968d9116b3288a288a8c9b15d68e51485ff88e4b58d82c2dfbbc27312ef",
+  "policyId": "topic-strength-lifecycle.owner-seeded-v0",
+  "replayType": "SCENARIO_REPLAY",
+  "rows": [
+    {
+      "absoluteGrade": "B",
+      "absoluteScore": 42.8,
+      "coreEvidence": [
+        0.0
+      ],
+      "expected": "B",
+      "kind": "STRENGTH",
+      "lifecycleCandidate": null,
+      "lifecycleFinal": "BASE",
+      "pass": true,
+      "relatedEvidence": [
+        0.3333333333333333
+      ],
+      "relativeGrade": "B",
+      "relativeScore": 51.8,
+      "repEvidence": [
+        0.0
+      ],
+      "rows": [
+        {
+          "candidateLifecycle": null,
+          "candidateStreak": 0,
+          "earlyRelativeStrengthConfirmation": false,
+          "finalLifecycle": "BASE",
+          "mainRiseOccurredInCycle": false,
+          "meaningfulExpansion": false,
+          "metrics": {
+            "core_median_return": 0.0,
+            "core_positive_breadth": 0.0,
+            "core_strong_breadth": 0.0,
+            "core_weak_ratio": 0.0,
+            "related_positive_breadth": 0.3333333333333333,
+            "related_positive_median": 1.0,
+            "rep_raw_return": 0.0
+          },
+          "previousLifecycle": "BASE",
+          "relativeDeteriorationConfirmation": false,
+          "renewedExpansion": false,
+          "tradingDate": "2026-09-01",
+          "transitionReason": "NO_STAGE_CANDIDATE"
+        }
+      ],
+      "scenario": "flat neutral Topic",
+      "scenarioId": "S01"
+    },
+    {
+      "absoluteGrade": "B",
+      "absoluteScore": 54.885,
+      "coreEvidence": [
+        1.0
+      ],
+      "expected": "B",
+      "kind": "STRENGTH",
+      "lifecycleCandidate": null,
+      "lifecycleFinal": "BASE",
+      "pass": true,
+      "relatedEvidence": [
+        0.6666666666666666
+      ],
+      "relativeGrade": "A",
+      "relativeScore": 65.165,
+      "repEvidence": [
+        0.7
+      ],
+      "rows": [
+        {
+          "candidateLifecycle": null,
+          "candidateStreak": 0,
+          "earlyRelativeStrengthConfirmation": true,
+          "finalLifecycle": "BASE",
+          "mainRiseOccurredInCycle": false,
+          "meaningfulExpansion": false,
+          "metrics": {
+            "core_median_return": 1.0,
+            "core_positive_breadth": 1.0,
+            "core_strong_breadth": 0.0,
+            "core_weak_ratio": 0.0,
+            "related_positive_breadth": 0.6666666666666666,
+            "related_positive_median": 0.15000000000000002,
+            "rep_raw_return": 0.7
+          },
+          "previousLifecycle": "BASE",
+          "relativeDeteriorationConfirmation": false,
+          "renewedExpansion": false,
+          "tradingDate": "2026-09-01",
+          "transitionReason": "NO_STAGE_CANDIDATE"
+        }
+      ],
+      "scenario": "mild positive Topic",
+      "scenarioId": "S02"
+    },
+    {
+      "absoluteGrade": "A",
+      "absoluteScore": 75.35,
+      "coreEvidence": [
+        2.5
+      ],
+      "expected": "A",
+      "kind": "STRENGTH",
+      "lifecycleCandidate": "MAIN_RISE",
+      "lifecycleFinal": "BASE",
+      "pass": true,
+      "relatedEvidence": [
+        0.6666666666666666
+      ],
+      "relativeGrade": "S",
+      "relativeScore": 83.35,
+      "repEvidence": [
+        1.5
+      ],
+      "rows": [
+        {
+          "candidateLifecycle": "MAIN_RISE",
+          "candidateStreak": 1,
+          "earlyRelativeStrengthConfirmation": false,
+          "finalLifecycle": "BASE",
+          "mainRiseOccurredInCycle": false,
+          "meaningfulExpansion": false,
+          "metrics": {
+            "core_median_return": 2.5,
+            "core_positive_breadth": 1.0,
+            "core_strong_breadth": 1.0,
+            "core_weak_ratio": 0.0,
+            "related_positive_breadth": 0.6666666666666666,
+            "related_positive_median": 1.0,
+            "rep_raw_return": 1.5
+          },
+          "previousLifecycle": "BASE",
+          "relativeDeteriorationConfirmation": false,
+          "renewedExpansion": false,
+          "tradingDate": "2026-09-01",
+          "transitionReason": "ILLEGAL_BACKWARD_OR_SKIPPED_TRANSITION_HELD"
+        }
+      ],
+      "scenario": "clear A Topic",
+      "scenarioId": "S03"
+    },
+    {
+      "absoluteGrade": "A",
+      "absoluteScore": 80.25,
+      "coreEvidence": [
+        3.0
+      ],
+      "expected": "A",
+      "kind": "STRENGTH",
+      "lifecycleCandidate": "MAIN_RISE",
+      "lifecycleFinal": "BASE",
+      "pass": true,
+      "relatedEvidence": [
+        0.5
+      ],
+      "relativeGrade": "S",
+      "relativeScore": 86.95,
+      "repEvidence": [
+        2.0
+      ],
+      "rows": [
+        {
+          "candidateLifecycle": "MAIN_RISE",
+          "candidateStreak": 1,
+          "earlyRelativeStrengthConfirmation": false,
+          "finalLifecycle": "BASE",
+          "mainRiseOccurredInCycle": false,
+          "meaningfulExpansion": false,
+          "metrics": {
+            "core_median_return": 3.0,
+            "core_positive_breadth": 1.0,
+            "core_strong_breadth": 1.0,
+            "core_weak_ratio": 0.0,
+            "related_positive_breadth": 0.5,
+            "related_positive_median": 1.0,
+            "rep_raw_return": 2.0
+          },
+          "previousLifecycle": "BASE",
+          "relativeDeteriorationConfirmation": false,
+          "renewedExpansion": false,
+          "tradingDate": "2026-09-01",
+          "transitionReason": "ILLEGAL_BACKWARD_OR_SKIPPED_TRANSITION_HELD"
+        }
+      ],
+      "scenario": "high-A Topic",
+      "scenarioId": "S04"
+    },
+    {
+      "absoluteGrade": "S",
+      "absoluteScore": 94.428571,
+      "coreEvidence": [
+        4.75
+      ],
+      "expected": "S",
+      "kind": "STRENGTH",
+      "lifecycleCandidate": "MAIN_RISE",
+      "lifecycleFinal": "BASE",
+      "pass": true,
+      "relatedEvidence": [
+        1.0
+      ],
+      "relativeGrade": "S",
+      "relativeScore": 97.642857,
+      "repEvidence": [
+        3.0
+      ],
+      "rows": [
+        {
+          "candidateLifecycle": "MAIN_RISE",
+          "candidateStreak": 1,
+          "earlyRelativeStrengthConfirmation": false,
+          "finalLifecycle": "BASE",
+          "mainRiseOccurredInCycle": false,
+          "meaningfulExpansion": false,
+          "metrics": {
+            "core_median_return": 4.75,
+            "core_positive_breadth": 1.0,
+            "core_strong_breadth": 1.0,
+            "core_weak_ratio": 0.0,
+            "related_positive_breadth": 1.0,
+            "related_positive_median": 2.0,
+            "rep_raw_return": 3.0
+          },
+          "previousLifecycle": "BASE",
+          "relativeDeteriorationConfirmation": false,
+          "renewedExpansion": false,
+          "tradingDate": "2026-09-01",
+          "transitionReason": "ILLEGAL_BACKWARD_OR_SKIPPED_TRANSITION_HELD"
+        }
+      ],
+      "scenario": "broad S Topic",
+      "scenarioId": "S05"
+    },
+    {
+      "absoluteGrade": "D",
+      "absoluteScore": 13.3,
+      "coreEvidence": [
+        -3.0
+      ],
+      "expected": "D",
+      "kind": "STRENGTH",
+      "lifecycleCandidate": "DECLINING",
+      "lifecycleFinal": "BASE",
+      "pass": true,
+      "relatedEvidence": [
+        0.0
+      ],
+      "relativeGrade": "D",
+      "relativeScore": 24.0,
+      "repEvidence": [
+        -2.0
+      ],
+      "rows": [
+        {
+          "candidateLifecycle": "DECLINING",
+          "candidateStreak": 1,
+          "earlyRelativeStrengthConfirmation": false,
+          "finalLifecycle": "BASE",
+          "mainRiseOccurredInCycle": false,
+          "meaningfulExpansion": false,
+          "metrics": {
+            "core_median_return": -3.0,
+            "core_positive_breadth": 0.0,
+            "core_strong_breadth": 0.0,
+            "core_weak_ratio": 1.0,
+            "related_positive_breadth": 0.0,
+            "related_positive_median": null,
+            "rep_raw_return": -2.0
+          },
+          "previousLifecycle": "BASE",
+          "relativeDeteriorationConfirmation": true,
+          "renewedExpansion": false,
+          "tradingDate": "2026-09-01",
+          "transitionReason": "ILLEGAL_BACKWARD_OR_SKIPPED_TRANSITION_HELD"
+        }
+      ],
+      "scenario": "broad negative D Topic",
+      "scenarioId": "S06"
+    },
+    {
+      "absoluteGrade": "B",
+      "absoluteScore": 41.0,
+      "coreEvidence": [
+        0.0
+      ],
+      "expected": "B",
+      "kind": "STRENGTH",
+      "lifecycleCandidate": null,
+      "lifecycleFinal": "BASE",
+      "pass": true,
+      "relatedEvidence": [
+        0.0
+      ],
+      "relativeGrade": "B",
+      "relativeScore": 50.0,
+      "repEvidence": [
+        0.0
+      ],
+      "rows": [
+        {
+          "candidateLifecycle": null,
+          "candidateStreak": 0,
+          "earlyRelativeStrengthConfirmation": false,
+          "finalLifecycle": "BASE",
+          "mainRiseOccurredInCycle": false,
+          "meaningfulExpansion": false,
+          "metrics": {
+            "core_median_return": 0.0,
+            "core_positive_breadth": 0.0,
+            "core_strong_breadth": 0.0,
+            "core_weak_ratio": 0.0,
+            "related_positive_breadth": 0.0,
+            "related_positive_median": null,
+            "rep_raw_return": 0.0
+          },
+          "previousLifecycle": "BASE",
+          "relativeDeteriorationConfirmation": false,
+          "renewedExpansion": false,
+          "tradingDate": "2026-09-01",
+          "transitionReason": "NO_STAGE_CANDIDATE"
+        }
+      ],
+      "scenario": "low numeric score but neutral evidence",
+      "scenarioId": "S07"
+    },
+    {
+      "absoluteGrade": "B",
+      "absoluteScore": 57.9,
+      "coreEvidence": [
+        0.0
+      ],
+      "expected": "B",
+      "kind": "STRENGTH",
+      "lifecycleCandidate": "SPROUTING",
+      "lifecycleFinal": "SPROUTING",
+      "pass": true,
+      "relatedEvidence": [
+        0.0
+      ],
+      "relativeGrade": "A",
+      "relativeScore": 65.5,
+      "repEvidence": [
+        1.0
+      ],
+      "rows": [
+        {
+          "candidateLifecycle": "SPROUTING",
+          "candidateStreak": 1,
+          "earlyRelativeStrengthConfirmation": true,
+          "finalLifecycle": "SPROUTING",
+          "mainRiseOccurredInCycle": false,
+          "meaningfulExpansion": false,
+          "metrics": {
+            "core_median_return": 0.0,
+            "core_positive_breadth": 0.3333333333333333,
+            "core_strong_breadth": 0.3333333333333333,
+            "core_weak_ratio": 0.0,
+            "related_positive_breadth": 0.0,
+            "related_positive_median": null,
+            "rep_raw_return": 1.0
+          },
+          "previousLifecycle": "BASE",
+          "relativeDeteriorationConfirmation": false,
+          "renewedExpansion": false,
+          "tradingDate": "2026-09-01",
+          "transitionReason": "CONFIRMED_OWNER_SEEDED_V0_TRANSITION"
+        }
+      ],
+      "scenario": "one CORE plus 9%, other CORE flat",
+      "scenarioId": "S08"
+    },
+    {
+      "absoluteGrade": "A",
+      "absoluteScore": 70.0,
+      "coreEvidence": [
+        3.0
+      ],
+      "expected": "A",
+      "kind": "STRENGTH",
+      "lifecycleCandidate": "FERMENTING",
+      "lifecycleFinal": "BASE",
+      "pass": true,
+      "relatedEvidence": [
+        0.0
+      ],
+      "relativeGrade": "A",
+      "relativeScore": 78.0,
+      "repEvidence": [
+        1.0
+      ],
+      "rows": [
+        {
+          "candidateLifecycle": "FERMENTING",
+          "candidateStreak": 1,
+          "earlyRelativeStrengthConfirmation": false,
+          "finalLifecycle": "BASE",
+          "mainRiseOccurredInCycle": false,
+          "meaningfulExpansion": false,
+          "metrics": {
+            "core_median_return": 3.0,
+            "core_positive_breadth": 1.0,
+            "core_strong_breadth": 1.0,
+            "core_weak_ratio": 0.0,
+            "related_positive_breadth": 0.0,
+            "related_positive_median": null,
+            "rep_raw_return": 1.0
+          },
+          "previousLifecycle": "BASE",
+          "relativeDeteriorationConfirmation": false,
+          "renewedExpansion": false,
+          "tradingDate": "2026-09-01",
+          "transitionReason": "CONFIRMATION_PENDING"
+        }
+      ],
+      "scenario": "four CORE plus 3%",
+      "scenarioId": "S09"
+    },
+    {
+      "absoluteGrade": "B",
+      "absoluteScore": 43.5,
+      "coreEvidence": [
+        0.0
+      ],
+      "expected": "RELATED_FAR_BELOW_CAP",
+      "kind": "STRENGTH",
+      "lifecycleCandidate": null,
+      "lifecycleFinal": "BASE",
+      "pass": true,
+      "relatedEvidence": [
+        1.0
+      ],
+      "relativeGrade": "B",
+      "relativeScore": 52.5,
+      "repEvidence": [
+        0.0
+      ],
+      "rows": [
+        {
+          "candidateLifecycle": null,
+          "candidateStreak": 0,
+          "earlyRelativeStrengthConfirmation": false,
+          "finalLifecycle": "BASE",
+          "mainRiseOccurredInCycle": false,
+          "meaningfulExpansion": false,
+          "metrics": {
+            "core_median_return": 0.0,
+            "core_positive_breadth": 0.0,
+            "core_strong_breadth": 0.0,
+            "core_weak_ratio": 0.0,
+            "related_positive_breadth": 1.0,
+            "related_positive_median": 0.1,
+            "rep_raw_return": 0.0
+          },
+          "previousLifecycle": "BASE",
+          "relativeDeteriorationConfirmation": false,
+          "renewedExpansion": false,
+          "tradingDate": "2026-09-01",
+          "transitionReason": "NO_STAGE_CANDIDATE"
+        }
+      ],
+      "scenario": "RELATED 100% plus 0.1%",
+      "scenarioId": "S10"
+    },
+    {
+      "absoluteGrade": "A",
+      "absoluteScore": 70.0,
+      "coreEvidence": [
+        3.0
+      ],
+      "expected": "MAIN_RISE_FALSE",
+      "kind": "STRENGTH",
+      "lifecycleCandidate": "FERMENTING",
+      "lifecycleFinal": "BASE",
+      "pass": true,
+      "relatedEvidence": [
+        0.0
+      ],
+      "relativeGrade": "A",
+      "relativeScore": 78.0,
+      "repEvidence": [
+        1.0
+      ],
+      "rows": [
+        {
+          "candidateLifecycle": "FERMENTING",
+          "candidateStreak": 1,
+          "earlyRelativeStrengthConfirmation": false,
+          "finalLifecycle": "BASE",
+          "mainRiseOccurredInCycle": false,
+          "meaningfulExpansion": false,
+          "metrics": {
+            "core_median_return": 3.0,
+            "core_positive_breadth": 1.0,
+            "core_strong_breadth": 1.0,
+            "core_weak_ratio": 0.0,
+            "related_positive_breadth": 0.0,
+            "related_positive_median": null,
+            "rep_raw_return": 1.0
+          },
+          "previousLifecycle": "BASE",
+          "relativeDeteriorationConfirmation": false,
+          "renewedExpansion": false,
+          "tradingDate": "2026-09-01",
+          "transitionReason": "CONFIRMATION_PENDING"
+        }
+      ],
+      "scenario": "CORE strong, RELATED weak",
+      "scenarioId": "S11"
+    },
+    {
+      "absoluteGrade": "A",
+      "absoluteScore": 79.0,
+      "coreEvidence": [
+        3.0
+      ],
+      "expected": "MAIN_RISE_TRUE",
+      "kind": "STRENGTH",
+      "lifecycleCandidate": "MAIN_RISE",
+      "lifecycleFinal": "BASE",
+      "pass": true,
+      "relatedEvidence": [
+        1.0
+      ],
+      "relativeGrade": "S",
+      "relativeScore": 87.0,
+      "repEvidence": [
+        1.0
+      ],
+      "rows": [
+        {
+          "candidateLifecycle": "MAIN_RISE",
+          "candidateStreak": 1,
+          "earlyRelativeStrengthConfirmation": false,
+          "finalLifecycle": "BASE",
+          "mainRiseOccurredInCycle": false,
+          "meaningfulExpansion": false,
+          "metrics": {
+            "core_median_return": 3.0,
+            "core_positive_breadth": 1.0,
+            "core_strong_breadth": 1.0,
+            "core_weak_ratio": 0.0,
+            "related_positive_breadth": 1.0,
+            "related_positive_median": 1.0,
+            "rep_raw_return": 1.0
+          },
+          "previousLifecycle": "BASE",
+          "relativeDeteriorationConfirmation": false,
+          "renewedExpansion": false,
+          "tradingDate": "2026-09-01",
+          "transitionReason": "ILLEGAL_BACKWARD_OR_SKIPPED_TRANSITION_HELD"
+        }
+      ],
+      "scenario": "CORE strong, RELATED broad",
+      "scenarioId": "S12"
+    },
+    {
+      "absoluteGrade": "B",
+      "absoluteScore": 51.0,
+      "coreEvidence": [
+        0.0
+      ],
+      "expected": "NO_FERMENTING",
+      "kind": "STRENGTH",
+      "lifecycleCandidate": null,
+      "lifecycleFinal": "BASE",
+      "pass": true,
+      "relatedEvidence": [
+        1.0
+      ],
+      "relativeGrade": "B",
+      "relativeScore": 60.0,
+      "repEvidence": [
+        0.0
+      ],
+      "rows": [
+        {
+          "candidateLifecycle": null,
+          "candidateStreak": 0,
+          "earlyRelativeStrengthConfirmation": false,
+          "finalLifecycle": "BASE",
+          "mainRiseOccurredInCycle": false,
+          "meaningfulExpansion": false,
+          "metrics": {
+            "core_median_return": 0.0,
+            "core_positive_breadth": 0.0,
+            "core_strong_breadth": 0.0,
+            "core_weak_ratio": 0.0,
+            "related_positive_breadth": 1.0,
+            "related_positive_median": 5.0,
+            "rep_raw_return": 0.0
+          },
+          "previousLifecycle": "BASE",
+          "relativeDeteriorationConfirmation": false,
+          "renewedExpansion": false,
+          "tradingDate": "2026-09-01",
+          "transitionReason": "NO_STAGE_CANDIDATE"
+        }
+      ],
+      "scenario": "RELATED-only surge",
+      "scenarioId": "S13"
+    },
+    {
+      "absoluteGrade": "B",
+      "absoluteScore": 57.0,
+      "coreEvidence": [
+        0.0
+      ],
+      "expected": "NOT_EXCEPTIONAL",
+      "kind": "STRENGTH",
+      "lifecycleCandidate": "SPROUTING",
+      "lifecycleFinal": "SPROUTING",
+      "pass": true,
+      "relatedEvidence": [
+        0.0
+      ],
+      "relativeGrade": "A",
+      "relativeScore": 65.0,
+      "repEvidence": [
+        5.0
+      ],
+      "rows": [
+        {
+          "candidateLifecycle": "SPROUTING",
+          "candidateStreak": 1,
+          "earlyRelativeStrengthConfirmation": true,
+          "finalLifecycle": "SPROUTING",
+          "mainRiseOccurredInCycle": false,
+          "meaningfulExpansion": false,
+          "metrics": {
+            "core_median_return": 0.0,
+            "core_positive_breadth": 0.0,
+            "core_strong_breadth": 0.0,
+            "core_weak_ratio": 0.0,
+            "related_positive_breadth": 0.0,
+            "related_positive_median": null,
+            "rep_raw_return": 5.0
+          },
+          "previousLifecycle": "BASE",
+          "relativeDeteriorationConfirmation": false,
+          "renewedExpansion": false,
+          "tradingDate": "2026-09-01",
+          "transitionReason": "CONFIRMED_OWNER_SEEDED_V0_TRANSITION"
+        }
+      ],
+      "scenario": "REP strong, CORE weak",
+      "scenarioId": "S14"
+    },
+    {
+      "absoluteGrade": "A",
+      "absoluteScore": 70.0,
+      "coreEvidence": [
+        3.0
+      ],
+      "expected": "A",
+      "kind": "STRENGTH",
+      "lifecycleCandidate": "FERMENTING",
+      "lifecycleFinal": "BASE",
+      "pass": true,
+      "relatedEvidence": [
+        0.0
+      ],
+      "relativeGrade": "A",
+      "relativeScore": 78.0,
+      "repEvidence": [
+        1.0
+      ],
+      "rows": [
+        {
+          "candidateLifecycle": "FERMENTING",
+          "candidateStreak": 1,
+          "earlyRelativeStrengthConfirmation": false,
+          "finalLifecycle": "BASE",
+          "mainRiseOccurredInCycle": false,
+          "meaningfulExpansion": false,
+          "metrics": {
+            "core_median_return": 3.0,
+            "core_positive_breadth": 1.0,
+            "core_strong_breadth": 1.0,
+            "core_weak_ratio": 0.0,
+            "related_positive_breadth": 0.0,
+            "related_positive_median": null,
+            "rep_raw_return": 1.0
+          },
+          "previousLifecycle": "BASE",
+          "relativeDeteriorationConfirmation": false,
+          "renewedExpansion": false,
+          "tradingDate": "2026-09-01",
+          "transitionReason": "CONFIRMATION_PENDING"
+        }
+      ],
+      "scenario": "REP ordinary, CORE broad strong",
+      "scenarioId": "S15"
+    },
+    {
+      "absoluteGrade": "D",
+      "absoluteScore": 26.0,
+      "coreEvidence": [
+        -1.5
+      ],
+      "expected": "RELATIVE_STRONGER",
+      "kind": "STRENGTH",
+      "lifecycleCandidate": "DECLINING",
+      "lifecycleFinal": "BASE",
+      "pass": true,
+      "relatedEvidence": [
+        0.0
+      ],
+      "relativeGrade": "S",
+      "relativeScore": 83.5,
+      "repEvidence": [
+        -1.0
+      ],
+      "rows": [
+        {
+          "candidateLifecycle": "DECLINING",
+          "candidateStreak": 1,
+          "earlyRelativeStrengthConfirmation": false,
+          "finalLifecycle": "BASE",
+          "mainRiseOccurredInCycle": false,
+          "meaningfulExpansion": false,
+          "metrics": {
+            "core_median_return": -1.5,
+            "core_positive_breadth": 0.0,
+            "core_strong_breadth": 0.0,
+            "core_weak_ratio": 1.0,
+            "related_positive_breadth": 0.0,
+            "related_positive_median": null,
+            "rep_raw_return": -1.0
+          },
+          "previousLifecycle": "BASE",
+          "relativeDeteriorationConfirmation": false,
+          "renewedExpansion": false,
+          "tradingDate": "2026-09-01",
+          "transitionReason": "ILLEGAL_BACKWARD_OR_SKIPPED_TRANSITION_HELD"
+        }
+      ],
+      "scenario": "Absolute weak / Relative strong",
+      "scenarioId": "S16"
+    },
+    {
+      "absoluteGrade": "S",
+      "absoluteScore": 84.0,
+      "coreEvidence": [
+        3.0
+      ],
+      "expected": "ABSOLUTE_STRONGER",
+      "kind": "STRENGTH",
+      "lifecycleCandidate": "MAIN_RISE",
+      "lifecycleFinal": "BASE",
+      "pass": true,
+      "relatedEvidence": [
+        1.0
+      ],
+      "relativeGrade": "B",
+      "relativeScore": 37.0,
+      "repEvidence": [
+        2.0
+      ],
+      "rows": [
+        {
+          "candidateLifecycle": "MAIN_RISE",
+          "candidateStreak": 1,
+          "earlyRelativeStrengthConfirmation": false,
+          "finalLifecycle": "BASE",
+          "mainRiseOccurredInCycle": false,
+          "meaningfulExpansion": false,
+          "metrics": {
+            "core_median_return": 3.0,
+            "core_positive_breadth": 1.0,
+            "core_strong_breadth": 1.0,
+            "core_weak_ratio": 0.0,
+            "related_positive_breadth": 1.0,
+            "related_positive_median": 1.0,
+            "rep_raw_return": 2.0
+          },
+          "previousLifecycle": "BASE",
+          "relativeDeteriorationConfirmation": true,
+          "renewedExpansion": false,
+          "tradingDate": "2026-09-01",
+          "transitionReason": "ILLEGAL_BACKWARD_OR_SKIPPED_TRANSITION_HELD"
+        }
+      ],
+      "scenario": "Absolute strong / Relative weak",
+      "scenarioId": "S17"
+    },
+    {
+      "absoluteGrade": "B",
+      "absoluteScore": 47.86,
+      "coreEvidence": [
+        0.0
+      ],
+      "expected": "SPROUTING",
+      "kind": "LIFECYCLE",
+      "lifecycleCandidate": "SPROUTING",
+      "lifecycleFinal": "SPROUTING",
+      "pass": true,
+      "relatedEvidence": [
+        0.0
+      ],
+      "relativeGrade": "B",
+      "relativeScore": 58.0,
+      "repEvidence": [
+        1.0
+      ],
+      "rows": [
+        {
+          "candidateLifecycle": "SPROUTING",
+          "candidateStreak": 1,
+          "earlyRelativeStrengthConfirmation": false,
+          "finalLifecycle": "SPROUTING",
+          "mainRiseOccurredInCycle": false,
+          "meaningfulExpansion": false,
+          "metrics": {
+            "core_median_return": 0.0,
+            "core_positive_breadth": 0.3333333333333333,
+            "core_strong_breadth": 0.0,
+            "core_weak_ratio": 0.0,
+            "related_positive_breadth": 0.0,
+            "related_positive_median": null,
+            "rep_raw_return": 1.0
+          },
+          "previousLifecycle": "BASE",
+          "relativeDeteriorationConfirmation": false,
+          "renewedExpansion": false,
+          "tradingDate": "2026-09-01",
+          "transitionReason": "CONFIRMED_OWNER_SEEDED_V0_TRANSITION"
+        }
+      ],
+      "scenario": "BASE to SPROUTING",
+      "scenarioId": "L18"
+    },
+    {
+      "absoluteGrade": "B",
+      "absoluteScore": 52.0,
+      "coreEvidence": [
+        1.5,
+        1.5
+      ],
+      "expected": "FERMENTING",
+      "kind": "LIFECYCLE",
+      "lifecycleCandidate": "FERMENTING",
+      "lifecycleFinal": "FERMENTING",
+      "pass": true,
+      "relatedEvidence": [
+        0.0,
+        0.0
+      ],
+      "relativeGrade": "B",
+      "relativeScore": 61.5,
+      "repEvidence": [
+        0.0,
+        0.0
+      ],
+      "rows": [
+        {
+          "candidateLifecycle": "FERMENTING",
+          "candidateStreak": 1,
+          "earlyRelativeStrengthConfirmation": false,
+          "finalLifecycle": "BASE",
+          "mainRiseOccurredInCycle": false,
+          "meaningfulExpansion": false,
+          "metrics": {
+            "core_median_return": 1.5,
+            "core_positive_breadth": 1.0,
+            "core_strong_breadth": 0.5,
+            "core_weak_ratio": 0.0,
+            "related_positive_breadth": 0.0,
+            "related_positive_median": null,
+            "rep_raw_return": 0.0
+          },
+          "previousLifecycle": "BASE",
+          "relativeDeteriorationConfirmation": false,
+          "renewedExpansion": false,
+          "tradingDate": "2026-09-01",
+          "transitionReason": "CONFIRMATION_PENDING"
+        },
+        {
+          "candidateLifecycle": "FERMENTING",
+          "candidateStreak": 2,
+          "earlyRelativeStrengthConfirmation": false,
+          "finalLifecycle": "FERMENTING",
+          "mainRiseOccurredInCycle": false,
+          "meaningfulExpansion": false,
+          "metrics": {
+            "core_median_return": 1.5,
+            "core_positive_breadth": 1.0,
+            "core_strong_breadth": 0.5,
+            "core_weak_ratio": 0.0,
+            "related_positive_breadth": 0.0,
+            "related_positive_median": null,
+            "rep_raw_return": 0.0
+          },
+          "previousLifecycle": "BASE",
+          "relativeDeteriorationConfirmation": false,
+          "renewedExpansion": false,
+          "tradingDate": "2026-09-02",
+          "transitionReason": "CONFIRMED_OWNER_SEEDED_V0_TRANSITION"
+        }
+      ],
+      "scenario": "BASE to FERMENTING directly",
+      "scenarioId": "L19"
+    },
+    {
+      "absoluteGrade": "A",
+      "absoluteScore": 75.5,
+      "coreEvidence": [
+        1.5,
+        1.5,
+        2.5,
+        2.5
+      ],
+      "expected": "MAIN_RISE",
+      "kind": "LIFECYCLE",
+      "lifecycleCandidate": "MAIN_RISE",
+      "lifecycleFinal": "MAIN_RISE",
+      "pass": true,
+      "relatedEvidence": [
+        0.0,
+        0.0,
+        1.0,
+        1.0
+      ],
+      "relativeGrade": "S",
+      "relativeScore": 84.5,
+      "repEvidence": [
+        0.0,
+        0.0,
+        1.0,
+        1.0
+      ],
+      "rows": [
+        {
+          "candidateLifecycle": "FERMENTING",
+          "candidateStreak": 1,
+          "earlyRelativeStrengthConfirmation": false,
+          "finalLifecycle": "BASE",
+          "mainRiseOccurredInCycle": false,
+          "meaningfulExpansion": false,
+          "metrics": {
+            "core_median_return": 1.5,
+            "core_positive_breadth": 1.0,
+            "core_strong_breadth": 0.5,
+            "core_weak_ratio": 0.0,
+            "related_positive_breadth": 0.0,
+            "related_positive_median": null,
+            "rep_raw_return": 0.0
+          },
+          "previousLifecycle": "BASE",
+          "relativeDeteriorationConfirmation": false,
+          "renewedExpansion": false,
+          "tradingDate": "2026-09-01",
+          "transitionReason": "CONFIRMATION_PENDING"
+        },
+        {
+          "candidateLifecycle": "FERMENTING",
+          "candidateStreak": 2,
+          "earlyRelativeStrengthConfirmation": false,
+          "finalLifecycle": "FERMENTING",
+          "mainRiseOccurredInCycle": false,
+          "meaningfulExpansion": false,
+          "metrics": {
+            "core_median_return": 1.5,
+            "core_positive_breadth": 1.0,
+            "core_strong_breadth": 0.5,
+            "core_weak_ratio": 0.0,
+            "related_positive_breadth": 0.0,
+            "related_positive_median": null,
+            "rep_raw_return": 0.0
+          },
+          "previousLifecycle": "BASE",
+          "relativeDeteriorationConfirmation": false,
+          "renewedExpansion": false,
+          "tradingDate": "2026-09-02",
+          "transitionReason": "CONFIRMED_OWNER_SEEDED_V0_TRANSITION"
+        },
+        {
+          "candidateLifecycle": "MAIN_RISE",
+          "candidateStreak": 1,
+          "earlyRelativeStrengthConfirmation": false,
+          "finalLifecycle": "FERMENTING",
+          "mainRiseOccurredInCycle": false,
+          "meaningfulExpansion": true,
+          "metrics": {
+            "core_median_return": 2.5,
+            "core_positive_breadth": 1.0,
+            "core_strong_breadth": 1.0,
+            "core_weak_ratio": 0.0,
+            "related_positive_breadth": 1.0,
+            "related_positive_median": 1.0,
+            "rep_raw_return": 1.0
+          },
+          "previousLifecycle": "FERMENTING",
+          "relativeDeteriorationConfirmation": false,
+          "renewedExpansion": false,
+          "tradingDate": "2026-09-03",
+          "transitionReason": "CONFIRMATION_PENDING"
+        },
+        {
+          "candidateLifecycle": "MAIN_RISE",
+          "candidateStreak": 2,
+          "earlyRelativeStrengthConfirmation": false,
+          "finalLifecycle": "MAIN_RISE",
+          "mainRiseOccurredInCycle": true,
+          "meaningfulExpansion": false,
+          "metrics": {
+            "core_median_return": 2.5,
+            "core_positive_breadth": 1.0,
+            "core_strong_breadth": 1.0,
+            "core_weak_ratio": 0.0,
+            "related_positive_breadth": 1.0,
+            "related_positive_median": 1.0,
+            "rep_raw_return": 1.0
+          },
+          "previousLifecycle": "FERMENTING",
+          "relativeDeteriorationConfirmation": false,
+          "renewedExpansion": false,
+          "tradingDate": "2026-09-04",
+          "transitionReason": "CONFIRMED_OWNER_SEEDED_V0_TRANSITION"
+        }
+      ],
+      "scenario": "FERMENTING to MAIN_RISE",
+      "scenarioId": "L20"
+    },
+    {
+      "absoluteGrade": "B",
+      "absoluteScore": 48.0,
+      "coreEvidence": [
+        2.5,
+        2.5,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "expected": "MATURE",
+      "kind": "LIFECYCLE",
+      "lifecycleCandidate": "MATURE",
+      "lifecycleFinal": "MATURE",
+      "pass": true,
+      "relatedEvidence": [
+        1.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "relativeGrade": "B",
+      "relativeScore": 58.0,
+      "repEvidence": [
+        1.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rows": [
+        {
+          "candidateLifecycle": "MAIN_RISE",
+          "candidateStreak": 0,
+          "earlyRelativeStrengthConfirmation": false,
+          "finalLifecycle": "MAIN_RISE",
+          "mainRiseOccurredInCycle": true,
+          "meaningfulExpansion": false,
+          "metrics": {
+            "core_median_return": 2.5,
+            "core_positive_breadth": 1.0,
+            "core_strong_breadth": 1.0,
+            "core_weak_ratio": 0.0,
+            "related_positive_breadth": 1.0,
+            "related_positive_median": 1.0,
+            "rep_raw_return": 1.0
+          },
+          "previousLifecycle": "MAIN_RISE",
+          "relativeDeteriorationConfirmation": false,
+          "renewedExpansion": false,
+          "tradingDate": "2026-09-01",
+          "transitionReason": "CURRENT_STAGE_EVIDENCE_PERSISTS"
+        },
+        {
+          "candidateLifecycle": "MAIN_RISE",
+          "candidateStreak": 0,
+          "earlyRelativeStrengthConfirmation": false,
+          "finalLifecycle": "MAIN_RISE",
+          "mainRiseOccurredInCycle": true,
+          "meaningfulExpansion": false,
+          "metrics": {
+            "core_median_return": 2.5,
+            "core_positive_breadth": 1.0,
+            "core_strong_breadth": 1.0,
+            "core_weak_ratio": 0.0,
+            "related_positive_breadth": 1.0,
+            "related_positive_median": 1.0,
+            "rep_raw_return": 1.0
+          },
+          "previousLifecycle": "MAIN_RISE",
+          "relativeDeteriorationConfirmation": false,
+          "renewedExpansion": false,
+          "tradingDate": "2026-09-02",
+          "transitionReason": "CURRENT_STAGE_EVIDENCE_PERSISTS"
+        },
+        {
+          "candidateLifecycle": "MATURE",
+          "candidateStreak": 1,
+          "earlyRelativeStrengthConfirmation": false,
+          "finalLifecycle": "MAIN_RISE",
+          "mainRiseOccurredInCycle": true,
+          "meaningfulExpansion": false,
+          "metrics": {
+            "core_median_return": 1.0,
+            "core_positive_breadth": 1.0,
+            "core_strong_breadth": 0.0,
+            "core_weak_ratio": 0.0,
+            "related_positive_breadth": 0.0,
+            "related_positive_median": null,
+            "rep_raw_return": 0.0
+          },
+          "previousLifecycle": "MAIN_RISE",
+          "relativeDeteriorationConfirmation": false,
+          "renewedExpansion": false,
+          "tradingDate": "2026-09-03",
+          "transitionReason": "CONFIRMATION_PENDING"
+        },
+        {
+          "candidateLifecycle": "MATURE",
+          "candidateStreak": 2,
+          "earlyRelativeStrengthConfirmation": false,
+          "finalLifecycle": "MATURE",
+          "mainRiseOccurredInCycle": true,
+          "meaningfulExpansion": false,
+          "metrics": {
+            "core_median_return": 1.0,
+            "core_positive_breadth": 1.0,
+            "core_strong_breadth": 0.0,
+            "core_weak_ratio": 0.0,
+            "related_positive_breadth": 0.0,
+            "related_positive_median": null,
+            "rep_raw_return": 0.0
+          },
+          "previousLifecycle": "MAIN_RISE",
+          "relativeDeteriorationConfirmation": false,
+          "renewedExpansion": false,
+          "tradingDate": "2026-09-04",
+          "transitionReason": "CONFIRMED_OWNER_SEEDED_V0_TRANSITION"
+        },
+        {
+          "candidateLifecycle": "MATURE",
+          "candidateStreak": 0,
+          "earlyRelativeStrengthConfirmation": false,
+          "finalLifecycle": "MATURE",
+          "mainRiseOccurredInCycle": true,
+          "meaningfulExpansion": false,
+          "metrics": {
+            "core_median_return": 1.0,
+            "core_positive_breadth": 1.0,
+            "core_strong_breadth": 0.0,
+            "core_weak_ratio": 0.0,
+            "related_positive_breadth": 0.0,
+            "related_positive_median": null,
+            "rep_raw_return": 0.0
+          },
+          "previousLifecycle": "MATURE",
+          "relativeDeteriorationConfirmation": false,
+          "renewedExpansion": false,
+          "tradingDate": "2026-09-05",
+          "transitionReason": "CURRENT_STAGE_EVIDENCE_PERSISTS"
+        },
+        {
+          "candidateLifecycle": "MATURE",
+          "candidateStreak": 0,
+          "earlyRelativeStrengthConfirmation": false,
+          "finalLifecycle": "MATURE",
+          "mainRiseOccurredInCycle": true,
+          "meaningfulExpansion": false,
+          "metrics": {
+            "core_median_return": 1.0,
+            "core_positive_breadth": 1.0,
+            "core_strong_breadth": 0.0,
+            "core_weak_ratio": 0.0,
+            "related_positive_breadth": 0.0,
+            "related_positive_median": null,
+            "rep_raw_return": 0.0
+          },
+          "previousLifecycle": "MATURE",
+          "relativeDeteriorationConfirmation": false,
+          "renewedExpansion": false,
+          "tradingDate": "2026-09-06",
+          "transitionReason": "CURRENT_STAGE_EVIDENCE_PERSISTS"
+        }
+      ],
+      "scenario": "MAIN_RISE to MATURE",
+      "scenarioId": "L21"
+    },
+    {
+      "absoluteGrade": "B",
+      "absoluteScore": 44.5,
+      "coreEvidence": [
+        2.5,
+        2.5,
+        0.5
+      ],
+      "expected": "MAIN_RISE_HOLD",
+      "kind": "LIFECYCLE",
+      "lifecycleCandidate": "MATURE",
+      "lifecycleFinal": "MAIN_RISE",
+      "pass": true,
+      "relatedEvidence": [
+        1.0,
+        1.0,
+        0.0
+      ],
+      "relativeGrade": "B",
+      "relativeScore": 54.0,
+      "repEvidence": [
+        1.0,
+        1.0,
+        0.0
+      ],
+      "rows": [
+        {
+          "candidateLifecycle": "MAIN_RISE",
+          "candidateStreak": 0,
+          "earlyRelativeStrengthConfirmation": false,
+          "finalLifecycle": "MAIN_RISE",
+          "mainRiseOccurredInCycle": true,
+          "meaningfulExpansion": false,
+          "metrics": {
+            "core_median_return": 2.5,
+            "core_positive_breadth": 1.0,
+            "core_strong_breadth": 1.0,
+            "core_weak_ratio": 0.0,
+            "related_positive_breadth": 1.0,
+            "related_positive_median": 1.0,
+            "rep_raw_return": 1.0
+          },
+          "previousLifecycle": "MAIN_RISE",
+          "relativeDeteriorationConfirmation": false,
+          "renewedExpansion": false,
+          "tradingDate": "2026-09-01",
+          "transitionReason": "CURRENT_STAGE_EVIDENCE_PERSISTS"
+        },
+        {
+          "candidateLifecycle": "MAIN_RISE",
+          "candidateStreak": 0,
+          "earlyRelativeStrengthConfirmation": false,
+          "finalLifecycle": "MAIN_RISE",
+          "mainRiseOccurredInCycle": true,
+          "meaningfulExpansion": false,
+          "metrics": {
+            "core_median_return": 2.5,
+            "core_positive_breadth": 1.0,
+            "core_strong_breadth": 1.0,
+            "core_weak_ratio": 0.0,
+            "related_positive_breadth": 1.0,
+            "related_positive_median": 1.0,
+            "rep_raw_return": 1.0
+          },
+          "previousLifecycle": "MAIN_RISE",
+          "relativeDeteriorationConfirmation": false,
+          "renewedExpansion": false,
+          "tradingDate": "2026-09-02",
+          "transitionReason": "CURRENT_STAGE_EVIDENCE_PERSISTS"
+        },
+        {
+          "candidateLifecycle": "MATURE",
+          "candidateStreak": 1,
+          "earlyRelativeStrengthConfirmation": false,
+          "finalLifecycle": "MAIN_RISE",
+          "mainRiseOccurredInCycle": true,
+          "meaningfulExpansion": false,
+          "metrics": {
+            "core_median_return": 0.5,
+            "core_positive_breadth": 1.0,
+            "core_strong_breadth": 0.0,
+            "core_weak_ratio": 0.0,
+            "related_positive_breadth": 0.0,
+            "related_positive_median": null,
+            "rep_raw_return": 0.0
+          },
+          "previousLifecycle": "MAIN_RISE",
+          "relativeDeteriorationConfirmation": false,
+          "renewedExpansion": false,
+          "tradingDate": "2026-09-03",
+          "transitionReason": "CONFIRMATION_PENDING"
+        }
+      ],
+      "scenario": "MAIN_RISE one-day pullback",
+      "scenarioId": "L22"
+    },
+    {
+      "absoluteGrade": "D",
+      "absoluteScore": 16.5,
+      "coreEvidence": [
+        2.5,
+        2.5,
+        -2.0,
+        -2.0
+      ],
+      "expected": "DECLINING",
+      "kind": "LIFECYCLE",
+      "lifecycleCandidate": "DECLINING",
+      "lifecycleFinal": "DECLINING",
+      "pass": true,
+      "relatedEvidence": [
+        1.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "relativeGrade": "D",
+      "relativeScore": 28.2,
+      "repEvidence": [
+        1.0,
+        1.0,
+        -2.0,
+        -2.0
+      ],
+      "rows": [
+        {
+          "candidateLifecycle": "FERMENTING",
+          "candidateStreak": 1,
+          "earlyRelativeStrengthConfirmation": false,
+          "finalLifecycle": "MATURE",
+          "mainRiseOccurredInCycle": true,
+          "meaningfulExpansion": false,
+          "metrics": {
+            "core_median_return": 2.5,
+            "core_positive_breadth": 1.0,
+            "core_strong_breadth": 1.0,
+            "core_weak_ratio": 0.0,
+            "related_positive_breadth": 1.0,
+            "related_positive_median": 1.0,
+            "rep_raw_return": 1.0
+          },
+          "previousLifecycle": "MATURE",
+          "relativeDeteriorationConfirmation": false,
+          "renewedExpansion": false,
+          "tradingDate": "2026-09-01",
+          "transitionReason": "ILLEGAL_BACKWARD_OR_SKIPPED_TRANSITION_HELD"
+        },
+        {
+          "candidateLifecycle": "FERMENTING",
+          "candidateStreak": 2,
+          "earlyRelativeStrengthConfirmation": false,
+          "finalLifecycle": "MATURE",
+          "mainRiseOccurredInCycle": true,
+          "meaningfulExpansion": false,
+          "metrics": {
+            "core_median_return": 2.5,
+            "core_positive_breadth": 1.0,
+            "core_strong_breadth": 1.0,
+            "core_weak_ratio": 0.0,
+            "related_positive_breadth": 1.0,
+            "related_positive_median": 1.0,
+            "rep_raw_return": 1.0
+          },
+          "previousLifecycle": "MATURE",
+          "relativeDeteriorationConfirmation": false,
+          "renewedExpansion": false,
+          "tradingDate": "2026-09-02",
+          "transitionReason": "ILLEGAL_BACKWARD_OR_SKIPPED_TRANSITION_HELD"
+        },
+        {
+          "candidateLifecycle": "DECLINING",
+          "candidateStreak": 1,
+          "earlyRelativeStrengthConfirmation": false,
+          "finalLifecycle": "MATURE",
+          "mainRiseOccurredInCycle": true,
+          "meaningfulExpansion": false,
+          "metrics": {
+            "core_median_return": -2.0,
+            "core_positive_breadth": 0.0,
+            "core_strong_breadth": 0.0,
+            "core_weak_ratio": 1.0,
+            "related_positive_breadth": 0.0,
+            "related_positive_median": null,
+            "rep_raw_return": -2.0
+          },
+          "previousLifecycle": "MATURE",
+          "relativeDeteriorationConfirmation": true,
+          "renewedExpansion": false,
+          "tradingDate": "2026-09-03",
+          "transitionReason": "CONFIRMATION_PENDING"
+        },
+        {
+          "candidateLifecycle": "DECLINING",
+          "candidateStreak": 2,
+          "earlyRelativeStrengthConfirmation": false,
+          "finalLifecycle": "DECLINING",
+          "mainRiseOccurredInCycle": true,
+          "meaningfulExpansion": false,
+          "metrics": {
+            "core_median_return": -2.0,
+            "core_positive_breadth": 0.0,
+            "core_strong_breadth": 0.0,
+            "core_weak_ratio": 1.0,
+            "related_positive_breadth": 0.0,
+            "related_positive_median": null,
+            "rep_raw_return": -2.0
+          },
+          "previousLifecycle": "MATURE",
+          "relativeDeteriorationConfirmation": true,
+          "renewedExpansion": false,
+          "tradingDate": "2026-09-04",
+          "transitionReason": "CONFIRMED_OWNER_SEEDED_V0_TRANSITION"
+        }
+      ],
+      "scenario": "persistent negative CORE to DECLINING",
+      "scenarioId": "L23"
+    },
+    {
+      "absoluteGrade": "B",
+      "absoluteScore": 53.5,
+      "coreEvidence": [
+        2.5,
+        2.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5
+      ],
+      "expected": "MATURE",
+      "kind": "LIFECYCLE",
+      "lifecycleCandidate": "MATURE",
+      "lifecycleFinal": "MATURE",
+      "pass": true,
+      "relatedEvidence": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "relativeGrade": "A",
+      "relativeScore": 63.0,
+      "repEvidence": [
+        1.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rows": [
+        {
+          "candidateLifecycle": "MAIN_RISE",
+          "candidateStreak": 0,
+          "earlyRelativeStrengthConfirmation": false,
+          "finalLifecycle": "MAIN_RISE",
+          "mainRiseOccurredInCycle": true,
+          "meaningfulExpansion": false,
+          "metrics": {
+            "core_median_return": 2.5,
+            "core_positive_breadth": 1.0,
+            "core_strong_breadth": 1.0,
+            "core_weak_ratio": 0.0,
+            "related_positive_breadth": 1.0,
+            "related_positive_median": 1.0,
+            "rep_raw_return": 1.0
+          },
+          "previousLifecycle": "MAIN_RISE",
+          "relativeDeteriorationConfirmation": false,
+          "renewedExpansion": false,
+          "tradingDate": "2026-09-01",
+          "transitionReason": "CURRENT_STAGE_EVIDENCE_PERSISTS"
+        },
+        {
+          "candidateLifecycle": "MAIN_RISE",
+          "candidateStreak": 0,
+          "earlyRelativeStrengthConfirmation": false,
+          "finalLifecycle": "MAIN_RISE",
+          "mainRiseOccurredInCycle": true,
+          "meaningfulExpansion": false,
+          "metrics": {
+            "core_median_return": 2.5,
+            "core_positive_breadth": 1.0,
+            "core_strong_breadth": 1.0,
+            "core_weak_ratio": 0.0,
+            "related_positive_breadth": 1.0,
+            "related_positive_median": 1.0,
+            "rep_raw_return": 1.0
+          },
+          "previousLifecycle": "MAIN_RISE",
+          "relativeDeteriorationConfirmation": false,
+          "renewedExpansion": false,
+          "tradingDate": "2026-09-02",
+          "transitionReason": "CURRENT_STAGE_EVIDENCE_PERSISTS"
+        },
+        {
+          "candidateLifecycle": "MATURE",
+          "candidateStreak": 1,
+          "earlyRelativeStrengthConfirmation": true,
+          "finalLifecycle": "MAIN_RISE",
+          "mainRiseOccurredInCycle": true,
+          "meaningfulExpansion": false,
+          "metrics": {
+            "core_median_return": 0.5,
+            "core_positive_breadth": 1.0,
+            "core_strong_breadth": 0.0,
+            "core_weak_ratio": 0.0,
+            "related_positive_breadth": 1.0,
+            "related_positive_median": 1.0,
+            "rep_raw_return": 0.0
+          },
+          "previousLifecycle": "MAIN_RISE",
+          "relativeDeteriorationConfirmation": false,
+          "renewedExpansion": false,
+          "tradingDate": "2026-09-03",
+          "transitionReason": "CONFIRMATION_PENDING"
+        },
+        {
+          "candidateLifecycle": "MATURE",
+          "candidateStreak": 2,
+          "earlyRelativeStrengthConfirmation": true,
+          "finalLifecycle": "MATURE",
+          "mainRiseOccurredInCycle": true,
+          "meaningfulExpansion": false,
+          "metrics": {
+            "core_median_return": 0.5,
+            "core_positive_breadth": 1.0,
+            "core_strong_breadth": 0.0,
+            "core_weak_ratio": 0.0,
+            "related_positive_breadth": 1.0,
+            "related_positive_median": 1.0,
+            "rep_raw_return": 0.0
+          },
+          "previousLifecycle": "MAIN_RISE",
+          "relativeDeteriorationConfirmation": false,
+          "renewedExpansion": false,
+          "tradingDate": "2026-09-04",
+          "transitionReason": "CONFIRMED_OWNER_SEEDED_V0_TRANSITION"
+        },
+        {
+          "candidateLifecycle": "MATURE",
+          "candidateStreak": 0,
+          "earlyRelativeStrengthConfirmation": true,
+          "finalLifecycle": "MATURE",
+          "mainRiseOccurredInCycle": true,
+          "meaningfulExpansion": false,
+          "metrics": {
+            "core_median_return": 0.5,
+            "core_positive_breadth": 1.0,
+            "core_strong_breadth": 0.0,
+            "core_weak_ratio": 0.0,
+            "related_positive_breadth": 1.0,
+            "related_positive_median": 1.0,
+            "rep_raw_return": 0.0
+          },
+          "previousLifecycle": "MATURE",
+          "relativeDeteriorationConfirmation": false,
+          "renewedExpansion": false,
+          "tradingDate": "2026-09-05",
+          "transitionReason": "CURRENT_STAGE_EVIDENCE_PERSISTS"
+        },
+        {
+          "candidateLifecycle": "MATURE",
+          "candidateStreak": 0,
+          "earlyRelativeStrengthConfirmation": true,
+          "finalLifecycle": "MATURE",
+          "mainRiseOccurredInCycle": true,
+          "meaningfulExpansion": false,
+          "metrics": {
+            "core_median_return": 0.5,
+            "core_positive_breadth": 1.0,
+            "core_strong_breadth": 0.0,
+            "core_weak_ratio": 0.0,
+            "related_positive_breadth": 1.0,
+            "related_positive_median": 1.0,
+            "rep_raw_return": 0.0
+          },
+          "previousLifecycle": "MATURE",
+          "relativeDeteriorationConfirmation": false,
+          "renewedExpansion": false,
+          "tradingDate": "2026-09-06",
+          "transitionReason": "CURRENT_STAGE_EVIDENCE_PERSISTS"
+        }
+      ],
+      "scenario": "late RELATED strong plus weakening CORE",
+      "scenarioId": "L24"
+    },
+    {
+      "absoluteGrade": "B",
+      "absoluteScore": 42.05,
+      "coreEvidence": [
+        -2.0,
+        -2.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "expected": "BASE",
+      "kind": "LIFECYCLE",
+      "lifecycleCandidate": "BASE",
+      "lifecycleFinal": "BASE",
+      "pass": true,
+      "relatedEvidence": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "relativeGrade": "B",
+      "relativeScore": 51.2,
+      "repEvidence": [
+        -2.0,
+        -2.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rows": [
+        {
+          "candidateLifecycle": "DECLINING",
+          "candidateStreak": 0,
+          "earlyRelativeStrengthConfirmation": false,
+          "finalLifecycle": "DECLINING",
+          "mainRiseOccurredInCycle": true,
+          "meaningfulExpansion": false,
+          "metrics": {
+            "core_median_return": -2.0,
+            "core_positive_breadth": 0.0,
+            "core_strong_breadth": 0.0,
+            "core_weak_ratio": 1.0,
+            "related_positive_breadth": 0.0,
+            "related_positive_median": null,
+            "rep_raw_return": -2.0
+          },
+          "previousLifecycle": "DECLINING",
+          "relativeDeteriorationConfirmation": true,
+          "renewedExpansion": false,
+          "tradingDate": "2026-09-01",
+          "transitionReason": "CURRENT_STAGE_EVIDENCE_PERSISTS"
+        },
+        {
+          "candidateLifecycle": "DECLINING",
+          "candidateStreak": 0,
+          "earlyRelativeStrengthConfirmation": false,
+          "finalLifecycle": "DECLINING",
+          "mainRiseOccurredInCycle": true,
+          "meaningfulExpansion": false,
+          "metrics": {
+            "core_median_return": -2.0,
+            "core_positive_breadth": 0.0,
+            "core_strong_breadth": 0.0,
+            "core_weak_ratio": 1.0,
+            "related_positive_breadth": 0.0,
+            "related_positive_median": null,
+            "rep_raw_return": -2.0
+          },
+          "previousLifecycle": "DECLINING",
+          "relativeDeteriorationConfirmation": true,
+          "renewedExpansion": false,
+          "tradingDate": "2026-09-02",
+          "transitionReason": "CURRENT_STAGE_EVIDENCE_PERSISTS"
+        },
+        {
+          "candidateLifecycle": "BASE",
+          "candidateStreak": 1,
+          "earlyRelativeStrengthConfirmation": false,
+          "finalLifecycle": "DECLINING",
+          "mainRiseOccurredInCycle": true,
+          "meaningfulExpansion": false,
+          "metrics": {
+            "core_median_return": 0.0,
+            "core_positive_breadth": 0.3333333333333333,
+            "core_strong_breadth": 0.0,
+            "core_weak_ratio": 0.0,
+            "related_positive_breadth": 0.0,
+            "related_positive_median": null,
+            "rep_raw_return": 0.0
+          },
+          "previousLifecycle": "DECLINING",
+          "relativeDeteriorationConfirmation": false,
+          "renewedExpansion": false,
+          "tradingDate": "2026-09-03",
+          "transitionReason": "CONFIRMATION_PENDING"
+        },
+        {
+          "candidateLifecycle": "BASE",
+          "candidateStreak": 2,
+          "earlyRelativeStrengthConfirmation": false,
+          "finalLifecycle": "DECLINING",
+          "mainRiseOccurredInCycle": true,
+          "meaningfulExpansion": false,
+          "metrics": {
+            "core_median_return": 0.0,
+            "core_positive_breadth": 0.3333333333333333,
+            "core_strong_breadth": 0.0,
+            "core_weak_ratio": 0.0,
+            "related_positive_breadth": 0.0,
+            "related_positive_median": null,
+            "rep_raw_return": 0.0
+          },
+          "previousLifecycle": "DECLINING",
+          "relativeDeteriorationConfirmation": false,
+          "renewedExpansion": false,
+          "tradingDate": "2026-09-04",
+          "transitionReason": "CONFIRMATION_PENDING"
+        },
+        {
+          "candidateLifecycle": "BASE",
+          "candidateStreak": 3,
+          "earlyRelativeStrengthConfirmation": false,
+          "finalLifecycle": "BASE",
+          "mainRiseOccurredInCycle": false,
+          "meaningfulExpansion": false,
+          "metrics": {
+            "core_median_return": 0.0,
+            "core_positive_breadth": 0.3333333333333333,
+            "core_strong_breadth": 0.0,
+            "core_weak_ratio": 0.0,
+            "related_positive_breadth": 0.0,
+            "related_positive_median": null,
+            "rep_raw_return": 0.0
+          },
+          "previousLifecycle": "DECLINING",
+          "relativeDeteriorationConfirmation": false,
+          "renewedExpansion": false,
+          "tradingDate": "2026-09-05",
+          "transitionReason": "CONFIRMED_OWNER_SEEDED_V0_TRANSITION"
+        }
+      ],
+      "scenario": "DECLINING to BASE reset",
+      "scenarioId": "L25"
+    }
+  ],
+  "schemaVersion": "topic-strength-lifecycle-owner-seeded-v0-scenario-replay.v1",
+  "status": "PASS"
+}
