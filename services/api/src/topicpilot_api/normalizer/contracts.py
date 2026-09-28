@@ -161,5 +161,5 @@ def stable_hash(value: Any) -> str:
 def ensure_utc(value: datetime) -> datetime:
     if value.tzinfo is None:
         raise ValueError("observed time must be timezone-aware")
-    # Keep Python 3.10 compatibility for the private provider runtime.
+    # Keep the Python 3.12 project runtime's timezone spelling explicit.
     return value.astimezone(timezone.utc)  # noqa: UP017

@@ -375,6 +375,135 @@ def test_checkpoint_events_are_append_only_and_increment_attempt_number():
     assert second.status == "COMPLETED"
 
 
+def test_institutional_flow_readback_requires_both_same_date_official_markets():
+    class Result:
+        def __init__(self, rows):
+            self.rows = rows
+
+        def mappings(self):
+            return self
+
+        def all(self):
+            return self.rows
+
+    class FakeSession:
+        def __init__(self, rows):
+            self.rows = rows
+
+        def execute(self, *_args, **_kwargs):
+            return Result(self.rows)
+
+    target = date(2026, 9, 3)
+    rows = [
+        {
+            "market": "TPE",
+            "trading_date": target,
+            "availability": "AVAILABLE",
+            "source_identity": "TPEX_INSTI_SUMMARY",
+        },
+        {
+            "market": "TWO",
+            "trading_date": target,
+            "availability": "AVAILABLE",
+            "source_identity": "TWSE_BFI82U",
+        },
+    ]
+    updater = PostCloseUpdater.__new__(PostCloseUpdater)
+    updater.session = FakeSession(rows)
+
+    assert updater._institutional_flow_readback(target)["status"] == "PASS"
+
+    updater.session.rows = rows[:1]
+    partial = updater._institutional_flow_readback(target)
+    assert partial["status"] == "FAIL"
+    assert partial["reasonCode"] == "WHOLE_MARKET_INSTITUTIONAL_FLOW_NOT_READY"
+
+
+def test_formal_publication_readback_requires_published_home_and_flow():
+    class Result:
+        def mappings(self):
+            return self
+
+        def all(self):
+            return [
+                {
+                    "market": "TPE",
+                    "trading_date": date(2026, 9, 3),
+                    "availability": "AVAILABLE",
+                    "source_identity": "TPEX_INSTI_SUMMARY",
+                },
+                {
+                    "market": "TWO",
+                    "trading_date": date(2026, 9, 3),
+                    "availability": "AVAILABLE",
+                    "source_identity": "TWSE_BFI82U",
+                },
+            ]
+
+    class FakeSession:
+        def __init__(self):
+            self.home = SimpleNamespace(
+                id=uuid4(),
+                publication_state="PUBLISHED",
+            )
+
+        def scalar(self, _query):
+            return self.home
+
+        def execute(self, *_args, **_kwargs):
+            return Result()
+
+    updater = PostCloseUpdater.__new__(PostCloseUpdater)
+    updater.session = FakeSession()
+    updater._formal_snapshot_readback = lambda _date: {
+        "status": "PASS",
+        "rowCount": 2,
+    }
+
+    assert updater._formal_publication_readback(
+        date(2026, 9, 3), run_id="run-1"
+    )["status"] == "PASS"
+
+    updater.session.home.publication_state = "UNAVAILABLE"
+    assert updater._formal_publication_readback(
+        date(2026, 9, 3), run_id="run-1"
+    )["status"] == "FAIL"
+
+
+def test_official_flow_persistence_skips_a_second_write_after_readback(monkeypatch):
+    calls = []
+
+    class FakeSession:
+        commits = 0
+
+        def commit(self):
+            self.commits += 1
+
+    updater = PostCloseUpdater.__new__(PostCloseUpdater)
+    updater.session = FakeSession()
+    updater._now = lambda: datetime(2026, 9, 3, 8, 0, tzinfo=UTC)
+    monkeypatch.setattr(
+        "topicpilot_api.live.post_close.persist_market_institutional_flows",
+        lambda *_args, **_kwargs: calls.append("persist")
+        or {"status": "SUCCESS", "persisted": 2, "available": 2},
+    )
+
+    facts = (SimpleNamespace(market="TPE"), SimpleNamespace(market="TWO"))
+    first = updater._persist_official_institutional_flow(
+        facts,
+        existing_readback={"status": "FAIL"},
+    )
+    second = updater._persist_official_institutional_flow(
+        facts,
+        existing_readback={"status": "PASS", "availableMarkets": ["TPE", "TWO"]},
+    )
+
+    assert first["status"] == "SUCCESS"
+    assert second["status"] == "IDEMPOTENT_READBACK"
+    assert calls == ["persist"]
+    assert updater.session.commits == 1
+
+
 def test_publication_readback_reuses_committed_output_after_checkpoint_interrupt(monkeypatch):
     monkeypatch.setattr(
         "topicpilot_api.live.post_close.reconcile_daily_market",

@@ -6,6 +6,7 @@ from topicpilot_api.home_v2_publication import (
     SectionResult,
     _aggregate_home_institutional_flow,
     _flow_window,
+    _read_home_institutional_flow,
     _turnover_comparison,
     build_daily_focus,
     build_market_distribution,
@@ -261,6 +262,29 @@ def test_institutional_flow_windows_sum_only_complete_official_sessions():
     assert rolling["investmentTrustNet"] == 100
     assert rolling["dealerNet"] == 150
     assert rolling["totalNet"] == 300
+
+
+def test_home_institutional_flow_does_not_carry_forward_when_exchange_is_missing():
+    target = date(2026, 8, 21)
+
+    class _MappingsResult:
+        def mappings(self):
+            return iter(
+                [
+                    {"market": "TPE", "trading_date": target, "availability": "AVAILABLE"},
+                    {
+                        "market": "TWO",
+                        "trading_date": date(2026, 8, 20),
+                        "availability": "AVAILABLE",
+                    },
+                ]
+            )
+
+    class _Session:
+        def execute(self, *_args, **_kwargs):
+            return _MappingsResult()
+
+    assert _read_home_institutional_flow(_Session(), target) is None
 
 
 def test_turnover_comparison_uses_formal_prior_session_and_fails_closed_for_missing_data():

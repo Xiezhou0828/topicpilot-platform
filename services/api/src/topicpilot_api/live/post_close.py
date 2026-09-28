@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import time
 from collections.abc import Callable, Collection, Mapping
+from contextlib import suppress
 from dataclasses import dataclass
 from datetime import UTC, date, datetime, timedelta
 from datetime import time as clock_time
@@ -1598,6 +1599,8 @@ class PostCloseUpdater:
             )
             formal_phase_key = "A9_B2_FORMAL_PROCESSING"
             formal_phase = self._latest_checkpoint(run_id, formal_phase_key)
+            market_facts_key = "FORMAL_MARKET_FACTS:OFFICIAL"
+            market_facts_phase = self._latest_checkpoint(run_id, market_facts_key)
             if (
                 reconciliation.downstream_ready
                 and formal_phase is not None
@@ -1625,54 +1628,116 @@ class PostCloseUpdater:
                     "topicSnapshot"
                 ]
                 snapshot_result["formalPublicationReadback"] = formal_readback
-            elif reconciliation.downstream_ready:
+                if market_facts_phase is None or market_facts_phase.status != "COMPLETED":
+                    self._checkpoint_event(
+                        run_id=run_id,
+                        batch_key=market_facts_key,
+                        batch_number=150,
+                        status="COMPLETED",
+                        metadata={
+                            "publicationAuthority": "topicpilot.market_institutional_flow_daily",
+                            "readback": formal_readback.get("institutionalFlow"),
+                            "reconciledFromCommittedOutputs": True,
+                        },
+                    )
+            else:
+                market_index_facts = fetch_official_market_indexes(
+                    target_date=local_date,
+                    retrieved_at=self._now(),
+                    as_of=self._now(),
+                    transport=_official_transport,
+                )
+                market_aggregate_facts = fetch_official_market_aggregates(
+                    target_date=local_date,
+                    retrieved_at=self._now(),
+                    as_of=self._now(),
+                    transport=_official_transport,
+                )
+                market_institutional_flow_facts = fetch_official_market_institutional_flows(
+                    target_date=local_date,
+                    retrieved_at=self._now(),
+                    as_of=self._now(),
+                    transport=_official_transport,
+                )
                 self._checkpoint_event(
                     run_id=run_id,
-                    batch_key=formal_phase_key,
+                    batch_key=market_facts_key,
+                    batch_number=150,
                     status="IN_PROGRESS",
                     metadata={
                         "sessionDate": local_date,
-                        "a9B2Boundary": "PRESERVED",
-                        "publicationAuthority": "topicpilot.topic_snapshots",
+                        "publicationAuthority": "topicpilot.market_institutional_flow_daily",
+                        "sourceIdentities": sorted(
+                            {
+                                str(getattr(fact, "source_identity", ""))
+                                for fact in market_institutional_flow_facts
+                            }
+                        ),
                     },
                 )
-                snapshot_result = self._run_snapshot(
-                    local_date,
-                    eligible_instrument_ids=eligible_instrument_ids,
-                    source_run_id=str(run_id),
-                    market_index_facts=fetch_official_market_indexes(
-                        target_date=local_date,
-                        retrieved_at=self._now(),
-                        as_of=self._now(),
-                        transport=_official_transport,
-                    ),
-                    market_aggregate_facts=fetch_official_market_aggregates(
-                        target_date=local_date,
-                        retrieved_at=self._now(),
-                        as_of=self._now(),
-                        transport=_official_transport,
-                    ),
-                    market_institutional_flow_facts=fetch_official_market_institutional_flows(
-                        target_date=local_date,
-                        retrieved_at=self._now(),
-                        as_of=self._now(),
-                        transport=_official_transport,
-                    ),
+                institutional_flow_persistence = self._persist_official_institutional_flow(
+                    tuple(market_institutional_flow_facts),
+                    existing_readback=formal_readback.get("institutionalFlow"),
                 )
+                if reconciliation.downstream_ready:
+                    self._checkpoint_event(
+                        run_id=run_id,
+                        batch_key=formal_phase_key,
+                        status="IN_PROGRESS",
+                        metadata={
+                            "sessionDate": local_date,
+                            "a9B2Boundary": "PRESERVED",
+                            "publicationAuthority": "topicpilot.topic_snapshots",
+                        },
+                    )
+                    snapshot_result = self._run_snapshot(
+                        local_date,
+                        eligible_instrument_ids=eligible_instrument_ids,
+                        source_run_id=str(run_id),
+                        market_index_facts=market_index_facts,
+                        market_aggregate_facts=market_aggregate_facts,
+                        market_institutional_flow_facts=(),
+                    )
+                    snapshot_result["marketInstitutionalFlow"] = institutional_flow_persistence
+                else:
+                    snapshot_result = self._publish_market_facts_only(
+                        local_date,
+                        source_run_id=str(run_id),
+                        market_index_facts=market_index_facts,
+                        market_aggregate_facts=market_aggregate_facts,
+                        market_institutional_flow_facts=market_institutional_flow_facts,
+                        market_institutional_flow_result=institutional_flow_persistence,
+                    )
                 formal_readback = self._formal_publication_readback(
                     local_date,
                     run_id=run_id,
                 )
                 snapshot_result["formalPublicationReadback"] = formal_readback
-            else:
-                snapshot_result = {
-                    "snapshotDate": local_date.isoformat(),
-                    "topicCount": 0,
-                    "status": "BLOCKED_DAILY_MARKET_NOT_READY",
-                    "formalPublicationReadback": formal_readback,
-                }
+
+                flow_readback = formal_readback.get("institutionalFlow", {})
+                self._checkpoint_event(
+                    run_id=run_id,
+                    batch_key=market_facts_key,
+                    batch_number=150,
+                    status=(
+                        "COMPLETED"
+                        if flow_readback.get("status") == "PASS"
+                        else "FAILED"
+                    ),
+                    failed_count=0 if flow_readback.get("status") == "PASS" else 1,
+                    metadata={
+                        "publicationAuthority": "topicpilot.market_institutional_flow_daily",
+                        "readback": flow_readback,
+                        "marketFactsPublication": snapshot_result.get(
+                            "marketFactsPublication"
+                        ),
+                    },
+                )
+            if "formalPublicationReadback" not in snapshot_result:
+                snapshot_result["formalPublicationReadback"] = formal_readback
             formal_ready = self._formal_snapshot_ready(snapshot_result)
-            if formal_ready:
+            formal_publication_ready = formal_readback.get("status") == "PASS"
+            if formal_ready and formal_publication_ready:
                 self._ensure_completed_checkpoint(
                     run_id=run_id,
                     batch_key="A9_B2_FORMAL_PROCESSING",
@@ -1690,23 +1755,47 @@ class PostCloseUpdater:
                     },
                 )
             else:
+                if formal_ready:
+                    self._ensure_completed_checkpoint(
+                        run_id=run_id,
+                        batch_key="A9_B2_FORMAL_PROCESSING",
+                        metadata={
+                            "readback": formal_readback,
+                            "semanticsChanged": False,
+                        },
+                    )
                 self._checkpoint_event(
                     run_id=run_id,
-                    batch_key="A9_B2_FORMAL_PROCESSING",
+                    batch_key="FINAL_PUBLICATION",
                     status="FAILED",
                     failed_count=1,
                     metadata={
-                        "errorCode": "CHECKPOINT_PUBLICATION_MISMATCH"
-                        if formal_phase is not None and formal_phase.status == "COMPLETED"
-                        else "FORMAL_TOPIC_SNAPSHOT_NOT_READY",
+                        "errorCode": (
+                            "CHECKPOINT_PUBLICATION_MISMATCH"
+                            if formal_phase is not None
+                            and formal_phase.status == "COMPLETED"
+                            else "FORMAL_PUBLICATION_READBACK_NOT_READY"
+                            if formal_ready
+                            else "FORMAL_TOPIC_SNAPSHOT_NOT_READY"
+                        ),
                         "readback": formal_readback,
                     },
                 )
             final_failure_codes = tuple(sorted(set(failure_codes)))
-            if status == "SUCCESS" and not formal_ready:
-                status = "PARTIAL"
+            if not (formal_ready and formal_publication_ready):
+                if status == "SUCCESS":
+                    status = "PARTIAL"
                 final_failure_codes = tuple(
-                    sorted({*final_failure_codes, "FORMAL_TOPIC_SNAPSHOT_NOT_READY"})
+                    sorted(
+                        {
+                            *final_failure_codes,
+                            (
+                                "FORMAL_TOPIC_SNAPSHOT_NOT_READY"
+                                if not formal_ready
+                                else "FORMAL_PUBLICATION_READBACK_NOT_READY"
+                            ),
+                        }
+                    )
                 )
             final_failure_codes = final_failure_codes or reconciliation.reason_codes
             if not final_failure_codes and skipped_count:
@@ -1755,6 +1844,113 @@ class PostCloseUpdater:
             local_date.isoformat(),
         )
 
+    def _publish_market_facts_only(
+        self,
+        snapshot_date: date,
+        *,
+        source_run_id: str,
+        market_index_facts: Collection[Any],
+        market_aggregate_facts: Collection[Any],
+        market_institutional_flow_facts: Collection[Any],
+        market_institutional_flow_result: Mapping[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        """Publish formal exchange-level facts without bypassing stock gates.
+
+        A missing stock bar blocks stock-dependent topic work, but it must not
+        suppress independently sourced whole-market index, breadth, turnover,
+        or institutional facts.  Each of those inputs remains typed and
+        fail-closed, so an unavailable provider fact cannot become a zero or a
+        single-market Taiwan total.
+        """
+
+        result: dict[str, Any] = {
+            "snapshotDate": snapshot_date.isoformat(),
+            "topicCount": 0,
+            "status": "BLOCKED_DAILY_MARKET_NOT_READY",
+            "marketFactsOnly": True,
+        }
+        try:
+            if market_institutional_flow_result is not None:
+                result["marketInstitutionalFlow"] = dict(market_institutional_flow_result)
+            elif market_institutional_flow_facts:
+                try:
+                    result["marketInstitutionalFlow"] = persist_market_institutional_flows(
+                        self.session,
+                        tuple(market_institutional_flow_facts),
+                        ingested_at=self._now(),
+                    )
+                except SQLAlchemyError as exc:
+                    self.session.rollback()
+                    result["marketInstitutionalFlow"] = {
+                        "status": "PERSISTENCE_UNAVAILABLE",
+                        "error": type(exc).__name__,
+                    }
+            result["homePublication"] = materialize_home_v2(
+                self.session,
+                trading_date=snapshot_date,
+                source_run_id=source_run_id,
+                market_index_facts=tuple(market_index_facts),
+                market_aggregate_facts=tuple(market_aggregate_facts),
+            )
+            result["marketFactsPublication"] = {
+                "status": "SUCCESS",
+                "institutionalFlow": result.get("marketInstitutionalFlow"),
+            }
+        except Exception as exc:
+            self.session.rollback()
+            result["homePublication"] = {
+                "status": "HOME_PUBLICATION_UNAVAILABLE",
+                "error": type(exc).__name__,
+            }
+            result["marketFactsPublication"] = {
+                "status": "UNAVAILABLE",
+                "error": type(exc).__name__,
+            }
+        return result
+
+    def _persist_official_institutional_flow(
+        self,
+        facts: Collection[Any],
+        *,
+        existing_readback: Mapping[str, Any] | None,
+    ) -> dict[str, Any]:
+        """Commit official flow facts once before A9/B2 processing."""
+
+        if existing_readback and existing_readback.get("status") == "PASS":
+            return {
+                "status": "IDEMPOTENT_READBACK",
+                "persisted": 0,
+                "available": len(existing_readback.get("availableMarkets", ())),
+            }
+        if not facts:
+            return {"status": "NOT_AVAILABLE", "persisted": 0, "available": 0}
+        try:
+            result = persist_market_institutional_flows(
+                self.session,
+                tuple(facts),
+                ingested_at=self._now(),
+            )
+            self.session.commit()
+            return dict(result)
+        except SQLAlchemyError as exc:
+            with suppress(Exception):
+                self.session.rollback()
+            return {
+                "status": "PERSISTENCE_UNAVAILABLE",
+                "persisted": 0,
+                "available": 0,
+                "error": type(exc).__name__,
+            }
+        except Exception as exc:
+            with suppress(Exception):
+                self.session.rollback()
+            return {
+                "status": "PERSISTENCE_UNAVAILABLE",
+                "persisted": 0,
+                "available": 0,
+                "error": type(exc).__name__,
+            }
+
     @staticmethod
     def _formal_snapshot_ready(snapshot_result: Mapping[str, Any]) -> bool:
         formal_state = snapshot_result.get("formalTopicDailyState") or {}
@@ -1798,6 +1994,93 @@ class PostCloseUpdater:
             "membershipMode": "PIT_FORMAL",
         }
 
+    def _institutional_flow_readback(self, snapshot_date: date) -> dict[str, Any]:
+        """Read both official exchange rows before allowing terminal success."""
+
+        expected_markets = ("TPE", "TWO")
+        expected_sources = {
+            "TPE": "TPEX_INSTI_SUMMARY",
+            "TWO": "TWSE_BFI82U",
+        }
+        try:
+            rows = list(
+                self.session.execute(
+                    text(
+                        """
+                        SELECT market, trading_date, availability, source_identity
+                        FROM topicpilot.market_institutional_flow_daily
+                        WHERE trading_date = :trading_date
+                          AND market IN ('TPE', 'TWO')
+                        ORDER BY market, source_as_of DESC NULLS LAST,
+                                 published_at DESC NULLS LAST, id DESC
+                        """
+                    ),
+                    {"trading_date": snapshot_date},
+                ).mappings().all()
+            )
+        except Exception as exc:
+            with suppress(Exception):
+                self.session.rollback()
+            return {
+                "status": "FAIL",
+                "tradingDate": snapshot_date.isoformat(),
+                "expectedMarkets": list(expected_markets),
+                "availableMarkets": [],
+                "authority": "topicpilot.market_institutional_flow_daily",
+                "reasonCode": "INSTITUTIONAL_FLOW_READBACK_UNAVAILABLE",
+                "error": type(exc).__name__,
+            }
+
+        selected: dict[str, Mapping[str, Any]] = {}
+        for market in expected_markets:
+            market_rows = [row for row in rows if str(row.get("market")) == market]
+            selected[market] = next(
+                (
+                    row
+                    for row in market_rows
+                    if str(row.get("source_identity")) == expected_sources[market]
+                ),
+                market_rows[0] if market_rows else {},
+            )
+
+        def row_date(value: Any) -> str:
+            if isinstance(value, datetime):
+                return value.date().isoformat()
+            if isinstance(value, date):
+                return value.isoformat()
+            return str(value or "")[:10]
+
+        valid = all(
+            selected[market]
+            and row_date(selected[market].get("trading_date"))
+            == snapshot_date.isoformat()
+            and selected[market].get("availability") == "AVAILABLE"
+            and selected[market].get("source_identity") == expected_sources[market]
+            for market in expected_markets
+        )
+        available_markets = [
+            market
+            for market in expected_markets
+            if selected[market].get("availability") == "AVAILABLE"
+        ]
+        return {
+            "status": "PASS" if valid else "FAIL",
+            "tradingDate": snapshot_date.isoformat(),
+            "expectedMarkets": list(expected_markets),
+            "availableMarkets": available_markets,
+            "markets": [
+                {
+                    "market": market,
+                    "tradingDate": row_date(selected[market].get("trading_date")),
+                    "availability": selected[market].get("availability"),
+                    "sourceIdentity": selected[market].get("source_identity"),
+                }
+                for market in expected_markets
+            ],
+            "authority": "topicpilot.market_institutional_flow_daily",
+            "reasonCode": None if valid else "WHOLE_MARKET_INSTITUTIONAL_FLOW_NOT_READY",
+        }
+
     def _formal_publication_readback(
         self,
         snapshot_date: date,
@@ -1814,22 +2097,35 @@ class PostCloseUpdater:
                 .where(
                     HomePublication.trading_date == snapshot_date,
                     HomePublication.source_run_id == str(run_id),
-                    HomePublication.publication_state.in_(
-                        ("PUBLISHED", "UNAVAILABLE")
-                    ),
+                    HomePublication.publication_state == "PUBLISHED",
                 )
                 .order_by(HomePublication.generated_at.desc(), HomePublication.id.desc())
                 .limit(1)
             )
+        institutional_flow = self._institutional_flow_readback(snapshot_date)
+        home_status = (
+            "PASS"
+            if home is not None and home.publication_state == "PUBLISHED"
+            else "NOT_FOUND"
+            if home is None
+            else "NOT_PUBLISHED"
+        )
         return {
-            "status": "PASS" if topic["status"] == "PASS" else "FAIL",
+            "status": (
+                "PASS"
+                if topic["status"] == "PASS"
+                and home_status == "PASS"
+                and institutional_flow["status"] == "PASS"
+                else "FAIL"
+            ),
             "topicSnapshot": topic,
             "homePublication": {
-                "status": "PASS" if home is not None else "NOT_FOUND",
+                "status": home_status,
                 "publicationId": str(home.id) if home is not None else None,
                 "publicationState": home.publication_state if home is not None else None,
                 "authority": "topicpilot.home_publications",
             },
+            "institutionalFlow": institutional_flow,
         }
 
     def _run_snapshot(
@@ -1893,19 +2189,6 @@ class PostCloseUpdater:
                 else:
                     result["lifecycle"] = {"status": "WAITING_FOR_FORMAL_SNAPSHOT"}
                 try:
-                    if market_institutional_flow_facts:
-                        try:
-                            result["marketInstitutionalFlow"] = persist_market_institutional_flows(
-                                self.session,
-                                tuple(market_institutional_flow_facts),
-                                ingested_at=self._now(),
-                            )
-                        except SQLAlchemyError as exc:
-                            self.session.rollback()
-                            result["marketInstitutionalFlow"] = {
-                                "status": "PERSISTENCE_UNAVAILABLE",
-                                "error": type(exc).__name__,
-                            }
                     result["homePublication"] = materialize_home_v2(
                         self.session,
                         trading_date=snapshot_date,
