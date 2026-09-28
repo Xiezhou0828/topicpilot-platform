@@ -34,6 +34,8 @@ PRODUCTION_DB_MANUAL_MUTATION=NO
 DEPLOYED=NO
 PUSHED=NO
 ```
+
+End of pre-promotion record.
 The broader failures remain the previously classified corporate-action and
 reference-bundle mismatch. They do not touch A10, live scheduling,
 checkpoint reconciliation, formal publication, or A9/B2 runtime behavior.
