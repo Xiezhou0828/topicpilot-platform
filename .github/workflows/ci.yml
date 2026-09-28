@@ -48,6 +48,12 @@ jobs:
           cache-dependency-path: services/api/pyproject.toml
       - name: Install API and development dependencies
         run: python -m pip install -e "services/api[dev]"
+      - name: Check canonical reference bundle serialization
+        env:
+          PYTHONPATH: services/api/src
+        run: >-
+          python -m topicpilot_api.reference_bundle_cli check
+          --bundle-dir services/api/src/topicpilot_api/reference_data/bundles/tw-reference-v1
       - name: Validate Alembic revision graph
         run: python infra/scripts/check_alembic_graph.py
       - name: Ruff baseline and no-new-debt gate

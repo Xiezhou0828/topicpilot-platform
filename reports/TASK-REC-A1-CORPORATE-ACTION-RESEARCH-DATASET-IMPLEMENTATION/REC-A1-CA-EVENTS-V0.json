@@ -401,7 +401,7 @@
       "status": "COMPLETED"
     }
   ],
-  "dataset_content_hash": "4d9b4912bd1c4613510e60c5cf4b5a629c367e1c94dd733d3b1dc3f935e0eb5d",
+  "dataset_content_hash": "267ae7ea07dcfc4a47d2e803906d74d95088910f79ad9a3496549efa67a51028",
   "dataset_schema_version": "rec-a1-corporate-action-research-dataset.v0",
   "dataset_version": "REC-A1-CA-EVENTS-V0",
   "events": [
@@ -9342,7 +9342,7 @@
       "query_window_end": "2026-08-13",
       "query_window_start": "2026-02-02",
       "record_count": 138,
-      "reference_version": "tw-reference-v1",
+      "reference_version": "tw-reference-v1-rollover-55684037eef58f10",
       "retrieved_at": "2026-08-15T00:00:00Z",
       "semantic_version": "CA-EVENT-SCHEMA-V0",
       "source_as_of_if_available": null,
@@ -9357,7 +9357,7 @@
       "query_window_end": "2026-08-13",
       "query_window_start": "2026-02-02",
       "record_count": 233,
-      "reference_version": "tw-reference-v1",
+      "reference_version": "tw-reference-v1-rollover-55684037eef58f10",
       "retrieved_at": "2026-08-15T00:00:00Z",
       "semantic_version": "CA-EVENT-SCHEMA-V0",
       "source_as_of_if_available": null,
@@ -9372,7 +9372,7 @@
       "query_window_end": "2026-08-13",
       "query_window_start": "2026-02-02",
       "record_count": 1,
-      "reference_version": "tw-reference-v1",
+      "reference_version": "tw-reference-v1-rollover-55684037eef58f10",
       "retrieved_at": "2026-08-15T00:00:00Z",
       "semantic_version": "CA-EVENT-SCHEMA-V0",
       "source_as_of_if_available": null,
@@ -9381,7 +9381,7 @@
       "status": "READY"
     }
   ],
-  "reference_version": "tw-reference-v1",
+  "reference_version": "tw-reference-v1-rollover-55684037eef58f10",
   "research_window_end": "2026-08-13",
   "research_window_start": "2026-02-02",
   "semantic_version": "CA-EVENT-SCHEMA-V0",

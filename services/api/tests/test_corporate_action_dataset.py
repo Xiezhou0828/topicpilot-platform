@@ -12,6 +12,7 @@ from topicpilot_api.normalizer.contracts import stable_hash
 from topicpilot_api.reference_data.bundle import load_bundle
 from topicpilot_api.research.corporate_action_dataset import (
     CA_EVENT_SCHEMA_VERSION,
+    REFERENCE_VERSION,
     TPEX_BOUNDED_ARTIFACT_REQUIREMENTS,
     CorporateActionDatasetError,
     EpisodeWindow,
@@ -77,6 +78,17 @@ def _event(*, effective: str, authority: str = "AUTHORITATIVE", reason: str) -> 
     return build_event(payload)
 
 
+def test_dataset_reference_lineage_matches_the_canonical_bundle_manifest():
+    bundle = load_bundle(REFERENCE)
+    document = _document()
+
+    assert bundle.manifest["referenceDataVersion"] == REFERENCE_VERSION
+    assert document["reference_version"] == REFERENCE_VERSION
+    assert {
+        item["reference_version"] for item in document["manifests"]
+    } == {REFERENCE_VERSION}
+
+
 def test_versioned_artifact_loads_against_canonical_reference_bundle():
     stats = load_dataset(ARTIFACT, reference_bundle_dir=REFERENCE)
 
@@ -97,11 +109,13 @@ def test_versioned_artifact_loads_against_canonical_reference_bundle():
 def test_control_cases_preserve_identity_and_effective_date_boundaries():
     document = _document()
     by_identity = {event["canonical_identity"]: event for event in document["events"]}
-    lifecycle = json.loads(
-        (
-            REFERENCE / "instrument_lifecycles.json"
-        ).read_text(encoding="utf-8")
-    )[0]
+    lifecycle = next(
+        item
+        for item in json.loads(
+            (REFERENCE / "instrument_lifecycles.json").read_text(encoding="utf-8")
+        )
+        if item["market_code"] == "TPE" and item["instrument_code"] == "6806"
+    )
 
     control_2330 = by_identity["TPE:2330"]
     assert control_2330["announcement_date_if_available"] is None
@@ -689,7 +703,7 @@ def test_owner_import_merge_replaces_same_semantic_prior_row_and_preserves_lifec
                 "record_count": 1,
                 "content_hash_if_allowed": None,
                 "semantic_version": "CA-EVENT-SCHEMA-V0",
-                "reference_version": "tw-reference-v1",
+                "reference_version": REFERENCE_VERSION,
                 "status": "PARTIAL",
             }
         ],
