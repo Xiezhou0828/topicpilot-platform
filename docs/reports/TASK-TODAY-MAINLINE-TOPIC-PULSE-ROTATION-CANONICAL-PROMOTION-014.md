@@ -80,11 +80,16 @@ The preferred PR title is:
 
 > Promote Today Mainline, Topic Pulse and Fast Rotation V1
 
-The PR body must state that Topic Strength authority is already canonical,
-Today Market Signal V1 is preserved, the lower-half semantics are the new
-delta, and legacy WARMING/COOLING plus 14D rotation remain superseded. PR
-number, exact PR head, CI result, merge commit, and post-merge CI are recorded
-in the final promotion status after the remote checks complete.
+The PR body states that Topic Strength authority is already canonical, Today
+Market Signal V1 is preserved, the lower-half semantics are the new delta,
+and legacy WARMING/COOLING plus 14D rotation remain superseded.
+
+- PR: [#16](https://github.com/Xiezhou0828/topicpilot-platform/pull/16)
+- Title: `Promote Today Mainline, Topic Pulse and Fast Rotation V1`
+- PR head when opened: `d2ec93a24e544cc5b9b470d3462bee44db7051ee`
+- Remote required CI and merge: pending at this report revision; the final
+  exact head, CI result, merge commit, and post-merge CI are recorded in the
+  promotion status block.
 
 ## Production boundary
 
