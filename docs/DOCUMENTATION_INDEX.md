@@ -43,6 +43,7 @@
 - [Operations runbook](operations/runbook.md)
 - [Deployment](operations/deployment.md)
 - [G2 official provider preflight](operations/provider-preflight.md)
+- [Production forensic readback](operations/production-forensic-readback.md)
 - [Reference registry transition](operations/reference-registry-transition.md)
 
 ## Historical evidence

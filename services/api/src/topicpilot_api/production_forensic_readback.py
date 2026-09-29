@@ -1,0 +1,539 @@
+"""Governed, fixed-command, SELECT-only Production forensic readback."""
+
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import re
+import sys
+from collections.abc import Callable, Mapping, Sequence
+from datetime import UTC, date, datetime
+from pathlib import Path
+from typing import Any
+from uuid import UUID
+
+from sqlalchemy import create_engine, text
+
+FORENSIC_COMMAND_POST_CLOSE_RUN_READBACK = "POST_CLOSE_RUN_READBACK"
+SUPPORTED_FORENSIC_COMMANDS = (FORENSIC_COMMAND_POST_CLOSE_RUN_READBACK,)
+TARGET_TABLE_SCOPE = (
+    "topicpilot.live_collector_runs",
+    "topicpilot.live_collector_attempts",
+    "topicpilot.live_collector_checkpoints",
+)
+MAX_ATTEMPT_REPRESENTATIVES = 50
+UUID_PATTERN = re.compile(
+    r"^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-"
+    r"[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$"
+)
+SHA_PATTERN = re.compile(r"^[0-9a-fA-F]{40}$")
+_SECRET_TEXT_PATTERNS = (
+    re.compile(r"(?i)(postgres(?:ql)?(?:\+\w+)?://)[^\s,;]+"),
+    re.compile(r"(?i)(authorization|cookie|password|secret|token|api[_-]?key)\s*[:=]\s*[^\s,;]+"),
+)
+
+
+class ForensicReadbackError(RuntimeError):
+    """A fail-closed readback validation or execution error."""
+
+    def __init__(self, code: str, message: str | None = None) -> None:
+        self.code = code
+        super().__init__(message or code)
+
+
+def validate_command(value: str) -> str:
+    """Validate the fixed forensic command allowlist."""
+
+    if value not in SUPPORTED_FORENSIC_COMMANDS:
+        raise ForensicReadbackError("FORENSIC_COMMAND_NOT_ALLOWED")
+    return value
+
+
+def validate_run_id(value: str) -> UUID:
+    """Validate one canonical hyphenated UUID and reject SQL-like input."""
+
+    if not isinstance(value, str) or not UUID_PATTERN.fullmatch(value):
+        raise ForensicReadbackError("RUN_ID_MUST_BE_UUID")
+    try:
+        return UUID(value)
+    except ValueError as exc:
+        raise ForensicReadbackError("RUN_ID_MUST_BE_UUID") from exc
+
+
+def validate_forensic_sha(value: str) -> str:
+    """Validate the exact 40-character tool revision used by the workflow."""
+
+    if not isinstance(value, str) or not SHA_PATTERN.fullmatch(value):
+        raise ForensicReadbackError("FORENSIC_TOOL_SHA_MUST_BE_EXACT_40_HEX")
+    return value.lower()
+
+
+def _sanitize_text(value: Any, *, limit: int = 512) -> str | None:
+    if value is None:
+        return None
+    normalized = " ".join(str(value).split())
+    for pattern in _SECRET_TEXT_PATTERNS:
+        normalized = pattern.sub("[REDACTED]", normalized)
+    return normalized[:limit]
+
+
+def _json_value(value: Any) -> Any:
+    if isinstance(value, (datetime, date)):
+        return value.isoformat()
+    if isinstance(value, UUID):
+        return str(value)
+    if isinstance(value, (str, int, float, bool)) or value is None:
+        return value
+    return _sanitize_text(value)
+
+
+def _row_mapping(row: Any) -> dict[str, Any]:
+    if isinstance(row, Mapping):
+        return dict(row)
+    if hasattr(row, "_mapping"):
+        return dict(row._mapping)
+    return dict(row)
+
+
+def _execute_mappings(
+    connection: Any,
+    statement: str,
+    parameters: Mapping[str, Any] | None = None,
+) -> list[dict[str, Any]]:
+    result = connection.execute(text(statement), dict(parameters or {}))
+    if hasattr(result, "mappings"):
+        return [dict(row) for row in result.mappings()]
+    return [_row_mapping(row) for row in result]
+
+
+def _as_iso(value: Any) -> str | None:
+    normalized = _json_value(value)
+    return normalized if isinstance(normalized, str) else None
+
+
+def _safe_run(row: Mapping[str, Any]) -> dict[str, Any]:
+    fields = (
+        "id",
+        "run_type",
+        "status",
+        "provider_code",
+        "adapter_version",
+        "started_at",
+        "heartbeat_at",
+        "completed_at",
+        "requested_count",
+        "success_count",
+        "failure_count",
+        "retry_count",
+        "latency_ms",
+        "freshness_state",
+        "provider_status",
+        "failure_code",
+    )
+    result = {field: _json_value(row.get(field)) for field in fields}
+    result["failure_message"] = _sanitize_text(row.get("failure_message"))
+    for field in ("started_at", "heartbeat_at", "completed_at"):
+        result[field] = _as_iso(row.get(field))
+    return result
+
+
+def _safe_attempt_group(row: Mapping[str, Any]) -> dict[str, Any]:
+    return {
+        "marketCode": _sanitize_text(row.get("market_code"), limit=64),
+        "status": _sanitize_text(row.get("status"), limit=32),
+        "providerStatus": _sanitize_text(row.get("provider_status"), limit=64),
+        "errorCode": _sanitize_text(row.get("error_code"), limit=128),
+        "attemptCount": int(row.get("attempt_count", 0) or 0),
+        "firstStartedAt": _as_iso(row.get("first_started_at")),
+        "lastRetrievedAt": _as_iso(row.get("last_retrieved_at")),
+    }
+
+
+def _safe_attempt(row: Mapping[str, Any]) -> dict[str, Any]:
+    return {
+        "instrumentCode": _sanitize_text(row.get("instrument_code"), limit=64),
+        "marketCode": _sanitize_text(row.get("market_code"), limit=64),
+        "attemptNumber": int(row.get("attempt_number", 0) or 0),
+        "status": _sanitize_text(row.get("status"), limit=32),
+        "startedAt": _as_iso(row.get("started_at")),
+        "retrievedAt": _as_iso(row.get("retrieved_at")),
+        "observedAt": _as_iso(row.get("observed_at")),
+        "latencyMs": row.get("latency_ms"),
+        "retryCount": int(row.get("retry_count", 0) or 0),
+        "providerStatus": _sanitize_text(row.get("provider_status"), limit=64),
+        "freshnessState": _sanitize_text(row.get("freshness_state"), limit=64),
+        "errorCode": _sanitize_text(row.get("error_code"), limit=128),
+        "errorMessage": _sanitize_text(row.get("error_message")),
+    }
+
+
+def _safe_checkpoint(row: Mapping[str, Any]) -> dict[str, Any]:
+    return {
+        "batchNumber": int(row.get("batch_number", 0) or 0),
+        "batchKey": _sanitize_text(row.get("batch_key"), limit=128),
+        "attemptNumber": int(row.get("attempt_number", 0) or 0),
+        "status": _sanitize_text(row.get("status"), limit=32),
+        "processedCount": int(row.get("processed_count", 0) or 0),
+        "succeededCount": int(row.get("succeeded_count", 0) or 0),
+        "failedCount": int(row.get("failed_count", 0) or 0),
+        "skippedCount": int(row.get("skipped_count", 0) or 0),
+        "retryCount": int(row.get("retry_count", 0) or 0),
+        "providerRequestCount": int(row.get("provider_request_count", 0) or 0),
+        "providerFailureCount": int(row.get("provider_failure_count", 0) or 0),
+        "checkpointHash": _sanitize_text(row.get("checkpoint_hash"), limit=128),
+        "createdAt": _as_iso(row.get("created_at")),
+        "metadata": {
+            key: _sanitize_text(row.get(key))
+            for key in (
+                "metadata_market",
+                "metadata_session_date",
+                "metadata_outcome",
+                "metadata_reason",
+                "metadata_publication",
+                "metadata_run_status",
+                "metadata_formal_readback",
+                "metadata_scope",
+            )
+            if row.get(key) is not None
+        },
+    }
+
+
+def _safe_distribution(row: Mapping[str, Any], *, key: str) -> dict[str, Any]:
+    return {
+        key: _sanitize_text(row.get(key), limit=128) or "NONE",
+        "count": int(row.get("count", 0) or 0),
+    }
+
+
+def summarize_attempt_rows(rows: Sequence[Mapping[str, Any]]) -> list[dict[str, Any]]:
+    """Build deterministic grouped attempt evidence for unit-testable input rows."""
+
+    groups: dict[tuple[Any, ...], dict[str, Any]] = {}
+    for row in rows:
+        key = (
+            row.get("market_code"),
+            row.get("status"),
+            row.get("provider_status"),
+            row.get("error_code"),
+        )
+        group = groups.setdefault(
+            key,
+            {
+                "market_code": key[0],
+                "status": key[1],
+                "provider_status": key[2],
+                "error_code": key[3],
+                "attempt_count": 0,
+                "first_started_at": None,
+                "last_retrieved_at": None,
+            },
+        )
+        group["attempt_count"] += 1
+        started = row.get("started_at")
+        retrieved = row.get("retrieved_at") or row.get("updated_at")
+        if group["first_started_at"] is None or (
+            started is not None and started < group["first_started_at"]
+        ):
+            group["first_started_at"] = started
+        if group["last_retrieved_at"] is None or (
+            retrieved is not None and retrieved > group["last_retrieved_at"]
+        ):
+            group["last_retrieved_at"] = retrieved
+    return [
+        _safe_attempt_group(groups[key])
+        for key in sorted(groups, key=lambda item: tuple(str(v) for v in item))
+    ]
+
+
+def _privilege_status(rows: Sequence[Mapping[str, Any]]) -> tuple[list[dict[str, Any]], str]:
+    privileges: list[dict[str, Any]] = []
+    mutation_present = False
+    for row in rows:
+        item = {
+            "table": _sanitize_text(row.get("table_name"), limit=128),
+            "select": bool(row.get("select_allowed")),
+            "insert": bool(row.get("insert_allowed")),
+            "update": bool(row.get("update_allowed")),
+            "delete": bool(row.get("delete_allowed")),
+            "truncate": bool(row.get("truncate_allowed")),
+        }
+        mutation_present = mutation_present or any(
+            item[field] for field in ("insert", "update", "delete", "truncate")
+        )
+        privileges.append(item)
+    return privileges, "YES" if mutation_present else "NO"
+
+
+RUN_QUERY = """
+SELECT id, run_type, status, provider_code, adapter_version,
+       started_at, heartbeat_at, completed_at, requested_count,
+       success_count, failure_count, retry_count, latency_ms,
+       freshness_state, provider_status, failure_code, failure_message
+FROM topicpilot.live_collector_runs
+WHERE id = :run_id
+  AND run_type = 'POST_CLOSE'
+"""
+
+ATTEMPT_GROUP_QUERY = """
+SELECT market_code, status, provider_status, error_code,
+       COUNT(*) AS attempt_count,
+       MIN(started_at) AS first_started_at,
+       MAX(COALESCE(retrieved_at, updated_at)) AS last_retrieved_at
+FROM topicpilot.live_collector_attempts
+WHERE run_id = :run_id
+GROUP BY market_code, status, provider_status, error_code
+ORDER BY market_code, status, provider_status, error_code
+"""
+
+ATTEMPT_REPRESENTATIVE_QUERY = """
+SELECT instrument_code, market_code, attempt_number, status,
+       started_at, retrieved_at, observed_at, latency_ms, retry_count,
+       provider_status, freshness_state, error_code, error_message
+FROM topicpilot.live_collector_attempts
+WHERE run_id = :run_id
+ORDER BY started_at, market_code, instrument_code, attempt_number
+LIMIT 50
+"""
+
+CHECKPOINT_QUERY = """
+SELECT batch_number, batch_key, attempt_number, status,
+       processed_count, succeeded_count, failed_count, skipped_count,
+       retry_count, provider_request_count, provider_failure_count,
+       checkpoint_hash, created_at,
+       metadata->>'market' AS metadata_market,
+       metadata->>'sessionDate' AS metadata_session_date,
+       metadata->>'outcome' AS metadata_outcome,
+       metadata->>'reason' AS metadata_reason,
+       metadata->>'publication' AS metadata_publication,
+       metadata->>'runStatus' AS metadata_run_status,
+       metadata->>'formalReadback' AS metadata_formal_readback,
+       metadata->>'scope' AS metadata_scope
+FROM topicpilot.live_collector_checkpoints
+WHERE run_id = :run_id
+ORDER BY created_at, batch_number, attempt_number
+"""
+
+MARKET_SUMMARY_QUERY = """
+SELECT market_code,
+       COUNT(*) AS attempt_count,
+       COUNT(*) FILTER (WHERE status = 'SUCCESS') AS success_count,
+       COUNT(*) FILTER (WHERE status = 'FAILED') AS failure_count,
+       COUNT(*) FILTER (WHERE status = 'SKIPPED') AS skipped_count,
+       COUNT(*) FILTER (WHERE status = 'TIMEOUT') AS timeout_count,
+       COUNT(DISTINCT instrument_code) AS instrument_count,
+       MIN(started_at) AS first_started_at,
+       MAX(COALESCE(retrieved_at, updated_at)) AS last_retrieved_at
+FROM topicpilot.live_collector_attempts
+WHERE run_id = :run_id
+GROUP BY market_code
+ORDER BY market_code
+"""
+
+ERROR_SUMMARY_QUERY = """
+SELECT COALESCE(error_code, 'NONE') AS error_code, COUNT(*) AS count
+FROM topicpilot.live_collector_attempts
+WHERE run_id = :run_id
+GROUP BY COALESCE(error_code, 'NONE')
+ORDER BY error_code
+"""
+
+PROVIDER_STATUS_SUMMARY_QUERY = """
+SELECT COALESCE(provider_status, 'NONE') AS provider_status, COUNT(*) AS count
+FROM topicpilot.live_collector_attempts
+WHERE run_id = :run_id
+GROUP BY COALESCE(provider_status, 'NONE')
+ORDER BY provider_status
+"""
+
+PRIVILEGE_QUERY = """
+SELECT table_name,
+       has_table_privilege(
+           current_user, format('%I.%I', 'topicpilot', table_name), 'SELECT'
+       ) AS select_allowed,
+       has_table_privilege(
+           current_user, format('%I.%I', 'topicpilot', table_name), 'INSERT'
+       ) AS insert_allowed,
+       has_table_privilege(
+           current_user, format('%I.%I', 'topicpilot', table_name), 'UPDATE'
+       ) AS update_allowed,
+       has_table_privilege(
+           current_user, format('%I.%I', 'topicpilot', table_name), 'DELETE'
+       ) AS delete_allowed,
+       has_table_privilege(
+           current_user, format('%I.%I', 'topicpilot', table_name), 'TRUNCATE'
+       ) AS truncate_allowed
+FROM unnest(
+    ARRAY['live_collector_runs', 'live_collector_attempts', 'live_collector_checkpoints']
+) AS scoped(table_name)
+ORDER BY table_name
+"""
+
+
+def _read_only_identity(connection: Any, expected_role: str) -> tuple[str, str, bool]:
+    connection.execute(text("SET TRANSACTION READ ONLY"))
+    read_only_value = str(
+        connection.execute(text("SHOW transaction_read_only")).scalar_one()
+    ).lower()
+    transaction_read_only = read_only_value in {"on", "true", "1"}
+    if not transaction_read_only:
+        raise ForensicReadbackError("BLOCKED_READONLY_TRANSACTION_NOT_ENFORCED")
+    identity_rows = _execute_mappings(
+        connection,
+        """
+        SELECT current_user AS current_user,
+               session_user AS session_user,
+               current_setting('transaction_read_only') AS transaction_read_only
+        """,
+    )
+    if not identity_rows:
+        raise ForensicReadbackError("DATABASE_IDENTITY_UNAVAILABLE")
+    identity = identity_rows[0]
+    current_user = str(identity.get("current_user") or "")
+    session_user = str(identity.get("session_user") or "")
+    if current_user != expected_role:
+        raise ForensicReadbackError("PRODUCTION_READONLY_ROLE_MISMATCH")
+    if str(identity.get("transaction_read_only", "")).lower() not in {"on", "true", "1"}:
+        raise ForensicReadbackError("BLOCKED_READONLY_TRANSACTION_NOT_ENFORCED")
+    return current_user, session_user, True
+
+
+def read_post_close_run(
+    *,
+    database_url: str,
+    run_id: str,
+    expected_role: str,
+    forensic_tool_sha: str,
+    engine_factory: Callable[..., Any] | None = None,
+    now: datetime | None = None,
+) -> dict[str, Any]:
+    """Read one POST_CLOSE run through the fixed, bounded forensic surface."""
+
+    if not database_url:
+        raise ForensicReadbackError("BLOCKED_PRODUCTION_READONLY_SECRET_MISSING")
+    if not expected_role:
+        raise ForensicReadbackError("PRODUCTION_READONLY_ROLE_EXPECTATION_MISSING")
+    run_uuid = validate_run_id(run_id)
+    tool_sha = validate_forensic_sha(forensic_tool_sha)
+    engine = (engine_factory or create_engine)(database_url, pool_pre_ping=True)
+    try:
+        with engine.connect() as connection, connection.begin():
+            current_user, session_user, transaction_read_only = _read_only_identity(
+                connection, expected_role
+            )
+            run_rows = _execute_mappings(connection, RUN_QUERY, {"run_id": run_uuid})
+            if not run_rows:
+                raise ForensicReadbackError("POST_CLOSE_RUN_NOT_FOUND")
+            run = run_rows[0]
+            attempt_groups = _execute_mappings(
+                connection, ATTEMPT_GROUP_QUERY, {"run_id": run_uuid}
+            )
+            representatives = _execute_mappings(
+                connection, ATTEMPT_REPRESENTATIVE_QUERY, {"run_id": run_uuid}
+            )
+            checkpoints = _execute_mappings(connection, CHECKPOINT_QUERY, {"run_id": run_uuid})
+            market_rows = _execute_mappings(connection, MARKET_SUMMARY_QUERY, {"run_id": run_uuid})
+            error_rows = _execute_mappings(connection, ERROR_SUMMARY_QUERY, {"run_id": run_uuid})
+            provider_rows = _execute_mappings(
+                connection, PROVIDER_STATUS_SUMMARY_QUERY, {"run_id": run_uuid}
+            )
+            privilege_rows = _execute_mappings(connection, PRIVILEGE_QUERY)
+            privileges, mutation_status = _privilege_status(privilege_rows)
+
+    except ForensicReadbackError:
+        raise
+    except Exception as exc:
+        raise ForensicReadbackError("FORENSIC_QUERY_FAILED", type(exc).__name__) from exc
+    finally:
+        engine.dispose()
+
+    safe_checkpoints = [_safe_checkpoint(row) for row in checkpoints]
+    failed_checkpoints = [row for row in safe_checkpoints if row["status"] == "FAILED"]
+    safe_market = []
+    for row in market_rows:
+        safe_market.append(
+            {
+                "marketCode": _sanitize_text(row.get("market_code"), limit=64),
+                "attemptCount": int(row.get("attempt_count", 0) or 0),
+                "successCount": int(row.get("success_count", 0) or 0),
+                "failureCount": int(row.get("failure_count", 0) or 0),
+                "skippedCount": int(row.get("skipped_count", 0) or 0),
+                "timeoutCount": int(row.get("timeout_count", 0) or 0),
+                "instrumentCount": int(row.get("instrument_count", 0) or 0),
+                "firstStartedAt": _as_iso(row.get("first_started_at")),
+                "lastRetrievedAt": _as_iso(row.get("last_retrieved_at")),
+            }
+        )
+    generated_at = now or datetime.now(UTC)
+    if generated_at.tzinfo is None:
+        generated_at = generated_at.replace(tzinfo=UTC)
+    return {
+        "forensicToolSha": tool_sha,
+        "databaseRole": current_user,
+        "sessionUser": session_user,
+        "transactionReadOnly": transaction_read_only,
+        "targetTableScope": list(TARGET_TABLE_SCOPE),
+        "targetPrivileges": privileges,
+        "mutationPrivilegesPresent": mutation_status,
+        "run": _safe_run(run),
+        "attemptSummary": [_safe_attempt_group(row) for row in attempt_groups],
+        "attemptRepresentatives": [
+            _safe_attempt(row) for row in representatives[:MAX_ATTEMPT_REPRESENTATIVES]
+        ],
+        "checkpointTimeline": safe_checkpoints,
+        "firstFailedCheckpoint": failed_checkpoints[0] if failed_checkpoints else None,
+        "marketSummary": safe_market,
+        "errorSummary": [_safe_distribution(row, key="error_code") for row in error_rows],
+        "providerStatusSummary": [
+            _safe_distribution(row, key="provider_status") for row in provider_rows
+        ],
+        "generatedAt": generated_at.astimezone(UTC).isoformat().replace("+00:00", "Z"),
+    }
+
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--command", choices=SUPPORTED_FORENSIC_COMMANDS, required=True)
+    parser.add_argument("--run-id", required=True)
+    parser.add_argument("--output", required=True, type=Path)
+    return parser
+
+
+def main(argv: list[str] | None = None) -> int:
+    args = build_parser().parse_args(argv)
+    try:
+        validate_command(args.command)
+        payload = read_post_close_run(
+            database_url=os.environ.get("TOPICPILOT_PRODUCTION_READONLY_DATABASE_URL", ""),
+            run_id=args.run_id,
+            expected_role=os.environ.get("TOPICPILOT_PRODUCTION_READONLY_ROLE", ""),
+            forensic_tool_sha=os.environ.get("TOPICPILOT_FORENSIC_TOOL_SHA", ""),
+        )
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(
+            json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+        print(
+            json.dumps(
+                {
+                    "status": "PASS",
+                    "command": args.command,
+                    "runId": payload["run"]["id"],
+                    "output": str(args.output),
+                    "databaseRole": payload["databaseRole"],
+                    "transactionReadOnly": payload["transactionReadOnly"],
+                },
+                ensure_ascii=False,
+                sort_keys=True,
+            )
+        )
+        return 0
+    except ForensicReadbackError as exc:
+        print(json.dumps({"status": "BLOCKED", "code": exc.code}), file=sys.stderr)
+        return 2
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
