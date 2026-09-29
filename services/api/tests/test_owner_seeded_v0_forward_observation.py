@@ -3,7 +3,6 @@ from pathlib import Path
 
 import pytest
 from jsonschema import Draft202012Validator
-
 from services.api.tools.capture_owner_seeded_v0_forward_observation import (
     OBSERVATION_SCHEMA_VERSION,
     POLICY_HASH,
@@ -11,6 +10,7 @@ from services.api.tools.capture_owner_seeded_v0_forward_observation import (
     _write_idempotent,
     capture_observation,
 )
+
 from topicpilot_api.topic_engine.forward_observation_activation import ACTIVATION_TASK_ID
 from topicpilot_api.topic_engine.owner_seeded_v0_policy import (
     CORE,
