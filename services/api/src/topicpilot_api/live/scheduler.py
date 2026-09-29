@@ -15,6 +15,26 @@ from .logging import log_event
 from .session import MarketSessionClock, SessionState
 
 
+def decide_runtime_mode(
+    session_clock: MarketSessionClock,
+    post_close_start: str | clock_time,
+    now: datetime | None = None,
+) -> str:
+    """Resolve one normal runtime mode from the frozen trigger contract."""
+
+    status = session_clock.status(now)
+    if status.state == SessionState.OPEN:
+        return "INTRADAY"
+    if status.reason != "OUTSIDE_SESSION":
+        return "WAIT"
+    threshold = (
+        clock_time.fromisoformat(post_close_start)
+        if isinstance(post_close_start, str)
+        else post_close_start
+    )
+    return "POST_CLOSE" if status.local_time.time() >= threshold else "WAIT"
+
+
 class LiveScheduler:
     """Run the same collector from a service, cron, Task Scheduler, or worker."""
 
@@ -45,15 +65,11 @@ class LiveScheduler:
         )
 
     def decide(self, now: datetime | None = None) -> str:
-        status = self.session_clock.status(now or self.clock())
-        if status.state == SessionState.OPEN:
-            return "INTRADAY"
-        if status.reason in {"WEEKEND", "CONFIGURED_CLOSED_DATE"}:
-            return "WAIT"
-        local = status.local_time
-        if self.post_close_start <= local.time():
-            return "POST_CLOSE"
-        return "WAIT"
+        return decide_runtime_mode(
+            self.session_clock,
+            self.post_close_start,
+            now or self.clock(),
+        )
 
     def run_once(self, mode: str = "AUTO", *, enforce_session: bool = True):
         normalized = mode.upper()
@@ -160,4 +176,4 @@ class LiveScheduler:
         log_event(self.logger, "tracking_universe_refreshed", instrumentCount=count)
 
 
-__all__ = ["LiveScheduler"]
+__all__ = ["LiveScheduler", "decide_runtime_mode"]
