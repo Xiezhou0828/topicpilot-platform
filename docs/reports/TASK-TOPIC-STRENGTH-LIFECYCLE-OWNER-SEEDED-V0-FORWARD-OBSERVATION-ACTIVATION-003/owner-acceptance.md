@@ -26,6 +26,7 @@ new policy version, historical backfill, or Production activation.
 CANONICAL_BASE_SHA=6cb88c0d7fceb45b244d295883636706f50ea0be
 OWNER_REVIEW_SOURCE_SHA=04f208a6e3465207652938e1229f41be122f63f9
 OWNER_REVIEW_BRANCH=codex/topic-strength-lifecycle-owner-review-002
+IMPLEMENTATION_SHA=897579b53ca933957367467c1219930f144df626
 ```
 
 The review source contains the exact 25-scenario replay, with 10
