@@ -104,14 +104,16 @@ def forensic_fixture() -> Iterator[tuple[str, str, str]]:
                 ),
                 {"id": uuid4(), "run_id": run_id, "created_at": now},
             )
-        role_engine = create_engine(
-            admin_url.set(username=role, password=password), pool_pre_ping=True
+        role_url = admin_url.set(username=role, password=password).render_as_string(
+            hide_password=False
         )
-        yield str(admin_url.set(username=role, password=password)), role, str(run_id)
+        role_engine = create_engine(role_url, pool_pre_ping=True)
+        yield role_url, role, str(run_id)
     finally:
         if role_engine is not None:
             role_engine.dispose()
         with admin_engine.begin() as connection:
+            connection.exec_driver_sql(f"DROP OWNED BY {role_ident}")
             connection.exec_driver_sql(f"DROP ROLE IF EXISTS {role_ident}")
         admin_engine.dispose()
 
