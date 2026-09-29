@@ -55,7 +55,8 @@ test("Today mainline cards navigate with the backend topic slug and preserve nul
   const page = await read("components/v2/TodayMarketPage.tsx");
   assert.match(page, /key=\{topic\.slug\}/);
   assert.match(page, /topic\.grade && <GradeChip grade=\{topic\.grade\}/);
-  assert.match(page, /topic\.currentState/);
+  assert.match(page, /topic\.lifecycle/);
+  assert.match(page, /topic\.absoluteScore/);
   assert.match(page, /href=\{`\/topics\/\$\{topic\.slug\}`\}/);
 });
 
@@ -85,6 +86,6 @@ test("Today heating and cooling fail closed and only expose Preview explicitly",
   assert.match(adapter, /state: "UNAVAILABLE"/);
   assert.match(adapter, /data\.length === 0/);
   assert.match(adapter, /data\.every\(isHomeRotationTopic\)/);
-  assert.match(adapter, /目前沒有足夠的 14 日資料/);
+  assert.match(adapter, /目前沒有足夠的正式 Topic Strength 5D 歷史資料/);
   assert.doesNotMatch(adapter, /fallback|rank|ranking|direction inference|strength calculation/i);
 });

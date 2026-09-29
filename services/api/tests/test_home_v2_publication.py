@@ -11,7 +11,7 @@ from topicpilot_api.home_v2_publication import (
     build_daily_focus,
     build_market_distribution,
     build_market_signals,
-    calculate_rotation_14d,
+    calculate_fast_rotation,
     empty_home_v2,
     rank_formal_topics,
     validate_home_gate,
@@ -23,105 +23,93 @@ from topicpilot_api.market_data.index_contract import (
 from topicpilot_api.schemas import HomeResponse
 
 
-def test_main_topics_rank_is_deterministic_and_exposes_evidence_not_a_new_score():
+def test_main_topics_rank_is_formal_and_deterministic():
     rows = [
         {
             "topic_slug": "beta",
             "topic_name": "Beta",
-            "data_status": "COMPLETE",
-            "observed_stock_count": 8,
+            "snapshot_date": date(2026, 8, 21),
+            "formal_member_count": 8,
+            "formal_daily_grade": "A",
+            "absolute_score": 70,
+            "relative_score": 60,
+            "formal_lifecycle": "FERMENTING",
+            "authority_status": "VALID",
+            "authority_quality_valid": True,
             "coverage_pct": 80,
-            "positive_count": 5,
-            "average_change": 1.0,
-            "stock_count": 10,
         },
         {
             "topic_slug": "alpha",
             "topic_name": "Alpha",
-            "data_status": "COMPLETE",
-            "observed_stock_count": 8,
+            "snapshot_date": date(2026, 8, 21),
+            "formal_member_count": 8,
+            "formal_daily_grade": "A",
+            "absolute_score": 70,
+            "relative_score": 60,
+            "formal_lifecycle": "FERMENTING",
+            "authority_status": "VALID",
+            "authority_quality_valid": True,
             "coverage_pct": 80,
-            "positive_count": 5,
-            "average_change": 1.0,
-            "stock_count": 10,
-        },
-        {
-            "topic_slug": "incomplete",
-            "topic_name": "Incomplete",
-            "data_status": "PARTIAL",
-            "observed_stock_count": 99,
-            "coverage_pct": 99,
-            "positive_count": 99,
-            "average_change": 99.0,
-            "stock_count": 100,
         },
     ]
 
     result = rank_formal_topics(reversed(rows))
 
-    assert [item["slug"] for item in result] == ["alpha", "beta", "incomplete"]
-    assert all(item["strength"] is None for item in result)
-    assert result[0]["rankingEvidence"]["rankingPolicy"].startswith("availability,")
-    assert result[0]["rankingEvidence"]["averageChange"] == 1.0
+    assert [item["slug"] for item in result] == ["alpha", "beta"]
+    assert result[0]["absoluteScore"] == 70
+    assert result[0]["rankingEvidence"]["rankingPolicy"].startswith("lifecycle,")
 
 
-def test_rotation_requires_fifteen_sessions_and_excludes_zero_change():
+def test_rotation_uses_five_session_absolute_strength_median():
     target = date(2026, 8, 21)
-    dates = [target - timedelta(days=offset) for offset in range(14, -1, -1)]
+    dates = [target - timedelta(days=offset) for offset in range(5, 0, -1)]
     rows = []
-    for snapshot_date in dates:
+    for index, snapshot_date in enumerate(dates):
         rows.extend(
             [
                 {
                     "topic_slug": "heating",
                     "topic_name": "Heating",
                     "snapshot_date": snapshot_date,
-                    "average_change": 1.0 if snapshot_date != target else 4.0,
-                    "observed_stock_count": 5,
-                    "market_grade": "A",
-                    "as_of_at": datetime(2026, 8, 21, 16, tzinfo=UTC),
+                    "formal_member_count": 5,
+                    "formal_daily_grade": "A",
+                    "absolute_score": 50 + index,
+                    "relative_score": 45 + index,
+                    "formal_lifecycle": "FERMENTING",
+                    "authority_status": "VALID",
+                    "authority_quality_valid": True,
                 },
                 {
                     "topic_slug": "cooling",
                     "topic_name": "Cooling",
                     "snapshot_date": snapshot_date,
-                    "average_change": 3.0 if snapshot_date != target else 1.0,
-                    "observed_stock_count": 5,
-                    "market_grade": "B",
-                    "as_of_at": datetime(2026, 8, 21, 16, tzinfo=UTC),
-                },
-                {
-                    "topic_slug": "flat",
-                    "topic_name": "Flat",
-                    "snapshot_date": snapshot_date,
-                    "average_change": 2.0,
-                    "observed_stock_count": 5,
-                    "market_grade": "B",
-                    "as_of_at": datetime(2026, 8, 21, 16, tzinfo=UTC),
+                    "formal_member_count": 5,
+                    "formal_daily_grade": "B",
+                    "absolute_score": 100 - index,
+                    "relative_score": 95 - index,
+                    "formal_lifecycle": "MATURE",
+                    "authority_status": "VALID",
+                    "authority_quality_valid": True,
                 },
             ]
         )
+    rows.extend(
+        [
+            {**rows[0], "snapshot_date": target, "absolute_score": 62},
+            {**rows[1], "snapshot_date": target, "absolute_score": 88},
+        ]
+    )
 
-    heating, cooling, reason = calculate_rotation_14d(rows, target_date=target)
+    heating, cooling, reason = calculate_fast_rotation(rows, target_date=target)
 
     assert reason is None
     assert [item["topicSlug"] for item in heating] == ["heating"]
     assert [item["topicSlug"] for item in cooling] == ["cooling"]
-    assert heating[0]["strengthDelta"] == 3.0
-    assert cooling[0]["strengthDelta"] == -2.0
-    assert heating[0]["averageDailyChange"] == 4.0
+    assert heating[0]["strengthDelta"] == 10.0
+    assert cooling[0]["strengthDelta"] == -10.0
+    assert heating[0]["baselineMedian"] == 52.0
     assert heating[0]["observedStockCount"] == 5
-    assert heating[0]["rotationEvidence"]["referenceDate"] == dates[0]
-
-    short_rows = [row for row in rows if row["snapshot_date"] != dates[0]]
-    short_heating, short_cooling, short_reason = calculate_rotation_14d(
-        short_rows, target_date=target, limit=3
-    )
-    assert (short_heating, short_cooling, short_reason) == (
-        [],
-        [],
-        "INSUFFICIENT_ROTATION_HISTORY",
-    )
+    assert heating[0]["rotationEvidence"]["baselineSessions"] == dates
 
 
 def test_daily_focus_is_rule_based_and_fail_closed_without_evidence():

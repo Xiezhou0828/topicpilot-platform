@@ -306,8 +306,22 @@ function leafStateFromApi(item: ApiTopicSummary): TopicLeafState {
     publication: item.publication,
     quality: item.quality,
     lineage: item.lineage,
-    ownerSeededV0: item.ownerSeededV0,
-    forwardObservation: item.forwardObservation,
+    ownerSeededV0: {
+      ...item.ownerSeededV0,
+      asOfDate: item.ownerSeededV0.asOfDate ?? null,
+      formalDailyGrade: item.ownerSeededV0.formalDailyGrade ?? null,
+      absolute: item.ownerSeededV0.absolute ?? {},
+      relative: item.ownerSeededV0.relative ?? {},
+      lifecycle: item.ownerSeededV0.lifecycle ?? {},
+      observationFlags: item.ownerSeededV0.observationFlags ?? [],
+      observationFlagCopy: item.ownerSeededV0.observationFlagCopy ?? {},
+      qualityFlags: item.ownerSeededV0.qualityFlags ?? {},
+    },
+    forwardObservation: {
+      ...item.forwardObservation,
+      latestAsOfDate: item.forwardObservation.latestAsOfDate ?? null,
+      implementationShas: item.forwardObservation.implementationShas ?? [],
+    },
   };
 }
 

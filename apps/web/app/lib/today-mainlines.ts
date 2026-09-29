@@ -275,8 +275,8 @@ function mapDailyFocus(
 function isHomeMarketPulseEvent(value: HomeMarketPulseEvent): boolean {
   return Boolean(
     value
-      && typeof value.eventTime === "string"
-      && value.eventTime.trim().length > 0
+      && (value.eventTime === undefined || value.eventTime === null || typeof value.eventTime === "string")
+      && (value.dataDate === undefined || value.dataDate === null || typeof value.dataDate === "string")
       && typeof value.topic === "string"
       && value.topic.trim().length > 0
       && typeof value.eventType === "string"
@@ -613,7 +613,7 @@ function mapRotation(
       state: "UNAVAILABLE",
       data: [],
       ...shared,
-      reason: sectionUserMessage(resource, section, "目前沒有足夠的 14 日資料。"),
+      reason: sectionUserMessage(resource, section, "目前沒有足夠的正式 Topic Strength 5D 歷史資料。"),
     };
   }
 
@@ -622,7 +622,7 @@ function mapRotation(
       state: "UNAVAILABLE",
       data: [],
       ...shared,
-      reason: sectionUserMessage(resource, section, "目前沒有足夠的 14 日資料。"),
+      reason: sectionUserMessage(resource, section, "目前沒有足夠的正式 Topic Strength 5D 歷史資料。"),
     };
   }
 
@@ -631,7 +631,7 @@ function mapRotation(
       state,
       data: [],
       ...shared,
-      reason: resource.metadata.reason ?? "目前沒有足夠的 14 日資料。",
+      reason: resource.metadata.reason ?? "目前沒有足夠的正式 Topic Strength 5D 歷史資料。",
     };
   }
 
@@ -641,7 +641,7 @@ function mapRotation(
     ...shared,
     reason: state === "FORMAL"
       ? null
-      : resource.metadata.reason ?? `${section === "heatingTopics" ? "升溫" : "降溫"}資料目前僅供預覽。`,
+      : resource.metadata.reason ?? `${section === "heatingTopics" ? "升溫" : "退潮"}資料目前僅供預覽。`,
   };
 }
 

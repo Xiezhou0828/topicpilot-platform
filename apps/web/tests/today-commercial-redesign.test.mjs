@@ -16,7 +16,7 @@ test("Today commercial surface is EOD-first and excludes mockup values", async (
   assert.doesNotMatch(page, /追蹤股票|追蹤題材|不可用家數|provider|generatedAt.*顯示/);
 });
 
-test("Today distribution, ticker, and opportunity entry remain backend-owned", async () => {
+test("Today distribution, topic pulse, and opportunity entry remain backend-owned", async () => {
   const [page, fields, css] = await Promise.all([
     read("components/v2/TodayMarketPage.tsx"),
     read("lib/today-market-fields.ts"),
@@ -31,12 +31,13 @@ test("Today distribution, ticker, and opportunity entry remain backend-owned", a
   assert.match(page, /resource\.data\?\.signals/);
   assert.match(page, /signal\.isActive|signal\.signalTemporalStatus|signal\.frequencyMessage/);
   assert.doesNotMatch(page, /indices\.reduce|turnover\.reduce|distribution.*sort|changePct.*calculate/i);
-  assert.match(page, /暫停題材動態/);
+  assert.match(page, /題材動態翻頁控制/);
+  assert.doesNotMatch(page, /暫停題材動態|播放題材動態/);
   assert.match(page, /href="\/opportunities"/);
   assert.match(page, /正式機會資料尚未發布|正式機會資料已發布/);
   assert.match(fields, /HomeMarketDistribution/);
   assert.match(fields, /formatMarketShare/);
-  assert.match(css, /tp-home-topic-ticker-track/);
+  assert.match(css, /tp-home-topic-pulse-grid/);
   assert.match(css, /prefers-reduced-motion: reduce/);
   assert.match(css, /overflow-x:auto/);
 });
