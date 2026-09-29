@@ -13,6 +13,8 @@ import {
   type TopicConstituent,
   type TopicDetail as TopicData,
   type TopicLifecycle,
+  type TopicForwardObservation,
+  type TopicOwnerSeededV0,
   type TopicPublicationDisclosure,
   type TopicResource,
   type TopicStatus,
@@ -118,6 +120,22 @@ function TodayStatusSection({
     <ResearchValue label="資料日期" value={topic.dataDate} disclosure={dateDisclosure} />
     <ResearchValue label="覆蓋率" value={topic.coveragePct === null ? null : `${topic.coveragePct}%`} disclosure={snapshotDisclosure} />
   </div></Card>;
+}
+
+function OwnerSeededV0Section({
+  strength,
+  observation,
+}: {
+  strength?: TopicOwnerSeededV0;
+  observation?: TopicForwardObservation;
+}) {
+  if (!strength || !observation) {
+    return <Card className="tp-topic-detail-card tp-topic-v0-card" data-testid="topic-v0-unavailable"><TopicSectionHeading title="Owner-seeded V0 觀察" description="正式後端 read model 尚未提供可安全呈現的 V0 結果；前端不自行計算。" /><EmptyState title="正式 V0 結果目前無法取得" description="請等待 canonical Topic read model 回傳正式結果。" /></Card>;
+  }
+  const lifecycle = strength.lifecycle;
+  const showWaiting = strength.status !== "AVAILABLE";
+  const progressStarted = observation.status === "AVAILABLE";
+  return <Card className="tp-topic-detail-card tp-topic-v0-card" data-testid="topic-v0-observation"><TopicSectionHeading title="Owner-seeded V0 觀察" description="Grade 是當日強度；Lifecycle 是跨期狀態。觀察旗標只供 Owner review，不會覆寫正式結果。" /><div className="tp-topic-v0-identity"><span className="tp-chip">Policy {strength.policyVersion}</span><span className="tp-chip">Diagnostic only</span>{strength.asOfDate && <span className="tp-chip">資料日 {strength.asOfDate}</span>}{strength.qualityFlags.SMALL_SAMPLE_X === true && <span className="tp-chip">小樣本 X · backend</span>}</div>{showWaiting ? <div className="tp-topic-v0-waiting"><strong>尚未累積正式交易日</strong><span>{observation.observationStartDate === "PENDING_CANONICAL_ACTIVATION" ? "等待 canonical activation 後開始 forward observation。" : "等待第一筆正式 post-close observation。"}</span></div> : <div className="tp-topic-v0-grid"><div className="tp-topic-v0-primary"><span>今日強度</span><GradeChip grade={strength.formalDailyGrade} /><small>Formal Daily Grade</small></div><div className="tp-topic-v0-primary"><span>生命週期</span><strong>{String(lifecycle.after ?? "—")}</strong><small>跨期狀態</small></div><div className="tp-topic-v0-primary"><span>候選狀態</span><strong>{lifecycle.candidate ?? "—"}</strong><small>{lifecycle.transitionConfirmed ? "已確認" : "等待確認"}</small></div><div className="tp-topic-v0-view"><span>Absolute</span><GradeChip grade={typeof strength.absolute.grade === "string" ? strength.absolute.grade : null} /><small>{typeof strength.absolute.score === "number" ? strength.absolute.score.toFixed(3) : "分數待提供"}</small></div><div className="tp-topic-v0-view"><span>Relative</span><GradeChip grade={typeof strength.relative.grade === "string" ? strength.relative.grade : null} /><small>{typeof strength.relative.score === "number" ? strength.relative.score.toFixed(3) : "分數待提供"}</small></div><div className="tp-topic-v0-primary"><span>Transition</span><strong>{String(lifecycle.transitionReason ?? "—")}</strong><small>Backend formal lifecycle result</small></div></div>}{strength.observationFlags.length > 0 && <div className="tp-topic-v0-flags" aria-label="觀察中"><span className="tp-topic-v0-observing">觀察中</span>{strength.observationFlags.map((flag) => <div className="tp-topic-v0-flag" key={flag}><strong>{flag}</strong><span>{strength.observationFlagCopy[flag] ?? "此情境保留供 Owner review。"}</span></div>)}</div>}<div className="tp-topic-v0-progress"><div><span>Forward Observation</span><strong>{progressStarted ? `${observation.sessionCount} sessions` : "等待啟動"}</strong></div><div><span>Observation start</span><strong>{observation.observationStartDate}</strong></div><div><span>下一檢查點</span><strong>{observation.nextCheckpoint ? `${observation.nextCheckpoint}D Owner Review` : "待 Owner review"}</strong></div><div className="tp-topic-v0-checkpoints">{Object.entries(observation.checkpointStatus).map(([checkpoint, status]) => <span className="tp-chip" data-checkpoint-status={status} key={checkpoint}>{checkpoint}: {status}</span>)}</div></div></Card>;
 }
 
 function TopicStatusSection({
@@ -288,6 +306,7 @@ export default function TopicDetailPage({ slug }: { slug: string }) {
         <TopicHierarchySection topic={topic} />
         {topic.kind === "PARENT" ? <ParentTopicState publication={publication} /> : <>
           <TodayStatusSection topic={topic} preview={preview} publication={publication} />
+          <OwnerSeededV0Section strength={topic.ownerSeededV0} observation={topic.forwardObservation} />
           <TopicStatusSection topic={topic} preview={preview} publication={publication} />
           <ConstituentsSection stocks={stocks} publication={publication} onSelect={setSelectedStock} />
           {selectedStock && <StockEncyclopediaDrawer presentation="inline" stock={stockDrawerItem(topic, selectedStock, resource)} onClose={() => setSelectedStock(null)} />}

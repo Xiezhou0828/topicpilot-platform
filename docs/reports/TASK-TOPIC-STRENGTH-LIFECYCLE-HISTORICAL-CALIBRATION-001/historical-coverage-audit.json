@@ -1,0 +1,78 @@
+{
+  "artifactVersion": "topic-strength-historical-calibration.v1.candidate",
+  "rowSchemaVersion": "topic-strength-calibration-row.v1",
+  "inputRowCount": 0,
+  "historicalDateRange": {
+    "start": null,
+    "end": null
+  },
+  "instrumentCount": 0,
+  "eligibleInstrumentCount": 0,
+  "eligibleTopicDayCount": 0,
+  "absoluteEligibleMemberRows": 0,
+  "relativeEligibleMemberRows": 0,
+  "weightedEligibleMemberRows": 0,
+  "roleAuthorityCoverage": 0.0,
+  "benchmarkCoverage": 0.0,
+  "exclusionReasons": {},
+  "status": "INSUFFICIENT_DATA",
+  "noLookahead": true,
+  "productionActive": false,
+  "sourceReadiness": {
+    "taskId": "TASK-TOPIC-STRENGTH-LIFECYCLE-HISTORICAL-CALIBRATION-001",
+    "status": "BOUNDED_DATA_LIMITATION",
+    "sourceAuthority": "COMMITTED_A2_AND_WS1_AUDIT_ARTIFACTS",
+    "observedEvidenceWindow": {
+      "start": "2026-02-02",
+      "end": "2026-08-13",
+      "note": "Evidence window only; not a claim that every date is calibration-eligible."
+    },
+    "canonicalPriceEvidence": {
+      "start": "2026-02-02",
+      "end": "2026-08-13",
+      "instrumentCount": 507,
+      "acceptedRows": 63826,
+      "status": "PRICE_FACTS_ONLY",
+      "source": "TASK-WS1-L2-HISTORICAL-RECONSTRUCTION-PREFLIGHT-20260822"
+    },
+    "sharedBootstrapEvidence": {
+      "start": "2024-08-13",
+      "end": "2026-08-13",
+      "instrumentCount": 603,
+      "acceptedRows": 288881,
+      "status": "NON_PRODUCTION_NOT_MERGED",
+      "source": "TASK-SHARED-DATA-FOUNDATION-603-UNIVERSE-AND-2Y-OHLCV-BOOTSTRAP-EXECUTION-20260819"
+    },
+    "formalPitEvidence": {
+      "start": "2026-08-07",
+      "end": "2026-08-13",
+      "topicDayRows": 460,
+      "topicCount": 92,
+      "expectedMemberFacts": 4240,
+      "observedMemberFacts": 4236,
+      "closureRows": 4235,
+      "strictFullyReconstructableCells": 0,
+      "status": "FAIL_CLOSED",
+      "blockers": [
+        "current-only historical LiveTrackingUniverse",
+        "one-row member-fact reconciliation mismatch",
+        "adjustment/corporate-action continuity unknown",
+        "no committed same-date benchmark export"
+      ],
+      "source": "TASK-WS1-L2-HISTORICAL-LIFECYCLE-RECONSTRUCTION-PREFLIGHT-20260822"
+    },
+    "roleAuthority": {
+      "status": "BOUNDARY_ONLY",
+      "pitApprovedCalibrationRows": 0,
+      "note": "Existing reconstruction uses current taxonomy and explicitly is not PIT truth."
+    },
+    "benchmarkCoverage": {
+      "status": "NOT_AVAILABLE_IN_COMMITTED_EXPORT",
+      "sameDateTaiexRows": 0,
+      "sameDateTpexIndexRows": 0
+    },
+    "calibrationDecision": "Do not fit or publish candidate numeric values from the available artifacts."
+  },
+  "inputPath": null,
+  "readOnly": true
+}

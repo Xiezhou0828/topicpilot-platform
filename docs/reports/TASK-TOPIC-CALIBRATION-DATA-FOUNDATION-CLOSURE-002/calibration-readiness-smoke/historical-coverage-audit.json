@@ -1,0 +1,49 @@
+{
+  "artifactVersion": "topic-strength-historical-calibration.v1.candidate",
+  "rowSchemaVersion": "topic-strength-calibration-row.v1",
+  "inputRowCount": 0,
+  "historicalDateRange": {
+    "start": null,
+    "end": null
+  },
+  "instrumentCount": 0,
+  "eligibleInstrumentCount": 0,
+  "eligibleTopicDayCount": 0,
+  "absoluteEligibleMemberRows": 0,
+  "relativeEligibleMemberRows": 0,
+  "weightedEligibleMemberRows": 0,
+  "roleAuthorityCoverage": 0.0,
+  "benchmarkCoverage": 0.0,
+  "exclusionReasons": {},
+  "status": "INSUFFICIENT_DATA",
+  "noLookahead": true,
+  "productionActive": false,
+  "sourceReadiness": {
+    "canonical_base_sha": "c3542a900d6c46e07bc4243804e9705475023316",
+    "date_range": null,
+    "generated_at": "2026-09-29T04:12:08+08:00",
+    "generator_version": "run_calibration_data_foundation.py.v1",
+    "no_look_ahead": {
+      "future_authority_rows_used": 0,
+      "status": "PASS_ZERO_STRICT_ROWS"
+    },
+    "readiness_classes": {
+      "AUTHORITY_AMBIGUOUS": 0,
+      "BENCHMARK_READY_ROLE_MISSING": 126,
+      "INSUFFICIENT_MEMBER_COUNT": null,
+      "MISSING_BENCHMARK": 0,
+      "MISSING_PREVIOUS_CLOSE": 0,
+      "MISSING_PRICE": null,
+      "PRICE_ONLY": 0,
+      "ROLE_READY_BENCHMARK_MISSING": 0,
+      "STRICT_READY": 0
+    },
+    "schema_version": "topic-strength-strict-calibration-readiness.v1",
+    "status": "BENCHMARK_READY_ROLE_MISSING",
+    "strict_member_day_count": 0,
+    "strict_ready": false,
+    "strict_topic_day_count": 0
+  },
+  "inputPath": null,
+  "readOnly": true
+}

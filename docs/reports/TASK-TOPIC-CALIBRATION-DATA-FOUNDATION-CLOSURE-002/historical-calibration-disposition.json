@@ -1,0 +1,55 @@
+{
+  "schema_version": "topic-strength-historical-calibration-disposition.v1",
+  "task_id": "TASK-TOPIC-CALIBRATION-DATA-FOUNDATION-CLOSURE-002",
+  "historical_calibration_status": "HISTORICAL_CALIBRATION_NOT_FEASIBLE",
+  "operating_mode": "OWNER_SEEDED_V0",
+  "owner_seed_status": "PENDING_OWNER_INPUT",
+  "strict_pit_calibratable_topic_day_count": 0,
+  "strict_pit_calibratable_member_day_count": 0,
+  "evidence_basis": {
+    "canonical_base_sha": "c3542a900d6c46e07bc4243804e9705475023316",
+    "price_window": "2026-02-02..2026-08-13",
+    "price_instrument_count": 507,
+    "price_row_count": 63826,
+    "formal_pit_authority_window": "2026-08-24..OPEN",
+    "official_taiex_sessions": 126,
+    "official_tpex_index_sessions": 126,
+    "prior_runtime_topic_day_rows": 460,
+    "prior_runtime_closure_member_facts": 4235,
+    "prior_runtime_evidence_promoted_to_pit_authority": false
+  },
+  "governance_rules": {
+    "manual_historical_authority_reconstruction": "FORBIDDEN",
+    "current_role_retrofill": "FORBIDDEN",
+    "pit_standard_relaxation": "FORBIDDEN",
+    "numeric_parameter_selection": "NOT_PERFORMED",
+    "production_activation": "FORBIDDEN"
+  },
+  "owner_seed_contract": {
+    "seed_values": null,
+    "seed_source": "OWNER_SUPPLIED_ONLY",
+    "seed_effective_date": "OWNER_MUST_SPECIFY",
+    "seed_must_preserve_design_freeze": true,
+    "seed_is_historical_calibration": false,
+    "seed_is_production_active": false
+  },
+  "known_limitations": [
+    "Formal PIT membership and structural-role authority begins after the committed price window.",
+    "Prior runtime evidence has a 4235 versus 4236 reconciliation mismatch and no committed PIT authority lineage.",
+    "Committed price evidence does not contain a member/date export, so benchmark member-day coverage is not computable.",
+    "Historical Score Importance authority is unavailable.",
+    "Price adjustment and corporate-action provenance remains partially unknown."
+  ],
+  "source_artifacts": [
+    "strict-calibration-readiness-summary.json",
+    "strict-topic-day-gap-classification.csv",
+    "pit-authority-resolution.json",
+    "taiex-history.json",
+    "tpex-index-history.json",
+    "topic-strength-calibration-register.v3.json"
+  ],
+  "production_active": false,
+  "migration_applied": false,
+  "deployed": false,
+  "pushed": false
+}

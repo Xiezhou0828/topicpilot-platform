@@ -16,13 +16,13 @@ from topicpilot_api.topic_lifecycle_contract import BACKEND_LIFECYCLE_STAGES
 
 BASE, SPROUTING, FERMENTING, MAIN_RISE, MATURE, DECLINING = BACKEND_LIFECYCLE_STAGES
 LIFECYCLE_STAGES = BACKEND_LIFECYCLE_STAGES
-LIFECYCLE_CALCULATION_VERSION = "topic-lifecycle-v1-shadow.v1.2"
-# Numeric policy and thresholds are unchanged; V1.2 ontology is carried by
-# the calculation/state-memory versions instead of pretending this is a new
-# calibration policy.
-LIFECYCLE_POLICY_VERSION = "topic-lifecycle-policy.v1"
+LIFECYCLE_CALCULATION_VERSION = "topic-lifecycle-role-diffusion.v2.shadow"
+LIFECYCLE_POLICY_VERSION = "topic-lifecycle-role-diffusion.v2.provisional"
 
-ROLE_LEAD = "LEAD"
+# ``ROLE_LEAD`` is a compatibility alias only.  It no longer denotes a
+# fourth formal role or a dynamic leader set.
+ROLE_REPRESENTATIVE = "REPRESENTATIVE"
+ROLE_LEAD = ROLE_REPRESENTATIVE
 ROLE_CORE = "CORE"
 ROLE_RELATED = "RELATED"
 KNOWN_ROLES = frozenset({ROLE_LEAD, ROLE_CORE, ROLE_RELATED})
@@ -61,8 +61,10 @@ class LifecyclePolicy:
     normal_confirmation_days: int = 2
     decline_confirmation_days: int = 2
     minimum_transition_confidence: float = 0.30
-    lead_core_authority_weight: float = 0.70
-    related_authority_weight: float = 0.30
+    # Retained as nullable compatibility fields; role-diffusion evaluation
+    # never uses a 70/30 blend as stage authority.
+    lead_core_authority_weight: float | None = None
+    related_authority_weight: float | None = None
     meaningful_expansion_pct: float = 4.0
     mature_stalled_expansion_sessions: int = 5
     mature_recovery_min_positive_breadth: float = 0.45
@@ -209,17 +211,14 @@ def _group(items: list[LifecycleObservation], policy: LifecyclePolicy) -> _Group
     positive = sum(value > 0 for value in changes)
     strong = sum(value >= policy.strong_member_change_pct for value in changes)
     weak = sum(value <= policy.weak_member_change_pct for value in changes)
-    leader = max(items, key=lambda item: float(item.change_pct)) if items else None
     return _GroupMetrics(
         count=len(changes),
         average_change=round(sum(changes) / len(changes), 4) if changes else None,
         positive_breadth=_ratio(positive, len(changes)),
         strong_breadth=_ratio(strong, len(changes)),
         weak_ratio=_ratio(weak, len(changes)),
-        leader_change=(
-            float(leader.change_pct) if leader and leader.change_pct is not None else None
-        ),
-        leader_id=leader.member_id if leader else None,
+        leader_change=None,
+        leader_id=None,
     )
 
 
@@ -239,23 +238,14 @@ def _metrics(value: LifecycleInput, policy: LifecyclePolicy) -> _Metrics:
     groups = {key: _group(items, policy) for key, items in role_items.items()}
     core = groups[ROLE_CORE]
     related = groups[ROLE_RELATED]
-    lead_core_items = role_items[ROLE_LEAD] + role_items[ROLE_CORE]
+    # Compatibility fields named lead_core now carry CORE evidence only.  The
+    # frozen Lifecycle topology has no fourth role and no blended gate.
+    lead_core_items = role_items[ROLE_CORE]
     lead_core = _group(lead_core_items, policy)
-    leader_pool = role_items[ROLE_LEAD] or lead_core_items or valid
-    leader = max(leader_pool, key=lambda item: float(item.change_pct)) if leader_pool else None
-    positive_abs = sum(item for item in changes if item > 0)
-    weighted_positive = (
-        policy.lead_core_authority_weight * (lead_core.positive_breadth or 0.0)
-        + policy.related_authority_weight * (related.positive_breadth or 0.0)
-        if valid
-        else None
-    )
-    weighted_strong = (
-        policy.lead_core_authority_weight * (lead_core.strong_breadth or 0.0)
-        + policy.related_authority_weight * (related.strong_breadth or 0.0)
-        if valid
-        else None
-    )
+    # These compatibility evidence fields are no longer a 70/30 authority
+    # score.  Keep the names for old read rows, but expose only CORE evidence.
+    weighted_positive = lead_core.positive_breadth if valid else None
+    weighted_strong = lead_core.strong_breadth if valid else None
     return _Metrics(
         expected_count=max(0, value.expected_member_count),
         observed_count=len(valid),
@@ -267,12 +257,10 @@ def _metrics(value: LifecycleInput, policy: LifecyclePolicy) -> _Metrics:
         positive_breadth=_ratio(positive, len(changes)),
         strong_breadth=_ratio(strong, len(changes)),
         weak_ratio=_ratio(weak, len(changes)),
-        leader_change=float(leader.change_pct) if leader else None,
-        leader_id=leader.member_id if leader else None,
-        leader_role=_role(leader.role) if leader else None,
-        positive_contribution_share=round(float(leader.change_pct) / positive_abs, 4)
-        if leader and positive_abs
-        else None,
+        leader_change=None,
+        leader_id=None,
+        leader_role=None,
+        positive_contribution_share=None,
         groups=groups,
         role_coverage_pct=round(known_count * 100 / len(valid), 4) if valid else None,
         role_authority_available=bool(valid) and known_count == len(valid),
@@ -355,7 +343,7 @@ def _progression(
     expansion_members: list[str] = []
     drawdowns: list[float] = []
     for item in value.observations:
-        if _role(item.role) not in {ROLE_LEAD, ROLE_CORE} or item.close is None:
+        if _role(item.role) not in {ROLE_LEAD, ROLE_CORE, ROLE_RELATED} or item.close is None:
             continue
         close = float(item.close)
         prior_peak = prior_peaks.get(item.member_id)
@@ -399,14 +387,18 @@ def _progression(
 
 
 def _main_rise_gate(metrics: _Metrics, policy: LifecyclePolicy) -> bool:
-    # A Related-only or Leader-only group cannot enter MAIN_RISE.  Broad Core
-    # can compensate for a weak/missing Lead through the Lead/Core gate.
+    # MAIN_RISE requires broad CORE strength plus substantive RELATED
+    # diffusion.  Related is evidence of expansion, not a 70/30 score bonus.
+    related = metrics.groups[ROLE_RELATED]
     return bool(
         metrics.groups[ROLE_CORE].count > 0
         and (metrics.lead_core_positive_breadth or 0.0) >= policy.main_rise_min_positive_breadth
         and (metrics.lead_core_strong_breadth or 0.0) >= policy.main_rise_min_strong_breadth
         and (metrics.lead_core_average_change or 0.0) >= policy.main_rise_min_average_change_pct
         and (metrics.core_positive_breadth or 0.0) >= policy.main_rise_min_positive_breadth
+        and related.count > 0
+        and (related.positive_breadth or 0.0) > 0.0
+        and (related.average_change or 0.0) > 0.0
     )
 
 
@@ -479,16 +471,18 @@ def _candidate(
     )
     if fermenting:
         return FERMENTING
+    representative = metrics.groups[ROLE_LEAD]
     if (
-        metrics.leader_change is not None
-        and metrics.leader_change >= policy.sprouting_leader_change_pct
+        representative.average_change is not None
+        and representative.average_change >= policy.sprouting_leader_change_pct
+        and (representative.positive_breadth or 0.0) > 0.0
         and (
-            (positive or 0.0) <= policy.sprouting_max_positive_breadth
+            (metrics.core_positive_breadth or 0.0) < policy.fermenting_min_positive_breadth
             or not metrics.groups[ROLE_CORE].count
         )
     ):
-        # Explicitly preserve the Owner distinction: one Leader can sprout,
-        # but cannot satisfy the Main Rise Core gate.
+        # REPRESENTATIVE evidence may start a cycle, but a peripheral or
+        # largest-gainer observation cannot promote itself to authority.
         return SPROUTING
     return None
 
@@ -754,18 +748,17 @@ def evaluate_lifecycle(
     groups = metrics.groups
     evidence = LifecycleEvidence(
         leadership={
-            "leaderSemanticAvailable": bool(groups[ROLE_LEAD].count),
+            "leaderSemanticAvailable": False,
+            "dynamicLeaderAuthority": False,
+            "representativeEvidenceAvailable": bool(groups[ROLE_LEAD].count),
             "roleAuthorityAvailable": metrics.role_authority_available,
             "roleCoveragePct": metrics.role_coverage_pct,
             "roleCounts": {key: item.count for key, item in groups.items()},
-            "leaderId": metrics.leader_id,
-            "leaderRole": metrics.leader_role,
-            "leaderChangePct": metrics.leader_change,
-            "positiveContributionShare": metrics.positive_contribution_share,
-            "authorityWeights": {
-                "leadCore": active_policy.lead_core_authority_weight,
-                "related": active_policy.related_authority_weight,
-            },
+            "leaderId": None,
+            "leaderRole": None,
+            "leaderChangePct": None,
+            "positiveContributionShare": None,
+            "authorityWeights": None,
         },
         diffusion={
             "positiveBreadth": metrics.positive_breadth,
@@ -775,7 +768,8 @@ def evaluate_lifecycle(
             "leadCorePositiveBreadth": metrics.lead_core_positive_breadth,
             "corePositiveBreadth": metrics.core_positive_breadth,
             "relatedPositiveBreadth": metrics.related_positive_breadth,
-            "authorityWeightedPositiveBreadth": metrics.authority_weighted_positive_breadth,
+            "authorityWeightedPositiveBreadth": None,
+            "roleDiffusionAuthority": "CORE_AND_RELATED_SEPARATE",
         },
         group_strength={
             "averageChangePct": metrics.average_change,

@@ -1,0 +1,210 @@
+{
+  "mapping": {
+    "D01": {
+      "implementation": "ROLE_ORDER and MemberObservation",
+      "semantic": "REPRESENTATIVE/CORE/RELATED are the only roles"
+    },
+    "D02": {
+      "implementation": "Lifecycle candidate predicates",
+      "semantic": "No Dynamic Leadership or max-gainer authority"
+    },
+    "D03": {
+      "implementation": "OwnerSeededV0Policy.roles",
+      "semantic": "Role caps are REP 30, CORE 60, RELATED 10"
+    },
+    "D04": {
+      "implementation": "ScoreImportancePolicy and weighted role aggregation",
+      "semantic": "Score Importance is role-local"
+    },
+    "D05": {
+      "implementation": "policy document relationWeight=EXCLUDED",
+      "semantic": "Relation Weight is excluded"
+    },
+    "D06": {
+      "implementation": "MemberObservation.value_for",
+      "semantic": "Absolute uses same-session raw member return"
+    },
+    "D07": {
+      "implementation": "PiecewiseLinearCurve",
+      "semantic": "Member responses are bounded before aggregation"
+    },
+    "D08": {
+      "implementation": "_role_evidence",
+      "semantic": "REP/CORE use weighted within-role means"
+    },
+    "D09": {
+      "implementation": "_related_evidence",
+      "semantic": "RELATED is group-level breadth plus magnitude"
+    },
+    "D10": {
+      "implementation": "evaluate_strength_view",
+      "semantic": "Absolute total is the sum of role contributions"
+    },
+    "D11": {
+      "implementation": "_grade",
+      "semantic": "Grades are S/A/B/D"
+    },
+    "D12": {
+      "implementation": "AbsoluteGradePolicy and _grade",
+      "semantic": "D requires explicit broad negative evidence"
+    },
+    "D13": {
+      "implementation": "evaluate_topic returns two views",
+      "semantic": "Absolute and Relative remain separate"
+    },
+    "D14": {
+      "implementation": "MemberObservation.value_for and benchmark_for_market",
+      "semantic": "TWSE maps to TAIEX and TPEx maps to TPEx Index"
+    },
+    "D15": {
+      "implementation": "MemberObservation.value_for(RELATIVE)",
+      "semantic": "Relative return is member-by-member"
+    },
+    "D16": {
+      "implementation": "LIFECYCLE_STAGES",
+      "semantic": "Lifecycle vocabulary is fixed"
+    },
+    "D17": {
+      "implementation": "LifecycleMetrics",
+      "semantic": "Lifecycle is role diffusion evidence"
+    },
+    "D18": {
+      "implementation": "advance_lifecycle candidate predicates",
+      "semantic": "Absolute evidence is lifecycle primary"
+    },
+    "D19": {
+      "implementation": "relative confirmation flags",
+      "semantic": "Relative evidence is confirmation only"
+    },
+    "D20": {
+      "implementation": "FERMENTING and MAIN_RISE predicates",
+      "semantic": "RELATED cannot rescue weak CORE/REP evidence"
+    },
+    "D21": {
+      "implementation": "candidate priority and transition guard",
+      "semantic": "SPROUTING is optional"
+    },
+    "D22": {
+      "implementation": "_allowed_transition",
+      "semantic": "Direct BASE to FERMENTING is allowed"
+    },
+    "D23": {
+      "implementation": "fermenting_candidate",
+      "semantic": "FERMENTING is partial CORE diffusion"
+    },
+    "D24": {
+      "implementation": "main_rise_candidate",
+      "semantic": "MAIN_RISE requires CORE plus RELATED diffusion"
+    },
+    "D25": {
+      "implementation": "_has_expansion",
+      "semantic": "Meaningful expansion is role-level, not max return"
+    },
+    "D26": {
+      "implementation": "LifecycleState.main_rise_occurred_in_cycle",
+      "semantic": "MAIN_RISE cycle memory is retained"
+    },
+    "D27": {
+      "implementation": "mature_condition",
+      "semantic": "MATURE follows stalled expansion after MAIN_RISE"
+    },
+    "D28": {
+      "implementation": "mature late-related branch",
+      "semantic": "Late RELATED strength with weak CORE supports MATURE"
+    },
+    "D29": {
+      "implementation": "declining_candidate",
+      "semantic": "DECLINING requires persistent structural weakness"
+    },
+    "D30": {
+      "implementation": "reset_candidate",
+      "semantic": "DECLINING to BASE requires three-session reset"
+    },
+    "D31": {
+      "implementation": "_allowed_transition",
+      "semantic": "Illegal backward transitions hold"
+    },
+    "D32": {
+      "implementation": "renewed_expansion and MATURE guard",
+      "semantic": "MATURE renewed expansion does not re-enter MAIN_RISE"
+    },
+    "D33": {
+      "implementation": "evaluate_strength_view minimum guard",
+      "semantic": "One or two formal members are not evaluable"
+    },
+    "D34": {
+      "implementation": "required-member input guard",
+      "semantic": "Missing data fails closed; no zero fill"
+    },
+    "D35": {
+      "implementation": "policy document coverage marker",
+      "semantic": "Coverage is evidence, not a score multiplier"
+    },
+    "D36": {
+      "implementation": "TopicEvaluationResult and LifecycleDayResult",
+      "semantic": "Forward observation output is versioned and reviewable"
+    },
+    "D37": {
+      "implementation": "scenario-replay artifact labels",
+      "semantic": "Synthetic replay is not historical backtest"
+    },
+    "D38": {
+      "implementation": "governance report compatibility note",
+      "semantic": "Opportunity consumes Absolute Grade primarily"
+    },
+    "D39": {
+      "implementation": "separate result fields",
+      "semantic": "No Absolute/Relative/Lifecycle master composite"
+    },
+    "D40": {
+      "implementation": "policy_document and JSON artifact",
+      "semantic": "Policy is explicit and versioned"
+    },
+    "D41": {
+      "implementation": "OwnerSeededV0Policy.policy_hash",
+      "semantic": "Policy hash changes with policy payload"
+    },
+    "D42": {
+      "implementation": "new opt-in module only",
+      "semantic": "Legacy active policy remains unchanged"
+    },
+    "D43": {
+      "implementation": "PRODUCTION_ACTIVE=False",
+      "semantic": "Production default remains inactive"
+    },
+    "D44": {
+      "implementation": "read-only config/artifacts",
+      "semantic": "No migration is required for policy constants"
+    },
+    "D45": {
+      "implementation": "register owner_review_required",
+      "semantic": "Owner review is required before promotion"
+    },
+    "D46": {
+      "implementation": "register previousVersion and policy identity",
+      "semantic": "Future V1 must supersede V0 explicitly"
+    },
+    "D47": {
+      "implementation": "relative benchmark mapping",
+      "semantic": "Official benchmark identity is preserved"
+    },
+    "D48": {
+      "implementation": "_clamp and curve caps",
+      "semantic": "All member and total outputs are capped"
+    },
+    "D49": {
+      "implementation": "RoleEvidenceV0 and lifecycle result",
+      "semantic": "Explainable evidence is emitted"
+    },
+    "D50": {
+      "implementation": "sensitivity-audit.json",
+      "semantic": "Sensitivity is diagnostic only"
+    },
+    "D51": {
+      "implementation": "policy metadata and run manifest",
+      "semantic": "Numeric V0 is Owner-seeded, not historically calibrated"
+    }
+  },
+  "policyId": "topic-strength-lifecycle.owner-seeded-v0",
+  "taskId": "TASK-TOPIC-STRENGTH-LIFECYCLE-OWNER-SEEDED-V0-POLICY-001"
+}

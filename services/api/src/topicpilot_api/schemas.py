@@ -654,6 +654,37 @@ class TopicConstituentRead(ApiModel):
     fact_hash: str | None = Field(default=None, alias="factHash")
 
 
+class TopicOwnerSeededV0Read(ApiModel):
+    status: str
+    policy_id: str = Field(alias="policyId")
+    policy_version: str = Field(alias="policyVersion")
+    policy_hash: str = Field(alias="policyHash")
+    implementation_sha: str | None = Field(alias="implementationSha")
+    as_of_date: str | None = Field(default=None, alias="asOfDate")
+    formal_daily_grade: str | None = Field(default=None, alias="formalDailyGrade")
+    absolute: dict[str, Any] = Field(default_factory=dict)
+    relative: dict[str, Any] = Field(default_factory=dict)
+    lifecycle: dict[str, Any] = Field(default_factory=dict)
+    observation_flags: list[str] = Field(default_factory=list, alias="observationFlags")
+    observation_flag_copy: dict[str, str] = Field(
+        default_factory=dict, alias="observationFlagCopy"
+    )
+    quality_flags: dict[str, Any] = Field(default_factory=dict, alias="qualityFlags")
+    diagnostic_only: bool = Field(alias="diagnosticOnly")
+
+
+class TopicForwardObservationRead(ApiModel):
+    status: str
+    observation_start_date: str = Field(alias="observationStartDate")
+    session_count: int = Field(alias="sessionCount")
+    next_checkpoint: int | None = Field(alias="nextCheckpoint")
+    checkpoint_status: dict[str, str] = Field(alias="checkpointStatus")
+    latest_as_of_date: str | None = Field(default=None, alias="latestAsOfDate")
+    implementation_shas: list[str] = Field(default_factory=list, alias="implementationShas")
+    diagnostic_only: bool = Field(alias="diagnosticOnly")
+    unavailable_reason: str | None = Field(default=None, alias="unavailableReason")
+
+
 class TopicReadModel(ApiModel):
     topic_id: str = Field(alias="topicId")
     slug: str
@@ -672,6 +703,8 @@ class TopicReadModel(ApiModel):
     status: list[TopicStatusRead] = Field(default_factory=list)
     lifecycle: TopicLifecycleRead
     constituents: list[TopicConstituentRead] = Field(default_factory=list)
+    owner_seeded_v0: TopicOwnerSeededV0Read = Field(alias="ownerSeededV0")
+    forward_observation: TopicForwardObservationRead = Field(alias="forwardObservation")
     publication: dict[str, Any] = Field(default_factory=dict)
     quality: dict[str, Any] = Field(default_factory=dict)
     lineage: dict[str, Any] = Field(default_factory=dict)
@@ -734,6 +767,10 @@ class TopicIntelligenceTopic(ApiModel):
     score: float | None
     grade: str | None
     strength: str | None
+    absolute_strength: float | None = Field(default=None, alias="absoluteStrength")
+    absolute_grade: str | None = Field(default=None, alias="absoluteGrade")
+    relative_strength: float | None = Field(default=None, alias="relativeStrength")
+    relative_grade: str | None = Field(default=None, alias="relativeGrade")
     confidence: float | None
     components: list[TopicIntelligenceComponent]
     evidence: TopicIntelligenceEvidence

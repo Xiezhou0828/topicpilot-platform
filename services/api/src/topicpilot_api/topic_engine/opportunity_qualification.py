@@ -276,6 +276,8 @@ class OpportunityQualificationDecision:
     presentation_eligible: bool
     reason_codes: tuple[str, ...]
     evidence: tuple[Evidence, ...]
+    absolute_grade: str | None = None
+    relative_grade: str | None = None
 
     def __post_init__(self) -> None:
         if self.contract_version != QUALIFICATION_CONTRACT_VERSION:
@@ -290,6 +292,8 @@ class OpportunityQualificationDecision:
             "parameterVersion": self.parameter_version,
             "strategyId": self.strategy_id,
             "grade": self.grade,
+            "absoluteGrade": self.absolute_grade or self.grade,
+            "relativeGrade": self.relative_grade,
             "lifecycle": self.lifecycle,
             "status": self.status,
             "gradeStatus": self.grade_status,
@@ -311,7 +315,9 @@ def _assessment(status: str, code: str, *evidence: Evidence) -> StageAssessment:
 def _grade_decision(
     theme: object, policy: OpportunityQualificationPolicy
 ) -> tuple[str, str, bool, tuple[str, ...], tuple[Evidence, ...]]:
-    grade = getattr(theme, "grade", None)
+    # Absolute Grade is the qualification baseline.  Relative Grade is
+    # context only and never rewrites this value.
+    grade = getattr(theme, "absolute_grade", None) or getattr(theme, "grade", None)
     if grade is None:
         return (
             QUALIFICATION_DEFERRED,
@@ -511,7 +517,7 @@ def qualify_opportunity(
 
     active = policy or OpportunityQualificationPolicy()
     strategy_id = result.strategy_id
-    grade = value.theme.grade
+    grade = getattr(value.theme, "absolute_grade", None) or value.theme.grade
     lifecycle = value.theme.lifecycle
     grade_status, grade_gate, exception_candidate, grade_codes, grade_evidence = _grade_decision(
         value.theme, active
@@ -608,6 +614,8 @@ def qualify_opportunity(
         presentation_eligible,
         _tuple_text(reasons),
         evidence,
+        absolute_grade=grade,
+        relative_grade=getattr(value.theme, "relative_grade", None),
     )
 
 

@@ -1,0 +1,33 @@
+{
+  "observation_schema_version": "topic-strength-lifecycle.owner-seeded-v0.forward-observation.v1",
+  "policy_id": "topic-strength-lifecycle.owner-seeded-v0",
+  "policy_version": "v0",
+  "policy_hash": "5d29d968d9116b3288a288a8c9b15d68e51485ff88e4b58d82c2dfbbc27312ef",
+  "observation_start_date": "PENDING_OWNER_ACTIVATION",
+  "session_count": 0,
+  "latest_session": null,
+  "topic_count": 0,
+  "data_authority_inputs": [
+    "formal member authority version",
+    "structural role authority version",
+    "official benchmark authority",
+    "governed trading-session calendar authority",
+    "date-bound complete member price observations"
+  ],
+  "known_gaps": [
+    "No observation session has been authorized or captured yet.",
+    "No scheduler or Production activation is wired.",
+    "No historical Topic/Structural Role overlap is available for calibration.",
+    "Observation artifacts are diagnostic evidence and cannot override formal outputs."
+  ],
+  "checkpoints": {
+    "OBSERVATION_20D": "NOT_STARTED",
+    "OBSERVATION_40D": "NOT_STARTED",
+    "OBSERVATION_60D": "NOT_STARTED"
+  },
+  "migration_required": "NO",
+  "migration_created": "NO",
+  "migration_applied": "NO",
+  "production_active": "NO",
+  "policy_recalibrated": "NO"
+}

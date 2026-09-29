@@ -3084,6 +3084,29 @@ export interface components {
             /** Topicslug */
             topicSlug: string;
         };
+        /** TopicForwardObservationRead */
+        TopicForwardObservationRead: {
+            /** Checkpointstatus */
+            checkpointStatus: {
+                [key: string]: string;
+            };
+            /** Diagnosticonly */
+            diagnosticOnly: boolean;
+            /** Implementationshas */
+            implementationShas?: string[];
+            /** Latestasofdate */
+            latestAsOfDate?: string | null;
+            /** Nextcheckpoint */
+            nextCheckpoint: number | null;
+            /** Observationstartdate */
+            observationStartDate: string;
+            /** Sessioncount */
+            sessionCount: number;
+            /** Status */
+            status: string;
+            /** Unavailablereason */
+            unavailableReason?: string | null;
+        };
         /** TopicHierarchyNodeRead */
         TopicHierarchyNodeRead: {
             /** Name */
@@ -3181,6 +3204,10 @@ export interface components {
         };
         /** TopicIntelligenceTopic */
         TopicIntelligenceTopic: {
+            /** Absolutegrade */
+            absoluteGrade?: string | null;
+            /** Absolutestrength */
+            absoluteStrength?: number | null;
             /** Components */
             components: components["schemas"]["TopicIntelligenceComponent"][];
             /** Confidence */
@@ -3190,6 +3217,10 @@ export interface components {
             evidence: components["schemas"]["TopicIntelligenceEvidence"];
             /** Grade */
             grade: string | null;
+            /** Relativegrade */
+            relativeGrade?: string | null;
+            /** Relativestrength */
+            relativeStrength?: number | null;
             /** Score */
             score: number | null;
             /** Status */
@@ -3351,6 +3382,47 @@ export interface components {
             /** Total */
             total: number;
         };
+        /** TopicOwnerSeededV0Read */
+        TopicOwnerSeededV0Read: {
+            /** Absolute */
+            absolute?: {
+                [key: string]: unknown;
+            };
+            /** Asofdate */
+            asOfDate?: string | null;
+            /** Diagnosticonly */
+            diagnosticOnly: boolean;
+            /** Formaldailygrade */
+            formalDailyGrade?: string | null;
+            /** Implementationsha */
+            implementationSha: string | null;
+            /** Lifecycle */
+            lifecycle?: {
+                [key: string]: unknown;
+            };
+            /** Observationflagcopy */
+            observationFlagCopy?: {
+                [key: string]: string;
+            };
+            /** Observationflags */
+            observationFlags?: string[];
+            /** Policyhash */
+            policyHash: string;
+            /** Policyid */
+            policyId: string;
+            /** Policyversion */
+            policyVersion: string;
+            /** Qualityflags */
+            qualityFlags?: {
+                [key: string]: unknown;
+            };
+            /** Relative */
+            relative?: {
+                [key: string]: unknown;
+            };
+            /** Status */
+            status: string;
+        };
         /** TopicReadModel */
         TopicReadModel: {
             /** Constituentcount */
@@ -3365,6 +3437,7 @@ export interface components {
             direction: string | null;
             /** Enabled */
             enabled: boolean;
+            forwardObservation: components["schemas"]["TopicForwardObservationRead"];
             /** Grade */
             grade: string | null;
             /** Groupname */
@@ -3376,6 +3449,7 @@ export interface components {
             };
             /** Name */
             name: string;
+            ownerSeededV0: components["schemas"]["TopicOwnerSeededV0Read"];
             /** Publication */
             publication?: {
                 [key: string]: unknown;

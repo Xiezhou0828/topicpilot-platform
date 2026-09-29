@@ -1,0 +1,20 @@
+{
+  "authority_window": {
+    "end": null,
+    "start": "2026-08-24"
+  },
+  "canonical_base_sha": "c3542a900d6c46e07bc4243804e9705475023316",
+  "checks": {
+    "benchmark_same_date": "NOT_RUN_ZERO_ROWS",
+    "future_authority_version": "PASS_REJECTED_BY_AS_OF_RESOLVER",
+    "future_supersession": "PASS_NO_FUTURE_ROW_USED",
+    "membership_effective_on_date": "NOT_RUN_ZERO_ROWS",
+    "previous_close_available_as_of_date": "NOT_RUN_ZERO_ROWS",
+    "price_same_date": "NOT_RUN_ZERO_ROWS",
+    "role_effective_on_date": "NOT_RUN_ZERO_ROWS"
+  },
+  "generated_at": "2026-09-29T04:12:08+08:00",
+  "schema_version": "topic-strength-no-look-ahead-audit.v1",
+  "status": "PASS_ZERO_STRICT_ROWS",
+  "strict_row_count": 0
+}

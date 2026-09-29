@@ -1,0 +1,220 @@
+{
+  "benchmarkHistoryStatus": "READY",
+  "evidenceWindow": "2026-02-02..2026-08-13 observed price evidence; zero strict calibration rows",
+  "foundationStatus": "COMPLETE_WITH_BOUNDED_AUTHORITY_LIMITATION",
+  "parameters": [
+    {
+      "candidateValue": null,
+      "limitations": [
+        "No PIT-approved role rows available",
+        "No strict authority/price/benchmark overlap on the committed window"
+      ],
+      "method": "DESCRIPTIVE_PIT_NO_LOOKAHEAD_PENDING",
+      "ownerApprovalRequired": true,
+      "parameterName": "absolute_rep_response_knots",
+      "productionActive": false,
+      "sampleCount": 0,
+      "status": "INSUFFICIENT_DATA",
+      "system": "ABSOLUTE"
+    },
+    {
+      "candidateValue": null,
+      "limitations": [
+        "No PIT-approved role rows available",
+        "No strict authority/price/benchmark overlap on the committed window"
+      ],
+      "method": "DESCRIPTIVE_PIT_NO_LOOKAHEAD_PENDING",
+      "ownerApprovalRequired": true,
+      "parameterName": "absolute_core_response_knots",
+      "productionActive": false,
+      "sampleCount": 0,
+      "status": "INSUFFICIENT_DATA",
+      "system": "ABSOLUTE"
+    },
+    {
+      "candidateValue": null,
+      "limitations": [
+        "No PIT-approved role rows available",
+        "No strict authority/price/benchmark overlap on the committed window"
+      ],
+      "method": "DESCRIPTIVE_PIT_NO_LOOKAHEAD_PENDING",
+      "ownerApprovalRequired": true,
+      "parameterName": "absolute_related_diffusion_mapping",
+      "productionActive": false,
+      "sampleCount": 0,
+      "status": "INSUFFICIENT_DATA",
+      "system": "ABSOLUTE"
+    },
+    {
+      "candidateValue": null,
+      "limitations": [
+        "No calibrated score distribution available",
+        "No strict authority/price/benchmark overlap on the committed window"
+      ],
+      "method": "DESCRIPTIVE_PIT_NO_LOOKAHEAD_PENDING",
+      "ownerApprovalRequired": true,
+      "parameterName": "absolute_grade_boundaries",
+      "productionActive": false,
+      "sampleCount": 0,
+      "status": "INSUFFICIENT_DATA",
+      "system": "ABSOLUTE"
+    },
+    {
+      "candidateValue": null,
+      "limitations": [
+        "No PIT role evidence available",
+        "No strict authority/price/benchmark overlap on the committed window"
+      ],
+      "method": "DESCRIPTIVE_PIT_NO_LOOKAHEAD_PENDING",
+      "ownerApprovalRequired": true,
+      "parameterName": "absolute_d_negative_evidence_guard",
+      "productionActive": false,
+      "sampleCount": 0,
+      "status": "INSUFFICIENT_DATA",
+      "system": "ABSOLUTE"
+    },
+    {
+      "candidateValue": null,
+      "limitations": [
+        "No strict authority/price/benchmark overlap on the committed window"
+      ],
+      "method": "DESCRIPTIVE_PIT_NO_LOOKAHEAD_PENDING",
+      "ownerApprovalRequired": true,
+      "parameterName": "relative_neutral_band",
+      "productionActive": false,
+      "sampleCount": 0,
+      "status": "INSUFFICIENT_DATA",
+      "system": "RELATIVE"
+    },
+    {
+      "candidateValue": null,
+      "limitations": [
+        "No strict authority/price/benchmark overlap on the committed window"
+      ],
+      "method": "DESCRIPTIVE_PIT_NO_LOOKAHEAD_PENDING",
+      "ownerApprovalRequired": true,
+      "parameterName": "relative_rep_response_knots",
+      "productionActive": false,
+      "sampleCount": 0,
+      "status": "INSUFFICIENT_DATA",
+      "system": "RELATIVE"
+    },
+    {
+      "candidateValue": null,
+      "limitations": [
+        "No strict authority/price/benchmark overlap on the committed window"
+      ],
+      "method": "DESCRIPTIVE_PIT_NO_LOOKAHEAD_PENDING",
+      "ownerApprovalRequired": true,
+      "parameterName": "relative_core_response_knots",
+      "productionActive": false,
+      "sampleCount": 0,
+      "status": "INSUFFICIENT_DATA",
+      "system": "RELATIVE"
+    },
+    {
+      "candidateValue": null,
+      "limitations": [
+        "No strict authority/price/benchmark overlap on the committed window"
+      ],
+      "method": "DESCRIPTIVE_PIT_NO_LOOKAHEAD_PENDING",
+      "ownerApprovalRequired": true,
+      "parameterName": "relative_related_diffusion_mapping",
+      "productionActive": false,
+      "sampleCount": 0,
+      "status": "INSUFFICIENT_DATA",
+      "system": "RELATIVE"
+    },
+    {
+      "candidateValue": null,
+      "limitations": [
+        "No relative score distribution available",
+        "No strict authority/price/benchmark overlap on the committed window"
+      ],
+      "method": "DESCRIPTIVE_PIT_NO_LOOKAHEAD_PENDING",
+      "ownerApprovalRequired": true,
+      "parameterName": "relative_grade_boundaries",
+      "productionActive": false,
+      "sampleCount": 0,
+      "status": "INSUFFICIENT_DATA",
+      "system": "RELATIVE"
+    },
+    {
+      "candidateValue": null,
+      "limitations": [
+        "No strict authority/price/benchmark overlap on the committed window"
+      ],
+      "method": "DESCRIPTIVE_PIT_NO_LOOKAHEAD_PENDING",
+      "ownerApprovalRequired": true,
+      "parameterName": "relative_d_underperformance_guard",
+      "productionActive": false,
+      "sampleCount": 0,
+      "status": "INSUFFICIENT_DATA",
+      "system": "RELATIVE"
+    },
+    {
+      "candidateValue": null,
+      "limitations": [
+        "No strict authority/price/benchmark overlap on the committed window",
+        "No strictly reconstructable PIT topic-day cells"
+      ],
+      "method": "DESCRIPTIVE_PIT_NO_LOOKAHEAD_PENDING",
+      "ownerApprovalRequired": true,
+      "parameterName": "lifecycle_role_diffusion_thresholds",
+      "productionActive": false,
+      "sampleCount": 0,
+      "status": "INSUFFICIENT_DATA",
+      "system": "LIFECYCLE"
+    },
+    {
+      "candidateValue": null,
+      "limitations": [
+        "No multi-session PIT replay set",
+        "No strict authority/price/benchmark overlap on the committed window"
+      ],
+      "method": "DESCRIPTIVE_PIT_NO_LOOKAHEAD_PENDING",
+      "ownerApprovalRequired": true,
+      "parameterName": "lifecycle_persistence_confirmation",
+      "productionActive": false,
+      "sampleCount": 0,
+      "status": "INSUFFICIENT_DATA",
+      "system": "LIFECYCLE"
+    },
+    {
+      "candidateValue": null,
+      "limitations": [
+        "No multi-session PIT replay set",
+        "No strict authority/price/benchmark overlap on the committed window"
+      ],
+      "method": "DESCRIPTIVE_PIT_NO_LOOKAHEAD_PENDING",
+      "ownerApprovalRequired": true,
+      "parameterName": "mature_expansion_stall_parameters",
+      "productionActive": false,
+      "sampleCount": 0,
+      "status": "INSUFFICIENT_DATA",
+      "system": "LIFECYCLE"
+    },
+    {
+      "candidateValue": null,
+      "limitations": [
+        "No multi-session PIT replay set",
+        "No strict authority/price/benchmark overlap on the committed window"
+      ],
+      "method": "DESCRIPTIVE_PIT_NO_LOOKAHEAD_PENDING",
+      "ownerApprovalRequired": true,
+      "parameterName": "declining_structural_deterioration_parameters",
+      "productionActive": false,
+      "sampleCount": 0,
+      "status": "INSUFFICIENT_DATA",
+      "system": "LIFECYCLE"
+    }
+  ],
+  "pitAuthorityStatus": "READY_BOUNDED_AFTER_PRICE_WINDOW",
+  "previousVersion": "topic-strength-historical-calibration.v1.candidate",
+  "productionActive": false,
+  "sourceRequirement": "CANONICAL_PIT_HISTORICAL",
+  "status": "INSUFFICIENT_DATA",
+  "strictMemberDayCount": 0,
+  "strictTopicDayCount": 0,
+  "version": "topic-strength-historical-calibration.v2.foundation-closure-002"
+}

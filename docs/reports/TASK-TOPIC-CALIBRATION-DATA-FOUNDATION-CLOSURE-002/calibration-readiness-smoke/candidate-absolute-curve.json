@@ -1,0 +1,47 @@
+{
+  "artifactVersion": "topic-strength-historical-calibration.v1.candidate",
+  "status": "INSUFFICIENT_DATA",
+  "system": "ABSOLUTE",
+  "productionActive": false,
+  "parameters": [
+    {
+      "parameterName": "absolute_rep_response_knots",
+      "system": "ABSOLUTE",
+      "status": "INSUFFICIENT_DATA",
+      "candidateValue": null,
+      "sampleCount": 0,
+      "method": "DESCRIPTIVE_PIT_NO_LOOKAHEAD_PENDING",
+      "limitations": [
+        "Candidate fitting is blocked until strict PIT rows are available."
+      ],
+      "ownerApprovalRequired": true,
+      "productionActive": false
+    },
+    {
+      "parameterName": "absolute_core_response_knots",
+      "system": "ABSOLUTE",
+      "status": "INSUFFICIENT_DATA",
+      "candidateValue": null,
+      "sampleCount": 0,
+      "method": "DESCRIPTIVE_PIT_NO_LOOKAHEAD_PENDING",
+      "limitations": [
+        "Candidate fitting is blocked until strict PIT rows are available."
+      ],
+      "ownerApprovalRequired": true,
+      "productionActive": false
+    },
+    {
+      "parameterName": "absolute_related_diffusion_mapping",
+      "system": "ABSOLUTE",
+      "status": "INSUFFICIENT_DATA",
+      "candidateValue": null,
+      "sampleCount": 0,
+      "method": "DESCRIPTIVE_PIT_NO_LOOKAHEAD_PENDING",
+      "limitations": [
+        "Candidate fitting is blocked until strict PIT rows are available."
+      ],
+      "ownerApprovalRequired": true,
+      "productionActive": false
+    }
+  ]
+}

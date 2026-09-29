@@ -72,7 +72,7 @@ def test_leader_only_is_sprouting_and_requires_confirmation():
 
 def test_related_only_cannot_enter_main_rise():
     result = evaluate_lifecycle(_day([8, 7, 6, 5], roles=["RELATED"] * 4))
-    assert result.candidate_stage == SPROUTING
+    assert result.candidate_stage is None
     assert result.candidate_stage != MAIN_RISE
 
 
@@ -92,8 +92,8 @@ def test_core_resonance_is_fermenting_not_main_rise():
 
 
 def test_broad_core_can_compensate_for_weak_lead_and_main_rise_confirms():
-    roles = ["REPRESENTATIVE"] + ["CORE"] * 9
-    changes = [0.5, 8, 7, 6, 5, 4, 3, 3, 2, 1]
+    roles = ["REPRESENTATIVE"] + ["CORE"] * 9 + ["RELATED"] * 2
+    changes = [0.5, 8, 7, 6, 5, 4, 3, 3, 2, 1, 2, 2]
     first = evaluate_lifecycle(_day(changes, roles=roles))
     second = evaluate_lifecycle(
         _day(
@@ -140,7 +140,7 @@ def test_main_rise_to_mature_after_five_sessions_without_expansion_or_recovery()
 
 
 def test_mature_to_main_rise_reentry_without_expansion_preserves_clock():
-    roles = ["REPRESENTATIVE"] + ["CORE"] * 9
+    roles = ["REPRESENTATIVE"] + ["CORE"] * 9 + ["RELATED"] * 2
     memory = {
         "mainRiseSegment": 1,
         "segmentEntryDate": "2026-08-01",
@@ -151,26 +151,26 @@ def test_mature_to_main_rise_reentry_without_expansion_preserves_clock():
     }
     first = evaluate_lifecycle(
         _day(
-            [8, 7, 6, 5, 5, 4, 4, 3, 3, 2],
+            [8, 7, 6, 5, 5, 4, 4, 3, 3, 2, 2, 2],
             roles=roles,
             previous=MATURE,
             state_memory=memory,
-            closes=[90] * 10,
-            previous_closes=[90] * 10,
+            closes=[90] * 12,
+            previous_closes=[90] * 12,
         )
     )
     assert first.candidate_stage == MAIN_RISE
     assert first.final_stage is MATURE
     second = evaluate_lifecycle(
         _day(
-            [8, 7, 6, 5, 5, 4, 4, 3, 3, 2],
+            [8, 7, 6, 5, 5, 4, 4, 3, 3, 2, 2, 2],
             roles=roles,
             previous=MATURE,
             state_memory=first.state_memory,
             candidate=first.candidate_stage,
             streak=first.confirmation_state["candidateStreak"],
-            closes=[90] * 10,
-            previous_closes=[90] * 10,
+            closes=[90] * 12,
+            previous_closes=[90] * 12,
         )
     )
     assert second.final_stage == MAIN_RISE

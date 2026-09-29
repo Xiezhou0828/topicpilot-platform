@@ -1,0 +1,203 @@
+{
+  "artifactVersion": "topic-strength-historical-calibration.v1.candidate",
+  "status": "INSUFFICIENT_DATA",
+  "productionActive": false,
+  "evidenceWindow": {},
+  "parameters": [
+    {
+      "parameterName": "absolute_rep_response_knots",
+      "system": "ABSOLUTE",
+      "status": "INSUFFICIENT_DATA",
+      "candidateValue": null,
+      "sampleCount": 0,
+      "method": "DESCRIPTIVE_PIT_NO_LOOKAHEAD_PENDING",
+      "limitations": [
+        "Candidate fitting is blocked until strict PIT rows are available."
+      ],
+      "ownerApprovalRequired": true,
+      "productionActive": false
+    },
+    {
+      "parameterName": "absolute_core_response_knots",
+      "system": "ABSOLUTE",
+      "status": "INSUFFICIENT_DATA",
+      "candidateValue": null,
+      "sampleCount": 0,
+      "method": "DESCRIPTIVE_PIT_NO_LOOKAHEAD_PENDING",
+      "limitations": [
+        "Candidate fitting is blocked until strict PIT rows are available."
+      ],
+      "ownerApprovalRequired": true,
+      "productionActive": false
+    },
+    {
+      "parameterName": "absolute_related_diffusion_mapping",
+      "system": "ABSOLUTE",
+      "status": "INSUFFICIENT_DATA",
+      "candidateValue": null,
+      "sampleCount": 0,
+      "method": "DESCRIPTIVE_PIT_NO_LOOKAHEAD_PENDING",
+      "limitations": [
+        "Candidate fitting is blocked until strict PIT rows are available."
+      ],
+      "ownerApprovalRequired": true,
+      "productionActive": false
+    },
+    {
+      "parameterName": "absolute_grade_boundaries",
+      "system": "ABSOLUTE",
+      "status": "INSUFFICIENT_DATA",
+      "candidateValue": null,
+      "sampleCount": 0,
+      "method": "DESCRIPTIVE_PIT_NO_LOOKAHEAD_PENDING",
+      "limitations": [
+        "Candidate fitting is blocked until strict PIT rows are available."
+      ],
+      "ownerApprovalRequired": true,
+      "productionActive": false
+    },
+    {
+      "parameterName": "absolute_d_negative_evidence_guard",
+      "system": "ABSOLUTE",
+      "status": "INSUFFICIENT_DATA",
+      "candidateValue": null,
+      "sampleCount": 0,
+      "method": "DESCRIPTIVE_PIT_NO_LOOKAHEAD_PENDING",
+      "limitations": [
+        "Candidate fitting is blocked until strict PIT rows are available."
+      ],
+      "ownerApprovalRequired": true,
+      "productionActive": false
+    },
+    {
+      "parameterName": "relative_neutral_band",
+      "system": "RELATIVE",
+      "status": "INSUFFICIENT_DATA",
+      "candidateValue": null,
+      "sampleCount": 0,
+      "method": "DESCRIPTIVE_PIT_NO_LOOKAHEAD_PENDING",
+      "limitations": [
+        "Candidate fitting is blocked until strict PIT rows are available."
+      ],
+      "ownerApprovalRequired": true,
+      "productionActive": false
+    },
+    {
+      "parameterName": "relative_rep_response_knots",
+      "system": "RELATIVE",
+      "status": "INSUFFICIENT_DATA",
+      "candidateValue": null,
+      "sampleCount": 0,
+      "method": "DESCRIPTIVE_PIT_NO_LOOKAHEAD_PENDING",
+      "limitations": [
+        "Candidate fitting is blocked until strict PIT rows are available."
+      ],
+      "ownerApprovalRequired": true,
+      "productionActive": false
+    },
+    {
+      "parameterName": "relative_core_response_knots",
+      "system": "RELATIVE",
+      "status": "INSUFFICIENT_DATA",
+      "candidateValue": null,
+      "sampleCount": 0,
+      "method": "DESCRIPTIVE_PIT_NO_LOOKAHEAD_PENDING",
+      "limitations": [
+        "Candidate fitting is blocked until strict PIT rows are available."
+      ],
+      "ownerApprovalRequired": true,
+      "productionActive": false
+    },
+    {
+      "parameterName": "relative_related_diffusion_mapping",
+      "system": "RELATIVE",
+      "status": "INSUFFICIENT_DATA",
+      "candidateValue": null,
+      "sampleCount": 0,
+      "method": "DESCRIPTIVE_PIT_NO_LOOKAHEAD_PENDING",
+      "limitations": [
+        "Candidate fitting is blocked until strict PIT rows are available."
+      ],
+      "ownerApprovalRequired": true,
+      "productionActive": false
+    },
+    {
+      "parameterName": "relative_grade_boundaries",
+      "system": "RELATIVE",
+      "status": "INSUFFICIENT_DATA",
+      "candidateValue": null,
+      "sampleCount": 0,
+      "method": "DESCRIPTIVE_PIT_NO_LOOKAHEAD_PENDING",
+      "limitations": [
+        "Candidate fitting is blocked until strict PIT rows are available."
+      ],
+      "ownerApprovalRequired": true,
+      "productionActive": false
+    },
+    {
+      "parameterName": "relative_d_underperformance_guard",
+      "system": "RELATIVE",
+      "status": "INSUFFICIENT_DATA",
+      "candidateValue": null,
+      "sampleCount": 0,
+      "method": "DESCRIPTIVE_PIT_NO_LOOKAHEAD_PENDING",
+      "limitations": [
+        "Candidate fitting is blocked until strict PIT rows are available."
+      ],
+      "ownerApprovalRequired": true,
+      "productionActive": false
+    },
+    {
+      "parameterName": "lifecycle_role_diffusion_thresholds",
+      "system": "LIFECYCLE",
+      "status": "INSUFFICIENT_DATA",
+      "candidateValue": null,
+      "sampleCount": 0,
+      "method": "DESCRIPTIVE_PIT_NO_LOOKAHEAD_PENDING",
+      "limitations": [
+        "Candidate fitting is blocked until strict PIT rows are available."
+      ],
+      "ownerApprovalRequired": true,
+      "productionActive": false
+    },
+    {
+      "parameterName": "lifecycle_persistence_confirmation",
+      "system": "LIFECYCLE",
+      "status": "INSUFFICIENT_DATA",
+      "candidateValue": null,
+      "sampleCount": 0,
+      "method": "DESCRIPTIVE_PIT_NO_LOOKAHEAD_PENDING",
+      "limitations": [
+        "Candidate fitting is blocked until strict PIT rows are available."
+      ],
+      "ownerApprovalRequired": true,
+      "productionActive": false
+    },
+    {
+      "parameterName": "mature_expansion_stall_parameters",
+      "system": "LIFECYCLE",
+      "status": "INSUFFICIENT_DATA",
+      "candidateValue": null,
+      "sampleCount": 0,
+      "method": "DESCRIPTIVE_PIT_NO_LOOKAHEAD_PENDING",
+      "limitations": [
+        "Candidate fitting is blocked until strict PIT rows are available."
+      ],
+      "ownerApprovalRequired": true,
+      "productionActive": false
+    },
+    {
+      "parameterName": "declining_structural_deterioration_parameters",
+      "system": "LIFECYCLE",
+      "status": "INSUFFICIENT_DATA",
+      "candidateValue": null,
+      "sampleCount": 0,
+      "method": "DESCRIPTIVE_PIT_NO_LOOKAHEAD_PENDING",
+      "limitations": [
+        "Candidate fitting is blocked until strict PIT rows are available."
+      ],
+      "ownerApprovalRequired": true,
+      "productionActive": false
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "artifactVersion": "topic-strength-historical-calibration.v1.candidate",
+  "view": "RELATIVE",
+  "status": "INSUFFICIENT_DATA",
+  "eligibleMemberRows": 0,
+  "groups": {},
+  "requiredPercentiles": [
+    "p1",
+    "p5",
+    "p10",
+    "p20",
+    "p25",
+    "p30",
+    "p40",
+    "p50",
+    "p60",
+    "p70",
+    "p75",
+    "p80",
+    "p90",
+    "p95",
+    "p97",
+    "p99"
+  ],
+  "productionActive": false
+}

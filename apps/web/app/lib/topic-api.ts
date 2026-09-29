@@ -60,6 +60,44 @@ export type TopicLeafState = {
   publication?: Record<string, unknown>;
   quality?: Record<string, unknown>;
   lineage?: Record<string, unknown>;
+  ownerSeededV0?: TopicOwnerSeededV0;
+  forwardObservation?: TopicForwardObservation;
+};
+
+export type TopicOwnerSeededV0 = {
+  status: string;
+  policyId: string;
+  policyVersion: string;
+  policyHash: string;
+  implementationSha: string | null;
+  asOfDate: string | null;
+  formalDailyGrade: string | null;
+  absolute: { score?: number | null; grade?: string | null; [key: string]: unknown };
+  relative: { score?: number | null; grade?: string | null; [key: string]: unknown };
+  lifecycle: {
+    before?: string | null;
+    candidate?: string | null;
+    after?: string | null;
+    transitionConfirmed?: boolean | null;
+    transitionReason?: string | null;
+    [key: string]: unknown;
+  };
+  observationFlags: string[];
+  observationFlagCopy: Record<string, string>;
+  qualityFlags: Record<string, unknown>;
+  diagnosticOnly: boolean;
+};
+
+export type TopicForwardObservation = {
+  status: string;
+  observationStartDate: string;
+  sessionCount: number;
+  nextCheckpoint: number | null;
+  checkpointStatus: Record<string, string>;
+  latestAsOfDate: string | null;
+  implementationShas: string[];
+  diagnosticOnly: boolean;
+  unavailableReason?: string | null;
 };
 
 export type TopicSummary = {
@@ -89,6 +127,8 @@ export type TopicSummary = {
   publication?: Record<string, unknown>;
   quality?: Record<string, unknown>;
   lineage?: Record<string, unknown>;
+  ownerSeededV0?: TopicOwnerSeededV0;
+  forwardObservation?: TopicForwardObservation;
 };
 
 export type TopicStatus = {
@@ -266,6 +306,8 @@ function leafStateFromApi(item: ApiTopicSummary): TopicLeafState {
     publication: item.publication,
     quality: item.quality,
     lineage: item.lineage,
+    ownerSeededV0: item.ownerSeededV0,
+    forwardObservation: item.forwardObservation,
   };
 }
 
@@ -312,6 +354,8 @@ function summaryFromCatalog(catalog: TopicCatalogNode, state: ApiTopicSummary | 
     publication: leafState?.publication,
     quality: leafState?.quality,
     lineage: leafState?.lineage,
+    ownerSeededV0: leafState?.ownerSeededV0,
+    forwardObservation: leafState?.forwardObservation,
   };
 }
 

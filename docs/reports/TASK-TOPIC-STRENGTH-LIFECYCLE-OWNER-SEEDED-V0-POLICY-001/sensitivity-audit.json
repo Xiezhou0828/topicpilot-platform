@@ -1,0 +1,27 @@
+{
+  "checks": [
+    {
+      "base": 62.0,
+      "classification": "SENSITIVE_BOUNDARY_DOCUMENTED",
+      "minus2": 60.0,
+      "parameter": "absolute_grade.clear_min",
+      "plus2": 64.0
+    },
+    {
+      "base": 82.0,
+      "classification": "SENSITIVE_BOUNDARY_DOCUMENTED",
+      "minus2": 80.0,
+      "parameter": "absolute_grade.exceptional_min",
+      "plus2": 84.0
+    },
+    {
+      "base": 0.65,
+      "classification": "SENSITIVE_BOUNDARY_DOCUMENTED",
+      "minus5_percentage_points": 0.6,
+      "parameter": "main_rise.core_positive_breadth_min",
+      "plus5_percentage_points": 0.7000000000000001
+    }
+  ],
+  "policyValuesUnchanged": true,
+  "status": "DIAGNOSTIC_ONLY"
+}

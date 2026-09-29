@@ -1,4 +1,10 @@
-"""Formal Score Projection V1 resolution and GovernedLeaderSet adaptation."""
+"""Formal Score Projection resolution for REP/CORE score participation.
+
+``selected_core_members`` is retained as a compatibility field because it is
+persisted in the V1 read model.  Its current semantic domain is the approved
+REPRESENTATIVE + CORE score-participating set; callers should use
+``selected_score_members`` for new code.
+"""
 
 from __future__ import annotations
 
@@ -19,6 +25,7 @@ from .structural_role_authority import (
     AUTHORITY_READ_CURRENT,
     AUTHORITY_READ_HISTORICAL,
     STRUCTURAL_ROLE_CORE,
+    STRUCTURAL_ROLE_REPRESENTATIVE,
     StructuralRoleAuthorityError,
     StructuralRoleResolution,
     resolve_structural_role,
@@ -27,7 +34,17 @@ from .structural_role_authority import (
 SCORE_PROJECTION_APPROVED = "APPROVED"
 SCORE_PROJECTION_READ_CURRENT = AUTHORITY_READ_CURRENT
 SCORE_PROJECTION_READ_HISTORICAL = AUTHORITY_READ_HISTORICAL
-ALLOWED_SCORE_IMPORTANCE = frozenset({Decimal("1.00"), Decimal("0.75"), Decimal("0.50")})
+REPRESENTATIVE_SCORE_IMPORTANCE = frozenset(
+    {Decimal("1.25"), Decimal("1.50"), Decimal("1.75")}
+)
+CORE_SCORE_IMPORTANCE = frozenset(
+    {Decimal("0.50"), Decimal("0.75"), Decimal("1.00")}
+)
+ALLOWED_SCORE_IMPORTANCE = REPRESENTATIVE_SCORE_IMPORTANCE | CORE_SCORE_IMPORTANCE
+# 0043 rows may still exist in historical databases.  They are readable only
+# through an explicit historical path and are never accepted as current D001
+# authority.
+LEGACY_SCORE_IMPORTANCE = frozenset({Decimal("0.25")})
 
 
 class ScoreProjectionError(ValueError):
@@ -105,6 +122,12 @@ class ScoreProjectionRecord:
             ),
         )
 
+    @property
+    def selected_score_members(self) -> tuple[ScoreProjectionMemberRecord, ...]:
+        """Canonical REP/CORE name for the compatibility-persisted field."""
+
+        return self.selected_core_members
+
 
 @dataclass(frozen=True)
 class ScoreProjectionResolution:
@@ -116,6 +139,10 @@ class ScoreProjectionResolution:
     @property
     def topic_id(self) -> str:
         return self.record.topic_id
+
+    @property
+    def selected_score_members(self) -> tuple[ScoreProjectionMemberRecord, ...]:
+        return self.record.selected_score_members
 
 
 def _required_text(value: str | None, field: str) -> str:
@@ -153,14 +180,22 @@ def _validate_projection(record: ScoreProjectionRecord) -> None:
         raise ScoreProjectionError("projection cannot be superseded by itself")
 
 
-def _validate_importance(value: Decimal) -> Decimal:
+def _validate_importance(value: Decimal, role: str, *, read_mode: str) -> Decimal:
     try:
         normalized = Decimal(str(value))
     except (InvalidOperation, ValueError) as exc:
         raise ScoreProjectionError("SCORE_IMPORTANCE_INVALID") from exc
-    if normalized not in ALLOWED_SCORE_IMPORTANCE:
-        raise ScoreProjectionError("SCORE_IMPORTANCE_INVALID")
-    return normalized
+    allowed = {
+        STRUCTURAL_ROLE_REPRESENTATIVE: REPRESENTATIVE_SCORE_IMPORTANCE,
+        STRUCTURAL_ROLE_CORE: CORE_SCORE_IMPORTANCE,
+    }.get(role)
+    if allowed is None:
+        raise ScoreProjectionError("SCORE_PROJECTION_ROLE_NOT_SCORE_PARTICIPATING")
+    if normalized in allowed:
+        return normalized
+    if read_mode == SCORE_PROJECTION_READ_HISTORICAL and normalized in LEGACY_SCORE_IMPORTANCE:
+        return normalized
+    raise ScoreProjectionError("SCORE_IMPORTANCE_INVALID_FOR_ROLE")
 
 
 AuthorityResolver = Callable[..., StructuralRoleResolution]
@@ -174,7 +209,7 @@ def resolve_score_projection_records(
     *,
     read_mode: str = SCORE_PROJECTION_READ_CURRENT,
 ) -> ScoreProjectionResolution:
-    """Resolve one topic projection and validate every selected CORE member."""
+    """Resolve one topic projection and validate every selected REP/CORE member."""
 
     if read_mode not in {SCORE_PROJECTION_READ_CURRENT, SCORE_PROJECTION_READ_HISTORICAL}:
         raise ScoreProjectionError("read_mode must be CURRENT or HISTORICAL")
@@ -210,7 +245,6 @@ def resolve_score_projection_records(
 
     member_authorities: list[StructuralRoleResolution] = []
     for member in selected.selected_core_members:
-        _validate_importance(member.score_importance)
         try:
             authority = authority_resolver(
                 selected.topic_id,
@@ -222,8 +256,21 @@ def resolve_score_projection_records(
             raise ScoreProjectionError(
                 f"STRUCTURAL_ROLE_AUTHORITY_INVALID:{member.instrument_id}"
             ) from exc
-        if authority.structural_role != STRUCTURAL_ROLE_CORE:
-            raise ScoreProjectionError("SCORE_PROJECTION_MEMBER_NOT_CORE")
+        if authority.structural_role not in {
+            STRUCTURAL_ROLE_REPRESENTATIVE,
+            STRUCTURAL_ROLE_CORE,
+        }:
+            # Keep NOT_CORE in the compatibility code so older clients can
+            # classify the historical failure while new clients use the
+            # complete error name.
+            raise ScoreProjectionError(
+                "SCORE_PROJECTION_MEMBER_NOT_CORE_OR_REPRESENTATIVE"
+            )
+        _validate_importance(
+            member.score_importance,
+            authority.structural_role,
+            read_mode=read_mode,
+        )
         if authority.authority_id != member.structural_role_authority_id:
             raise ScoreProjectionError("SCORE_PROJECTION_MEMBER_AUTHORITY_MISMATCH")
         if authority.record.authority_version != member.structural_role_authority_version:
@@ -303,6 +350,9 @@ build_governed_leader_set_from_projection = build_governed_leader_set
 
 __all__ = [
     "ALLOWED_SCORE_IMPORTANCE",
+    "CORE_SCORE_IMPORTANCE",
+    "LEGACY_SCORE_IMPORTANCE",
+    "REPRESENTATIVE_SCORE_IMPORTANCE",
     "SCORE_PROJECTION_APPROVED",
     "SCORE_PROJECTION_READ_CURRENT",
     "SCORE_PROJECTION_READ_HISTORICAL",

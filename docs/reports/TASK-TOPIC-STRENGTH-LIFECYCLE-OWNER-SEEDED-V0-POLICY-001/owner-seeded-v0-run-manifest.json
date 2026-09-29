@@ -1,0 +1,19 @@
+{
+  "canonicalBaseSha": "ec46db023c8e701044e162dcf723f362002b88d7",
+  "deployed": false,
+  "generatorVersion": "run_owner_seeded_v0_policy.py.v1",
+  "historicalCalibration": "NOT_AVAILABLE",
+  "migrationApplied": false,
+  "monotonicity": "PASS",
+  "ownerApprovedForReview": true,
+  "policyHash": "5d29d968d9116b3288a288a8c9b15d68e51485ff88e4b58d82c2dfbbc27312ef",
+  "policyId": "topic-strength-lifecycle.owner-seeded-v0",
+  "policyVersion": "v0",
+  "productionActive": false,
+  "provisional": true,
+  "pushed": false,
+  "scenarioReplay": "PASS",
+  "schemaVersion": "topic-strength-lifecycle-owner-seeded-v0.v1",
+  "sensitivity": "DIAGNOSTIC_ONLY",
+  "taskId": "TASK-TOPIC-STRENGTH-LIFECYCLE-OWNER-SEEDED-V0-POLICY-001"
+}

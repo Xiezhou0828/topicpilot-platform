@@ -1,0 +1,20 @@
+{
+  "authority_artifact": "config\\topic_structural_role_authority\\structural-role-authority-20260912.v4.json",
+  "canonical_base_sha": "c3542a900d6c46e07bc4243804e9705475023316",
+  "database_mutation": false,
+  "deployed": false,
+  "generated_at": "2026-09-29T04:12:08+08:00",
+  "generator_version": "run_calibration_data_foundation.py.v1",
+  "migration_applied": false,
+  "official_benchmark_errors": [],
+  "production_mutation": false,
+  "pushed": false,
+  "schema_version": "topic-strength-calibration-foundation.v1",
+  "source_readiness": "docs\\reports\\TASK-TOPIC-STRENGTH-LIFECYCLE-HISTORICAL-CALIBRATION-001\\source-readiness.json",
+  "status": "COMPLETE_WITH_BOUNDED_AUTHORITY_LIMITATION",
+  "target_window": {
+    "end": "2026-08-13",
+    "start": "2026-02-02"
+  },
+  "task_id": "TASK-TOPIC-CALIBRATION-DATA-FOUNDATION-CLOSURE-002"
+}

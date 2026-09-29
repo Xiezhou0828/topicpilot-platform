@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "topic-strength-lifecycle.owner-seeded-v0.forward-observation.v2",
+  "title": "Owner-seeded V0 activation forward observation",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "observation_schema_version",
+    "task_id",
+    "activation_task_id",
+    "owner_review_status",
+    "as_of_date",
+    "observation_start_date",
+    "policy_id",
+    "policy_version",
+    "policy_hash",
+    "implementation_sha",
+    "topic_id",
+    "topic_name",
+    "authority",
+    "formal_member_count",
+    "representative_count",
+    "core_count",
+    "related_count",
+    "absolute_score_inputs",
+    "relative_score_inputs",
+    "absolute_metrics",
+    "relative_metrics",
+    "contributions",
+    "scores",
+    "lifecycle",
+    "observation_flags",
+    "observation_flag_copy",
+    "quality_flags",
+    "formal_output_boundary",
+    "next_lifecycle_state"
+  ],
+  "properties": {
+    "observation_schema_version": {"const": "topic-strength-lifecycle.owner-seeded-v0.forward-observation.v2"},
+    "task_id": {"const": "TASK-TOPIC-STRENGTH-LIFECYCLE-OWNER-SEEDED-V0-FORWARD-OBSERVATION-ACTIVATION-003"},
+    "activation_task_id": {"const": "TASK-TOPIC-STRENGTH-LIFECYCLE-OWNER-SEEDED-V0-FORWARD-OBSERVATION-ACTIVATION-003"},
+    "owner_review_status": {"const": "OWNER_REVIEW_ACCEPTED_WITH_OBSERVATION_FLAGS"},
+    "as_of_date": {"type": "string", "format": "date"},
+    "observation_start_date": {"type": "string", "format": "date"},
+    "policy_id": {"const": "topic-strength-lifecycle.owner-seeded-v0"},
+    "policy_version": {"const": "v0"},
+    "policy_hash": {"const": "5d29d968d9116b3288a288a8c9b15d68e51485ff88e4b58d82c2dfbbc27312ef"},
+    "implementation_sha": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "topic_id": {"type": "string", "minLength": 1},
+    "topic_name": {"type": "string", "minLength": 1},
+    "authority": {"type": "object", "additionalProperties": true},
+    "formal_member_count": {"type": "integer", "minimum": 1},
+    "representative_count": {"type": "integer", "minimum": 0},
+    "core_count": {"type": "integer", "minimum": 0},
+    "related_count": {"type": "integer", "minimum": 0},
+    "absolute_score_inputs": {"type": "array"},
+    "relative_score_inputs": {"type": "array"},
+    "absolute_metrics": {"type": "object", "additionalProperties": true},
+    "relative_metrics": {"type": "object", "additionalProperties": true},
+    "contributions": {"type": "object", "additionalProperties": true},
+    "scores": {"type": "object", "additionalProperties": true},
+    "lifecycle": {"type": "object", "additionalProperties": true},
+    "observation_flags": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "STRONG_GRADE_WITH_HELD_LIFECYCLE_CANDIDATE",
+          "GRADE_D_WHILE_DECLINING_PENDING",
+          "ABS_REL_GRADE_DIVERGENCE",
+          "MATURE_OR_MAIN_RISE_WITH_GRADE_B"
+        ]
+      }
+    },
+    "observation_flag_copy": {"type": "object", "additionalProperties": {"type": "string"}},
+    "quality_flags": {"type": "object", "additionalProperties": true},
+    "formal_output_boundary": {
+      "type": "object",
+      "required": ["formal_output_overridden", "historical_output_mutated", "production_active", "diagnostic_only"],
+      "properties": {
+        "formal_output_overridden": {"const": false},
+        "historical_output_mutated": {"const": false},
+        "production_active": {"const": false},
+        "diagnostic_only": {"const": true}
+      },
+      "additionalProperties": true
+    },
+    "next_lifecycle_state": {"type": "object", "additionalProperties": true}
+  }
+}

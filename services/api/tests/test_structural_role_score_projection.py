@@ -16,6 +16,7 @@ from topicpilot_api.topic_engine import (
     SCORE_PROJECTION_READ_HISTORICAL,
     STRUCTURAL_ROLE_CORE,
     STRUCTURAL_ROLE_RELATED,
+    STRUCTURAL_ROLE_REPRESENTATIVE,
     ScoreProjectionError,
     ScoreProjectionMemberRecord,
     ScoreProjectionRecord,
@@ -216,6 +217,19 @@ def test_projection_accepts_only_valid_core_members_and_adapter_is_deterministic
     assert leader_set.artifact_id == "projection-1"
     assert leader_set.leaders_for("topic-1")[0].member_id == "instrument-1"
     assert leader_set.leaders_for("topic-1")[0].importance == 1.0
+
+
+def test_projection_accepts_representative_member_with_representative_importance():
+    authority = _authority(role=STRUCTURAL_ROLE_REPRESENTATIVE)
+    resolution = resolve_score_projection_records(
+        (_projection(importance=Decimal("1.75")),),
+        "topic-1",
+        AS_OF,
+        _resolve_authority((authority,)),
+    )
+
+    assert resolution.member_authorities[0].structural_role == STRUCTURAL_ROLE_REPRESENTATIVE
+    assert resolution.selected_score_members[0].score_importance == 1.75
 
 
 @pytest.mark.parametrize(

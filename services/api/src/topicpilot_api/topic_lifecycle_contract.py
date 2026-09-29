@@ -1,4 +1,4 @@
-"""Frozen Topic Lifecycle V1.2 contract vocabulary and availability boundary.
+"""Frozen Topic Lifecycle vocabulary and role-diffusion boundary.
 
 This module records the V1.2 upstream stage vocabulary recovered by the WS1
 preflight and BASE ontology correction.
@@ -50,6 +50,12 @@ LIFECYCLE_AVAILABILITY_STATES = (
     "FAIL_CLOSED",
 )
 
+LIFECYCLE_ROLE_EVIDENCE_CONTRACT_VERSION = "topic-lifecycle-role-diffusion.v2"
+LIFECYCLE_ABSOLUTE_AUTHORITY = "PRIMARY"
+LIFECYCLE_RELATIVE_AUTHORITY = "CONFIRMATION_ONLY"
+LIFECYCLE_DYNAMIC_LEADER_ALLOWED = False
+LIFECYCLE_ROLE_BLEND_ALLOWED = False
+
 
 def is_backend_lifecycle_stage(value: str | None) -> bool:
     return value in BACKEND_LIFECYCLE_STAGES
@@ -60,7 +66,12 @@ __all__ = [
     "BACKEND_LIFECYCLE_STAGES",
     "BACKEND_TO_OWNER_LIFECYCLE_STAGE",
     "LEGACY_PRESENTATION_ALIASES",
+    "LIFECYCLE_ABSOLUTE_AUTHORITY",
     "LIFECYCLE_AVAILABILITY_STATES",
+    "LIFECYCLE_DYNAMIC_LEADER_ALLOWED",
+    "LIFECYCLE_RELATIVE_AUTHORITY",
+    "LIFECYCLE_ROLE_BLEND_ALLOWED",
+    "LIFECYCLE_ROLE_EVIDENCE_CONTRACT_VERSION",
     "OWNER_LIFECYCLE_STAGES",
     "LifecycleAvailability",
     "is_backend_lifecycle_stage",

@@ -1,0 +1,59 @@
+{
+  "artifactVersion": "topic-strength-historical-calibration.v1.candidate",
+  "status": "INSUFFICIENT_DATA",
+  "productionActive": false,
+  "parameters": [
+    {
+      "parameterName": "lifecycle_role_diffusion_thresholds",
+      "system": "LIFECYCLE",
+      "status": "INSUFFICIENT_DATA",
+      "candidateValue": null,
+      "sampleCount": 0,
+      "method": "DESCRIPTIVE_PIT_NO_LOOKAHEAD_PENDING",
+      "limitations": [
+        "Candidate fitting is blocked until strict PIT rows are available."
+      ],
+      "ownerApprovalRequired": true,
+      "productionActive": false
+    },
+    {
+      "parameterName": "lifecycle_persistence_confirmation",
+      "system": "LIFECYCLE",
+      "status": "INSUFFICIENT_DATA",
+      "candidateValue": null,
+      "sampleCount": 0,
+      "method": "DESCRIPTIVE_PIT_NO_LOOKAHEAD_PENDING",
+      "limitations": [
+        "Candidate fitting is blocked until strict PIT rows are available."
+      ],
+      "ownerApprovalRequired": true,
+      "productionActive": false
+    },
+    {
+      "parameterName": "mature_expansion_stall_parameters",
+      "system": "LIFECYCLE",
+      "status": "INSUFFICIENT_DATA",
+      "candidateValue": null,
+      "sampleCount": 0,
+      "method": "DESCRIPTIVE_PIT_NO_LOOKAHEAD_PENDING",
+      "limitations": [
+        "Candidate fitting is blocked until strict PIT rows are available."
+      ],
+      "ownerApprovalRequired": true,
+      "productionActive": false
+    },
+    {
+      "parameterName": "declining_structural_deterioration_parameters",
+      "system": "LIFECYCLE",
+      "status": "INSUFFICIENT_DATA",
+      "candidateValue": null,
+      "sampleCount": 0,
+      "method": "DESCRIPTIVE_PIT_NO_LOOKAHEAD_PENDING",
+      "limitations": [
+        "Candidate fitting is blocked until strict PIT rows are available."
+      ],
+      "ownerApprovalRequired": true,
+      "productionActive": false
+    }
+  ]
+}
