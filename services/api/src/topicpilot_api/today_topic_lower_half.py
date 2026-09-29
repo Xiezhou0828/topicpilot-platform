@@ -1,3 +1,5 @@
+# ruff: noqa: E501, RUF001
+
 """Formal, deterministic read logic for the lower half of Today.
 
 This module is intentionally policy-free.  Topic Strength and Lifecycle are
@@ -7,7 +9,7 @@ Today presentation contracts to already-authoritative rows.
 
 from __future__ import annotations
 
-from collections.abc import Iterable, Mapping, Sequence
+from collections.abc import Iterable, Mapping
 from datetime import date
 from statistics import median
 from typing import Any
@@ -56,6 +58,11 @@ def _slug(row: Mapping[str, Any]) -> str:
     return str(row.get("topic_slug") or row.get("slug") or "")
 
 
+def _topic_id(row: Mapping[str, Any]) -> str | None:
+    value = row.get("topic_id") or row.get("topicId")
+    return str(value) if value is not None else None
+
+
 def _name(row: Mapping[str, Any]) -> str:
     return str(row.get("topic_name") or row.get("name") or _slug(row))
 
@@ -96,6 +103,24 @@ def _member_count(row: Mapping[str, Any]) -> int | None:
 
 def _coverage(row: Mapping[str, Any]) -> float | None:
     return _finite(row.get("formal_coverage_pct", row.get("coverage_pct")))
+
+
+def _streak_days(row: Mapping[str, Any]) -> int | None:
+    value = row.get("lifecycle_streak_days", row.get("persistence_days"))
+    number = _number(value)
+    return int(number) if number is not None else None
+
+
+def _optional_bool(row: Mapping[str, Any], *keys: str) -> bool | None:
+    for key in keys:
+        value = row.get(key)
+        if isinstance(value, bool):
+            return value
+    return None
+
+
+def _observation_flags(row: Mapping[str, Any]) -> list[str]:
+    return [str(value) for value in row.get("observation_flags") or () if value is not None]
 
 
 def _authority_valid(row: Mapping[str, Any]) -> bool:
@@ -183,12 +208,23 @@ def _topic_payload(row: Mapping[str, Any], *, rank: int | None = None) -> dict[s
     member_count = _member_count(row)
     small_sample = member_count is not None and member_count < MIN_FORMAL_MEMBERS
     status = "X_NOT_FOCUS" if small_sample else "EVALUABLE" if _evaluable(row) else "NOT_EVALUABLE"
+    absolute_grade = row.get("absolute_grade")
+    relative_grade = row.get("relative_grade")
+    streak_days = _streak_days(row)
+    meaningful_expansion = _optional_bool(row, "meaningful_expansion", "meaningfulExpansion")
+    renewed_expansion = _optional_bool(row, "renewed_expansion", "renewedExpansion")
     if status != "EVALUABLE":
         grade = None
         lifecycle = None
         absolute = None
         relative = None
+        absolute_grade = None
+        relative_grade = None
+        streak_days = None
+        meaningful_expansion = None
+        renewed_expansion = None
     payload = {
+        "topicId": _topic_id(row),
         "slug": _slug(row),
         "name": _name(row),
         "grade": grade,
@@ -199,10 +235,22 @@ def _topic_payload(row: Mapping[str, Any], *, rank: int | None = None) -> dict[s
         "favorite": False,
         "dataDate": row.get("snapshot_date") or row.get("evaluation_date"),
         "absoluteScore": absolute,
+        "absoluteGrade": absolute_grade,
         "relativeScore": relative,
+        "relativeGrade": relative_grade,
         "lifecycle": lifecycle,
         "lifecycleCandidate": _candidate(row) if status == "EVALUABLE" else None,
         "candidateConfirmation": _confirmation(row) if status == "EVALUABLE" else None,
+        "lifecycleStreakDays": streak_days,
+        "meaningfulExpansion": meaningful_expansion,
+        "renewedExpansion": renewed_expansion,
+        "observationFlags": _observation_flags(row),
+        "transitionReason": row.get("transition_reason"),
+        "evaluationStatus": row.get("evaluation_status") or row.get("lifecycle_evaluation_status"),
+        "secondaryEvents": list(row.get("secondary_events") or ()),
+        "persistenceState": (
+            f"延續第 {streak_days} 日" if streak_days is not None else "狀態延續"
+        ),
         "formalMemberCount": member_count,
         "coveragePct": _coverage(row),
         "authorityStatus": row.get("authority_status") or ("VALID" if _authority_valid(row) else "NOT_EVALUABLE"),
@@ -313,15 +361,37 @@ def build_topic_pulse(
         item = _topic_payload(row)
         item.update(
             {
+                "topic": item["name"],
+                "topicSlug": item["slug"],
+                "dailyGrade": item["grade"],
+                "status": item["topicStatus"],
                 "dataDate": row.get("snapshot_date") or row.get("evaluation_date") or target_date,
                 "eventTime": None,
                 "eventType": event_type,
+                "eventPriority": EVENT_PRIORITY[event_type],
+                "title": event_copy,
+                "description": event_copy,
+                "severity": "HIGH" if changed and event_type == "LIFECYCLE_TRANSITION" else "MEDIUM" if changed else "LOW",
+                "source": "FORMAL_TOPIC_STATE_COMPARISON",
+                "formal": True,
                 "primaryEvent": event_copy,
                 "changed": changed,
                 "eventSource": "FORMAL_TOPIC_STATE_COMPARISON" if previous else "FORMAL_TOPIC_STATE_NO_HISTORY",
                 "eventEvidence": {
                     "hasComparableHistory": previous is not None,
                     "secondaryEvents": [],
+                },
+                "fromState": (
+                    {
+                        "grade": _grade(previous),
+                        "lifecycle": _lifecycle(previous),
+                    }
+                    if previous is not None
+                    else None
+                ),
+                "toState": {
+                    "grade": _grade(row),
+                    "lifecycle": _lifecycle(row),
                 },
             }
         )
@@ -394,7 +464,7 @@ def calculate_fast_rotation(
         baseline = float(median(value for value in baseline_values if value is not None))
         assert current_score is not None
         delta = current_score - baseline
-        if delta < cooling_threshold and delta > warming_threshold:
+        if delta < warming_threshold and delta > cooling_threshold:
             continue
         direction = "warming" if delta >= warming_threshold else "cooling" if delta <= cooling_threshold else None
         if direction is None:
@@ -413,19 +483,27 @@ def calculate_fast_rotation(
             else f"{lifecycle}/{grade} · 短期正式強度{'提升' if direction == 'warming' else '轉弱'}。"
         )
         item = {
+            "topicId": _topic_id(current),
             "topic": _name(current),
             "topicSlug": slug,
             "strengthDelta": delta,
+            "strengthDelta5d": delta,
             "currentGrade": grade,
             "lifecycle": lifecycle,
             "absoluteScore": current_score,
+            "currentAbsoluteScore": current_score,
             "baselineMedian": baseline,
+            "baselineMedian5d": baseline,
             "baselineSessions": baseline_sessions,
+            "relativeScore": _relative_score(current),
+            "relativeDelta": None,
             "averageDailyChange": None,
             "observedStockCount": _member_count(current),
             "summary": copy,
             "dataDate": target_date,
             "asOf": current.get("as_of_at"),
+            "evaluationStatus": current.get("evaluation_status"),
+            "authorityStatus": current.get("authority_status") or "VALID",
             "rotationEvidence": {
                 "measure": "formal absolute Topic Strength score",
                 "baseline": "previous 5 governed/evaluable trading sessions median",

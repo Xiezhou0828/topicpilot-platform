@@ -1642,18 +1642,199 @@
       },
       "HomeMarketPulseEvent": {
         "properties": {
+          "absoluteGrade": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Absolutegrade"
+          },
+          "absoluteScore": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Absolutescore"
+          },
+          "authorityStatus": {
+            "default": "NOT_EVALUABLE",
+            "title": "Authoritystatus",
+            "type": "string"
+          },
+          "changed": {
+            "default": false,
+            "title": "Changed",
+            "type": "boolean"
+          },
+          "dailyGrade": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dailygrade"
+          },
+          "dataDate": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Datadate"
+          },
           "description": {
             "title": "Description",
             "type": "string"
           },
+          "evaluationStatus": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Evaluationstatus"
+          },
+          "eventEvidence": {
+            "additionalProperties": true,
+            "title": "Eventevidence",
+            "type": "object"
+          },
+          "eventPriority": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Eventpriority"
+          },
           "eventTime": {
-            "format": "date-time",
-            "title": "Eventtime",
-            "type": "string"
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Eventtime"
           },
           "eventType": {
             "title": "Eventtype",
             "type": "string"
+          },
+          "formal": {
+            "default": true,
+            "title": "Formal",
+            "type": "boolean"
+          },
+          "fromState": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fromstate"
+          },
+          "lifecycle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lifecycle"
+          },
+          "lifecycleCandidate": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lifecyclecandidate"
+          },
+          "observationFlags": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Observationflags",
+            "type": "array"
+          },
+          "persistenceState": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Persistencestate"
+          },
+          "primaryEvent": {
+            "default": "狀態延續",
+            "title": "Primaryevent",
+            "type": "string"
+          },
+          "relativeGrade": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Relativegrade"
+          },
+          "relativeScore": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Relativescore"
+          },
+          "secondaryEvents": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Secondaryevents",
+            "type": "array"
           },
           "severity": {
             "title": "Severity",
@@ -1663,9 +1844,48 @@
             "title": "Source",
             "type": "string"
           },
+          "status": {
+            "default": "EVALUABLE",
+            "title": "Status",
+            "type": "string"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          },
+          "toState": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tostate"
+          },
           "topic": {
             "title": "Topic",
             "type": "string"
+          },
+          "topicId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Topicid"
           },
           "topicSlug": {
             "title": "Topicslug",
@@ -1673,7 +1893,6 @@
           }
         },
         "required": [
-          "eventTime",
           "topic",
           "eventType",
           "description",
@@ -2640,6 +2859,17 @@
       },
       "HomeRotationTopic": {
         "properties": {
+          "absoluteScore": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Absolutescore"
+          },
           "asOf": {
             "anyOf": [
               {
@@ -2652,6 +2882,11 @@
             ],
             "title": "Asof"
           },
+          "authorityStatus": {
+            "default": "NOT_EVALUABLE",
+            "title": "Authoritystatus",
+            "type": "string"
+          },
           "averageDailyChange": {
             "anyOf": [
               {
@@ -2662,6 +2897,47 @@
               }
             ],
             "title": "Averagedailychange"
+          },
+          "baselineMedian": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Baselinemedian"
+          },
+          "baselineMedian5d": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Baselinemedian5D"
+          },
+          "baselineSessions": {
+            "items": {
+              "format": "date",
+              "type": "string"
+            },
+            "title": "Baselinesessions",
+            "type": "array"
+          },
+          "currentAbsoluteScore": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Currentabsolutescore"
           },
           "currentGrade": {
             "anyOf": [
@@ -2686,6 +2962,28 @@
             ],
             "title": "Datadate"
           },
+          "evaluationStatus": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Evaluationstatus"
+          },
+          "lifecycle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lifecycle"
+          },
           "observedStockCount": {
             "anyOf": [
               {
@@ -2697,6 +2995,28 @@
             ],
             "title": "Observedstockcount"
           },
+          "relativeDelta": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Relativedelta"
+          },
+          "relativeScore": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Relativescore"
+          },
           "rotationEvidence": {
             "additionalProperties": true,
             "title": "Rotationevidence",
@@ -2706,6 +3026,17 @@
             "title": "Strengthdelta",
             "type": "number"
           },
+          "strengthDelta5d": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Strengthdelta5D"
+          },
           "summary": {
             "title": "Summary",
             "type": "string"
@@ -2713,6 +3044,17 @@
           "topic": {
             "title": "Topic",
             "type": "string"
+          },
+          "topicId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Topicid"
           },
           "topicSlug": {
             "title": "Topicslug",
@@ -2808,6 +3150,56 @@
       },
       "HomeTopicCard": {
         "properties": {
+          "absoluteGrade": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Absolutegrade"
+          },
+          "absoluteScore": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Absolutescore"
+          },
+          "authorityStatus": {
+            "default": "NOT_EVALUABLE",
+            "title": "Authoritystatus",
+            "type": "string"
+          },
+          "candidateConfirmation": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Candidateconfirmation"
+          },
+          "coveragePct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Coveragepct"
+          },
           "currentState": {
             "anyOf": [
               {
@@ -2831,9 +3223,31 @@
             ],
             "title": "Datadate"
           },
+          "evaluationStatus": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Evaluationstatus"
+          },
           "favorite": {
             "title": "Favorite",
             "type": "boolean"
+          },
+          "formalMemberCount": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Formalmembercount"
           },
           "grade": {
             "anyOf": [
@@ -2846,14 +3260,117 @@
             ],
             "title": "Grade"
           },
+          "lifecycle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lifecycle"
+          },
+          "lifecycleCandidate": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lifecyclecandidate"
+          },
+          "lifecycleStreakDays": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lifecyclestreakdays"
+          },
+          "meaningfulExpansion": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Meaningfulexpansion"
+          },
           "name": {
             "title": "Name",
             "type": "string"
+          },
+          "observationFlags": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Observationflags",
+            "type": "array"
+          },
+          "persistenceState": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Persistencestate"
           },
           "rankingEvidence": {
             "additionalProperties": true,
             "title": "Rankingevidence",
             "type": "object"
+          },
+          "relativeGrade": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Relativegrade"
+          },
+          "relativeScore": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Relativescore"
+          },
+          "renewedExpansion": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Renewedexpansion"
+          },
+          "secondaryEvents": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Secondaryevents",
+            "type": "array"
           },
           "slug": {
             "title": "Slug",
@@ -2877,6 +3394,33 @@
           "summary": {
             "title": "Summary",
             "type": "string"
+          },
+          "topicId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Topicid"
+          },
+          "topicStatus": {
+            "default": "NOT_EVALUABLE",
+            "title": "Topicstatus",
+            "type": "string"
+          },
+          "transitionReason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Transitionreason"
           }
         },
         "required": [

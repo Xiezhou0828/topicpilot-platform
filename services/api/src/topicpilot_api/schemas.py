@@ -1244,6 +1244,7 @@ class HomeDailyFocus(ApiModel):
 
 
 class HomeTopicCard(ApiModel):
+    topic_id: str | None = Field(default=None, alias="topicId")
     slug: str
     name: str
     grade: str | None
@@ -1254,19 +1255,68 @@ class HomeTopicCard(ApiModel):
     favorite: bool
     data_date: date | None = Field(alias="dataDate")
     ranking_evidence: dict[str, Any] = Field(alias="rankingEvidence", default_factory=dict)
+    absolute_score: float | None = Field(default=None, alias="absoluteScore")
+    absolute_grade: str | None = Field(default=None, alias="absoluteGrade")
+    relative_score: float | None = Field(default=None, alias="relativeScore")
+    relative_grade: str | None = Field(default=None, alias="relativeGrade")
+    lifecycle: str | None = None
+    lifecycle_candidate: str | None = Field(default=None, alias="lifecycleCandidate")
+    candidate_confirmation: dict[str, Any] | None = Field(
+        default=None, alias="candidateConfirmation"
+    )
+    formal_member_count: int | None = Field(default=None, alias="formalMemberCount")
+    coverage_pct: float | None = Field(default=None, alias="coveragePct")
+    lifecycle_streak_days: int | None = Field(default=None, alias="lifecycleStreakDays")
+    meaningful_expansion: bool | None = Field(default=None, alias="meaningfulExpansion")
+    renewed_expansion: bool | None = Field(default=None, alias="renewedExpansion")
+    observation_flags: list[str] = Field(default_factory=list, alias="observationFlags")
+    transition_reason: str | None = Field(default=None, alias="transitionReason")
+    evaluation_status: str | None = Field(default=None, alias="evaluationStatus")
+    secondary_events: list[dict[str, Any]] = Field(
+        default_factory=list, alias="secondaryEvents"
+    )
+    persistence_state: str | None = Field(default=None, alias="persistenceState")
+    authority_status: str = Field(default="NOT_EVALUABLE", alias="authorityStatus")
+    topic_status: str = Field(default="NOT_EVALUABLE", alias="topicStatus")
 
 
 class HomeMarketPulseEvent(ApiModel):
-    event_time: datetime = Field(alias="eventTime")
+    topic_id: str | None = Field(default=None, alias="topicId")
+    event_time: datetime | None = Field(default=None, alias="eventTime")
+    data_date: date | None = Field(default=None, alias="dataDate")
     topic: str
     event_type: str = Field(alias="eventType")
+    event_priority: int | None = Field(default=None, alias="eventPriority")
+    title: str | None = None
     description: str
     severity: str
     topic_slug: str = Field(alias="topicSlug")
     source: str
+    status: str = "EVALUABLE"
+    daily_grade: str | None = Field(default=None, alias="dailyGrade")
+    lifecycle: str | None = None
+    lifecycle_candidate: str | None = Field(default=None, alias="lifecycleCandidate")
+    absolute_score: float | None = Field(default=None, alias="absoluteScore")
+    absolute_grade: str | None = Field(default=None, alias="absoluteGrade")
+    relative_score: float | None = Field(default=None, alias="relativeScore")
+    relative_grade: str | None = Field(default=None, alias="relativeGrade")
+    secondary_events: list[dict[str, Any]] = Field(
+        default_factory=list, alias="secondaryEvents"
+    )
+    persistence_state: str | None = Field(default=None, alias="persistenceState")
+    observation_flags: list[str] = Field(default_factory=list, alias="observationFlags")
+    evaluation_status: str | None = Field(default=None, alias="evaluationStatus")
+    authority_status: str = Field(default="NOT_EVALUABLE", alias="authorityStatus")
+    formal: bool = True
+    primary_event: str = Field(default="狀態延續", alias="primaryEvent")
+    changed: bool = False
+    event_evidence: dict[str, Any] = Field(default_factory=dict, alias="eventEvidence")
+    from_state: dict[str, Any] | None = Field(default=None, alias="fromState")
+    to_state: dict[str, Any] | None = Field(default=None, alias="toState")
 
 
 class HomeRotationTopic(ApiModel):
+    topic_id: str | None = Field(default=None, alias="topicId")
     topic: str
     topic_slug: str = Field(alias="topicSlug")
     strength_delta: float = Field(alias="strengthDelta")
@@ -1277,6 +1327,17 @@ class HomeRotationTopic(ApiModel):
     data_date: date | None = Field(alias="dataDate", default=None)
     as_of: datetime | None = Field(alias="asOf", default=None)
     rotation_evidence: dict[str, Any] = Field(alias="rotationEvidence", default_factory=dict)
+    lifecycle: str | None = None
+    absolute_score: float | None = Field(default=None, alias="absoluteScore")
+    current_absolute_score: float | None = Field(default=None, alias="currentAbsoluteScore")
+    baseline_median: float | None = Field(default=None, alias="baselineMedian")
+    baseline_median_5d: float | None = Field(default=None, alias="baselineMedian5d")
+    strength_delta_5d: float | None = Field(default=None, alias="strengthDelta5d")
+    relative_score: float | None = Field(default=None, alias="relativeScore")
+    relative_delta: float | None = Field(default=None, alias="relativeDelta")
+    baseline_sessions: list[date] = Field(default_factory=list, alias="baselineSessions")
+    evaluation_status: str | None = Field(default=None, alias="evaluationStatus")
+    authority_status: str = Field(default="NOT_EVALUABLE", alias="authorityStatus")
 
 
 class HomeOpportunityStock(ApiModel):

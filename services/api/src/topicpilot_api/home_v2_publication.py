@@ -508,6 +508,22 @@ def _json_metric(payload: Any, names: Sequence[str]) -> float | None:
     return None
 
 
+def _json_value(payload: Any, names: Sequence[str]) -> Any:
+    if isinstance(payload, Mapping):
+        for name in names:
+            value = payload.get(name)
+            if value is not None:
+                return value
+    if isinstance(payload, list):
+        for item in payload:
+            if not isinstance(item, Mapping):
+                continue
+            name = item.get("name") or item.get("key")
+            if name in names:
+                return item.get("value")
+    return None
+
+
 def _formal_topic_state_rows(
     session: Session, *, trading_date: date, current_only: bool
 ) -> list[dict[str, Any]]:
@@ -528,6 +544,8 @@ def _formal_topic_state_rows(
                   AND s.publication_state = 'PUBLISHED'
                   AND s.finality_state = 'FINAL'
                   AND t.status NOT IN ('DISABLED', 'RETIRED')
+                  AND (t.valid_from IS NULL OR t.valid_from <= s.snapshot_date)
+                  AND (t.valid_to IS NULL OR t.valid_to >= s.snapshot_date)
                   AND NOT EXISTS (
                       SELECT 1 FROM topicpilot.topic_snapshots successor
                       WHERE successor.supersedes_snapshot_id = s.id
@@ -598,9 +616,52 @@ def _formal_topic_state_rows(
         components = row.get("score_components")
         absolute = _json_metric(components, ("absolute_score", "absoluteScore", "absolute_total"))
         relative = _json_metric(components, ("relative_score", "relativeScore", "relative_total"))
+        absolute_block = _json_value(components, ("absolute", "ABSOLUTE"))
+        relative_block = _json_value(components, ("relative", "RELATIVE"))
+        if absolute is None:
+            absolute = _json_metric(
+                absolute_block, ("score", "absolute_score", "absoluteScore")
+            )
+        if relative is None:
+            relative = _json_metric(
+                relative_block, ("score", "relative_score", "relativeScore")
+            )
+        absolute_grade = _json_value(components, ("absolute_grade", "absoluteGrade"))
+        relative_grade = _json_value(components, ("relative_grade", "relativeGrade"))
+        if absolute_grade is None:
+            absolute_grade = _json_value(
+                absolute_block, ("grade", "absolute_grade", "absoluteGrade")
+            )
+        if relative_grade is None:
+            relative_grade = _json_value(
+                relative_block, ("grade", "relative_grade", "relativeGrade")
+            )
         quality_flags = row.get("score_quality_flags") or {}
         confirmation = row.get("confirmation_state") or {}
         persistence = row.get("persistence_evidence") or {}
+        state_memory = row.get("state_memory") or {}
+        observation_flags = []
+        if isinstance(quality_flags, Mapping):
+            observation_flags = quality_flags.get("observationFlags") or quality_flags.get(
+                "observation_flags"
+            ) or []
+        meaningful_expansion = _json_value(
+            persistence, ("meaningfulExpansion", "meaningful_expansion")
+        )
+        renewed_expansion = _json_value(
+            persistence, ("renewedExpansion", "renewed_expansion")
+        )
+        if meaningful_expansion is None:
+            meaningful_expansion = _json_value(
+                state_memory, ("meaningfulExpansion", "meaningful_expansion")
+            )
+        if renewed_expansion is None:
+            renewed_expansion = _json_value(
+                state_memory, ("renewedExpansion", "renewed_expansion")
+            )
+        persistence_days = row.get("stage_trading_days")
+        if persistence_days is None and isinstance(persistence, Mapping):
+            persistence_days = persistence.get("tradingDays")
         authority_valid = bool(
             row.get("score_publication_status") == "PUBLISHED"
             and row.get("lifecycle_publication_status") == "PUBLISHED"
@@ -617,17 +678,19 @@ def _formal_topic_state_rows(
                 "formal_daily_grade": row.get("formal_grade"),
                 "absolute_score": absolute,
                 "relative_score": relative,
+                "absolute_grade": absolute_grade,
+                "relative_grade": relative_grade,
                 "formal_lifecycle": row.get("final_stage"),
                 "lifecycle_candidate": row.get("candidate_stage"),
                 "candidate_confirmation_current": confirmation.get("current") if isinstance(confirmation, Mapping) else None,
                 "candidate_confirmation_required": confirmation.get("required") if isinstance(confirmation, Mapping) else None,
                 "confirmation_progress": confirmation if isinstance(confirmation, Mapping) else None,
-                "persistence_days": row.get("stage_trading_days") or persistence.get("tradingDays") if isinstance(persistence, Mapping) else row.get("stage_trading_days"),
-                "renewed_expansion": bool(
-                    isinstance(persistence, Mapping)
-                    and persistence.get("renewedExpansion") is True
-                ),
-                "observation_flags": quality_flags.get("observationFlags", []) if isinstance(quality_flags, Mapping) else [],
+                "persistence_days": persistence_days,
+                "renewed_expansion": renewed_expansion if isinstance(renewed_expansion, bool) else None,
+                "meaningful_expansion": meaningful_expansion if isinstance(meaningful_expansion, bool) else None,
+                "observation_flags": observation_flags,
+                "transition_reason": row.get("transition_reason"),
+                "evaluation_status": row.get("lifecycle_evaluation_status") or row.get("score_evaluation_status"),
                 "authority_status": "VALID" if authority_valid else "NOT_EVALUABLE",
                 "authority_quality_valid": authority_valid,
                 "as_of_at": max(
@@ -1849,12 +1912,12 @@ def materialize_home_v2(
             "sourceDatasetId": source_dataset_id,
             "lineage": {
                 "canonicalDailyMarket": "topicpilot.vw_daily_market_observations",
-                "formalTopics": "topicpilot.topic_snapshots",
+                "formalTopics": "topicpilot.topic_snapshots + formal Topic Strength/Lifecycle results",
             },
             "completeness": {
                 "required": ["marketOverview"],
-                "sectionAvailableWhenEvidenceExists": ["dailyFocus", "mainTopics"],
-                "optional": ["heatingTopics", "coolingTopics", "marketEvents", "opportunities"],
+                "sectionAvailableWhenEvidenceExists": ["dailyFocus", "mainTopics", "marketEvents"],
+                "optional": ["heatingTopics", "coolingTopics", "opportunities"],
                 "sectionStatuses": section_statuses,
             },
         },
@@ -1872,9 +1935,9 @@ def materialize_home_v2(
             ) else "PARTIAL" if publication_state == "PUBLISHED" else "UNAVAILABLE",
             "source": HOME_SOURCE,
             "classification": "FORMAL",
-            "temporarySections": ["marketEvents", "opportunities"],
+            "temporarySections": ["opportunities"],
             "missingSections": [key for key, item in sections.items() if item.status == "UNAVAILABLE"],
-            "notes": ["Market Events 與 Opportunities 不參與 Today V1 正式發布 gate。"],
+            "notes": ["題材動態快訊由正式 Topic state comparison 提供；Opportunities 不參與 Today V1 正式發布 gate。"],
             "diagnosticCodes": {
                 key: item.reason_code for key, item in sections.items() if item.reason_code
             },
@@ -2137,7 +2200,7 @@ def empty_home_v2(now: datetime, *, tracked_stock_count: int = 0) -> dict[str, A
             if key == "mainTopics"
             else "DAILY_FOCUS_EVIDENCE_INCOMPLETE"
             if key == "dailyFocus"
-            else "INSUFFICIENT_ROTATION_HISTORY"
+            else "INSUFFICIENT_FORMAL_STRENGTH_HISTORY"
             if key in {"heatingTopics", "coolingTopics"}
             else "OPTIONAL_SECTION_NOT_FORMAL",
             "userMessage": USER_MESSAGES["NO_PUBLISHED_MARKET_FACTS"]
@@ -2146,7 +2209,7 @@ def empty_home_v2(now: datetime, *, tracked_stock_count: int = 0) -> dict[str, A
             if key == "mainTopics"
             else USER_MESSAGES["DAILY_FOCUS_EVIDENCE_INCOMPLETE"]
             if key == "dailyFocus"
-            else USER_MESSAGES["INSUFFICIENT_ROTATION_HISTORY"]
+            else USER_MESSAGES["INSUFFICIENT_FORMAL_STRENGTH_HISTORY"]
             if key in {"heatingTopics", "coolingTopics"}
             else USER_MESSAGES["OPTIONAL_SECTION_NOT_FORMAL"],
         }
@@ -2224,6 +2287,7 @@ __all__ = [
     "build_daily_focus",
     "build_market_distribution",
     "build_market_signals",
+    "calculate_fast_rotation",
     "empty_home_v2",
     "materialize_home_v2",
     "normalize_home_publication_for_read",

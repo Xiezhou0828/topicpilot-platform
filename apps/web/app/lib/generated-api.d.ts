@@ -1282,21 +1282,87 @@ export interface components {
         };
         /** HomeMarketPulseEvent */
         HomeMarketPulseEvent: {
+            /** Absolutegrade */
+            absoluteGrade?: string | null;
+            /** Absolutescore */
+            absoluteScore?: number | null;
+            /**
+             * Authoritystatus
+             * @default NOT_EVALUABLE
+             */
+            authorityStatus: string;
+            /**
+             * Changed
+             * @default false
+             */
+            changed: boolean;
+            /** Dailygrade */
+            dailyGrade?: string | null;
+            /** Datadate */
+            dataDate?: string | null;
             /** Description */
             description: string;
-            /**
-             * Eventtime
-             * Format: date-time
-             */
-            eventTime: string;
+            /** Evaluationstatus */
+            evaluationStatus?: string | null;
+            /** Eventevidence */
+            eventEvidence?: {
+                [key: string]: unknown;
+            };
+            /** Eventpriority */
+            eventPriority?: number | null;
+            /** Eventtime */
+            eventTime?: string | null;
             /** Eventtype */
             eventType: string;
+            /**
+             * Formal
+             * @default true
+             */
+            formal: boolean;
+            /** Fromstate */
+            fromState?: {
+                [key: string]: unknown;
+            } | null;
+            /** Lifecycle */
+            lifecycle?: string | null;
+            /** Lifecyclecandidate */
+            lifecycleCandidate?: string | null;
+            /** Observationflags */
+            observationFlags?: string[];
+            /** Persistencestate */
+            persistenceState?: string | null;
+            /**
+             * Primaryevent
+             * @default 狀態延續
+             */
+            primaryEvent: string;
+            /** Relativegrade */
+            relativeGrade?: string | null;
+            /** Relativescore */
+            relativeScore?: number | null;
+            /** Secondaryevents */
+            secondaryEvents?: {
+                [key: string]: unknown;
+            }[];
             /** Severity */
             severity: string;
             /** Source */
             source: string;
+            /**
+             * Status
+             * @default EVALUABLE
+             */
+            status: string;
+            /** Title */
+            title?: string | null;
+            /** Tostate */
+            toState?: {
+                [key: string]: unknown;
+            } | null;
             /** Topic */
             topic: string;
+            /** Topicid */
+            topicId?: string | null;
             /** Topicslug */
             topicSlug: string;
         };
@@ -1552,26 +1618,53 @@ export interface components {
         };
         /** HomeRotationTopic */
         HomeRotationTopic: {
+            /** Absolutescore */
+            absoluteScore?: number | null;
             /** Asof */
             asOf?: string | null;
+            /**
+             * Authoritystatus
+             * @default NOT_EVALUABLE
+             */
+            authorityStatus: string;
             /** Averagedailychange */
             averageDailyChange?: number | null;
+            /** Baselinemedian */
+            baselineMedian?: number | null;
+            /** Baselinemedian5D */
+            baselineMedian5d?: number | null;
+            /** Baselinesessions */
+            baselineSessions?: string[];
+            /** Currentabsolutescore */
+            currentAbsoluteScore?: number | null;
             /** Currentgrade */
             currentGrade: string | null;
             /** Datadate */
             dataDate?: string | null;
+            /** Evaluationstatus */
+            evaluationStatus?: string | null;
+            /** Lifecycle */
+            lifecycle?: string | null;
             /** Observedstockcount */
             observedStockCount?: number | null;
+            /** Relativedelta */
+            relativeDelta?: number | null;
+            /** Relativescore */
+            relativeScore?: number | null;
             /** Rotationevidence */
             rotationEvidence?: {
                 [key: string]: unknown;
             };
             /** Strengthdelta */
             strengthDelta: number;
+            /** Strengthdelta5D */
+            strengthDelta5d?: number | null;
             /** Summary */
             summary: string;
             /** Topic */
             topic: string;
+            /** Topicid */
+            topicId?: string | null;
             /** Topicslug */
             topicSlug: string;
         };
@@ -1595,20 +1688,61 @@ export interface components {
         };
         /** HomeTopicCard */
         HomeTopicCard: {
+            /** Absolutegrade */
+            absoluteGrade?: string | null;
+            /** Absolutescore */
+            absoluteScore?: number | null;
+            /**
+             * Authoritystatus
+             * @default NOT_EVALUABLE
+             */
+            authorityStatus: string;
+            /** Candidateconfirmation */
+            candidateConfirmation?: {
+                [key: string]: unknown;
+            } | null;
+            /** Coveragepct */
+            coveragePct?: number | null;
             /** Currentstate */
             currentState: string | null;
             /** Datadate */
             dataDate: string | null;
+            /** Evaluationstatus */
+            evaluationStatus?: string | null;
             /** Favorite */
             favorite: boolean;
+            /** Formalmembercount */
+            formalMemberCount?: number | null;
             /** Grade */
             grade: string | null;
+            /** Lifecycle */
+            lifecycle?: string | null;
+            /** Lifecyclecandidate */
+            lifecycleCandidate?: string | null;
+            /** Lifecyclestreakdays */
+            lifecycleStreakDays?: number | null;
+            /** Meaningfulexpansion */
+            meaningfulExpansion?: boolean | null;
             /** Name */
             name: string;
+            /** Observationflags */
+            observationFlags?: string[];
+            /** Persistencestate */
+            persistenceState?: string | null;
             /** Rankingevidence */
             rankingEvidence?: {
                 [key: string]: unknown;
             };
+            /** Relativegrade */
+            relativeGrade?: string | null;
+            /** Relativescore */
+            relativeScore?: number | null;
+            /** Renewedexpansion */
+            renewedExpansion?: boolean | null;
+            /** Secondaryevents */
+            secondaryEvents?: {
+                [key: string]: unknown;
+            }[];
             /** Slug */
             slug: string;
             /** Stockcount */
@@ -1617,6 +1751,15 @@ export interface components {
             strength: number | null;
             /** Summary */
             summary: string;
+            /** Topicid */
+            topicId?: string | null;
+            /**
+             * Topicstatus
+             * @default NOT_EVALUABLE
+             */
+            topicStatus: string;
+            /** Transitionreason */
+            transitionReason?: string | null;
         };
         /** LiveRunSummary */
         LiveRunSummary: {

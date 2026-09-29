@@ -117,7 +117,10 @@ test("V2 Home renders formal topic state without browser-derived strategy semant
   const home = await read("components/v2/TodayMarketPage.tsx");
   assert.match(home, /resource\.data\.map/);
   assert.match(home, /topic\.grade && <GradeChip grade=\{topic\.grade\}/);
-  assert.match(home, /topic\.currentState/);
+  assert.match(home, /topic\.lifecycle/);
+  assert.match(home, /topic\.absoluteScore/);
+  assert.match(home, /topic\.relativeScore/);
+  assert.doesNotMatch(home, /topic\.currentState|topic\.averageChange/);
   assert.match(home, /tp-home-topic-detail/);
   assert.match(home, /Today 只提供正式機會資料的摘要入口/);
   assert.doesNotMatch(home, /candidate\.sort|strategyId|rankScore|targetPrice/);
