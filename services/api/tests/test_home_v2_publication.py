@@ -170,7 +170,10 @@ def test_market_signals_use_formal_index_and_breadth_facts_only():
         }
     )
 
-    assert [item["key"] for item in signals] == ["INDEX_DIVERGENCE", "BREADTH_DIVERGENCE"]
+    assert [item["signalId"] for item in signals] == [
+        "INDEX_MARKET_DIVERGENCE",
+        "BREADTH_RED_INDEX_DISCONNECT",
+    ]
     assert all(item["evidence"] for item in signals)
 
 

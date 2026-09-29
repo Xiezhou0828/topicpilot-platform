@@ -23,6 +23,8 @@ from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
+from topicpilot_api.market_signals import build_market_signals as build_v1_market_signals
+from topicpilot_api.market_signals import catalog_payload, evaluate_v1_signals
 from topicpilot_api.orm import HomeMarketFact, HomePublication, HomePublicationSection
 
 HOME_PUBLICATION_VERSION = "home-v2.formal.v1"
@@ -56,36 +58,8 @@ MARKET_DISTRIBUTION_BUCKETS = (
     ("PCT_LE_NEG_10", "跌幅 ≥10%（未確認跌停）"),
 )
 
-MARKET_SIGNAL_CATALOG = (
-    {
-        "key": "INDEX_DIVERGENCE",
-        "name": "大型股／中小型股分化",
-        "condition": "TSE 與 TWO 報酬方向相反",
-        "direction": "Neutral / Watch",
-        "description": "大型股與中小型股走勢分歧。",
-    },
-    {
-        "key": "OTC_VOLUME_PRICE_DIVERGENCE",
-        "name": "櫃買量價背離",
-        "condition": "TWO 下跌且上櫃成交金額較前一交易日增加",
-        "direction": "Bearish / Warning",
-        "description": "中小型股成交熱度升高但價格走弱。",
-    },
-    {
-        "key": "INSTITUTION_PRICE_DIVERGENCE",
-        "name": "法人與價格背離",
-        "condition": "指數上漲且外資淨賣超",
-        "direction": "Watch",
-        "description": "價格與外資籌碼方向不一致。",
-    },
-    {
-        "key": "BREADTH_DIVERGENCE",
-        "name": "市場廣度背離",
-        "condition": "指數上漲且下跌家數高於上漲家數",
-        "direction": "Watch",
-        "description": "指數上漲但市場參與度不足。",
-    },
-)
+MARKET_SIGNAL_CATALOG = tuple(catalog_payload())
+build_market_signals = build_v1_market_signals
 
 USER_MESSAGES = {
     "NO_PUBLISHED_MARKET_FACTS": "市場資料尚未完整。",
@@ -305,133 +279,6 @@ def _signal_change_text(item: Mapping[str, Any], label: str) -> str:
     return f"{label} {change_text}"
 
 
-def build_market_signals(market_overview: Mapping[str, Any]) -> list[dict[str, Any]]:
-    """Return only triggered signals from formal, published market facts."""
-
-    health = market_overview.get("marketHealth") or {}
-    formal_statuses = {"AVAILABLE", "PUBLISHED", "FORMAL"}
-    indices = {
-        str(item.get("market")): item
-        for item in market_overview.get("indices") or []
-        if isinstance(item, Mapping)
-        and str(item.get("status") or "").upper() in formal_statuses
-        and isinstance(item.get("change"), (int, float))
-        and not isinstance(item.get("change"), bool)
-    }
-    signals: list[dict[str, Any]] = []
-    tpe = indices.get("TPE")
-    two = indices.get("TWO")
-    if tpe is not None and two is not None:
-        tpe_change = tpe["change"]
-        two_change = two["change"]
-        if (tpe_change > 0 and two_change < 0) or (tpe_change < 0 and two_change > 0):
-            signals.append(
-                {
-                    "key": "INDEX_DIVERGENCE",
-                    "name": "大型股／中小型股分化",
-                    "severity": "WATCH",
-                    "direction": "Neutral",
-                    "evidence": [
-                        _signal_change_text(tpe, "加權指數"),
-                        _signal_change_text(two, "櫃買指數"),
-                    ],
-                    "interpretation": "大型股與中小型股走勢明顯分化。",
-                }
-            )
-
-    turnover = {
-        str(item.get("market")): item
-        for item in market_overview.get("turnover") or []
-        if isinstance(item, Mapping)
-    }
-    two_turnover = turnover.get("TWO")
-    two_change_pct = two_turnover.get("changePct") if isinstance(two_turnover, Mapping) else None
-    if (
-        two is not None
-        and two["change"] < 0
-        and two_turnover is not None
-        and str(two_turnover.get("status") or "").upper() in formal_statuses
-        and isinstance(two_change_pct, (int, float))
-        and not isinstance(two_change_pct, bool)
-        and two_change_pct > 0
-    ):
-        signals.append(
-            {
-                "key": "OTC_VOLUME_PRICE_DIVERGENCE",
-                "name": "櫃買量價背離",
-                "severity": "WARNING",
-                "direction": "Bearish",
-                "evidence": [
-                    _signal_change_text(two, "櫃買指數"),
-                    f"上櫃成交金額 {two_change_pct:+g}%（較前一交易日）",
-                ],
-                "interpretation": "中小型股成交熱度升高但價格走弱。",
-            }
-        )
-
-    institution_flows = market_overview.get("institutionFlows")
-    tpe_flow = None
-    if isinstance(institution_flows, Mapping) and isinstance(institution_flows.get("markets"), list):
-        tpe_flow = next(
-            (
-                item
-                for item in institution_flows["markets"]
-                if isinstance(item, Mapping) and item.get("market") == "TPE"
-            ),
-            None,
-        )
-    current = tpe_flow.get("current") if isinstance(tpe_flow, Mapping) else None
-    foreign = current.get("foreign") if isinstance(current, Mapping) else None
-    foreign_value = foreign.get("value") if isinstance(foreign, Mapping) else None
-    foreign_status = str(foreign.get("status") or "").upper() if isinstance(foreign, Mapping) else ""
-    if (
-        tpe is not None
-        and tpe["change"] > 0
-        and foreign_status in formal_statuses
-        and isinstance(foreign_value, (int, float))
-        and not isinstance(foreign_value, bool)
-        and foreign_value < 0
-    ):
-        signals.append(
-            {
-                "key": "INSTITUTION_PRICE_DIVERGENCE",
-                "name": "法人與價格背離",
-                "severity": "WATCH",
-                "direction": "Watch",
-                "evidence": [
-                    _signal_change_text(tpe, "加權指數"),
-                    f"外資淨賣超 {foreign_value:g}",
-                ],
-                "interpretation": "價格與外資籌碼方向不一致。",
-            }
-        )
-
-    advance = health.get("advance")
-    decline = health.get("decline")
-    if (
-        tpe is not None
-        and tpe["change"] > 0
-        and str(health.get("status") or "").upper() in formal_statuses
-        and isinstance(advance, int)
-        and isinstance(decline, int)
-        and decline > advance
-    ):
-        signals.append(
-            {
-                "key": "BREADTH_DIVERGENCE",
-                "name": "市場廣度背離",
-                "severity": "WATCH",
-                "direction": "Watch",
-                "evidence": [
-                    _signal_change_text(tpe, "加權指數"),
-                    f"上漲家數 {advance}、下跌家數 {decline}",
-                ],
-                "interpretation": "指數上漲但市場參與度不足。",
-            }
-        )
-    return signals
-
-
 def build_daily_focus(
     *,
     market_overview: Mapping[str, Any],
@@ -440,6 +287,8 @@ def build_daily_focus(
     cooling_topics: Sequence[Mapping[str, Any]],
     data_date: date | None,
     as_of: datetime | None,
+    history: Sequence[Mapping[str, Any]] = (),
+    topic_observations: Sequence[Mapping[str, Any]] = (),
 ) -> SectionResult:
     """Build formal market signals from published facts only."""
 
@@ -450,7 +299,17 @@ def build_daily_focus(
         or (market_overview.get("marketHealth") or {}).get("breadthEligible")
     )
     signal_catalog = [dict(item) for item in MARKET_SIGNAL_CATALOG]
-    signals = build_market_signals(market_overview) if has_market_evidence else []
+    signals = (
+        evaluate_v1_signals(
+            market_overview,
+            history=history,
+            topic_observations=topic_observations,
+            trading_date=data_date,
+        )
+        if has_market_evidence
+        else []
+    )
+    active_signals = [item for item in signals if item.get("isActive")]
     if not has_market_evidence:
         return _status(
             "UNAVAILABLE",
@@ -472,7 +331,7 @@ def build_daily_focus(
                 "userMessage": USER_MESSAGES["DAILY_FOCUS_EVIDENCE_INCOMPLETE"],
             },
         )
-    headline = signals[0]["name"] if signals else "今日無異常訊號"
+    headline = active_signals[0]["title"] if active_signals else "今日無異常訊號"
     return _status(
         "AVAILABLE",
         data_date=data_date,
@@ -482,7 +341,7 @@ def build_daily_focus(
             "mode": "RULE_BASED_V1",
             "temporary": False,
             "headline": headline,
-            "bullets": [item["interpretation"] for item in signals[:4]] or ["目前沒有符合正式規則的市場訊號。"],
+            "bullets": [item["summary"] for item in active_signals[:4]] or ["目前沒有符合正式規則的市場訊號。"],
             "signals": signals,
             "signalCatalog": signal_catalog,
             "dataDate": data_date,
@@ -1020,7 +879,12 @@ def _as_datetime(value: Any) -> datetime | None:
     return None
 
 
-def normalize_home_publication_for_read(payload: Mapping[str, Any]) -> dict[str, Any]:
+def normalize_home_publication_for_read(
+    payload: Mapping[str, Any],
+    *,
+    history: Sequence[Mapping[str, Any]] = (),
+    topic_observations: Sequence[Mapping[str, Any]] = (),
+) -> dict[str, Any]:
     """Rebuild persisted Daily Focus from the current formal market facts."""
 
     result = dict(payload)
@@ -1094,6 +958,8 @@ def normalize_home_publication_for_read(payload: Mapping[str, Any]) -> dict[str,
         cooling_topics=(),
         data_date=data_date,
         as_of=as_of,
+        history=history,
+        topic_observations=topic_observations,
     )
     result["dailyFocus"] = normalized.payload
     statuses = result.get("sectionStatuses")
@@ -1367,6 +1233,186 @@ def _read_home_institutional_flow(
         "unit": rows[0].get("unit") or "TWD",
         "scale": int(rows[0].get("scale") or 0),
     }
+
+
+def _read_signal_home_history(
+    session: Session, trading_date: date | None, *, limit: int = 21
+) -> list[dict[str, Any]]:
+    """Read prior governed Home publications for signal temporal state."""
+
+    if trading_date is None:
+        return []
+    try:
+        rows = session.execute(
+            text(
+                """
+                SELECT trading_date, payload
+                FROM topicpilot.home_publications
+                WHERE trading_date < :trading_date
+                  AND publication_state = 'PUBLISHED'
+                ORDER BY trading_date DESC, published_at DESC NULLS LAST,
+                         generated_at DESC, id DESC
+                LIMIT :limit
+                """
+            ),
+            {"trading_date": trading_date, "limit": limit},
+        ).mappings()
+    except SQLAlchemyError:
+        session.rollback()
+        return []
+    result: list[dict[str, Any]] = []
+    seen: set[date] = set()
+    for row in rows:
+        row_date = _as_date(row.get("trading_date"))
+        payload = row.get("payload")
+        if row_date is None or row_date in seen or not isinstance(payload, Mapping):
+            continue
+        overview = payload.get("marketOverview")
+        if not isinstance(overview, Mapping):
+            continue
+        seen.add(row_date)
+        result.append({"tradingDate": row_date, "marketOverview": dict(overview)})
+    return result
+
+
+def _read_signal_institutional_history(
+    session: Session, trading_date: date | None
+) -> dict[date, dict[str, Any]]:
+    """Read same-date TWSE+TPEx official flow facts for signal history."""
+
+    if trading_date is None:
+        return {}
+    try:
+        rows = session.execute(
+            text(
+                """
+                SELECT market, trading_date, unit, scale, availability,
+                       foreign_net, investment_trust_net,
+                       source_as_of, published_at
+                FROM topicpilot.market_institutional_flow_daily
+                WHERE trading_date <= :trading_date
+                ORDER BY trading_date DESC, market, source_as_of DESC NULLS LAST,
+                         published_at DESC NULLS LAST, id DESC
+                """
+            ),
+            {"trading_date": trading_date},
+        ).mappings()
+    except SQLAlchemyError:
+        session.rollback()
+        return {}
+
+    grouped: dict[date, dict[str, Mapping[str, Any]]] = defaultdict(dict)
+    for row in rows:
+        row_date = _as_date(row.get("trading_date"))
+        market = str(row.get("market") or "")
+        if row_date is not None and market in {"TPE", "TWO"}:
+            grouped[row_date].setdefault(market, row)
+
+    result: dict[date, dict[str, Any]] = {}
+    for row_date, by_market in grouped.items():
+        if set(by_market) != {"TPE", "TWO"}:
+            continue
+        markets: list[dict[str, Any]] = []
+        for market in ("TPE", "TWO"):
+            row = by_market[market]
+            availability = str(row.get("availability") or "UNKNOWN")
+            current = {
+                "tradingDate": row_date,
+                "foreign": {
+                    "net": _number(row.get("foreign_net")),
+                    "status": availability,
+                    "unit": row.get("unit") or "TWD",
+                    "scale": int(row.get("scale") or 0),
+                },
+                "investmentTrust": {
+                    "net": _number(row.get("investment_trust_net")),
+                    "status": availability,
+                    "unit": row.get("unit") or "TWD",
+                    "scale": int(row.get("scale") or 0),
+                },
+            }
+            markets.append(
+                {
+                    "market": market,
+                    "asOfDate": row_date,
+                    "availability": availability,
+                    "current": current,
+                }
+            )
+        result[row_date] = {
+            "contractVersion": "market-institutional-flow.formal.v1",
+            "asOfDate": row_date,
+            "status": "AVAILABLE"
+            if all(item["availability"] == "AVAILABLE" for item in markets)
+            else "UNAVAILABLE",
+            "markets": markets,
+            "source": "TWSE+TPEX",
+        }
+    return result
+
+
+def _read_formal_topic_signal_rows(
+    session: Session, trading_date: date | None
+) -> list[dict[str, Any]]:
+    """Read date-effective formal CORE member facts without score/grade inputs."""
+
+    if trading_date is None:
+        return []
+    try:
+        rows = session.execute(
+            text(
+                """
+                SELECT ts.snapshot_date, ts.topic_id, ts.topic_slug, ts.topic_name,
+                       ts.stock_count AS formal_member_count,
+                       mf.structural_role, mf.fact_state, mf.change_pct
+                FROM topicpilot.topic_snapshots ts
+                JOIN topicpilot.topic_snapshot_member_facts mf
+                  ON mf.snapshot_id = ts.id
+                WHERE ts.snapshot_date <= :trading_date
+                  AND ts.publication_mode = 'FORMAL'
+                  AND ts.publication_state = 'PUBLISHED'
+                  AND NOT EXISTS (
+                      SELECT 1
+                      FROM topicpilot.topic_snapshots successor
+                      WHERE successor.supersedes_snapshot_id = ts.id
+                  )
+                ORDER BY ts.snapshot_date DESC, ts.topic_slug, mf.membership_order
+                """
+            ),
+            {"trading_date": trading_date},
+        ).mappings()
+    except SQLAlchemyError:
+        session.rollback()
+        return []
+    return [dict(row) for row in rows]
+
+
+def _signal_history_with_authority(
+    session: Session,
+    *,
+    trading_date: date | None,
+    topic_rows: Sequence[Mapping[str, Any]] = (),
+) -> list[dict[str, Any]]:
+    """Join existing Home, Topic, and institutional history for evaluation."""
+
+    history = _read_signal_home_history(session, trading_date)
+    institution_by_date = _read_signal_institutional_history(session, trading_date)
+    topic_by_date: dict[date, list[Mapping[str, Any]]] = defaultdict(list)
+    for row in topic_rows:
+        row_date = _as_date(row.get("snapshot_date") or row.get("snapshotDate"))
+        if row_date is not None:
+            topic_by_date[row_date].append(row)
+    for item in history:
+        item_date = _as_date(item.get("tradingDate"))
+        overview = item.get("marketOverview")
+        if not isinstance(overview, Mapping):
+            continue
+        enriched = dict(overview)
+        if item_date in institution_by_date and not enriched.get("institutionFlows"):
+            enriched["institutionFlows"] = institution_by_date[item_date]
+        item["marketOverview"] = enriched
+        item["topicObservations"] = topic_by_date.get(item_date, [])
+    return history
 
 
 def _aggregate_fact_input(item: Any) -> dict[str, Any]:
@@ -1678,6 +1724,16 @@ def materialize_home_v2(
     )
     market_overview_payload["trackedTopicCount"] = len(topic_rows)
 
+    current_institutional_flow = _read_home_institutional_flow(session, trading_date)
+    if current_institutional_flow is not None:
+        market_overview_payload["institutionFlows"] = current_institutional_flow
+    topic_signal_rows = _read_formal_topic_signal_rows(session, trading_date)
+    signal_history = _signal_history_with_authority(
+        session,
+        trading_date=trading_date,
+        topic_rows=topic_signal_rows,
+    )
+
     rotation_rows = _formal_topic_history(session, trading_date)
     heating, cooling, rotation_reason = calculate_rotation_14d(rotation_rows, target_date=trading_date)
     rotation_as_of = max((row["as_of_at"] for row in rotation_rows if row.get("as_of_at")), default=None)
@@ -1706,6 +1762,8 @@ def materialize_home_v2(
         cooling_topics=cooling,
         data_date=trading_date,
         as_of=max((item for item in (breadth_as_of, rotation_as_of) if item), default=None),
+        history=signal_history,
+        topic_observations=topic_signal_rows,
     )
     events_section = _status(
         "UNAVAILABLE",
@@ -2030,6 +2088,17 @@ def read_latest_home_publication(session: Session) -> dict[str, Any] | None:
                 _read_previous_session_turnover(session, trading_date),
             )
         payload["marketOverview"] = enriched_overview
+        topic_rows = _read_formal_topic_signal_rows(session, trading_date)
+        payload_history = _signal_history_with_authority(
+            session,
+            trading_date=trading_date,
+            topic_rows=topic_rows,
+        )
+        return normalize_home_publication_for_read(
+            payload,
+            history=payload_history,
+            topic_observations=topic_rows,
+        )
     return normalize_home_publication_for_read(payload)
 
 
