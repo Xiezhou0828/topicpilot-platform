@@ -17,6 +17,7 @@ test("Topic detail presents the backend Owner-seeded V0 read model", () => {
     "Absolute",
     "Relative",
     "觀察中",
+    "SMALL_SAMPLE_X",
     "data-checkpoint-status",
   ]) {
     assert.match(detail, new RegExp(token));
