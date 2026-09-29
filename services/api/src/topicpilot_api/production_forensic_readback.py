@@ -16,12 +16,78 @@ from uuid import UUID
 from sqlalchemy import create_engine, text
 
 FORENSIC_COMMAND_POST_CLOSE_RUN_READBACK = "POST_CLOSE_RUN_READBACK"
-SUPPORTED_FORENSIC_COMMANDS = (FORENSIC_COMMAND_POST_CLOSE_RUN_READBACK,)
+FORENSIC_COMMAND_SCHEMA_PREFLIGHT = "PRODUCTION_READONLY_SCHEMA_PREFLIGHT"
+SUPPORTED_FORENSIC_COMMANDS = (
+    FORENSIC_COMMAND_POST_CLOSE_RUN_READBACK,
+    FORENSIC_COMMAND_SCHEMA_PREFLIGHT,
+)
 TARGET_TABLE_SCOPE = (
     "topicpilot.live_collector_runs",
     "topicpilot.live_collector_attempts",
     "topicpilot.live_collector_checkpoints",
 )
+EXPECTED_PREFLIGHT_COLUMNS = {
+    "live_collector_runs": frozenset(
+        {
+            "id",
+            "run_type",
+            "status",
+            "provider_code",
+            "adapter_version",
+            "started_at",
+            "heartbeat_at",
+            "completed_at",
+            "requested_count",
+            "success_count",
+            "failure_count",
+            "retry_count",
+            "latency_ms",
+            "freshness_state",
+            "provider_status",
+            "failure_code",
+            "failure_message",
+        }
+    ),
+    "live_collector_attempts": frozenset(
+        {
+            "run_id",
+            "instrument_code",
+            "market_code",
+            "attempt_number",
+            "status",
+            "started_at",
+            "retrieved_at",
+            "updated_at",
+            "observed_at",
+            "latency_ms",
+            "retry_count",
+            "provider_status",
+            "freshness_state",
+            "error_code",
+            "error_message",
+        }
+    ),
+    "live_collector_checkpoints": frozenset(
+        {
+            "run_id",
+            "batch_number",
+            "batch_key",
+            "attempt_number",
+            "status",
+            "processed_count",
+            "succeeded_count",
+            "failed_count",
+            "skipped_count",
+            "retry_count",
+            "provider_request_count",
+            "provider_failure_count",
+            "checkpoint_hash",
+            "created_at",
+            "metadata",
+        }
+    ),
+}
+PREFLIGHT_TABLE_NAMES = tuple(EXPECTED_PREFLIGHT_COLUMNS)
 MAX_ATTEMPT_REPRESENTATIVES = 50
 UUID_PATTERN = re.compile(
     r"^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-"
@@ -370,6 +436,33 @@ FROM unnest(
 ORDER BY table_name
 """
 
+PREFLIGHT_TABLE_QUERY = """
+SELECT table_name,
+       EXISTS (
+           SELECT 1
+           FROM information_schema.tables AS tables
+           WHERE tables.table_schema = 'topicpilot'
+             AND tables.table_name = scoped.table_name
+       ) AS table_exists
+FROM unnest(
+    ARRAY['live_collector_runs', 'live_collector_attempts',
+          'live_collector_checkpoints']
+) AS scoped(table_name)
+ORDER BY table_name
+"""
+
+PREFLIGHT_COLUMN_QUERY = """
+SELECT table_name, column_name, data_type, is_nullable
+FROM information_schema.columns
+WHERE table_schema = 'topicpilot'
+  AND table_name IN (
+      'live_collector_runs',
+      'live_collector_attempts',
+      'live_collector_checkpoints'
+  )
+ORDER BY table_name, ordinal_position
+"""
+
 
 def _read_only_identity(connection: Any, expected_role: str) -> tuple[str, str, bool]:
     connection.execute(text("SET TRANSACTION READ ONLY"))
@@ -397,6 +490,150 @@ def _read_only_identity(connection: Any, expected_role: str) -> tuple[str, str, 
     if str(identity.get("transaction_read_only", "")).lower() not in {"on", "true", "1"}:
         raise ForensicReadbackError("BLOCKED_READONLY_TRANSACTION_NOT_ENFORCED")
     return current_user, session_user, True
+
+
+def _connection_failure_class(exc: Exception) -> str:
+    """Classify only the connection layer without exposing driver details."""
+
+    message = str(exc).lower()
+    if "password authentication failed" in message or "authentication" in message:
+        return "AUTHENTICATION_FAILED"
+    if "ssl" in message or "certificate" in message:
+        return "SSL_FAILED"
+    if (
+        "could not translate host name" in message
+        or "name or service not known" in message
+        or "nodename nor servname" in message
+        or "temporary failure in name resolution" in message
+    ):
+        return "DNS_FAILED"
+    if "invalid dsn" in message or "malformed" in message or "no such file" in message:
+        return "CONNECTION_FAILED"
+    return "OTHER_CONNECTION_FAILED"
+
+
+def _preflight_schema_inventory(column_rows: Sequence[Mapping[str, Any]]) -> tuple[
+    dict[str, list[dict[str, str | None]]],
+    dict[str, list[str]],
+    dict[str, list[str]],
+]:
+    inventory = {table: [] for table in PREFLIGHT_TABLE_NAMES}
+    actual_columns = {table: set() for table in PREFLIGHT_TABLE_NAMES}
+    for row in column_rows:
+        table_name = str(row.get("table_name") or "")
+        column_name = str(row.get("column_name") or "")
+        if table_name not in inventory or not column_name:
+            continue
+        actual_columns[table_name].add(column_name)
+        inventory[table_name].append(
+            {
+                "columnName": column_name,
+                "dataType": _sanitize_text(row.get("data_type"), limit=128),
+                "isNullable": _sanitize_text(row.get("is_nullable"), limit=16),
+            }
+        )
+    missing = {
+        table: sorted(EXPECTED_PREFLIGHT_COLUMNS[table] - actual_columns[table])
+        for table in PREFLIGHT_TABLE_NAMES
+    }
+    unexpected = {
+        table: sorted(actual_columns[table] - EXPECTED_PREFLIGHT_COLUMNS[table])
+        for table in PREFLIGHT_TABLE_NAMES
+    }
+    return inventory, missing, unexpected
+
+
+def run_schema_preflight(
+    *,
+    database_url: str,
+    expected_role: str,
+    forensic_tool_sha: str,
+    engine_factory: Callable[..., Any] | None = None,
+    now: datetime | None = None,
+) -> dict[str, Any]:
+    """Run only the fixed connection, schema, and privilege preflight."""
+
+    if not database_url:
+        raise ForensicReadbackError("CONNECTION_URL_INVALID")
+    if not expected_role:
+        raise ForensicReadbackError("PRODUCTION_READONLY_ROLE_EXPECTATION_MISSING")
+    tool_sha = validate_forensic_sha(forensic_tool_sha)
+    engine = None
+    try:
+        engine = (engine_factory or create_engine)(database_url, pool_pre_ping=True)
+        with engine.connect() as connection, connection.begin():
+            connection.execute(text("SET TRANSACTION READ ONLY"))
+            transaction_read_only = str(
+                connection.execute(text("SHOW transaction_read_only")).scalar_one()
+            ).lower()
+            if transaction_read_only not in {"on", "true", "1"}:
+                raise ForensicReadbackError("READONLY_TRANSACTION_FAILURE")
+            identity_rows = _execute_mappings(
+                connection,
+                """
+                SELECT current_database() AS database_name,
+                       current_user AS current_user,
+                       session_user AS session_user
+                """,
+            )
+            if not identity_rows:
+                raise ForensicReadbackError("DATABASE_IDENTITY_UNAVAILABLE")
+            identity = identity_rows[0]
+            database_name = _sanitize_text(identity.get("database_name"), limit=128)
+            current_user = _sanitize_text(identity.get("current_user"), limit=128)
+            session_user = _sanitize_text(identity.get("session_user"), limit=128)
+            if current_user != expected_role:
+                raise ForensicReadbackError("PRODUCTION_READONLY_ROLE_MISMATCH")
+
+            table_rows = _execute_mappings(connection, PREFLIGHT_TABLE_QUERY)
+            table_exists = {
+                str(row.get("table_name")): bool(row.get("table_exists"))
+                for row in table_rows
+                if str(row.get("table_name")) in PREFLIGHT_TABLE_NAMES
+            }
+            if not all(table_exists.get(table, False) for table in PREFLIGHT_TABLE_NAMES):
+                raise ForensicReadbackError("TARGET_TABLE_MISSING")
+
+            column_rows = _execute_mappings(connection, PREFLIGHT_COLUMN_QUERY)
+            inventory, missing, unexpected = _preflight_schema_inventory(column_rows)
+            if any(missing.values()):
+                raise ForensicReadbackError("TARGET_COLUMN_SCHEMA_MISMATCH")
+
+            privilege_rows = _execute_mappings(connection, PRIVILEGE_QUERY)
+            privileges, mutation_status = _privilege_status(privilege_rows)
+            if any(not item["select"] for item in privileges):
+                raise ForensicReadbackError("TARGET_SELECT_PRIVILEGE_MISSING")
+            if mutation_status != "NO":
+                raise ForensicReadbackError("MUTATION_PRIVILEGES_PRESENT")
+    except ForensicReadbackError:
+        raise
+    except Exception as exc:
+        raise ForensicReadbackError(_connection_failure_class(exc)) from exc
+    finally:
+        if engine is not None:
+            engine.dispose()
+
+    generated_at = now or datetime.now(UTC)
+    if generated_at.tzinfo is None:
+        generated_at = generated_at.replace(tzinfo=UTC)
+    return {
+        "forensicToolSha": tool_sha,
+        "databaseName": database_name,
+        "databaseRole": current_user,
+        "sessionUser": session_user,
+        "transactionReadOnly": transaction_read_only,
+        "tableExistence": table_exists,
+        "columnInventory": inventory,
+        "runsSchemaMatch": not missing["live_collector_runs"],
+        "attemptsSchemaMatch": not missing["live_collector_attempts"],
+        "checkpointsSchemaMatch": not missing["live_collector_checkpoints"],
+        "missingColumns": missing,
+        "unexpectedRelevantColumns": unexpected,
+        "targetPrivileges": privileges,
+        "mutationPrivilegesPresent": mutation_status,
+        "primaryFailureLayer": "UNKNOWN_PREFLIGHT_PASSED",
+        "generatedAt": generated_at.astimezone(UTC).isoformat().replace("+00:00", "Z"),
+    }
 
 
 def read_post_close_run(
@@ -495,7 +732,7 @@ def read_post_close_run(
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--command", choices=SUPPORTED_FORENSIC_COMMANDS, required=True)
-    parser.add_argument("--run-id", required=True)
+    parser.add_argument("--run-id")
     parser.add_argument("--output", required=True, type=Path)
     return parser
 
@@ -504,12 +741,24 @@ def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     try:
         validate_command(args.command)
-        payload = read_post_close_run(
-            database_url=os.environ.get("TOPICPILOT_PRODUCTION_READONLY_DATABASE_URL", ""),
-            run_id=args.run_id,
-            expected_role=os.environ.get("TOPICPILOT_PRODUCTION_READONLY_ROLE", ""),
-            forensic_tool_sha=os.environ.get("TOPICPILOT_FORENSIC_TOOL_SHA", ""),
-        )
+        database_url = os.environ.get("TOPICPILOT_PRODUCTION_READONLY_DATABASE_URL", "")
+        expected_role = os.environ.get("TOPICPILOT_PRODUCTION_READONLY_ROLE", "")
+        forensic_tool_sha = os.environ.get("TOPICPILOT_FORENSIC_TOOL_SHA", "")
+        if args.command == FORENSIC_COMMAND_SCHEMA_PREFLIGHT:
+            payload = run_schema_preflight(
+                database_url=database_url,
+                expected_role=expected_role,
+                forensic_tool_sha=forensic_tool_sha,
+            )
+        else:
+            if not args.run_id:
+                raise ForensicReadbackError("RUN_ID_REQUIRED")
+            payload = read_post_close_run(
+                database_url=database_url,
+                run_id=args.run_id,
+                expected_role=expected_role,
+                forensic_tool_sha=forensic_tool_sha,
+            )
         args.output.parent.mkdir(parents=True, exist_ok=True)
         args.output.write_text(
             json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
@@ -520,7 +769,7 @@ def main(argv: list[str] | None = None) -> int:
                 {
                     "status": "PASS",
                     "command": args.command,
-                    "runId": payload["run"]["id"],
+                    "runId": payload.get("run", {}).get("id"),
                     "output": str(args.output),
                     "databaseRole": payload["databaseRole"],
                     "transactionReadOnly": payload["transactionReadOnly"],
