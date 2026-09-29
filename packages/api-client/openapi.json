@@ -1686,8 +1686,18 @@
       },
       "HomeMarketSignal": {
         "properties": {
+          "authorityStatus": {
+            "default": "FORMAL",
+            "title": "Authoritystatus",
+            "type": "string"
+          },
           "direction": {
             "title": "Direction",
+            "type": "string"
+          },
+          "evaluationStatus": {
+            "default": "INACTIVE",
+            "title": "Evaluationstatus",
             "type": "string"
           },
           "evidence": {
@@ -1697,9 +1707,50 @@
             "title": "Evidence",
             "type": "array"
           },
+          "evidenceDetail": {
+            "additionalProperties": true,
+            "title": "Evidencedetail",
+            "type": "object"
+          },
+          "frequencyBand": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Frequencyband"
+          },
+          "frequencyMessage": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Frequencymessage"
+          },
+          "frequencyStatus": {
+            "default": "INSUFFICIENT_HISTORY",
+            "enum": [
+              "AVAILABLE",
+              "INSUFFICIENT_HISTORY"
+            ],
+            "title": "Frequencystatus",
+            "type": "string"
+          },
           "interpretation": {
             "title": "Interpretation",
             "type": "string"
+          },
+          "isActive": {
+            "default": false,
+            "title": "Isactive",
+            "type": "boolean"
           },
           "key": {
             "title": "Key",
@@ -1709,6 +1760,17 @@
             "title": "Name",
             "type": "string"
           },
+          "occurrenceDays20d": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Occurrencedays20D"
+          },
           "severity": {
             "enum": [
               "INFO",
@@ -1717,6 +1779,95 @@
             ],
             "title": "Severity",
             "type": "string"
+          },
+          "signalFamily": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Signalfamily"
+          },
+          "signalId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Signalid"
+          },
+          "signalStatus": {
+            "default": "INACTIVE",
+            "enum": [
+              "ACTIVE",
+              "INACTIVE",
+              "NOT_EVALUABLE"
+            ],
+            "title": "Signalstatus",
+            "type": "string"
+          },
+          "signalTemporalStatus": {
+            "default": "INACTIVE",
+            "enum": [
+              "NEW",
+              "PERSISTING",
+              "INSUFFICIENT_HISTORY",
+              "INACTIVE",
+              "NOT_EVALUABLE"
+            ],
+            "title": "Signaltemporalstatus",
+            "type": "string"
+          },
+          "streakDays": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Streakdays"
+          },
+          "summary": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Summary"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          },
+          "tradingDate": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tradingdate"
           }
         },
         "required": [
@@ -1743,6 +1894,25 @@
             "title": "Direction",
             "type": "string"
           },
+          "displayOrder": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Displayorder"
+          },
+          "frequencyBands": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Frequencybands",
+            "type": "array"
+          },
           "key": {
             "title": "Key",
             "type": "string"
@@ -1750,6 +1920,39 @@
           "name": {
             "title": "Name",
             "type": "string"
+          },
+          "signalFamily": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Signalfamily"
+          },
+          "signalId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Signalid"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
           }
         },
         "required": [

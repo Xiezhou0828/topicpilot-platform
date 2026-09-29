@@ -1302,21 +1302,76 @@ export interface components {
         };
         /** HomeMarketSignal */
         HomeMarketSignal: {
+            /**
+             * Authoritystatus
+             * @default FORMAL
+             */
+            authorityStatus: string;
             /** Direction */
             direction: string;
+            /**
+             * Evaluationstatus
+             * @default INACTIVE
+             */
+            evaluationStatus: string;
             /** Evidence */
             evidence?: string[];
+            /** Evidencedetail */
+            evidenceDetail?: {
+                [key: string]: unknown;
+            };
+            /** Frequencyband */
+            frequencyBand?: string | null;
+            /** Frequencymessage */
+            frequencyMessage?: string | null;
+            /**
+             * Frequencystatus
+             * @default INSUFFICIENT_HISTORY
+             * @enum {string}
+             */
+            frequencyStatus: "AVAILABLE" | "INSUFFICIENT_HISTORY";
             /** Interpretation */
             interpretation: string;
+            /**
+             * Isactive
+             * @default false
+             */
+            isActive: boolean;
             /** Key */
             key: string;
             /** Name */
             name: string;
+            /** Occurrencedays20D */
+            occurrenceDays20d?: number | null;
             /**
              * Severity
              * @enum {string}
              */
             severity: "INFO" | "WATCH" | "WARNING";
+            /** Signalfamily */
+            signalFamily?: string | null;
+            /** Signalid */
+            signalId?: string | null;
+            /**
+             * Signalstatus
+             * @default INACTIVE
+             * @enum {string}
+             */
+            signalStatus: "ACTIVE" | "INACTIVE" | "NOT_EVALUABLE";
+            /**
+             * Signaltemporalstatus
+             * @default INACTIVE
+             * @enum {string}
+             */
+            signalTemporalStatus: "NEW" | "PERSISTING" | "INSUFFICIENT_HISTORY" | "INACTIVE" | "NOT_EVALUABLE";
+            /** Streakdays */
+            streakDays?: number | null;
+            /** Summary */
+            summary?: string | null;
+            /** Title */
+            title?: string | null;
+            /** Tradingdate */
+            tradingDate?: string | null;
         };
         /** HomeMarketSignalCatalog */
         HomeMarketSignalCatalog: {
@@ -1326,10 +1381,22 @@ export interface components {
             description: string;
             /** Direction */
             direction: string;
+            /** Displayorder */
+            displayOrder?: number | null;
+            /** Frequencybands */
+            frequencyBands?: {
+                [key: string]: unknown;
+            }[];
             /** Key */
             key: string;
             /** Name */
             name: string;
+            /** Signalfamily */
+            signalFamily?: string | null;
+            /** Signalid */
+            signalId?: string | null;
+            /** Title */
+            title?: string | null;
         };
         /** HomeMarketTurnover */
         HomeMarketTurnover: {

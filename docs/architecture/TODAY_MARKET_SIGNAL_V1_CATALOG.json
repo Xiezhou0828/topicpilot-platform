@@ -1,0 +1,24 @@
+{
+  "contract": "TODAY_MARKET_SIGNAL_V1",
+  "status": "FROZEN_OWNER_PRODUCT_CONTRACT",
+  "signal_count": 16,
+  "threshold_owner": "OWNER_SEEDED_V1_PRODUCT_THRESHOLDS",
+  "signals": [
+    {"signal_id":"INDEX_MARKET_DIVERGENCE","family":"INDEX_STRUCTURE","title":"雙盤分家","threshold":"opposite signs OR spread_pp >= 1.0","frequency_template_key":"INDEX_MARKET_DIVERGENCE","frequency_bands":[[1,3],[4,6],[7,9],[10,null]],"display_order":1},
+    {"signal_id":"INDEX_BOTH_STRONG","family":"INDEX_STRUCTURE","title":"雙盤齊揚","threshold":"TPE >= 0.5 AND TWO >= 0.5 AND no divergence","frequency_template_key":"INDEX_BOTH_STRONG","frequency_bands":[[1,2],[3,5],[6,8],[9,null]],"display_order":2},
+    {"signal_id":"INDEX_BOTH_WEAK","family":"INDEX_STRUCTURE","title":"雙盤走弱","threshold":"TPE <= -0.5 AND TWO <= -0.5 AND no divergence","frequency_template_key":"INDEX_BOTH_WEAK","frequency_bands":[[1,2],[3,5],[6,8],[9,null]],"display_order":3},
+    {"signal_id":"BREADTH_RED_INDEX_DISCONNECT","family":"MARKET_BREADTH","title":"紅盤失隊","threshold":"TPE >= 0.3 AND positive_breadth <= 40%","frequency_template_key":"BREADTH_RED_INDEX_DISCONNECT","frequency_bands":[[1,2],[3,5],[6,8],[9,null]],"display_order":4},
+    {"signal_id":"BREADTH_BROAD_ADVANCE","family":"MARKET_BREADTH","title":"全面開花","threshold":"positive_breadth >= 70%","frequency_template_key":"BREADTH_BROAD_ADVANCE","frequency_bands":[[1,2],[3,5],[6,8],[9,null]],"display_order":5},
+    {"signal_id":"BREADTH_DECLINERS_DOMINATE","family":"MARKET_BREADTH","title":"跌多漲少","threshold":"negative_breadth >= 60%","frequency_template_key":"BREADTH_DECLINERS_DOMINATE","frequency_bands":[[1,3],[4,6],[7,9],[10,null]],"display_order":6},
+    {"signal_id":"BREADTH_UPSIDE_EXPANSION","family":"MARKET_BREADTH","title":"上漲擴散","threshold":"positive_delta >= 15pp AND positive_breadth >= 50%","frequency_template_key":"BREADTH_UPSIDE_EXPANSION","frequency_bands":[[1,2],[3,5],[6,8],[9,null]],"display_order":7},
+    {"signal_id":"BREADTH_DOWNSIDE_EXPANSION","family":"MARKET_BREADTH","title":"下跌擴散","threshold":"negative_delta >= 15pp AND negative_breadth >= 50%","frequency_template_key":"BREADTH_DOWNSIDE_EXPANSION","frequency_bands":[[1,2],[3,5],[6,8],[9,null]],"display_order":8},
+    {"signal_id":"TOPIC_CONCENTRATION","family":"TOPIC_BREADTH_STRUCTURE","title":"題材集中","threshold":"evaluable >= 5 AND positive >= 2 AND top3_share >= 65%","frequency_template_key":"TOPIC_CONCENTRATION","frequency_bands":[[1,3],[4,6],[7,9],[10,null]],"display_order":9},
+    {"signal_id":"TOPIC_EXPANSION","family":"TOPIC_BREADTH_STRUCTURE","title":"題材擴散","threshold":"evaluable >= 5 AND positive_topic_ratio >= 60%","frequency_template_key":"TOPIC_EXPANSION","frequency_bands":[[1,2],[3,5],[6,8],[9,null]],"display_order":10},
+    {"signal_id":"TOPIC_DISPERSION","family":"TOPIC_BREADTH_STRUCTURE","title":"題材分化","threshold":"evaluable >= 5 AND IQR >= 2.0pp AND strong >= 2 AND weak >= 2","frequency_template_key":"TOPIC_DISPERSION","frequency_bands":[[1,3],[4,6],[7,9],[10,null]],"display_order":11},
+    {"signal_id":"MARKET_VOLUME_PRICE_ADVANCE","family":"MARKET_PARTICIPATION","title":"量價齊揚","threshold":"turnover_ratio_20d >= 1.15 AND both indices >= 0.5 AND no divergence","frequency_template_key":"MARKET_VOLUME_PRICE_ADVANCE","frequency_bands":[[1,2],[3,5],[6,8],[9,null]],"display_order":12},
+    {"signal_id":"MARKET_VOLUME_PRICE_DECLINE","family":"MARKET_PARTICIPATION","title":"量增價跌","threshold":"turnover_ratio_20d >= 1.15 AND both indices <= -0.5 AND no divergence","frequency_template_key":"MARKET_VOLUME_PRICE_DECLINE","frequency_bands":[[1,2],[3,5],[6,8],[9,null]],"display_order":13},
+    {"signal_id":"INSTITUTIONAL_SUPPORT","family":"INSTITUTIONAL_STRUCTURE","title":"法人助攻","threshold":"foreign_ratio >= 0.20% AND investment_trust_ratio >= 0.20%","frequency_template_key":"INSTITUTIONAL_SUPPORT","frequency_bands":[[1,3],[4,6],[7,9],[10,null]],"display_order":14},
+    {"signal_id":"INSTITUTIONAL_HEADWIND","family":"INSTITUTIONAL_STRUCTURE","title":"法人逆風","threshold":"foreign_ratio <= -0.20% AND investment_trust_ratio <= -0.20%","frequency_template_key":"INSTITUTIONAL_HEADWIND","frequency_bands":[[1,3],[4,6],[7,9],[10,null]],"display_order":15},
+    {"signal_id":"INSTITUTIONAL_DIVERGENCE","family":"INSTITUTIONAL_STRUCTURE","title":"法人分歧","threshold":"opposite signs AND max(abs(ratios)) >= 0.20%","frequency_template_key":"INSTITUTIONAL_DIVERGENCE","frequency_bands":[[1,3],[4,6],[7,9],[10,null]],"display_order":16}
+  ]
+}

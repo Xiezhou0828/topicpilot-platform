@@ -1088,6 +1088,28 @@ class HomeMarketSignal(ApiModel):
     direction: str
     evidence: list[str] = Field(default_factory=list)
     interpretation: str
+    signal_id: str | None = Field(alias="signalId", default=None)
+    signal_family: str | None = Field(alias="signalFamily", default=None)
+    title: str | None = None
+    is_active: bool = Field(alias="isActive", default=False)
+    signal_status: Literal["ACTIVE", "INACTIVE", "NOT_EVALUABLE"] = Field(
+        alias="signalStatus", default="INACTIVE"
+    )
+    signal_temporal_status: Literal[
+        "NEW", "PERSISTING", "INSUFFICIENT_HISTORY", "INACTIVE", "NOT_EVALUABLE"
+    ] = Field(alias="signalTemporalStatus", default="INACTIVE")
+    streak_days: int | None = Field(alias="streakDays", default=None)
+    occurrence_days_20d: int | None = Field(alias="occurrenceDays20d", default=None)
+    frequency_status: Literal["AVAILABLE", "INSUFFICIENT_HISTORY"] = Field(
+        alias="frequencyStatus", default="INSUFFICIENT_HISTORY"
+    )
+    frequency_band: str | None = Field(alias="frequencyBand", default=None)
+    frequency_message: str | None = Field(alias="frequencyMessage", default=None)
+    summary: str | None = None
+    trading_date: date | None = Field(alias="tradingDate", default=None)
+    evidence_detail: dict[str, Any] = Field(alias="evidenceDetail", default_factory=dict)
+    authority_status: str = Field(alias="authorityStatus", default="FORMAL")
+    evaluation_status: str = Field(alias="evaluationStatus", default="INACTIVE")
 
 
 class HomeMarketSignalCatalog(ApiModel):
@@ -1096,6 +1118,11 @@ class HomeMarketSignalCatalog(ApiModel):
     condition: str
     direction: str
     description: str
+    signal_id: str | None = Field(alias="signalId", default=None)
+    signal_family: str | None = Field(alias="signalFamily", default=None)
+    title: str | None = None
+    display_order: int | None = Field(alias="displayOrder", default=None)
+    frequency_bands: list[dict[str, Any]] = Field(alias="frequencyBands", default_factory=list)
 
 
 class MarketFlowLegRead(ApiModel):

@@ -29,7 +29,7 @@ test("Today distribution, ticker, and opportunity entry remain backend-owned", a
   assert.match(page, /bucket\.percentage/);
   assert.match(page, /overview\.institutionFlows/);
   assert.match(page, /resource\.data\?\.signals/);
-  assert.match(page, /法人逆勢|上市櫃分化|櫃買量能放大/);
+  assert.match(page, /signal\.isActive|signal\.signalTemporalStatus|signal\.frequencyMessage/);
   assert.doesNotMatch(page, /indices\.reduce|turnover\.reduce|distribution.*sort|changePct.*calculate/i);
   assert.match(page, /暫停題材動態/);
   assert.match(page, /href="\/opportunities"/);
