@@ -4,7 +4,7 @@ from pathlib import Path
 import pytest
 from jsonschema import Draft202012Validator
 
-from tools.capture_owner_seeded_v0_forward_observation import (
+from services.api.tools.capture_owner_seeded_v0_forward_observation import (
     OBSERVATION_SCHEMA_VERSION,
     POLICY_HASH,
     ForwardObservationCaptureError,
