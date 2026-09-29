@@ -93,6 +93,10 @@ jobs:
         run: |
           python -m alembic downgrade -1
           python -m alembic upgrade head
+      - name: Production forensic disposable PostgreSQL privilege test
+        env:
+          TEST_DATABASE_URL: ${{ env.DATABASE_URL }}
+        run: python -m pytest services/api/tests/test_production_forensic_readback_postgres.py -q
       - name: Reference bootstrap PostgreSQL integration
         run: python -m pytest services/api/tests/test_reference_bootstrap_postgres.py -q
       - name: Backend tests
