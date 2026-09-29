@@ -26,12 +26,18 @@ from sqlalchemy.orm import Session
 from topicpilot_api.market_signals import build_market_signals as build_v1_market_signals
 from topicpilot_api.market_signals import catalog_payload, evaluate_v1_signals
 from topicpilot_api.orm import HomeMarketFact, HomePublication, HomePublicationSection
+from topicpilot_api.today_topic_lower_half import (
+    build_topic_pulse,
+    calculate_fast_rotation,
+    rank_formal_topics,
+)
 
 HOME_PUBLICATION_VERSION = "home-v2.formal.v1"
 HOME_SOURCE = "HOME_V2_FORMAL_PUBLICATION"
 DAILY_FOCUS_SOURCE = "HOME_V2_DAILY_FOCUS_RULE_V1"
 MAIN_TOPICS_SOURCE = "HOME_V2_FORMAL_TOPIC_PUBLICATION"
-ROTATION_SOURCE = "HOME_V2_ROTATION_14_TRADING_SESSIONS"
+TOPIC_PULSE_SOURCE = "HOME_V2_FORMAL_TOPIC_PULSE"
+ROTATION_SOURCE = "HOME_V2_ROTATION_5_SESSION_ABSOLUTE_STRENGTH"
 SECTION_KEYS = (
     "marketOverview",
     "dailyFocus",
@@ -64,7 +70,8 @@ build_market_signals = build_v1_market_signals
 USER_MESSAGES = {
     "NO_PUBLISHED_MARKET_FACTS": "市場資料尚未完整。",
     "NO_FORMAL_TOPIC_PUBLICATION": "題材資料尚未完成發布。",
-    "INSUFFICIENT_ROTATION_HISTORY": "目前累積的交易日資料不足，尚無法計算 14 日變化。",
+    "INSUFFICIENT_FORMAL_STRENGTH_HISTORY": "目前正式 Topic Strength 歷史不足 5 個交易日，暫無法計算快速升溫／退潮。",
+    "NO_FORMAL_STRENGTH_SCORE": "正式 Topic Strength 分數目前無法提供。",
     "DAILY_FOCUS_EVIDENCE_INCOMPLETE": "今日市場重點尚未完成。",
     "UPSTREAM_SOURCE_UNAVAILABLE": "這項市場資料目前無法提供。",
     "NO_FORMAL_MARKET_BREADTH": "市場廣度資料目前無法提供。",
@@ -161,111 +168,6 @@ def _status(
         payload=payload,
         diagnostic_detail=detail,
     )
-
-
-def rank_formal_topics(rows: Iterable[Mapping[str, Any]], limit: int = 3) -> list[dict[str, Any]]:
-    """Return the transparent V2 Main Topics ordering tuple.
-
-    The tuple is: complete evidence first, observed participation, coverage,
-    positive progression (average daily change), then stable slug.  No score
-    is created; all displayed evidence remains raw or directly aggregated.
-    """
-
-    def key(row: Mapping[str, Any]) -> tuple[Any, ...]:
-        complete = 0 if row.get("data_status") == "COMPLETE" else 1
-        observed = -(int(row.get("observed_stock_count") or 0))
-        coverage = -(float(row.get("coverage_pct") or 0))
-        positive = -(int(row.get("positive_count") or 0))
-        progression = -(float(row.get("average_change") or 0))
-        return complete, observed, coverage, positive, progression, str(row.get("topic_slug") or "")
-
-    result: list[dict[str, Any]] = []
-    for row in sorted(rows, key=key)[:limit]:
-        average = _number(row.get("average_change"))
-        result.append(
-            {
-                "slug": row["topic_slug"],
-                "name": row["topic_name"],
-                "grade": row.get("market_grade"),
-                "strength": None,
-                "currentState": row.get("topic_direction"),
-                "stockCount": int(row.get("stock_count") or 0),
-                "summary": (
-                    f"觀測 {int(row.get('observed_stock_count') or 0)} / "
-                    f"{int(row.get('stock_count') or 0)} 檔，平均日變化 "
-                    f"{average if average is not None else '無資料'}。"
-                ),
-                "favorite": False,
-                "dataDate": row.get("snapshot_date"),
-                "rankingEvidence": {
-                    "availability": row.get("data_status"),
-                    "observedStockCount": int(row.get("observed_stock_count") or 0),
-                    "coveragePct": _number(row.get("coverage_pct")),
-                    "positiveCount": int(row.get("positive_count") or 0),
-                    "averageChange": average,
-                    "rankingPolicy": "availability,observedParticipation,coverage,positiveProgression,slug",
-                },
-            }
-        )
-    return result
-
-
-def calculate_rotation_14d(
-    rows: Iterable[Mapping[str, Any]], *, target_date: date, limit: int = 3
-) -> tuple[list[dict[str, Any]], list[dict[str, Any]], str | None]:
-    """Compare current topic activity with the 14th prior trading session."""
-
-    grouped: dict[str, list[Mapping[str, Any]]] = defaultdict(list)
-    dates: set[date] = set()
-    for row in rows:
-        row_date = row.get("snapshot_date")
-        if row_date is None or row_date > target_date:
-            continue
-        if (row.get("average_change") is None) or not int(row.get("observed_stock_count") or 0):
-            continue
-        grouped[str(row["topic_slug"])].append(row)
-        dates.add(row_date)
-    sessions = sorted(dates)
-    if len(sessions) < 15:
-        return [], [], "INSUFFICIENT_ROTATION_HISTORY"
-    current_date = sessions[-1]
-    reference_date = sessions[-15]
-    if current_date != target_date:
-        return [], [], "INSUFFICIENT_ROTATION_HISTORY"
-
-    heating: list[dict[str, Any]] = []
-    cooling: list[dict[str, Any]] = []
-    for topic_rows in grouped.values():
-        by_date = {row["snapshot_date"]: row for row in topic_rows}
-        current = by_date.get(current_date)
-        reference = by_date.get(reference_date)
-        if current is None or reference is None:
-            continue
-        delta = float(current["average_change"]) - float(reference["average_change"])
-        if delta == 0:
-            continue
-        item = {
-            "topic": current["topic_name"],
-            "topicSlug": current["topic_slug"],
-            "strengthDelta": delta,
-            "currentGrade": current.get("market_grade"),
-            "averageDailyChange": _number(current.get("average_change")),
-            "observedStockCount": int(current["observed_stock_count"]),
-            "summary": (
-                f"近 14 個交易日的平均日變化差異為 {_number(delta)}。"
-            ),
-            "dataDate": current_date,
-            "asOf": current.get("as_of_at"),
-            "rotationEvidence": {
-                "currentDate": current_date,
-                "referenceDate": reference_date,
-                "measure": "topic average daily canonical PRICE change",
-            },
-        }
-        (heating if delta > 0 else cooling).append(item)
-    heating.sort(key=lambda item: (-item["strengthDelta"], item["topicSlug"]))
-    cooling.sort(key=lambda item: (item["strengthDelta"], item["topicSlug"]))
-    return heating[:limit], cooling[:limit], None
 
 
 def _signal_change_text(item: Mapping[str, Any], label: str) -> str:
@@ -575,58 +477,167 @@ def _breadth(
 
 
 def _formal_topic_rows(session: Session, trading_date: date) -> list[dict[str, Any]]:
-    return [
-        dict(row)
-        for row in session.execute(
-            text(
-                """
-                SELECT DISTINCT ON (topic_id)
-                    topic_id, topic_slug, topic_name, snapshot_date,
-                    market_grade, topic_direction, stock_count,
-                    observed_stock_count, coverage_pct, average_change,
-                    data_status, positive_count, as_of_at, published_at,
-                    source_artifact_hash
-                FROM topicpilot.topic_snapshots
-                WHERE snapshot_date = :trading_date
-                  AND publication_mode = 'FORMAL'
-                  AND publication_state = 'PUBLISHED'
-                  AND NOT EXISTS (
-                      SELECT 1 FROM topicpilot.topic_snapshots successor
-                      WHERE successor.supersedes_snapshot_id = topic_snapshots.id
-                  )
-                ORDER BY topic_id, correction_sequence DESC, published_at DESC NULLS LAST, id DESC
-                """
-            ),
-            {"trading_date": trading_date},
-        ).mappings()
-    ]
+    return _formal_topic_state_rows(session, trading_date=trading_date, current_only=True)
 
 
 def _formal_topic_history(session: Session, trading_date: date) -> list[dict[str, Any]]:
-    return [
-        dict(row)
-        for row in session.execute(
-            text(
-                """
-                SELECT topic_id, topic_slug, topic_name, snapshot_date,
-                       market_grade, average_change, observed_stock_count,
-                       data_status, as_of_at
-                FROM topicpilot.topic_snapshots
-                WHERE snapshot_date <= :trading_date
-                  AND publication_mode = 'FORMAL'
-                  AND publication_state = 'PUBLISHED'
+    return _formal_topic_state_rows(session, trading_date=trading_date, current_only=False)
+
+
+def _json_metric(payload: Any, names: Sequence[str]) -> float | None:
+    """Read a named metric from either object-shaped or component-list JSON."""
+
+    if isinstance(payload, Mapping):
+        for name in names:
+            value = payload.get(name)
+            if value is not None:
+                try:
+                    return float(value)
+                except (TypeError, ValueError):
+                    continue
+    if isinstance(payload, list):
+        for item in payload:
+            if not isinstance(item, Mapping):
+                continue
+            name = item.get("name") or item.get("key")
+            if name in names:
+                try:
+                    return float(item.get("value"))
+                except (TypeError, ValueError):
+                    continue
+    return None
+
+
+def _formal_topic_state_rows(
+    session: Session, *, trading_date: date, current_only: bool
+) -> list[dict[str, Any]]:
+    """Read the dynamic formal Topic universe plus formal Score/Lifecycle facts."""
+
+    date_filter = "s.snapshot_date = :trading_date" if current_only else "s.snapshot_date <= :trading_date"
+    rows = session.execute(
+        text(
+            f"""
+            WITH current_snapshots AS (
+                SELECT DISTINCT ON (s.topic_id, s.snapshot_date)
+                    s.*
+                FROM topicpilot.topic_snapshots s
+                JOIN topicpilot.topics t ON t.id = s.topic_id
+                WHERE {date_filter}
+                  AND s.publication_mode = 'FORMAL'
+                  AND s.membership_mode = 'PIT_FORMAL'
+                  AND s.publication_state = 'PUBLISHED'
+                  AND s.finality_state = 'FINAL'
+                  AND t.status NOT IN ('DISABLED', 'RETIRED')
                   AND NOT EXISTS (
                       SELECT 1 FROM topicpilot.topic_snapshots successor
-                      WHERE successor.supersedes_snapshot_id = topic_snapshots.id
+                      WHERE successor.supersedes_snapshot_id = s.id
                   )
-                  AND average_change IS NOT NULL
-                  AND observed_stock_count > 0
-                ORDER BY snapshot_date, topic_slug, correction_sequence DESC, id DESC
-                """
-            ),
-            {"trading_date": trading_date},
-        ).mappings()
-    ]
+                ORDER BY s.topic_id, s.snapshot_date, s.correction_sequence DESC,
+                         s.published_at DESC NULLS LAST, s.id DESC
+            ), formal_scores AS (
+                SELECT DISTINCT ON (r.topic_id, r.evaluation_date)
+                    r.topic_id, r.evaluation_date, r.score AS formal_score,
+                    r.grade AS formal_grade, r.eligibility AS score_eligibility,
+                    r.evaluation_status AS score_evaluation_status,
+                    r.publication_status AS score_publication_status,
+                    r.components AS score_components,
+                    r.quality_flags AS score_quality_flags,
+                    r.policy_id AS score_policy_id,
+                    r.as_of_at AS score_as_of_at
+                FROM topicpilot.topic_score_formal_results r
+                WHERE r.publication_mode = 'FORMAL'
+                  AND r.publication_status = 'PUBLISHED'
+                  AND r.supersession_state = 'ACTIVE'
+                ORDER BY r.topic_id, r.evaluation_date, r.decision_revision DESC,
+                         r.published_at DESC NULLS LAST, r.id DESC
+            ), formal_lifecycle AS (
+                SELECT DISTINCT ON (r.topic_id, r.evaluation_date)
+                    r.topic_id, r.evaluation_date, r.previous_stage,
+                    r.candidate_stage, r.final_stage, r.stage_trading_days,
+                    r.evaluation_status AS lifecycle_evaluation_status,
+                    r.data_status AS lifecycle_data_status,
+                    r.transition_reason, r.confirmation_state,
+                    r.state_memory, r.persistence_evidence,
+                    r.sample_confidence, r.publication_status AS lifecycle_publication_status,
+                    r.as_of_at AS lifecycle_as_of_at
+                FROM topicpilot.topic_lifecycle_formal_results r
+                WHERE r.evaluation_mode = 'FORMAL'
+                  AND r.publication_status = 'PUBLISHED'
+                  AND r.supersession_state = 'ACTIVE'
+                ORDER BY r.topic_id, r.evaluation_date, r.decision_revision DESC,
+                         r.published_at DESC NULLS LAST, r.id DESC
+            )
+            SELECT s.topic_id, s.topic_slug, s.topic_name, s.snapshot_date,
+                   s.stock_count, s.eligible_count, s.observed_stock_count,
+                   s.coverage_pct, s.data_status, s.as_of_at, s.published_at,
+                   s.source_artifact_hash,
+                   f.formal_score, f.formal_grade, f.score_eligibility,
+                   f.score_evaluation_status, f.score_publication_status,
+                   f.score_components, f.score_quality_flags, f.score_policy_id,
+                   f.score_as_of_at,
+                   l.previous_stage, l.candidate_stage, l.final_stage,
+                   l.stage_trading_days, l.lifecycle_evaluation_status,
+                   l.lifecycle_data_status, l.transition_reason,
+                   l.confirmation_state, l.state_memory, l.persistence_evidence,
+                   l.sample_confidence, l.lifecycle_publication_status,
+                   l.lifecycle_as_of_at
+            FROM current_snapshots s
+            LEFT JOIN formal_scores f
+              ON f.topic_id = s.topic_id AND f.evaluation_date = s.snapshot_date
+            LEFT JOIN formal_lifecycle l
+              ON l.topic_id = s.topic_id AND l.evaluation_date = s.snapshot_date
+            ORDER BY s.snapshot_date, s.topic_slug
+            """
+        ),
+        {"trading_date": trading_date},
+    ).mappings()
+
+    result: list[dict[str, Any]] = []
+    for raw in rows:
+        row = dict(raw)
+        components = row.get("score_components")
+        absolute = _json_metric(components, ("absolute_score", "absoluteScore", "absolute_total"))
+        relative = _json_metric(components, ("relative_score", "relativeScore", "relative_total"))
+        quality_flags = row.get("score_quality_flags") or {}
+        confirmation = row.get("confirmation_state") or {}
+        persistence = row.get("persistence_evidence") or {}
+        authority_valid = bool(
+            row.get("score_publication_status") == "PUBLISHED"
+            and row.get("lifecycle_publication_status") == "PUBLISHED"
+            and row.get("score_evaluation_status") not in {None, "UNAVAILABLE"}
+            and row.get("lifecycle_evaluation_status") not in {None, "UNAVAILABLE"}
+            and row.get("formal_grade") in {"S", "A", "B", "D"}
+            and row.get("final_stage")
+            and absolute is not None
+            and row.get("eligible_count", row.get("stock_count")) is not None
+        )
+        row.update(
+            {
+                "formal_member_count": row.get("eligible_count") or row.get("stock_count"),
+                "formal_daily_grade": row.get("formal_grade"),
+                "absolute_score": absolute,
+                "relative_score": relative,
+                "formal_lifecycle": row.get("final_stage"),
+                "lifecycle_candidate": row.get("candidate_stage"),
+                "candidate_confirmation_current": confirmation.get("current") if isinstance(confirmation, Mapping) else None,
+                "candidate_confirmation_required": confirmation.get("required") if isinstance(confirmation, Mapping) else None,
+                "confirmation_progress": confirmation if isinstance(confirmation, Mapping) else None,
+                "persistence_days": row.get("stage_trading_days") or persistence.get("tradingDays") if isinstance(persistence, Mapping) else row.get("stage_trading_days"),
+                "renewed_expansion": bool(
+                    isinstance(persistence, Mapping)
+                    and persistence.get("renewedExpansion") is True
+                ),
+                "observation_flags": quality_flags.get("observationFlags", []) if isinstance(quality_flags, Mapping) else [],
+                "authority_status": "VALID" if authority_valid else "NOT_EVALUABLE",
+                "authority_quality_valid": authority_valid,
+                "as_of_at": max(
+                    (value for value in (row.get("as_of_at"), row.get("score_as_of_at"), row.get("lifecycle_as_of_at")) if value is not None),
+                    default=None,
+                ),
+            }
+        )
+        result.append(row)
+    return result
 
 
 def _market_index_payload(fact: Mapping[str, Any]) -> dict[str, Any]:
@@ -1712,6 +1723,7 @@ def materialize_home_v2(
     )
 
     topic_rows = _formal_topic_rows(session, trading_date)
+    formal_topic_history = _formal_topic_history(session, trading_date)
     main_topics_payload = rank_formal_topics(topic_rows)
     main_section = _status(
         "AVAILABLE" if main_topics_payload else "UNAVAILABLE",
@@ -1719,7 +1731,7 @@ def materialize_home_v2(
         as_of=max((row["as_of_at"] for row in topic_rows if row.get("as_of_at")), default=None),
         source=MAIN_TOPICS_SOURCE,
         reason_code=None if main_topics_payload else "NO_FORMAL_TOPIC_PUBLICATION",
-        detail=f"formal topic rows selected: {len(topic_rows)}",
+        detail=f"formal topic universe rows: {len(topic_rows)}; eligible mainline rows: {len(main_topics_payload)}",
         payload=main_topics_payload,
     )
     market_overview_payload["trackedTopicCount"] = len(topic_rows)
@@ -1734,16 +1746,32 @@ def materialize_home_v2(
         topic_rows=topic_signal_rows,
     )
 
-    rotation_rows = _formal_topic_history(session, trading_date)
-    heating, cooling, rotation_reason = calculate_rotation_14d(rotation_rows, target_date=trading_date)
-    rotation_as_of = max((row["as_of_at"] for row in rotation_rows if row.get("as_of_at")), default=None)
+    topic_pulse_payload = build_topic_pulse(
+        topic_rows,
+        formal_topic_history,
+        target_date=trading_date,
+    )
+    topic_pulse_section = _status(
+        "AVAILABLE" if topic_pulse_payload else "UNAVAILABLE",
+        data_date=trading_date,
+        as_of=max((row["as_of_at"] for row in topic_rows if row.get("as_of_at")), default=None),
+        source=TOPIC_PULSE_SOURCE,
+        reason_code=None if topic_pulse_payload else "NO_FORMAL_TOPIC_PUBLICATION",
+        detail=f"all current effective formal Topics returned: {len(topic_pulse_payload)}",
+        payload=topic_pulse_payload,
+    )
+    heating, cooling, rotation_reason = calculate_fast_rotation(
+        formal_topic_history,
+        target_date=trading_date,
+    )
+    rotation_as_of = max((row["as_of_at"] for row in formal_topic_history if row.get("as_of_at")), default=None)
     heating_section = _status(
         "AVAILABLE" if heating else "UNAVAILABLE",
         data_date=trading_date,
         as_of=rotation_as_of,
         source=ROTATION_SOURCE,
-        reason_code=None if heating else rotation_reason or "INSUFFICIENT_ROTATION_HISTORY",
-        detail=f"formal topic sessions available: {len({row['snapshot_date'] for row in rotation_rows})}",
+        reason_code=None if heating else rotation_reason or "INSUFFICIENT_FORMAL_STRENGTH_HISTORY",
+        detail=f"formal Topic Strength sessions available: {len({row['snapshot_date'] for row in formal_topic_history})}",
         payload=heating,
     )
     cooling_section = _status(
@@ -1751,8 +1779,8 @@ def materialize_home_v2(
         data_date=trading_date,
         as_of=rotation_as_of,
         source=ROTATION_SOURCE,
-        reason_code=None if cooling else rotation_reason or "INSUFFICIENT_ROTATION_HISTORY",
-        detail=f"formal topic sessions available: {len({row['snapshot_date'] for row in rotation_rows})}",
+        reason_code=None if cooling else rotation_reason or "INSUFFICIENT_FORMAL_STRENGTH_HISTORY",
+        detail=f"formal Topic Strength sessions available: {len({row['snapshot_date'] for row in formal_topic_history})}",
         payload=cooling,
     )
     daily_section = build_daily_focus(
@@ -1765,15 +1793,7 @@ def materialize_home_v2(
         history=signal_history,
         topic_observations=topic_signal_rows,
     )
-    events_section = _status(
-        "UNAVAILABLE",
-        data_date=trading_date,
-        as_of=None,
-        source="HOME_V2_FORMAL_EVENT_AUTHORITY",
-        reason_code="OPTIONAL_SECTION_NOT_FORMAL",
-        detail="temporary topic snapshot diff events do not participate in the formal gate",
-        payload=[],
-    )
+    events_section = topic_pulse_section
     opportunities_section = _status(
         "UNAVAILABLE",
         data_date=trading_date,
@@ -1841,7 +1861,7 @@ def materialize_home_v2(
         "marketOverview": market_overview_payload,
         "dailyFocus": daily_section.payload,
         "mainTopics": main_topics_payload,
-        "marketPulse": [],
+        "marketPulse": topic_pulse_payload,
         "heatingTopics": heating,
         "coolingTopics": cooling,
         "opportunities": [],
@@ -2204,7 +2224,6 @@ __all__ = [
     "build_daily_focus",
     "build_market_distribution",
     "build_market_signals",
-    "calculate_rotation_14d",
     "empty_home_v2",
     "materialize_home_v2",
     "normalize_home_publication_for_read",
