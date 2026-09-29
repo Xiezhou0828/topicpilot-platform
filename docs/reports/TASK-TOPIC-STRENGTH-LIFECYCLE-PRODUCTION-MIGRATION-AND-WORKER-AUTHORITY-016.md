@@ -168,5 +168,71 @@ NEXT_RECOMMENDED_TASK=After the two authority gates are supplied, execute 0047 o
 - Governed release configuration: `.github/workflows/deploy.yml`, `render.yaml`
 - Production migration readback before this task: `0046_task_stock_maint_relation_weight_authority_001d`
 
-No Production release, schema mutation, business-data mutation, Worker release,
-or TASK-015 activation occurred.
+At the initial blocked state, no Production release, schema mutation,
+business-data mutation, Worker release, or TASK-015 activation had occurred.
+
+## Owner authorization resumption and closure
+
+The Owner later provided explicit authorization for exactly migration 0047 and
+for the minimum governed Worker release/readback path. The authorization did
+not authorize API/Web deployment or TASK-015 activation.
+
+The governed release-path implementation was promoted by PR #20 at
+`e8c35469e0134ae8c790f065b3f868cd4912ef94`. It added:
+
+- `apply_migration_0047=true` under the protected `production-db-maintenance`
+  environment, with exact 0046 precondition, exact 0047 upgrade, and
+  post-upgrade constraint/head verification;
+- `deploy_worker=true` under the protected `production-worker` environment,
+  using the exact `release_ref` on the Render Worker hook and requiring a
+  read-only migration-0047 precondition; and
+- `topicpilot-worker-revision --json`, which fails closed unless the protected
+  runtime exposes a valid `RENDER_GIT_COMMIT` or `GIT_SHA`.
+
+The migration was then executed through the governed workflow using the exact
+canonical SHA. The workflow validated the Production head as 0046 before the
+upgrade, applied only 0047, and verified the 0047 check constraint and final
+head. Independent public readback returned 0047 after execution.
+
+```text
+TASK_STATUS=COMPLETE_MIGRATION_AND_WORKER_AUTHORITY_BLOCKER_CLOSURE
+CURRENT_MAIN_SHA=e8c35469e0134ae8c790f065b3f868cd4912ef94
+PRODUCTION_MIGRATION_HEAD_BEFORE=0046_task_stock_maint_relation_weight_authority_001d
+EXPECTED_MIGRATION=0047_task_topic_role_strength_design_freeze
+MIGRATION_SCOPE_AUDIT=PASS
+MIGRATION_GRAPH_STATUS=PASS_SINGLE_HEAD_0047
+OWNER_MIGRATION_APPROVAL_STATUS=APPROVED
+MIGRATION_RUN_ID=36588470183;JOB_ID=109475379048
+MIGRATION_STARTED_AT=2026-09-29T15:13:48Z
+MIGRATION_COMPLETED_AT=2026-09-29T15:14:28Z
+MIGRATION_EXECUTION_STATUS=PASS
+PRODUCTION_MIGRATION_HEAD_AFTER=0047_task_topic_role_strength_design_freeze
+MIGRATION_HEAD_STATUS=PASS
+SCHEMA_MUTATION_OCCURRED=YES; APPROVED_0047_ONLY
+BUSINESS_DATA_MUTATED=NO
+
+WORKER_RELEASE_AUTHORITY_STATUS=READY
+WORKER_RELEASE_WORKFLOW=.github/workflows/deploy.yml; deploy_worker=true; production-worker
+WORKER_RELEASE_SOURCE=Exact release_ref through protected Render topicpilot-live hook
+WORKER_READBACK_METHOD=topicpilot-worker-revision --json in protected Worker runtime
+WORKER_READBACK_STATUS=READY
+REQUESTED_WORKER_SHA=NOT_REQUESTED
+BUILT_WORKER_SHA=NOT_BUILT_FOR_PRODUCTION
+RUNTIME_WORKER_SHA=NOT_VERIFIED
+WORKER_SHA_STATUS=NOT_APPLICABLE_NO_PRODUCTION_RELEASE
+WORKER_PRODUCTION_RELEASED=NO
+
+EXCHANGE_NO_DATA_STATUS=REMAINS_RELEVANT_TO_TASK-015
+OBSERVATION_SESSION_COUNT_CHANGED=NO
+API_DEPLOYED=NO
+WEB_DEPLOYED=NO
+PRODUCTION_READY=NO
+TASK_015_RESUMABLE=YES
+TASK_COMPLETE=YES
+```
+
+The migration workflow run was
+[36588470183](https://github.com/Xiezhou0828/topicpilot-platform/actions/runs/36588470183).
+The governed-path implementation is [PR #20](https://github.com/Xiezhou0828/topicpilot-platform/pull/20).
+No Worker release was triggered, so no Worker runtime SHA is claimed. The
+next action is to resume TASK-015; this task stops here as required.
