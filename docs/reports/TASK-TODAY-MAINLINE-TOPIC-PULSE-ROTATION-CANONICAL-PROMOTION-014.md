@@ -86,10 +86,16 @@ and legacy WARMING/COOLING plus 14D rotation remain superseded.
 
 - PR: [#16](https://github.com/Xiezhou0828/topicpilot-platform/pull/16)
 - Title: `Promote Today Mainline, Topic Pulse and Fast Rotation V1`
-- PR head when opened: `d2ec93a24e544cc5b9b470d3462bee44db7051ee`
-- Remote required CI and merge: pending at this report revision; the final
-  exact head, CI result, merge commit, and post-merge CI are recorded in the
-  promotion status block.
+- PR head: `0de8bd6282c4041070fb4419b04d12a0c3358a96`
+- Pre-merge CI run: `36525739779` — all required jobs passed, including
+  Backend/migration/OpenAPI, Frontend, Secret scan, and Docker Compose smoke.
+- Merge: squash-merged under normal repository policy at `2026-09-29T05:25:58Z`.
+- Promoted canonical `origin/main`: `d0514eac064e823ddb46c25daa402619f06a1970`
+- Post-merge CI run: `36526136747` — all required jobs passed, including Docker
+  Compose smoke.
+
+The report-finalization PR only records these post-merge facts in this
+governance document; it does not alter the promoted implementation.
 
 ## Production boundary
 
