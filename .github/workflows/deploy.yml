@@ -17,6 +17,16 @@ on:
         required: true
         type: boolean
         default: true
+      apply_migration_0047:
+        description: Apply exactly the approved 0047 Production migration
+        required: true
+        type: boolean
+        default: false
+      deploy_worker:
+        description: Trigger the protected Render live Worker deploy hook
+        required: true
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -44,6 +54,79 @@ jobs:
         run: |
           docker compose config --quiet
           test -s render.yaml
+
+  migrate-production:
+    name: Apply Production migration 0047
+    if: ${{ inputs.apply_migration_0047 }}
+    needs: validate
+    runs-on: ubuntu-latest
+    environment: production-db-maintenance
+    concurrency:
+      group: topicpilot-production-db-maintenance
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.release_ref }}
+      - name: Build the exact release image
+        run: docker build --file infra/docker/api.Dockerfile --tag topicpilot-migration:${{ inputs.release_ref }} .
+      - name: Require Production head 0046 before upgrade
+        env:
+          MIGRATION_DATABASE_URL: ${{ secrets.TOPICPILOT_PRODUCTION_DATABASE_URL }}
+        run: |
+          if [ -z "$MIGRATION_DATABASE_URL" ]; then
+            echo "TOPICPILOT_PRODUCTION_DATABASE_URL is not configured in production-db-maintenance." >&2
+            exit 1
+          fi
+          docker run --rm --entrypoint python \
+            --env MIGRATION_DATABASE_URL \
+            "topicpilot-migration:${{ inputs.release_ref }}" \
+            -c 'import os, sys; from sqlalchemy import create_engine, text; e=create_engine(os.environ["MIGRATION_DATABASE_URL"], pool_pre_ping=True); c=e.connect(); rows=[str(r[0]) for r in c.execute(text("SELECT version_num FROM alembic_version ORDER BY version_num"))]; c.close(); expected=["0046_task_stock_maint_relation_weight_authority_001d"]; sys.exit(f"unexpected Production migration head: {rows!r}") if rows != expected else print("Production migration head precondition: 0046")'
+      - name: Apply exactly migration 0047
+        env:
+          MIGRATION_DATABASE_URL: ${{ secrets.TOPICPILOT_PRODUCTION_DATABASE_URL }}
+        run: |
+          docker run --rm --entrypoint alembic \
+            --env MIGRATION_DATABASE_URL \
+            "topicpilot-migration:${{ inputs.release_ref }}" \
+            upgrade 0047_task_topic_role_strength_design_freeze
+      - name: Verify Production head and 0047 constraint
+        env:
+          MIGRATION_DATABASE_URL: ${{ secrets.TOPICPILOT_PRODUCTION_DATABASE_URL }}
+        run: |
+          docker run --rm --entrypoint python \
+            --env MIGRATION_DATABASE_URL \
+            "topicpilot-migration:${{ inputs.release_ref }}" \
+            -c 'import os, sys; from sqlalchemy import create_engine, text; e=create_engine(os.environ["MIGRATION_DATABASE_URL"], pool_pre_ping=True); c=e.connect(); head=str(c.execute(text("SELECT version_num FROM alembic_version ORDER BY version_num")).scalar_one()); definition=str(c.execute(text("SELECT pg_get_constraintdef(oid) FROM pg_constraint WHERE conname = :name"), {"name": "ck_topic_score_projection_member_importance"}).scalar_one()); c.close(); expected="0047_task_topic_role_strength_design_freeze"; sys.exit(f"unexpected Production migration head after upgrade: {head!r}") if head != expected else None; sys.exit(f"0047 constraint verification failed: {definition!r}") if "1.75" not in definition else print(f"Production migration head after upgrade: {head}")'
+
+  deploy-worker:
+    name: Trigger Render Worker deployment
+    if: ${{ inputs.deploy_worker }}
+    needs: validate
+    runs-on: ubuntu-latest
+    environment: production-worker
+    steps:
+      - name: Require migration 0047 before Worker release
+        env:
+          PRODUCTION_API_ORIGIN: https://topicpilot-api.onrender.com
+        run: |
+          payload="$(curl --fail --silent --show-error "$PRODUCTION_API_ORIGIN/api/v1/admin/migration")"
+          python -c 'import json, sys; payload=json.loads(sys.argv[1]); expected="0047_task_topic_role_strength_design_freeze"; actual=payload.get("alembicRevision"); raise SystemExit(f"Worker release requires migration 0047, got {actual!r}") if actual != expected else print("Worker migration precondition: 0047")' "$payload"
+      - name: Trigger protected Worker deploy hook with exact SHA
+        env:
+          RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+        run: |
+          if [ -z "$RENDER_DEPLOY_HOOK_URL" ]; then
+            echo "RENDER_DEPLOY_HOOK_URL is not configured in production-worker." >&2
+            exit 1
+          fi
+          separator="?"
+          if [[ "$RENDER_DEPLOY_HOOK_URL" == *\?* ]]; then
+            separator="&"
+          fi
+          curl --fail --silent --show-error --request POST \
+            "${RENDER_DEPLOY_HOOK_URL}${separator}ref=${{ inputs.release_ref }}"
+          echo "Requested Worker SHA: ${{ inputs.release_ref }}"
 
   deploy-api:
     name: Trigger Render API deployment
