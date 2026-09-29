@@ -93,4 +93,3 @@ production database was mutated. The next task is the separately governed
 production activation task:
 
 `TASK-TODAY-TOPIC-LOWER-HALF-PRODUCTION-ACTIVATION-015`
-
