@@ -4,7 +4,7 @@
   "policy_id": "topic-strength-lifecycle.owner-seeded-v0",
   "policy_version": "v0",
   "policy_hash": "5d29d968d9116b3288a288a8c9b15d68e51485ff88e4b58d82c2dfbbc27312ef",
-  "implementation_sha": "897579b53ca933957367467c1219930f144df626",
+  "implementation_sha": "0e083d41bcce1aa89e5339025f4d1f9d3586dfbf",
   "accepted_observation_flags": [
     "STRONG_GRADE_WITH_HELD_LIFECYCLE_CANDIDATE",
     "GRADE_D_WHILE_DECLINING_PENDING",
