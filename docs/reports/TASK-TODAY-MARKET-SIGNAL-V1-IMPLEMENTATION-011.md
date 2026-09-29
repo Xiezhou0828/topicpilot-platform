@@ -12,6 +12,10 @@ The canonical base was fetched and recorded as
 while concurrent repository work continued; this candidate remains anchored to
 the captured base and was not rebased or merged into that later remote state.
 
+The implementation candidate commit is
+`65eb36553849ccaa4d9fc5ae85ab04b7a25f5d08`; this report finalization is an
+additive governance follow-up commit on the same candidate branch.
+
 ## Existing signal audit
 
 The four signals present at the captured base were reconciled as follows:
@@ -101,9 +105,9 @@ TASK_ID=TASK-TODAY-MARKET-SIGNAL-V1-IMPLEMENTATION-011
 TASK_STATUS=COMPLETE_TODAY_MARKET_SIGNAL_V1_IMPLEMENTATION_CANDIDATE_READY
 
 CANONICAL_BASE_SHA=ec46db023c8e701044e162dcf723f362002b88d7
-CANDIDATE_SHA=SET_AFTER_COMMIT
+CANDIDATE_SHA=65eb36553849ccaa4d9fc5ae85ab04b7a25f5d08
 REMOTE_BRANCH=codex/today-market-signal-v1-implementation-011
-PUSH_STATUS=SET_AFTER_PUSH
+PUSH_STATUS=PASS
 
 OLD_V1_RECOMMENDED_SIGNAL_COUNT=12
 FROZEN_V1_SIGNAL_COUNT=16
