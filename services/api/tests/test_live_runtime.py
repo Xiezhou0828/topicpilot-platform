@@ -3,6 +3,7 @@ from __future__ import annotations
 from datetime import UTC, date, datetime
 from decimal import Decimal
 from uuid import uuid4
+from zoneinfo import ZoneInfo
 
 from topicpilot_api.live.collector import LiveCollector
 from topicpilot_api.live.config import LiveRuntimeConfig
@@ -150,6 +151,19 @@ def test_scheduler_waits_on_configured_closed_date_after_post_close_start():
     assert scheduler.decide(datetime(2026, 8, 10, 6, 0, tzinfo=UTC)) == "WAIT"
 
 
+def test_scheduler_uses_inclusive_1335_asia_taipei_boundary():
+    config = LiveRuntimeConfig()
+    scheduler = LiveScheduler(object(), config)
+    taipei = ZoneInfo("Asia/Taipei")
+
+    assert scheduler.decide(
+        datetime(2026, 8, 10, 13, 34, 59, tzinfo=taipei)
+    ) == "WAIT"
+    assert scheduler.decide(
+        datetime(2026, 8, 10, 13, 35, tzinfo=taipei)
+    ) == "POST_CLOSE"
+
+
 def test_scheduler_allows_after_midnight_daily_schedule():
     config = LiveRuntimeConfig(post_close_start="04:30")
     collector = LiveCollector(
@@ -262,7 +276,7 @@ def test_scheduler_starts_worker_at_open_and_stops_before_post_close():
             8,
             10,
             1 if timeline.cycles == 0 else 5,
-            0 if timeline.cycles == 0 else 30,
+                0 if timeline.cycles == 0 else 35,
             tzinfo=UTC,
         ),
     )
