@@ -1,0 +1,251 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "topic-strength-lifecycle.owner-seeded-v0.forward-observation.v1",
+  "title": "Owner-seeded V0 forward observation",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "observation_schema_version",
+    "task_id",
+    "as_of_date",
+    "observation_start_date",
+    "policy_id",
+    "policy_version",
+    "policy_hash",
+    "topic_id",
+    "topic_name",
+    "authority",
+    "formal_member_count",
+    "representative_count",
+    "core_count",
+    "related_count",
+    "absolute_score_inputs",
+    "relative_score_inputs",
+    "absolute_metrics",
+    "relative_metrics",
+    "contributions",
+    "scores",
+    "lifecycle",
+    "quality_flags",
+    "formal_output_boundary",
+    "next_lifecycle_state"
+  ],
+  "properties": {
+    "observation_schema_version": {"const": "topic-strength-lifecycle.owner-seeded-v0.forward-observation.v1"},
+    "task_id": {"const": "TASK-TOPIC-STRENGTH-LIFECYCLE-OWNER-SEEDED-V0-REVIEW-AND-FORWARD-OBSERVATION-002"},
+    "as_of_date": {"type": "string", "format": "date"},
+    "observation_start_date": {"type": "string", "format": "date"},
+    "policy_id": {"const": "topic-strength-lifecycle.owner-seeded-v0"},
+    "policy_version": {"const": "v0"},
+    "policy_hash": {"const": "5d29d968d9116b3288a288a8c9b15d68e51485ff88e4b58d82c2dfbbc27312ef"},
+    "topic_id": {"type": "string", "minLength": 1},
+    "topic_name": {"type": "string", "minLength": 1},
+    "authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "formal_member_authority_version",
+        "structural_role_authority_version",
+        "benchmark_authority",
+        "trading_session_authority_version"
+      ],
+      "properties": {
+        "formal_member_authority_version": {"type": "string", "minLength": 1},
+        "structural_role_authority_version": {"type": "string", "minLength": 1},
+        "trading_session_authority_version": {"type": "string", "minLength": 1},
+        "benchmark_authority": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["source", "version"],
+          "properties": {
+            "source": {"type": "string", "minLength": 1},
+            "version": {"type": "string", "minLength": 1}
+          }
+        }
+      }
+    },
+    "formal_member_count": {"type": "integer", "minimum": 1},
+    "representative_count": {"type": "integer", "minimum": 0},
+    "core_count": {"type": "integer", "minimum": 0},
+    "related_count": {"type": "integer", "minimum": 0},
+    "absolute_score_inputs": {"$ref": "#/$defs/scoreInputList"},
+    "relative_score_inputs": {"$ref": "#/$defs/relativeScoreInputList"},
+    "absolute_metrics": {"$ref": "#/$defs/metrics"},
+    "relative_metrics": {"$ref": "#/$defs/metrics"},
+    "contributions": {"$ref": "#/$defs/contributions"},
+    "scores": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "absolute_total",
+        "relative_total",
+        "absolute_grade",
+        "relative_grade",
+        "final_daily_grade",
+        "absolute_d_guard",
+        "relative_d_guard"
+      ],
+      "properties": {
+        "absolute_total": {"type": ["number", "null"]},
+        "relative_total": {"type": ["number", "null"]},
+        "absolute_grade": {"type": ["string", "null"]},
+        "relative_grade": {"type": ["string", "null"]},
+        "final_daily_grade": {"type": ["string", "null"]},
+        "absolute_d_guard": {"type": "boolean"},
+        "relative_d_guard": {"type": "boolean"}
+      }
+    },
+    "lifecycle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "lifecycle_before",
+        "lifecycle_candidate",
+        "lifecycle_after",
+        "transition_confirmed",
+        "transition_reason",
+        "meaningful_expansion_flag",
+        "renewed_expansion_flag",
+        "relative_deterioration_confirmation",
+        "early_relative_strength_confirmation"
+      ],
+      "properties": {
+        "lifecycle_before": {"type": "string"},
+        "lifecycle_candidate": {"type": ["string", "null"]},
+        "lifecycle_after": {"type": "string"},
+        "transition_confirmed": {"type": "boolean"},
+        "transition_reason": {"type": "string"},
+        "meaningful_expansion_flag": {"type": "boolean"},
+        "renewed_expansion_flag": {"type": "boolean"},
+        "relative_deterioration_confirmation": {"type": "boolean"},
+        "early_relative_strength_confirmation": {"type": "boolean"}
+      }
+    },
+    "quality_flags": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "FORMAL_MEMBER_COVERAGE_OK",
+        "STRUCTURAL_ROLE_AUTHORITY_OK",
+        "BENCHMARK_READY",
+        "PRICE_DATA_COMPLETE",
+        "RELATIVE_SCORE_AVAILABLE",
+        "SMALL_SAMPLE_X",
+        "FAIL_CLOSED_REASON"
+      ],
+      "properties": {
+        "FORMAL_MEMBER_COVERAGE_OK": {"type": "boolean"},
+        "STRUCTURAL_ROLE_AUTHORITY_OK": {"type": "boolean"},
+        "BENCHMARK_READY": {"type": "boolean"},
+        "PRICE_DATA_COMPLETE": {"type": "boolean"},
+        "RELATIVE_SCORE_AVAILABLE": {"type": "boolean"},
+        "SMALL_SAMPLE_X": {"type": "boolean"},
+        "FAIL_CLOSED_REASON": {"type": ["string", "null"]}
+      }
+    },
+    "formal_output_boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "formal_output_overridden",
+        "historical_output_mutated",
+        "production_active",
+        "diagnostic_only"
+      ],
+      "properties": {
+        "formal_output_overridden": {"const": false},
+        "historical_output_mutated": {"const": false},
+        "production_active": {"const": false},
+        "diagnostic_only": {"const": true}
+      }
+    },
+    "next_lifecycle_state": {"$ref": "#/$defs/lifecycleState"}
+  },
+  "$defs": {
+    "scoreInputList": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["member_id", "role", "return_pct"],
+        "properties": {
+          "member_id": {"type": "string", "minLength": 1},
+          "role": {"enum": ["REPRESENTATIVE", "CORE", "RELATED"]},
+          "return_pct": {"type": ["number", "null"]}
+        }
+      }
+    },
+    "relativeScoreInputList": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["member_id", "role", "excess_return_pct"],
+        "properties": {
+          "member_id": {"type": "string", "minLength": 1},
+          "role": {"enum": ["REPRESENTATIVE", "CORE", "RELATED"]},
+          "excess_return_pct": {"type": ["number", "null"]}
+        }
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "rep_weighted_raw",
+        "core_median_return",
+        "core_positive_breadth",
+        "core_strong_breadth",
+        "core_weak_ratio",
+        "related_positive_breadth",
+        "related_median_return"
+      ],
+      "properties": {
+        "rep_weighted_raw": {"type": ["number", "null"]},
+        "core_median_return": {"type": ["number", "null"]},
+        "core_positive_breadth": {"type": ["number", "null"]},
+        "core_strong_breadth": {"type": ["number", "null"]},
+        "core_weak_ratio": {"type": ["number", "null"]},
+        "related_positive_breadth": {"type": ["number", "null"]},
+        "related_median_return": {"type": ["number", "null"]}
+      }
+    },
+    "contributions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["representative", "core", "related"],
+      "properties": {
+        "representative": {"$ref": "#/$defs/viewContribution"},
+        "core": {"$ref": "#/$defs/viewContribution"},
+        "related": {"$ref": "#/$defs/viewContribution"}
+      }
+    },
+    "viewContribution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["absolute", "relative"],
+      "properties": {
+        "absolute": {"type": "number"},
+        "relative": {"type": "number"}
+      }
+    },
+    "lifecycleState": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "stage",
+        "main_rise_occurred_in_cycle",
+        "candidate_stage",
+        "candidate_streak",
+        "history"
+      ],
+      "properties": {
+        "stage": {"type": "string"},
+        "main_rise_occurred_in_cycle": {"type": "boolean"},
+        "candidate_stage": {"type": ["string", "null"]},
+        "candidate_streak": {"type": "integer", "minimum": 0},
+        "history": {"type": "array"}
+      }
+    }
+  }
+}

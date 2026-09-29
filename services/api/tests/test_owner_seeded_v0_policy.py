@@ -180,6 +180,29 @@ def test_absolute_d_guard_precedes_grade_boundaries():
     assert unguarded.grade != "D"
 
 
+def test_deep_core_d_guard_and_declining_do_not_require_representative():
+    core_only = tuple(
+        MemberObservation(
+            f"core-{index}", CORE, -3.0, 1.00 if index % 2 else 0.75, "TWSE", 0.0
+        )
+        for index in range(1, 4)
+    )
+
+    absolute = evaluate_strength_view(core_only, view="ABSOLUTE")
+    relative = evaluate_strength_view(core_only, view="RELATIVE")
+    assert absolute.d_guard is True
+    assert absolute.grade == "D"
+    assert relative.d_guard is True
+    assert relative.grade == "D"
+
+    state, rows = advance_sequence(
+        LifecycleState(stage="MATURE", main_rise_occurred_in_cycle=True),
+        (core_only, core_only),
+    )
+    assert state.stage == "DECLINING"
+    assert rows[-1].candidate_stage == "DECLINING"
+
+
 def test_relative_d_guard_requires_total_score_gate():
     guarded = evaluate_strength_view(
         members(-2.0, (-3.0, -3.0, -3.0, -3.0), (0.0,)), view="RELATIVE"

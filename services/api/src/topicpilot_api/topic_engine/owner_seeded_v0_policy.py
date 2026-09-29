@@ -738,12 +738,14 @@ def _grade(
             core.median_return is not None
             and core.positive_breadth is not None
             and core.weak_ratio is not None
-            and rep.weighted_raw_return is not None
             and core.median_return <= grade_policy.d_core_median_max
             and core.positive_breadth <= grade_policy.d_core_positive_breadth_max
             and core.weak_ratio >= grade_policy.d_core_weak_ratio_min
             and (
-                rep.weighted_raw_return <= grade_policy.d_rep_weighted_raw_max
+                (
+                    rep.weighted_raw_return is not None
+                    and rep.weighted_raw_return <= grade_policy.d_rep_weighted_raw_max
+                )
                 or core.median_return <= grade_policy.d_core_median_deep_max
             )
         )
@@ -754,12 +756,14 @@ def _grade(
             and core.median_return is not None
             and core.positive_breadth is not None
             and core.weak_ratio is not None
-            and rep.weighted_raw_return is not None
             and core.median_return <= grade_policy.d_core_median_max
             and core.positive_breadth <= grade_policy.d_core_positive_breadth_max
             and core.weak_ratio >= grade_policy.d_core_weak_ratio_min
             and (
-                rep.weighted_raw_return <= grade_policy.d_rep_weighted_raw_max
+                (
+                    rep.weighted_raw_return is not None
+                    and rep.weighted_raw_return <= grade_policy.d_rep_weighted_raw_max
+                )
                 or core.median_return <= grade_policy.d_core_median_deep_max
             )
         )
@@ -1155,12 +1159,11 @@ def advance_lifecycle(
         core_median is not None
         and core_positive is not None
         and core_weak is not None
-        and rep is not None
         and core_median <= lifecycle.declining_core_median_max
         and core_positive <= lifecycle.declining_core_positive_breadth_max
         and core_weak >= lifecycle.declining_core_weak_ratio_min
         and (
-            rep <= lifecycle.declining_rep_raw_max
+            (rep is not None and rep <= lifecycle.declining_rep_raw_max)
             or core_median <= lifecycle.declining_core_median_deep_max
             or day.evaluation.absolute.d_guard
         )
