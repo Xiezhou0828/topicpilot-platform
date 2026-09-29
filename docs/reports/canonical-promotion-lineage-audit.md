@@ -34,7 +34,7 @@ changes merged without semantic conflict.
 | 2 | `7cbf00e8e630fc0e72e53267b3253a9fccb30ea7` | Record topic design freeze governance report | `GOVERNANCE_REQUIRED` | Preserve design-freeze evidence and authority boundaries. |
 | 3 | `0ce187927885c9844709c95dd6e4cf0b556c462a` | Build bounded historical calibration candidate pipeline | `CALIBRATION_ARTIFACT_ONLY` | Preserve as diagnostic/research lineage; it is not runtime policy authority. |
 | 4 | `b5903f8b8bdc8bea1eaa9d5305270a719cd2378d` | Record historical calibration governance limitation | `GOVERNANCE_REQUIRED` | Preserve the explicit calibration limitation and no-retrofill boundary. |
-| 5 | `bde413235d5f9512956a6b6f9f9bc441fa971f2` | Complete historical calibration decision report | `CALIBRATION_ARTIFACT_ONLY` | Preserve the decision artifact; no historical seed becomes runtime authority. |
+| 5 | `bde4132358d5f9512956a6b6f9f9bc441fa971f2` | Complete historical calibration decision report | `CALIBRATION_ARTIFACT_ONLY` | Preserve the decision artifact; no historical seed becomes runtime authority. |
 | 6 | `28752394bcccb4226d52516070e9b9cd2165f55f` | Close calibration data foundation with official benchmarks | `CALIBRATION_ARTIFACT_ONLY` | Preserve bounded PIT/benchmark evidence; do not activate it as policy. |
 | 7 | `27ac01eff270bf35b49d7112646d3393cf6b39ad` | Close historical calibration and enter owner seeded v0 | `GOVERNANCE_REQUIRED` | Preserve the explicit transition to Owner-seeded V0 and the historical-calibration disposition. |
 | 8 | `304eebd0d5c77f158e30adaa5502a62d02f03d4e` | Reconcile latest canonical main before owner seeded policy | `RUNTIME_REQUIRED` | Preserve the A10/Today compatibility reconciliation carried by the candidate lineage. |
