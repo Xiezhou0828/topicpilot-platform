@@ -160,6 +160,11 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Validate secret-scan revision policy
+        run: python infra/scripts/check_secret_scan_policy.py
       - name: Gitleaks
         uses: gitleaks/gitleaks-action@v2
         env:
