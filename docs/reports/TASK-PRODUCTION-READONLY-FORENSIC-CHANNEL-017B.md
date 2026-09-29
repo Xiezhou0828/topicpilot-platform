@@ -17,8 +17,9 @@ The source task evidence was re-read from the canonical repository history:
 
 The implementation is intentionally ready for Owner provisioning but cannot
 claim Production role readiness. A GitHub API check at
-`2026-09-30T01:14:53+08:00` reported that the `production-readonly`
-Environment did not yet exist. No secret value was requested or read.
+`2026-09-30T01:14:53+08:00` and the final post-merge check reported that the
+`production-readonly` Environment did not yet exist. No secret value was
+requested or read.
 
 ## Exact provenance
 
@@ -26,13 +27,19 @@ Environment did not yet exist. No secret value was requested or read.
 TASK_ID=TASK-PRODUCTION-READONLY-FORENSIC-CHANNEL-017B
 TASK_TYPE=implementation
 REQUIRED_TERMINAL_STATE=CANONICALIZED
-CURRENT_MAIN_SHA=979f3509934b88a2dfbde507704b7511b42ac734
+INITIAL_MAIN_SHA=979f3509934b88a2dfbde507704b7511b42ac734
 IMPLEMENTATION_SHA=4efe30f9b14ba87c9e7463d35e76a8fb92ca2ed1
-CANONICAL_PROMOTION_SHA=PENDING_PR_MERGE_AT_REPORT_CUT
+FOLLOWUP_CI_COMMIT_SHA=cce88cdbaa4dcbcdc25873cd17a719e76164f726
+FOLLOWUP_TEST_FIX_COMMIT_SHA=aeee7cd85c8cb75fcb683d762600d0c89b75af42
+PR_24_MERGE_SHA=48780a567ea9fcfb18821f5168617bf5d11a18f4
+PR_25_MERGE_SHA=cac367d5f396f9fc0c81b1adc64c56178befbc82
+CANONICAL_MAIN_SHA=cac367d5f396f9fc0c81b1adc64c56178befbc82
 MIGRATION_HEAD=0047_task_topic_role_strength_design_freeze
 SEMANTICS_CHANGED=NO_PRODUCT_OR_WORKER_SEMANTICS; ADDITIVE_OPERATIONS_CHANNEL_ONLY
 PRODUCTION_DEPENDENCY=YES; READBACK_ROLE_AND_ENVIRONMENT_NOT_PROVISIONED
 WORKTREE_STATUS=ONLY_PREEXISTING_UNTRACKED_OWNER_REPORT_REMAINS
+PR_24=https://github.com/Xiezhou0828/topicpilot-platform/pull/24
+PR_25=https://github.com/Xiezhou0828/topicpilot-platform/pull/25
 ```
 
 ## Implemented controls
@@ -56,13 +63,13 @@ WORKTREE_STATUS=ONLY_PREEXISTING_UNTRACKED_OWNER_REPORT_REMAINS
 
 ```text
 UNIT_TEST_STATUS=PASS; 15 passed
-DISPOSABLE_POSTGRES_TEST_STATUS=NOT_RUN_LOCAL; 1 skipped because TEST_DATABASE_URL was absent and Docker was unavailable
+DISPOSABLE_POSTGRES_TEST_STATUS=PASS_IN_CI_RUN_36604719746
 SECURITY_NEGATIVE_TEST_STATUS=PASS; invalid command/UUID/SHA, writable transaction, and SQL-surface tests
 WORKFLOW_STATIC_TEST_STATUS=PASS
 WORKFLOW_YAML_PARSE_STATUS=PASS
 CHANGED_SCOPE_RUFF_STATUS=PASS
 DIFF_CHECK_STATUS=PASS
-CI_STATUS=PENDING_PR
+CI_STATUS=PASS; RUN_36604719746
 SANITIZED_ARTIFACT_STATUS=IMPLEMENTED_AND_SCHEMA_CHECKED; PRODUCTION_ARTIFACT_NOT_GENERATED
 ```
 
@@ -94,10 +101,10 @@ are attested, the task remains:
 BLOCKED_OWNER_READONLY_ROLE_PROVISIONING_REQUIRED
 ```
 
-## Required final status at this report cut
+## Required final status after canonical merge
 
 ```text
-FORENSIC_WORKFLOW_CANONICAL=READY_FOR_CANONICAL_RECONCILIATION
+FORENSIC_WORKFLOW_CANONICAL=CANONICALIZED_ON_MAIN
 FORENSIC_WORKFLOW=.github/workflows/production-forensic-readback.yml
 FORENSIC_WORKFLOW_STATUS=IMPLEMENTED; PROTECTED_ENVIRONMENT_PREFLIGHT_REQUIRED
 FORENSIC_COMMANDS_SUPPORTED=POST_CLOSE_RUN_READBACK
@@ -135,6 +142,8 @@ FOLLOW_UP_REQUIRED=YES
 FOLLOW_UP_REASON=Owner must provision and attest the dedicated role and protected Environment, then run the first SELECT-only acceptance readback.
 OWNER_DECISIONS_REQUIRED=Production role privilege matrix and protected Environment reviewer/provisioning approval
 KNOWN_LIMITATIONS=No Production role, secret, Environment, current_user, transaction readback, or incident artifact was available in this execution.
+CANONICAL_CI_RUN=36604719746; ALL_CHECKS_PASS
+CANONICAL_MERGE_STATUS=PR_24_AND_PR_25_MERGED
 ARTIFACTS=.github/workflows/production-forensic-readback.yml; services/api/src/topicpilot_api/production_forensic_readback.py; docs/operations/production-forensic-readback.md; services/api/tests/test_production_forensic_readback.py; services/api/tests/test_production_forensic_readback_postgres.py; services/api/tests/test_production_forensic_workflow.py
 NEXT_RECOMMENDED_TASK=Provision production-readonly and execute the first SELECT-only acceptance readback for 30c4c3b1-5e3d-4402-9f96-5f6fb5ec0f9a
 ```
