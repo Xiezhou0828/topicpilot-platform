@@ -7796,6 +7796,83 @@
         "title": "TopicFormalSnapshotRead",
         "type": "object"
       },
+      "TopicForwardObservationRead": {
+        "properties": {
+          "checkpointStatus": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Checkpointstatus",
+            "type": "object"
+          },
+          "diagnosticOnly": {
+            "title": "Diagnosticonly",
+            "type": "boolean"
+          },
+          "implementationShas": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Implementationshas",
+            "type": "array"
+          },
+          "latestAsOfDate": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latestasofdate"
+          },
+          "nextCheckpoint": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nextcheckpoint"
+          },
+          "observationStartDate": {
+            "title": "Observationstartdate",
+            "type": "string"
+          },
+          "sessionCount": {
+            "title": "Sessioncount",
+            "type": "integer"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "unavailableReason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unavailablereason"
+          }
+        },
+        "required": [
+          "status",
+          "observationStartDate",
+          "sessionCount",
+          "nextCheckpoint",
+          "checkpointStatus",
+          "diagnosticOnly"
+        ],
+        "title": "TopicForwardObservationRead",
+        "type": "object"
+      },
       "TopicHierarchyNodeRead": {
         "properties": {
           "name": {
@@ -8079,6 +8156,28 @@
       },
       "TopicIntelligenceTopic": {
         "properties": {
+          "absoluteGrade": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Absolutegrade"
+          },
+          "absoluteStrength": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Absolutestrength"
+          },
           "components": {
             "items": {
               "$ref": "#/components/schemas/TopicIntelligenceComponent"
@@ -8114,6 +8213,28 @@
               }
             ],
             "title": "Grade"
+          },
+          "relativeGrade": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Relativegrade"
+          },
+          "relativeStrength": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Relativestrength"
           },
           "score": {
             "anyOf": [
@@ -8682,6 +8803,107 @@
         "title": "TopicMinimumReadPage",
         "type": "object"
       },
+      "TopicOwnerSeededV0Read": {
+        "properties": {
+          "absolute": {
+            "additionalProperties": true,
+            "title": "Absolute",
+            "type": "object"
+          },
+          "asOfDate": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Asofdate"
+          },
+          "diagnosticOnly": {
+            "title": "Diagnosticonly",
+            "type": "boolean"
+          },
+          "formalDailyGrade": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Formaldailygrade"
+          },
+          "implementationSha": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Implementationsha"
+          },
+          "lifecycle": {
+            "additionalProperties": true,
+            "title": "Lifecycle",
+            "type": "object"
+          },
+          "observationFlagCopy": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Observationflagcopy",
+            "type": "object"
+          },
+          "observationFlags": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Observationflags",
+            "type": "array"
+          },
+          "policyHash": {
+            "title": "Policyhash",
+            "type": "string"
+          },
+          "policyId": {
+            "title": "Policyid",
+            "type": "string"
+          },
+          "policyVersion": {
+            "title": "Policyversion",
+            "type": "string"
+          },
+          "qualityFlags": {
+            "additionalProperties": true,
+            "title": "Qualityflags",
+            "type": "object"
+          },
+          "relative": {
+            "additionalProperties": true,
+            "title": "Relative",
+            "type": "object"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "policyId",
+          "policyVersion",
+          "policyHash",
+          "implementationSha",
+          "diagnosticOnly"
+        ],
+        "title": "TopicOwnerSeededV0Read",
+        "type": "object"
+      },
       "TopicReadModel": {
         "properties": {
           "constituentCount": {
@@ -8733,6 +8955,9 @@
             "title": "Enabled",
             "type": "boolean"
           },
+          "forwardObservation": {
+            "$ref": "#/components/schemas/TopicForwardObservationRead"
+          },
           "grade": {
             "anyOf": [
               {
@@ -8766,6 +8991,9 @@
           "name": {
             "title": "Name",
             "type": "string"
+          },
+          "ownerSeededV0": {
+            "$ref": "#/components/schemas/TopicOwnerSeededV0Read"
           },
           "publication": {
             "additionalProperties": true,
@@ -8838,7 +9066,9 @@
           "readableState",
           "coveragePct",
           "constituentCount",
-          "lifecycle"
+          "lifecycle",
+          "ownerSeededV0",
+          "forwardObservation"
         ],
         "title": "TopicReadModel",
         "type": "object"
