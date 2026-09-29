@@ -147,3 +147,72 @@ CANONICAL_MERGE_STATUS=PR_24_AND_PR_25_MERGED
 ARTIFACTS=.github/workflows/production-forensic-readback.yml; services/api/src/topicpilot_api/production_forensic_readback.py; docs/operations/production-forensic-readback.md; services/api/tests/test_production_forensic_readback.py; services/api/tests/test_production_forensic_readback_postgres.py; services/api/tests/test_production_forensic_workflow.py
 NEXT_RECOMMENDED_TASK=Provision production-readonly and execute the first SELECT-only acceptance readback for 30c4c3b1-5e3d-4402-9f96-5f6fb5ec0f9a
 ```
+
+## Owner provisioning and acceptance addendum
+
+Recorded for the explicitly authorized 017B continuation on 2026-09-30
+(Asia/Taipei). The latest canonical `origin/main` was fetched before the
+acceptance attempt and remained:
+
+```text
+CURRENT_MAIN_SHA=a565fa60668e562e07de06035ea95c5575f89b49
+PRODUCTION_READONLY_ENVIRONMENT=READY
+REQUIRED_REVIEWER_RULE=READY; Xiezhou0828
+PRODUCTION_READONLY_ROLE=topicpilot_forensic_readonly
+TOPICPILOT_PRODUCTION_READONLY_DATABASE_URL=CONFIGURED; VALUE_NOT_READ
+ROLE_PROVISIONING_STATUS=OWNER_ATTESTED_PASS
+```
+
+The environment secret and variable were checked by metadata only. The
+secret value was not read, printed, copied, or stored. The canonical workflow
+was not modified. The Owner-provisioned Production role was not altered.
+
+The one newly dispatched acceptance run was:
+
+```text
+FORENSIC_WORKFLOW_RUN_ID=36621398206
+FORENSIC_TOOL_SHA=a565fa60668e562e07de06035ea95c5575f89b49
+FIRST_ACCEPTANCE_RUN_ID=30c4c3b1-5e3d-4402-9f96-5f6fb5ec0f9a
+FORENSIC_COMMAND=POST_CLOSE_RUN_READBACK
+```
+
+Environment approval, exact-SHA checkout, input validation, CLI installation,
+and the protected-environment preflight passed. The fixed readback command
+then terminated with the sanitized workflow error `FORENSIC_QUERY_FAILED`.
+The artifact validation and upload steps were skipped; no sanitized
+Production artifact was produced. No retry, alternate SQL, public endpoint,
+or administrative credential was used.
+
+Because the artifact was not generated, the following remain unverified and
+must not be inferred:
+
+```text
+DATABASE_CURRENT_USER=NOT_VERIFIED
+TRANSACTION_READONLY_READBACK=NOT_VERIFIED
+MUTATION_PRIVILEGES_PRESENT=UNVERIFIED
+RUN_STATUS=UNVERIFIED
+TPE/TWO_DISTRIBUTIONS=UNVERIFIED
+FIRST_FAILED_CHECKPOINT=UNVERIFIED
+FALLBACK_PATH_STATUS=UNVERIFIED
+FALLBACK_AMPLIFICATION_STATUS=UNVERIFIED
+INCIDENT_WORKER_RUNTIME_SHA=UNVERIFIED
+INCIDENT_REFERENCE_VERSION=UNVERIFIED
+```
+
+The incident conclusion therefore remains:
+
+```text
+PRIMARY_ROOT_CAUSE=UNKNOWN_INSUFFICIENT_EVIDENCE
+SECONDARY_CONTRIBUTING_CAUSES=UNRESOLVED
+ROOT_CAUSE_CONFIDENCE=NONE
+TASK_017A_STATUS=BLOCKED_FORENSIC_WORKFLOW_ACCEPTANCE
+TASK_015_RESUMABLE=DO_NOT_CHANGE_AUTOMATICALLY
+PRODUCTION_DB_MUTATED=NO
+POST_CLOSE_RETRIED=NO
+DEPLOYMENT_PERFORMED=NO
+SCHEDULER_CHANGED=NO
+OBSERVATION_CHANGED=NO
+TASK_STATUS=BLOCKED_FORENSIC_WORKFLOW_ACCEPTANCE
+TASK_COMPLETE=NO
+NEXT_RECOMMENDED_TASK=Owner review of the sanitized FORENSIC_QUERY_FAILED channel failure; no rerun without a new explicit acceptance authorization
+```
