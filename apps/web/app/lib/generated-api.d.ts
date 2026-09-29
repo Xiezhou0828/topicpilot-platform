@@ -3300,6 +3300,8 @@ export interface components {
             enabled: boolean;
             /** Grade */
             grade: string | null;
+            /** Forward observation */
+            forwardObservation: components["schemas"]["TopicForwardObservationRead"];
             /** Groupname */
             groupName: string | null;
             lifecycle: components["schemas"]["TopicLifecycleRead"];
@@ -3309,6 +3311,8 @@ export interface components {
             };
             /** Name */
             name: string;
+            /** Owner seeded v0 */
+            ownerSeededV0: components["schemas"]["TopicOwnerSeededV0Read"];
             /** Publication */
             publication?: {
                 [key: string]: unknown;
@@ -3331,6 +3335,70 @@ export interface components {
             topicId: string;
             /** Topictype */
             topicType: string;
+        };
+        /** TopicForwardObservationRead */
+        TopicForwardObservationRead: {
+            /** Checkpoint status */
+            checkpointStatus: {
+                [key: string]: string;
+            };
+            /** Diagnostic only */
+            diagnosticOnly: boolean;
+            /** Implementation shas */
+            implementationShas?: string[];
+            /** Latest as of date */
+            latestAsOfDate?: string | null;
+            /** Next checkpoint */
+            nextCheckpoint: number | null;
+            /** Observation start date */
+            observationStartDate: string;
+            /** Session count */
+            sessionCount: number;
+            /** Status */
+            status: string;
+            /** Unavailable reason */
+            unavailableReason?: string | null;
+        };
+        /** TopicOwnerSeededV0Read */
+        TopicOwnerSeededV0Read: {
+            /** Absolute */
+            absolute?: {
+                [key: string]: unknown;
+            };
+            /** As of date */
+            asOfDate?: string | null;
+            /** Diagnostic only */
+            diagnosticOnly: boolean;
+            /** Formal daily grade */
+            formalDailyGrade?: string | null;
+            /** Implementation sha */
+            implementationSha: string | null;
+            /** Lifecycle */
+            lifecycle?: {
+                [key: string]: unknown;
+            };
+            /** Observation flag copy */
+            observationFlagCopy?: {
+                [key: string]: string;
+            };
+            /** Observation flags */
+            observationFlags?: string[];
+            /** Policy hash */
+            policyHash: string;
+            /** Policy id */
+            policyId: string;
+            /** Policy version */
+            policyVersion: string;
+            /** Quality flags */
+            qualityFlags?: {
+                [key: string]: unknown;
+            };
+            /** Relative */
+            relative?: {
+                [key: string]: unknown;
+            };
+            /** Status */
+            status: string;
         };
         /** TopicReadModelPage */
         TopicReadModelPage: {

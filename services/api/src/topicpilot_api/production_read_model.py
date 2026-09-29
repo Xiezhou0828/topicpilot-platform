@@ -18,6 +18,9 @@ from sqlalchemy.orm import Session
 
 from topicpilot_api.lifecycle_formal_publication import read_formal_lifecycle
 from topicpilot_api.problems import NotFoundProblem
+from topicpilot_api.topic_strength_lifecycle_read_model import (
+    build_topic_strength_lifecycle_read,
+)
 
 TAIPEI = ZoneInfo("Asia/Taipei")
 VALID_MARKETS = {"TPE", "TWO"}
@@ -808,6 +811,7 @@ def _topic_read_item(
     topic_row: Any,
     constituents: list[dict[str, Any]],
     lifecycle: dict[str, Any] | None = None,
+    strength_lifecycle: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     direction = topic_row["topic_direction"]
     stock_count = topic_row["stock_count"]
@@ -829,6 +833,7 @@ def _topic_read_item(
         "status": _status_items(topic_row, constituents),
         "lifecycle": lifecycle or _lifecycle_unavailable(),
         "constituents": constituents,
+        **(strength_lifecycle or build_topic_strength_lifecycle_read(topic_row["slug"])),
         "publication": {
             "mode": topic_row["publication_mode"],
             "membershipMode": topic_row["membership_mode"],
@@ -991,11 +996,24 @@ def _formal_topic_constituents(session: Session, slug: str) -> list[dict[str, An
 
 
 def read_topics(
-    session: Session, *, slug: str | None = None, limit: int = 200, offset: int = 0
+    session: Session,
+    *,
+    slug: str | None = None,
+    limit: int = 200,
+    offset: int = 0,
+    observation_dir: str | None = None,
 ) -> dict[str, Any]:
     as_of_date = _date_now()
     rows = session.execute(TOPIC_ROWS_SQL, {"as_of_date": as_of_date, "slug": slug}).mappings()
-    items = [_topic_read_item(row, [], _read_lifecycle(session, row["topic_id"])) for row in rows]
+    items = [
+        _topic_read_item(
+            row,
+            [],
+            _read_lifecycle(session, row["topic_id"]),
+            build_topic_strength_lifecycle_read(row["slug"], observation_dir),
+        )
+        for row in rows
+    ]
     total = len(items)
     return {
         "items": items[offset : offset + limit],
@@ -1006,7 +1024,12 @@ def read_topics(
     }
 
 
-def read_topic(session: Session, slug: str) -> dict[str, Any]:
+def read_topic(
+    session: Session,
+    slug: str,
+    *,
+    observation_dir: str | None = None,
+) -> dict[str, Any]:
     as_of_date = _date_now()
     row = (
         session.execute(TOPIC_ROWS_SQL, {"as_of_date": as_of_date, "slug": slug}).mappings().first()
@@ -1014,7 +1037,12 @@ def read_topic(session: Session, slug: str) -> dict[str, Any]:
     if row is None:
         raise NotFoundProblem(f"Topic {slug!r} was not found in the formal topic read model")
     constituents = _formal_topic_constituents(session, slug)
-    return _topic_read_item(row, constituents, _read_lifecycle(session, row["topic_id"]))
+    return _topic_read_item(
+        row,
+        constituents,
+        _read_lifecycle(session, row["topic_id"]),
+        build_topic_strength_lifecycle_read(row["slug"], observation_dir),
+    )
 
 
 __all__ = ["read_stock", "read_stocks", "read_topic", "read_topics"]

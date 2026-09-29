@@ -34,6 +34,11 @@ class Settings(BaseSettings):
     )
     freshness_days: int = Field(default=3, ge=0, le=30)
     log_level: str = "INFO"
+    forward_observation_dir: str | None = Field(
+        default=None,
+        validation_alias="FORWARD_OBSERVATION_DIR",
+        description="Authorized diagnostic JSON artifact store; no database schema is implied.",
+    )
 
     @field_validator("cors_origins", mode="before")
     @classmethod

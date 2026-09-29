@@ -5,7 +5,7 @@ from __future__ import annotations
 from datetime import date
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, Request
 from sqlalchemy.orm import Session
 
 from topicpilot_api.database import get_db
@@ -149,15 +149,25 @@ def stock(symbol: str, session: DbSession) -> dict:
 )
 def topics(
     session: DbSession,
+    request: Request,
     limit: int = Query(default=200, ge=1, le=500),
     offset: int = Query(default=0, ge=0),
 ) -> dict:
-    return read_topics(session, limit=limit, offset=offset)
+    return read_topics(
+        session,
+        limit=limit,
+        offset=offset,
+        observation_dir=request.app.state.settings.forward_observation_dir,
+    )
 
 
 @router.get("/topics/{slug}", response_model=TopicReadModel, summary="Read one formal topic")
-def topic(slug: str, session: DbSession) -> dict:
-    return read_topic(session, slug)
+def topic(slug: str, session: DbSession, request: Request) -> dict:
+    return read_topic(
+        session,
+        slug,
+        observation_dir=request.app.state.settings.forward_observation_dir,
+    )
 
 
 __all__ = ["router"]

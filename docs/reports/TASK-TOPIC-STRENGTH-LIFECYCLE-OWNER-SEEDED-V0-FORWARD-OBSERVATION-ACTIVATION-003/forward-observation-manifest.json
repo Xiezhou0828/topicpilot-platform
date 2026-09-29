@@ -1,0 +1,29 @@
+{
+  "task_id": "TASK-TOPIC-STRENGTH-LIFECYCLE-OWNER-SEEDED-V0-FORWARD-OBSERVATION-ACTIVATION-003",
+  "owner_review_status": "OWNER_REVIEW_ACCEPTED_WITH_OBSERVATION_FLAGS",
+  "policy_id": "topic-strength-lifecycle.owner-seeded-v0",
+  "policy_version": "v0",
+  "policy_hash": "5d29d968d9116b3288a288a8c9b15d68e51485ff88e4b58d82c2dfbbc27312ef",
+  "implementation_sha": "PENDING_ACTIVATION_CANDIDATE_SHA",
+  "accepted_observation_flags": [
+    "STRONG_GRADE_WITH_HELD_LIFECYCLE_CANDIDATE",
+    "GRADE_D_WHILE_DECLINING_PENDING",
+    "ABS_REL_GRADE_DIVERGENCE",
+    "MATURE_OR_MAIN_RISE_WITH_GRADE_B"
+  ],
+  "observation_start_date": "PENDING_CANONICAL_ACTIVATION",
+  "session_count": 0,
+  "latest_session": null,
+  "topic_count": 0,
+  "checkpoints": {
+    "OBSERVATION_20D": "NOT_STARTED",
+    "OBSERVATION_40D": "NOT_STARTED",
+    "OBSERVATION_60D": "NOT_STARTED"
+  },
+  "migration_required": "NO",
+  "migration_created": "NO",
+  "migration_applied": "NO",
+  "production_active": "NO",
+  "deployed": "NO",
+  "policy_recalibrated": "NO"
+}

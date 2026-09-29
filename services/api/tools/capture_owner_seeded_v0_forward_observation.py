@@ -12,13 +12,22 @@ import argparse
 import json
 import re
 import sys
-from datetime import date
+from datetime import date, datetime, time
 from pathlib import Path
 from typing import Any
+from zoneinfo import ZoneInfo
 
+from topicpilot_api.topic_engine.forward_observation_activation import (
+    ACTIVATION_TASK_ID,
+    OBSERVATION_FLAG_COPY,
+    OWNER_REVIEW_ACCEPTED,
+    POLICY_HASH,
+    assert_owner_review_accepted,
+    derive_observation_flags,
+    validate_implementation_sha,
+)
 from topicpilot_api.topic_engine.owner_seeded_v0_policy import (
     CORE,
-    DEFAULT_POLICY,
     LIFECYCLE_STAGES,
     POLICY_ID,
     POLICY_VERSION,
@@ -33,9 +42,8 @@ from topicpilot_api.topic_engine.owner_seeded_v0_policy import (
     evaluate_topic,
 )
 
-TASK_ID = "TASK-TOPIC-STRENGTH-LIFECYCLE-OWNER-SEEDED-V0-REVIEW-AND-FORWARD-OBSERVATION-002"
-OBSERVATION_SCHEMA_VERSION = "topic-strength-lifecycle.owner-seeded-v0.forward-observation.v1"
-POLICY_HASH = DEFAULT_POLICY.policy_hash()
+TASK_ID = ACTIVATION_TASK_ID
+OBSERVATION_SCHEMA_VERSION = "topic-strength-lifecycle.owner-seeded-v0.forward-observation.v2"
 
 
 class ForwardObservationCaptureError(ValueError):
@@ -62,6 +70,21 @@ def _parse_date(value: Any, field_name: str) -> date:
         return date.fromisoformat(value)
     except ValueError as exc:
         raise ForwardObservationCaptureError(f"INVALID_DATE_FIELD:{field_name}") from exc
+
+
+def _post_close_boundary(value: Any) -> datetime:
+    if not isinstance(value, str):
+        raise ForwardObservationCaptureError("MISSING_POST_CLOSE_BOUNDARY")
+    try:
+        parsed = datetime.fromisoformat(value)
+    except ValueError as exc:
+        raise ForwardObservationCaptureError("INVALID_POST_CLOSE_BOUNDARY") from exc
+    if parsed.tzinfo is None or parsed.utcoffset() is None:
+        raise ForwardObservationCaptureError("POST_CLOSE_BOUNDARY_MUST_BE_TIMEZONED")
+    taipei_time = parsed.astimezone(ZoneInfo("Asia/Taipei")).timetz().replace(tzinfo=None)
+    if taipei_time < time(13, 35):
+        raise ForwardObservationCaptureError("POST_CLOSE_BOUNDARY_NOT_REACHED")
+    return parsed
 
 
 def _number_or_none(value: Any, field_name: str) -> float | None:
@@ -266,10 +289,29 @@ def _capture_payload(payload: dict[str, Any]) -> dict[str, Any]:
         raise ForwardObservationCaptureError("POLICY_VERSION_MISMATCH")
     if _text(payload, "policy_hash") != POLICY_HASH:
         raise ForwardObservationCaptureError("POLICY_HASH_MISMATCH")
+    try:
+        assert_owner_review_accepted(_text(payload, "owner_review_status"))
+    except ValueError as exc:
+        raise ForwardObservationCaptureError(str(exc)) from exc
+    if _text(payload, "activation_task_id") != ACTIVATION_TASK_ID:
+        raise ForwardObservationCaptureError("ACTIVATION_TASK_ID_MISMATCH")
+    try:
+        implementation_sha = validate_implementation_sha(_text(payload, "implementation_sha"))
+    except ValueError as exc:
+        raise ForwardObservationCaptureError(str(exc)) from exc
 
     session = payload.get("session")
     if not isinstance(session, dict) or session.get("is_governed_trading_session") is not True:
         raise ForwardObservationCaptureError("NOT_A_GOVERNED_TRADING_SESSION")
+    if as_of_date.weekday() >= 5 or session.get("status") == "MARKET_CLOSED":
+        raise ForwardObservationCaptureError("MARKET_CLOSED")
+    if session.get("evaluable") is not True:
+        raise ForwardObservationCaptureError("NOT_EVALUABLE")
+    if _text(session, "timezone") != "Asia/Taipei":
+        raise ForwardObservationCaptureError("TIMEZONE_MISMATCH")
+    _post_close_boundary(session.get("post_close_at"))
+    if _text(session, "status") != "POST_CLOSE":
+        raise ForwardObservationCaptureError("POST_CLOSE_BOUNDARY_NOT_REACHED")
     session_authority_version = _text(session, "authority_version")
     topic_id = _text(payload, "topic_id")
     topic_name = _text(payload, "topic_name")
@@ -309,14 +351,36 @@ def _capture_payload(payload: dict[str, Any]) -> dict[str, Any]:
         "SMALL_SAMPLE_X": absolute_result.grade == "X",
         "FAIL_CLOSED_REASON": None,
     }
+    lifecycle_payload = {
+        "lifecycle_before": lifecycle.previous_stage,
+        "lifecycle_candidate": lifecycle.candidate_stage,
+        "lifecycle_after": lifecycle.final_stage,
+        "transition_confirmed": lifecycle.final_stage != lifecycle.previous_stage,
+        "transition_reason": lifecycle.transition_reason,
+        "meaningful_expansion_flag": lifecycle.meaningful_expansion,
+        "renewed_expansion_flag": lifecycle.renewed_expansion,
+        "relative_deterioration_confirmation": lifecycle.relative_deterioration_confirmation,
+        "early_relative_strength_confirmation": lifecycle.early_relative_strength_confirmation,
+    }
+    observation_flags = derive_observation_flags(
+        absolute_grade=absolute_result.grade,
+        relative_grade=relative_result.grade,
+        formal_daily_grade=absolute_result.grade,
+        lifecycle_before=lifecycle.previous_stage,
+        lifecycle_candidate=lifecycle.candidate_stage,
+        lifecycle_after=lifecycle.final_stage,
+    )
     return {
         "observation_schema_version": OBSERVATION_SCHEMA_VERSION,
         "task_id": TASK_ID,
+        "activation_task_id": ACTIVATION_TASK_ID,
+        "owner_review_status": OWNER_REVIEW_ACCEPTED,
         "as_of_date": as_of_date.isoformat(),
         "observation_start_date": observation_start_date.isoformat(),
         "policy_id": POLICY_ID,
         "policy_version": POLICY_VERSION,
         "policy_hash": POLICY_HASH,
+        "implementation_sha": implementation_sha,
         "topic_id": topic_id,
         "topic_name": topic_name,
         "authority": {
@@ -375,16 +439,10 @@ def _capture_payload(payload: dict[str, Any]) -> dict[str, Any]:
             "absolute_d_guard": absolute_result.d_guard,
             "relative_d_guard": relative_result.d_guard,
         },
-        "lifecycle": {
-            "lifecycle_before": lifecycle.previous_stage,
-            "lifecycle_candidate": lifecycle.candidate_stage,
-            "lifecycle_after": lifecycle.final_stage,
-            "transition_confirmed": lifecycle.final_stage != lifecycle.previous_stage,
-            "transition_reason": lifecycle.transition_reason,
-            "meaningful_expansion_flag": lifecycle.meaningful_expansion,
-            "renewed_expansion_flag": lifecycle.renewed_expansion,
-            "relative_deterioration_confirmation": lifecycle.relative_deterioration_confirmation,
-            "early_relative_strength_confirmation": lifecycle.early_relative_strength_confirmation,
+        "lifecycle": lifecycle_payload,
+        "observation_flags": observation_flags,
+        "observation_flag_copy": {
+            flag: OBSERVATION_FLAG_COPY[flag] for flag in observation_flags
         },
         "quality_flags": quality_flags,
         "formal_output_boundary": {
