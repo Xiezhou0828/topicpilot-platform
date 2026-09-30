@@ -16,9 +16,11 @@ from uuid import UUID
 from sqlalchemy import create_engine, text
 
 FORENSIC_COMMAND_POST_CLOSE_RUN_READBACK = "POST_CLOSE_RUN_READBACK"
+FORENSIC_COMMAND_POST_CLOSE_DATE_READBACK = "POST_CLOSE_DATE_READBACK"
 FORENSIC_COMMAND_SCHEMA_PREFLIGHT = "PRODUCTION_READONLY_SCHEMA_PREFLIGHT"
 SUPPORTED_FORENSIC_COMMANDS = (
     FORENSIC_COMMAND_POST_CLOSE_RUN_READBACK,
+    FORENSIC_COMMAND_POST_CLOSE_DATE_READBACK,
     FORENSIC_COMMAND_SCHEMA_PREFLIGHT,
 )
 TARGET_TABLE_SCOPE = (
@@ -94,6 +96,7 @@ UUID_PATTERN = re.compile(
     r"[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$"
 )
 SHA_PATTERN = re.compile(r"^[0-9a-fA-F]{40}$")
+ISO_DATE_PATTERN = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 _SECRET_TEXT_PATTERNS = (
     re.compile(r"(?i)(postgres(?:ql)?(?:\+\w+)?://)[^\s,;]+"),
     re.compile(r"(?i)(authorization|cookie|password|secret|token|api[_-]?key)\s*[:=]\s*[^\s,;]+"),
@@ -133,6 +136,20 @@ def validate_forensic_sha(value: str) -> str:
     if not isinstance(value, str) or not SHA_PATTERN.fullmatch(value):
         raise ForensicReadbackError("FORENSIC_TOOL_SHA_MUST_BE_EXACT_40_HEX")
     return value.lower()
+
+
+def validate_trading_date(value: str) -> date:
+    """Validate one canonical ISO trading date for date-bound readback."""
+
+    if not isinstance(value, str) or not ISO_DATE_PATTERN.fullmatch(value):
+        raise ForensicReadbackError("TRADING_DATE_MUST_BE_ISO_DATE")
+    try:
+        parsed = date.fromisoformat(value)
+    except ValueError as exc:
+        raise ForensicReadbackError("TRADING_DATE_MUST_BE_ISO_DATE") from exc
+    if parsed.isoformat() != value:
+        raise ForensicReadbackError("TRADING_DATE_MUST_BE_ISO_DATE")
+    return parsed
 
 
 def _sanitize_text(value: Any, *, limit: int = 512) -> str | None:
@@ -204,6 +221,49 @@ def _safe_run(row: Mapping[str, Any]) -> dict[str, Any]:
     return result
 
 
+def _safe_date_candidate(row: Mapping[str, Any]) -> dict[str, Any]:
+    return {
+        "id": _json_value(row.get("id")),
+        "runType": _sanitize_text(row.get("run_type"), limit=32),
+        "status": _sanitize_text(row.get("status"), limit=32),
+        "startedAt": _as_iso(row.get("started_at")),
+        "completedAt": _as_iso(row.get("completed_at")),
+        "runDate": _sanitize_text(row.get("metadata_run_date"), limit=32),
+        "targetDate": _sanitize_text(row.get("metadata_target_date"), limit=32),
+        "scope": _sanitize_text(row.get("metadata_scope"), limit=32),
+        "executionMode": _sanitize_text(row.get("metadata_execution_mode"), limit=32),
+        "timezone": _sanitize_text(row.get("metadata_timezone"), limit=64),
+        "sessionCode": _sanitize_text(row.get("metadata_session_code"), limit=64),
+        "calendarCode": _sanitize_text(row.get("metadata_calendar_code"), limit=64),
+    }
+
+
+def select_date_bound_run(
+    rows: Sequence[Mapping[str, Any]], trading_date: date
+) -> tuple[Mapping[str, Any] | None, str, list[dict[str, Any]]]:
+    """Select one natural full POST_CLOSE row, failing closed on ambiguity."""
+
+    safe_candidates = [_safe_date_candidate(row) for row in rows]
+    explicit = [
+        row
+        for row in rows
+        if str(row.get("metadata_run_date") or "") == trading_date.isoformat()
+    ]
+    candidates = explicit or list(rows)
+    full_scope = [
+        row
+        for row in candidates
+        if str(row.get("metadata_scope") or "FULL").upper() == "FULL"
+    ]
+    preferred = full_scope or candidates
+    if len(preferred) > 1:
+        raise ForensicReadbackError("POST_CLOSE_DATE_AMBIGUOUS")
+    if not preferred:
+        return None, "NOT_FOUND", safe_candidates
+    basis = "METADATA_RUN_DATE" if explicit else "STARTED_AT_ASIA_TAIPEI_DATE"
+    return preferred[0], basis, safe_candidates
+
+
 def _safe_attempt_group(row: Mapping[str, Any]) -> dict[str, Any]:
     return {
         "marketCode": _sanitize_text(row.get("market_code"), limit=64),
@@ -235,6 +295,22 @@ def _safe_attempt(row: Mapping[str, Any]) -> dict[str, Any]:
 
 
 def _safe_checkpoint(row: Mapping[str, Any]) -> dict[str, Any]:
+    publication_readback = {
+        key: _sanitize_text(row.get(key), limit=64)
+        for key in (
+            "metadata_formal_publication_status",
+            "metadata_formal_topic_status",
+            "metadata_formal_topic_date",
+            "metadata_home_publication_status",
+            "metadata_home_publication_state",
+            "metadata_formal_readback_status",
+            "metadata_formal_readback_topic_status",
+            "metadata_formal_readback_topic_date",
+            "metadata_formal_readback_home_status",
+            "metadata_formal_readback_home_state",
+        )
+        if row.get(key) is not None
+    }
     return {
         "batchNumber": int(row.get("batch_number", 0) or 0),
         "batchKey": _sanitize_text(row.get("batch_key"), limit=128),
@@ -263,6 +339,7 @@ def _safe_checkpoint(row: Mapping[str, Any]) -> dict[str, Any]:
             )
             if row.get(key) is not None
         },
+        "publicationReadback": publication_readback,
     }
 
 
@@ -342,6 +419,32 @@ WHERE id = :run_id
   AND run_type = 'POST_CLOSE'
 """
 
+CURRENT_DAY_RUN_QUERY = """
+SELECT id, run_type, status, provider_code, adapter_version,
+       started_at, completed_at,
+       metadata->>'runDate' AS metadata_run_date,
+       metadata->>'targetDate' AS metadata_target_date,
+       metadata->>'scope' AS metadata_scope,
+       metadata->>'executionMode' AS metadata_execution_mode,
+       metadata->>'timezone' AS metadata_timezone,
+       metadata->>'sessionCode' AS metadata_session_code,
+       metadata->>'calendarCode' AS metadata_calendar_code
+FROM topicpilot.live_collector_runs
+WHERE run_type = 'POST_CLOSE'
+  AND (
+      metadata->>'runDate' = :trading_date
+      OR (
+          metadata->>'runDate' IS NULL
+          AND (started_at AT TIME ZONE 'Asia/Taipei')::date = :trading_date
+      )
+  )
+ORDER BY
+    CASE WHEN metadata->>'runDate' = :trading_date THEN 0 ELSE 1 END,
+    CASE WHEN COALESCE(metadata->>'scope', 'FULL') = 'FULL' THEN 0 ELSE 1 END,
+    started_at DESC,
+    id DESC
+"""
+
 ATTEMPT_GROUP_QUERY = """
 SELECT market_code, status, provider_status, error_code,
        COUNT(*) AS attempt_count,
@@ -375,7 +478,25 @@ SELECT batch_number, batch_key, attempt_number, status,
        metadata->>'publication' AS metadata_publication,
        metadata->>'runStatus' AS metadata_run_status,
        metadata->>'formalReadback' AS metadata_formal_readback,
-       metadata->>'scope' AS metadata_scope
+       metadata->>'scope' AS metadata_scope,
+       metadata->'formalPublication'->>'status' AS metadata_formal_publication_status,
+       metadata->'formalPublication'->'topicSnapshot'->>'status'
+           AS metadata_formal_topic_status,
+       metadata->'formalPublication'->'topicSnapshot'->>'tradingDate'
+           AS metadata_formal_topic_date,
+       metadata->'formalPublication'->'homePublication'->>'status'
+           AS metadata_home_publication_status,
+       metadata->'formalPublication'->'homePublication'->>'publicationState'
+           AS metadata_home_publication_state,
+       metadata->'formalReadback'->>'status' AS metadata_formal_readback_status,
+       metadata->'formalReadback'->'topicSnapshot'->>'status'
+           AS metadata_formal_readback_topic_status,
+       metadata->'formalReadback'->'topicSnapshot'->>'tradingDate'
+           AS metadata_formal_readback_topic_date,
+       metadata->'formalReadback'->'homePublication'->>'status'
+           AS metadata_formal_readback_home_status,
+       metadata->'formalReadback'->'homePublication'->>'publicationState'
+           AS metadata_formal_readback_home_state
 FROM topicpilot.live_collector_checkpoints
 WHERE run_id = :run_id
 ORDER BY created_at, batch_number, attempt_number
@@ -729,10 +850,101 @@ def read_post_close_run(
     }
 
 
+def read_post_close_date(
+    *,
+    database_url: str,
+    trading_date: str,
+    expected_role: str,
+    forensic_tool_sha: str,
+    engine_factory: Callable[..., Any] | None = None,
+    now: datetime | None = None,
+) -> dict[str, Any]:
+    """Locate and read one natural POST_CLOSE run for an exact trading date."""
+
+    if not database_url:
+        raise ForensicReadbackError("BLOCKED_PRODUCTION_READONLY_SECRET_MISSING")
+    if not expected_role:
+        raise ForensicReadbackError("PRODUCTION_READONLY_ROLE_EXPECTATION_MISSING")
+    parsed_date = validate_trading_date(trading_date)
+    tool_sha = validate_forensic_sha(forensic_tool_sha)
+    engine = (engine_factory or create_engine)(database_url, pool_pre_ping=True)
+    try:
+        with engine.connect() as connection, connection.begin():
+            current_user, session_user, transaction_read_only = _read_only_identity(
+                connection, expected_role
+            )
+            candidate_rows = _execute_mappings(
+                connection,
+                CURRENT_DAY_RUN_QUERY,
+                {"trading_date": parsed_date.isoformat()},
+            )
+            privilege_rows = _execute_mappings(connection, PRIVILEGE_QUERY)
+            privileges, mutation_status = _privilege_status(privilege_rows)
+            selected, selection_basis, safe_candidates = select_date_bound_run(
+                candidate_rows, parsed_date
+            )
+    except ForensicReadbackError:
+        raise
+    except Exception as exc:
+        raise ForensicReadbackError("FORENSIC_QUERY_FAILED", type(exc).__name__) from exc
+    finally:
+        engine.dispose()
+
+    if selected is None:
+        generated_at = now or datetime.now(UTC)
+        if generated_at.tzinfo is None:
+            generated_at = generated_at.replace(tzinfo=UTC)
+        return {
+            "forensicToolSha": tool_sha,
+            "databaseRole": current_user,
+            "sessionUser": session_user,
+            "transactionReadOnly": transaction_read_only,
+            "targetTableScope": list(TARGET_TABLE_SCOPE),
+            "targetPrivileges": privileges,
+            "mutationPrivilegesPresent": mutation_status,
+            "requestedTradingDate": parsed_date.isoformat(),
+            "postCloseRunFound": False,
+            "runSelection": {
+                "selectionBasis": selection_basis,
+                "candidateCount": len(safe_candidates),
+                "candidates": safe_candidates,
+                "selectedCandidate": None,
+            },
+            "run": None,
+            "attemptSummary": [],
+            "attemptRepresentatives": [],
+            "checkpointTimeline": [],
+            "firstFailedCheckpoint": None,
+            "marketSummary": [],
+            "errorSummary": [],
+            "providerStatusSummary": [],
+            "generatedAt": generated_at.astimezone(UTC).isoformat().replace("+00:00", "Z"),
+        }
+
+    payload = read_post_close_run(
+        database_url=database_url,
+        run_id=str(selected["id"]),
+        expected_role=expected_role,
+        forensic_tool_sha=tool_sha,
+        engine_factory=engine_factory,
+        now=now,
+    )
+    payload["requestedTradingDate"] = parsed_date.isoformat()
+    payload["postCloseRunFound"] = True
+    payload["runSelection"] = {
+        "selectionBasis": selection_basis,
+        "candidateCount": len(safe_candidates),
+        "candidates": safe_candidates,
+        "selectedCandidate": _safe_date_candidate(selected),
+    }
+    return payload
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--command", choices=SUPPORTED_FORENSIC_COMMANDS, required=True)
     parser.add_argument("--run-id")
+    parser.add_argument("--trading-date")
     parser.add_argument("--output", required=True, type=Path)
     return parser
 
@@ -747,6 +959,15 @@ def main(argv: list[str] | None = None) -> int:
         if args.command == FORENSIC_COMMAND_SCHEMA_PREFLIGHT:
             payload = run_schema_preflight(
                 database_url=database_url,
+                expected_role=expected_role,
+                forensic_tool_sha=forensic_tool_sha,
+            )
+        elif args.command == FORENSIC_COMMAND_POST_CLOSE_DATE_READBACK:
+            if not args.trading_date:
+                raise ForensicReadbackError("TRADING_DATE_REQUIRED")
+            payload = read_post_close_date(
+                database_url=database_url,
+                trading_date=args.trading_date,
                 expected_role=expected_role,
                 forensic_tool_sha=forensic_tool_sha,
             )
@@ -769,7 +990,7 @@ def main(argv: list[str] | None = None) -> int:
                 {
                     "status": "PASS",
                     "command": args.command,
-                    "runId": payload.get("run", {}).get("id"),
+                    "runId": (payload.get("run") or {}).get("id"),
                     "output": str(args.output),
                     "databaseRole": payload["databaseRole"],
                     "transactionReadOnly": payload["transactionReadOnly"],

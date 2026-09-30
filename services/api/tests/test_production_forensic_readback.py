@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import re
-from datetime import UTC, datetime
+from datetime import UTC, date, datetime
 
 import pytest
 
@@ -9,7 +9,9 @@ from topicpilot_api.production_forensic_readback import (
     ATTEMPT_GROUP_QUERY,
     ATTEMPT_REPRESENTATIVE_QUERY,
     CHECKPOINT_QUERY,
+    CURRENT_DAY_RUN_QUERY,
     ERROR_SUMMARY_QUERY,
+    FORENSIC_COMMAND_POST_CLOSE_DATE_READBACK,
     FORENSIC_COMMAND_POST_CLOSE_RUN_READBACK,
     MARKET_SUMMARY_QUERY,
     PRIVILEGE_QUERY,
@@ -20,10 +22,12 @@ from topicpilot_api.production_forensic_readback import (
     _safe_attempt,
     _safe_checkpoint,
     _sanitize_text,
+    select_date_bound_run,
     summarize_attempt_rows,
     validate_command,
     validate_forensic_sha,
     validate_run_id,
+    validate_trading_date,
 )
 
 
@@ -33,6 +37,45 @@ def test_only_the_fixed_command_is_allowed() -> None:
     )
     with pytest.raises(ForensicReadbackError, match="FORENSIC_COMMAND_NOT_ALLOWED"):
         validate_command("SELECT * FROM topicpilot.live_collector_runs")
+
+
+def test_date_bound_command_accepts_only_canonical_trading_date() -> None:
+    assert validate_command(FORENSIC_COMMAND_POST_CLOSE_DATE_READBACK) == (
+        FORENSIC_COMMAND_POST_CLOSE_DATE_READBACK
+    )
+    assert validate_trading_date("2026-09-30") == date(2026, 9, 30)
+    with pytest.raises(ForensicReadbackError, match="TRADING_DATE_MUST_BE_ISO_DATE"):
+        validate_trading_date("2026-9-30")
+
+
+def test_date_bound_selection_prefers_explicit_full_run() -> None:
+    rows = [
+        {
+            "id": "legacy",
+            "metadata_run_date": None,
+            "metadata_scope": "FULL",
+            "started_at": datetime(2026, 9, 30, 5, 0, tzinfo=UTC),
+        },
+        {
+            "id": "natural",
+            "metadata_run_date": "2026-09-30",
+            "metadata_scope": "FULL",
+            "started_at": datetime(2026, 9, 30, 5, 1, tzinfo=UTC),
+        },
+    ]
+    selected, basis, candidates = select_date_bound_run(rows, date(2026, 9, 30))
+    assert selected is rows[1]
+    assert basis == "METADATA_RUN_DATE"
+    assert len(candidates) == 2
+
+
+def test_date_bound_selection_fails_closed_on_ambiguous_runs() -> None:
+    rows = [
+        {"id": "one", "metadata_run_date": "2026-09-30", "metadata_scope": "FULL"},
+        {"id": "two", "metadata_run_date": "2026-09-30", "metadata_scope": "FULL"},
+    ]
+    with pytest.raises(ForensicReadbackError, match="POST_CLOSE_DATE_AMBIGUOUS"):
+        select_date_bound_run(rows, date(2026, 9, 30))
 
 
 @pytest.mark.parametrize(
@@ -194,6 +237,7 @@ def test_writable_transaction_fails_closed() -> None:
 def test_query_surface_has_no_mutation_statement() -> None:
     statements = (
         RUN_QUERY,
+        CURRENT_DAY_RUN_QUERY,
         ATTEMPT_GROUP_QUERY,
         ATTEMPT_REPRESENTATIVE_QUERY,
         CHECKPOINT_QUERY,

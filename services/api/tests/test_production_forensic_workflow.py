@@ -25,6 +25,8 @@ def test_forensic_workflow_has_no_arbitrary_sql_or_shell_surface() -> None:
     source = WORKFLOW.read_text(encoding="utf-8")
     assert "type: choice" in source
     assert "POST_CLOSE_RUN_READBACK" in source
+    assert "POST_CLOSE_DATE_READBACK" in source
+    assert "trading_date:" in source
     assert "--command \"$FORENSIC_COMMAND\"" in source
     assert "--run-id \"$RUN_ID\"" in source
     assert "--database-url" not in source
