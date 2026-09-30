@@ -111,7 +111,7 @@ jobs:
           PRODUCTION_API_ORIGIN: https://topicpilot-api.onrender.com
         run: |
           payload="$(curl --fail --silent --show-error "$PRODUCTION_API_ORIGIN/api/v1/admin/migration")"
-          python -c 'import json, sys; payload=json.loads(sys.argv[1]); expected="0047_task_topic_role_strength_design_freeze"; actual=payload.get("alembicRevision"); raise SystemExit(f"Worker release requires migration 0047, got {actual!r}") if actual != expected else print("Worker migration precondition: 0047")' "$payload"
+          python -c 'import json, sys; payload=json.loads(sys.argv[1]); expected="0047_task_topic_role_strength_design_freeze"; actual=payload.get("alembicRevision"); sys.exit(f"Worker release requires migration 0047, got {actual!r}") if actual != expected else print("Worker migration precondition: 0047")' "$payload"
       - name: Trigger protected Worker deploy hook with exact SHA
         env:
           RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
