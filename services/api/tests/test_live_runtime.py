@@ -151,16 +151,16 @@ def test_scheduler_waits_on_configured_closed_date_after_post_close_start():
     assert scheduler.decide(datetime(2026, 8, 10, 6, 0, tzinfo=UTC)) == "WAIT"
 
 
-def test_scheduler_uses_inclusive_1335_asia_taipei_boundary():
+def test_scheduler_uses_inclusive_1345_asia_taipei_boundary():
     config = LiveRuntimeConfig()
     scheduler = LiveScheduler(object(), config)
     taipei = ZoneInfo("Asia/Taipei")
 
     assert scheduler.decide(
-        datetime(2026, 8, 10, 13, 34, 59, tzinfo=taipei)
+        datetime(2026, 8, 10, 13, 44, 59, tzinfo=taipei)
     ) == "WAIT"
     assert scheduler.decide(
-        datetime(2026, 8, 10, 13, 35, tzinfo=taipei)
+        datetime(2026, 8, 10, 13, 45, tzinfo=taipei)
     ) == "POST_CLOSE"
 
 
@@ -276,7 +276,7 @@ def test_scheduler_starts_worker_at_open_and_stops_before_post_close():
             8,
             10,
             1 if timeline.cycles == 0 else 5,
-                0 if timeline.cycles == 0 else 35,
+                0 if timeline.cycles == 0 else 45,
             tzinfo=UTC,
         ),
     )

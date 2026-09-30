@@ -55,7 +55,7 @@ def _runner(
     clock_value: datetime,
     *,
     result_status: str = "SUCCESS",
-    post_close_start: str = "13:30",
+    post_close_start: str = "13:45",
 ):
     config = LiveRuntimeConfig(post_close_start=post_close_start)
     updater = FakeUpdater(config, result_status=result_status)
@@ -78,6 +78,20 @@ def test_daily_forward_waits_until_configured_post_close_start():
     assert result.target_date == date(2026, 8, 28)
     assert result.next_session_date == date(2026, 8, 31)
     assert updater.calls == []
+
+
+def test_daily_forward_uses_inclusive_1345_asia_taipei_boundary():
+    before, before_updater = _runner(datetime(2026, 8, 31, 5, 44, 59, tzinfo=UTC))
+    before_result = before.run_once()
+
+    assert before_result.status == "WAITING_FOR_POST_CLOSE"
+    assert before_updater.calls == []
+
+    at_start, at_start_updater = _runner(datetime(2026, 8, 31, 5, 45, tzinfo=UTC))
+    at_start_result = at_start.run_once()
+
+    assert at_start_result.status == "SUCCESS"
+    assert at_start_updater.calls == [(date(2026, 8, 31), "MANUAL")]
 
 
 def test_daily_forward_after_midnight_targets_latest_closed_session():
