@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from http.client import IncompleteRead
+
 from topicpilot_api.market_data.rate_limit import RateLimitedTransport
 
 
@@ -53,3 +55,24 @@ def test_rate_limited_transport_enforces_interval_and_rolling_budget() -> None:
     transport("three", 1.0)
 
     assert request_times == [0.0, 1.0, 60.0]
+
+
+def test_rate_limited_transport_retries_incomplete_http_reads() -> None:
+    calls: list[str] = []
+
+    def transport(url: str, _timeout: float) -> bytes:
+        calls.append(url)
+        if len(calls) == 1:
+            raise IncompleteRead(b"partial")
+        return b"complete"
+
+    limited = RateLimitedTransport(
+        transport,
+        requests_per_minute=100,
+        max_retries=1,
+        retry_backoff_seconds=0,
+        sleep=lambda _seconds: None,
+    )
+
+    assert limited("https://example.test", 1.0) == b"complete"
+    assert limited.retry_count == 1

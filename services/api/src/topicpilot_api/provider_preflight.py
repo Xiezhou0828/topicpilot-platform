@@ -410,6 +410,8 @@ def _provider_failure(exc: Exception) -> G2MarketFailure:
         code = "PROVIDER_REQUEST_FAILED"
     parsed_codes = {
         "EXCHANGE_NO_DATA",
+        "EXCHANGE_NOT_READY",
+        "EXCHANGE_EMPTY_PAYLOAD",
         "INVALID_PAYLOAD",
         "DUPLICATE_INSTRUMENT_ROW",
         "INVALID_OHLC",

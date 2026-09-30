@@ -14,7 +14,9 @@ from topicpilot_api.live.post_close import (
     PostClosePreconditionError,
     PostCloseUpdater,
     _json_safe,
+    resolve_post_close_run_date,
 )
+from topicpilot_api.market_data.history import HistoricalProviderError
 from topicpilot_api.market_data.ingestion import HistoricalInstrumentResult
 
 
@@ -337,6 +339,42 @@ def test_post_close_execution_key_is_session_and_scope_bound():
     )
 
 
+@pytest.mark.parametrize(
+    ("run_at", "expected"),
+    [
+        (datetime(2026, 9, 29, 5, 35, tzinfo=UTC), date(2026, 9, 29)),
+        (datetime(2026, 9, 30, 5, 35, tzinfo=UTC), date(2026, 9, 30)),
+    ],
+)
+def test_post_close_run_date_binding_uses_asia_taipei_session_date(run_at, expected):
+    assert resolve_post_close_run_date(run_at, "Asia/Taipei") == expected
+
+
+def test_explicit_post_close_run_date_overrides_clock_date():
+    assert resolve_post_close_run_date(
+        datetime(2026, 9, 30, 5, 35, tzinfo=UTC),
+        "Asia/Taipei",
+        date(2026, 9, 29),
+    ) == date(2026, 9, 29)
+
+
+def test_market_batch_provider_failure_does_not_enter_per_symbol_fallback():
+    provider_error = HistoricalProviderError("EXCHANGE_NOT_READY", "not ready")
+
+    assert PostCloseUpdater._is_market_batch_provider_failure(
+        provider_error,
+        SimpleNamespace(market_batch=True),
+    ) is True
+    assert PostCloseUpdater._is_market_batch_provider_failure(
+        ValueError("reference failure"),
+        SimpleNamespace(market_batch=True),
+    ) is False
+    assert PostCloseUpdater._is_market_batch_provider_failure(
+        provider_error,
+        SimpleNamespace(market_batch=False),
+    ) is False
+
+
 def test_checkpoint_events_are_append_only_and_increment_attempt_number():
     class FakeSession:
         latest = None
@@ -368,11 +406,16 @@ def test_checkpoint_events_are_append_only_and_increment_attempt_number():
         run_id=first.run_id,
         batch_key=first.batch_key,
         batch_number=first.batch_number,
-        status="COMPLETED",
+        status="FAILED",
         processed_count=20,
+        failed_count=20,
+        provider_failure_count=1,
+        metadata={"providerErrorCode": "EXCHANGE_NOT_READY"},
     )
     assert second.attempt_number == 2
-    assert second.status == "COMPLETED"
+    assert second.status == "FAILED"
+    assert second.provider_failure_count == 1
+    assert second.metadata_payload["providerErrorCode"] == "EXCHANGE_NOT_READY"
 
 
 def test_institutional_flow_readback_requires_both_same_date_official_markets():
