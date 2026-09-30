@@ -147,3 +147,41 @@ CANONICAL_MERGE_STATUS=PR_24_AND_PR_25_MERGED
 ARTIFACTS=.github/workflows/production-forensic-readback.yml; services/api/src/topicpilot_api/production_forensic_readback.py; docs/operations/production-forensic-readback.md; services/api/tests/test_production_forensic_readback.py; services/api/tests/test_production_forensic_readback_postgres.py; services/api/tests/test_production_forensic_workflow.py
 NEXT_RECOMMENDED_TASK=Provision production-readonly and execute the first SELECT-only acceptance readback for 30c4c3b1-5e3d-4402-9f96-5f6fb5ec0f9a
 ```
+
+## 017C/017D operational verification addendum
+
+The owner subsequently completed the required protected-role provisioning and
+the 017C schema preflight. A separately authorized 017D execution then used
+the governed workflow exactly once for the incident run. This addendum does
+not change the implementation scope above; it records that the channel was
+exercised successfully and that the incident artifact was recovered.
+
+```text
+PREFLIGHT_WORKFLOW_RUN_ID=36668440861
+PREFLIGHT_STATUS=PASS
+PREFLIGHT_ROLE=topicpilot_forensic_readonly
+PREFLIGHT_TRANSACTION_READONLY=on
+PREFLIGHT_MUTATION_PRIVILEGES_PRESENT=NO
+
+INCIDENT_READBACK_WORKFLOW_RUN_ID=36678415986
+INCIDENT_READBACK_JOB_ID=109768368162
+INCIDENT_READBACK_TOOL_SHA=a0f16107af5cfcdd063458d65a473ef2e4a7175b
+INCIDENT_READBACK_ARTIFACT_ID=11081105402
+INCIDENT_READBACK_STATUS=PASS
+INCIDENT_READBACK_COMMAND=POST_CLOSE_RUN_READBACK
+INCIDENT_READBACK_RUN_ID=30c4c3b1-5e3d-4402-9f96-5f6fb5ec0f9a
+```
+
+The recovered artifact verified the expected role, session user,
+transaction-level read-only mode, and absence of mutation privileges. It
+reported the incident run as `FAILED` with `requested=553`, `success=0`,
+`failure=347`, `retry=0`, and `freshness_state=PARTIAL`. Its bounded market
+summary recorded 347 TPE failures with `EXCHANGE_NO_DATA` and 206 TWO skips
+with `MISSING_MARKET_DATA`. The checkpoint timeline was empty, so no first
+failed checkpoint is asserted. No remediation, retry, replay, deployment,
+scheduler change, migration, or Production mutation occurred.
+
+The implementation task is therefore operationally verified, while the
+incident root cause remains `UNKNOWN_INSUFFICIENT_EVIDENCE`. Detailed
+evidence and status are maintained in
+`TASK-POST-CLOSE-20260929-PROTECTED-INCIDENT-READBACK-017D.md`.
