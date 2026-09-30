@@ -8,10 +8,11 @@ import os
 import re
 import sys
 from collections.abc import Callable, Mapping, Sequence
-from datetime import UTC, date, datetime
+from datetime import UTC, date, datetime, time, timedelta
 from pathlib import Path
 from typing import Any
 from uuid import UUID
+from zoneinfo import ZoneInfo
 
 from sqlalchemy import create_engine, text
 
@@ -221,6 +222,27 @@ def _safe_run(row: Mapping[str, Any]) -> dict[str, Any]:
     return result
 
 
+def _metadata_field(row: Mapping[str, Any], field: str) -> Any:
+    direct = row.get(f"metadata_{field}")
+    if direct is not None:
+        return direct
+    raw = row.get("metadata_text")
+    if not isinstance(raw, str):
+        return None
+    try:
+        parsed = json.loads(raw)
+    except (TypeError, ValueError):
+        return None
+    json_key = {
+        "run_date": "runDate",
+        "target_date": "targetDate",
+        "execution_mode": "executionMode",
+        "session_code": "sessionCode",
+        "calendar_code": "calendarCode",
+    }.get(field, field)
+    return parsed.get(json_key) if isinstance(parsed, dict) else None
+
+
 def _safe_date_candidate(row: Mapping[str, Any]) -> dict[str, Any]:
     return {
         "id": _json_value(row.get("id")),
@@ -228,13 +250,13 @@ def _safe_date_candidate(row: Mapping[str, Any]) -> dict[str, Any]:
         "status": _sanitize_text(row.get("status"), limit=32),
         "startedAt": _as_iso(row.get("started_at")),
         "completedAt": _as_iso(row.get("completed_at")),
-        "runDate": _sanitize_text(row.get("metadata_run_date"), limit=32),
-        "targetDate": _sanitize_text(row.get("metadata_target_date"), limit=32),
-        "scope": _sanitize_text(row.get("metadata_scope"), limit=32),
-        "executionMode": _sanitize_text(row.get("metadata_execution_mode"), limit=32),
-        "timezone": _sanitize_text(row.get("metadata_timezone"), limit=64),
-        "sessionCode": _sanitize_text(row.get("metadata_session_code"), limit=64),
-        "calendarCode": _sanitize_text(row.get("metadata_calendar_code"), limit=64),
+        "runDate": _sanitize_text(_metadata_field(row, "run_date"), limit=32),
+        "targetDate": _sanitize_text(_metadata_field(row, "target_date"), limit=32),
+        "scope": _sanitize_text(_metadata_field(row, "scope"), limit=32),
+        "executionMode": _sanitize_text(_metadata_field(row, "execution_mode"), limit=32),
+        "timezone": _sanitize_text(_metadata_field(row, "timezone"), limit=64),
+        "sessionCode": _sanitize_text(_metadata_field(row, "session_code"), limit=64),
+        "calendarCode": _sanitize_text(_metadata_field(row, "calendar_code"), limit=64),
     }
 
 
@@ -247,13 +269,13 @@ def select_date_bound_run(
     explicit = [
         row
         for row in rows
-        if str(row.get("metadata_run_date") or "") == trading_date.isoformat()
+        if str(_metadata_field(row, "run_date") or "") == trading_date.isoformat()
     ]
     candidates = explicit or list(rows)
     full_scope = [
         row
         for row in candidates
-        if str(row.get("metadata_scope") or "FULL").upper() == "FULL"
+        if str(_metadata_field(row, "scope") or "FULL").upper() == "FULL"
     ]
     preferred = full_scope or candidates
     if len(preferred) > 1:
@@ -422,25 +444,12 @@ WHERE id = :run_id
 CURRENT_DAY_RUN_QUERY = """
 SELECT id, run_type, status, provider_code, adapter_version,
        started_at, completed_at,
-       metadata->>'runDate' AS metadata_run_date,
-       metadata->>'targetDate' AS metadata_target_date,
-       metadata->>'scope' AS metadata_scope,
-       metadata->>'executionMode' AS metadata_execution_mode,
-       metadata->>'timezone' AS metadata_timezone,
-       metadata->>'sessionCode' AS metadata_session_code,
-       metadata->>'calendarCode' AS metadata_calendar_code
+       CAST(metadata AS TEXT) AS metadata_text
 FROM topicpilot.live_collector_runs
 WHERE run_type = 'POST_CLOSE'
-  AND (
-      metadata->>'runDate' = :trading_date
-      OR (
-          metadata->>'runDate' IS NULL
-          AND (started_at AT TIME ZONE 'Asia/Taipei')::date = :trading_date
-      )
-  )
+  AND started_at >= :local_start
+  AND started_at < :local_end
 ORDER BY
-    CASE WHEN metadata->>'runDate' = :trading_date THEN 0 ELSE 1 END,
-    CASE WHEN COALESCE(metadata->>'scope', 'FULL') = 'FULL' THEN 0 ELSE 1 END,
     started_at DESC,
     id DESC
 """
@@ -867,6 +876,9 @@ def read_post_close_date(
         raise ForensicReadbackError("PRODUCTION_READONLY_ROLE_EXPECTATION_MISSING")
     parsed_date = validate_trading_date(trading_date)
     tool_sha = validate_forensic_sha(forensic_tool_sha)
+    timezone = ZoneInfo("Asia/Taipei")
+    local_start = datetime.combine(parsed_date, time.min, tzinfo=timezone).astimezone(UTC)
+    local_end = local_start + timedelta(days=1)
     engine = (engine_factory or create_engine)(database_url, pool_pre_ping=True)
     try:
         with engine.connect() as connection, connection.begin():
@@ -877,7 +889,7 @@ def read_post_close_date(
                 candidate_rows = _execute_mappings(
                     connection,
                     CURRENT_DAY_RUN_QUERY,
-                    {"trading_date": parsed_date.isoformat()},
+                    {"local_start": local_start, "local_end": local_end},
                 )
             except Exception as exc:
                 raise ForensicReadbackError("CURRENT_DAY_RUN_LOCATOR_QUERY_FAILED") from exc
