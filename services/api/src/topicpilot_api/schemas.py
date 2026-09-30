@@ -1130,8 +1130,8 @@ class MarketFlowLegRead(ApiModel):
     sell: Decimal | None
     net: Decimal | None
     value: Decimal | None = None
-    unit: str
-    scale: int
+    unit: str | None
+    scale: int | None
     status: str
 
 
@@ -1165,8 +1165,8 @@ class MarketFlowWindowRead(ApiModel):
     investment_trust_net: Decimal | None = Field(alias="investmentTrustNet")
     dealer_net: Decimal | None = Field(alias="dealerNet")
     total_net: Decimal | None = Field(alias="totalNet")
-    unit: str
-    scale: int
+    unit: str | None
+    scale: int | None
 
 
 class MarketPriceFlowRelationRead(ApiModel):
