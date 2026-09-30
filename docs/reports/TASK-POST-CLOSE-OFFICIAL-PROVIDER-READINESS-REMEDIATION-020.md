@@ -2,13 +2,13 @@
 
 ## Scope and status
 
-This remediation addresses the repeated 2026-09-29 and 2026-09-30 POST_CLOSE official-provider failure. It does not replay either date, backfill history, mutate Production, or deploy any service.
+This remediation addresses the repeated 2026-09-29 and 2026-09-30 POST_CLOSE official-provider failure. It did not replay either date, backfill history, mutate Production, or deploy any service.
 
 ```text
 TASK_ID=TASK-POST-CLOSE-OFFICIAL-PROVIDER-READINESS-REMEDIATION-020
 INITIAL_MAIN_SHA=ef4b73ba6ae78afb24245fc03da823fd05a50cb7
 IMPLEMENTATION_SHA=6652fe0e95140e4ee3598a1fa57c3a91b0b6a0ff
-FINAL_MAIN_SHA=TO_BE_RECORDED_AFTER_PROMOTION
+FINAL_MAIN_SHA=02ffb7b97f4331153b226f368fb8d19b48be8cc8
 ```
 
 ## Evidence and root cause
@@ -108,7 +108,7 @@ RUFF_STATUS=changed-scope Ruff PASS; full-repository Ruff contains pre-existing 
 GIT_DIFF_CHECK=PASS
 ```
 
-Exact-SHA CI is required before promotion. The current branch has not deployed or invoked any Production workflow.
+Exact-SHA CI run 212 passed all Backend, Frontend, Secret scan, and Docker Compose smoke jobs before promotion. No Production workflow was deployed or invoked.
 
 ## Production boundary and remaining activation
 
@@ -123,7 +123,10 @@ TASK_015_RESUMED=NO
 After this candidate is merged, a separate authorized Production activation is still required: deploy the exact promoted API/Worker artifacts through the normal release process, verify runtime provenance and checkpoint writes, and observe a future eligible current-day POST_CLOSE run. Do not replay 2026-09-29 or 2026-09-30 as part of this task.
 
 ```text
-TASK_STATUS=CANDIDATE_PENDING_EXACT_SHA_CI_AND_PROMOTION
-TASK_COMPLETE=NO
-NEXT_RECOMMENDED_TASK=after merge, activate the exact canonical API/Worker SHA through the normal deployment task and observe the next eligible current-day POST_CLOSE run; no historical replay
+TASK_STATUS=COMPLETE; PR #39 merged after exact-SHA CI success
+PR_NUMBER=39
+FINAL_CANONICAL_SHA=02ffb7b97f4331153b226f368fb8d19b48be8cc8
+CI_STATUS=PASS; GitHub Actions CI run 212
+TASK_COMPLETE=YES
+NEXT_RECOMMENDED_TASK=activate the exact canonical API/Worker SHA through the normal deployment task and observe the next eligible current-day POST_CLOSE run; no historical replay
 ```
