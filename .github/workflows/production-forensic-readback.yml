@@ -9,9 +9,14 @@ on:
         type: choice
         options:
           - POST_CLOSE_RUN_READBACK
+          - POST_CLOSE_DATE_READBACK
       run_id:
         description: One POST_CLOSE run UUID to read
-        required: true
+        required: false
+        type: string
+      trading_date:
+        description: Exact Asia/Taipei trading date for natural current-day run lookup
+        required: false
         type: string
       forensic_ref:
         description: Exact 40-character canonical commit SHA
@@ -59,28 +64,32 @@ jobs:
         env:
           FORENSIC_COMMAND: ${{ inputs.forensic_command }}
           RUN_ID: ${{ inputs.run_id }}
+          TRADING_DATE: ${{ inputs.trading_date }}
           FORENSIC_REF: ${{ inputs.forensic_ref }}
         run: |
           set -euo pipefail
-          if [[ "$FORENSIC_COMMAND" != "POST_CLOSE_RUN_READBACK" ]]; then
-            echo "Only POST_CLOSE_RUN_READBACK is allowed." >&2
+          if [[ "$FORENSIC_COMMAND" != "POST_CLOSE_RUN_READBACK" && "$FORENSIC_COMMAND" != "POST_CLOSE_DATE_READBACK" ]]; then
+            echo "Only governed POST_CLOSE readback commands are allowed." >&2
             exit 1
           fi
           if [[ ! "$FORENSIC_REF" =~ ^[0-9a-fA-F]{40}$ ]]; then
             echo "forensic_ref must be an exact 40-character commit SHA." >&2
             exit 1
           fi
-          python - "$RUN_ID" <<'PY'
+          python - "$FORENSIC_COMMAND" "$RUN_ID" "$TRADING_DATE" <<'PY'
           import re
           import sys
 
-          value = sys.argv[1]
-          pattern = re.compile(
-              r"^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-"
-              r"[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$"
-          )
-          if not pattern.fullmatch(value):
-              raise SystemExit("run_id must be one canonical UUID")
+          command, run_id, trading_date = sys.argv[1:]
+          if command == "POST_CLOSE_RUN_READBACK":
+              pattern = re.compile(
+                  r"^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-"
+                  r"[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$"
+              )
+              if not pattern.fullmatch(run_id):
+                  raise SystemExit("run_id must be one canonical UUID")
+          elif not re.fullmatch(r"\d{4}-\d{2}-\d{2}", trading_date):
+              raise SystemExit("trading_date must be one canonical ISO date")
           PY
 
       - uses: actions/checkout@v4
@@ -113,16 +122,24 @@ jobs:
         env:
           FORENSIC_COMMAND: ${{ inputs.forensic_command }}
           RUN_ID: ${{ inputs.run_id }}
+          TRADING_DATE: ${{ inputs.trading_date }}
           TOPICPILOT_FORENSIC_TOOL_SHA: ${{ inputs.forensic_ref }}
           TOPICPILOT_PRODUCTION_READONLY_DATABASE_URL: ${{ secrets.TOPICPILOT_PRODUCTION_READONLY_DATABASE_URL }}
           TOPICPILOT_PRODUCTION_READONLY_ROLE: ${{ vars.TOPICPILOT_PRODUCTION_READONLY_ROLE }}
           OUTPUT_PATH: ${{ runner.temp }}/production-forensic-readback.json
         run: |
           set -euo pipefail
-          python -m topicpilot_api.production_forensic_readback \
-            --command "$FORENSIC_COMMAND" \
-            --run-id "$RUN_ID" \
-            --output "$OUTPUT_PATH"
+          if [[ "$FORENSIC_COMMAND" == "POST_CLOSE_DATE_READBACK" ]]; then
+            python -m topicpilot_api.production_forensic_readback \
+              --command "$FORENSIC_COMMAND" \
+              --trading-date "$TRADING_DATE" \
+              --output "$OUTPUT_PATH"
+          else
+            python -m topicpilot_api.production_forensic_readback \
+              --command "$FORENSIC_COMMAND" \
+              --run-id "$RUN_ID" \
+              --output "$OUTPUT_PATH"
+          fi
           test -s "$OUTPUT_PATH"
           python - "$OUTPUT_PATH" <<'PY'
           import json
@@ -154,8 +171,9 @@ jobs:
         run: |
           {
             echo "## Production forensic readback"
-            echo "- Command: POST_CLOSE_RUN_READBACK"
-            echo "- Run ID: $RUN_ID"
+            echo "- Command: $FORENSIC_COMMAND"
+            echo "- Run ID: ${RUN_ID:-DATE_BOUND_LOOKUP}"
+            echo "- Trading date: ${TRADING_DATE:-NOT_APPLICABLE}"
             echo "- Tool SHA: $FORENSIC_REF"
             echo "- Database mode: transaction-level READ ONLY"
             echo "- Scope: live_collector_runs, live_collector_attempts, live_collector_checkpoints"
@@ -165,7 +183,7 @@ jobs:
       - name: Upload sanitized forensic artifact
         uses: actions/upload-artifact@v4
         with:
-          name: production-forensic-readback-${{ inputs.run_id }}
+          name: production-forensic-readback-${{ inputs.run_id || inputs.trading_date }}
           path: ${{ runner.temp }}/production-forensic-readback.json
           if-no-files-found: error
           retention-days: 14
