@@ -101,8 +101,8 @@ because it was open.
 
 ### Retained blocked work
 
-`codex/structural-role-production-read-boundary` remains the sole retained
-branch. Its unique path is `.github/workflows/relation-weight-bootstrap.yml`.
+`codex/structural-role-production-read-boundary` remains the sole 019-retained
+blocked branch. Its unique path is `.github/workflows/relation-weight-bootstrap.yml`.
 The workflow has a stale default migration head (`0046` while canonical main
 is at `0047`), a historical release SHA default, and a Production `apply`
 mode. It was not rebased, merged, or executed. It remains
@@ -146,8 +146,15 @@ codex/topic-strength-lifecycle-owner-review-002
 
 For every deleted branch, the delete reason was `ALREADY_CANONICAL` or
 `SUPERSEDED`, and the canonical evidence was the current main lineage or the
-specific merged PR listed above. The post-cleanup remote branch count is one:
-the retained structural-role blocked branch.
+specific merged PR listed above. Immediately after 019's cleanup, the remote
+had one non-`main` branch: the retained structural-role blocked branch.
+
+After that cleanup, concurrent TASK-POST-CLOSE-20260930-CURRENT-DAY-HEALTH-018
+created its active branch `codex/current-day-health-018` at
+`0cd163106c2365369ac405afcbfc668df5dc4262`. 019 did not delete, close,
+rewrite, or otherwise interfere with that branch or its merged PR lineage
+(PRs #32, #34, and #35). Therefore the final remote state has two non-`main`
+branches: the 019-retained blocked branch and the 018 active branch.
 
 ## Canonical capability readback
 
@@ -194,19 +201,21 @@ Exact-SHA GitHub CI for candidate `a48631904b27a939315ff81c242d699202f94196`:
 The current main also contains the concurrent 018 current-day forensic
 readback commits through `7331daed...`; this task did not alter their
 Production behavior. A 018 Production forensic workflow failure is reported
-separately by that task and is not a 019 candidate regression.
+separately by that task and is not a 019 candidate regression. The 018 branch
+was discovered after the initial 019 cleanup and is counted separately in the
+final remote inventory below.
 
 ## Final status
 
 ```text
 TASK_ID=TASK-CANONICAL-INTEGRATION-AND-BRANCH-HYGIENE-019
-TASK_STATUS=COMPLETE_WITH_RETAINED_BLOCKED_WORK
+TASK_STATUS=COMPLETE_WITH_RETAINED_BLOCKED_AND_CONCURRENT_ACTIVE_WORK
 
 INITIAL_MAIN_SHA=aad2ae1f47c5a0a2ae389a541de213681a87558d
-FINAL_MAIN_SHA=7331daed7338f0c6b95d94c5af90bf3695655448
+FINAL_MAIN_SHA=9790f3d58f1eec6c88c2351acfed43b158f71ab3
 
 REMOTE_BRANCH_COUNT_BEFORE=24
-REMOTE_BRANCH_COUNT_AFTER=1
+REMOTE_BRANCH_COUNT_AFTER=2
 
 ALREADY_CANONICAL_BRANCHES=18
 SUPERSEDED_BRANCHES=4
@@ -214,7 +223,7 @@ PROMOTED_BRANCHES=1
 RETAINED_BLOCKED_BRANCHES=1
 OWNER_DECISION_BRANCHES=0
 
-PRS_MERGED=#33 (new 019 promotion); prior canonical PR evidence retained: #11-#21, #24-#26, #28-#31
+PRS_MERGED=#33 (validated reference promotion), #36 (019 report); prior canonical PR evidence retained: #11-#21, #24-#26, #28-#31; concurrent 018 PRs #32,#34,#35 were not modified
 PRS_CLOSED_SUPERSEDED=#22,#23,#27
 PRS_LEFT_OPEN=NONE
 
@@ -228,7 +237,7 @@ FORENSIC_CHANNEL_CANONICAL=YES
 TASK_015_CODE_CANONICAL=YES
 TASK_015_PRODUCTION_ACTIVE=NO; BLOCKED_MIGRATION_ACTIVATION_REQUIRED
 
-CANONICAL_INTEGRATION_CHECKPOINT_SHA=7331daed7338f0c6b95d94c5af90bf3695655448
+CANONICAL_INTEGRATION_CHECKPOINT_SHA=9790f3d58f1eec6c88c2351acfed43b158f71ab3
 TAG_CREATION_REQUIRES_OWNER_AUTHORIZATION=YES
 
 BACKEND_VALIDATION=PASS; exact-SHA CI run 36682807281
@@ -244,6 +253,6 @@ SCHEDULER_CHANGED=NO
 
 TASK_COMPLETE=YES
 
-NEXT_ACTIVE_BRANCHES=codex/structural-role-production-read-boundary
+NEXT_ACTIVE_BRANCHES=codex/structural-role-production-read-boundary; codex/current-day-health-018 (concurrent 018, out of 019 scope)
 NEXT_RECOMMENDED_TASK=Owner review and current-SHA reconciliation of the retained structural-role relation-weight bootstrap workflow; do not execute its Production apply mode as part of 019.
 ```
