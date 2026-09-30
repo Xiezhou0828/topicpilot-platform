@@ -111,3 +111,62 @@ TASK_STATUS=BLOCKED_DATABASE_READONLY_ATTESTATION
 TASK_COMPLETE=NO
 NEXT_RECOMMENDED_TASK=Owner verify the production-readonly secret host/DNS/TLS reachability without exposing the secret, then issue a new explicit preflight authorization before any further execution
 ```
+
+## Renewed preflight attempt
+
+The Owner explicitly authorized one renewed 017C test after correcting the
+secret. The latest canonical main was fetched first:
+
+```text
+RENEWED_CURRENT_MAIN_SHA=3b09a5ae5e74d48c724e27fdc3a0eeac0862320f
+RENEWED_PREFLIGHT_WORKFLOW_RUN_ID=36667554536
+RENEWED_PREFLIGHT_TOOL_SHA=3b09a5ae5e74d48c724e27fdc3a0eeac0862320f
+RENEWED_PREFLIGHT_COMMAND=PRODUCTION_READONLY_SCHEMA_PREFLIGHT
+```
+
+The protected Environment approval, exact-SHA checkout, and CLI installation
+passed. The fixed preflight then failed at authentication with the sanitized
+classification `AUTHENTICATION_FAILED`. This is a new connection-layer
+result; it replaces the prior DNS failure as the current blocker. The
+preflight stopped before schema, privilege, or table-row inspection.
+
+```text
+RENEWED_DATABASE_CONNECT_STATUS=FAILED
+RENEWED_CONNECTION_FAILURE_CLASS=AUTHENTICATION_FAILED
+DATABASE_NAME=UNAVAILABLE
+DATABASE_CURRENT_USER=UNAVAILABLE
+DATABASE_SESSION_USER=UNAVAILABLE
+TRANSACTION_READONLY=UNAVAILABLE
+
+RUNS_TABLE_EXISTS=NOT_RUN
+ATTEMPTS_TABLE_EXISTS=NOT_RUN
+CHECKPOINTS_TABLE_EXISTS=NOT_RUN
+RUNS_SCHEMA_MATCH=NOT_RUN
+ATTEMPTS_SCHEMA_MATCH=NOT_RUN
+CHECKPOINTS_SCHEMA_MATCH=NOT_RUN
+MISSING_COLUMNS=NOT_RUN
+UNEXPECTED_RELEVANT_COLUMNS=NOT_RUN
+RUNS_SELECT=NOT_RUN
+ATTEMPTS_SELECT=NOT_RUN
+CHECKPOINTS_SELECT=NOT_RUN
+MUTATION_PRIVILEGES_PRESENT=NOT_RUN
+SANITIZED_DIAGNOSTIC_ARTIFACT=NOT_GENERATED; AUTHENTICATION_FAILED
+```
+
+No secret value, connection string, driver detail, database row, schema row,
+or incident UUID row was exposed. No additional preflight or incident
+readback was attempted after this result.
+
+```text
+PRIMARY_FAILURE_LAYER=AUTHENTICATION_FAILURE
+REPOSITORY_FIX_REQUIRED=NO
+OWNER_SECRET_CORRECTION_REQUIRED=YES
+PRODUCTION_DB_MUTATED=NO
+INCIDENT_DATA_READ=NO
+POST_CLOSE_RETRIED=NO
+DEPLOYMENT_PERFORMED=NO
+SCHEDULER_CHANGED=NO
+TASK_STATUS=BLOCKED_DATABASE_READONLY_ATTESTATION
+TASK_COMPLETE=NO
+NEXT_RECOMMENDED_TASK=Owner verify that the protected secret credential matches the dedicated topicpilot_forensic_readonly login and Production database endpoint, without exposing the secret; obtain new authorization before another preflight
+```
