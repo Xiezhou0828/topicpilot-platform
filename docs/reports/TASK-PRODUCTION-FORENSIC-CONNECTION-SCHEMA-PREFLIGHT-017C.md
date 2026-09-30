@@ -111,3 +111,129 @@ TASK_STATUS=BLOCKED_DATABASE_READONLY_ATTESTATION
 TASK_COMPLETE=NO
 NEXT_RECOMMENDED_TASK=Owner verify the production-readonly secret host/DNS/TLS reachability without exposing the secret, then issue a new explicit preflight authorization before any further execution
 ```
+
+## Renewed preflight attempt
+
+The Owner explicitly authorized one renewed 017C test after correcting the
+secret. The latest canonical main was fetched first:
+
+```text
+RENEWED_CURRENT_MAIN_SHA=3b09a5ae5e74d48c724e27fdc3a0eeac0862320f
+RENEWED_PREFLIGHT_WORKFLOW_RUN_ID=36667554536
+RENEWED_PREFLIGHT_TOOL_SHA=3b09a5ae5e74d48c724e27fdc3a0eeac0862320f
+RENEWED_PREFLIGHT_COMMAND=PRODUCTION_READONLY_SCHEMA_PREFLIGHT
+```
+
+The protected Environment approval, exact-SHA checkout, and CLI installation
+passed. The fixed preflight then failed at authentication with the sanitized
+classification `AUTHENTICATION_FAILED`. This is a new connection-layer
+result; it replaces the prior DNS failure as the current blocker. The
+preflight stopped before schema, privilege, or table-row inspection.
+
+```text
+RENEWED_DATABASE_CONNECT_STATUS=FAILED
+RENEWED_CONNECTION_FAILURE_CLASS=AUTHENTICATION_FAILED
+DATABASE_NAME=UNAVAILABLE
+DATABASE_CURRENT_USER=UNAVAILABLE
+DATABASE_SESSION_USER=UNAVAILABLE
+TRANSACTION_READONLY=UNAVAILABLE
+
+RUNS_TABLE_EXISTS=NOT_RUN
+ATTEMPTS_TABLE_EXISTS=NOT_RUN
+CHECKPOINTS_TABLE_EXISTS=NOT_RUN
+RUNS_SCHEMA_MATCH=NOT_RUN
+ATTEMPTS_SCHEMA_MATCH=NOT_RUN
+CHECKPOINTS_SCHEMA_MATCH=NOT_RUN
+MISSING_COLUMNS=NOT_RUN
+UNEXPECTED_RELEVANT_COLUMNS=NOT_RUN
+RUNS_SELECT=NOT_RUN
+ATTEMPTS_SELECT=NOT_RUN
+CHECKPOINTS_SELECT=NOT_RUN
+MUTATION_PRIVILEGES_PRESENT=NOT_RUN
+SANITIZED_DIAGNOSTIC_ARTIFACT=NOT_GENERATED; AUTHENTICATION_FAILED
+```
+
+No secret value, connection string, driver detail, database row, schema row,
+or incident UUID row was exposed. No additional preflight or incident
+readback was attempted after this result.
+
+```text
+PRIMARY_FAILURE_LAYER=AUTHENTICATION_FAILURE
+REPOSITORY_FIX_REQUIRED=NO
+OWNER_SECRET_CORRECTION_REQUIRED=YES
+PRODUCTION_DB_MUTATED=NO
+INCIDENT_DATA_READ=NO
+POST_CLOSE_RETRIED=NO
+DEPLOYMENT_PERFORMED=NO
+SCHEDULER_CHANGED=NO
+TASK_STATUS=BLOCKED_DATABASE_READONLY_ATTESTATION
+TASK_COMPLETE=NO
+NEXT_RECOMMENDED_TASK=Owner verify that the protected secret credential matches the dedicated topicpilot_forensic_readonly login and Production database endpoint, without exposing the secret; obtain new authorization before another preflight
+```
+
+## Successful renewed preflight
+
+After the Owner corrected the protected secret, a further explicit 017C
+authorization was provided. The latest canonical main was fetched before
+dispatch:
+
+```text
+SUCCESSFUL_CURRENT_MAIN_SHA=3b09a5ae5e74d48c724e27fdc3a0eeac0862320f
+SUCCESSFUL_PREFLIGHT_WORKFLOW_RUN_ID=36668440861
+SUCCESSFUL_PREFLIGHT_TOOL_SHA=3b09a5ae5e74d48c724e27fdc3a0eeac0862320f
+SUCCESSFUL_PREFLIGHT_COMMAND=PRODUCTION_READONLY_SCHEMA_PREFLIGHT
+SANITIZED_ARTIFACT=production-forensic-schema-preflight-36668440861
+```
+
+The protected Environment approval, exact-SHA checkout, fixed preflight, and
+sanitized artifact upload all passed.
+
+```text
+DATABASE_CONNECT_STATUS=PASS
+DATABASE_NAME=neondb
+DATABASE_CURRENT_USER=topicpilot_forensic_readonly
+DATABASE_SESSION_USER=topicpilot_forensic_readonly
+TRANSACTION_READONLY=on
+
+RUNS_TABLE_EXISTS=YES
+ATTEMPTS_TABLE_EXISTS=YES
+CHECKPOINTS_TABLE_EXISTS=YES
+
+RUNS_SCHEMA_MATCH=YES
+ATTEMPTS_SCHEMA_MATCH=YES
+CHECKPOINTS_SCHEMA_MATCH=YES
+MISSING_COLUMNS=NONE
+UNEXPECTED_RELEVANT_COLUMNS=EXTRA_METADATA_COLUMNS_PRESENT_BUT_NOT_USED_BY_FORENSIC_CLI
+
+RUNS_SELECT=YES
+ATTEMPTS_SELECT=YES
+CHECKPOINTS_SELECT=YES
+MUTATION_PRIVILEGES_PRESENT=NO
+PRIMARY_FAILURE_LAYER=UNKNOWN_PREFLIGHT_PASSED
+```
+
+The artifact reported these additional existing columns outside the CLI
+expectation set: `live_collector_attempts.created_at`,
+`live_collector_attempts.id`, `live_collector_attempts.instrument_id`,
+`live_collector_attempts.payload_hash`, `live_collector_checkpoints.id`,
+`live_collector_runs.config_hash`, `live_collector_runs.created_at`,
+`live_collector_runs.metadata`, and `live_collector_runs.updated_at`. They
+are metadata-only observations and do not represent missing or incompatible
+CLI-required columns.
+
+The preflight read no incident UUID row and did not execute any of the
+incident readback queries. No Production mutation, retry, deployment,
+scheduler change, migration, or observation activation occurred.
+
+```text
+REPOSITORY_FIX_REQUIRED=NO
+OWNER_SECRET_CORRECTION_REQUIRED=NO
+PRODUCTION_DB_MUTATED=NO
+INCIDENT_DATA_READ=NO
+POST_CLOSE_RETRIED=NO
+DEPLOYMENT_PERFORMED=NO
+SCHEDULER_CHANGED=NO
+TASK_STATUS=COMPLETE_PRODUCTION_FORENSIC_CONNECTION_SCHEMA_PREFLIGHT
+TASK_COMPLETE=YES
+NEXT_RECOMMENDED_TASK=If incident evidence is still required, obtain separate explicit authorization for one governed POST_CLOSE_RUN_READBACK; do not infer incident data from this preflight
+```
