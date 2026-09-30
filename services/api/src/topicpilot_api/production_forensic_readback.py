@@ -873,12 +873,18 @@ def read_post_close_date(
             current_user, session_user, transaction_read_only = _read_only_identity(
                 connection, expected_role
             )
-            candidate_rows = _execute_mappings(
-                connection,
-                CURRENT_DAY_RUN_QUERY,
-                {"trading_date": parsed_date.isoformat()},
-            )
-            privilege_rows = _execute_mappings(connection, PRIVILEGE_QUERY)
+            try:
+                candidate_rows = _execute_mappings(
+                    connection,
+                    CURRENT_DAY_RUN_QUERY,
+                    {"trading_date": parsed_date.isoformat()},
+                )
+            except Exception as exc:
+                raise ForensicReadbackError("CURRENT_DAY_RUN_LOCATOR_QUERY_FAILED") from exc
+            try:
+                privilege_rows = _execute_mappings(connection, PRIVILEGE_QUERY)
+            except Exception as exc:
+                raise ForensicReadbackError("CURRENT_DAY_PRIVILEGE_READBACK_FAILED") from exc
             privileges, mutation_status = _privilege_status(privilege_rows)
             selected, selection_basis, safe_candidates = select_date_bound_run(
                 candidate_rows, parsed_date
