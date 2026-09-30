@@ -1,8 +1,8 @@
-# ruff: noqa: E501, E701
+# ruff: noqa: B008, E501, E701
 from __future__ import annotations
 
 import uuid
-from datetime import datetime
+from datetime import date, datetime
 from typing import Annotated, Any
 from zoneinfo import ZoneInfo
 
@@ -21,7 +21,7 @@ from .orm import (
     Topic,
     TopicHierarchy,
 )
-from .schemas import MigrationRevisionResponse
+from .schemas import MigrationRevisionResponse, TradingStatusAuthorityReadPage
 from .structural_role_audit import (
     StructuralRoleAuthorityAuditPage,
     read_structural_role_authority_audit,
@@ -31,6 +31,7 @@ from .structural_role_read_boundary import (
     StructuralRoleAuthorityReadPage,
     read_current_structural_role_authority,
 )
+from .trading_status_authority import read_effective_trading_status_authority
 
 router = APIRouter(prefix="/api/v1/admin", tags=["admin"])
 DbSession = Annotated[Session, Depends(get_db)]
@@ -180,6 +181,47 @@ def structural_role_authority_audit(
         offset=offset,
         has_more=offset + limit < len(items),
         summary=summary,
+    )
+
+
+@router.get(
+    "/trading-status-authority",
+    response_model=TradingStatusAuthorityReadPage,
+    summary="Read effective daily trading-status authority",
+)
+def trading_status_authority(
+    session: DbSession,
+    trading_date: date | None = Query(None, alias="tradingDate"),
+    market: str | None = Query(None),
+    status: str | None = Query(None),
+    resolved: bool | None = Query(None),
+    blocking: bool | None = Query(None),
+    limit: int = Query(100, ge=1, le=500),
+    offset: int = Query(0, ge=0),
+) -> TradingStatusAuthorityReadPage:
+    """Expose effective status diagnostics to the existing operator surface.
+
+    This endpoint is intentionally read-only and lives under the existing
+    admin boundary.  Manual authority mutation remains unavailable until a
+    separately governed, audited write path exists.
+    """
+
+    target_date = trading_date or datetime.now(ZoneInfo("Asia/Taipei")).date()
+    items = read_effective_trading_status_authority(
+        session,
+        target_date,
+        market=market.upper() if market else None,
+        status=status,
+        resolved=resolved,
+        blocking=blocking,
+    )
+    return TradingStatusAuthorityReadPage(
+        items=items[offset : offset + limit],
+        total=len(items),
+        limit=limit,
+        offset=offset,
+        has_more=offset + limit < len(items),
+        trading_date=target_date,
     )
 
 @router.get("/imports")

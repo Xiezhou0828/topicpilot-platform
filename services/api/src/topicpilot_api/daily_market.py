@@ -20,6 +20,12 @@ from topicpilot_api.market_data.availability import (
     PIPELINE_FAILURE_CODES,
     classify_availability,
 )
+from topicpilot_api.trading_status_authority import (
+    CANONICAL_STATUS_SOURCES,
+    AuthorityClass,
+    TradingStatusAuthorityRecord,
+    resolve_effective_trading_status,
+)
 
 
 @dataclass(frozen=True)
@@ -400,15 +406,44 @@ def build_unavailable_instruments(
     for row in rows:
         if row.get("close") is not None:
             continue
-        status_code = str(row.get("status_code") or "UNKNOWN").upper()
-        reason_code = _availability_reason(row)
+        status_id = row.get("status_observation_id")
+        source = str(row.get("status_source") or "")
+        official = (
+            (
+                TradingStatusAuthorityRecord(
+                    status_code=str(row.get("status_code") or "UNKNOWN"),
+                    effective_from=trade_date,
+                    effective_to=trade_date,
+                    source=source,
+                    source_reference=str(status_id),
+                    reason_code=row.get("status_reason"),
+                    observed_at=row.get("status_observed_at"),
+                    authority_class=AuthorityClass.OFFICIAL_EXCHANGE.value,
+                ),
+            )
+            if status_id is not None and source in CANONICAL_STATUS_SOURCES
+            else ()
+        )
+        resolution = resolve_effective_trading_status(
+            row.get("instrument_id"),
+            trade_date,
+            official_authority=official,
+            price_source=str(row.get("source_code") or "CANONICAL_DAILY_PRICE"),
+        )
+        status_code = resolution.status
+        reason_code = resolution.reason_code or _availability_reason(row)
         decision = classify_availability(
             status_code=status_code,
             reason_code=reason_code,
-            has_canonical_status_evidence=row.get("status_observation_id") is not None,
+            has_canonical_status_evidence=resolution.authority_class
+            in {
+                AuthorityClass.OFFICIAL_EXCHANGE.value,
+                AuthorityClass.REFERENCE_LIFECYCLE.value,
+            },
         )
-        source = (
-            row.get("status_source")
+        resolved_source = (
+            resolution.authority_source
+            or row.get("status_source")
             or row.get("source_code")
             or "CANONICAL_DAILY_MARKET_READ_MODEL"
         )
@@ -420,7 +455,7 @@ def build_unavailable_instruments(
                 market=str(row.get("market") or ""),
                 status=decision.status,
                 reason_code=decision.reason_code or "UNKNOWN",
-                source=str(source),
+                source=str(resolved_source),
                 last_valid_price_date=row.get("last_valid_price_date"),
                 last_valid_close=row.get("last_valid_close"),
                 formal_topic_membership_count=int(
