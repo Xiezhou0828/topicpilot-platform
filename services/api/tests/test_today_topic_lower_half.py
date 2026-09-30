@@ -231,3 +231,15 @@ def test_fast_rotation_thresholds_and_startup_fail_closed():
         calculate_fast_rotation(short, target_date=target)[2]
         == "INSUFFICIENT_FORMAL_STRENGTH_HISTORY"
     )
+
+
+def test_fast_rotation_distinguishes_missing_current_formal_strength_from_short_history():
+    target = date(2026, 9, 29)
+    prior_dates = [target - timedelta(days=offset) for offset in range(5, 0, -1)]
+    rows = [row("warm", snapshot_date=session, score=50) for session in prior_dates]
+
+    warming, cooling, reason = calculate_fast_rotation(rows, target_date=target)
+
+    assert warming == []
+    assert cooling == []
+    assert reason == "CURRENT_FORMAL_TOPIC_STRENGTH_NOT_PUBLISHED"

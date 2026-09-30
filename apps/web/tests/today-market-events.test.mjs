@@ -48,3 +48,14 @@ test("Today Market Events fail closed and preserve publication semantics", async
   assert.match(page, /resource\.state === "UNAVAILABLE"/);
   assert.doesNotMatch(page, /fallback hardcoded|mock formal/i);
 });
+
+test("Today downstream unavailable copy comes from backend section messages", async () => {
+  const adapter = await read("lib/today-mainlines.ts");
+  assert.match(adapter, /sectionUserMessage\(resource, "mainTopics"/);
+  assert.match(adapter, /sectionUserMessage\(resource, "marketEvents"/);
+  assert.match(adapter, /sectionUserMessage\([\s\S]{0,180}section/);
+  assert.match(adapter, /FORMAL_OPPORTUNITY_UNAVAILABLE_MESSAGE/);
+  assert.doesNotMatch(adapter, /CURRENT_FORMAL_TOPIC_STRENGTH_NOT_PUBLISHED/);
+  assert.doesNotMatch(adapter, /INSUFFICIENT_FORMAL_STRENGTH_HISTORY/);
+  assert.doesNotMatch(adapter, /previous session|fallback.*date|new Date\(/i);
+});

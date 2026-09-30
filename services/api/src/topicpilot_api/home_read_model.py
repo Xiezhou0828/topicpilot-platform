@@ -21,6 +21,8 @@ from sqlalchemy.orm import Session
 
 from topicpilot_api.home_v2_publication import (
     empty_home_v2,
+    has_prior_home_publication,
+    latest_canonical_trading_date,
     read_latest_home_publication,
 )
 
@@ -157,7 +159,16 @@ def build_home_read_model(session: Session, now: datetime | None = None) -> dict
         session.rollback()
         v2_table_present = False
     if v2_table_present:
-        publication = read_latest_home_publication(session)
+        try:
+            current_trading_date = latest_canonical_trading_date(session)
+        except SQLAlchemyError:
+            session.rollback()
+            current_trading_date = None
+        publication = (
+            read_latest_home_publication(session, trading_date=current_trading_date)
+            if current_trading_date is not None
+            else None
+        )
         if publication is not None:
             return publication
         tracked_stock_count = int(
@@ -173,7 +184,14 @@ def build_home_read_model(session: Session, now: datetime | None = None) -> dict
             )
             or 0
         )
-        return empty_home_v2(generated_now, tracked_stock_count=tracked_stock_count)
+        return empty_home_v2(
+            generated_now,
+            tracked_stock_count=tracked_stock_count,
+            stale_formal_publication=bool(
+                current_trading_date
+                and has_prior_home_publication(session, current_trading_date)
+            ),
+        )
     run = _row_dict(
         session.execute(
             text(

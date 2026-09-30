@@ -75,7 +75,11 @@ build_market_signals = build_v1_market_signals
 USER_MESSAGES = {
     "NO_PUBLISHED_MARKET_FACTS": "市場資料尚未完整。",
     "NO_FORMAL_TOPIC_PUBLICATION": "題材資料尚未完成發布。",
-    "INSUFFICIENT_FORMAL_STRENGTH_HISTORY": "目前正式 Topic Strength 歷史不足 5 個交易日，暫無法計算快速升溫／退潮。",
+    "FORMAL_TOPIC_PUBLICATION_NOT_READY": "題材資料尚未完成正式發布。",
+    "STALE_FORMAL_PUBLICATION": "今日正式資料尚未發布，上一交易日資料不會冒充今日結果。",
+    "CURRENT_FORMAL_TOPIC_STRENGTH_NOT_PUBLISHED": "今日正式 Topic Strength 尚未發布。",
+    "INSUFFICIENT_FORMAL_STRENGTH_HISTORY": "正式 Topic Strength 歷史資料尚不足五個可評估交易日。",
+    "FORMAL_OPPORTUNITY_PROVIDER_NOT_IMPLEMENTED": "今日機會資料尚未提供。此區塊尚未建立正式資料來源，不顯示 shadow／研究資料。",
     "NO_FORMAL_STRENGTH_SCORE": "正式 Topic Strength 分數目前無法提供。",
     "DAILY_FOCUS_EVIDENCE_INCOMPLETE": "今日市場重點尚未完成。",
     "UPSTREAM_SOURCE_UNAVAILABLE": "這項市場資料目前無法提供。",
@@ -160,6 +164,7 @@ def _status(
     as_of: datetime | None,
     source: str | None,
     reason_code: str | None = None,
+    user_message: str | None = None,
     detail: str | None = None,
     payload: Any,
 ) -> SectionResult:
@@ -169,10 +174,24 @@ def _status(
         as_of=as_of,
         source=source,
         reason_code=reason_code,
-        user_message=_reason(reason_code),
+        user_message=user_message if user_message is not None else _reason(reason_code),
         payload=payload,
         diagnostic_detail=detail,
     )
+
+
+def _rotation_user_message(direction: str, reason_code: str | None) -> str | None:
+    if reason_code == "CURRENT_FORMAL_TOPIC_STRENGTH_NOT_PUBLISHED":
+        return (
+            f"快速{'升溫' if direction == 'heating' else '降溫'}暫無法評估："
+            "今日正式 Topic Strength 尚未發布，未補造歷史資料。"
+        )
+    if reason_code == "INSUFFICIENT_FORMAL_STRENGTH_HISTORY":
+        return (
+            f"快速{'升溫' if direction == 'heating' else '降溫'}暫無法評估："
+            "正式 Topic Strength 歷史資料尚不足五個可評估交易日。"
+        )
+    return None
 
 
 def _signal_change_text(item: Mapping[str, Any], label: str) -> str:
@@ -301,6 +320,35 @@ def _latest_canonical_date(session: Session) -> date | None:
             """
         )
     ).scalar_one_or_none()
+
+
+def latest_canonical_trading_date(session: Session) -> date | None:
+    """Return the latest valid canonical market session used by Home."""
+
+    return _latest_canonical_date(session)
+
+
+def has_prior_home_publication(session: Session, trading_date: date) -> bool:
+    """Report whether an older formal Home envelope exists for diagnostics."""
+
+    try:
+        return bool(
+            session.scalar(
+                text(
+                    """
+                    SELECT 1
+                    FROM topicpilot.home_publications
+                    WHERE publication_state IN ('PUBLISHED', 'UNAVAILABLE')
+                      AND trading_date < :trading_date
+                    LIMIT 1
+                    """
+                ),
+                {"trading_date": trading_date},
+            )
+        )
+    except SQLAlchemyError:
+        session.rollback()
+        return False
 
 
 def _distribution_bucket(change_pct: Decimal) -> str:
@@ -1826,7 +1874,8 @@ def materialize_home_v2(
         data_date=trading_date,
         as_of=max((row["as_of_at"] for row in topic_rows if row.get("as_of_at")), default=None),
         source=MAIN_TOPICS_SOURCE,
-        reason_code=None if main_topics_payload else "NO_FORMAL_TOPIC_PUBLICATION",
+        reason_code=None if main_topics_payload else "FORMAL_TOPIC_PUBLICATION_NOT_READY",
+        user_message=None if main_topics_payload else "今日主線尚未完成正式發布。",
         detail=f"formal topic universe rows: {len(topic_rows)}; eligible mainline rows: {len(main_topics_payload)}",
         payload=main_topics_payload,
     )
@@ -1852,7 +1901,8 @@ def materialize_home_v2(
         data_date=trading_date,
         as_of=max((row["as_of_at"] for row in topic_rows if row.get("as_of_at")), default=None),
         source=TOPIC_PULSE_SOURCE,
-        reason_code=None if topic_pulse_payload else "NO_FORMAL_TOPIC_PUBLICATION",
+        reason_code=None if topic_pulse_payload else "FORMAL_TOPIC_PUBLICATION_NOT_READY",
+        user_message=None if topic_pulse_payload else "題材動態尚未完成正式發布。",
         detail=f"all current effective formal Topics returned: {len(topic_pulse_payload)}",
         payload=topic_pulse_payload,
     )
@@ -1867,6 +1917,13 @@ def materialize_home_v2(
         as_of=rotation_as_of,
         source=ROTATION_SOURCE,
         reason_code=None if heating else rotation_reason or "INSUFFICIENT_FORMAL_STRENGTH_HISTORY",
+        user_message=(
+            None
+            if heating
+            else _rotation_user_message(
+                "heating", rotation_reason or "INSUFFICIENT_FORMAL_STRENGTH_HISTORY"
+            )
+        ),
         detail=f"formal Topic Strength sessions available: {len({row['snapshot_date'] for row in formal_topic_history})}",
         payload=heating,
     )
@@ -1876,6 +1933,13 @@ def materialize_home_v2(
         as_of=rotation_as_of,
         source=ROTATION_SOURCE,
         reason_code=None if cooling else rotation_reason or "INSUFFICIENT_FORMAL_STRENGTH_HISTORY",
+        user_message=(
+            None
+            if cooling
+            else _rotation_user_message(
+                "cooling", rotation_reason or "INSUFFICIENT_FORMAL_STRENGTH_HISTORY"
+            )
+        ),
         detail=f"formal Topic Strength sessions available: {len({row['snapshot_date'] for row in formal_topic_history})}",
         payload=cooling,
     )
@@ -1895,8 +1959,9 @@ def materialize_home_v2(
         data_date=trading_date,
         as_of=None,
         source="HOME_V2_FORMAL_OPPORTUNITY_AUTHORITY",
-        reason_code="OPTIONAL_SECTION_NOT_FORMAL",
-        detail="temporary opportunity bridge does not participate in the formal gate",
+        reason_code="FORMAL_OPPORTUNITY_PROVIDER_NOT_IMPLEMENTED",
+        user_message=USER_MESSAGES["FORMAL_OPPORTUNITY_PROVIDER_NOT_IMPLEMENTED"],
+        detail="no canonical formal Opportunity provider is configured; shadow and research data are excluded",
         payload=[],
     )
     sections = {
@@ -2149,21 +2214,29 @@ def materialize_home_v2(
     }
 
 
-def read_latest_home_publication(session: Session) -> dict[str, Any] | None:
-    """Read the latest V2 envelope; no legacy completed-run gate is used."""
+def read_latest_home_publication(
+    session: Session, *, trading_date: date | None = None
+) -> dict[str, Any] | None:
+    """Read the V2 envelope for the requested session, never an older session."""
 
     try:
-        row = session.execute(
-            text(
-                """
+        date_filter = "" if trading_date is None else "AND trading_date = :trading_date"
+        statement = text(
+            f"""
                 SELECT payload
                 FROM topicpilot.home_publications
                 WHERE publication_state IN ('PUBLISHED', 'UNAVAILABLE')
+                  {date_filter}
                 ORDER BY trading_date DESC, published_at DESC NULLS LAST, generated_at DESC, id DESC
                 LIMIT 1
                 """
-            )
-        ).mappings().one_or_none()
+        )
+        result = (
+            session.execute(statement, {"trading_date": trading_date})
+            if trading_date is not None
+            else session.execute(statement)
+        )
+        row = result.mappings().one_or_none()
     except SQLAlchemyError:
         return None
     if not row:
@@ -2218,36 +2291,53 @@ def read_latest_home_publication(session: Session) -> dict[str, Any] | None:
     return normalize_home_publication_for_read(payload)
 
 
-def empty_home_v2(now: datetime, *, tracked_stock_count: int = 0) -> dict[str, Any]:
+def empty_home_v2(
+    now: datetime,
+    *,
+    tracked_stock_count: int = 0,
+    stale_formal_publication: bool = False,
+) -> dict[str, Any]:
     """Return a typed, product-safe fail-closed envelope before first publish."""
 
-    statuses = {
-        key: {
+    stale_reason = "STALE_FORMAL_PUBLICATION" if stale_formal_publication else "NO_PUBLISHED_MARKET_FACTS"
+
+    def empty_status(key: str) -> dict[str, Any]:
+        if key == "marketOverview":
+            reason_code = stale_reason
+            user_message = USER_MESSAGES[stale_reason]
+        elif key in {"mainTopics", "marketEvents"}:
+            reason_code = "FORMAL_TOPIC_PUBLICATION_NOT_READY"
+            user_message = (
+                "今日主線尚未完成正式發布。"
+                if key == "mainTopics"
+                else "題材動態尚未完成正式發布。"
+            )
+        elif key == "dailyFocus":
+            reason_code = "DAILY_FOCUS_EVIDENCE_INCOMPLETE"
+            user_message = USER_MESSAGES[reason_code]
+        elif key in {"heatingTopics", "coolingTopics"}:
+            reason_code = "CURRENT_FORMAL_TOPIC_STRENGTH_NOT_PUBLISHED"
+            user_message = (
+                "快速升溫暫無法評估：今日正式 Topic Strength 尚未發布，未補造歷史資料。"
+                if key == "heatingTopics"
+                else "快速降溫暫無法評估：今日正式 Topic Strength 尚未發布，未補造歷史資料。"
+            )
+        elif key == "opportunities":
+            reason_code = "FORMAL_OPPORTUNITY_PROVIDER_NOT_IMPLEMENTED"
+            user_message = USER_MESSAGES[reason_code]
+        else:
+            reason_code = "OPTIONAL_SECTION_NOT_FORMAL"
+            user_message = USER_MESSAGES[reason_code]
+        return {
             "status": "UNAVAILABLE",
             "dataDate": None,
             "asOf": None,
             "source": HOME_SOURCE,
-            "reasonCode": "NO_PUBLISHED_MARKET_FACTS"
-            if key == "marketOverview"
-            else "NO_FORMAL_TOPIC_PUBLICATION"
-            if key == "mainTopics"
-            else "DAILY_FOCUS_EVIDENCE_INCOMPLETE"
-            if key == "dailyFocus"
-            else "INSUFFICIENT_FORMAL_STRENGTH_HISTORY"
-            if key in {"heatingTopics", "coolingTopics"}
-            else "OPTIONAL_SECTION_NOT_FORMAL",
-            "userMessage": USER_MESSAGES["NO_PUBLISHED_MARKET_FACTS"]
-            if key == "marketOverview"
-            else USER_MESSAGES["NO_FORMAL_TOPIC_PUBLICATION"]
-            if key == "mainTopics"
-            else USER_MESSAGES["DAILY_FOCUS_EVIDENCE_INCOMPLETE"]
-            if key == "dailyFocus"
-            else USER_MESSAGES["INSUFFICIENT_FORMAL_STRENGTH_HISTORY"]
-            if key in {"heatingTopics", "coolingTopics"}
-            else USER_MESSAGES["OPTIONAL_SECTION_NOT_FORMAL"],
+            "reasonCode": reason_code,
+            "userMessage": user_message,
         }
-        for key in SECTION_KEYS
-    }
+
+    statuses = {key: empty_status(key) for key in SECTION_KEYS}
     return {
         "contractVersion": "v2.home-read-model.v2",
         "asOf": None,
@@ -2302,7 +2392,7 @@ def empty_home_v2(now: datetime, *, tracked_stock_count: int = 0) -> dict[str, A
             "classification": "FORMAL",
             "temporarySections": ["marketEvents", "opportunities"],
             "missingSections": [key for key in SECTION_KEYS if statuses[key]["status"] == "UNAVAILABLE"],
-            "notes": [],
+            "notes": [USER_MESSAGES["STALE_FORMAL_PUBLICATION"]] if stale_formal_publication else [],
             "diagnosticCodes": {
                 key: statuses[key]["reasonCode"] for key in SECTION_KEYS
             },
@@ -2322,6 +2412,8 @@ __all__ = [
     "build_market_signals",
     "calculate_fast_rotation",
     "empty_home_v2",
+    "has_prior_home_publication",
+    "latest_canonical_trading_date",
     "materialize_home_v2",
     "normalize_home_publication_for_read",
     "rank_formal_topics",

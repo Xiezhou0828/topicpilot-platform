@@ -435,6 +435,8 @@ def calculate_fast_rotation(
         for row in usable
         if (row.get("snapshot_date") or row.get("evaluation_date")) == target_date
     }
+    if not current_rows:
+        return [], [], "CURRENT_FORMAL_TOPIC_STRENGTH_NOT_PUBLISHED"
     prior_sessions = sorted(
         {
             row.get("snapshot_date") or row.get("evaluation_date")

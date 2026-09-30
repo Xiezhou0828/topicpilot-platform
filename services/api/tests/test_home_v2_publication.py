@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from datetime import UTC, date, datetime, timedelta
 
+from topicpilot_api import home_read_model
 from topicpilot_api.home_v2_publication import (
     SectionResult,
     _aggregate_home_institutional_flow,
@@ -14,6 +15,7 @@ from topicpilot_api.home_v2_publication import (
     calculate_fast_rotation,
     empty_home_v2,
     rank_formal_topics,
+    read_latest_home_publication,
     validate_home_gate,
 )
 from topicpilot_api.market_data.index_contract import (
@@ -371,6 +373,83 @@ def test_empty_home_is_typed_and_product_safe_before_first_publication():
     assert payload["dailyFocus"]["temporary"] is False
     assert payload["dailyFocus"]["bullets"] == []
     assert payload["sectionStatuses"]["marketEvents"]["status"] == "UNAVAILABLE"
+
+
+def test_empty_home_exposes_downstream_reason_codes_and_backend_owned_messages():
+    payload = empty_home_v2(
+        datetime(2026, 8, 21, 16, tzinfo=UTC),
+        stale_formal_publication=True,
+    )
+
+    statuses = payload["sectionStatuses"]
+    assert statuses["marketOverview"]["reasonCode"] == "STALE_FORMAL_PUBLICATION"
+    assert statuses["mainTopics"]["reasonCode"] == "FORMAL_TOPIC_PUBLICATION_NOT_READY"
+    assert statuses["marketEvents"]["reasonCode"] == "FORMAL_TOPIC_PUBLICATION_NOT_READY"
+    assert statuses["heatingTopics"]["reasonCode"] == "CURRENT_FORMAL_TOPIC_STRENGTH_NOT_PUBLISHED"
+    assert statuses["coolingTopics"]["reasonCode"] == "CURRENT_FORMAL_TOPIC_STRENGTH_NOT_PUBLISHED"
+    assert statuses["opportunities"]["reasonCode"] == "FORMAL_OPPORTUNITY_PROVIDER_NOT_IMPLEMENTED"
+    assert statuses["mainTopics"]["userMessage"] == "今日主線尚未完成正式發布。"
+    assert statuses["marketEvents"]["userMessage"] == "題材動態尚未完成正式發布。"
+    assert statuses["heatingTopics"]["userMessage"].startswith("快速升溫暫無法評估")
+    assert statuses["coolingTopics"]["userMessage"].startswith("快速降溫暫無法評估")
+    assert payload["dataQuality"]["notes"]
+
+
+def test_read_latest_home_publication_filters_to_requested_trading_date():
+    target = date(2026, 9, 30)
+
+    class _Result:
+        def mappings(self):
+            return self
+
+        def one_or_none(self):
+            return None
+
+    class _Session:
+        statement = None
+        params = None
+
+        def execute(self, statement, params):
+            self.statement = str(statement)
+            self.params = params
+            return _Result()
+
+    session = _Session()
+    assert read_latest_home_publication(session, trading_date=target) is None
+    assert "trading_date = :trading_date" in session.statement
+    assert session.params == {"trading_date": target}
+
+
+def test_home_read_model_does_not_return_prior_published_envelope_as_today(
+    monkeypatch,
+):
+    target = date(2026, 9, 30)
+
+    class _Session:
+        def execute(self, *_args, **_kwargs):
+            return object()
+
+        def scalar(self, *_args, **_kwargs):
+            return 0
+
+        def rollback(self):
+            return None
+
+    monkeypatch.setattr(home_read_model, "latest_canonical_trading_date", lambda _session: target)
+    monkeypatch.setattr(
+        home_read_model,
+        "read_latest_home_publication",
+        lambda _session, *, trading_date: None,
+    )
+    monkeypatch.setattr(home_read_model, "has_prior_home_publication", lambda _session, _date: True)
+
+    payload = home_read_model.build_home_read_model(
+        _Session(), now=datetime(2026, 9, 30, 16, tzinfo=UTC)
+    )
+
+    assert payload["publication"]["state"] == "UNAVAILABLE"
+    assert payload["dataQuality"]["diagnosticCodes"]["marketOverview"] == "STALE_FORMAL_PUBLICATION"
+    assert payload["mainTopics"] == []
 
 
 def test_official_index_fetch_transport_failure_is_typed_unavailable():

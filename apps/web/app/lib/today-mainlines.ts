@@ -187,6 +187,13 @@ function sectionUserMessage(
     ?? defaultMessage;
 }
 
+function rotationUnavailableMessage(direction: "heating" | "cooling"): string {
+  return `${direction === "heating" ? "升溫" : "降溫"}題材暫無法評估：目前沒有足夠的正式 Topic Strength 5D 歷史資料。`;
+}
+
+const FORMAL_OPPORTUNITY_UNAVAILABLE_MESSAGE =
+  "今日機會資料尚未提供。此區塊尚未建立正式資料來源，不顯示 shadow／研究資料。";
+
 function isHomeRotationTopic(value: HomeRotationTopic): boolean {
   return Boolean(
     value
@@ -332,7 +339,7 @@ function mapMarketEvents(
       state,
       data: [],
       ...shared,
-      reason: resource.metadata.reason ?? "今日市場事件尚未完成。",
+      reason: sectionUserMessage(resource, "marketEvents", "今日市場事件尚未完成。"),
     };
   }
 
@@ -426,7 +433,7 @@ function mapOpportunities(
       state: "UNAVAILABLE",
       data: [],
       ...shared,
-      reason: sectionUserMessage(resource, "opportunities", "今日機會資料尚未提供。"),
+      reason: sectionUserMessage(resource, "opportunities", FORMAL_OPPORTUNITY_UNAVAILABLE_MESSAGE),
     };
   }
 
@@ -435,7 +442,7 @@ function mapOpportunities(
       state: "UNAVAILABLE",
       data: [],
       ...shared,
-      reason: sectionUserMessage(resource, "opportunities", "今日機會資料尚未提供。"),
+      reason: sectionUserMessage(resource, "opportunities", FORMAL_OPPORTUNITY_UNAVAILABLE_MESSAGE),
     };
   }
 
@@ -461,9 +468,13 @@ function mapOpportunities(
     state: "UNAVAILABLE",
     data: [],
     ...shared,
-    reason: hasShadowOpportunityData(resource, data)
-      ? "今日機會資料尚未完成正式驗證。"
-      : "今日機會目前尚未提供正式資料。",
+    reason: sectionUserMessage(
+      resource,
+      "opportunities",
+      hasShadowOpportunityData(resource, data)
+        ? "今日機會資料尚未完成正式驗證。"
+        : "今日機會目前尚未提供正式資料。",
+    ),
   };
 }
 
@@ -613,7 +624,11 @@ function mapRotation(
       state: "UNAVAILABLE",
       data: [],
       ...shared,
-      reason: sectionUserMessage(resource, section, "目前沒有足夠的正式 Topic Strength 5D 歷史資料。"),
+      reason: sectionUserMessage(
+        resource,
+        section,
+        rotationUnavailableMessage(direction),
+      ),
     };
   }
 
@@ -622,7 +637,11 @@ function mapRotation(
       state: "UNAVAILABLE",
       data: [],
       ...shared,
-      reason: sectionUserMessage(resource, section, "目前沒有足夠的正式 Topic Strength 5D 歷史資料。"),
+      reason: sectionUserMessage(
+        resource,
+        section,
+        rotationUnavailableMessage(direction),
+      ),
     };
   }
 
@@ -631,7 +650,11 @@ function mapRotation(
       state,
       data: [],
       ...shared,
-      reason: resource.metadata.reason ?? "目前沒有足夠的正式 Topic Strength 5D 歷史資料。",
+      reason: sectionUserMessage(
+        resource,
+        section,
+        rotationUnavailableMessage(direction),
+      ),
     };
   }
 
@@ -694,7 +717,7 @@ export function toTodayMainlinesResource(
       state,
       data: [],
       ...shared,
-      reason: resource.metadata.reason ?? "今日主線尚未完成發布。",
+      reason: sectionUserMessage(resource, "mainTopics", "今日主線尚未完成正式發布。"),
       dailyFocus,
       marketEvents,
       marketOverview,
