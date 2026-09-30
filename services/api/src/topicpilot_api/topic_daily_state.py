@@ -21,6 +21,7 @@ from uuid import UUID
 from sqlalchemy import bindparam, func, or_, select, text
 from sqlalchemy.orm import Session, aliased
 
+from topicpilot_api.market_data.availability import LEGITIMATE_UNAVAILABLE_CODES
 from topicpilot_api.orm import (
     Instrument,
     InstrumentTopicRelation,
@@ -48,7 +49,7 @@ RESEARCH_PUBLICATION_MODE = "RESEARCH_ONLY"
 SHADOW_PUBLICATION_MODE = "SHADOW"
 MAPPING_POLICY_VERSION = "topic-membership-pit.v1"
 CALCULATION_VERSION = "topic-daily-state.v1"
-NO_TRADE_STATUS_CODES = frozenset({"NO_TRADE", "EXCHANGE_CONFIRMED_NO_DATA"})
+NO_TRADE_STATUS_CODES = LEGITIMATE_UNAVAILABLE_CODES
 
 
 class FormalAuthorityUnavailable(ValueError):

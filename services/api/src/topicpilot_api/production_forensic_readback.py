@@ -92,6 +92,7 @@ EXPECTED_PREFLIGHT_COLUMNS = {
 }
 PREFLIGHT_TABLE_NAMES = tuple(EXPECTED_PREFLIGHT_COLUMNS)
 MAX_ATTEMPT_REPRESENTATIVES = 50
+MAX_UNAVAILABLE_ATTEMPTS = 200
 UUID_PATTERN = re.compile(
     r"^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-"
     r"[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$"
@@ -475,6 +476,17 @@ ORDER BY started_at, market_code, instrument_code, attempt_number
 LIMIT 50
 """
 
+UNAVAILABLE_ATTEMPT_QUERY = """
+SELECT instrument_code, market_code, attempt_number, status,
+       started_at, retrieved_at, observed_at, latency_ms, retry_count,
+       provider_status, freshness_state, error_code, error_message
+FROM topicpilot.live_collector_attempts
+WHERE run_id = :run_id
+  AND status = 'SKIPPED'
+ORDER BY started_at, market_code, instrument_code, attempt_number
+LIMIT 200
+"""
+
 CHECKPOINT_QUERY = """
 SELECT batch_number, batch_key, attempt_number, status,
        processed_count, succeeded_count, failed_count, skipped_count,
@@ -799,6 +811,9 @@ def read_post_close_run(
             representatives = _execute_mappings(
                 connection, ATTEMPT_REPRESENTATIVE_QUERY, {"run_id": run_uuid}
             )
+            unavailable_attempts = _execute_mappings(
+                connection, UNAVAILABLE_ATTEMPT_QUERY, {"run_id": run_uuid}
+            )
             checkpoints = _execute_mappings(connection, CHECKPOINT_QUERY, {"run_id": run_uuid})
             market_rows = _execute_mappings(connection, MARKET_SUMMARY_QUERY, {"run_id": run_uuid})
             error_rows = _execute_mappings(connection, ERROR_SUMMARY_QUERY, {"run_id": run_uuid})
@@ -847,6 +862,9 @@ def read_post_close_run(
         "attemptSummary": [_safe_attempt_group(row) for row in attempt_groups],
         "attemptRepresentatives": [
             _safe_attempt(row) for row in representatives[:MAX_ATTEMPT_REPRESENTATIVES]
+        ],
+        "unavailableAttempts": [
+            _safe_attempt(row) for row in unavailable_attempts[:MAX_UNAVAILABLE_ATTEMPTS]
         ],
         "checkpointTimeline": safe_checkpoints,
         "firstFailedCheckpoint": failed_checkpoints[0] if failed_checkpoints else None,

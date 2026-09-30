@@ -319,6 +319,22 @@ def test_post_close_batched_outcome_keeps_unknown_missing_data_uncovered():
         None,
     )
 
+    halted = approved.__class__(
+        instrument_code="6807",
+        market_code="TWO",
+        provider_point_count=0,
+        observed_count=1,
+        priced_count=0,
+        covered_count=1,
+        unexplained_missing_count=0,
+        instrument_status="HALTED",
+    )
+    assert PostCloseUpdater._history_attempt_outcome(halted) == (
+        "SUCCESS",
+        "APPROVED_NO_TRADE",
+        None,
+    )
+
 
 def test_post_close_execution_key_is_session_and_scope_bound():
     updater = PostCloseUpdater.__new__(PostCloseUpdater)

@@ -60,6 +60,20 @@ test("Today Market Overview preserves publication states and fails closed", asyn
   assert.doesNotMatch(`${adapter}\n${page}`, /API error[\s\S]{0,120}mock|fallback hardcoded/i);
 });
 
+test("Today Market Overview discloses typed unavailable instruments without price fabrication", async () => {
+  const [page, generated] = await Promise.all([
+    read("components/v2/TodayMarketPage.tsx"),
+    read("lib/generated-api.d.ts"),
+  ]);
+  assert.match(page, /今日無有效行情/);
+  assert.match(page, /unavailableInstruments/);
+  assert.match(page, /<details/);
+  assert.match(page, /lastValidPriceDate/);
+  assert.match(page, /isLegitimateUnavailable/);
+  assert.match(generated, /unavailableInstruments\?: components\["schemas"\]\["HomeUnavailableInstrument"\]\[\]/);
+  assert.match(generated, /pipelineFailureCount\?: number \| null/);
+});
+
 test("Today Market Overview keeps the owner-approved compact card semantics", async () => {
   const [page, fields, css] = await Promise.all([
     read("components/v2/TodayMarketPage.tsx"),

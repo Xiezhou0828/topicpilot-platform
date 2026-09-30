@@ -1039,6 +1039,35 @@ class HomeMarketBreadth(ApiModel):
     source: str
 
 
+class HomeMarketCoverage(ApiModel):
+    denominator: str
+    eligible_universe: int = Field(alias="eligibleUniverse")
+    priced_count: int = Field(alias="pricedCount")
+    covered_count: int = Field(alias="coveredCount")
+    unavailable_count: int = Field(alias="unavailableCount")
+    pipeline_failure_count: int = Field(alias="pipelineFailureCount")
+    unknown_count: int = Field(alias="unknownCount")
+    coverage_pct: float = Field(alias="coveragePct")
+    covered_coverage_pct: float = Field(alias="coveredCoveragePct")
+    source: str
+
+
+class HomeUnavailableInstrument(ApiModel):
+    trading_date: date = Field(alias="tradingDate")
+    symbol: str
+    name: str | None
+    market: str
+    status: str
+    reason_code: str = Field(alias="reasonCode")
+    source: str
+    last_valid_price_date: date | None = Field(alias="lastValidPriceDate")
+    last_valid_close: float | None = Field(alias="lastValidClose")
+    formal_topic_membership_count: int = Field(alias="formalTopicMembershipCount")
+    affected_topic_slugs: list[str] = Field(alias="affectedTopicSlugs", default_factory=list)
+    is_legitimate_unavailable: bool = Field(alias="isLegitimateUnavailable")
+    blocks_formal_publication: bool = Field(alias="blocksFormalPublication")
+
+
 class HomeMarketLimits(ApiModel):
     limit_up: int | None = Field(alias="limitUp")
     limit_down: int | None = Field(alias="limitDown")
@@ -1060,6 +1089,11 @@ class HomeMarketHealth(ApiModel):
     decline_pct: float | None = Field(alias="declinePct", default=None)
     flat_pct: float | None = Field(alias="flatPct", default=None)
     unavailable: int | None
+    priced_count: int | None = Field(alias="pricedCount", default=None)
+    covered_count: int | None = Field(alias="coveredCount", default=None)
+    coverage_pct: float | None = Field(alias="coveragePct", default=None)
+    pipeline_failure_count: int | None = Field(alias="pipelineFailureCount", default=None)
+    unknown_count: int | None = Field(alias="unknownCount", default=None)
 
 
 class HomeMarketDistributionBucket(ApiModel):
@@ -1221,6 +1255,10 @@ class HomeMarketOverview(ApiModel):
         default=None, alias="institutionFlows"
     )
     breadth: list[HomeMarketBreadth] = Field(default_factory=list)
+    coverage: HomeMarketCoverage | None = None
+    unavailable_instruments: list[HomeUnavailableInstrument] = Field(
+        alias="unavailableInstruments", default_factory=list
+    )
     distribution: HomeMarketDistribution | None = None
     indices: list[HomeMarketIndex] = Field(default_factory=list)
     turnover: list[HomeMarketTurnover] = Field(default_factory=list)

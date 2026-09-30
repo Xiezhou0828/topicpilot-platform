@@ -20,6 +20,8 @@ from urllib.parse import quote, urlencode
 from urllib.request import Request, urlopen
 from zoneinfo import ZoneInfo
 
+from .availability import LEGITIMATE_UNAVAILABLE_CODES
+
 TAIPEI: Final = ZoneInfo("Asia/Taipei")
 DEFAULT_CHART_BASE_URL: Final = "https://query1.finance.yahoo.com/v8/finance/chart"
 DEFAULT_INTERVAL: Final = "1d"
@@ -44,7 +46,7 @@ DAILY_TRADING_STATUS_CODES: Final = frozenset(
     }
 )
 COVERED_NO_TRADE_STATUS_CODES: Final = frozenset(
-    {"SUSPENDED", "NO_TRADE", "EXCHANGE_CONFIRMED_NO_DATA", "DELISTED", "TERMINATED"}
+    LEGITIMATE_UNAVAILABLE_CODES
 )
 
 

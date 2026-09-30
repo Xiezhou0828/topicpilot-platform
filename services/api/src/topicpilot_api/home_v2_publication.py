@@ -23,6 +23,11 @@ from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
+from topicpilot_api.daily_market import (
+    build_unavailable_instruments,
+    read_daily_market_rows,
+)
+from topicpilot_api.market_data.availability import LEGITIMATE_UNAVAILABLE_CODES
 from topicpilot_api.market_signals import build_market_signals as build_v1_market_signals
 from topicpilot_api.market_signals import catalog_payload, evaluate_v1_signals
 from topicpilot_api.orm import HomeMarketFact, HomePublication, HomePublicationSection
@@ -50,7 +55,7 @@ SECTION_KEYS = (
 
 MARKET_DISTRIBUTION_SOURCE = "topicpilot.vw_daily_market_observations"
 _NO_TRADE_STATUS_CODES = frozenset(
-    {"SUSPENDED", "NO_TRADE", "EXCHANGE_CONFIRMED_NO_DATA", "DELISTED", "TERMINATED"}
+    LEGITIMATE_UNAVAILABLE_CODES
 )
 MARKET_DISTRIBUTION_BUCKETS = (
     ("PCT_GE_10", "漲幅 ≥10%（未確認漲停）"),
@@ -266,6 +271,11 @@ def validate_home_gate(
     market_payload = market_overview.payload if isinstance(market_overview.payload, Mapping) else {}
     health = market_payload.get("marketHealth") or {}
     breadth = market_payload.get("breadth") or []
+    coverage = market_payload.get("coverage") or {}
+    if int(coverage.get("pipelineFailureCount") or 0) or int(
+        coverage.get("unknownCount") or 0
+    ):
+        return "UNAVAILABLE", "NO_PUBLISHED_MARKET_FACTS"
     market_minimum = bool(
         any(int(item.get("observed") or 0) > 0 for item in breadth)
         or health.get("advance") is not None
@@ -386,51 +396,23 @@ def build_market_distribution(
 def _breadth(
     session: Session, trading_date: date
 ) -> tuple[list[dict[str, Any]], datetime | None, list[dict[str, Any]]]:
-    observations = [
-        dict(row)
-        for row in session.execute(
-            text(
-                """
-                WITH universe AS (
-                    SELECT i.id, m.code AS market
-                    FROM topicpilot.instruments i
-                    JOIN topicpilot.markets m ON m.id = i.market_id
-                    WHERE i.is_active = true AND m.is_active = true
-                      AND i.instrument_type = 'EQUITY'
-                      AND m.code IN ('TPE', 'TWO')
-                      AND (i.valid_from IS NULL OR i.valid_from <= :trading_date)
-                      AND (i.valid_to IS NULL OR i.valid_to >= :trading_date)
-                      AND (m.valid_from IS NULL OR m.valid_from <= :trading_date)
-                      AND (m.valid_to IS NULL OR m.valid_to >= :trading_date)
-                ), current_observations AS (
-                    SELECT DISTINCT ON (current.instrument_id)
-                        current.instrument_id, current.close, current.status_code,
-                        current.observed_at, previous.close AS previous_close
-                    FROM topicpilot.vw_daily_market_observations current
-                    LEFT JOIN LATERAL (
-                        SELECT prior.close
-                        FROM topicpilot.vw_daily_market_observations prior
-                        WHERE prior.instrument_id = current.instrument_id
-                          AND prior.trade_date < current.trade_date
-                        ORDER BY prior.trade_date DESC, prior.observed_at DESC,
-                                 prior.canonical_observation_id DESC
-                        LIMIT 1
-                    ) previous ON true
-                    WHERE current.trade_date = :trading_date
-                    ORDER BY current.instrument_id, current.observed_at DESC,
-                             current.canonical_observation_id DESC
-                )
-                SELECT u.market, u.id AS universe_instrument_id,
-                       o.instrument_id, o.close, o.previous_close,
-                       o.status_code, o.observed_at
-                FROM universe u
-                LEFT JOIN current_observations o ON o.instrument_id = u.id
-                ORDER BY u.market, u.id
-                """
-            ),
-            {"trading_date": trading_date},
-        ).mappings().all()
-    ]
+    raw_rows = read_daily_market_rows(session, trading_date)
+    unavailable = build_unavailable_instruments(raw_rows, trade_date=trading_date)
+    observations: list[dict[str, Any]] = []
+    for row in raw_rows:
+        current_observed_at = row.get("observed_at") or row.get("status_observed_at")
+        status_code = str(
+            row.get("status_code") or row.get("price_status_code") or "UNKNOWN"
+        ).upper()
+        observations.append(
+            {
+                **row,
+                "universe_instrument_id": row.get("instrument_id"),
+                "instrument_id": row.get("instrument_id"),
+                "status_code": status_code,
+                "observed_at": current_observed_at,
+            }
+        )
     aggregate: dict[str, dict[str, Any]] = {}
     for row in observations:
         market = str(row["market"])
@@ -445,20 +427,38 @@ def _breadth(
                 "decline": 0,
                 "flat": 0,
                 "unavailable": 0,
+                "pipeline_failure": 0,
+                "unknown": 0,
                 "as_of": None,
             },
         )
         item["eligible"] += 1
-        if row["instrument_id"] is None:
-            continue
-        item["observed"] += 1
+        current_has_evidence = row.get("observed_at") is not None or row.get(
+            "status_observation_id"
+        ) is not None
+        if current_has_evidence:
+            item["observed"] += 1
         if row["observed_at"] is not None and (
             item["as_of"] is None or row["observed_at"] > item["as_of"]
         ):
             item["as_of"] = row["observed_at"]
-        status_code = str(row["status_code"] or "UNKNOWN").upper()
-        if status_code in _NO_TRADE_STATUS_CODES:
+        if row.get("close") is None:
             item["unavailable"] += 1
+            item["pipeline_failure"] += sum(
+                unavailable_item.market == market
+                and unavailable_item.symbol == row.get("symbol")
+                and unavailable_item.reason_code
+                in {"MISSING_MARKET_DATA", "PROVIDER_ERROR", "DATE_MISMATCH"}
+                for unavailable_item in unavailable
+            )
+            item["unknown"] += sum(
+                unavailable_item.market == market
+                and unavailable_item.symbol == row.get("symbol")
+                and unavailable_item.status == "UNKNOWN"
+                and unavailable_item.reason_code
+                not in {"MISSING_MARKET_DATA", "PROVIDER_ERROR", "DATE_MISMATCH"}
+                for unavailable_item in unavailable
+            )
             continue
         if row["close"] is not None and row["close"] > 0:
             item["priced"] += 1
@@ -1633,6 +1633,60 @@ def materialize_home_v2(
             item["unavailable"] = int(row["unavailable"] or 0)
             item["coverage"]["priceObserved"] = int(row["priced"] or 0)
 
+    unavailable_instruments = build_unavailable_instruments(
+        breadth_observations, trade_date=trading_date
+    )
+    unavailable_by_market: dict[str, list[Any]] = defaultdict(list)
+    for unavailable_item in unavailable_instruments:
+        unavailable_by_market[unavailable_item.market].append(unavailable_item)
+    for item in breadth_payload:
+        market = str(item["market"])
+        market_unavailable = unavailable_by_market.get(market, [])
+        eligible = int(item.get("eligible") or 0)
+        priced = int(item.get("coverage", {}).get("priceObserved") or item.get("priced") or 0)
+        legitimate = sum(1 for unavailable_item in market_unavailable if unavailable_item.is_legitimate_unavailable)
+        pipeline_failure = sum(1 for unavailable_item in market_unavailable if unavailable_item.reason_code in {"MISSING_MARKET_DATA", "PROVIDER_ERROR", "DATE_MISMATCH"} and unavailable_item.blocks_formal_publication)
+        unknown = sum(1 for unavailable_item in market_unavailable if unavailable_item.status == "UNKNOWN" and unavailable_item.blocks_formal_publication and unavailable_item.reason_code not in {"MISSING_MARKET_DATA", "PROVIDER_ERROR", "DATE_MISMATCH"})
+        item["coverage"].update(
+            {
+                "eligibleUniverse": eligible,
+                "pricedCount": priced,
+                "coveredCount": priced + legitimate,
+                "unavailableCount": len(market_unavailable),
+                "pipelineFailureCount": pipeline_failure,
+                "unknownCount": unknown,
+                "coveragePct": round(priced / eligible * 100, 4) if eligible else 0,
+                "coveredCoveragePct": round((priced + legitimate) / eligible * 100, 4) if eligible else 0,
+            }
+        )
+
+    read_model_eligible = len(breadth_observations)
+    read_model_priced = sum(row.get("close") is not None for row in breadth_observations)
+    read_model_covered = read_model_priced + sum(
+        item.is_legitimate_unavailable for item in unavailable_instruments
+    )
+    market_coverage = {
+        "denominator": "active date-effective EQUITY instruments in TPE/TWO",
+        "eligibleUniverse": read_model_eligible,
+        "pricedCount": read_model_priced,
+        "coveredCount": read_model_covered,
+        "unavailableCount": len(unavailable_instruments),
+        "pipelineFailureCount": sum(
+            item.reason_code in {"MISSING_MARKET_DATA", "PROVIDER_ERROR", "DATE_MISMATCH"}
+            and item.blocks_formal_publication
+            for item in unavailable_instruments
+        ),
+        "unknownCount": sum(
+            item.status == "UNKNOWN"
+            and item.blocks_formal_publication
+            and item.reason_code not in {"MISSING_MARKET_DATA", "PROVIDER_ERROR", "DATE_MISMATCH"}
+            for item in unavailable_instruments
+        ),
+        "coveragePct": round(read_model_priced / read_model_eligible * 100, 4) if read_model_eligible else 0,
+        "coveredCoveragePct": round(read_model_covered / read_model_eligible * 100, 4) if read_model_eligible else 0,
+        "source": "topicpilot.canonical_daily_market_read_model",
+    }
+
     total_eligible = sum(item["eligible"] for item in breadth_payload)
     total_observed = sum(item["observed"] for item in breadth_payload)
     total_unavailable = sum(item["unavailable"] for item in breadth_payload)
@@ -1663,6 +1717,11 @@ def materialize_home_v2(
         "declinePct": _percentage(decline),
         "flatPct": _percentage(flat),
         "unavailable": total_unavailable,
+        "pricedCount": read_model_priced,
+        "coveredCount": read_model_covered,
+        "coveragePct": market_coverage["coveragePct"],
+        "pipelineFailureCount": market_coverage["pipelineFailureCount"],
+        "unknownCount": market_coverage["unknownCount"],
     }
     indices = [_market_index_payload(item) for item in index_inputs]
     by_market_index = {item.get("market"): item for item in indices}
@@ -1690,7 +1749,9 @@ def materialize_home_v2(
             },
         )
     indices = [by_market_index[market] for market in ("TPE", "TWO")]
-    if aggregate_inputs:
+    if market_coverage["pipelineFailureCount"] or market_coverage["unknownCount"]:
+        market_data_status = "UNAVAILABLE"
+    elif aggregate_inputs:
         turnover_inputs = [
             {
                 "market": item.get("market"),
@@ -1765,6 +1826,8 @@ def materialize_home_v2(
         "trackedTopicCount": 0,
         "latestSnapshotTime": breadth_as_of,
         "marketHealth": market_health,
+        "coverage": market_coverage,
+        "unavailableInstruments": [item.to_dict() for item in unavailable_instruments],
         "institutionFlows": None,
         "breadth": breadth_payload,
         "distribution": distribution_payload,

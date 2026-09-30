@@ -1135,6 +1135,29 @@ export interface components {
             /** Unavailable */
             unavailable: number;
         };
+        /** HomeMarketCoverage */
+        HomeMarketCoverage: {
+            /** Coveragepct */
+            coveragePct: number;
+            /** Coveredcount */
+            coveredCount: number;
+            /** Coveredcoveragepct */
+            coveredCoveragePct: number;
+            /** Denominator */
+            denominator: string;
+            /** Eligibleuniverse */
+            eligibleUniverse: number;
+            /** Pipelinefailurecount */
+            pipelineFailureCount: number;
+            /** Pricedcount */
+            pricedCount: number;
+            /** Source */
+            source: string;
+            /** Unavailablecount */
+            unavailableCount: number;
+            /** Unknowncount */
+            unknownCount: number;
+        };
         /** HomeMarketDistribution */
         HomeMarketDistribution: {
             /** Asof */
@@ -1177,6 +1200,10 @@ export interface components {
             advancePct?: number | null;
             /** Breadtheligible */
             breadthEligible?: number | null;
+            /** Coveragepct */
+            coveragePct?: number | null;
+            /** Coveredcount */
+            coveredCount?: number | null;
             /** Decline */
             decline: number | null;
             /** Declinepct */
@@ -1191,12 +1218,18 @@ export interface components {
             net?: number | null;
             /** Observed */
             observed?: number | null;
+            /** Pipelinefailurecount */
+            pipelineFailureCount?: number | null;
+            /** Pricedcount */
+            pricedCount?: number | null;
             /** Status */
             status: string;
             /** Totalstocks */
             totalStocks: number | null;
             /** Unavailable */
             unavailable: number | null;
+            /** Unknowncount */
+            unknownCount?: number | null;
         };
         /** HomeMarketIndex */
         HomeMarketIndex: {
@@ -1254,6 +1287,7 @@ export interface components {
         HomeMarketOverview: {
             /** Breadth */
             breadth?: components["schemas"]["HomeMarketBreadth"][];
+            coverage?: components["schemas"]["HomeMarketCoverage"] | null;
             /** Datadate */
             dataDate: string | null;
             /**
@@ -1277,6 +1311,8 @@ export interface components {
             trackedTopicCount: number;
             /** Turnover */
             turnover?: components["schemas"]["HomeMarketTurnover"][];
+            /** Unavailableinstruments */
+            unavailableInstruments?: components["schemas"]["HomeUnavailableInstrument"][];
             /** Updatedat */
             updatedAt: string | null;
         };
@@ -1760,6 +1796,38 @@ export interface components {
             topicStatus: string;
             /** Transitionreason */
             transitionReason?: string | null;
+        };
+        /** HomeUnavailableInstrument */
+        HomeUnavailableInstrument: {
+            /** Affectedtopicslugs */
+            affectedTopicSlugs?: string[];
+            /** Blocksformalpublication */
+            blocksFormalPublication: boolean;
+            /** Formaltopicmembershipcount */
+            formalTopicMembershipCount: number;
+            /** Islegitimateunavailable */
+            isLegitimateUnavailable: boolean;
+            /** Lastvalidclose */
+            lastValidClose: number | null;
+            /** Lastvalidpricedate */
+            lastValidPriceDate: string | null;
+            /** Market */
+            market: string;
+            /** Name */
+            name: string | null;
+            /** Reasoncode */
+            reasonCode: string;
+            /** Source */
+            source: string;
+            /** Status */
+            status: string;
+            /** Symbol */
+            symbol: string;
+            /**
+             * Tradingdate
+             * Format: date
+             */
+            tradingDate: string;
         };
         /** LiveRunSummary */
         LiveRunSummary: {

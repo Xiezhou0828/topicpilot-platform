@@ -26,6 +26,7 @@ from topicpilot_api.instrument_universe import (
     resolve_lifecycle_status,
 )
 from topicpilot_api.market_data.aggregate_contract import fetch_official_market_aggregates
+from topicpilot_api.market_data.availability import LEGITIMATE_UNAVAILABLE_CODES
 from topicpilot_api.market_data.index_contract import fetch_official_market_indexes
 from topicpilot_api.market_data.ingestion import (
     HistoricalInstrumentResult,
@@ -843,13 +844,7 @@ class PostCloseUpdater:
             error_code = (
                 "APPROVED_NO_TRADE"
                 if result.instrument_status
-                in {
-                    "SUSPENDED",
-                    "NO_TRADE",
-                    "EXCHANGE_CONFIRMED_NO_DATA",
-                    "DELISTED",
-                    "TERMINATED",
-                }
+                in LEGITIMATE_UNAVAILABLE_CODES
                 and result.priced_count == 0
                 else None
             )

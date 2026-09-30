@@ -23,11 +23,10 @@ from sqlalchemy import Engine, create_engine, text
 from sqlalchemy.orm import Session
 
 from topicpilot_api.config import get_settings
+from topicpilot_api.market_data.availability import LEGITIMATE_UNAVAILABLE_CODES
 
 MAX_AUDIT_DAYS = 3660
-NO_TRADE_CODES = frozenset(
-    {"SUSPENDED", "NO_TRADE", "EXCHANGE_CONFIRMED_NO_DATA", "DELISTED", "TERMINATED"}
-)
+NO_TRADE_CODES = LEGITIMATE_UNAVAILABLE_CODES
 LIFECYCLE_CODES = frozenset({"SUSPENDED", "DELISTED", "TERMINATED"})
 MARKET_NO_SESSION_CODES = frozenset({"HOLIDAY", "SUSPENDED"})
 
