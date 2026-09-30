@@ -21,6 +21,7 @@ from uuid import UUID
 from sqlalchemy import bindparam, func, or_, select, text
 from sqlalchemy.orm import Session, aliased
 
+from topicpilot_api.market_data.availability import LEGITIMATE_UNAVAILABLE_CODES
 from topicpilot_api.orm import (
     Instrument,
     InstrumentTopicRelation,
@@ -40,7 +41,6 @@ from topicpilot_api.topic_engine.structural_role_authority import (
     StructuralRoleResolution,
     resolve_structural_role,
 )
-from topicpilot_api.market_data.availability import LEGITIMATE_UNAVAILABLE_CODES
 
 FORMAL_MAPPING_EARLIEST_DATE = date(2026, 8, 7)
 FORMAL_PUBLICATION_MODE = "FORMAL"
