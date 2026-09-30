@@ -321,6 +321,19 @@ def _safe_attempt(row: Mapping[str, Any]) -> dict[str, Any]:
 
 
 def _safe_checkpoint(row: Mapping[str, Any]) -> dict[str, Any]:
+    provider_metrics_applicability = str(
+        row.get("metadata_provider_metrics_applicability") or "UNKNOWN_LEGACY"
+    )
+    provider_request_count = (
+        int(row.get("provider_request_count", 0) or 0)
+        if provider_metrics_applicability == "ACTUAL"
+        else None
+    )
+    provider_failure_count = (
+        int(row.get("provider_failure_count", 0) or 0)
+        if provider_metrics_applicability == "ACTUAL"
+        else None
+    )
     publication_readback = {
         key: _sanitize_text(row.get(key), limit=64)
         for key in (
@@ -337,6 +350,46 @@ def _safe_checkpoint(row: Mapping[str, Any]) -> dict[str, Any]:
         )
         if row.get(key) is not None
     }
+    readback = {
+        key: _sanitize_text(row.get(key), limit=128)
+        for key in (
+            "metadata_readback_status",
+            "metadata_readback_reason_code",
+            "metadata_readback_failed_section",
+            "metadata_readback_failure_classification",
+        )
+        if row.get(key) is not None
+    }
+    market_facts_publication = {
+        key: _sanitize_text(row.get(key), limit=128)
+        for key in (
+            "metadata_market_facts_publication_status",
+            "metadata_market_facts_publication_failure_classification",
+        )
+        if row.get(key) is not None
+    }
+    metadata = {
+        key: _sanitize_text(row.get(key))
+        for key in (
+            "metadata_market",
+            "metadata_session_date",
+            "metadata_outcome",
+            "metadata_reason",
+            "metadata_publication",
+            "metadata_run_status",
+            "metadata_formal_readback",
+            "metadata_scope",
+            "metadata_checkpoint_semantic",
+            "metadata_provider_metrics_applicability",
+            "metadata_failure_classification",
+            "metadata_failed_section",
+        )
+        if row.get(key) is not None
+    }
+    if readback:
+        metadata["readback"] = readback
+    if market_facts_publication:
+        metadata["marketFactsPublication"] = market_facts_publication
     return {
         "batchNumber": int(row.get("batch_number", 0) or 0),
         "batchKey": _sanitize_text(row.get("batch_key"), limit=128),
@@ -347,25 +400,15 @@ def _safe_checkpoint(row: Mapping[str, Any]) -> dict[str, Any]:
         "failedCount": int(row.get("failed_count", 0) or 0),
         "skippedCount": int(row.get("skipped_count", 0) or 0),
         "retryCount": int(row.get("retry_count", 0) or 0),
-        "providerRequestCount": int(row.get("provider_request_count", 0) or 0),
-        "providerFailureCount": int(row.get("provider_failure_count", 0) or 0),
+        "providerRequestCount": provider_request_count,
+        "providerFailureCount": provider_failure_count,
+        "providerMetricsApplicability": provider_metrics_applicability,
         "checkpointHash": _sanitize_text(row.get("checkpoint_hash"), limit=128),
         "createdAt": _as_iso(row.get("created_at")),
-        "metadata": {
-            key: _sanitize_text(row.get(key))
-            for key in (
-                "metadata_market",
-                "metadata_session_date",
-                "metadata_outcome",
-                "metadata_reason",
-                "metadata_publication",
-                "metadata_run_status",
-                "metadata_formal_readback",
-                "metadata_scope",
-            )
-            if row.get(key) is not None
-        },
+        "metadata": metadata,
         "publicationReadback": publication_readback,
+        "readback": readback,
+        "marketFactsPublication": market_facts_publication,
     }
 
 
@@ -503,6 +546,20 @@ SELECT batch_number, batch_key, attempt_number, status,
        metadata->>'runStatus' AS metadata_run_status,
        metadata->>'formalReadback' AS metadata_formal_readback,
        metadata->>'scope' AS metadata_scope,
+       metadata->>'checkpointSemantic' AS metadata_checkpoint_semantic,
+       metadata->>'providerMetricsApplicability'
+           AS metadata_provider_metrics_applicability,
+       metadata->>'failureClassification' AS metadata_failure_classification,
+       metadata->>'failedSection' AS metadata_failed_section,
+       metadata->'readback'->>'status' AS metadata_readback_status,
+       metadata->'readback'->>'reasonCode' AS metadata_readback_reason_code,
+       metadata->'readback'->>'failedSection' AS metadata_readback_failed_section,
+       metadata->'readback'->>'failureClassification'
+           AS metadata_readback_failure_classification,
+       metadata->'marketFactsPublication'->>'status'
+           AS metadata_market_facts_publication_status,
+       metadata->'marketFactsPublication'->>'failureClassification'
+           AS metadata_market_facts_publication_failure_classification,
        metadata->'formalPublication'->>'status' AS metadata_formal_publication_status,
        metadata->'formalPublication'->'topicSnapshot'->>'status'
            AS metadata_formal_topic_status,

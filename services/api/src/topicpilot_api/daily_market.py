@@ -15,6 +15,7 @@ from typing import Any
 from sqlalchemy import bindparam, text
 from sqlalchemy.orm import Session
 
+from topicpilot_api.corporate_action_authority import corporate_action_authorities_for
 from topicpilot_api.market_data.availability import (
     LEGITIMATE_UNAVAILABLE_CODES,
     PIPELINE_FAILURE_CODES,
@@ -24,6 +25,7 @@ from topicpilot_api.trading_status_authority import (
     CANONICAL_STATUS_SOURCES,
     AuthorityClass,
     TradingStatusAuthorityRecord,
+    TradingStatusResolution,
     resolve_effective_trading_status,
 )
 
@@ -380,7 +382,16 @@ def read_daily_market_rows(
     )
     if expected_instrument_ids is not None:
         query = query.bindparams(bindparam("expected_instrument_ids", expanding=True))
-    return [dict(row) for row in session.execute(query, params).mappings().all()]
+    rows = [dict(row) for row in session.execute(query, params).mappings().all()]
+    for row in rows:
+        row["corporateActionAuthorities"] = tuple(
+            corporate_action_authorities_for(
+                symbol=str(row.get("symbol") or ""),
+                market=str(row.get("market") or ""),
+                trading_date=trade_date,
+            )
+        )
+    return rows
 
 
 def _availability_reason(row: Mapping[str, Any]) -> str:
@@ -398,11 +409,15 @@ def _availability_reason(row: Mapping[str, Any]) -> str:
 
 
 def build_unavailable_instruments(
-    rows: Sequence[Mapping[str, Any]], *, trade_date: date
+    rows: Sequence[Mapping[str, Any]],
+    *,
+    trade_date: date,
+    status_resolutions: Mapping[Any, TradingStatusResolution] | None = None,
 ) -> tuple[UnavailableInstrument, ...]:
     """Build the typed, disclosure-safe read model for unpriced rows."""
 
     result: list[UnavailableInstrument] = []
+    status_resolutions = status_resolutions or {}
     for row in rows:
         if row.get("close") is not None:
             continue
@@ -424,12 +439,25 @@ def build_unavailable_instruments(
             if status_id is not None and source in CANONICAL_STATUS_SOURCES
             else ()
         )
-        resolution = resolve_effective_trading_status(
-            row.get("instrument_id"),
-            trade_date,
-            official_authority=official,
-            price_source=str(row.get("source_code") or "CANONICAL_DAILY_PRICE"),
+        corporate_action = tuple(
+            item.to_trading_status_record()
+            for item in (
+                row.get("corporateActionAuthorities")
+                or corporate_action_authorities_for(
+                    symbol=str(row.get("symbol") or ""),
+                    market=str(row.get("market") or ""),
+                    trading_date=trade_date,
+                )
+            )
         )
+        resolution = status_resolutions.get(row.get("instrument_id"))
+        if resolution is None:
+            resolution = resolve_effective_trading_status(
+                row.get("instrument_id"),
+                trade_date,
+                official_authority=(*official, *corporate_action),
+                price_source=str(row.get("source_code") or "CANONICAL_DAILY_PRICE"),
+            )
         status_code = resolution.status
         reason_code = resolution.reason_code or _availability_reason(row)
         decision = classify_availability(
@@ -438,6 +466,7 @@ def build_unavailable_instruments(
             has_canonical_status_evidence=resolution.authority_class
             in {
                 AuthorityClass.OFFICIAL_EXCHANGE.value,
+                AuthorityClass.CORPORATE_ACTION.value,
                 AuthorityClass.REFERENCE_LIFECYCLE.value,
             },
         )
@@ -475,6 +504,7 @@ def reconcile_daily_market(
     *,
     market_closed: bool = False,
     expected_instrument_ids: Collection[Any] | None = None,
+    status_resolutions: Mapping[Any, TradingStatusResolution] | None = None,
 ) -> DailyMarketReconciliation:
     """Reconcile the canonical daily projection against a date-effective universe."""
 
@@ -494,14 +524,23 @@ def reconcile_daily_market(
         market = str(row["market"])
         expected_by_market[market] = expected_by_market.get(market, 0) + 1
         has_price_evidence = row.get("observed_at") is not None
-        has_status_evidence = row.get("status_observation_id") is not None
+        resolved_status = (status_resolutions or {}).get(row.get("instrument_id"))
+        has_status_evidence = (
+            row.get("status_observation_id") is not None
+            or bool(row.get("corporateActionAuthorities"))
+            or (resolved_status is not None and resolved_status.resolved)
+        )
         observed_by_market[market] = observed_by_market.get(market, 0) + int(
             has_price_evidence or has_status_evidence
         )
         priced_by_market[market] = priced_by_market.get(market, 0) + int(
             row.get("close") is not None
         )
-    unavailable_instruments = build_unavailable_instruments(rows, trade_date=trade_date)
+    unavailable_instruments = build_unavailable_instruments(
+        rows,
+        trade_date=trade_date,
+        status_resolutions=status_resolutions,
+    )
     for item in unavailable_instruments:
         if item.is_legitimate_unavailable:
             covered_by_market[item.market] = covered_by_market.get(item.market, 0) + 1
