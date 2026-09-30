@@ -1,4 +1,5 @@
 from datetime import date, datetime
+from pathlib import Path
 from zoneinfo import ZoneInfo
 
 from topicpilot_api.live.cli import resolve_decision
@@ -15,16 +16,16 @@ def _clock(config: LiveRuntimeConfig) -> MarketSessionClock:
     )
 
 
-def test_cli_auto_uses_inclusive_1335_boundary():
+def test_cli_auto_uses_inclusive_1345_boundary():
     config = LiveRuntimeConfig()
     clock = _clock(config)
     taipei = ZoneInfo("Asia/Taipei")
 
     assert resolve_decision(
-        "auto", config, clock, now=datetime(2026, 8, 10, 13, 34, 59, tzinfo=taipei)
+        "auto", config, clock, now=datetime(2026, 8, 10, 13, 44, 59, tzinfo=taipei)
     ) == "WAIT"
     assert resolve_decision(
-        "auto", config, clock, now=datetime(2026, 8, 10, 13, 35, tzinfo=taipei)
+        "auto", config, clock, now=datetime(2026, 8, 10, 13, 45, tzinfo=taipei)
     ) == "POST_CLOSE"
 
 
@@ -35,12 +36,23 @@ def test_cli_auto_keeps_configured_closed_date_out_of_post_close():
         "auto",
         config,
         _clock(config),
-        now=datetime(2026, 8, 10, 13, 35, tzinfo=ZoneInfo("Asia/Taipei")),
+        now=datetime(2026, 8, 10, 13, 45, tzinfo=ZoneInfo("Asia/Taipei")),
     ) == "WAIT"
 
 
 def test_runtime_defaults_keep_the_frozen_trigger_boundary(monkeypatch):
     monkeypatch.delenv("TOPICPILOT_LIVE_POST_CLOSE_START", raising=False)
 
-    assert LiveRuntimeConfig().post_close_start == "13:35"
-    assert LiveRuntimeConfig.from_environment().post_close_start == "13:35"
+    assert LiveRuntimeConfig().post_close_start == "13:45"
+    assert LiveRuntimeConfig.from_environment().post_close_start == "13:45"
+
+
+def test_deployment_schedule_surfaces_are_frozen_to_1345():
+    root = Path(__file__).resolve().parents[3]
+
+    assert 'value: "13:45"' in (root / "render.yaml").read_text(encoding="utf-8")
+    assert "TOPICPILOT_LIVE_POST_CLOSE_START=13:45" in (
+        root / "services" / "api" / ".env.example"
+    ).read_text(encoding="utf-8")
+    compose = (root / "compose.yaml").read_text(encoding="utf-8")
+    assert "TOPICPILOT_LIVE_POST_CLOSE_START: ${TOPICPILOT_LIVE_POST_CLOSE_START:-13:45}" in compose

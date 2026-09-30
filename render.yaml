@@ -51,7 +51,7 @@ services:
       - key: TOPICPILOT_LIVE_PROVIDER_TIMEOUT_SECONDS
         value: "30"
       - key: TOPICPILOT_LIVE_POST_CLOSE_START
-        value: "13:35"
+        value: "13:45"
       - key: TOPICPILOT_LIVE_MAX_RETRIES
         value: "2"
       - key: TOPICPILOT_LIVE_INTERVAL
