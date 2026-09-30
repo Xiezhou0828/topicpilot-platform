@@ -170,3 +170,70 @@ TASK_STATUS=BLOCKED_DATABASE_READONLY_ATTESTATION
 TASK_COMPLETE=NO
 NEXT_RECOMMENDED_TASK=Owner verify that the protected secret credential matches the dedicated topicpilot_forensic_readonly login and Production database endpoint, without exposing the secret; obtain new authorization before another preflight
 ```
+
+## Successful renewed preflight
+
+After the Owner corrected the protected secret, a further explicit 017C
+authorization was provided. The latest canonical main was fetched before
+dispatch:
+
+```text
+SUCCESSFUL_CURRENT_MAIN_SHA=3b09a5ae5e74d48c724e27fdc3a0eeac0862320f
+SUCCESSFUL_PREFLIGHT_WORKFLOW_RUN_ID=36668440861
+SUCCESSFUL_PREFLIGHT_TOOL_SHA=3b09a5ae5e74d48c724e27fdc3a0eeac0862320f
+SUCCESSFUL_PREFLIGHT_COMMAND=PRODUCTION_READONLY_SCHEMA_PREFLIGHT
+SANITIZED_ARTIFACT=production-forensic-schema-preflight-36668440861
+```
+
+The protected Environment approval, exact-SHA checkout, fixed preflight, and
+sanitized artifact upload all passed.
+
+```text
+DATABASE_CONNECT_STATUS=PASS
+DATABASE_NAME=neondb
+DATABASE_CURRENT_USER=topicpilot_forensic_readonly
+DATABASE_SESSION_USER=topicpilot_forensic_readonly
+TRANSACTION_READONLY=on
+
+RUNS_TABLE_EXISTS=YES
+ATTEMPTS_TABLE_EXISTS=YES
+CHECKPOINTS_TABLE_EXISTS=YES
+
+RUNS_SCHEMA_MATCH=YES
+ATTEMPTS_SCHEMA_MATCH=YES
+CHECKPOINTS_SCHEMA_MATCH=YES
+MISSING_COLUMNS=NONE
+UNEXPECTED_RELEVANT_COLUMNS=EXTRA_METADATA_COLUMNS_PRESENT_BUT_NOT_USED_BY_FORENSIC_CLI
+
+RUNS_SELECT=YES
+ATTEMPTS_SELECT=YES
+CHECKPOINTS_SELECT=YES
+MUTATION_PRIVILEGES_PRESENT=NO
+PRIMARY_FAILURE_LAYER=UNKNOWN_PREFLIGHT_PASSED
+```
+
+The artifact reported these additional existing columns outside the CLI
+expectation set: `live_collector_attempts.created_at`,
+`live_collector_attempts.id`, `live_collector_attempts.instrument_id`,
+`live_collector_attempts.payload_hash`, `live_collector_checkpoints.id`,
+`live_collector_runs.config_hash`, `live_collector_runs.created_at`,
+`live_collector_runs.metadata`, and `live_collector_runs.updated_at`. They
+are metadata-only observations and do not represent missing or incompatible
+CLI-required columns.
+
+The preflight read no incident UUID row and did not execute any of the
+incident readback queries. No Production mutation, retry, deployment,
+scheduler change, migration, or observation activation occurred.
+
+```text
+REPOSITORY_FIX_REQUIRED=NO
+OWNER_SECRET_CORRECTION_REQUIRED=NO
+PRODUCTION_DB_MUTATED=NO
+INCIDENT_DATA_READ=NO
+POST_CLOSE_RETRIED=NO
+DEPLOYMENT_PERFORMED=NO
+SCHEDULER_CHANGED=NO
+TASK_STATUS=COMPLETE_PRODUCTION_FORENSIC_CONNECTION_SCHEMA_PREFLIGHT
+TASK_COMPLETE=YES
+NEXT_RECOMMENDED_TASK=If incident evidence is still required, obtain separate explicit authorization for one governed POST_CLOSE_RUN_READBACK; do not infer incident data from this preflight
+```
