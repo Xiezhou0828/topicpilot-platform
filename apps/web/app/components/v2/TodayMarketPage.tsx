@@ -152,11 +152,30 @@ function BreadthCard({ overview }: { overview: NonNullable<TodayMarketOverviewRe
   return <article className="tp-home-target-breadth-card"><div className="tp-home-target-subheading"><div><h3>市場廣度</h3><span className="tp-home-target-helper">官方全市場廣度彙總</span></div><span className="tp-home-target-info" title={breadthUniverse} aria-label={`廣度統計範圍：${breadthUniverse}`}><Info size={17} aria-hidden="true" /></span></div><div className="tp-home-target-breadth-rows"><div className="up"><ArrowUp size={20} aria-hidden="true" /><span>上漲家數</span><strong>{advance ?? "尚未提供"}</strong></div><div className="down"><ArrowDown size={20} aria-hidden="true" /><span>下跌家數</span><strong>{decline ?? "尚未提供"}</strong></div><div><span className="tp-home-target-flat-mark">—</span><span>平盤家數</span><strong>{flat ?? "尚未提供"}</strong></div><div className="tp-home-target-breadth-total"><span aria-hidden="true">Σ</span><span>總家數</span><strong>{total ?? "尚未提供"}</strong></div></div></article>;
 }
 
+function UnavailableInstrumentDisclosure({ overview }: { overview: NonNullable<TodayMarketOverviewResource["data"]> }) {
+  const unavailable = overview.unavailableInstruments ?? [];
+  if (unavailable.length === 0) return null;
+  return <section className="tp-home-market-unavailable" aria-label="今日無有效行情">
+    <strong>今日無有效行情：{formatMarketNumber(unavailable.length)} 檔</strong>
+    <details className="tp-home-market-unavailable-details">
+      <summary>查看明細</summary>
+      <div className="tp-home-market-unavailable-list">
+        {unavailable.map((item) => <article key={`${item.market}:${item.symbol}`} className="tp-home-market-unavailable-item">
+          <div><strong>{item.symbol}</strong><span>{item.name ?? "名稱尚未提供"} · {item.market}</span></div>
+          <div><span>狀態</span><b>{item.status}</b><span>原因</span><b>{item.reasonCode}</b></div>
+          <div><span>最近有效行情</span><b>{item.lastValidPriceDate ?? "尚未提供"}{item.lastValidClose !== null && item.lastValidClose !== undefined ? ` · ${formatMarketNumber(item.lastValidClose)}` : ""}</b></div>
+          <small>{item.isLegitimateUnavailable ? "交易所／正式狀態已確認，不納入價格計算。" : "資料證據尚未完整，維持 fail-closed。"}</small>
+        </article>)}
+      </div>
+    </details>
+  </section>;
+}
+
 function MarketOverviewCard({ loading, resource }: { loading: boolean; resource: TodayMarketOverviewResource }) {
   const overview = resource.data;
   const indices = overview ? marketIndices(overview) : [];
   const nonFormal = resource.state !== "FORMAL" && resource.state !== "UNAVAILABLE" && resource.state !== "ERROR";
-  return <Card className="tp-home-overview-card tp-home-target-overview-card"><div className="tp-home-target-overview-heading"><SectionHeading id="market-overview-title" title="市場概況" description="掌握今日台股整體表現，快速了解市場強弱與資金動向。" />{overview && <DatePanel dataDate={overview.dataDate} updatedAt={overview.updatedAt} />}</div>{loading || resource.state === "UNAVAILABLE" || resource.state === "ERROR" ? <MainlinesState loading={loading} state={resource.state} reason={resource.reason} dataDate={resource.dataDate} section="市場概況" /> : overview ? <>{nonFormal && <MainlinesState loading={false} state={resource.state} reason={resource.reason} dataDate={resource.dataDate} section="市場概況" />}<div className="tp-home-target-top-grid"><IndexFactCard label="加權指數 (TPE)" {...(indices.find((index) => index.market === "TPE") ?? { value: null, change: null, changePct: null, status: "UNAVAILABLE" })} market="TPE" /><IndexFactCard label="櫃買指數 (TWO)" {...(indices.find((index) => index.market === "TWO") ?? { value: null, change: null, changePct: null, status: "UNAVAILABLE" })} market="TWO" /><TurnoverFactCard overview={overview} /><InstitutionalFactCard overview={overview} /></div><div className="tp-home-target-bottom-grid"><DistributionCard overview={overview} /><BreadthCard overview={overview} /></div></> : <MainlinesState loading={false} state="UNAVAILABLE" reason="市場資料尚未完整。" dataDate={resource.dataDate} section="市場概況" />}<CompactDisclosure loading={loading} resource={resource} sectionKey="marketOverview" sectionLabel="市場概況" /></Card>;
+ return <Card className="tp-home-overview-card tp-home-target-overview-card"><div className="tp-home-target-overview-heading"><SectionHeading id="market-overview-title" title="市場概況" description="掌握今日台股整體表現，快速了解市場強弱與資金動向。" />{overview && <DatePanel dataDate={overview.dataDate} updatedAt={overview.updatedAt} />}</div>{loading || resource.state === "UNAVAILABLE" || resource.state === "ERROR" ? <MainlinesState loading={loading} state={resource.state} reason={resource.reason} dataDate={resource.dataDate} section="市場概況" /> : overview ? <>{nonFormal && <MainlinesState loading={false} state={resource.state} reason={resource.reason} dataDate={resource.dataDate} section="市場概況" />}<div className="tp-home-target-top-grid"><IndexFactCard label="加權指數 (TPE)" {...(indices.find((index) => index.market === "TPE") ?? { value: null, change: null, changePct: null, status: "UNAVAILABLE" })} market="TPE" /><IndexFactCard label="櫃買指數 (TWO)" {...(indices.find((index) => index.market === "TWO") ?? { value: null, change: null, changePct: null, status: "UNAVAILABLE" })} market="TWO" /><TurnoverFactCard overview={overview} /><InstitutionalFactCard overview={overview} /></div><div className="tp-home-target-bottom-grid"><DistributionCard overview={overview} /><BreadthCard overview={overview} /></div><UnavailableInstrumentDisclosure overview={overview} /></> : <MainlinesState loading={false} state="UNAVAILABLE" reason="市場資料尚未完整。" dataDate={resource.dataDate} section="市場概況" />}<CompactDisclosure loading={loading} resource={resource} sectionKey="marketOverview" sectionLabel="市場概況" /></Card>;
 }
 
 function MarketSignalCards({ loading, resource }: { loading: boolean; resource: ReturnType<typeof useTodayMainlines>["resource"]["dailyFocus"] }) {

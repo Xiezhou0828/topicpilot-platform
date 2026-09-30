@@ -1004,6 +1004,64 @@
         "title": "HomeMarketBreadth",
         "type": "object"
       },
+      "HomeMarketCoverage": {
+        "properties": {
+          "coveragePct": {
+            "title": "Coveragepct",
+            "type": "number"
+          },
+          "coveredCount": {
+            "title": "Coveredcount",
+            "type": "integer"
+          },
+          "coveredCoveragePct": {
+            "title": "Coveredcoveragepct",
+            "type": "number"
+          },
+          "denominator": {
+            "title": "Denominator",
+            "type": "string"
+          },
+          "eligibleUniverse": {
+            "title": "Eligibleuniverse",
+            "type": "integer"
+          },
+          "pipelineFailureCount": {
+            "title": "Pipelinefailurecount",
+            "type": "integer"
+          },
+          "pricedCount": {
+            "title": "Pricedcount",
+            "type": "integer"
+          },
+          "source": {
+            "title": "Source",
+            "type": "string"
+          },
+          "unavailableCount": {
+            "title": "Unavailablecount",
+            "type": "integer"
+          },
+          "unknownCount": {
+            "title": "Unknowncount",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "denominator",
+          "eligibleUniverse",
+          "pricedCount",
+          "coveredCount",
+          "unavailableCount",
+          "pipelineFailureCount",
+          "unknownCount",
+          "coveragePct",
+          "coveredCoveragePct",
+          "source"
+        ],
+        "title": "HomeMarketCoverage",
+        "type": "object"
+      },
       "HomeMarketDistribution": {
         "properties": {
           "asOf": {
@@ -1142,6 +1200,28 @@
             ],
             "title": "Breadtheligible"
           },
+          "coveragePct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Coveragepct"
+          },
+          "coveredCount": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Coveredcount"
+          },
           "decline": {
             "anyOf": [
               {
@@ -1212,6 +1292,28 @@
             ],
             "title": "Observed"
           },
+          "pipelineFailureCount": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pipelinefailurecount"
+          },
+          "pricedCount": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pricedcount"
+          },
           "status": {
             "title": "Status",
             "type": "string"
@@ -1237,6 +1339,17 @@
               }
             ],
             "title": "Unavailable"
+          },
+          "unknownCount": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unknowncount"
           }
         },
         "required": [
@@ -1515,6 +1628,16 @@
             "title": "Breadth",
             "type": "array"
           },
+          "coverage": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/HomeMarketCoverage"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "dataDate": {
             "anyOf": [
               {
@@ -1612,6 +1735,13 @@
               "$ref": "#/components/schemas/HomeMarketTurnover"
             },
             "title": "Turnover",
+            "type": "array"
+          },
+          "unavailableInstruments": {
+            "items": {
+              "$ref": "#/components/schemas/HomeUnavailableInstrument"
+            },
+            "title": "Unavailableinstruments",
             "type": "array"
           },
           "updatedAt": {
@@ -3435,6 +3565,104 @@
           "dataDate"
         ],
         "title": "HomeTopicCard",
+        "type": "object"
+      },
+      "HomeUnavailableInstrument": {
+        "properties": {
+          "affectedTopicSlugs": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Affectedtopicslugs",
+            "type": "array"
+          },
+          "blocksFormalPublication": {
+            "title": "Blocksformalpublication",
+            "type": "boolean"
+          },
+          "formalTopicMembershipCount": {
+            "title": "Formaltopicmembershipcount",
+            "type": "integer"
+          },
+          "isLegitimateUnavailable": {
+            "title": "Islegitimateunavailable",
+            "type": "boolean"
+          },
+          "lastValidClose": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lastvalidclose"
+          },
+          "lastValidPriceDate": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lastvalidpricedate"
+          },
+          "market": {
+            "title": "Market",
+            "type": "string"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "reasonCode": {
+            "title": "Reasoncode",
+            "type": "string"
+          },
+          "source": {
+            "title": "Source",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "symbol": {
+            "title": "Symbol",
+            "type": "string"
+          },
+          "tradingDate": {
+            "format": "date",
+            "title": "Tradingdate",
+            "type": "string"
+          }
+        },
+        "required": [
+          "tradingDate",
+          "symbol",
+          "name",
+          "market",
+          "status",
+          "reasonCode",
+          "source",
+          "lastValidPriceDate",
+          "lastValidClose",
+          "formalTopicMembershipCount",
+          "isLegitimateUnavailable",
+          "blocksFormalPublication"
+        ],
+        "title": "HomeUnavailableInstrument",
         "type": "object"
       },
       "LiveRunSummary": {

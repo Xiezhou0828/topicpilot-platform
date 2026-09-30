@@ -40,6 +40,7 @@ from topicpilot_api.topic_engine.structural_role_authority import (
     StructuralRoleResolution,
     resolve_structural_role,
 )
+from topicpilot_api.market_data.availability import LEGITIMATE_UNAVAILABLE_CODES
 
 FORMAL_MAPPING_EARLIEST_DATE = date(2026, 8, 7)
 FORMAL_PUBLICATION_MODE = "FORMAL"
@@ -48,7 +49,7 @@ RESEARCH_PUBLICATION_MODE = "RESEARCH_ONLY"
 SHADOW_PUBLICATION_MODE = "SHADOW"
 MAPPING_POLICY_VERSION = "topic-membership-pit.v1"
 CALCULATION_VERSION = "topic-daily-state.v1"
-NO_TRADE_STATUS_CODES = frozenset({"NO_TRADE", "EXCHANGE_CONFIRMED_NO_DATA"})
+NO_TRADE_STATUS_CODES = LEGITIMATE_UNAVAILABLE_CODES
 
 
 class FormalAuthorityUnavailable(ValueError):
