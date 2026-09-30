@@ -92,7 +92,10 @@ EXPECTED_PREFLIGHT_COLUMNS = {
 }
 PREFLIGHT_TABLE_NAMES = tuple(EXPECTED_PREFLIGHT_COLUMNS)
 MAX_ATTEMPT_REPRESENTATIVES = 50
-MAX_UNAVAILABLE_ATTEMPTS = 200
+# The current full TPE+TWO universe is 553 instruments.  Keep this bounded
+# above the complete governed universe so a later-market skipped row cannot
+# be hidden behind an earlier market's representatives.
+MAX_UNAVAILABLE_ATTEMPTS = 1000
 UUID_PATTERN = re.compile(
     r"^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-"
     r"[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$"
@@ -484,7 +487,7 @@ FROM topicpilot.live_collector_attempts
 WHERE run_id = :run_id
   AND status = 'SKIPPED'
 ORDER BY started_at, market_code, instrument_code, attempt_number
-LIMIT 200
+LIMIT 1000
 """
 
 CHECKPOINT_QUERY = """
