@@ -1848,13 +1848,13 @@ export interface components {
             /** Net */
             net: string | null;
             /** Scale */
-            scale: number;
+            scale: number | null;
             /** Sell */
             sell: string | null;
             /** Status */
             status: string;
             /** Unit */
-            unit: string;
+            unit: string | null;
             /** Value */
             value?: string | null;
         };
@@ -1873,11 +1873,11 @@ export interface components {
             /** Requiredsessions */
             requiredSessions: number;
             /** Scale */
-            scale: number;
+            scale: number | null;
             /** Totalnet */
             totalNet: string | null;
             /** Unit */
-            unit: string;
+            unit: string | null;
         };
         /** MarketInstitutionalFlowDailyRead */
         MarketInstitutionalFlowDailyRead: {

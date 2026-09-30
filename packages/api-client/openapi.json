@@ -3720,8 +3720,15 @@
             "title": "Net"
           },
           "scale": {
-            "title": "Scale",
-            "type": "integer"
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Scale"
           },
           "sell": {
             "anyOf": [
@@ -3740,8 +3747,15 @@
             "type": "string"
           },
           "unit": {
-            "title": "Unit",
-            "type": "string"
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit"
           },
           "value": {
             "anyOf": [
@@ -3818,8 +3832,15 @@
             "type": "integer"
           },
           "scale": {
-            "title": "Scale",
-            "type": "integer"
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Scale"
           },
           "totalNet": {
             "anyOf": [
@@ -3834,8 +3855,15 @@
             "title": "Totalnet"
           },
           "unit": {
-            "title": "Unit",
-            "type": "string"
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit"
           }
         },
         "required": [
