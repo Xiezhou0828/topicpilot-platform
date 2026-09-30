@@ -44,6 +44,7 @@
 - [Deployment](operations/deployment.md)
 - [G2 official provider preflight](operations/provider-preflight.md)
 - [Production forensic readback](operations/production-forensic-readback.md)
+- [Reference bundle regression closure](reports/TASK-REFERENCE-BUNDLE-REGRESSION-CLOSURE-001.md) — canonical bundle inventory, rollover-lineage repair, deterministic check/update flow, and regression matrix.
 - [Reference registry transition](operations/reference-registry-transition.md)
 
 ## Historical evidence

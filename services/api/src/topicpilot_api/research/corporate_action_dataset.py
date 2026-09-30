@@ -22,12 +22,17 @@ from typing import Any
 from urllib.parse import urlparse
 
 from topicpilot_api.normalizer.contracts import stable_hash
-from topicpilot_api.reference_data.bundle import load_bundle
+from topicpilot_api.reference_data.bundle import (
+    BUNDLE_NAME,
+    canonical_bundle_version,
+    load_bundle,
+)
 
 CA_EVENT_SCHEMA_VERSION = "CA-EVENT-SCHEMA-V0"
 DATASET_SCHEMA_VERSION = "rec-a1-corporate-action-research-dataset.v0"
 DATASET_VERSION = "REC-A1-CA-EVENTS-V0"
-REFERENCE_VERSION = "tw-reference-v1"
+REFERENCE_BUNDLE_NAME = BUNDLE_NAME
+REFERENCE_VERSION = canonical_bundle_version()
 UNIVERSE_POLICY = "LIFECYCLE_GATED_507"
 WINDOW_START = date(2026, 2, 2)
 WINDOW_END = date(2026, 8, 13)
@@ -1613,8 +1618,12 @@ def dataset_content_hash(document: Mapping[str, Any]) -> str:
 
 def _load_identity_set(reference_bundle_dir: Path) -> frozenset[str]:
     bundle = load_bundle(reference_bundle_dir)
-    if bundle.manifest.get("referenceDataVersion") != REFERENCE_VERSION:
-        raise CorporateActionDatasetError("reference bundle version mismatch")
+    actual_version = bundle.manifest.get("referenceDataVersion")
+    if actual_version != REFERENCE_VERSION:
+        raise CorporateActionDatasetError(
+            "reference bundle version mismatch: "
+            f"expected {REFERENCE_VERSION}, got {actual_version}"
+        )
     return frozenset(f"{row['market_code']}:{row['instrument_code']}" for row in bundle.instruments)
 
 
@@ -1737,7 +1746,9 @@ def validate_dataset_document(
         if identities is not None and event.canonical_identity not in identities:
             invalid_identities += 1
     if invalid_identities:
-        raise CorporateActionDatasetError("event identity is not in tw-reference-v1")
+        raise CorporateActionDatasetError(
+            f"event identity is not in {REFERENCE_BUNDLE_NAME}"
+        )
     invalid_effective_dates = sum(
         not WINDOW_START <= date.fromisoformat(item.primary_effective_date) <= WINDOW_END
         for item in events
@@ -1995,6 +2006,7 @@ __all__ = [
     "DATASET_VERSION",
     "FREEZE_POLICIES",
     "PRIMARY_EVENT_FAMILIES",
+    "REFERENCE_BUNDLE_NAME",
     "REFERENCE_VERSION",
     "RESIDUAL_RISK_CLASSIFICATIONS",
     "REVIEW_STATES",

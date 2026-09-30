@@ -20,6 +20,8 @@ from typing import Any
 from topicpilot_api.market_data.history import DAILY_TRADING_STATUS_CODES
 
 BUNDLE_SCHEMA_VERSION = "reference-bundle.v1"
+BUNDLE_NAME = "tw-reference-v1"
+BUNDLE_DIR = Path(__file__).with_name("bundles") / BUNDLE_NAME
 BUNDLE_FILE_NAMES = (
     "markets.json",
     "instruments.json",
@@ -34,6 +36,16 @@ BUNDLE_FILE_NAMES = (
 )
 _SYMBOL_RE = re.compile(r"^[A-Za-z0-9_-]{1,64}$")
 _REQUIRED_STOCK_HEADERS = ("股號", "名稱", "市場代碼")
+_CANONICAL_STATUS_ORDER = (
+    "AVAILABLE",
+    "DELISTED",
+    "EXCHANGE_CONFIRMED_NO_DATA",
+    "NO_TRADE",
+    "OPEN",
+    "SUSPENDED",
+    "UNKNOWN",
+    "TERMINATED",
+)
 _MARKET_DEFINITIONS = {
     "TPE": {
         "code": "TPE",
@@ -343,6 +355,18 @@ def _parse_adjustments(path: Path) -> tuple[dict[str, Any], ...]:
     )
 
 
+def _parse_status_catalogue(evidence: dict[str, Any]) -> tuple[dict[str, Any], ...]:
+    evidence_statuses = {
+        item.get("status")
+        for item in evidence.get("suspensions", {}).values()
+        if isinstance(item, dict) and item.get("status")
+    }
+    codes = set(DAILY_TRADING_STATUS_CODES) | evidence_statuses
+    ordered = [code for code in _CANONICAL_STATUS_ORDER if code in codes]
+    ordered.extend(sorted(codes - set(_CANONICAL_STATUS_ORDER)))
+    return tuple({"code": code} for code in ordered)
+
+
 def build_bundle_from_sources(
     *,
     stock_source: Path,
@@ -360,15 +384,7 @@ def build_bundle_from_sources(
     currencies = ({"code": "TWD", "scale": 2},)
     timezones = ({"name": "Asia/Taipei"},)
     sessions = ({"code": "REGULAR", "calendar_code": "TW_MARKET"},)
-    evidence_statuses = {
-        item.get("status")
-        for item in evidence.get("suspensions", {}).values()
-        if isinstance(item, dict) and item.get("status")
-    }
-    statuses = tuple(
-        {"code": code}
-        for code in sorted(set(DAILY_TRADING_STATUS_CODES) | evidence_statuses)
-    )
+    statuses = _parse_status_catalogue(evidence)
     bundle = ReferenceBundle(
         manifest={
             "bundleSchemaVersion": BUNDLE_SCHEMA_VERSION,
@@ -561,6 +577,16 @@ def write_bundle(bundle: ReferenceBundle, output_dir: Path) -> Path:
     return output_dir
 
 
+def canonical_bundle_version(bundle_dir: Path | None = None) -> str:
+    """Return the exact version recorded by the canonical checked-in bundle."""
+
+    bundle = load_bundle(bundle_dir or BUNDLE_DIR)
+    version = bundle.manifest.get("referenceDataVersion")
+    if not isinstance(version, str) or not version.strip():
+        raise BundleValidationError("canonical bundle referenceDataVersion is missing")
+    return version
+
+
 def load_bundle(bundle_dir: Path) -> ReferenceBundle:
     if not bundle_dir.is_dir():
         raise BundleValidationError(f"bundle directory does not exist: {bundle_dir}")
@@ -598,10 +624,13 @@ def load_bundle(bundle_dir: Path) -> ReferenceBundle:
 
 
 __all__ = [
+    "BUNDLE_DIR",
     "BUNDLE_FILE_NAMES",
+    "BUNDLE_NAME",
     "BundleValidationError",
     "ReferenceBundle",
     "build_bundle_from_sources",
+    "canonical_bundle_version",
     "load_bundle",
     "validate_bundle",
     "write_bundle",

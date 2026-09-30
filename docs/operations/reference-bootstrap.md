@@ -36,6 +36,20 @@ python -m topicpilot_api.reference_bundle_cli validate \
   --bundle-dir services/api/src/topicpilot_api/reference_data/bundles/tw-reference-v1
 ```
 
+The non-mutating canonical check verifies the committed bytes against the
+repository serializer and prints
+`CURRENT_BUNDLE_MATCHES_CANONICAL_GENERATOR=YES|NO`:
+
+```console
+PYTHONPATH=services/api/src python -m topicpilot_api.reference_bundle_cli check \
+  --bundle-dir services/api/src/topicpilot_api/reference_data/bundles/tw-reference-v1
+```
+
+When the reviewed source inputs are available, pass them to `check` as well;
+the command then regenerates into a temporary directory and reports the
+artifact path, semantic path, expected value, and actual value for drift. It
+never writes the checked-in bundle.
+
 To regenerate a bundle from source, use the separate offline command. The
 output directory must be reviewed before it is promoted as the canonical
 artifact:
@@ -50,6 +64,12 @@ python -m topicpilot_api.reference_bundle_cli generate \
 
 The generator derives market and instrument totals from records. `507` is a
 current artifact result, not a loader business rule.
+
+Bundle updates are allowed only for an intentional canonical contract,
+schema, serializer, or authority change. A failing test, red CI, or an
+inconvenient expected value is not a valid reason to update a bundle. The
+write command must be explicit, reviewed, and followed by the canonical check;
+ordinary tests never rewrite references.
 
 ## Production gate order
 
