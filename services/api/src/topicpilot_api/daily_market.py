@@ -398,7 +398,12 @@ def _availability_reason(row: Mapping[str, Any]) -> str:
 
 
 def build_unavailable_instruments(
-    rows: Sequence[Mapping[str, Any]], *, trade_date: date
+    rows: Sequence[Mapping[str, Any]],
+    *,
+    trade_date: date,
+    corporate_action_authority_by_identity: Mapping[
+        tuple[str, str], Sequence[TradingStatusAuthorityRecord]
+    ] | None = None,
 ) -> tuple[UnavailableInstrument, ...]:
     """Build the typed, disclosure-safe read model for unpriced rows."""
 
@@ -424,10 +429,17 @@ def build_unavailable_instruments(
             if status_id is not None and source in CANONICAL_STATUS_SOURCES
             else ()
         )
+        corporate_action_authority = ()
+        if corporate_action_authority_by_identity:
+            corporate_action_authority = corporate_action_authority_by_identity.get(
+                (str(row.get("market") or "").upper(), str(row.get("symbol") or "")),
+                (),
+            )
         resolution = resolve_effective_trading_status(
             row.get("instrument_id"),
             trade_date,
             official_authority=official,
+            corporate_action_authority=corporate_action_authority,
             price_source=str(row.get("source_code") or "CANONICAL_DAILY_PRICE"),
         )
         status_code = resolution.status
@@ -438,6 +450,7 @@ def build_unavailable_instruments(
             has_canonical_status_evidence=resolution.authority_class
             in {
                 AuthorityClass.OFFICIAL_EXCHANGE.value,
+                AuthorityClass.OFFICIAL_CORPORATE_ACTION.value,
                 AuthorityClass.REFERENCE_LIFECYCLE.value,
             },
         )
@@ -475,6 +488,9 @@ def reconcile_daily_market(
     *,
     market_closed: bool = False,
     expected_instrument_ids: Collection[Any] | None = None,
+    corporate_action_authority_by_identity: Mapping[
+        tuple[str, str], Sequence[TradingStatusAuthorityRecord]
+    ] | None = None,
 ) -> DailyMarketReconciliation:
     """Reconcile the canonical daily projection against a date-effective universe."""
 
@@ -501,7 +517,11 @@ def reconcile_daily_market(
         priced_by_market[market] = priced_by_market.get(market, 0) + int(
             row.get("close") is not None
         )
-    unavailable_instruments = build_unavailable_instruments(rows, trade_date=trade_date)
+    unavailable_instruments = build_unavailable_instruments(
+        rows,
+        trade_date=trade_date,
+        corporate_action_authority_by_identity=corporate_action_authority_by_identity,
+    )
     for item in unavailable_instruments:
         if item.is_legitimate_unavailable:
             covered_by_market[item.market] = covered_by_market.get(item.market, 0) + 1

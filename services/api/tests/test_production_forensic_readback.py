@@ -180,6 +180,40 @@ def test_output_sanitizes_attempt_and_checkpoint_details() -> None:
     assert checkpoint["metadata"] == {"metadata_reason": "safe operational reason"}
 
 
+def test_checkpoint_provider_na_is_not_reported_as_zero_and_nested_failure_is_preserved():
+    checkpoint = _safe_checkpoint(
+        {
+            "batch_number": 150,
+            "batch_key": "FORMAL_MARKET_FACTS:OFFICIAL",
+            "attempt_number": 1,
+            "status": "FAILED",
+            "provider_request_count": 0,
+            "metadata_provider_metrics_applicable": "false",
+            "metadata_provider_request_count": None,
+            "metadata_checkpoint_semantics": "FORMAL_MARKET_FACTS_PUBLICATION",
+            "metadata_failure_readback_status": "FAIL",
+            "metadata_failure_reason_code": "FORMAL_MARKET_FACTS_PUBLICATION_NOT_READY",
+            "metadata_failure_institutional_flow_status": "FAIL",
+            "metadata_failure_market_facts_status": "UNAVAILABLE",
+            "metadata_failure_failed_section": "FORMAL_MARKET_FACTS_PUBLICATION",
+            "metadata_failure_classification": "PUBLICATION_CHECKPOINT",
+        }
+    )
+
+    assert checkpoint["providerRequestCount"] is None
+    assert checkpoint["metadata"]["metadata_checkpoint_semantics"] == (
+        "FORMAL_MARKET_FACTS_PUBLICATION"
+    )
+    assert checkpoint["failureReason"] == {
+        "readbackStatus": "FAIL",
+        "reasonCode": "FORMAL_MARKET_FACTS_PUBLICATION_NOT_READY",
+        "institutionalFlowStatus": "FAIL",
+        "marketFactsPublicationStatus": "UNAVAILABLE",
+        "failedSection": "FORMAL_MARKET_FACTS_PUBLICATION",
+        "failureClassification": "PUBLICATION_CHECKPOINT",
+    }
+
+
 class _ScalarResult:
     def __init__(self, value: str) -> None:
         self.value = value
