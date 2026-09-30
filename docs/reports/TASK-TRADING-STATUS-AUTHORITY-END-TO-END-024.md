@@ -1,16 +1,22 @@
 # TASK-TRADING-STATUS-AUTHORITY-END-TO-END-024
 
-Status: `CANDIDATE_COMMIT_READY`
+Status: `CANONICALIZED`
 
-This task stops at a local candidate commit. No merge, push, Production
-deployment, Production database mutation, recovery run, or migration execution
-was performed.
+The implementation was integrated into canonical `main` through PR #50 after
+candidate provenance, exact baseline attribution, and all required CI checks
+passed. No Production deployment, Production database mutation, recovery run,
+or migration execution was performed.
 
 ## Scope and baseline
 
 - Initial main SHA: `3f012dda6f40a57fedd4cf47b7a5a62a1562d4b9`
 - Worktree: `C:\Users\acer\Desktop\topicpilot-platform-TASK-020`
 - Branch: `codex/task-024-trading-status-authority`
+- Source SHA: `263c0b2a44a04c78762b665ac3f6320e44aae08b`
+- Canonical branch: `main`
+- PR: [#50](https://github.com/Xiezhou0828/topicpilot-platform/pull/50)
+- Merge commit: `ac95d642fa18fb5e590999b424705dec4ab74c7e`
+- Final canonical main SHA at integration: `ac95d642fa18fb5e590999b424705dec4ab74c7e`
 - Owner schedule context remains unchanged: `POST_CLOSE_START=13:45`
 - The 2026-09-30 recovery is not performed by this task.
 
@@ -175,21 +181,50 @@ was added.
   `reports/TASK-WS3-CORE-V0-A1-...` JSON artifacts are absent from this
   worktree; their stack traces do not touch this task's implementation. They
   were not repaired as unrelated work.
+- Exact initial-main baseline: `956 passed, 60 skipped, 5 failed`.
+- Candidate delta: `+24 passed`, unchanged `60 skipped` and unchanged `5 failed`;
+  the five failure names and missing WS3 prerequisite JSON paths are identical
+  between baseline and candidate. No new failure was introduced.
+- Required PR CI: all PASS — Backend/migration/OpenAPI, Frontend
+  install/test/build, Secret scan, and Docker Compose smoke.
 
-## Activation requirements after this candidate
+## Activation requirements after canonicalization
 
-Hold this candidate for multi-workstream canonical reconciliation and explicit
-Owner authorization. A later task may independently prove or wire standalone
-official status endpoints, add governed manual persistence/authentication,
-promote the exact candidate SHA, verify runtime schedule `13:45`, and perform
-the separately authorized terminal recovery. This task performs none of those
-actions.
+Canonical integration is complete. A later separately authorized task may
+independently prove or wire standalone official status endpoints, add governed
+manual persistence/authentication, verify runtime schedule `13:45`, and
+perform the separately authorized terminal recovery. This task performs none
+of those actions.
+
+`TASK_021_RESOLVED_BY_024=NOT_PROVEN_UNTIL_PRODUCTION_VALIDATION`
+
+## Canonical closure record
+
+- `TASK_ID=TASK-TRADING-STATUS-AUTHORITY-END-TO-END-024`
+- `TASK_TYPE=candidate review and canonical integration`
+- `REQUIRED_TERMINAL_STATE=CANONICALIZED`
+- `ACHIEVED_TERMINAL_STATE=CANONICALIZED`
+- `TASK_COMPLETE=YES_FOR_CANONICAL_INTEGRATION_ONLY`
+- `FOLLOW_UP_REQUIRED=YES`
+- `FOLLOW_UP_REASON=Production release and TASK-021 recovery require separate authorization and validation.`
+- `CANONICAL_IMPLEMENTATION_SHA=ac95d642fa18fb5e590999b424705dec4ab74c7e`
+- `PR_NUMBER=50`
+- `PR_STATUS=MERGED`
+- `CI_STATUS=PASS`
+- `CANONICAL_STATUS=CANONICALIZED`
+- `RELEASE_STATUS=NOT_RELEASED`
+- `PRODUCTION_VERIFICATION=NOT_PERFORMED`
+- `CANONICAL_RECONCILIATION_DISPOSITION=COMPLETE`
+- `REPOSITORY_HYGIENE_STATUS=PASS`
 
 ## Terminal invariants
 
 - `PRODUCTION_DB_MUTATED=NO`
 - `PRODUCTION_DEPLOYED=NO`
 - `POST_CLOSE_RETRIED=NO`
-- `PUSH_PERFORMED=NO`
-- `MERGE_PERFORMED=NO`
-- `TASK_TERMINAL_STATE=CANDIDATE_COMMIT_READY`
+- `HISTORICAL_BACKFILL=NO`
+- `SCHEDULER_ACTIVATED=NO`
+- `NEXT_TASK_CHANGED=NO`
+- `PUSH_PERFORMED=YES` (candidate branch only)
+- `MERGE_PERFORMED=YES` (PR #50)
+- `TASK_TERMINAL_STATE=CANONICALIZED`
