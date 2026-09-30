@@ -54,6 +54,13 @@ from topicpilot_api.provider_preflight import load_g2_preflight_context
 from topicpilot_api.topic_daily_state import materialize_bounded_formal_dates
 from topicpilot_api.topic_lifecycle_engine import TopicLifecycleEngine
 from topicpilot_api.topic_snapshot_engine import TopicSnapshotEngine
+from topicpilot_api.trading_status_authority import (
+    StatusResolutionMetrics,
+    TradingStatusAuthorityError,
+    TradingStatusResolution,
+    read_effective_trading_status_authority,
+    resolve_missing_statuses_with_budget,
+)
 
 from .config import LiveRuntimeConfig
 from .persistence import LiveRepository
@@ -112,6 +119,7 @@ class PostCloseRunResult:
     snapshot_status: str = "NOT_RUN"
     snapshot_date: str | None = None
     idempotent_reuse: bool = False
+    status_resolution_metrics: Mapping[str, int | float] | None = None
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -130,6 +138,7 @@ class PostCloseRunResult:
             "snapshotStatus": self.snapshot_status,
             "snapshotDate": self.snapshot_date,
             "idempotentReuse": self.idempotent_reuse,
+            "statusResolutionMetrics": dict(self.status_resolution_metrics or {}),
         }
 
 
@@ -194,9 +203,7 @@ def expected_post_close_universe(
         run_date=run_date,
         reference_version=reference_version,
     )
-    return {
-        market.market_code: tuple(market.instrument_codes) for market in context.markets
-    }
+    return {market.market_code: tuple(market.instrument_codes) for market in context.markets}
 
 
 class PostCloseUpdater:
@@ -214,6 +221,7 @@ class PostCloseUpdater:
         self.config = config
         self.clock = clock or (lambda: datetime.now(UTC))
         self.sleep = sleep
+        self._status_resolution_metrics = StatusResolutionMetrics()
         self.session_clock = MarketSessionClock(
             config.timezone_name,
             config.session_open,
@@ -287,29 +295,19 @@ class PostCloseUpdater:
             if not token:
                 raise PostClosePreconditionError("TARGET_SYMBOL_INVALID")
             if ":" in token:
-                market_code, instrument_code = (
-                    part.strip() for part in token.split(":", 1)
-                )
+                market_code, instrument_code = (part.strip() for part in token.split(":", 1))
                 if not market_code or not instrument_code:
                     raise PostClosePreconditionError("TARGET_SYMBOL_INVALID")
                 identity = (market_code, instrument_code)
             else:
-                matches = [
-                    identity
-                    for identity in expected
-                    if identity[1] == token
-                ]
+                matches = [identity for identity in expected if identity[1] == token]
                 if not matches:
-                    raise PostClosePreconditionError(
-                        "TARGET_SYMBOL_NOT_IN_DATE_EFFECTIVE_UNIVERSE"
-                    )
+                    raise PostClosePreconditionError("TARGET_SYMBOL_NOT_IN_DATE_EFFECTIVE_UNIVERSE")
                 if len(matches) > 1:
                     raise PostClosePreconditionError("TARGET_SYMBOL_MARKET_REQUIRED")
                 identity = matches[0]
             if identity not in expected:
-                raise PostClosePreconditionError(
-                    "TARGET_SYMBOL_NOT_IN_DATE_EFFECTIVE_UNIVERSE"
-                )
+                raise PostClosePreconditionError("TARGET_SYMBOL_NOT_IN_DATE_EFFECTIVE_UNIVERSE")
             if identity not in selected:
                 selected.append(identity)
 
@@ -320,16 +318,10 @@ class PostCloseUpdater:
         for market_code, instrument_code in selected:
             selected_by_market.setdefault(market_code, []).append(instrument_code)
         normalized = tuple(
-            sorted(
-                f"{market_code}:{instrument_code}"
-                for market_code, instrument_code in selected
-            )
+            sorted(f"{market_code}:{instrument_code}" for market_code, instrument_code in selected)
         )
         return (
-            {
-                market_code: tuple(codes)
-                for market_code, codes in selected_by_market.items()
-            },
+            {market_code: tuple(codes) for market_code, codes in selected_by_market.items()},
             normalized,
         )
 
@@ -348,8 +340,7 @@ class PostCloseUpdater:
         """
 
         grouped: dict[str, set[str]] = {
-            market_code: set(codes)
-            for market_code, codes in eligible_by_market.items()
+            market_code: set(codes) for market_code, codes in eligible_by_market.items()
         }
         for row in context.universe_rows:
             if row.market_code not in grouped:
@@ -358,10 +349,7 @@ class PostCloseUpdater:
             lifecycle_status = resolve_lifecycle_status(row, run_date)
             if eligibility.eligible or lifecycle_status in INELIGIBLE_LIFECYCLE_STATUSES:
                 grouped[row.market_code].add(row.instrument_code)
-        return {
-            market_code: tuple(sorted(codes))
-            for market_code, codes in grouped.items()
-        }
+        return {market_code: tuple(sorted(codes)) for market_code, codes in grouped.items()}
 
     def _execution_key(
         self,
@@ -373,9 +361,7 @@ class PostCloseUpdater:
 
         scope = "FULL" if target_symbols is None else "TARGETED"
         scope_suffix = (
-            ""
-            if target_symbols is None
-            else f":{stable_hash(tuple(target_symbols))[:32]}"
+            "" if target_symbols is None else f":{stable_hash(tuple(target_symbols))[:32]}"
         )
         return (
             f"post-close:{self.config.reference_data_version}:"
@@ -553,9 +539,7 @@ class PostCloseUpdater:
                         LiveCollectorRun.metadata_payload["runDate"].as_string()
                         == run_date.isoformat(),
                         and_(
-                            LiveCollectorRun.metadata_payload["runDate"]
-                            .as_string()
-                            .is_(None),
+                            LiveCollectorRun.metadata_payload["runDate"].as_string().is_(None),
                             LiveCollectorRun.started_at >= local_start,
                             LiveCollectorRun.started_at < local_end,
                         ),
@@ -619,24 +603,15 @@ class PostCloseUpdater:
             return None
         latest = tuple(latest_by_instrument.values())
         if any(
-            attempt.status not in {"SUCCESS", "FAILED", "TIMEOUT", "SKIPPED"}
-            for attempt in latest
+            attempt.status not in {"SUCCESS", "FAILED", "TIMEOUT", "SKIPPED"} for attempt in latest
         ):
             return None
         failure_codes = tuple(
-            sorted(
-                {
-                    attempt.error_code
-                    for attempt in latest
-                    if attempt.error_code
-                }
-            )
+            sorted({attempt.error_code for attempt in latest if attempt.error_code})
         )
         return {
             "success_count": sum(attempt.status == "SUCCESS" for attempt in latest),
-            "failure_count": sum(
-                attempt.status in {"FAILED", "TIMEOUT"} for attempt in latest
-            ),
+            "failure_count": sum(attempt.status in {"FAILED", "TIMEOUT"} for attempt in latest),
             "skipped_count": sum(attempt.status == "SKIPPED" for attempt in latest),
             "retry_count": sum(attempt.retry_count for attempt in latest),
             "failure_codes": failure_codes,
@@ -677,6 +652,7 @@ class PostCloseUpdater:
             str(snapshot.get("status", "ALREADY_COMPLETED")),
             str(snapshot.get("snapshotDate", run_date.isoformat())),
             bool((metadata.get("forwardAutomation") or {}).get("status") == "SUCCESS"),
+            metadata.get("statusResolutionMetrics"),
         )
 
     def _create_run(
@@ -717,6 +693,11 @@ class PostCloseUpdater:
             "sessionCode": self.config.session_code,
             "calendarCode": self.config.calendar_code,
             "postCloseStart": self.config.post_close_start,
+            "statusResolutionBudget": {
+                "maxAttempts": self.config.status_resolution_max_attempts,
+                "maxTotalWaitSeconds": self.config.status_resolution_max_total_wait_seconds,
+                "backoffSeconds": self.config.status_resolution_backoff_seconds,
+            },
             "executionMode": execution_mode,
             "calendarAuthority": "ACTIVE_REFERENCE_PREFLIGHT",
             "lifecycleAuthority": "ACTIVE_REFERENCE_PREFLIGHT",
@@ -745,6 +726,13 @@ class PostCloseUpdater:
                     ),
                     "historyMaxRetries": self.config.history_max_retries,
                     "historyRetryBackoffSeconds": str(self.config.history_retry_backoff_seconds),
+                    "statusResolutionMaxAttempts": self.config.status_resolution_max_attempts,
+                    "statusResolutionMaxTotalWaitSeconds": str(
+                        self.config.status_resolution_max_total_wait_seconds
+                    ),
+                    "statusResolutionBackoffSeconds": str(
+                        self.config.status_resolution_backoff_seconds
+                    ),
                 }
             ),
             started_at=started_at,
@@ -831,6 +819,7 @@ class PostCloseUpdater:
                 str(snapshot.get("status", "SUCCESS")),
                 run_date.isoformat(),
                 True,
+                metadata.get("statusResolutionMetrics"),
             )
         return None
 
@@ -843,8 +832,7 @@ class PostCloseUpdater:
         if result.covered_count:
             error_code = (
                 "APPROVED_NO_TRADE"
-                if result.instrument_status
-                in LEGITIMATE_UNAVAILABLE_CODES
+                if result.instrument_status in LEGITIMATE_UNAVAILABLE_CODES
                 and result.priced_count == 0
                 else None
             )
@@ -909,9 +897,7 @@ class PostCloseUpdater:
                 retrieved_at=completed_at if attempt_status == "SUCCESS" else None,
                 updated_at=completed_at,
                 observed_at=None,
-                latency_ms=max(
-                    0, int((completed_at - started_at).total_seconds() * 1000)
-                ),
+                latency_ms=max(0, int((completed_at - started_at).total_seconds() * 1000)),
                 retry_count=retry_count,
                 provider_status=provider_status,
                 freshness_state="FRESH" if attempt_status == "SUCCESS" else "UNKNOWN",
@@ -977,8 +963,7 @@ class PostCloseUpdater:
             (
                 run
                 for run in self._runs_for_date(run_date)
-                if run.status == "RUNNING"
-                and (existing_run is None or run.id != existing_run.id)
+                if run.status == "RUNNING" and (existing_run is None or run.id != existing_run.id)
             ),
             None,
         )
@@ -986,19 +971,19 @@ class PostCloseUpdater:
             raise PostClosePreconditionError("POST_CLOSE_RUN_IN_PROGRESS")
 
         if existing_run is not None:
-            existing_run = self.session.scalar(
-                select(LiveCollectorRun)
-                .where(LiveCollectorRun.id == existing_run.id)
-                .with_for_update()
-            ) or existing_run
+            existing_run = (
+                self.session.scalar(
+                    select(LiveCollectorRun)
+                    .where(LiveCollectorRun.id == existing_run.id)
+                    .with_for_update()
+                )
+                or existing_run
+            )
             metadata = existing_run.metadata_payload or {}
             forward_status = (metadata.get("forwardAutomation") or {}).get("status")
             safely_complete = (
                 existing_run.status == "SUCCESS" and forward_status == "SUCCESS"
-            ) or (
-                existing_run.status == "MARKET_CLOSED"
-                and not context.target_date_is_session
-            )
+            ) or (existing_run.status == "MARKET_CLOSED" and not context.target_date_is_session)
             if safely_complete or (
                 existing_run.status in {"SUCCESS", "PARTIAL", "FAILED", "MARKET_CLOSED"}
                 and not allow_terminal_recovery
@@ -1104,6 +1089,7 @@ class PostCloseUpdater:
         skipped_count = recovered_counts.get("skipped_count", 0)
         retry_count = recovered_counts.get("retry_count", 0)
         point_count = recovered_counts.get("point_count", 0)
+        status_resolution_candidates: dict[Any, bool] = {}
         self._ensure_completed_checkpoint(
             run_id=run_id,
             batch_key="SESSION_VALIDATION",
@@ -1125,10 +1111,10 @@ class PostCloseUpdater:
         session_status = self.session_clock.status(
             datetime.combine(local_date, clock_time(13, 30), tzinfo=self.session_clock.timezone)
         )
-        if (
-            not context.target_date_is_session
-            or session_status.reason in {"WEEKEND", "CONFIGURED_CLOSED_DATE"}
-        ):
+        if not context.target_date_is_session or session_status.reason in {
+            "WEEKEND",
+            "CONFIGURED_CLOSED_DATE",
+        }:
             skipped_count = len(instruments)
             status = "MARKET_CLOSED"
             reconciliation = reconcile_daily_market(
@@ -1185,6 +1171,8 @@ class PostCloseUpdater:
                 snapshot_result.get("topicCount", 0),
                 snapshot_result.get("status", "FAILED"),
                 local_date.isoformat(),
+                False,
+                getattr(self, "_status_resolution_metrics", StatusResolutionMetrics()).to_dict(),
             )
 
         transport = RateLimitedTransport(
@@ -1213,23 +1201,15 @@ class PostCloseUpdater:
 
         market_batches: list[list[tuple[Instrument, Market]]] = []
         for market_code in ("TPE", "TWO"):
-            market_instruments = [
-                item for item in instruments if item[1].code == market_code
-            ]
-            for batch_start in range(
-                0, len(market_instruments), self.config.history_batch_size
-            ):
+            market_instruments = [item for item in instruments if item[1].code == market_code]
+            for batch_start in range(0, len(market_instruments), self.config.history_batch_size):
                 market_batches.append(
-                    market_instruments[
-                        batch_start : batch_start + self.config.history_batch_size
-                    ]
+                    market_instruments[batch_start : batch_start + self.config.history_batch_size]
                 )
 
         for batch_index, batch in enumerate(market_batches, start=1):
             market = batch[0][1]
-            batch_key = self._checkpoint_key(
-                "FORMAL_MARKET_FACTS", f"{market.code}:{batch_index}"
-            )
+            batch_key = self._checkpoint_key("FORMAL_MARKET_FACTS", f"{market.code}:{batch_index}")
             previous_checkpoint = self._latest_checkpoint(run_id, batch_key)
             if previous_checkpoint is not None and previous_checkpoint.status == "COMPLETED":
                 success_count += previous_checkpoint.succeeded_count
@@ -1299,8 +1279,8 @@ class PostCloseUpdater:
                     completed = self._now()
                     for index, (instrument, item_market) in enumerate(batch):
                         summary = summaries[(instrument.instrument_code, item_market.code)]
-                        attempt_status, error_code, error_message = (
-                            self._history_attempt_outcome(summary)
+                        attempt_status, error_code, error_message = self._history_attempt_outcome(
+                            summary
                         )
                         self._record_history_attempt(
                             run_id=run_id,
@@ -1318,6 +1298,11 @@ class PostCloseUpdater:
                             batch_success_count += 1
                         else:
                             batch_skipped_count += 1
+                            status_resolution_candidates[instrument.id] = error_code in {
+                                "PROVIDER_ERROR",
+                                "EXCHANGE_NOT_READY",
+                                "PROVIDER_REQUEST_FAILED",
+                            }
                             if is_targeted and error_code:
                                 failure_codes.append(error_code)
                 batch_point_count = result.provider_point_count
@@ -1357,6 +1342,7 @@ class PostCloseUpdater:
                     with self.session.begin():
                         completed = self._now()
                         for instrument, item_market in batch:
+                            status_resolution_candidates[instrument.id] = True
                             self._record_history_attempt(
                                 run_id=run_id,
                                 instrument=instrument,
@@ -1451,6 +1437,7 @@ class PostCloseUpdater:
                             fallback_failure_count += 1
                             error_code = getattr(exc, "code", type(exc).__name__)
                             error_message = str(exc)
+                            status_resolution_candidates[instrument.id] = True
                             failure_codes.append(error_code)
                         completed = self._now()
                         item_retry_count = (
@@ -1498,6 +1485,18 @@ class PostCloseUpdater:
                 )
             self._heartbeat(run_id, self._now())
 
+        bounded_status_resolution = self._resolve_missing_statuses(
+            run_id=run_id,
+            trading_date=local_date,
+            candidates=status_resolution_candidates,
+        )
+        if bounded_status_resolution is not None:
+            legitimate_count = bounded_status_resolution.metrics.legitimate_unavailable_count
+            success_count += legitimate_count
+            skipped_count = max(0, skipped_count - legitimate_count)
+            if legitimate_count:
+                failure_codes = [code for code in failure_codes if code != "MISSING_MARKET_DATA"]
+
         if is_targeted:
             return self._finalize_targeted_run(
                 run_id=run_id,
@@ -1530,6 +1529,96 @@ class PostCloseUpdater:
         run.heartbeat_at = now
         run.updated_at = now
         self.session.commit()
+
+    def _resolve_missing_statuses(
+        self,
+        *,
+        run_id: Any,
+        trading_date: date,
+        candidates: Mapping[Any, bool],
+    ):
+        """Resolve only missing-price candidates in a separate bounded window."""
+
+        if not candidates:
+            self._status_resolution_metrics = StatusResolutionMetrics()
+            return None
+        self._checkpoint_event(
+            run_id=run_id,
+            batch_key="STATUS_RESOLUTION",
+            batch_number=120,
+            status="IN_PROGRESS",
+            metadata={
+                "tradingDate": trading_date,
+                "candidateCount": len(candidates),
+                "maxAttempts": self.config.status_resolution_max_attempts,
+                "maxTotalWaitSeconds": self.config.status_resolution_max_total_wait_seconds,
+                "backoffSeconds": self.config.status_resolution_backoff_seconds,
+                "separateFromPriceReadiness": True,
+            },
+        )
+
+        def lookup():
+            try:
+                rows = read_effective_trading_status_authority(
+                    self.session,
+                    trading_date,
+                    expected_instrument_ids=tuple(candidates),
+                    provider_failure_instrument_ids=(
+                        instrument_id
+                        for instrument_id, provider_failed in candidates.items()
+                        if provider_failed
+                    ),
+                )
+                # Convert the operator projection back through the pure
+                # resolver contract.  The read model is already the
+                # canonical effective decision; no frontend re-derivation
+                # is involved.
+                return tuple(
+                    TradingStatusResolution(
+                        status=str(item["resolvedStatus"]),
+                        authority_source=item.get("authoritySource"),
+                        reason_code=str(item["reasonCode"]),
+                        effective_from=item.get("effectiveFrom"),
+                        effective_to=item.get("effectiveTo"),
+                        source_reference=item.get("sourceReference"),
+                        resolution_state=str(item["resolutionState"]),
+                        blocks_publication=bool(item["blocksPublication"]),
+                        is_legitimate_unavailable=bool(item["isLegitimateUnavailable"]),
+                        authority_class=(
+                            "NONE"
+                            if item.get("authoritySource") is None
+                            else "CANONICAL_STATUS_AUTHORITY"
+                        ),
+                    )
+                    for item in rows
+                )
+            except Exception as exc:
+                raise TradingStatusAuthorityError("STATUS_AUTHORITY_PROVIDER_FAILURE") from exc
+
+        bounded = resolve_missing_statuses_with_budget(
+            lookup,
+            candidate_count=len(candidates),
+            max_attempts=self.config.status_resolution_max_attempts,
+            max_total_wait_seconds=self.config.status_resolution_max_total_wait_seconds,
+            backoff_seconds=self.config.status_resolution_backoff_seconds,
+            sleep=self.sleep,
+        )
+        self._status_resolution_metrics = bounded.metrics
+        self._checkpoint_event(
+            run_id=run_id,
+            batch_key="STATUS_RESOLUTION",
+            batch_number=120,
+            status=(
+                "COMPLETED" if bounded.metrics.unresolved_unavailable_count == 0 else "PARTIAL"
+            ),
+            processed_count=len(candidates),
+            succeeded_count=bounded.metrics.legitimate_unavailable_count,
+            skipped_count=bounded.metrics.unresolved_unavailable_count,
+            retry_count=bounded.metrics.retry_count,
+            provider_failure_count=bounded.metrics.provider_failure_count,
+            metadata={"metrics": bounded.metrics.to_dict()},
+        )
+        return bounded
 
     def _refresh_tracking_universe_with_retry(
         self,
@@ -1661,6 +1750,8 @@ class PostCloseUpdater:
             snapshot_result["topicCount"],
             snapshot_result["status"],
             local_date.isoformat(),
+            False,
+            getattr(self, "_status_resolution_metrics", StatusResolutionMetrics()).to_dict(),
         )
 
     def _finalize_collected_run(
@@ -1712,9 +1803,7 @@ class PostCloseUpdater:
                 # Read it back and converge without invoking the writers again.
                 run_metadata = self.session.get(LiveCollectorRun, run_id)
                 snapshot_result = dict(
-                    (run_metadata.metadata_payload if run_metadata else {}).get(
-                        "topicSnapshot", {}
-                    )
+                    (run_metadata.metadata_payload if run_metadata else {}).get("topicSnapshot", {})
                 )
                 snapshot_result.setdefault("snapshotDate", local_date.isoformat())
                 snapshot_result.setdefault(
@@ -1725,9 +1814,7 @@ class PostCloseUpdater:
                     "formalTopicDailyState",
                     {"status": "SUCCESS", "statusReason": "READBACK_REUSED"},
                 )
-                snapshot_result["formalTopicSnapshotReadback"] = formal_readback[
-                    "topicSnapshot"
-                ]
+                snapshot_result["formalTopicSnapshotReadback"] = formal_readback["topicSnapshot"]
                 snapshot_result["formalPublicationReadback"] = formal_readback
                 if market_facts_phase is None or market_facts_phase.status != "COMPLETED":
                     self._checkpoint_event(
@@ -1820,18 +1907,12 @@ class PostCloseUpdater:
                     run_id=run_id,
                     batch_key=market_facts_key,
                     batch_number=150,
-                    status=(
-                        "COMPLETED"
-                        if flow_readback.get("status") == "PASS"
-                        else "FAILED"
-                    ),
+                    status=("COMPLETED" if flow_readback.get("status") == "PASS" else "FAILED"),
                     failed_count=0 if flow_readback.get("status") == "PASS" else 1,
                     metadata={
                         "publicationAuthority": "topicpilot.market_institutional_flow_daily",
                         "readback": flow_readback,
-                        "marketFactsPublication": snapshot_result.get(
-                            "marketFactsPublication"
-                        ),
+                        "marketFactsPublication": snapshot_result.get("marketFactsPublication"),
                     },
                 )
             if "formalPublicationReadback" not in snapshot_result:
@@ -1873,8 +1954,7 @@ class PostCloseUpdater:
                     metadata={
                         "errorCode": (
                             "CHECKPOINT_PUBLICATION_MISMATCH"
-                            if formal_phase is not None
-                            and formal_phase.status == "COMPLETED"
+                            if formal_phase is not None and formal_phase.status == "COMPLETED"
                             else "FORMAL_PUBLICATION_READBACK_NOT_READY"
                             if formal_ready
                             else "FORMAL_TOPIC_SNAPSHOT_NOT_READY"
@@ -1943,6 +2023,8 @@ class PostCloseUpdater:
             snapshot_result.get("topicCount", 0),
             snapshot_result.get("status", "FAILED"),
             local_date.isoformat(),
+            False,
+            getattr(self, "_status_resolution_metrics", StatusResolutionMetrics()).to_dict(),
         )
 
     def _publish_market_facts_only(
@@ -2076,13 +2158,17 @@ class PostCloseUpdater:
             )
         ).all()
         topic_ids = [row.topic_id for row in rows]
-        valid = bool(rows) and len(topic_ids) == len(set(topic_ids)) and all(
-            row.membership_snapshot_id
-            and row.membership_snapshot_hash
-            and row.relation_version
-            and row.source_artifact_hash
-            and row.lineage_hash
-            for row in rows
+        valid = (
+            bool(rows)
+            and len(topic_ids) == len(set(topic_ids))
+            and all(
+                row.membership_snapshot_id
+                and row.membership_snapshot_hash
+                and row.relation_version
+                and row.source_artifact_hash
+                and row.lineage_hash
+                for row in rows
+            )
         )
         return {
             "status": "PASS" if valid else "FAIL",
@@ -2117,7 +2203,9 @@ class PostCloseUpdater:
                         """
                     ),
                     {"trading_date": snapshot_date},
-                ).mappings().all()
+                )
+                .mappings()
+                .all()
             )
         except Exception as exc:
             with suppress(Exception):
@@ -2153,8 +2241,7 @@ class PostCloseUpdater:
 
         valid = all(
             selected[market]
-            and row_date(selected[market].get("trading_date"))
-            == snapshot_date.isoformat()
+            and row_date(selected[market].get("trading_date")) == snapshot_date.isoformat()
             and selected[market].get("availability") == "AVAILABLE"
             and selected[market].get("source_identity") == expected_sources[market]
             for market in expected_markets
@@ -2366,10 +2453,13 @@ class PostCloseUpdater:
                 "dailyMarketReconciliation": (
                     reconciliation.to_dict() if reconciliation else {"status": "NOT_RUN"}
                 ),
-                "downstreamReady": bool(
-                    reconciliation and reconciliation.downstream_ready
-                ),
+                "downstreamReady": bool(reconciliation and reconciliation.downstream_ready),
                 "topicSnapshot": snapshot_result or {"status": "NOT_RUN"},
+                "statusResolutionMetrics": getattr(
+                    self,
+                    "_status_resolution_metrics",
+                    StatusResolutionMetrics(),
+                ).to_dict(),
             }
         )
         reconciliation_payload = metadata.get("dailyMarketReconciliation") or {}
@@ -2410,9 +2500,7 @@ class PostCloseUpdater:
                 else "FAIL"
             ),
             "formalTopicSnapshotReadback": (
-                "NOT_RUN"
-                if is_market_closed
-                else formal_readback.get("status", "FAIL")
+                "NOT_RUN" if is_market_closed else formal_readback.get("status", "FAIL")
             ),
         }
         run.metadata_payload = _json_safe(metadata)

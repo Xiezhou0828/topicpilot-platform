@@ -63,6 +63,17 @@ def test_structural_role_authority_audit_is_operator_read_only():
     assert properties["$ref"].endswith("StructuralRoleAuthorityAuditPage")
 
 
+def test_trading_status_authority_is_operator_read_only_and_filterable():
+    operation = create_app().openapi()["paths"][
+        "/api/v1/admin/trading-status-authority"
+    ]["get"]
+    assert "post" not in operation
+    properties = operation["responses"]["200"]["content"]["application/json"]["schema"]
+    assert properties["$ref"].endswith("TradingStatusAuthorityReadPage")
+    query_names = {item["name"] for item in operation["parameters"]}
+    assert {"tradingDate", "market", "status", "resolved", "blocking"} <= query_names
+
+
 def test_migration_probe_is_select_only_and_uses_public_alembic_table():
     statements: list[str] = []
 

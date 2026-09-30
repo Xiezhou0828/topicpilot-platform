@@ -88,6 +88,11 @@ class LiveRuntimeConfig:
     history_readiness_max_attempts: int = 3
     history_readiness_max_total_wait_seconds: float = 90.0
     history_readiness_backoff_seconds: float = 30.0
+    # Status authority resolution is a separate bounded window.  It is only
+    # entered for instruments whose same-session price remains unavailable.
+    status_resolution_max_attempts: int = 3
+    status_resolution_max_total_wait_seconds: float = 90.0
+    status_resolution_backoff_seconds: float = 30.0
     tracking_refresh_batch_size: int = 50
     tracking_refresh_lock_timeout_seconds: float = 30.0
     tracking_refresh_statement_timeout_seconds: float = 120.0
@@ -125,6 +130,12 @@ class LiveRuntimeConfig:
             or self.history_readiness_backoff_seconds < 0
         ):
             raise ValueError("historical provider configuration is invalid")
+        if (
+            self.status_resolution_max_attempts < 1
+            or self.status_resolution_max_total_wait_seconds < 0
+            or self.status_resolution_backoff_seconds < 0
+        ):
+            raise ValueError("status-resolution configuration is invalid")
         if (
             self.tracking_refresh_batch_size < 1
             or self.tracking_refresh_lock_timeout_seconds <= 0
@@ -258,6 +269,15 @@ class LiveRuntimeConfig:
             history_readiness_backoff_seconds=_float(
                 "TOPICPILOT_HISTORY_READINESS_BACKOFF_SECONDS", 30.0, minimum=0.0
             ),
+            status_resolution_max_attempts=_int(
+                "TOPICPILOT_STATUS_RESOLUTION_MAX_ATTEMPTS", 3, minimum=1
+            ),
+            status_resolution_max_total_wait_seconds=_float(
+                "TOPICPILOT_STATUS_RESOLUTION_MAX_TOTAL_WAIT_SECONDS", 90.0, minimum=0.0
+            ),
+            status_resolution_backoff_seconds=_float(
+                "TOPICPILOT_STATUS_RESOLUTION_BACKOFF_SECONDS", 30.0, minimum=0.0
+            ),
             tracking_refresh_batch_size=_int(
                 "TOPICPILOT_LIVE_TRACKING_REFRESH_BATCH_SIZE", 50, minimum=1
             ),
@@ -309,6 +329,9 @@ class LiveRuntimeConfig:
             "historyReadinessMaxAttempts": self.history_readiness_max_attempts,
             "historyReadinessMaxTotalWaitSeconds": self.history_readiness_max_total_wait_seconds,
             "historyReadinessBackoffSeconds": self.history_readiness_backoff_seconds,
+            "statusResolutionMaxAttempts": self.status_resolution_max_attempts,
+            "statusResolutionMaxTotalWaitSeconds": self.status_resolution_max_total_wait_seconds,
+            "statusResolutionBackoffSeconds": self.status_resolution_backoff_seconds,
             "trackingRefreshBatchSize": self.tracking_refresh_batch_size,
             "trackingRefreshLockTimeoutSeconds": self.tracking_refresh_lock_timeout_seconds,
             "trackingRefreshStatementTimeoutSeconds": (

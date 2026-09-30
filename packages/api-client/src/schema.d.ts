@@ -234,6 +234,30 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/admin/trading-status-authority": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Read effective daily trading-status authority
+         * @description Expose effective status diagnostics to the existing operator surface.
+         *
+         *     This endpoint is intentionally read-only and lives under the existing
+         *     admin boundary.  Manual authority mutation remains unavailable until a
+         *     separately governed, audited write path exists.
+         */
+        get: operations["trading_status_authority_api_v1_admin_trading_status_authority_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/analytics/strategy-performance": {
         parameters: {
             query?: never;
@@ -1135,29 +1159,6 @@ export interface components {
             /** Unavailable */
             unavailable: number;
         };
-        /** HomeMarketCoverage */
-        HomeMarketCoverage: {
-            /** Coveragepct */
-            coveragePct: number;
-            /** Coveredcount */
-            coveredCount: number;
-            /** Coveredcoveragepct */
-            coveredCoveragePct: number;
-            /** Denominator */
-            denominator: string;
-            /** Eligibleuniverse */
-            eligibleUniverse: number;
-            /** Pipelinefailurecount */
-            pipelineFailureCount: number;
-            /** Pricedcount */
-            pricedCount: number;
-            /** Source */
-            source: string;
-            /** Unavailablecount */
-            unavailableCount: number;
-            /** Unknowncount */
-            unknownCount: number;
-        };
         /** HomeMarketDistribution */
         HomeMarketDistribution: {
             /** Asof */
@@ -1200,10 +1201,6 @@ export interface components {
             advancePct?: number | null;
             /** Breadtheligible */
             breadthEligible?: number | null;
-            /** Coveragepct */
-            coveragePct?: number | null;
-            /** Coveredcount */
-            coveredCount?: number | null;
             /** Decline */
             decline: number | null;
             /** Declinepct */
@@ -1218,18 +1215,12 @@ export interface components {
             net?: number | null;
             /** Observed */
             observed?: number | null;
-            /** Pipelinefailurecount */
-            pipelineFailureCount?: number | null;
-            /** Pricedcount */
-            pricedCount?: number | null;
             /** Status */
             status: string;
             /** Totalstocks */
             totalStocks: number | null;
             /** Unavailable */
             unavailable: number | null;
-            /** Unknowncount */
-            unknownCount?: number | null;
         };
         /** HomeMarketIndex */
         HomeMarketIndex: {
@@ -1287,7 +1278,6 @@ export interface components {
         HomeMarketOverview: {
             /** Breadth */
             breadth?: components["schemas"]["HomeMarketBreadth"][];
-            coverage?: components["schemas"]["HomeMarketCoverage"] | null;
             /** Datadate */
             dataDate: string | null;
             /**
@@ -1311,8 +1301,6 @@ export interface components {
             trackedTopicCount: number;
             /** Turnover */
             turnover?: components["schemas"]["HomeMarketTurnover"][];
-            /** Unavailableinstruments */
-            unavailableInstruments?: components["schemas"]["HomeUnavailableInstrument"][];
             /** Updatedat */
             updatedAt: string | null;
         };
@@ -1796,38 +1784,6 @@ export interface components {
             topicStatus: string;
             /** Transitionreason */
             transitionReason?: string | null;
-        };
-        /** HomeUnavailableInstrument */
-        HomeUnavailableInstrument: {
-            /** Affectedtopicslugs */
-            affectedTopicSlugs?: string[];
-            /** Blocksformalpublication */
-            blocksFormalPublication: boolean;
-            /** Formaltopicmembershipcount */
-            formalTopicMembershipCount: number;
-            /** Islegitimateunavailable */
-            isLegitimateUnavailable: boolean;
-            /** Lastvalidclose */
-            lastValidClose: number | null;
-            /** Lastvalidpricedate */
-            lastValidPriceDate: string | null;
-            /** Market */
-            market: string;
-            /** Name */
-            name: string | null;
-            /** Reasoncode */
-            reasonCode: string;
-            /** Source */
-            source: string;
-            /** Status */
-            status: string;
-            /** Symbol */
-            symbol: string;
-            /**
-             * Tradingdate
-             * Format: date
-             */
-            tradingDate: string;
         };
         /** LiveRunSummary */
         LiveRunSummary: {
@@ -4048,6 +4004,67 @@ export interface components {
             /** Topictype */
             topicType: string;
         };
+        /**
+         * TradingStatusAuthorityRead
+         * @description Operator-only effective daily trading-status read model.
+         */
+        TradingStatusAuthorityRead: {
+            /** Affectedtopiccount */
+            affectedTopicCount: number;
+            /** Affectedtopicslugs */
+            affectedTopicSlugs?: string[];
+            /** Authoritysource */
+            authoritySource: string | null;
+            /** Blockspublication */
+            blocksPublication: boolean;
+            /** Effectivefrom */
+            effectiveFrom: string | null;
+            /** Effectiveto */
+            effectiveTo: string | null;
+            /** Islegitimateunavailable */
+            isLegitimateUnavailable: boolean;
+            /** Lastvalidclose */
+            lastValidClose: number | null;
+            /** Lastvalidpricedate */
+            lastValidPriceDate: string | null;
+            /** Market */
+            market: string;
+            /** Name */
+            name: string | null;
+            /** Reasoncode */
+            reasonCode: string;
+            /** Resolutionstate */
+            resolutionState: string;
+            /** Resolvedstatus */
+            resolvedStatus: string;
+            /** Sourcereference */
+            sourceReference: string | null;
+            /** Symbol */
+            symbol: string;
+            /**
+             * Tradingdate
+             * Format: date
+             */
+            tradingDate: string;
+        };
+        /** TradingStatusAuthorityReadPage */
+        TradingStatusAuthorityReadPage: {
+            /** Hasmore */
+            hasMore: boolean;
+            /** Items */
+            items?: components["schemas"]["TradingStatusAuthorityRead"][];
+            /** Limit */
+            limit: number;
+            /** Offset */
+            offset: number;
+            /** Total */
+            total: number;
+            /**
+             * Tradingdate
+             * Format: date
+             */
+            tradingDate: string;
+        };
         /** ValidationError */
         ValidationError: {
             /** Context */
@@ -4461,6 +4478,43 @@ export interface operations {
                     "application/json": {
                         [key: string]: unknown;
                     };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    trading_status_authority_api_v1_admin_trading_status_authority_get: {
+        parameters: {
+            query?: {
+                tradingDate?: string | null;
+                market?: string | null;
+                status?: string | null;
+                resolved?: boolean | null;
+                blocking?: boolean | null;
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TradingStatusAuthorityReadPage"];
                 };
             };
             /** @description Validation Error */

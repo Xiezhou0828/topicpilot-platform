@@ -271,11 +271,6 @@ def validate_home_gate(
     market_payload = market_overview.payload if isinstance(market_overview.payload, Mapping) else {}
     health = market_payload.get("marketHealth") or {}
     breadth = market_payload.get("breadth") or []
-    coverage = market_payload.get("coverage") or {}
-    if int(coverage.get("pipelineFailureCount") or 0) or int(
-        coverage.get("unknownCount") or 0
-    ):
-        return "UNAVAILABLE", "NO_PUBLISHED_MARKET_FACTS"
     market_minimum = bool(
         any(int(item.get("observed") or 0) > 0 for item in breadth)
         or health.get("advance") is not None
@@ -1636,29 +1631,6 @@ def materialize_home_v2(
     unavailable_instruments = build_unavailable_instruments(
         breadth_observations, trade_date=trading_date
     )
-    unavailable_by_market: dict[str, list[Any]] = defaultdict(list)
-    for unavailable_item in unavailable_instruments:
-        unavailable_by_market[unavailable_item.market].append(unavailable_item)
-    for item in breadth_payload:
-        market = str(item["market"])
-        market_unavailable = unavailable_by_market.get(market, [])
-        eligible = int(item.get("eligible") or 0)
-        priced = int(item.get("coverage", {}).get("priceObserved") or item.get("priced") or 0)
-        legitimate = sum(1 for unavailable_item in market_unavailable if unavailable_item.is_legitimate_unavailable)
-        pipeline_failure = sum(1 for unavailable_item in market_unavailable if unavailable_item.reason_code in {"MISSING_MARKET_DATA", "PROVIDER_ERROR", "DATE_MISMATCH"} and unavailable_item.blocks_formal_publication)
-        unknown = sum(1 for unavailable_item in market_unavailable if unavailable_item.status == "UNKNOWN" and unavailable_item.blocks_formal_publication and unavailable_item.reason_code not in {"MISSING_MARKET_DATA", "PROVIDER_ERROR", "DATE_MISMATCH"})
-        item["coverage"].update(
-            {
-                "eligibleUniverse": eligible,
-                "pricedCount": priced,
-                "coveredCount": priced + legitimate,
-                "unavailableCount": len(market_unavailable),
-                "pipelineFailureCount": pipeline_failure,
-                "unknownCount": unknown,
-                "coveragePct": round(priced / eligible * 100, 4) if eligible else 0,
-                "coveredCoveragePct": round((priced + legitimate) / eligible * 100, 4) if eligible else 0,
-            }
-        )
 
     read_model_eligible = len(breadth_observations)
     read_model_priced = sum(row.get("close") is not None for row in breadth_observations)
@@ -1717,11 +1689,6 @@ def materialize_home_v2(
         "declinePct": _percentage(decline),
         "flatPct": _percentage(flat),
         "unavailable": total_unavailable,
-        "pricedCount": read_model_priced,
-        "coveredCount": read_model_covered,
-        "coveragePct": market_coverage["coveragePct"],
-        "pipelineFailureCount": market_coverage["pipelineFailureCount"],
-        "unknownCount": market_coverage["unknownCount"],
     }
     indices = [_market_index_payload(item) for item in index_inputs]
     by_market_index = {item.get("market"): item for item in indices}
@@ -1749,9 +1716,10 @@ def materialize_home_v2(
             },
         )
     indices = [by_market_index[market] for market in ("TPE", "TWO")]
-    if market_coverage["pipelineFailureCount"] or market_coverage["unknownCount"]:
-        market_data_status = "UNAVAILABLE"
-    elif aggregate_inputs:
+    market_data_blocked = bool(
+        market_coverage["pipelineFailureCount"] or market_coverage["unknownCount"]
+    )
+    if aggregate_inputs:
         turnover_inputs = [
             {
                 "market": item.get("market"),
@@ -1800,14 +1768,18 @@ def materialize_home_v2(
     available_turnover = [item for item in turnover if item.get("status") == "AVAILABLE" and item.get("value") is not None]
     if aggregate_inputs:
         market_data_status = (
-            "AVAILABLE"
+            "UNAVAILABLE"
+            if market_data_blocked
+            else "AVAILABLE"
             if all(aggregate_by_market.get(market, {}).get("status") == "AVAILABLE" for market in ("TPE", "TWO"))
             else "PARTIAL"
             if aggregate_inputs and (available_indices or available_turnover or total_observed)
             else "UNAVAILABLE"
         )
     else:
-        market_data_status = "AVAILABLE" if total_observed else "UNAVAILABLE"
+        market_data_status = (
+            "UNAVAILABLE" if market_data_blocked else "AVAILABLE" if total_observed else "UNAVAILABLE"
+        )
     aggregate_limits = [item for item in aggregate_inputs if item.get("status") == "AVAILABLE"]
     limit_up_values = [item.get("limitUpCount") for item in aggregate_limits]
     limit_down_values = [item.get("limitDownCount") for item in aggregate_limits]
@@ -1826,8 +1798,6 @@ def materialize_home_v2(
         "trackedTopicCount": 0,
         "latestSnapshotTime": breadth_as_of,
         "marketHealth": market_health,
-        "coverage": market_coverage,
-        "unavailableInstruments": [item.to_dict() for item in unavailable_instruments],
         "institutionFlows": None,
         "breadth": breadth_payload,
         "distribution": distribution_payload,
