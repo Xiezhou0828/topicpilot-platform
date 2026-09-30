@@ -134,11 +134,25 @@ def build_historical_provider_registry(
     end_date: date | None = None,
     exchange_transport: Callable[[str, float], bytes] | None = None,
     market_batch: bool = False,
+    readiness_max_attempts: int = 3,
+    readiness_max_total_wait_seconds: float = 90.0,
+    readiness_backoff_seconds: float = 30.0,
+    readiness_sleep: Callable[[float], None] | None = None,
+    readiness_clock: Callable[[], float] | None = None,
 ) -> HistoricalProviderRegistry:
     end = end_date or (date.today() - timedelta(days=1))
     start = start_date or (end - timedelta(days=180))
     if end < start:
         raise ValueError("historical provider window is invalid")
+    readiness_kwargs: dict[str, object] = {
+        "readiness_max_attempts": readiness_max_attempts,
+        "readiness_max_total_wait_seconds": readiness_max_total_wait_seconds,
+        "readiness_backoff_seconds": readiness_backoff_seconds,
+    }
+    if readiness_sleep is not None:
+        readiness_kwargs["readiness_sleep"] = readiness_sleep
+    if readiness_clock is not None:
+        readiness_kwargs["readiness_clock"] = readiness_clock
     registry = HistoricalProviderRegistry()
     registry.register(
         HistoricalProviderRegistration(
@@ -148,10 +162,14 @@ def build_historical_provider_registry(
                 end_date=end,
                 transport=exchange_transport,
                 market_batch=market_batch,
+                **readiness_kwargs,
             )
             if exchange_transport is not None
             else TwseOfficialDailyProvider(
-                start_date=start, end_date=end, market_batch=market_batch
+                start_date=start,
+                end_date=end,
+                market_batch=market_batch,
+                **readiness_kwargs,
             ),
             frozenset({"TPE"}),
             30,
@@ -165,10 +183,14 @@ def build_historical_provider_registry(
                 end_date=end,
                 transport=exchange_transport,
                 market_batch=market_batch,
+                **readiness_kwargs,
             )
             if exchange_transport is not None
             else TpexOfficialDailyProvider(
-                start_date=start, end_date=end, market_batch=market_batch
+                start_date=start,
+                end_date=end,
+                market_batch=market_batch,
+                **readiness_kwargs,
             ),
             frozenset({"TWO"}),
             40,

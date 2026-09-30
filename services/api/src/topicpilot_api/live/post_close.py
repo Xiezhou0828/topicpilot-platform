@@ -12,6 +12,7 @@ from decimal import Decimal
 from typing import Any
 from urllib.request import Request, urlopen
 from uuid import NAMESPACE_URL, UUID, uuid5
+from zoneinfo import ZoneInfo
 
 from sqlalchemy import and_, or_, select, text
 from sqlalchemy.exc import DBAPIError, IntegrityError, SQLAlchemyError
@@ -137,6 +138,20 @@ class PostClosePreconditionError(RuntimeError):
     def __init__(self, code: str):
         self.code = code
         super().__init__(code)
+
+
+def resolve_post_close_run_date(
+    now: datetime,
+    timezone_name: str,
+    explicit_run_date: date | None = None,
+) -> date:
+    """Bind an automatic POST_CLOSE run to the configured market-local date."""
+
+    if explicit_run_date is not None:
+        return explicit_run_date
+    if now.tzinfo is None:
+        raise ValueError("post-close clock must be timezone-aware")
+    return now.astimezone(ZoneInfo(timezone_name)).date()
 
 
 def _validated_post_close_context(
@@ -849,6 +864,30 @@ class PostCloseUpdater:
             ),
         )
 
+    @staticmethod
+    def _is_market_batch_provider_failure(exc: Exception, adapter: Any) -> bool:
+        """Avoid per-symbol fallback when the shared market request failed."""
+
+        code = getattr(exc, "code", None)
+        return bool(
+            getattr(adapter, "market_batch", False)
+            and isinstance(code, str)
+            and code
+            in {
+                "EXCHANGE_EMPTY_PAYLOAD",
+                "EXCHANGE_NO_DATA",
+                "EXCHANGE_NOT_READY",
+                "DUPLICATE_INSTRUMENT_ROW",
+                "INVALID_DATE",
+                "INVALID_NUMBER",
+                "INVALID_OHLC",
+                "INVALID_PAYLOAD",
+                "INVALID_VOLUME",
+                "PROVIDER_DATE_MISMATCH",
+                "PROVIDER_REQUEST_FAILED",
+            }
+        )
+
     def _record_history_attempt(
         self,
         *,
@@ -1021,10 +1060,11 @@ class PostCloseUpdater:
         now = self._now()
         if execution_mode not in {"SCHEDULED", "MANUAL", "RECOVERY"}:
             raise ValueError("invalid POST_CLOSE execution_mode")
-        if run_date is None:
-            local_date = now.astimezone(self.session_clock.timezone).date()
-        else:
-            local_date = run_date
+        local_date = resolve_post_close_run_date(
+            now,
+            self.config.timezone_name,
+            run_date,
+        )
         context = _validated_post_close_context(
             self.session,
             run_date=local_date,
@@ -1165,6 +1205,10 @@ class PostCloseUpdater:
             end_date=local_date,
             exchange_transport=transport,
             market_batch=True,
+            readiness_max_attempts=self.config.history_readiness_max_attempts,
+            readiness_max_total_wait_seconds=self.config.history_readiness_max_total_wait_seconds,
+            readiness_backoff_seconds=self.config.history_readiness_backoff_seconds,
+            readiness_sleep=self.sleep,
         )
         policy = MappingPolicy(
             mapping_policy_version=HISTORICAL_MAPPING_POLICY_VERSION,
@@ -1213,6 +1257,7 @@ class PostCloseUpdater:
             registration = registry.for_market(market.code)[0]
             batch_started = self._now()
             retries_before = transport.retry_count
+            readiness_retries_before = getattr(registration.adapter, "readiness_retry_count", 0)
             batch_retry_count = 0
             batch_success_count = 0
             batch_skipped_count = 0
@@ -1250,7 +1295,12 @@ class PostCloseUpdater:
                     }
                     if set(summaries) != expected_keys:
                         raise RuntimeError("BATCH_RESULT_MISMATCH")
-                    batch_retry_count = transport.retry_count - retries_before
+                    batch_retry_count = (
+                        transport.retry_count
+                        - retries_before
+                        + getattr(registration.adapter, "readiness_retry_count", 0)
+                        - readiness_retries_before
+                    )
                     completed = self._now()
                     for index, (instrument, item_market) in enumerate(batch):
                         summary = summaries[(instrument.instrument_code, item_market.code)]
@@ -1292,10 +1342,58 @@ class PostCloseUpdater:
                     provider_request_count=batch_point_count,
                     metadata={"market": market.code, "sessionDate": local_date},
                 )
-            except Exception:
-                batch_retry_count = transport.retry_count - retries_before
+            except Exception as exc:
+                provider_exception = exc
+                batch_retry_count = (
+                    transport.retry_count
+                    - retries_before
+                    + getattr(registration.adapter, "readiness_retry_count", 0)
+                    - readiness_retries_before
+                )
                 retry_count += batch_retry_count
                 self.session.rollback()
+
+                if provider_exception is not None and self._is_market_batch_provider_failure(
+                    provider_exception, registration.adapter
+                ):
+                    provider_error_code = str(provider_exception.code)
+                    provider_error_message = str(provider_exception)
+                    fallback_failure_count = 0
+                    with self.session.begin():
+                        completed = self._now()
+                        for instrument, item_market in batch:
+                            self._record_history_attempt(
+                                run_id=run_id,
+                                instrument=instrument,
+                                market=item_market,
+                                started_at=batch_started,
+                                completed_at=completed,
+                                attempt_status="FAILED",
+                                retry_count=0,
+                                error_code=provider_error_code,
+                                error_message=provider_error_message,
+                                provider_status="ERROR",
+                            )
+                            fallback_failure_count += 1
+                    failure_codes.append(provider_error_code)
+                    failure_count += fallback_failure_count
+                    self._checkpoint_event(
+                        run_id=run_id,
+                        batch_key=batch_key,
+                        batch_number=100 + batch_index,
+                        status="FAILED",
+                        processed_count=len(batch),
+                        failed_count=fallback_failure_count,
+                        retry_count=batch_retry_count,
+                        provider_failure_count=1,
+                        metadata={
+                            "market": market.code,
+                            "sessionDate": local_date,
+                            "providerErrorCode": provider_error_code,
+                        },
+                    )
+                    self._heartbeat(run_id, self._now())
+                    continue
 
                 # Preserve the old per-symbol failure isolation only for a
                 # batch that could not be committed as a unit.  In the normal
@@ -1309,6 +1407,9 @@ class PostCloseUpdater:
                     for instrument, item_market in batch:
                         item_started = self._now()
                         item_retries_before = transport.retry_count
+                        item_readiness_retries_before = getattr(
+                            registration.adapter, "readiness_retry_count", 0
+                        )
                         attempt_status = "FAILED"
                         error_code: str | None = None
                         error_message: str | None = None
@@ -1357,7 +1458,12 @@ class PostCloseUpdater:
                             error_message = str(exc)
                             failure_codes.append(error_code)
                         completed = self._now()
-                        item_retry_count = transport.retry_count - item_retries_before
+                        item_retry_count = (
+                            transport.retry_count
+                            - item_retries_before
+                            + getattr(registration.adapter, "readiness_retry_count", 0)
+                            - item_readiness_retries_before
+                        )
                         retry_count += item_retry_count
                         self._record_history_attempt(
                             run_id=run_id,
@@ -2326,4 +2432,5 @@ __all__ = [
     "PostCloseRunResult",
     "PostCloseUpdater",
     "expected_post_close_universe",
+    "resolve_post_close_run_date",
 ]

@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import json
 import re
+import time
 from collections.abc import Callable, Mapping
 from datetime import date, datetime
 from decimal import Decimal, InvalidOperation
@@ -25,6 +26,12 @@ TWSE_DAILY_SOURCE_CODE: Final = "TWSE_OFFICIAL_DAILY"
 TWSE_DAILY_ADAPTER_VERSION: Final = "twse-official-daily.v2"
 TPEX_DAILY_SOURCE_CODE: Final = "TPEX_OFFICIAL_DAILY"
 TPEX_DAILY_ADAPTER_VERSION: Final = "tpex-official-daily.v2"
+DEFAULT_READINESS_MAX_ATTEMPTS: Final = 3
+DEFAULT_READINESS_MAX_TOTAL_WAIT_SECONDS: Final = 90.0
+DEFAULT_READINESS_BACKOFF_SECONDS: Final = 30.0
+_RETRYABLE_READINESS_CODES: Final = frozenset(
+    {"EXCHANGE_NOT_READY", "EXCHANGE_EMPTY_PAYLOAD"}
+)
 _IDENTIFIER_RE: Final = re.compile(r"^[A-Za-z0-9_-]{1,64}$")
 _MISSING_MARKERS: Final = {"", "-", "--", "---", "X", "N/A", "null"}
 
@@ -166,9 +173,18 @@ class TwseOfficialDailyProvider:
         transport: Transport = _read_url,
         clock: Callable[[], datetime] | None = None,
         market_batch: bool = False,
+        readiness_max_attempts: int = DEFAULT_READINESS_MAX_ATTEMPTS,
+        readiness_max_total_wait_seconds: float = DEFAULT_READINESS_MAX_TOTAL_WAIT_SECONDS,
+        readiness_backoff_seconds: float = DEFAULT_READINESS_BACKOFF_SECONDS,
+        readiness_sleep: Callable[[float], None] = time.sleep,
+        readiness_clock: Callable[[], float] = time.monotonic,
     ) -> None:
         if timeout <= 0:
             raise ValueError("timeout must be positive")
+        if readiness_max_attempts < 1:
+            raise ValueError("readiness_max_attempts must be positive")
+        if readiness_max_total_wait_seconds < 0 or readiness_backoff_seconds < 0:
+            raise ValueError("readiness timing must be non-negative")
         self.start_date = start_date
         self.end_date = end_date
         self.base_url = base_url
@@ -177,9 +193,19 @@ class TwseOfficialDailyProvider:
         self.transport = transport
         self.clock = clock or (lambda: datetime.now(TAIPEI))
         self.market_batch = market_batch
+        self.readiness_max_attempts = readiness_max_attempts
+        self.readiness_max_total_wait_seconds = readiness_max_total_wait_seconds
+        self.readiness_backoff_seconds = readiness_backoff_seconds
+        self.readiness_sleep = readiness_sleep
+        self.readiness_clock = readiness_clock
+        self.readiness_attempt_count = 0
+        self.readiness_retry_count = 0
+        self.readiness_wait_seconds = 0.0
+        self.last_market_failure_code: str | None = None
         self._market_cache: tuple[datetime, dict[str, HistoricalBar]] | None = None
+        self._market_failure: HistoricalProviderError | None = None
 
-    def _fetch_market_day(self) -> tuple[datetime, dict[str, HistoricalBar]]:
+    def _fetch_market_day_once(self) -> tuple[datetime, dict[str, HistoricalBar]]:
         if self.start_date != self.end_date:
             raise HistoricalProviderError(
                 "MARKET_BATCH_DATE_WINDOW",
@@ -198,7 +224,7 @@ class TwseOfficialDailyProvider:
         payload = _json(self.transport, f"{self.market_base_url}?{query}", self.timeout)
         if str(payload.get("stat", "")).upper() != "OK":
             raise HistoricalProviderError(
-                "EXCHANGE_NO_DATA", str(payload.get("stat", "unknown"))
+                "EXCHANGE_NOT_READY", str(payload.get("stat", "unknown"))
             )
         response_date = str(payload.get("date", ""))
         if response_date != target_date.strftime("%Y%m%d"):
@@ -246,8 +272,43 @@ class TwseOfficialDailyProvider:
             )
             _validate_bar(bar)
             bars[code] = bar
+        if not bars:
+            raise HistoricalProviderError(
+                "EXCHANGE_EMPTY_PAYLOAD", "TWSE market close table contains no rows"
+            )
         self._market_cache = (self.clock(), bars)
         return self._market_cache
+
+    def _fetch_market_day(self) -> tuple[datetime, dict[str, HistoricalBar]]:
+        if self._market_failure is not None:
+            raise self._market_failure
+        if self._market_cache is not None:
+            return self._market_cache
+        started = self.readiness_clock()
+        while True:
+            self.readiness_attempt_count += 1
+            try:
+                return self._fetch_market_day_once()
+            except HistoricalProviderError as exc:
+                self.last_market_failure_code = exc.code
+                if exc.code not in _RETRYABLE_READINESS_CODES:
+                    self._market_failure = exc
+                    raise
+                elapsed = max(0.0, self.readiness_clock() - started)
+                remaining = self.readiness_max_total_wait_seconds - elapsed
+                if self.readiness_attempt_count >= self.readiness_max_attempts or remaining <= 0:
+                    self._market_failure = exc
+                    raise
+                delay = min(
+                    self.readiness_backoff_seconds * (2 ** (self.readiness_attempt_count - 1)),
+                    remaining,
+                )
+                if delay <= 0:
+                    self._market_failure = exc
+                    raise
+                self.readiness_retry_count += 1
+                self.readiness_wait_seconds += delay
+                self.readiness_sleep(delay)
 
     def _fetch_market_instrument(
         self, instrument_code: str, market_code: str
@@ -353,9 +414,18 @@ class TpexOfficialDailyProvider:
         transport: Transport = _read_url,
         clock: Callable[[], datetime] | None = None,
         market_batch: bool = False,
+        readiness_max_attempts: int = DEFAULT_READINESS_MAX_ATTEMPTS,
+        readiness_max_total_wait_seconds: float = DEFAULT_READINESS_MAX_TOTAL_WAIT_SECONDS,
+        readiness_backoff_seconds: float = DEFAULT_READINESS_BACKOFF_SECONDS,
+        readiness_sleep: Callable[[float], None] = time.sleep,
+        readiness_clock: Callable[[], float] = time.monotonic,
     ) -> None:
         if timeout <= 0:
             raise ValueError("timeout must be positive")
+        if readiness_max_attempts < 1:
+            raise ValueError("readiness_max_attempts must be positive")
+        if readiness_max_total_wait_seconds < 0 or readiness_backoff_seconds < 0:
+            raise ValueError("readiness timing must be non-negative")
         self.start_date = start_date
         self.end_date = end_date
         self.base_url = base_url
@@ -364,9 +434,19 @@ class TpexOfficialDailyProvider:
         self.transport = transport
         self.clock = clock or (lambda: datetime.now(TAIPEI))
         self.market_batch = market_batch
+        self.readiness_max_attempts = readiness_max_attempts
+        self.readiness_max_total_wait_seconds = readiness_max_total_wait_seconds
+        self.readiness_backoff_seconds = readiness_backoff_seconds
+        self.readiness_sleep = readiness_sleep
+        self.readiness_clock = readiness_clock
+        self.readiness_attempt_count = 0
+        self.readiness_retry_count = 0
+        self.readiness_wait_seconds = 0.0
+        self.last_market_failure_code: str | None = None
         self._market_cache: tuple[datetime, dict[str, HistoricalBar]] | None = None
+        self._market_failure: HistoricalProviderError | None = None
 
-    def _fetch_market_day(self) -> tuple[datetime, dict[str, HistoricalBar]]:
+    def _fetch_market_day_once(self) -> tuple[datetime, dict[str, HistoricalBar]]:
         if self.start_date != self.end_date:
             raise HistoricalProviderError(
                 "MARKET_BATCH_DATE_WINDOW",
@@ -381,7 +461,7 @@ class TpexOfficialDailyProvider:
         payload = _json(self.transport, f"{self.market_base_url}?{query}", self.timeout)
         if str(payload.get("stat", "")).lower() != "ok":
             raise HistoricalProviderError(
-                "EXCHANGE_NO_DATA", str(payload.get("stat", "unknown"))
+                "EXCHANGE_NOT_READY", str(payload.get("stat", "unknown"))
             )
         response_date = str(payload.get("date", ""))
         if response_date != target_date.strftime("%Y%m%d"):
@@ -430,8 +510,43 @@ class TpexOfficialDailyProvider:
             )
             _validate_bar(bar)
             bars[code] = bar
+        if not bars:
+            raise HistoricalProviderError(
+                "EXCHANGE_EMPTY_PAYLOAD", "TPEx market close table contains no rows"
+            )
         self._market_cache = (self.clock(), bars)
         return self._market_cache
+
+    def _fetch_market_day(self) -> tuple[datetime, dict[str, HistoricalBar]]:
+        if self._market_failure is not None:
+            raise self._market_failure
+        if self._market_cache is not None:
+            return self._market_cache
+        started = self.readiness_clock()
+        while True:
+            self.readiness_attempt_count += 1
+            try:
+                return self._fetch_market_day_once()
+            except HistoricalProviderError as exc:
+                self.last_market_failure_code = exc.code
+                if exc.code not in _RETRYABLE_READINESS_CODES:
+                    self._market_failure = exc
+                    raise
+                elapsed = max(0.0, self.readiness_clock() - started)
+                remaining = self.readiness_max_total_wait_seconds - elapsed
+                if self.readiness_attempt_count >= self.readiness_max_attempts or remaining <= 0:
+                    self._market_failure = exc
+                    raise
+                delay = min(
+                    self.readiness_backoff_seconds * (2 ** (self.readiness_attempt_count - 1)),
+                    remaining,
+                )
+                if delay <= 0:
+                    self._market_failure = exc
+                    raise
+                self.readiness_retry_count += 1
+                self.readiness_wait_seconds += delay
+                self.readiness_sleep(delay)
 
     def _fetch_market_instrument(
         self, instrument_code: str, market_code: str
@@ -519,6 +634,9 @@ class TpexOfficialDailyProvider:
 
 
 __all__ = [
+    "DEFAULT_READINESS_BACKOFF_SECONDS",
+    "DEFAULT_READINESS_MAX_ATTEMPTS",
+    "DEFAULT_READINESS_MAX_TOTAL_WAIT_SECONDS",
     "TPEX_DAILY_ADAPTER_VERSION",
     "TPEX_DAILY_SOURCE_CODE",
     "TWSE_DAILY_ADAPTER_VERSION",

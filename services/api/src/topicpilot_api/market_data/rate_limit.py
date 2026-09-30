@@ -5,6 +5,7 @@ from __future__ import annotations
 import time
 from collections import deque
 from collections.abc import Callable
+from http.client import HTTPException
 
 
 class RateLimitedTransport:
@@ -68,7 +69,7 @@ class RateLimitedTransport:
             self._wait_for_budget()
             try:
                 return self.transport(url, timeout)
-            except (OSError, TimeoutError) as exc:
+            except (OSError, TimeoutError, HTTPException) as exc:
                 last_error = exc
                 if attempt >= self.max_retries:
                     raise

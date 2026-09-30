@@ -85,6 +85,9 @@ class LiveRuntimeConfig:
     history_min_request_interval_seconds: float = 0.5
     history_max_retries: int = 4
     history_retry_backoff_seconds: float = 2.0
+    history_readiness_max_attempts: int = 3
+    history_readiness_max_total_wait_seconds: float = 90.0
+    history_readiness_backoff_seconds: float = 30.0
     tracking_refresh_batch_size: int = 50
     tracking_refresh_lock_timeout_seconds: float = 30.0
     tracking_refresh_statement_timeout_seconds: float = 120.0
@@ -117,6 +120,9 @@ class LiveRuntimeConfig:
             or self.history_min_request_interval_seconds < 0
             or self.history_max_retries < 0
             or self.history_retry_backoff_seconds < 0
+            or self.history_readiness_max_attempts < 1
+            or self.history_readiness_max_total_wait_seconds < 0
+            or self.history_readiness_backoff_seconds < 0
         ):
             raise ValueError("historical provider configuration is invalid")
         if (
@@ -243,6 +249,15 @@ class LiveRuntimeConfig:
             history_retry_backoff_seconds=_float(
                 "TOPICPILOT_HISTORY_RETRY_BACKOFF_SECONDS", 2.0, minimum=0.0
             ),
+            history_readiness_max_attempts=_int(
+                "TOPICPILOT_HISTORY_READINESS_MAX_ATTEMPTS", 3, minimum=1
+            ),
+            history_readiness_max_total_wait_seconds=_float(
+                "TOPICPILOT_HISTORY_READINESS_MAX_TOTAL_WAIT_SECONDS", 90.0, minimum=0.0
+            ),
+            history_readiness_backoff_seconds=_float(
+                "TOPICPILOT_HISTORY_READINESS_BACKOFF_SECONDS", 30.0, minimum=0.0
+            ),
             tracking_refresh_batch_size=_int(
                 "TOPICPILOT_LIVE_TRACKING_REFRESH_BATCH_SIZE", 50, minimum=1
             ),
@@ -291,6 +306,9 @@ class LiveRuntimeConfig:
             "historyMinRequestIntervalSeconds": self.history_min_request_interval_seconds,
             "historyMaxRetries": self.history_max_retries,
             "historyRetryBackoffSeconds": self.history_retry_backoff_seconds,
+            "historyReadinessMaxAttempts": self.history_readiness_max_attempts,
+            "historyReadinessMaxTotalWaitSeconds": self.history_readiness_max_total_wait_seconds,
+            "historyReadinessBackoffSeconds": self.history_readiness_backoff_seconds,
             "trackingRefreshBatchSize": self.tracking_refresh_batch_size,
             "trackingRefreshLockTimeoutSeconds": self.tracking_refresh_lock_timeout_seconds,
             "trackingRefreshStatementTimeoutSeconds": (

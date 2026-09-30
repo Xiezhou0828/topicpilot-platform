@@ -166,6 +166,150 @@ def test_market_batch_rejects_wrong_provider_date():
         provider.fetch_daily("2330", "TPE")
 
 
+def test_twse_market_batch_retries_bounded_not_ready_response_then_uses_same_day_data():
+    calls: list[str] = []
+    sleeps: list[float] = []
+    payloads = iter(
+        [
+            {"stat": "查無資料"},
+            {
+                "stat": "OK",
+                "date": "20260807",
+                "tables": [
+                    {
+                        "fields": ["證券代號", "成交股數", "開盤價", "最高價", "最低價", "收盤價"],
+                        "data": [
+                            ["2330", "TSMC", "1,000", "10", "100,000", "100", "105", "99", "104"]
+                        ],
+                    }
+                ],
+            },
+        ]
+    )
+    provider = TwseOfficialDailyProvider(
+        start_date=date(2026, 8, 7),
+        end_date=date(2026, 8, 7),
+        market_batch=True,
+        readiness_max_attempts=3,
+        readiness_max_total_wait_seconds=90,
+        readiness_backoff_seconds=10,
+        readiness_sleep=sleeps.append,
+        transport=lambda url, _timeout: (calls.append(url), json.dumps(next(payloads)).encode())[1],
+    )
+
+    result = provider.fetch_daily("2330", "TPE")
+
+    assert result.bars[0].close == Decimal("104")
+    assert len(calls) == 2
+    assert provider.readiness_attempt_count == 2
+    assert provider.readiness_retry_count == 1
+    assert sleeps == [10]
+    assert "date=20260807" in calls[0]
+
+
+def test_tpex_market_batch_retries_empty_payload_without_cross_market_state():
+    calls: list[str] = []
+    sleeps: list[float] = []
+    payloads = iter(
+        [
+            {
+                "stat": "ok",
+                "date": "20260807",
+                "tables": [{"title": "上櫃股票行情", "fields": ["代號"], "data": []}],
+            },
+            {
+                "stat": "ok",
+                "date": "20260807",
+                "tables": [
+                    {
+                        "title": "上櫃股票行情",
+                        "fields": [
+                            "代號",
+                            "名稱",
+                            "收盤",
+                            "漲跌",
+                            "開盤",
+                            "最高",
+                            "最低",
+                            "均價",
+                            "成交股數",
+                        ],
+                        "data": [["4979", "Example", "50", "+1", "49", "51", "48", "50", "3,000"]],
+                    }
+                ],
+            },
+        ]
+    )
+    tpex = TpexOfficialDailyProvider(
+        start_date=date(2026, 8, 7),
+        end_date=date(2026, 8, 7),
+        market_batch=True,
+        readiness_max_attempts=3,
+        readiness_max_total_wait_seconds=90,
+        readiness_backoff_seconds=5,
+        readiness_sleep=sleeps.append,
+        transport=lambda url, _timeout: (calls.append(url), json.dumps(next(payloads)).encode())[1],
+    )
+    twse = TwseOfficialDailyProvider(
+        start_date=date(2026, 8, 7),
+        end_date=date(2026, 8, 7),
+        market_batch=True,
+        transport=lambda _url, _timeout: json.dumps(
+            {
+                "stat": "查無資料",
+            }
+        ).encode(),
+        readiness_max_attempts=1,
+    )
+
+    with pytest.raises(HistoricalProviderError, match="EXCHANGE_NOT_READY"):
+        twse.fetch_daily("2330", "TPE")
+    result = tpex.fetch_daily("4979", "TWO")
+
+    assert result.bars[0].close == Decimal("50")
+    assert len(calls) == 2
+    assert tpex.readiness_retry_count == 1
+    assert sleeps == [5]
+
+
+def test_market_batch_caches_terminal_empty_payload_and_preserves_schema_errors():
+    calls: list[str] = []
+    payload = json.dumps(
+        {
+            "stat": "OK",
+            "date": "20260807",
+            "tables": [{"fields": ["證券代號"], "data": []}],
+        }
+    ).encode()
+    provider = TwseOfficialDailyProvider(
+        start_date=date(2026, 8, 7),
+        end_date=date(2026, 8, 7),
+        market_batch=True,
+        readiness_max_attempts=2,
+        readiness_max_total_wait_seconds=1,
+        readiness_backoff_seconds=1,
+        readiness_sleep=lambda _seconds: None,
+        transport=lambda url, _timeout: (calls.append(url), payload)[1],
+    )
+
+    with pytest.raises(HistoricalProviderError, match="EXCHANGE_EMPTY_PAYLOAD"):
+        provider.fetch_daily("2330", "TPE")
+    with pytest.raises(HistoricalProviderError, match="EXCHANGE_EMPTY_PAYLOAD"):
+        provider.fetch_daily("2317", "TPE")
+
+    assert len(calls) == 2
+    assert provider.readiness_retry_count == 1
+
+    schema_provider = TwseOfficialDailyProvider(
+        start_date=date(2026, 8, 7),
+        end_date=date(2026, 8, 7),
+        market_batch=True,
+        transport=lambda _url, _timeout: b'{"stat":"OK","date":"20260807","tables":[]}',
+    )
+    with pytest.raises(HistoricalProviderError, match="INVALID_PAYLOAD"):
+        schema_provider.fetch_daily("2330", "TPE")
+
+
 def test_explicit_no_trade_normalizes_to_price_null_plus_status_evidence():
     now = datetime(2026, 8, 7, tzinfo=UTC)
     envelope = InputEnvelope(
