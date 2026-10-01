@@ -412,16 +412,21 @@ def build_market_distribution(
             for key, label in MARKET_DISTRIBUTION_BUCKETS
         ],
         "coverage": {
+            "scope": "COVERED_STOCKS",
             "denominator": "active date-effective EQUITY instruments in TPE/TWO",
-            "universeLabel": (
-                "上市＋上櫃活躍、具日期效力的 EQUITY；分布僅納入正式收盤與前收完整者"
-            ),
+            "distributionDenominator": "COMPLETE_CLOSE_PREVIOUS_CLOSE",
+            "universeLabel": "已覆蓋股票：正式收盤與前收完整者",
             "eligibleUniverse": int(eligible_count),
+            "observedComplete": eligible,
+            "coveragePct": round(eligible / int(eligible_count) * 100, 4)
+            if int(eligible_count)
+            else None,
             "percentageEligible": round(eligible / int(eligible_count) * 100, 4)
             if int(eligible_count)
             else 0,
             "breadthEligible": eligible,
             "distributionTotal": eligible,
+            "excludedCount": max(0, int(eligible_count) - eligible),
             "reconciliationStatus": "PASS" if eligible else "UNAVAILABLE",
             "exclusionCount": max(0, int(eligible_count) - eligible),
             "exclusionReason": (

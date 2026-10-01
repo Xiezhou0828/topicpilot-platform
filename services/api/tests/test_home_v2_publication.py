@@ -185,6 +185,12 @@ def test_market_distribution_excludes_missing_price_pairs_without_zero_filling()
     assert sum(bucket["percentage"] for bucket in distribution["buckets"]) == 100.0
     assert distribution["coverage"]["reconciliationStatus"] == "PASS"
     assert distribution["coverage"]["breadthEligible"] == 2
+    assert distribution["coverage"]["scope"] == "COVERED_STOCKS"
+    assert distribution["coverage"]["universeLabel"].startswith("已覆蓋股票")
+    assert distribution["coverage"]["universeLabel"].endswith("正式收盤與前收完整者")
+    assert distribution["coverage"]["observedComplete"] == 2
+    assert distribution["coverage"]["excludedCount"] == 1
+    assert distribution["coverage"]["distributionDenominator"] == "COMPLETE_CLOSE_PREVIOUS_CLOSE"
 
 
 def test_home_institutional_flow_aggregate_requires_matching_exchange_facts():
