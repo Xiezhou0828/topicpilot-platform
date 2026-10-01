@@ -337,6 +337,26 @@ def _safe_checkpoint(row: Mapping[str, Any]) -> dict[str, Any]:
         )
         if row.get(key) is not None
     }
+    provider_applicable = row.get("metadata_provider_metrics_applicable")
+    provider_request_count = row.get("provider_request_count")
+    if str(provider_applicable).lower() == "false":
+        provider_request_count = None
+    elif row.get("metadata_provider_request_count") is not None:
+        provider_request_count = int(row["metadata_provider_request_count"])
+    elif provider_request_count is not None:
+        provider_request_count = int(provider_request_count)
+    failure_reason = {
+        output_key: _sanitize_text(row.get(input_key), limit=128)
+        for output_key, input_key in (
+            ("readbackStatus", "metadata_failure_readback_status"),
+            ("reasonCode", "metadata_failure_reason_code"),
+            ("institutionalFlowStatus", "metadata_failure_institutional_flow_status"),
+            ("marketFactsPublicationStatus", "metadata_failure_market_facts_status"),
+            ("failedSection", "metadata_failure_failed_section"),
+            ("failureClassification", "metadata_failure_classification"),
+        )
+        if row.get(input_key) is not None
+    }
     return {
         "batchNumber": int(row.get("batch_number", 0) or 0),
         "batchKey": _sanitize_text(row.get("batch_key"), limit=128),
@@ -347,7 +367,7 @@ def _safe_checkpoint(row: Mapping[str, Any]) -> dict[str, Any]:
         "failedCount": int(row.get("failed_count", 0) or 0),
         "skippedCount": int(row.get("skipped_count", 0) or 0),
         "retryCount": int(row.get("retry_count", 0) or 0),
-        "providerRequestCount": int(row.get("provider_request_count", 0) or 0),
+        "providerRequestCount": provider_request_count,
         "providerFailureCount": int(row.get("provider_failure_count", 0) or 0),
         "checkpointHash": _sanitize_text(row.get("checkpoint_hash"), limit=128),
         "createdAt": _as_iso(row.get("created_at")),
@@ -362,10 +382,12 @@ def _safe_checkpoint(row: Mapping[str, Any]) -> dict[str, Any]:
                 "metadata_run_status",
                 "metadata_formal_readback",
                 "metadata_scope",
+                "metadata_checkpoint_semantics",
             )
             if row.get(key) is not None
         },
         "publicationReadback": publication_readback,
+        "failureReason": failure_reason or None,
     }
 
 
@@ -503,6 +525,23 @@ SELECT batch_number, batch_key, attempt_number, status,
        metadata->>'runStatus' AS metadata_run_status,
        metadata->>'formalReadback' AS metadata_formal_readback,
        metadata->>'scope' AS metadata_scope,
+       metadata->>'checkpointSemantics' AS metadata_checkpoint_semantics,
+       metadata->'providerMetrics'->>'applicable'
+           AS metadata_provider_metrics_applicable,
+       metadata->'providerMetrics'->>'requestCount'
+           AS metadata_provider_request_count,
+       metadata->'failureReason'->>'readbackStatus'
+           AS metadata_failure_readback_status,
+       metadata->'failureReason'->>'reasonCode'
+           AS metadata_failure_reason_code,
+       metadata->'failureReason'->>'institutionalFlowStatus'
+           AS metadata_failure_institutional_flow_status,
+       metadata->'failureReason'->>'marketFactsPublicationStatus'
+           AS metadata_failure_market_facts_status,
+       metadata->'failureReason'->>'failedSection'
+           AS metadata_failure_failed_section,
+       metadata->'failureReason'->>'failureClassification'
+           AS metadata_failure_classification,
        metadata->'formalPublication'->>'status' AS metadata_formal_publication_status,
        metadata->'formalPublication'->'topicSnapshot'->>'status'
            AS metadata_formal_topic_status,

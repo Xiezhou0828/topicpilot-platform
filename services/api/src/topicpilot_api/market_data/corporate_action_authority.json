@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "official-corporate-action-authority.v1",
+  "authority": "TWSE_MOPS_OFFICIAL_CORPORATE_ACTION",
+  "events": [
+    {
+      "marketCode": "TPE",
+      "instrumentCode": "1563",
+      "eventType": "CAPITAL_REDUCTION",
+      "effectiveFrom": "2026-08-27",
+      "effectiveTo": "2026-09-04",
+      "resumeDate": "2026-09-07",
+      "source": "TWSE_OFFICIAL_CORPORATE_ACTION",
+      "sourceReference": "MOPS-TPE-1563-SUSPENDED-20260827",
+      "sourceUrl": "https://mops.twse.com.tw/mops/web/t05st01"
+    },
+    {
+      "marketCode": "TWO",
+      "instrumentCode": "6129",
+      "eventType": "CAPITAL_REDUCTION",
+      "effectiveFrom": "2026-09-03",
+      "effectiveTo": "2026-09-11",
+      "resumeDate": "2026-09-14",
+      "source": "TPEX_OFFICIAL_CORPORATE_ACTION",
+      "sourceReference": "MOPS-TWO-6129-SUSPENDED-20260903",
+      "sourceUrl": "https://mops.twse.com.tw/mops/web/t05st01"
+    },
+    {
+      "marketCode": "TPE",
+      "instrumentCode": "2601",
+      "eventType": "CAPITAL_REDUCTION",
+      "effectiveFrom": "2026-09-23",
+      "effectiveTo": "2026-10-03",
+      "resumeDate": "2026-10-05",
+      "source": "TWSE_OFFICIAL_CORPORATE_ACTION",
+      "sourceReference": "MOPS-TPE-2601-SUSPENDED-20260923",
+      "sourceUrl": "https://mops.twse.com.tw/mops/web/t05st01"
+    }
+  ]
+}

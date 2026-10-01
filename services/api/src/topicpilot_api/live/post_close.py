@@ -27,6 +27,11 @@ from topicpilot_api.instrument_universe import (
 )
 from topicpilot_api.market_data.aggregate_contract import fetch_official_market_aggregates
 from topicpilot_api.market_data.availability import LEGITIMATE_UNAVAILABLE_CODES
+from topicpilot_api.market_data.corporate_action_authority import (
+    CorporateActionAuthorityRecord,
+    authority_by_identity,
+    load_official_corporate_action_snapshot,
+)
 from topicpilot_api.market_data.index_contract import fetch_official_market_indexes
 from topicpilot_api.market_data.ingestion import (
     HistoricalInstrumentResult,
@@ -216,12 +221,18 @@ class PostCloseUpdater:
         *,
         clock: Callable[[], datetime] | None = None,
         sleep: Callable[[float], None] = time.sleep,
+        corporate_action_authority: Collection[CorporateActionAuthorityRecord] | None = None,
     ) -> None:
         self.session = session
         self.config = config
         self.clock = clock or (lambda: datetime.now(UTC))
         self.sleep = sleep
         self._status_resolution_metrics = StatusResolutionMetrics()
+        self._corporate_action_authority_by_identity = authority_by_identity(
+            corporate_action_authority
+            if corporate_action_authority is not None
+            else load_official_corporate_action_snapshot()
+        )
         self.session_clock = MarketSessionClock(
             config.timezone_name,
             config.session_open,
@@ -407,7 +418,7 @@ class PostCloseUpdater:
         failed_count: int = 0,
         skipped_count: int = 0,
         retry_count: int = 0,
-        provider_request_count: int = 0,
+        provider_request_count: int | None = None,
         provider_failure_count: int = 0,
         metadata: Mapping[str, Any] | None = None,
     ) -> LiveCollectorCheckpoint:
@@ -424,6 +435,14 @@ class PostCloseUpdater:
             if batch_number is not None
             else _CHECKPOINT_BATCH_NUMBERS.get(batch_key, 1000)
         )
+        metadata_payload = dict(metadata or {})
+        provider_metrics = dict(metadata_payload.get("providerMetrics") or {})
+        provider_metrics.setdefault("applicable", provider_request_count is not None)
+        provider_metrics.setdefault("requestCount", provider_request_count)
+        metadata_payload["providerMetrics"] = provider_metrics
+        stored_provider_request_count = (
+            provider_request_count if provider_request_count is not None else 0
+        )
         payload = _json_safe(
             {
                 "runId": str(run_id),
@@ -438,7 +457,7 @@ class PostCloseUpdater:
                 "retryCount": retry_count,
                 "providerRequestCount": provider_request_count,
                 "providerFailureCount": provider_failure_count,
-                "metadata": metadata or {},
+                "metadata": metadata_payload,
             }
         )
         checkpoint = LiveCollectorCheckpoint(
@@ -452,7 +471,7 @@ class PostCloseUpdater:
             failed_count=failed_count,
             skipped_count=skipped_count,
             retry_count=retry_count,
-            provider_request_count=provider_request_count,
+            provider_request_count=stored_provider_request_count,
             provider_failure_count=provider_failure_count,
             checkpoint_hash=stable_hash(payload),
             metadata_payload=payload["metadata"],
@@ -1122,6 +1141,9 @@ class PostCloseUpdater:
                 local_date,
                 market_closed=True,
                 expected_instrument_ids=eligible_instrument_ids,
+                corporate_action_authority_by_identity=getattr(
+                    self, "_corporate_action_authority_by_identity", {}
+                ),
             )
             snapshot_result = {
                 "snapshotDate": local_date.isoformat(),
@@ -1568,6 +1590,9 @@ class PostCloseUpdater:
                         for instrument_id, provider_failed in candidates.items()
                         if provider_failed
                     ),
+                    corporate_action_authority_by_identity=getattr(
+                        self, "_corporate_action_authority_by_identity", {}
+                    ),
                 )
                 # Convert the operator projection back through the pure
                 # resolver contract.  The read model is already the
@@ -1580,14 +1605,13 @@ class PostCloseUpdater:
                         reason_code=str(item["reasonCode"]),
                         effective_from=item.get("effectiveFrom"),
                         effective_to=item.get("effectiveTo"),
+                        resume_date=item.get("resumeDate"),
                         source_reference=item.get("sourceReference"),
                         resolution_state=str(item["resolutionState"]),
                         blocks_publication=bool(item["blocksPublication"]),
                         is_legitimate_unavailable=bool(item["isLegitimateUnavailable"]),
                         authority_class=(
-                            "NONE"
-                            if item.get("authoritySource") is None
-                            else "CANONICAL_STATUS_AUTHORITY"
+                            str(item.get("authorityClass") or "NONE")
                         ),
                     )
                     for item in rows
@@ -1772,6 +1796,9 @@ class PostCloseUpdater:
                 self.session,
                 local_date,
                 expected_instrument_ids=eligible_instrument_ids,
+                corporate_action_authority_by_identity=getattr(
+                    self, "_corporate_action_authority_by_identity", {}
+                ),
             )
             if failure_count or skipped_count:
                 status = "PARTIAL" if success_count else "FAILED"
@@ -1823,38 +1850,84 @@ class PostCloseUpdater:
                         batch_number=150,
                         status="COMPLETED",
                         metadata={
-                            "publicationAuthority": "topicpilot.market_institutional_flow_daily",
+                            "checkpointSemantics": "FORMAL_MARKET_FACTS_PUBLICATION",
+                            "publicationAuthority": "topicpilot.market_facts",
                             "readback": formal_readback.get("institutionalFlow"),
                             "reconciledFromCommittedOutputs": True,
                         },
                     )
             else:
-                market_index_facts = fetch_official_market_indexes(
-                    target_date=local_date,
-                    retrieved_at=self._now(),
-                    as_of=self._now(),
-                    transport=_official_transport,
-                )
-                market_aggregate_facts = fetch_official_market_aggregates(
-                    target_date=local_date,
-                    retrieved_at=self._now(),
-                    as_of=self._now(),
-                    transport=_official_transport,
-                )
-                market_institutional_flow_facts = fetch_official_market_institutional_flows(
-                    target_date=local_date,
-                    retrieved_at=self._now(),
-                    as_of=self._now(),
-                    transport=_official_transport,
-                )
+                provider_ingestion_key = "MARKET_FACTS_PROVIDER_INGESTION"
+                persistence_key = "MARKET_FACTS_PERSISTENCE"
+                flow_readback_key = "INSTITUTIONAL_FLOW_READBACK"
+                provider_request_count = 0
                 self._checkpoint_event(
                     run_id=run_id,
-                    batch_key=market_facts_key,
-                    batch_number=150,
+                    batch_key=provider_ingestion_key,
+                    batch_number=147,
                     status="IN_PROGRESS",
+                    provider_request_count=0,
                     metadata={
                         "sessionDate": local_date,
-                        "publicationAuthority": "topicpilot.market_institutional_flow_daily",
+                        "checkpointSemantics": "PROVIDER_INGESTION",
+                    },
+                )
+                try:
+                    provider_request_count += 1
+                    market_index_facts = fetch_official_market_indexes(
+                        target_date=local_date,
+                        retrieved_at=self._now(),
+                        as_of=self._now(),
+                        transport=_official_transport,
+                    )
+                    provider_request_count += 1
+                    market_aggregate_facts = fetch_official_market_aggregates(
+                        target_date=local_date,
+                        retrieved_at=self._now(),
+                        as_of=self._now(),
+                        transport=_official_transport,
+                    )
+                    provider_request_count += 1
+                    market_institutional_flow_facts = fetch_official_market_institutional_flows(
+                        target_date=local_date,
+                        retrieved_at=self._now(),
+                        as_of=self._now(),
+                        transport=_official_transport,
+                    )
+                except Exception as exc:
+                    self._checkpoint_event(
+                        run_id=run_id,
+                        batch_key=provider_ingestion_key,
+                        batch_number=147,
+                        status="FAILED",
+                        failed_count=1,
+                        provider_request_count=provider_request_count,
+                        provider_failure_count=1,
+                        metadata={
+                            "sessionDate": local_date,
+                            "checkpointSemantics": "PROVIDER_INGESTION",
+                            "failureReason": {
+                                "readbackStatus": "NOT_RUN",
+                                "reasonCode": "MARKET_FACTS_PROVIDER_INGESTION_FAILED",
+                                "institutionalFlowStatus": "NOT_RUN",
+                                "marketFactsPublicationStatus": "NOT_RUN",
+                                "failedSection": "PROVIDER_INGESTION",
+                                "failureClassification": type(exc).__name__,
+                            },
+                        },
+                    )
+                    raise
+                self._checkpoint_event(
+                    run_id=run_id,
+                    batch_key=provider_ingestion_key,
+                    batch_number=147,
+                    status="COMPLETED",
+                    processed_count=3,
+                    succeeded_count=3,
+                    provider_request_count=provider_request_count,
+                    metadata={
+                        "sessionDate": local_date,
+                        "checkpointSemantics": "PROVIDER_INGESTION",
                         "sourceIdentities": sorted(
                             {
                                 str(getattr(fact, "source_identity", ""))
@@ -1866,6 +1939,62 @@ class PostCloseUpdater:
                 institutional_flow_persistence = self._persist_official_institutional_flow(
                     tuple(market_institutional_flow_facts),
                     existing_readback=formal_readback.get("institutionalFlow"),
+                )
+                persistence_ok = institutional_flow_persistence.get("status") in {
+                    "SUCCESS",
+                    "IDEMPOTENT_READBACK",
+                }
+                self._checkpoint_event(
+                    run_id=run_id,
+                    batch_key=persistence_key,
+                    batch_number=148,
+                    status="COMPLETED" if persistence_ok else "FAILED",
+                    failed_count=0 if persistence_ok else 1,
+                    metadata={
+                        "sessionDate": local_date,
+                        "checkpointSemantics": "MARKET_FACTS_PERSISTENCE",
+                        "result": institutional_flow_persistence,
+                        "failureReason": (
+                            {
+                                "readbackStatus": "NOT_RUN",
+                                "reasonCode": "MARKET_FACTS_PERSISTENCE_FAILED",
+                                "institutionalFlowStatus": institutional_flow_persistence.get(
+                                    "status"
+                                ),
+                                "marketFactsPublicationStatus": "NOT_RUN",
+                                "failedSection": "MARKET_FACTS_PERSISTENCE",
+                                "failureClassification": "PERSISTENCE",
+                            }
+                            if not persistence_ok
+                            else None
+                        ),
+                    },
+                )
+                flow_readback = self._institutional_flow_readback(local_date)
+                flow_readback_ok = flow_readback.get("status") == "PASS"
+                self._checkpoint_event(
+                    run_id=run_id,
+                    batch_key=flow_readback_key,
+                    batch_number=149,
+                    status="COMPLETED" if flow_readback_ok else "FAILED",
+                    failed_count=0 if flow_readback_ok else 1,
+                    metadata={
+                        "sessionDate": local_date,
+                        "checkpointSemantics": "INSTITUTIONAL_FLOW_READBACK",
+                        "readback": flow_readback,
+                        "failureReason": (
+                            {
+                                "readbackStatus": flow_readback.get("status"),
+                                "reasonCode": flow_readback.get("reasonCode"),
+                                "institutionalFlowStatus": flow_readback.get("status"),
+                                "marketFactsPublicationStatus": "NOT_RUN",
+                                "failedSection": "INSTITUTIONAL_FLOW_READBACK",
+                                "failureClassification": "READBACK",
+                            }
+                            if not flow_readback_ok
+                            else None
+                        ),
+                    },
                 )
                 if reconciliation.downstream_ready:
                     self._checkpoint_event(
@@ -1902,17 +2031,40 @@ class PostCloseUpdater:
                 )
                 snapshot_result["formalPublicationReadback"] = formal_readback
 
-                flow_readback = formal_readback.get("institutionalFlow", {})
+                market_facts_publication = snapshot_result.get("marketFactsPublication") or {
+                    "status": "SUCCESS" if flow_readback_ok else "UNAVAILABLE"
+                }
+                market_facts_publication_ok = market_facts_publication.get("status") in {
+                    "SUCCESS",
+                    "PUBLISHED",
+                } and flow_readback_ok
                 self._checkpoint_event(
                     run_id=run_id,
                     batch_key=market_facts_key,
                     batch_number=150,
-                    status=("COMPLETED" if flow_readback.get("status") == "PASS" else "FAILED"),
-                    failed_count=0 if flow_readback.get("status") == "PASS" else 1,
+                    status="COMPLETED" if market_facts_publication_ok else "FAILED",
+                    failed_count=0 if market_facts_publication_ok else 1,
                     metadata={
-                        "publicationAuthority": "topicpilot.market_institutional_flow_daily",
-                        "readback": flow_readback,
-                        "marketFactsPublication": snapshot_result.get("marketFactsPublication"),
+                        "checkpointSemantics": "FORMAL_MARKET_FACTS_PUBLICATION",
+                        "publicationAuthority": "topicpilot.market_facts",
+                        "readback": formal_readback,
+                        "marketFactsPublication": market_facts_publication,
+                        "failureReason": (
+                            {
+                                "readbackStatus": formal_readback.get("status"),
+                                "reasonCode": (
+                                    "FORMAL_MARKET_FACTS_PUBLICATION_NOT_READY"
+                                ),
+                                "institutionalFlowStatus": flow_readback.get("status"),
+                                "marketFactsPublicationStatus": market_facts_publication.get(
+                                    "status"
+                                ),
+                                "failedSection": "FORMAL_MARKET_FACTS_PUBLICATION",
+                                "failureClassification": "PUBLICATION_CHECKPOINT",
+                            }
+                            if not market_facts_publication_ok
+                            else None
+                        ),
                     },
                 )
             if "formalPublicationReadback" not in snapshot_result:

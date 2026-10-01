@@ -14,7 +14,7 @@ ambiguous or unsupported remains fail-closed.
 from __future__ import annotations
 
 import time
-from collections.abc import Callable, Iterable, Sequence
+from collections.abc import Callable, Iterable, Mapping, Sequence
 from dataclasses import dataclass
 from datetime import date, datetime
 from decimal import Decimal
@@ -31,7 +31,14 @@ from .market_data.availability import (
 from .orm import ReferenceInstrumentLifecycle, ReferenceRegistrySet
 
 OFFICIAL_DAILY_SOURCES = frozenset({"TWSE_OFFICIAL_DAILY", "TPEX_OFFICIAL_DAILY"})
-CANONICAL_STATUS_SOURCES = OFFICIAL_DAILY_SOURCES | {"CANONICAL_STATUS_AUTHORITY"}
+OFFICIAL_CORPORATE_ACTION_SOURCES = frozenset(
+    {"TWSE_OFFICIAL_CORPORATE_ACTION", "TPEX_OFFICIAL_CORPORATE_ACTION"}
+)
+CANONICAL_STATUS_SOURCES = (
+    OFFICIAL_DAILY_SOURCES
+    | OFFICIAL_CORPORATE_ACTION_SOURCES
+    | {"CANONICAL_STATUS_AUTHORITY"}
+)
 LIFECYCLE_STATUS_CODES = frozenset({"SUSPENDED", "DELISTED", "TERMINATED"})
 KNOWN_STATUS_CODES = frozenset(item.value for item in MarketAvailability)
 
@@ -42,6 +49,7 @@ class TradingStatusAuthorityError(ValueError):
 
 class AuthorityClass(StrEnum):
     OFFICIAL_EXCHANGE = "OFFICIAL_EXCHANGE"
+    OFFICIAL_CORPORATE_ACTION = "OFFICIAL_CORPORATE_ACTION"
     REFERENCE_LIFECYCLE = "REFERENCE_LIFECYCLE"
     MANUAL_GOVERNED = "MANUAL_GOVERNED"
     PRICE_SESSION = "PRICE_SESSION"
@@ -71,6 +79,7 @@ class TradingStatusAuthorityRecord:
     supersedes: str | None = None
     superseded_by: str | None = None
     expires_at: date | None = None
+    resume_date: date | None = None
 
     def __post_init__(self) -> None:
         status = self.status_code.upper()
@@ -78,6 +87,12 @@ class TradingStatusAuthorityRecord:
             raise TradingStatusAuthorityError(f"UNKNOWN_SOURCE_STATUS:{self.status_code}")
         if self.effective_to is not None and self.effective_to < self.effective_from:
             raise TradingStatusAuthorityError("INVALID_EFFECTIVE_RANGE")
+        if (
+            self.resume_date is not None
+            and self.effective_to is not None
+            and self.resume_date <= self.effective_to
+        ):
+            raise TradingStatusAuthorityError("INVALID_RESUME_DATE")
         if not self.source.strip() or not self.source_reference.strip():
             raise TradingStatusAuthorityError("MISSING_AUTHORITY_PROVENANCE")
 
@@ -97,6 +112,7 @@ class TradingStatusAuthorityRecord:
             "statusCode": self.normalized_status,
             "effectiveFrom": self.effective_from,
             "effectiveTo": self.effective_to,
+            "resumeDate": self.resume_date,
             "source": self.source,
             "sourceReference": self.source_reference,
             "reasonCode": self.reason_code,
@@ -144,6 +160,7 @@ class TradingStatusResolution:
     resolution_state: str
     blocks_publication: bool
     is_legitimate_unavailable: bool
+    resume_date: date | None = None
     authority_class: str = AuthorityClass.NONE.value
     is_manual_override: bool = False
     preserved_event_status: str | None = None
@@ -160,6 +177,7 @@ class TradingStatusResolution:
             "reasonCode": self.reason_code,
             "effectiveFrom": self.effective_from,
             "effectiveTo": self.effective_to,
+            "resumeDate": self.resume_date,
             "sourceReference": self.source_reference,
             "resolutionState": self.resolution_state,
             "blocksPublication": self.blocks_publication,
@@ -311,6 +329,7 @@ def _choose_official(
         if item.authority_class
         in {
             AuthorityClass.OFFICIAL_EXCHANGE.value,
+            AuthorityClass.OFFICIAL_CORPORATE_ACTION.value,
             AuthorityClass.REFERENCE_LIFECYCLE.value,
             AuthorityClass.MANUAL_GOVERNED.value,
         }
@@ -324,10 +343,21 @@ def _choose_official(
     def _timestamp(value: datetime | None) -> str:
         return value.isoformat() if value is not None else ""
 
+    def _authority_priority(item: TradingStatusAuthorityRecord) -> int:
+        return {
+            AuthorityClass.OFFICIAL_CORPORATE_ACTION.value: 0,
+            AuthorityClass.OFFICIAL_EXCHANGE.value: 1,
+            AuthorityClass.REFERENCE_LIFECYCLE.value: 2,
+            AuthorityClass.MANUAL_GOVERNED.value: 3,
+        }.get(item.authority_class, 9)
+
+    highest_priority = min(_authority_priority(item) for item in official)
+    highest_priority_records = [
+        item for item in official if _authority_priority(item) == highest_priority
+    ]
     return sorted(
-        official,
+        highest_priority_records,
         key=lambda item: (
-            item.authority_class != AuthorityClass.OFFICIAL_EXCHANGE.value,
             _timestamp(item.observed_at),
             _timestamp(item.published_at),
             item.source_reference,
@@ -342,6 +372,7 @@ def resolve_effective_trading_status(
     *,
     same_session_close: Decimal | int | float | None = None,
     official_authority: Iterable[TradingStatusAuthorityRecord] = (),
+    corporate_action_authority: Iterable[TradingStatusAuthorityRecord] = (),
     manual_overrides: Iterable[ManualTradingStatusOverride] = (),
     provider_failure: bool = False,
     price_source: str = "CANONICAL_DAILY_PRICE",
@@ -353,12 +384,28 @@ def resolve_effective_trading_status(
     """
 
     del instrument
+    corporate = _active_records(corporate_action_authority, trading_date)
     official = _active_records(official_authority, trading_date)
     manual = _active_records(manual_overrides, trading_date)
+    corporate_statuses = {item.normalized_status for item in corporate}
+    if len(corporate_statuses) > 1:
+        return TradingStatusResolution(
+            status=MarketAvailability.UNKNOWN.value,
+            authority_source=None,
+            reason_code="CONFLICTING_CORPORATE_ACTION_AUTHORITY",
+            effective_from=None,
+            effective_to=None,
+            source_reference=None,
+            resolution_state=ResolutionState.UNRESOLVED.value,
+            blocks_publication=True,
+            is_legitimate_unavailable=False,
+            authority_class=AuthorityClass.OFFICIAL_CORPORATE_ACTION.value,
+        )
+    selected_corporate = _choose_official(corporate)
     selected_official = _choose_official(official)
     selected_manual = _choose_official(manual)
 
-    if same_session_close is not None:
+    if selected_corporate is None and same_session_close is not None:
         preserved = selected_official
         return TradingStatusResolution(
             status=MarketAvailability.AVAILABLE.value,
@@ -375,7 +422,11 @@ def resolve_effective_trading_status(
             preserved_event_source=preserved.source if preserved else None,
         )
 
-    official_statuses = {item.normalized_status for item in official}
+    if selected_corporate is not None:
+        selected_official = selected_corporate
+        official_statuses = {selected_corporate.normalized_status}
+    else:
+        official_statuses = {item.normalized_status for item in official}
     if len(official_statuses) > 1:
         return TradingStatusResolution(
             status=MarketAvailability.UNKNOWN.value,
@@ -398,6 +449,7 @@ def resolve_effective_trading_status(
                 reason_code=selected_official.reason_code or status,
                 effective_from=selected_official.effective_from,
                 effective_to=selected_official.effective_to,
+                resume_date=selected_official.resume_date,
                 source_reference=selected_official.source_reference,
                 resolution_state=ResolutionState.RESOLVED.value,
                 blocks_publication=False,
@@ -412,6 +464,7 @@ def resolve_effective_trading_status(
                 reason_code="OFFICIAL_STATUS_EXPECTS_PRICE",
                 effective_from=selected_official.effective_from,
                 effective_to=selected_official.effective_to,
+                resume_date=selected_official.resume_date,
                 source_reference=selected_official.source_reference,
                 resolution_state=ResolutionState.UNRESOLVED.value,
                 blocks_publication=True,
@@ -424,6 +477,7 @@ def resolve_effective_trading_status(
             reason_code="AMBIGUOUS_OR_UNSUPPORTED_AUTHORITY",
             effective_from=selected_official.effective_from,
             effective_to=selected_official.effective_to,
+            resume_date=selected_official.resume_date,
             source_reference=selected_official.source_reference,
             resolution_state=ResolutionState.UNRESOLVED.value,
             blocks_publication=True,
@@ -440,6 +494,7 @@ def resolve_effective_trading_status(
                 reason_code=selected_manual.reason_code or status,
                 effective_from=selected_manual.effective_from,
                 effective_to=selected_manual.effective_to,
+                resume_date=selected_manual.resume_date,
                 source_reference=selected_manual.source_reference,
                 resolution_state=ResolutionState.RESOLVED.value,
                 blocks_publication=False,
@@ -467,6 +522,7 @@ def resolve_effective_trading_status(
         reason_code=MarketAvailability.MISSING_MARKET_DATA.value,
         effective_from=None,
         effective_to=None,
+        resume_date=None,
         source_reference=None,
         resolution_state=ResolutionState.UNRESOLVED.value,
         blocks_publication=True,
@@ -504,6 +560,7 @@ def resolve_missing_statuses_with_budget(
                     reason_code=MarketAvailability.PROVIDER_ERROR.value,
                     effective_from=None,
                     effective_to=None,
+                    resume_date=None,
                     source_reference=None,
                     resolution_state=ResolutionState.PROVIDER_FAILURE.value,
                     blocks_publication=True,
@@ -607,6 +664,9 @@ def read_effective_trading_status_authority(
     status: str | None = None,
     resolved: bool | None = None,
     blocking: bool | None = None,
+    corporate_action_authority_by_identity: Mapping[
+        tuple[str, str], Sequence[TradingStatusAuthorityRecord]
+    ] | None = None,
 ) -> list[dict[str, Any]]:
     """Build the operator-only read model from existing canonical evidence."""
 
@@ -644,6 +704,12 @@ def read_effective_trading_status_authority(
             trading_date,
             same_session_close=row.get("close"),
             official_authority=(*official, *lifecycle.get(row.get("instrument_id"), ())),
+            corporate_action_authority=(
+                corporate_action_authority_by_identity or {}
+            ).get(
+                (str(row.get("market") or "").upper(), str(row.get("symbol") or "")),
+                (),
+            ),
             provider_failure=row.get("instrument_id") in failed,
             price_source=str(row.get("source_code") or "CANONICAL_DAILY_PRICE"),
         )
@@ -667,9 +733,11 @@ def read_effective_trading_status_authority(
                 "sourceReference": resolution.source_reference,
                 "effectiveFrom": resolution.effective_from,
                 "effectiveTo": resolution.effective_to,
+                "resumeDate": resolution.resume_date,
                 "lastValidPriceDate": row.get("last_valid_price_date"),
                 "lastValidClose": row.get("last_valid_close"),
                 "resolutionState": resolution.resolution_state,
+                "authorityClass": resolution.authority_class,
                 "isLegitimateUnavailable": resolution.is_legitimate_unavailable,
                 "blocksPublication": resolution.blocks_publication,
                 "affectedTopicCount": int(row.get("formal_topic_membership_count") or 0),
