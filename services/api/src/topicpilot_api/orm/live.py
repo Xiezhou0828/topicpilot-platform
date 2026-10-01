@@ -126,8 +126,8 @@ class LiveCollectorCheckpoint(Base, IdentityMixin, CreatedAtMixin):
     failed_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     skipped_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     retry_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
-    provider_request_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
-    provider_failure_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    provider_request_count: Mapped[int | None] = mapped_column(Integer, nullable=True, default=None)
+    provider_failure_count: Mapped[int | None] = mapped_column(Integer, nullable=True, default=None)
     checkpoint_hash: Mapped[str] = mapped_column(String(128), nullable=False)
     metadata_payload: Mapped[dict[str, Any] | None] = mapped_column("metadata", JSONB)
 

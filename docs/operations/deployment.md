@@ -69,12 +69,12 @@ Required protected GitHub API secret:
 Do not store a Render API key when a service-scoped deploy hook is sufficient.
 
 The governed manual release workflow also exposes two separately protected
-operations. `apply_migration_0047=true` builds the exact release image, requires
-the Production Alembic head to be `0046_task_stock_maint_relation_weight_authority_001d`,
-applies only `0047_task_topic_role_strength_design_freeze`, and verifies the
-resulting head and check constraint under the `production-db-maintenance`
-environment. `deploy_worker=true` requires a read-only migration readback of
-0047 and triggers the `production-worker` Render hook with the exact
+operations. `apply_migration_0048=true` builds the exact release image, requires
+the Production Alembic head to be `0047_task_topic_role_strength_design_freeze`,
+applies only `0048_task_checkpoint_provider_metric_applicability`, and verifies
+the resulting head and nullable checkpoint metric columns under the
+`production-db-maintenance` environment. `deploy_worker=true` requires a
+read-only migration readback of 0048 and triggers the `production-worker` Render hook with the exact
 `release_ref`; it never infers the Worker revision from the API revision.
 
 Inside the protected Worker runtime, run the secret-free command

@@ -5,7 +5,7 @@ from __future__ import annotations
 from datetime import date, datetime
 from typing import Any
 
-CANONICAL_MIGRATION_HEAD = "0046_task_stock_maint_relation_weight_authority_001d"
+CANONICAL_MIGRATION_HEAD = "0048_task_checkpoint_provider_metric_applicability"
 
 
 class SourceProbeError(RuntimeError):

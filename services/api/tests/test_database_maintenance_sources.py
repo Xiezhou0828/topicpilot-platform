@@ -33,12 +33,12 @@ def test_migration_head_comparison_is_explicit() -> None:
         migration_schema_status("0036_task_ws4_active_reference_daily_projection")
         == "OLDER_THAN_CANONICAL"
     )
-    assert migration_schema_status("0047_future") == "NEWER_THAN_CANONICAL"
+    assert migration_schema_status("0049_future") == "NEWER_THAN_CANONICAL"
     assert migration_schema_status(None) == "UNKNOWN"
 
 
 def test_migration_number_rejects_unversioned_marker() -> None:
-    assert migration_number(CANONICAL_MIGRATION_HEAD) == 46
+    assert migration_number(CANONICAL_MIGRATION_HEAD) == 48
     assert migration_number("not-a-migration") is None
 
 

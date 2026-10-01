@@ -478,8 +478,8 @@ class PostCloseUpdater:
         failed_count: int = 0,
         skipped_count: int = 0,
         retry_count: int = 0,
-        provider_request_count: int = 0,
-        provider_failure_count: int = 0,
+        provider_request_count: int | None = None,
+        provider_failure_count: int | None = None,
         metadata: Mapping[str, Any] | None = None,
     ) -> LiveCollectorCheckpoint:
         """Append one immutable checkpoint event and make it durable."""
@@ -496,13 +496,28 @@ class PostCloseUpdater:
             else _CHECKPOINT_BATCH_NUMBERS.get(batch_key, 1000)
         )
         metadata_payload = dict(metadata or {})
-        metadata_payload.setdefault("checkpointSemantic", _checkpoint_semantics(batch_key))
+        checkpoint_semantic = _checkpoint_semantics(batch_key)
+        metadata_payload.setdefault("checkpointSemantic", checkpoint_semantic)
+        provider_metrics_applicability = _provider_metrics_applicability(batch_key)
         metadata_payload.setdefault(
-            "providerMetricsApplicability", _provider_metrics_applicability(batch_key)
+            "providerMetricsApplicability", provider_metrics_applicability
         )
         failure_classification = _failure_classification_for_checkpoint(batch_key, status)
         if failure_classification is not None:
             metadata_payload.setdefault("failureClassification", failure_classification)
+        if provider_metrics_applicability == "ACTUAL":
+            provider_request_count = 0 if provider_request_count is None else provider_request_count
+            provider_failure_count = 0 if provider_failure_count is None else provider_failure_count
+            if (
+                not isinstance(provider_request_count, int)
+                or provider_request_count < 0
+                or not isinstance(provider_failure_count, int)
+                or provider_failure_count < 0
+            ):
+                raise ValueError("provider checkpoint counters must be non-negative integers")
+        else:
+            provider_request_count = None
+            provider_failure_count = None
         payload = _json_safe(
             {
                 "runId": str(run_id),
@@ -562,7 +577,7 @@ class PostCloseUpdater:
             "failure_count": sum(row.failed_count for row in completed),
             "skipped_count": sum(row.skipped_count for row in completed),
             "retry_count": sum(row.retry_count for row in completed),
-            "point_count": sum(row.provider_request_count for row in completed),
+            "point_count": sum((row.provider_request_count or 0) for row in completed),
         }
 
     def _mark_run_for_resume(self, run: LiveCollectorRun, now: datetime) -> None:
@@ -1295,7 +1310,7 @@ class PostCloseUpdater:
                 failure_count += previous_checkpoint.failed_count
                 skipped_count += previous_checkpoint.skipped_count
                 retry_count += previous_checkpoint.retry_count
-                point_count += previous_checkpoint.provider_request_count
+                point_count += previous_checkpoint.provider_request_count or 0
                 continue
             self._checkpoint_event(
                 run_id=run_id,

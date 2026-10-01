@@ -1,6 +1,8 @@
 from datetime import date
 from pathlib import Path
 
+import pytest
+
 from topicpilot_api.daily_market import assess_daily_coverage, build_unavailable_instruments
 
 MIGRATION = (
@@ -90,7 +92,8 @@ def test_null_close_is_unavailable_and_never_coerced_to_zero():
     assert "UNAVAILABLE_DAILY_CLOSE" in result.reason_codes
 
 
-def test_twse_corporate_action_is_consumed_by_unavailable_read_model():
+@pytest.mark.parametrize("trade_date", [date(2026, 9, 30), date(2026, 10, 3)])
+def test_twse_corporate_action_is_consumed_by_unavailable_read_model(trade_date):
     rows = [
         {
             "instrument_id": "instrument-2601",
@@ -110,7 +113,7 @@ def test_twse_corporate_action_is_consumed_by_unavailable_read_model():
         }
     ]
 
-    result = build_unavailable_instruments(rows, trade_date=date(2026, 9, 30))
+    result = build_unavailable_instruments(rows, trade_date=trade_date)
 
     assert len(result) == 1
     assert result[0].status == "SUSPENDED"
@@ -118,6 +121,7 @@ def test_twse_corporate_action_is_consumed_by_unavailable_read_model():
     assert result[0].source == "TWSE_OFFICIAL_REDUCTION"
     assert result[0].is_legitimate_unavailable is True
     assert result[0].blocks_formal_publication is False
+    assert result[0].last_valid_close is None
 
 
 def test_date_or_stable_key_conflict_blocks_handoff():
