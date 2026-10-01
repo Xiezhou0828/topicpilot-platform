@@ -62,6 +62,7 @@ from topicpilot_api.trading_status_authority import (
     resolve_missing_statuses_with_budget,
 )
 
+from .checkpoint_contract import checkpoint_stable_hash
 from .config import LiveRuntimeConfig
 from .persistence import LiveRepository
 from .session import MarketSessionClock
@@ -293,6 +294,8 @@ class PostCloseUpdater:
         self.clock = clock or (lambda: datetime.now(UTC))
         self.sleep = sleep
         self._status_resolution_metrics = StatusResolutionMetrics()
+        self._active_run_id: Any | None = None
+        self._active_failure_stage = "POST_CLOSE_ORCHESTRATION"
         self.session_clock = MarketSessionClock(
             config.timezone_name,
             config.session_open,
@@ -488,6 +491,10 @@ class PostCloseUpdater:
             return None  # type: ignore[return-value]
         if status not in {"IN_PROGRESS", "COMPLETED", "PARTIAL", "FAILED"}:
             raise ValueError("invalid POST_CLOSE checkpoint status")
+        previous_failure_stage = getattr(
+            self, "_active_failure_stage", "POST_CLOSE_ORCHESTRATION"
+        )
+        self._active_failure_stage = f"{batch_key}_CHECKPOINT"
         latest = self._latest_checkpoint(run_id, batch_key)
         attempt_number = (latest.attempt_number + 1) if latest else 1
         resolved_batch_number = (
@@ -535,6 +542,11 @@ class PostCloseUpdater:
                 "metadata": metadata_payload,
             }
         )
+        try:
+            checkpoint_hash = checkpoint_stable_hash(payload)
+        except Exception:
+            self._active_failure_stage = f"{batch_key}_CHECKPOINT_CANONICALIZATION"
+            raise
         checkpoint = LiveCollectorCheckpoint(
             run_id=run_id,
             batch_number=resolved_batch_number,
@@ -548,11 +560,12 @@ class PostCloseUpdater:
             retry_count=retry_count,
             provider_request_count=provider_request_count,
             provider_failure_count=provider_failure_count,
-            checkpoint_hash=stable_hash(payload),
+            checkpoint_hash=checkpoint_hash,
             metadata_payload=payload["metadata"],
         )
         self.session.add(checkpoint)
         self.session.commit()
+        self._active_failure_stage = previous_failure_stage
         return checkpoint
 
     def _completed_market_checkpoint_totals(self, run_id: Any) -> dict[str, int]:
@@ -580,10 +593,54 @@ class PostCloseUpdater:
             "point_count": sum((row.provider_request_count or 0) for row in completed),
         }
 
-    def _mark_run_for_resume(self, run: LiveCollectorRun, now: datetime) -> None:
+    @staticmethod
+    def _reentry_block_reason(
+        metadata: Mapping[str, Any],
+        *,
+        allow_terminal_recovery: bool,
+        execution_mode: str,
+    ) -> str | None:
+        """Fail closed unless an existing recovery has a durable re-entry contract."""
+
+        if not allow_terminal_recovery or execution_mode != "RECOVERY":
+            return None
+        contract = metadata.get("reentryContract")
+        if not isinstance(contract, Mapping):
+            return "POST_CLOSE_REENTRY_REQUIRES_OWNER_REAUTH"
+        execution_key = metadata.get("executionKey")
+        if contract.get("idempotencyKey") != execution_key:
+            return "POST_CLOSE_REENTRY_IDEMPOTENCY_KEY_MISMATCH"
+        if contract.get("status") == "OWNER_REAUTH_REQUIRED":
+            return "POST_CLOSE_REENTRY_REQUIRES_OWNER_REAUTH"
+        if contract.get("eligible") is False:
+            return "POST_CLOSE_REENTRY_REQUIRES_OWNER_REAUTH"
+        if metadata.get("orchestrationFailure"):
+            return "POST_CLOSE_REENTRY_REQUIRES_OWNER_REAUTH"
+        return None
+
+    def _mark_run_for_resume(
+        self,
+        run: LiveCollectorRun,
+        now: datetime,
+        *,
+        recovery_authorization_consumed: bool = False,
+    ) -> None:
         metadata = dict(run.metadata_payload or {})
         metadata["resumeCount"] = int(metadata.get("resumeCount", 0) or 0) + 1
         metadata["lastResumeAt"] = now
+        reentry_contract = dict(metadata.get("reentryContract") or {})
+        reentry_contract.setdefault("idempotencyKey", metadata.get("executionKey"))
+        reentry_contract.setdefault("newRecoveryRunAllowed", False)
+        reentry_contract.setdefault("providerPointReuse", "COMPLETED_CHECKPOINTS_ONLY")
+        reentry_contract.setdefault(
+            "providerPointDuplicationRisk", "POSSIBLE_FOR_NON_COMPLETED_BATCHES"
+        )
+        reentry_contract["status"] = "RESUMING"
+        reentry_contract["eligible"] = True
+        reentry_contract["operatorActionRequired"] = False
+        if recovery_authorization_consumed:
+            reentry_contract["recoveryAuthorizationConsumed"] = True
+        metadata["reentryContract"] = reentry_contract
         run.status = "RUNNING"
         run.completed_at = None
         run.heartbeat_at = now
@@ -593,6 +650,81 @@ class PostCloseUpdater:
         run.failure_message = None
         run.metadata_payload = _json_safe(metadata)
         self.session.commit()
+
+    def _close_orchestration_failure(self, run_id: Any, exc: Exception) -> None:
+        """Close an interrupted run without classifying it as a data failure.
+
+        The existing run status vocabulary has a legal terminal ``FAILED``
+        state, so no enum or migration is needed.  This write is deliberately
+        separate from checkpoint emission: a checkpoint canonicalization
+        error must not prevent the run lifecycle from reaching a terminal
+        state, and it must not create a misleading provider checkpoint.
+        """
+
+        try:
+            self.session.rollback()
+            run = self.session.get(LiveCollectorRun, run_id)
+            if run is None or run.status != "RUNNING":
+                return
+            now = self._now()
+            stage = getattr(self, "_active_failure_stage", "POST_CLOSE_ORCHESTRATION")
+            failure_code = (
+                "POST_CLOSE_CHECKPOINT_CANONICALIZATION_FAILED"
+                if stage.endswith("_CHECKPOINT_CANONICALIZATION")
+                else "POST_CLOSE_RUN_RESUME_FAILED"
+                if stage == "RUN_RESUME"
+                else "POST_CLOSE_CHECKPOINT_WRITE_FAILED"
+                if stage.endswith("_CHECKPOINT")
+                else "POST_CLOSE_ORCHESTRATION_FAILED"
+            )
+            metadata = dict(run.metadata_payload or {})
+            try:
+                resume_count = int(metadata.get("resumeCount", 0) or 0)
+            except (TypeError, ValueError):
+                resume_count = 0
+            execution_key = metadata.get("executionKey")
+            metadata["orchestrationFailure"] = {
+                "status": "FAILED",
+                "failureClassification": "POST_CLOSE_ORCHESTRATION_FAILURE",
+                "failureCode": failure_code,
+                "failureStage": stage,
+                "exceptionClass": type(exc).__name__,
+                "exceptionMessage": str(exc)[:500],
+                "runId": str(run_id),
+                "previousState": "RUNNING",
+                "resumeCount": resume_count,
+                "retryReentryEligibility": "OWNER_REAUTH_REQUIRED",
+                "operatorActionRequired": True,
+            }
+            metadata["reentryContract"] = {
+                "status": "OWNER_REAUTH_REQUIRED",
+                "eligible": False,
+                "idempotencyKey": execution_key,
+                "newRecoveryRunAllowed": False,
+                "providerPointReuse": "COMPLETED_CHECKPOINTS_ONLY",
+                "providerPointDuplicationRisk": "POSSIBLE_FOR_NON_COMPLETED_BATCHES",
+                "recoveryAuthorizationConsumed": True,
+                "operatorActionRequired": True,
+            }
+            run.status = "FAILED"
+            run.completed_at = now
+            run.heartbeat_at = now
+            run.updated_at = now
+            run.provider_status = "ERROR"
+            run.freshness_state = "PARTIAL"
+            run.failure_code = failure_code
+            run.failure_message = f"{type(exc).__name__}: {str(exc)[:500]}"
+            run.metadata_payload = _json_safe(metadata)
+            self.session.commit()
+        except Exception:
+            # Preserve the original exception.  If the database is unavailable
+            # the next process can still inspect the original failure context.
+            with suppress(Exception):
+                self.session.rollback()
+
+    def _set_active_run(self, run_id: Any, stage: str = "POST_CLOSE_ORCHESTRATION") -> None:
+        self._active_run_id = run_id
+        self._active_failure_stage = stage
 
     def _acquire_session_claim_lock(self, run_date: date) -> None:
         """Serialize first-claim races without adding a second lock table."""
@@ -791,6 +923,16 @@ class PostCloseUpdater:
                 "maxAttempts": self.config.status_resolution_max_attempts,
                 "maxTotalWaitSeconds": self.config.status_resolution_max_total_wait_seconds,
                 "backoffSeconds": self.config.status_resolution_backoff_seconds,
+            },
+            "reentryContract": {
+                "status": "INITIAL",
+                "eligible": True,
+                "idempotencyKey": execution_key,
+                "newRecoveryRunAllowed": False,
+                "providerPointReuse": "COMPLETED_CHECKPOINTS_ONLY",
+                "providerPointDuplicationRisk": "POSSIBLE_FOR_NON_COMPLETED_BATCHES",
+                "recoveryAuthorizationConsumed": execution_mode == "RECOVERY",
+                "operatorActionRequired": False,
             },
             "executionMode": execution_mode,
             "calendarAuthority": "ACTIVE_REFERENCE_PREFLIGHT",
@@ -1073,6 +1215,7 @@ class PostCloseUpdater:
                 )
                 or existing_run
             )
+            self._set_active_run(existing_run.id)
             metadata = existing_run.metadata_payload or {}
             forward_status = (metadata.get("forwardAutomation") or {}).get("status")
             safely_complete = (
@@ -1089,6 +1232,13 @@ class PostCloseUpdater:
                 stale_after=self._stale_after_seconds(),
             ):
                 raise PostClosePreconditionError("POST_CLOSE_RUN_IN_PROGRESS")
+            reentry_block_reason = self._reentry_block_reason(
+                metadata,
+                allow_terminal_recovery=allow_terminal_recovery,
+                execution_mode=execution_mode,
+            )
+            if reentry_block_reason is not None:
+                raise PostClosePreconditionError(reentry_block_reason)
             if existing_run.failure_code == "POST_CLOSE_FINALIZATION_FAILED":
                 # Preserve the existing recovery diagnostic while resuming the
                 # same deterministic run identity and checkpoint stream.
@@ -1096,7 +1246,13 @@ class PostCloseUpdater:
                 metadata["resumeReason"] = "POST_CLOSE_FINALIZATION_FAILED"
                 existing_run.metadata_payload = _json_safe(metadata)
                 self.session.commit()
-            self._mark_run_for_resume(existing_run, now)
+            self._active_failure_stage = "RUN_RESUME"
+            self._mark_run_for_resume(
+                existing_run,
+                now,
+                recovery_authorization_consumed=(execution_mode == "RECOVERY"),
+            )
+            self._active_failure_stage = "POST_CLOSE_ORCHESTRATION"
             return (
                 existing_run,
                 True,
@@ -1112,16 +1268,64 @@ class PostCloseUpdater:
             execution_mode=execution_mode,
         )
         if not created:
+            self._set_active_run(run.id)
             if run.status == "RUNNING":
                 raise PostClosePreconditionError("POST_CLOSE_RUN_IN_PROGRESS")
             if run.status in {"SUCCESS", "PARTIAL", "FAILED", "MARKET_CLOSED"}:
                 if not allow_terminal_recovery:
                     return run, True, {}
-                self._mark_run_for_resume(run, now)
+                metadata = run.metadata_payload or {}
+                reentry_block_reason = self._reentry_block_reason(
+                    metadata,
+                    allow_terminal_recovery=allow_terminal_recovery,
+                    execution_mode=execution_mode,
+                )
+                if reentry_block_reason is not None:
+                    raise PostClosePreconditionError(reentry_block_reason)
+                self._active_failure_stage = "RUN_RESUME"
+                self._mark_run_for_resume(
+                    run,
+                    now,
+                    recovery_authorization_consumed=(execution_mode == "RECOVERY"),
+                )
+                self._active_failure_stage = "POST_CLOSE_ORCHESTRATION"
                 return run, True, self._completed_market_checkpoint_totals(run.id)
+        else:
+            self._set_active_run(run.id)
         return run, False, {}
 
     def run_once(
+        self,
+        *,
+        run_date: date | None = None,
+        allow_terminal_recovery: bool = False,
+        target_symbols: Collection[str] | None = None,
+        execution_mode: str = "MANUAL",
+    ) -> PostCloseRunResult:
+        """Execute one run and close any post-claim orchestration failure."""
+
+        self._active_run_id = None
+        self._active_failure_stage = "POST_CLOSE_ORCHESTRATION"
+        try:
+            return self._run_once(
+                run_date=run_date,
+                allow_terminal_recovery=allow_terminal_recovery,
+                target_symbols=target_symbols,
+                execution_mode=execution_mode,
+            )
+        except PostClosePreconditionError:
+            # A precondition rejection is not a run failure and must not create
+            # a terminal audit row for a run that did not execute.
+            raise
+        except Exception as exc:
+            if self._active_run_id is not None:
+                self._close_orchestration_failure(self._active_run_id, exc)
+            raise
+        finally:
+            self._active_run_id = None
+            self._active_failure_stage = "POST_CLOSE_ORCHESTRATION"
+
+    def _run_once(
         self,
         *,
         run_date: date | None = None,

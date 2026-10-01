@@ -471,6 +471,172 @@ def test_non_provider_checkpoint_persists_null_provider_counters() -> None:
     assert checkpoint.metadata_payload["providerMetricsApplicability"] == "NOT_APPLICABLE"
 
 
+def test_checkpoint_hash_accepts_runtime_float_metadata_at_checkpoint_boundary():
+    class FakeSession:
+        def scalar(self, _query):
+            return None
+
+        def add(self, value):
+            self.added = value
+
+        def commit(self):
+            return None
+
+    updater = PostCloseUpdater.__new__(PostCloseUpdater)
+    updater.session = FakeSession()
+    checkpoint = updater._checkpoint_event(
+        run_id=uuid4(),
+        batch_key="STATUS_RESOLUTION",
+        status="IN_PROGRESS",
+        metadata={"backoffSeconds": 30.0},
+    )
+
+    assert checkpoint.checkpoint_hash
+    assert checkpoint.metadata_payload["backoffSeconds"] == 30.0
+    assert checkpoint.metadata_payload["providerMetricsApplicability"] == "NOT_APPLICABLE"
+
+
+def test_orchestration_failure_closes_running_run_and_is_idempotent():
+    class FakeSession:
+        def __init__(self, run):
+            self.run = run
+            self.commit_count = 0
+
+        def rollback(self):
+            return None
+
+        def get(self, _model, _run_id):
+            return self.run
+
+        def commit(self):
+            self.commit_count += 1
+
+    run = SimpleNamespace(
+        id=uuid4(),
+        status="RUNNING",
+        metadata_payload={"executionKey": "post-close:2026-09-30:FULL", "resumeCount": 2},
+        completed_at=None,
+        heartbeat_at=None,
+        updated_at=None,
+        provider_status="CONNECTING",
+        freshness_state="UNKNOWN",
+        failure_code=None,
+        failure_message=None,
+    )
+    updater = PostCloseUpdater.__new__(PostCloseUpdater)
+    updater.session = FakeSession(run)
+    updater.clock = lambda: datetime(2026, 10, 1, 1, 0, tzinfo=UTC)
+    updater._active_failure_stage = "STATUS_RESOLUTION_CHECKPOINT_CANONICALIZATION"
+
+    error = TypeError("unsupported canonical value: float")
+    updater._close_orchestration_failure(run.id, error)
+    updater._close_orchestration_failure(run.id, error)
+
+    assert run.status == "FAILED"
+    assert run.failure_code == "POST_CLOSE_CHECKPOINT_CANONICALIZATION_FAILED"
+    assert run.provider_status == "ERROR"
+    assert run.metadata_payload["orchestrationFailure"] == {
+        "status": "FAILED",
+        "failureClassification": "POST_CLOSE_ORCHESTRATION_FAILURE",
+        "failureCode": "POST_CLOSE_CHECKPOINT_CANONICALIZATION_FAILED",
+        "failureStage": "STATUS_RESOLUTION_CHECKPOINT_CANONICALIZATION",
+        "exceptionClass": "TypeError",
+        "exceptionMessage": "unsupported canonical value: float",
+        "runId": str(run.id),
+        "previousState": "RUNNING",
+        "resumeCount": 2,
+        "retryReentryEligibility": "OWNER_REAUTH_REQUIRED",
+        "operatorActionRequired": True,
+    }
+    assert run.metadata_payload["reentryContract"]["eligible"] is False
+    assert updater.session.commit_count == 1
+
+
+def test_run_wrapper_closes_exception_after_run_resume_claim():
+    class FakeSession:
+        def __init__(self, run):
+            self.run = run
+
+        def rollback(self):
+            return None
+
+        def get(self, _model, _run_id):
+            return self.run
+
+        def commit(self):
+            return None
+
+    run = SimpleNamespace(
+        id=uuid4(),
+        status="RUNNING",
+        metadata_payload={"executionKey": "post-close:2026-09-30:FULL"},
+        completed_at=None,
+        heartbeat_at=None,
+        updated_at=None,
+        provider_status="CONNECTING",
+        freshness_state="UNKNOWN",
+        failure_code=None,
+        failure_message=None,
+    )
+    updater = PostCloseUpdater.__new__(PostCloseUpdater)
+    updater.session = FakeSession(run)
+    updater.clock = lambda: datetime(2026, 10, 1, 1, 0, tzinfo=UTC)
+
+    def fail_after_resume_claim(**_kwargs):
+        updater._set_active_run(run.id, "RUN_RESUME")
+        raise RuntimeError("resume commit boundary failed")
+
+    updater._run_once = fail_after_resume_claim
+    with pytest.raises(RuntimeError, match="resume commit boundary failed"):
+        updater.run_once(run_date=date(2026, 9, 30), execution_mode="RECOVERY")
+
+    assert run.status == "FAILED"
+    assert run.failure_code == "POST_CLOSE_RUN_RESUME_FAILED"
+    assert run.metadata_payload["orchestrationFailure"]["previousState"] == "RUNNING"
+
+
+def test_reentry_contract_blocks_missing_or_failed_recovery_authorization():
+    assert (
+        PostCloseUpdater._reentry_block_reason(
+            {"executionKey": "key"},
+            allow_terminal_recovery=True,
+            execution_mode="RECOVERY",
+        )
+        == "POST_CLOSE_REENTRY_REQUIRES_OWNER_REAUTH"
+    )
+    assert (
+        PostCloseUpdater._reentry_block_reason(
+            {
+                "executionKey": "key",
+                "orchestrationFailure": {"failureCode": "POST_CLOSE_RUN_RESUME_FAILED"},
+                "reentryContract": {
+                    "status": "OWNER_REAUTH_REQUIRED",
+                    "eligible": False,
+                    "idempotencyKey": "key",
+                },
+            },
+            allow_terminal_recovery=True,
+            execution_mode="RECOVERY",
+        )
+        == "POST_CLOSE_REENTRY_REQUIRES_OWNER_REAUTH"
+    )
+    assert (
+        PostCloseUpdater._reentry_block_reason(
+            {
+                "executionKey": "key",
+                "reentryContract": {
+                    "status": "OWNER_REAUTH_APPROVED",
+                    "eligible": True,
+                    "idempotencyKey": "key",
+                },
+            },
+            allow_terminal_recovery=True,
+            execution_mode="RECOVERY",
+        )
+        is None
+    )
+
+
 def test_status_resolution_result_is_carried_into_final_reconciliation_overlay(monkeypatch):
     updater = PostCloseUpdater.__new__(PostCloseUpdater)
     updater.session = SimpleNamespace()
@@ -508,6 +674,59 @@ def test_status_resolution_result_is_carried_into_final_reconciliation_overlay(m
 
     assert bounded.metrics.legitimate_unavailable_count == 1
     assert updater._status_resolution_by_instrument_id["instrument-2601"].status == "SUSPENDED"
+
+
+def test_status_authority_is_reached_after_checkpoint_canonicalization(monkeypatch):
+    class FakeSession:
+        def scalar(self, _query):
+            return None
+
+        def add(self, value):
+            self.added = value
+
+        def commit(self):
+            return None
+
+    authority_calls = []
+    updater = PostCloseUpdater.__new__(PostCloseUpdater)
+    updater.session = FakeSession()
+    updater.config = SimpleNamespace(
+        status_resolution_max_attempts=1,
+        status_resolution_max_total_wait_seconds=0,
+        status_resolution_backoff_seconds=30.0,
+    )
+    updater.sleep = lambda _seconds: None
+    monkeypatch.setattr(
+        "topicpilot_api.live.post_close.read_effective_trading_status_authority",
+        lambda *_args, **_kwargs: authority_calls.append(True)
+        or [
+            {
+                "instrumentId": "instrument-2601",
+                "resolvedStatus": "SUSPENDED",
+                "reasonCode": "CAPITAL_REDUCTION_TRADING_SUSPENSION",
+                "authoritySource": "TWSE_OFFICIAL_REDUCTION",
+                "sourceReference": "https://www.twse.com.tw/official",
+                "effectiveFrom": date(2026, 9, 23),
+                "effectiveTo": date(2026, 10, 3),
+                "resolutionState": "RESOLVED",
+                "blocksPublication": False,
+                "isLegitimateUnavailable": True,
+                "authorityClass": "CORPORATE_ACTION",
+            }
+        ],
+    )
+
+    bounded = updater._resolve_missing_statuses(
+        run_id="run-1",
+        trading_date=date(2026, 9, 30),
+        candidates={"instrument-2601": True},
+    )
+
+    assert authority_calls == [True]
+    assert bounded.metrics.legitimate_unavailable_count == 1
+    assert updater.session.added.metadata_payload["checkpointSemantic"] == (
+        "TRADING_STATUS_AUTHORITY_RESOLUTION"
+    )
     assert (
         updater._status_resolution_by_instrument_id["instrument-2601"].authority_class
         == "CORPORATE_ACTION"
