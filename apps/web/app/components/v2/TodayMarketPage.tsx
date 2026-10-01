@@ -26,12 +26,14 @@ import {
   formatMarketAsOf,
   formatMarketDate,
   formatMarketDistributionLabel,
+  formatInstitutionalAmount,
   formatMarketNumber,
   formatMarketPercent as formatMarketPercentValue,
   formatSignedMarketNumber,
   formatTurnoverHundredMillion,
   formatTurnoverHundredMillionValue,
   marketDistribution,
+  marketDistributionDisplayMeta,
   marketFactIsAvailable,
   marketIndices,
   marketTurnover,
@@ -100,11 +102,20 @@ function DatePanel({ dataDate, updatedAt }: { dataDate: string | null; updatedAt
   return <div className="tp-home-date-panel"><CalendarDays size={22} aria-hidden="true" /><div><strong>{dataDate ? `${formatMarketDate(dataDate)}（收盤）` : "資料日尚未提供"}</strong><span>收盤後 · 資料更新時間：{updatedAt ? formatMarketAsOf(updatedAt) : "尚未提供"}</span></div><Info size={18} aria-hidden="true" /></div>;
 }
 
-function IndexFactCard({ label, market, value, open, high, low, change, changePct, status }: { label: string; market: string; value: number | null; open?: number | null; high?: number | null; low?: number | null; change: number | null; changePct: number | null; status: string }) {
+function indexPointTone(value: number | null | undefined, previousClose: number | null | undefined): "is-up" | "is-down" | "is-flat" | "is-unavailable" {
+  if (typeof value !== "number" || !Number.isFinite(value) || typeof previousClose !== "number" || !Number.isFinite(previousClose)) return "is-unavailable";
+  if (value > previousClose!) return "is-up";
+  if (value < previousClose!) return "is-down";
+  return "is-flat";
+}
+
+function IndexFactCard({ label, market, value, open, high, low, previousClose, change, changePct, status }: { label: string; market: string; value: number | null; open?: number | null; high?: number | null; low?: number | null; previousClose?: number | null; change: number | null; changePct: number | null; status: string }) {
   const available = marketFactIsAvailable(status, value);
   const ohlcAvailable = available && [open, high, low].every((item) => typeof item === "number" && Number.isFinite(item));
   const direction = typeof change === "number" && change > 0 ? "up" : typeof change === "number" && change < 0 ? "down" : "flat";
-  return <article data-market={market} className={`tp-home-target-fact-card tp-home-target-index-card tp-home-target-${direction}${ohlcAvailable ? "" : " tp-home-target-index-card--compact"}`}><div className="tp-home-target-card-title"><strong>{label}</strong></div><strong className="tp-home-target-index-value">{available ? formatMarketNumber(value) : "尚未提供"}</strong><span className="tp-home-target-index-change" aria-label={available && change !== null ? `漲跌 ${formatSignedMarketNumber(change)} 點${changePct !== null ? `，${formatMarketPercent(changePct)}` : ""}` : "漲跌點尚未提供"}>{available && change !== null ? `${change > 0 ? "▲" : change < 0 ? "▼" : "—"} ${formatSignedMarketNumber(change)} 點` : "漲跌點尚未提供"}{available && changePct !== null && ` · ${formatMarketPercent(changePct)}`}</span>{ohlcAvailable && <div className="tp-home-target-index-stats" aria-label={`${label}日內 OHLC`}><div><span>開盤</span><strong>{formatMarketNumber(open)}</strong></div><div><span>最高</span><strong>{formatMarketNumber(high)}</strong></div><div><span>最低</span><strong>{formatMarketNumber(low)}</strong></div></div>}</article>;
+  const highTone = indexPointTone(high, previousClose);
+  const lowTone = indexPointTone(low, previousClose);
+  return <article data-market={market} className={`tp-home-target-fact-card tp-home-target-index-card tp-home-target-${direction}${ohlcAvailable ? "" : " tp-home-target-index-card--compact"}`}><div className="tp-home-target-card-title"><strong>{label}</strong></div><strong className="tp-home-target-index-value">{available ? formatMarketNumber(value) : "尚未提供"}</strong><span className="tp-home-target-index-change" aria-label={available && change !== null ? `漲跌 ${formatSignedMarketNumber(change)} 點${changePct !== null ? `，${formatMarketPercent(changePct)}` : ""}` : "漲跌點尚未提供"}>{available && change !== null ? `${change > 0 ? "▲" : change < 0 ? "▼" : "—"} ${formatSignedMarketNumber(change)} 點` : "漲跌點尚未提供"}{available && changePct !== null && ` · ${formatMarketPercent(changePct)}`}</span>{ohlcAvailable && <div className="tp-home-target-index-stats" aria-label={`${label}日內 OHLC`}><div><span>開盤</span><strong>{formatMarketNumber(open)}</strong></div><div><span>最高</span><strong className={highTone}>{formatMarketNumber(high)}</strong></div><div><span>最低</span><strong className={lowTone}>{formatMarketNumber(low)}</strong></div></div>}</article>;
 }
 
 function TurnoverFactCard({ overview }: { overview: NonNullable<TodayMarketOverviewResource["data"]> }) {
@@ -129,16 +140,21 @@ function InstitutionalFactCard({ overview }: { overview: NonNullable<TodayMarket
     const numeric = numericValue(value);
     return numeric === null ? "is-unavailable" : numeric > 0 ? "is-up" : numeric < 0 ? "is-down" : "is-flat";
   };
-  return <article className="tp-home-target-fact-card tp-home-target-institution-card"><div className="tp-home-target-card-title"><strong>三大法人買賣超</strong><Landmark size={22} aria-hidden="true" /></div><div className="tp-home-target-institution-rows">{rows.map(([label, value]) => <div key={label}><span>{label}</span><strong className={valueTone(value)}>{combinedAvailable ? formatSignedMarketNumber(numericValue(value)) : "尚未提供"}</strong></div>)}</div>{combinedAvailable ? <small className="tp-home-target-flow-meta">上市＋上櫃合計 · {flow?.unit ?? "TWD"} · 資料日 {formatMarketDate(flow?.asOfDate)}</small> : <small className="tp-home-target-unavailable-note">正式法人資料尚未提供，不以單一市場或 0 代替。</small>}</article>;
+  return <article className="tp-home-target-fact-card tp-home-target-institution-card"><div className="tp-home-target-card-title"><strong>三大法人買賣超</strong><Landmark size={22} aria-hidden="true" /></div><div className="tp-home-target-institution-rows">{rows.map(([label, value]) => <div key={label}><span>{label}</span><strong className={valueTone(value)}>{combinedAvailable ? formatInstitutionalAmount(numericValue(value)) : "尚未提供"}</strong></div>)}</div>{combinedAvailable ? <small className="tp-home-target-flow-meta">上市＋上櫃合計 · {flow?.unit ?? "TWD"} · 資料日 {formatMarketDate(flow?.asOfDate)}</small> : <small className="tp-home-target-unavailable-note">正式法人資料尚未提供，不以單一市場或 0 代替。</small>}</article>;
 }
 
 function DistributionCard({ overview }: { overview: NonNullable<TodayMarketOverviewResource["data"]> }) {
   const distribution = marketDistribution(overview);
   const available = distribution?.status === "AVAILABLE" && distribution.eligible > 0;
   const coverage = distribution?.coverage ?? {};
+  const displayMeta = marketDistributionDisplayMeta(distribution);
   const distributionUniverse = typeof coverage.universeLabel === "string" ? coverage.universeLabel : typeof coverage.denominator === "string" ? coverage.denominator : "正式分布統計範圍尚未提供";
+  const coveragePctLabel = displayMeta.coveragePct === null ? "尚未提供" : `${formatMarketNumber(displayMeta.coveragePct)}%`;
+  const coverageText = displayMeta.universeCount === null
+    ? `覆蓋率：${formatMarketNumber(displayMeta.completeCount)} / 尚未提供（${coveragePctLabel}）`
+    : `覆蓋率：${formatMarketNumber(displayMeta.completeCount)} / ${formatMarketNumber(displayMeta.universeCount)}（${coveragePctLabel}）`;
   const maxPercentage = available ? Math.max(...(distribution.buckets ?? []).map((bucket) => bucket.percentage ?? 0), 1) : 1;
-  return <article aria-label="漲跌幅分布與市場廣度" className="tp-home-target-distribution-card"><div className="tp-home-target-subheading"><div><h3>漲跌幅分布（上市＋上櫃）</h3><span className="tp-home-target-helper">完整收盤／前收資料 · 排除未成交或缺值</span></div><span className="tp-home-target-info" title={distributionUniverse} aria-label={`分布統計範圍：${distributionUniverse}`}><Info size={17} aria-hidden="true" /></span>{available && <strong>總家數 {formatMarketNumber(distribution.eligible)}</strong>}</div>{available ? <div className="tp-home-target-bars">{(distribution.buckets ?? []).map((bucket) => <div className="tp-home-target-bar-item" key={bucket.key}><strong className="tp-home-target-bar-count">{formatMarketNumber(bucket.count)}</strong><i aria-hidden="true" style={{ height: `${Math.max(5, Math.round(((bucket.percentage ?? 0) / maxPercentage) * 62))}px` }} /><span className="tp-home-target-bar-label" title={bucket.label}>{formatMarketDistributionLabel(bucket.key, bucket.label)}</span></div>)}</div> : <div className="tp-home-target-empty">正式漲跌幅分布目前尚未提供。</div>}</article>;
+  return <article aria-label="漲跌幅分布與市場廣度" className="tp-home-target-distribution-card"><div className="tp-home-target-subheading"><div><h3>{displayMeta.title}</h3><span className="tp-home-target-helper">分布百分比以完整收盤／前收股票為分母</span></div><span className="tp-home-target-info" title={distributionUniverse} aria-label={`分布統計範圍：${distributionUniverse}`}><Info size={17} aria-hidden="true" /></span>{available && <strong>完整收盤／前收：{formatMarketNumber(displayMeta.completeCount)} 家</strong>}</div>{available && <div className="tp-home-target-distribution-meta"><span>{coverageText}</span><span>排除：{formatMarketNumber(displayMeta.excludedCount)} 家</span></div>}{available ? <div className="tp-home-target-bars">{(distribution.buckets ?? []).map((bucket) => <div className="tp-home-target-bar-item" key={bucket.key}><strong className="tp-home-target-bar-count">{formatMarketNumber(bucket.count)}</strong><i aria-hidden="true" style={{ height: `${Math.max(5, Math.round(((bucket.percentage ?? 0) / maxPercentage) * 62))}px` }} /><span className="tp-home-target-bar-label" title={bucket.label}>{formatMarketDistributionLabel(bucket.key, bucket.label)}</span></div>)}</div> : <div className="tp-home-target-empty">正式漲跌幅分布目前尚未提供。</div>}</article>;
 }
 
 function BreadthCard({ overview }: { overview: NonNullable<TodayMarketOverviewResource["data"]> }) {
@@ -161,19 +177,34 @@ function MarketOverviewCard({ loading, resource }: { loading: boolean; resource:
 
 function MarketSignalCards({ loading, resource }: { loading: boolean; resource: ReturnType<typeof useTodayMainlines>["resource"]["dailyFocus"] }) {
   const data = resource.data;
-  const signals = (resource.data?.signals ?? []).filter((signal) => signal.isActive !== false);
+  const allSignals = resource.data?.signals ?? [];
+  const signals = allSignals.filter((signal) => signal.isActive === true && signal.signalStatus === "ACTIVE");
+  const [showCatalog, setShowCatalog] = useState(false);
   const [signalPage, setSignalPage] = useState(0);
   const pageSize = 5;
   const pageCount = Math.max(1, Math.ceil(signals.length / pageSize));
   const safePage = Math.min(signalPage, pageCount - 1);
   const visibleSignals = signals.slice(safePage * pageSize, (safePage + 1) * pageSize);
+  const catalogSignals = (data?.signalCatalog ?? []).map((catalog) => ({
+    catalog,
+    current: allSignals.find((signal) => (signal.signalId ?? signal.key) === (catalog.signalId ?? catalog.key)),
+  }));
+  const signalReasonCode = (signal: (typeof allSignals)[number] | undefined): string => {
+    if (!signal) return "CATALOG_STATUS_NOT_EVALUATED";
+    if (signal.signalStatus === "ACTIVE") return "ACTIVE_CONDITION_MET";
+    if (signal.signalStatus === "NOT_EVALUABLE") return "FORMAL_DATA_INSUFFICIENT";
+    return "CONDITION_NOT_MET";
+  };
   // Keep the formal daily-focus fields explicit for the data-owned empty state: data.headline and (data.bullets ?? []).map(...).
   const temporalLabel = (signal: (typeof signals)[number]): string => signal.signalTemporalStatus === "NEW"
     ? "NEW"
     : signal.signalTemporalStatus === "PERSISTING" && signal.streakDays
       ? `延續第 ${signal.streakDays} 日`
       : signal.signalTemporalStatus === "INSUFFICIENT_HISTORY" ? "歷史資料不足" : "今日啟動";
-  return <Card className="tp-home-signals-card tp-home-target-signals-card"><div className="tp-home-target-section-title"><div><Target size={28} aria-hidden="true" /><div><h2 id="market-signals-title">今日市場訊號 <Info size={17} aria-hidden="true" /></h2><p>偵測市場異常變化，協助掌握今日值得關注的關鍵訊號。</p></div></div><button type="button" className="tp-home-target-outline-button"><BarChart3 size={17} aria-hidden="true" />查看全部市場訊號<ChevronRight size={16} aria-hidden="true" /></button></div>{loading || resource.state === "UNAVAILABLE" || resource.state === "ERROR" ? <MainlinesState loading={loading} state={resource.state} reason={resource.reason} dataDate={resource.dataDate} section="今日市場訊號" /> : signals.length > 0 ? <><div className="tp-home-signal-grid">{visibleSignals.map((signal) => <article className={`tp-home-signal-card tp-home-signal-card--${signal.severity.toLowerCase()}`} key={signal.signalId ?? signal.key}><div className="tp-home-signal-card-heading"><strong>{signal.title ?? signal.name}</strong><b>{temporalLabel(signal)}</b></div><small>{signal.occurrenceDays20d === null || signal.occurrenceDays20d === undefined ? "近20日發生狀態尚未完整" : `近20日發生 ${signal.occurrenceDays20d} 日`}</small><p>{signal.frequencyMessage ?? signal.summary ?? signal.interpretation}</p><ul>{(signal.evidence ?? []).map((item) => <li key={item}>{item}</li>)}</ul></article>)}</div>{signals.length > pageSize && <div className="tp-home-signal-pagination" aria-label="市場訊號翻頁控制"><button type="button" onClick={() => setSignalPage(Math.max(0, safePage - 1))} disabled={safePage === 0} aria-label="上一組市場訊號">上一組</button><span>顯示 {safePage * pageSize + 1}-{Math.min((safePage + 1) * pageSize, signals.length)} / {signals.length}</span><button type="button" onClick={() => setSignalPage(Math.min(pageCount - 1, safePage + 1))} disabled={safePage >= pageCount - 1} aria-label="下一組市場訊號">下一組</button></div>}</> : <div className="tp-home-target-signal-empty"><strong>{data?.headline ?? "今日市場訊號尚未完成。"}</strong>{data ? <ul>{(data.bullets ?? []).map((bullet) => <li key={bullet}>{bullet}</li>)}</ul> : <p>正式訊號依賴資料尚未完整發布。</p>}</div>}<CompactDisclosure loading={loading} resource={resource} sectionKey="dailyFocus" sectionLabel="今日市場訊號" /></Card>;
+  return <>
+    <Card className="tp-home-signals-card tp-home-target-signals-card"><div className="tp-home-target-section-title"><div><Target size={28} aria-hidden="true" /><div><h2 id="market-signals-title">今日市場訊號 <Info size={17} aria-hidden="true" /></h2><p>偵測市場異常變化，協助掌握今日值得關注的關鍵訊號。</p></div></div><button type="button" className="tp-home-target-outline-button" aria-haspopup="dialog" onClick={() => setShowCatalog(true)}><BarChart3 size={17} aria-hidden="true" />查看全部市場訊號<ChevronRight size={16} aria-hidden="true" /></button></div>{loading || resource.state === "UNAVAILABLE" || resource.state === "ERROR" ? <MainlinesState loading={loading} state={resource.state} reason={resource.reason} dataDate={resource.dataDate} section="今日市場訊號" /> : signals.length > 0 ? <><div className="tp-home-signal-grid">{visibleSignals.map((signal) => <article className={`tp-home-signal-card tp-home-signal-card--${signal.severity.toLowerCase()}`} key={signal.signalId ?? signal.key}><div className="tp-home-signal-card-heading"><strong>{signal.title ?? signal.name}</strong><b>{temporalLabel(signal)}</b></div><small>{signal.occurrenceDays20d === null || signal.occurrenceDays20d === undefined ? "近20日發生狀態尚未完整" : `近20日發生 ${signal.occurrenceDays20d} 日`}</small><p>{signal.frequencyMessage ?? signal.summary ?? signal.interpretation}</p><ul>{(signal.evidence ?? []).map((item) => <li key={item}>{item}</li>)}</ul></article>)}</div>{signals.length > pageSize && <div className="tp-home-signal-pagination" aria-label="市場訊號翻頁控制"><button type="button" onClick={() => setSignalPage(Math.max(0, safePage - 1))} disabled={safePage === 0} aria-label="上一組市場訊號">上一組</button><span>顯示 {safePage * pageSize + 1}-{Math.min((safePage + 1) * pageSize, signals.length)} / {signals.length}</span><button type="button" onClick={() => setSignalPage(Math.min(pageCount - 1, safePage + 1))} disabled={safePage >= pageCount - 1} aria-label="下一組市場訊號">下一組</button></div>}</> : <div className="tp-home-target-signal-empty"><strong>{data?.headline ?? "今日市場訊號尚未完成。"}</strong>{data ? <ul>{(data.bullets ?? []).map((bullet) => <li key={bullet}>{bullet}</li>)}</ul> : <p>正式訊號依賴資料尚未完整發布。</p>}</div>}<CompactDisclosure loading={loading} resource={resource} sectionKey="dailyFocus" sectionLabel="今日市場訊號" /></Card>
+    {showCatalog && <div className="tp-home-signal-modal-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setShowCatalog(false); }}><section className="tp-home-signal-modal" role="dialog" aria-modal="true" aria-labelledby="market-signal-catalog-title"><div className="tp-home-signal-modal-heading"><div><span className="tp-overline">FORMAL SIGNAL CATALOG</span><h2 id="market-signal-catalog-title">完整市場訊號目錄</h2><p>今日卡片只呈現 ACTIVE；此目錄保留每項正式規則的當日狀態。</p></div><button type="button" aria-label="關閉市場訊號目錄" onClick={() => setShowCatalog(false)}>關閉</button></div><div className="tp-home-signal-modal-list">{catalogSignals.map(({ catalog, current }) => <article className={`tp-home-signal-modal-item ${current?.signalStatus === "ACTIVE" && current.isActive === true ? "is-active" : "is-inactive"}`} key={catalog.signalId ?? catalog.key}><div className="tp-home-signal-modal-item-title"><h3>{catalog.title ?? catalog.name}</h3><span>{current?.signalStatus ?? "NOT_EVALUABLE"}</span></div><p>{catalog.description}</p><dl><div><dt>Reason code</dt><dd>{signalReasonCode(current)}</dd></div><div><dt>Temporal</dt><dd>{current?.signalTemporalStatus ?? "INACTIVE"}</dd></div><div><dt>Streak</dt><dd>{current?.streakDays ?? "—"}</dd></div><div><dt>Occurrence</dt><dd>{current?.occurrenceDays20d ?? "—"}</dd></div><div><dt>Frequency</dt><dd>{current?.frequencyBand ?? "INSUFFICIENT_FORMAL_HISTORY"}</dd></div><div><dt>Message</dt><dd>{current?.frequencyMessage ?? current?.summary ?? catalog.condition}</dd></div></dl></article>)}</div></section></div>}
+  </>;
 }
 
 function MainlineCards({ loading, resource }: { loading: boolean; resource: ReturnType<typeof useTodayMainlines>["resource"] }) {

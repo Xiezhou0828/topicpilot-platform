@@ -86,3 +86,17 @@ test("Today Market Overview keeps the owner-approved compact card semantics", as
   assert.match(css, /tp-home-target-index-card--compact/);
   assert.match(css, /tp-home-target-bottom-grid\{grid-template-columns:minmax\(0,3fr\) minmax\(240px,1\.05fr\)\}/);
 });
+
+test("Today Market Overview colors high and low against previous close", async () => {
+  const [page, fields, css] = await Promise.all([
+    read("components/v2/TodayMarketPage.tsx"),
+    read("lib/today-market-fields.ts"),
+    read("globals.css"),
+  ]);
+  assert.match(page, /indexPointTone\(high, previousClose\)/);
+  assert.match(page, /indexPointTone\(low, previousClose\)/);
+  assert.match(page, /previousClose\?: number \| null/);
+  assert.match(css, /tp-home-target-index-stats strong\.is-up/);
+  assert.match(css, /tp-home-target-index-stats strong\.is-down/);
+  assert.match(fields, /formatInstitutionalAmount/);
+});

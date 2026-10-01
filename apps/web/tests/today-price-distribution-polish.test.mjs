@@ -63,15 +63,17 @@ test("PRICE_DISTRIBUTION_LABEL_ORDER=PASS", async () => {
 
 test("PRICE_DISTRIBUTION_TITLE_TYPOGRAPHY_CONSISTENT=PASS", async () => {
   const { page, css } = await distributionSources();
-  assert.match(page, /<h3>漲跌幅分布（上市＋上櫃）<\/h3>/);
+  assert.match(page, /<h3>\{displayMeta\.title\}<\/h3>/);
   assert.match(css, /\.tp-home-target-card-title strong\{font-size:17px\}/);
   assert.match(css, /\.tp-home-target-subheading h3\{font-size:17px;font-weight:650;letter-spacing:-\.02em\}/);
 });
 
 test("PRICE_DISTRIBUTION_UNIVERSE_HELPER_PRESERVED=PASS", async () => {
   const { page } = await distributionSources();
-  assert.match(page, /完整收盤／前收資料 · 排除未成交或缺值/);
-  assert.match(page, /總家數 \{formatMarketNumber\(distribution\.eligible\)\}/);
+  assert.match(page, /分布百分比以完整收盤／前收股票為分母/);
+  assert.match(page, /完整收盤／前收：\{formatMarketNumber\(displayMeta\.completeCount\)\} 家/);
+  assert.match(page, /覆蓋率：/);
+  assert.match(page, /排除：\{formatMarketNumber\(displayMeta\.excludedCount\)\} 家/);
   assert.match(page, /title=\{distributionUniverse\} aria-label=\{`分布統計範圍：\$\{distributionUniverse\}`\}/);
 });
 

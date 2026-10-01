@@ -6,6 +6,16 @@ export type HomeMarketTurnover = components["schemas"]["HomeMarketTurnover"];
 export type HomeMarketTurnoverPreviousSession = components["schemas"]["HomeMarketTurnoverPreviousSession"];
 export type HomeMarketDistribution = components["schemas"]["HomeMarketDistribution"];
 
+export type MarketDistributionDisplayMeta = {
+  scope: "COVERED_STOCKS" | "WHOLE_MARKET";
+  title: string;
+  completeCount: number;
+  universeCount: number | null;
+  coveragePct: number | null;
+  excludedCount: number;
+  denominator: string;
+};
+
 export type MarketFactState = "AVAILABLE" | "PARTIAL" | "UNAVAILABLE";
 
 const AVAILABLE_STATUSES = new Set(["AVAILABLE", "PUBLISHED", "FORMAL"]);
@@ -14,7 +24,7 @@ function normalizedStatus(status: string | null | undefined): string {
   return typeof status === "string" ? status.trim().toUpperCase() : "";
 }
 
-function finiteNumber(value: number | null | undefined): value is number {
+function finiteNumber(value: unknown): value is number {
   return typeof value === "number" && Number.isFinite(value);
 }
 
@@ -110,6 +120,35 @@ export function marketDistribution(overview: HomeMarketOverview | null): HomeMar
   return value;
 }
 
+export function marketDistributionDisplayMeta(
+  distribution: HomeMarketDistribution | null,
+): MarketDistributionDisplayMeta {
+  const coverage = distribution?.coverage ?? {};
+  const wholeMarket = coverage.scope === "WHOLE_MARKET";
+  const universeCount = finiteNumber(coverage.eligibleUniverse) ? coverage.eligibleUniverse : null;
+  const completeCount = finiteNumber(coverage.observedComplete)
+    ? coverage.observedComplete
+    : distribution?.eligible ?? 0;
+  const coveragePct = finiteNumber(coverage.coveragePct)
+    ? coverage.coveragePct
+    : universeCount !== null && universeCount > 0
+      ? completeCount / universeCount * 100
+      : null;
+  return {
+    scope: wholeMarket ? "WHOLE_MARKET" : "COVERED_STOCKS",
+    title: wholeMarket ? "漲跌幅分布（上市＋上櫃全市場）" : "已覆蓋股票漲跌幅分布",
+    completeCount,
+    universeCount,
+    coveragePct,
+    excludedCount: finiteNumber(coverage.excludedCount)
+      ? coverage.excludedCount
+      : distribution?.excluded ?? 0,
+    denominator: typeof coverage.distributionDenominator === "string"
+      ? coverage.distributionDenominator
+      : "COMPLETE_CLOSE_PREVIOUS_CLOSE",
+  };
+}
+
 export function formatMarketNumber(value: number | null | undefined): string {
   return finiteNumber(value)
     ? new Intl.NumberFormat("zh-TW", { maximumFractionDigits: 2 }).format(value)
@@ -120,6 +159,25 @@ export function formatSignedMarketNumber(value: number | null | undefined): stri
   if (!finiteNumber(value)) return "尚未提供";
   const formatted = formatMarketNumber(Math.abs(value));
   return value > 0 ? `+${formatted}` : value < 0 ? `-${formatted}` : formatted;
+}
+
+export function formatInstitutionalAmount(value: number | null | undefined): string {
+  if (!finiteNumber(value)) return "尚未提供";
+  const sign = value < 0 ? "-" : "";
+  const absolute = Math.abs(value);
+  if (absolute >= 100_000_000) {
+    let billions = Math.floor(absolute / 100_000_000);
+    let tenThousands = Math.round((absolute - billions * 100_000_000) / 10_000);
+    if (tenThousands >= 10_000) {
+      billions += 1;
+      tenThousands = 0;
+    }
+    return tenThousands > 0
+      ? `${sign}${formatMarketNumber(billions)} 億 ${formatMarketNumber(tenThousands)} 萬`
+      : `${sign}${formatMarketNumber(billions)} 億`;
+  }
+  if (absolute >= 10_000) return `${sign}${formatMarketNumber(absolute / 10_000)} 萬`;
+  return `${sign}${formatMarketNumber(absolute)} 元`;
 }
 
 export function formatMarketPercent(value: number | null | undefined): string {
