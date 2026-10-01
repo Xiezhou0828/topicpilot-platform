@@ -6,6 +6,7 @@ from types import SimpleNamespace
 
 import pytest
 
+from topicpilot_api.corporate_action_authority import corporate_action_authorities_for
 from topicpilot_api.market_data.availability import MarketAvailability
 from topicpilot_api.trading_status_authority import (
     AuthorityClass,
@@ -254,6 +255,60 @@ def test_tpe_and_two_source_authority_remain_independent() -> None:
         resolve_effective_trading_status(object(), TRADE_DATE, official_authority=(two,)).status
         == "NO_TRADE"
     )
+
+
+@pytest.mark.parametrize(
+    "trading_date",
+    [date(2026, 9, 23), date(2026, 9, 30), date(2026, 10, 3)],
+)
+def test_twse_reduction_authority_resolves_2601_as_suspended(trading_date: date) -> None:
+    authority = tuple(
+        item.to_trading_status_record()
+        for item in corporate_action_authorities_for(
+            symbol="2601", market="TPE", trading_date=trading_date
+        )
+    )
+
+    result = resolve_effective_trading_status(object(), trading_date, official_authority=authority)
+
+    assert result.status == "SUSPENDED"
+    assert result.reason_code == "CAPITAL_REDUCTION_TRADING_SUSPENSION"
+    assert result.authority_source == "TWSE_OFFICIAL_REDUCTION"
+    assert result.authority_class == AuthorityClass.CORPORATE_ACTION.value
+    assert result.blocks_publication is False
+
+
+def test_reduction_authority_does_not_infer_available_after_resume_date() -> None:
+    authority = tuple(
+        item.to_trading_status_record()
+        for item in corporate_action_authorities_for(
+            symbol="2601", market="TPE", trading_date=date(2026, 10, 5)
+        )
+    )
+
+    result = resolve_effective_trading_status(
+        object(), date(2026, 10, 5), official_authority=authority
+    )
+
+    assert result.status == "MISSING_MARKET_DATA"
+    assert result.blocks_publication is True
+
+
+def test_same_session_close_precedes_reduction_authority_without_discarding_event() -> None:
+    authority = tuple(
+        item.to_trading_status_record()
+        for item in corporate_action_authorities_for(
+            symbol="2601", market="TPE", trading_date=date(2026, 9, 30)
+        )
+    )
+
+    result = resolve_effective_trading_status(
+        object(), date(2026, 9, 30), same_session_close=5.91, official_authority=authority
+    )
+
+    assert result.status == "AVAILABLE"
+    assert result.preserved_event_status == "SUSPENDED"
+    assert result.preserved_event_source == "TWSE_OFFICIAL_REDUCTION"
 
 
 def test_bounded_resolution_retries_until_authority_arrives() -> None:

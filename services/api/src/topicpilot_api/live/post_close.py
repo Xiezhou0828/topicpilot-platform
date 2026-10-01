@@ -103,6 +103,77 @@ def _json_safe(value: Any) -> Any:
     return value
 
 
+def _checkpoint_semantics(batch_key: str) -> str:
+    if batch_key.startswith("FORMAL_MARKET_FACTS:"):
+        parts = batch_key.split(":")
+        if len(parts) >= 3 and parts[1] in {"TPE", "TWO"}:
+            return "PROVIDER_INGESTION"
+        if batch_key == "FORMAL_MARKET_FACTS:OFFICIAL":
+            return "INSTITUTIONAL_FLOW_PUBLICATION_READBACK"
+    return {
+        "STATUS_RESOLUTION": "TRADING_STATUS_AUTHORITY_RESOLUTION",
+        "A9_B2_FORMAL_PROCESSING": "FORMAL_MARKET_FACTS_PERSISTENCE",
+        "FINAL_PUBLICATION": "FINAL_FORMAL_PUBLICATION",
+        "COMPLETION": "RUN_COMPLETION",
+    }.get(batch_key, "POST_CLOSE_ORCHESTRATION")
+
+
+def _provider_metrics_applicability(batch_key: str) -> str:
+    return (
+        "ACTUAL"
+        if _checkpoint_semantics(batch_key) == "PROVIDER_INGESTION"
+        else "NOT_APPLICABLE"
+    )
+
+
+def _failure_classification_for_checkpoint(batch_key: str, status: str) -> str | None:
+    if status == "COMPLETED":
+        return None
+    return {
+        "PROVIDER_INGESTION": "PROVIDER_INGESTION_FAILURE",
+        "INSTITUTIONAL_FLOW_PUBLICATION_READBACK": "INSTITUTIONAL_FLOW_READBACK_FAILURE",
+        "FORMAL_MARKET_FACTS_PERSISTENCE": "MARKET_FACTS_PERSISTENCE_FAILURE",
+        "FINAL_FORMAL_PUBLICATION": "FORMAL_PUBLICATION_READINESS_FAILURE",
+    }.get(_checkpoint_semantics(batch_key))
+
+
+def _readback_failure_metadata(
+    *,
+    formal_readback: Mapping[str, Any],
+    market_facts_publication: Mapping[str, Any] | None = None,
+) -> dict[str, Any]:
+    flow = formal_readback.get("institutionalFlow") or {}
+    if flow.get("status") != "PASS":
+        return {
+            "failureClassification": "INSTITUTIONAL_FLOW_READBACK_FAILURE",
+            "failedSection": "institutionalFlow",
+            "reasonCode": flow.get("reasonCode") or "INSTITUTIONAL_FLOW_READBACK_UNAVAILABLE",
+        }
+    if market_facts_publication and market_facts_publication.get("status") != "SUCCESS":
+        return {
+            "failureClassification": "MARKET_FACTS_PERSISTENCE_FAILURE",
+            "failedSection": "marketFactsPublication",
+            "reasonCode": market_facts_publication.get("reason")
+            or market_facts_publication.get("error")
+            or "MARKET_FACTS_PERSISTENCE_UNAVAILABLE",
+        }
+    if formal_readback.get("status") != "PASS":
+        topic = formal_readback.get("topicSnapshot") or {}
+        home = formal_readback.get("homePublication") or {}
+        return {
+            "failureClassification": "FORMAL_PUBLICATION_READINESS_FAILURE",
+            "failedSection": (
+                "topicSnapshot"
+                if topic.get("status") != "PASS"
+                else "homePublication"
+                if home.get("status") != "PASS"
+                else "formalPublication"
+            ),
+            "reasonCode": "FORMAL_PUBLICATION_READBACK_NOT_READY",
+        }
+    return {}
+
+
 @dataclass(frozen=True)
 class PostCloseRunResult:
     run_id: str
@@ -407,8 +478,8 @@ class PostCloseUpdater:
         failed_count: int = 0,
         skipped_count: int = 0,
         retry_count: int = 0,
-        provider_request_count: int = 0,
-        provider_failure_count: int = 0,
+        provider_request_count: int | None = None,
+        provider_failure_count: int | None = None,
         metadata: Mapping[str, Any] | None = None,
     ) -> LiveCollectorCheckpoint:
         """Append one immutable checkpoint event and make it durable."""
@@ -424,6 +495,29 @@ class PostCloseUpdater:
             if batch_number is not None
             else _CHECKPOINT_BATCH_NUMBERS.get(batch_key, 1000)
         )
+        metadata_payload = dict(metadata or {})
+        checkpoint_semantic = _checkpoint_semantics(batch_key)
+        metadata_payload.setdefault("checkpointSemantic", checkpoint_semantic)
+        provider_metrics_applicability = _provider_metrics_applicability(batch_key)
+        metadata_payload.setdefault(
+            "providerMetricsApplicability", provider_metrics_applicability
+        )
+        failure_classification = _failure_classification_for_checkpoint(batch_key, status)
+        if failure_classification is not None:
+            metadata_payload.setdefault("failureClassification", failure_classification)
+        if provider_metrics_applicability == "ACTUAL":
+            provider_request_count = 0 if provider_request_count is None else provider_request_count
+            provider_failure_count = 0 if provider_failure_count is None else provider_failure_count
+            if (
+                not isinstance(provider_request_count, int)
+                or provider_request_count < 0
+                or not isinstance(provider_failure_count, int)
+                or provider_failure_count < 0
+            ):
+                raise ValueError("provider checkpoint counters must be non-negative integers")
+        else:
+            provider_request_count = None
+            provider_failure_count = None
         payload = _json_safe(
             {
                 "runId": str(run_id),
@@ -438,7 +532,7 @@ class PostCloseUpdater:
                 "retryCount": retry_count,
                 "providerRequestCount": provider_request_count,
                 "providerFailureCount": provider_failure_count,
-                "metadata": metadata or {},
+                "metadata": metadata_payload,
             }
         )
         checkpoint = LiveCollectorCheckpoint(
@@ -483,7 +577,7 @@ class PostCloseUpdater:
             "failure_count": sum(row.failed_count for row in completed),
             "skipped_count": sum(row.skipped_count for row in completed),
             "retry_count": sum(row.retry_count for row in completed),
-            "point_count": sum(row.provider_request_count for row in completed),
+            "point_count": sum((row.provider_request_count or 0) for row in completed),
         }
 
     def _mark_run_for_resume(self, run: LiveCollectorRun, now: datetime) -> None:
@@ -1216,7 +1310,7 @@ class PostCloseUpdater:
                 failure_count += previous_checkpoint.failed_count
                 skipped_count += previous_checkpoint.skipped_count
                 retry_count += previous_checkpoint.retry_count
-                point_count += previous_checkpoint.provider_request_count
+                point_count += previous_checkpoint.provider_request_count or 0
                 continue
             self._checkpoint_event(
                 run_id=run_id,
@@ -1539,6 +1633,7 @@ class PostCloseUpdater:
     ):
         """Resolve only missing-price candidates in a separate bounded window."""
 
+        self._status_resolution_by_instrument_id = {}
         if not candidates:
             self._status_resolution_metrics = StatusResolutionMetrics()
             return None
@@ -1573,8 +1668,9 @@ class PostCloseUpdater:
                 # resolver contract.  The read model is already the
                 # canonical effective decision; no frontend re-derivation
                 # is involved.
-                return tuple(
-                    TradingStatusResolution(
+                converted: list[TradingStatusResolution] = []
+                for item in rows:
+                    resolution = TradingStatusResolution(
                         status=str(item["resolvedStatus"]),
                         authority_source=item.get("authoritySource"),
                         reason_code=str(item["reasonCode"]),
@@ -1585,13 +1681,14 @@ class PostCloseUpdater:
                         blocks_publication=bool(item["blocksPublication"]),
                         is_legitimate_unavailable=bool(item["isLegitimateUnavailable"]),
                         authority_class=(
-                            "NONE"
-                            if item.get("authoritySource") is None
-                            else "CANONICAL_STATUS_AUTHORITY"
+                            str(item.get("authorityClass") or "NONE")
                         ),
                     )
-                    for item in rows
-                )
+                    converted.append(resolution)
+                    instrument_id = item.get("instrumentId")
+                    if instrument_id is not None:
+                        self._status_resolution_by_instrument_id[instrument_id] = resolution
+                return tuple(converted)
             except Exception as exc:
                 raise TradingStatusAuthorityError("STATUS_AUTHORITY_PROVIDER_FAILURE") from exc
 
@@ -1772,6 +1869,7 @@ class PostCloseUpdater:
                 self.session,
                 local_date,
                 expected_instrument_ids=eligible_instrument_ids,
+                status_resolutions=getattr(self, "_status_resolution_by_instrument_id", {}),
             )
             if failure_count or skipped_count:
                 status = "PARTIAL" if success_count else "FAILED"
@@ -1913,6 +2011,12 @@ class PostCloseUpdater:
                         "publicationAuthority": "topicpilot.market_institutional_flow_daily",
                         "readback": flow_readback,
                         "marketFactsPublication": snapshot_result.get("marketFactsPublication"),
+                        **_readback_failure_metadata(
+                            formal_readback=formal_readback,
+                            market_facts_publication=snapshot_result.get(
+                                "marketFactsPublication"
+                            ),
+                        ),
                     },
                 )
             if "formalPublicationReadback" not in snapshot_result:
@@ -1960,6 +2064,12 @@ class PostCloseUpdater:
                             else "FORMAL_TOPIC_SNAPSHOT_NOT_READY"
                         ),
                         "readback": formal_readback,
+                        **_readback_failure_metadata(
+                            formal_readback=formal_readback,
+                            market_facts_publication=snapshot_result.get(
+                                "marketFactsPublication"
+                            ),
+                        ),
                     },
                 )
             final_failure_codes = tuple(sorted(set(failure_codes)))

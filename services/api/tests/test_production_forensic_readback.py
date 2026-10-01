@@ -180,6 +180,43 @@ def test_output_sanitizes_attempt_and_checkpoint_details() -> None:
     assert checkpoint["metadata"] == {"metadata_reason": "safe operational reason"}
 
 
+def test_checkpoint_readback_preserves_semantics_without_claiming_zero_for_na_metrics() -> None:
+    checkpoint = _safe_checkpoint(
+        {
+            "batch_number": 150,
+            "batch_key": "FORMAL_MARKET_FACTS:OFFICIAL",
+            "attempt_number": 2,
+            "status": "FAILED",
+            "processed_count": 0,
+            "succeeded_count": 0,
+            "failed_count": 1,
+            "skipped_count": 0,
+            "retry_count": 0,
+            "provider_request_count": 0,
+            "provider_failure_count": 0,
+            "metadata_checkpoint_semantic": "INSTITUTIONAL_FLOW_PUBLICATION_READBACK",
+            "metadata_provider_metrics_applicability": "NOT_APPLICABLE",
+            "metadata_failure_classification": "INSTITUTIONAL_FLOW_READBACK_FAILURE",
+            "metadata_failed_section": "institutionalFlow",
+            "metadata_readback_status": "FAIL",
+            "metadata_readback_reason_code": "WHOLE_MARKET_INSTITUTIONAL_FLOW_NOT_READY",
+            "metadata_readback_failed_section": "institutionalFlow",
+            "metadata_readback_failure_classification": "INSTITUTIONAL_FLOW_READBACK_FAILURE",
+            "metadata_market_facts_publication_status": "SUCCESS",
+        }
+    )
+
+    assert checkpoint["providerRequestCount"] is None
+    assert checkpoint["providerFailureCount"] is None
+    assert checkpoint["providerMetricsApplicability"] == "NOT_APPLICABLE"
+    assert checkpoint["readback"]["metadata_readback_reason_code"] == (
+        "WHOLE_MARKET_INSTITUTIONAL_FLOW_NOT_READY"
+    )
+    assert checkpoint["metadata"]["metadata_checkpoint_semantic"] == (
+        "INSTITUTIONAL_FLOW_PUBLICATION_READBACK"
+    )
+
+
 class _ScalarResult:
     def __init__(self, value: str) -> None:
         self.value = value

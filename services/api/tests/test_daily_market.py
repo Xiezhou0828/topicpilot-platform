@@ -1,7 +1,9 @@
 from datetime import date
 from pathlib import Path
 
-from topicpilot_api.daily_market import assess_daily_coverage
+import pytest
+
+from topicpilot_api.daily_market import assess_daily_coverage, build_unavailable_instruments
 
 MIGRATION = (
     Path(__file__).parents[1]
@@ -88,6 +90,38 @@ def test_null_close_is_unavailable_and_never_coerced_to_zero():
     assert result.unavailable_count == 1
     assert result.downstream_ready is False
     assert "UNAVAILABLE_DAILY_CLOSE" in result.reason_codes
+
+
+@pytest.mark.parametrize("trade_date", [date(2026, 9, 30), date(2026, 10, 3)])
+def test_twse_corporate_action_is_consumed_by_unavailable_read_model(trade_date):
+    rows = [
+        {
+            "instrument_id": "instrument-2601",
+            "symbol": "2601",
+            "name": "益航",
+            "market": "TPE",
+            "close": None,
+            "status_observation_id": None,
+            "status_source": None,
+            "status_code": None,
+            "status_reason": None,
+            "source_code": "TWSE_OFFICIAL_DAILY",
+            "last_valid_price_date": None,
+            "last_valid_close": None,
+            "formal_topic_membership_count": 1,
+            "affected_topic_slugs": ["shipping"],
+        }
+    ]
+
+    result = build_unavailable_instruments(rows, trade_date=trade_date)
+
+    assert len(result) == 1
+    assert result[0].status == "SUSPENDED"
+    assert result[0].reason_code == "CAPITAL_REDUCTION_TRADING_SUSPENSION"
+    assert result[0].source == "TWSE_OFFICIAL_REDUCTION"
+    assert result[0].is_legitimate_unavailable is True
+    assert result[0].blocks_formal_publication is False
+    assert result[0].last_valid_close is None
 
 
 def test_date_or_stable_key_conflict_blocks_handoff():

@@ -416,6 +416,8 @@ def test_checkpoint_events_are_append_only_and_increment_attempt_number():
     assert first.attempt_number == 1
     assert first.status == "IN_PROGRESS"
     assert first.checkpoint_hash
+    assert first.provider_request_count == 0
+    assert first.provider_failure_count == 0
 
     updater.session.latest = SimpleNamespace(attempt_number=first.attempt_number)
     second = updater._checkpoint_event(
@@ -432,6 +434,84 @@ def test_checkpoint_events_are_append_only_and_increment_attempt_number():
     assert second.status == "FAILED"
     assert second.provider_failure_count == 1
     assert second.metadata_payload["providerErrorCode"] == "EXCHANGE_NOT_READY"
+    assert second.metadata_payload["checkpointSemantic"] == "PROVIDER_INGESTION"
+    assert second.metadata_payload["providerMetricsApplicability"] == "ACTUAL"
+
+
+def test_non_provider_checkpoint_persists_null_provider_counters() -> None:
+    class FakeSession:
+        latest = None
+
+        def scalar(self, _query):
+            return self.latest
+
+        def add(self, value):
+            self.added = value
+
+        def commit(self):
+            return None
+
+    updater = PostCloseUpdater.__new__(PostCloseUpdater)
+    updater.session = FakeSession()
+    checkpoint = updater._checkpoint_event(
+        run_id=uuid4(),
+        batch_key="FORMAL_MARKET_FACTS:OFFICIAL",
+        batch_number=150,
+        status="FAILED",
+        failed_count=1,
+        provider_request_count=7,
+        provider_failure_count=2,
+    )
+
+    assert checkpoint.provider_request_count is None
+    assert checkpoint.provider_failure_count is None
+    assert checkpoint.metadata_payload["checkpointSemantic"] == (
+        "INSTITUTIONAL_FLOW_PUBLICATION_READBACK"
+    )
+    assert checkpoint.metadata_payload["providerMetricsApplicability"] == "NOT_APPLICABLE"
+
+
+def test_status_resolution_result_is_carried_into_final_reconciliation_overlay(monkeypatch):
+    updater = PostCloseUpdater.__new__(PostCloseUpdater)
+    updater.session = SimpleNamespace()
+    updater.config = SimpleNamespace(
+        status_resolution_max_attempts=1,
+        status_resolution_max_total_wait_seconds=0,
+        status_resolution_backoff_seconds=0,
+    )
+    updater.sleep = lambda _seconds: None
+    updater._checkpoint_event = lambda **_kwargs: None
+    monkeypatch.setattr(
+        "topicpilot_api.live.post_close.read_effective_trading_status_authority",
+        lambda *_args, **_kwargs: [
+            {
+                "instrumentId": "instrument-2601",
+                "resolvedStatus": "SUSPENDED",
+                "reasonCode": "CAPITAL_REDUCTION_TRADING_SUSPENSION",
+                "authoritySource": "TWSE_OFFICIAL_REDUCTION",
+                "sourceReference": "https://www.twse.com.tw/official",
+                "effectiveFrom": date(2026, 9, 23),
+                "effectiveTo": date(2026, 10, 3),
+                "resolutionState": "RESOLVED",
+                "blocksPublication": False,
+                "isLegitimateUnavailable": True,
+                "authorityClass": "CORPORATE_ACTION",
+            }
+        ],
+    )
+
+    bounded = updater._resolve_missing_statuses(
+        run_id="run-1",
+        trading_date=date(2026, 9, 30),
+        candidates={"instrument-2601": True},
+    )
+
+    assert bounded.metrics.legitimate_unavailable_count == 1
+    assert updater._status_resolution_by_instrument_id["instrument-2601"].status == "SUSPENDED"
+    assert (
+        updater._status_resolution_by_instrument_id["instrument-2601"].authority_class
+        == "CORPORATE_ACTION"
+    )
 
 
 def test_institutional_flow_readback_requires_both_same_date_official_markets():

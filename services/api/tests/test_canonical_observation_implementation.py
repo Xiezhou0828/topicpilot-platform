@@ -15,7 +15,7 @@ def test_canonical_revision_is_linear_after_0018():
     config = Config(str(ROOT / "alembic.ini"))
     script = ScriptDirectory.from_config(config)
     assert [head.revision for head in script.get_revisions("heads")] == [
-        "0047_task_topic_role_strength_design_freeze"
+        "0048_task_checkpoint_provider_metric_applicability"
     ]
 
 

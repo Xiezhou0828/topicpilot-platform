@@ -42,10 +42,19 @@ class TradingStatusAuthorityError(ValueError):
 
 class AuthorityClass(StrEnum):
     OFFICIAL_EXCHANGE = "OFFICIAL_EXCHANGE"
+    CORPORATE_ACTION = "CORPORATE_ACTION"
     REFERENCE_LIFECYCLE = "REFERENCE_LIFECYCLE"
     MANUAL_GOVERNED = "MANUAL_GOVERNED"
     PRICE_SESSION = "PRICE_SESSION"
     NONE = "NONE"
+
+
+_AUTHORITY_PRECEDENCE = {
+    AuthorityClass.OFFICIAL_EXCHANGE.value: 3,
+    AuthorityClass.CORPORATE_ACTION.value: 2,
+    AuthorityClass.REFERENCE_LIFECYCLE.value: 1,
+    AuthorityClass.MANUAL_GOVERNED.value: 0,
+}
 
 
 class ResolutionState(StrEnum):
@@ -311,12 +320,19 @@ def _choose_official(
         if item.authority_class
         in {
             AuthorityClass.OFFICIAL_EXCHANGE.value,
+            AuthorityClass.CORPORATE_ACTION.value,
             AuthorityClass.REFERENCE_LIFECYCLE.value,
             AuthorityClass.MANUAL_GOVERNED.value,
         }
     ]
     if not official:
         return None
+    highest = max(_AUTHORITY_PRECEDENCE.get(item.authority_class, -1) for item in official)
+    official = [
+        item
+        for item in official
+        if _AUTHORITY_PRECEDENCE.get(item.authority_class, -1) == highest
+    ]
     statuses = {item.normalized_status for item in official}
     if len(statuses) > 1:
         return None
@@ -375,8 +391,27 @@ def resolve_effective_trading_status(
             preserved_event_source=preserved.source if preserved else None,
         )
 
-    official_statuses = {item.normalized_status for item in official}
-    if len(official_statuses) > 1:
+    selected_official_records = [
+        item
+        for item in official
+        if item.authority_class
+        in {
+            AuthorityClass.OFFICIAL_EXCHANGE.value,
+            AuthorityClass.CORPORATE_ACTION.value,
+            AuthorityClass.REFERENCE_LIFECYCLE.value,
+            AuthorityClass.MANUAL_GOVERNED.value,
+        }
+    ]
+    highest_precedence = max(
+        (_AUTHORITY_PRECEDENCE.get(item.authority_class, -1) for item in selected_official_records),
+        default=-1,
+    )
+    selected_precedence_records = [
+        item
+        for item in selected_official_records
+        if _AUTHORITY_PRECEDENCE.get(item.authority_class, -1) == highest_precedence
+    ]
+    if len({item.normalized_status for item in selected_precedence_records}) > 1:
         return TradingStatusResolution(
             status=MarketAvailability.UNKNOWN.value,
             authority_source=None,
@@ -619,6 +654,7 @@ def read_effective_trading_status_authority(
     )
     ids = [row.get("instrument_id") for row in rows if row.get("instrument_id") is not None]
     lifecycle = _lifecycle_records(session, instrument_ids=ids, trading_date=trading_date)
+    from .corporate_action_authority import corporate_action_authorities_for
     failed = set(provider_failure_instrument_ids)
     output: list[dict[str, Any]] = []
     for row in rows:
@@ -643,7 +679,18 @@ def read_effective_trading_status_authority(
             row.get("instrument_id"),
             trading_date,
             same_session_close=row.get("close"),
-            official_authority=(*official, *lifecycle.get(row.get("instrument_id"), ())),
+            official_authority=(
+                *official,
+                *(
+                    item.to_trading_status_record()
+                    for item in corporate_action_authorities_for(
+                        symbol=str(row.get("symbol") or ""),
+                        market=str(row.get("market") or ""),
+                        trading_date=trading_date,
+                    )
+                ),
+                *lifecycle.get(row.get("instrument_id"), ()),
+            ),
             provider_failure=row.get("instrument_id") in failed,
             price_source=str(row.get("source_code") or "CANONICAL_DAILY_PRICE"),
         )
@@ -658,6 +705,7 @@ def read_effective_trading_status_authority(
         output.append(
             {
                 "tradingDate": trading_date,
+                "instrumentId": row.get("instrument_id"),
                 "symbol": str(row.get("symbol") or ""),
                 "name": row.get("name"),
                 "market": str(row.get("market") or ""),
@@ -670,6 +718,7 @@ def read_effective_trading_status_authority(
                 "lastValidPriceDate": row.get("last_valid_price_date"),
                 "lastValidClose": row.get("last_valid_close"),
                 "resolutionState": resolution.resolution_state,
+                "authorityClass": resolution.authority_class,
                 "isLegitimateUnavailable": resolution.is_legitimate_unavailable,
                 "blocksPublication": resolution.blocks_publication,
                 "affectedTopicCount": int(row.get("formal_topic_membership_count") or 0),
