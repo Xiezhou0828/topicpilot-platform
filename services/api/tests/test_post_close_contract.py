@@ -11,6 +11,8 @@ import pytest
 from topicpilot_api.instrument_universe import InstrumentLifecycle, InstrumentUniverseRow
 from topicpilot_api.live.cli import _symbols_argument, build_parser
 from topicpilot_api.live.post_close import (
+    HISTORY_RECOVERY,
+    NORMAL_CURRENT_DAY,
     PostClosePreconditionError,
     PostCloseUpdater,
     _json_safe,
@@ -348,10 +350,227 @@ def test_post_close_execution_key_is_session_and_scope_bound():
         date(2026, 9, 3), target_symbols=("TPE:2330", "TWO:6129")
     )
 
-    assert full == "post-close:tw-reference-v1:TW_MARKET:2026-09-03:FULL"
+    assert full == "post-close:tw-reference-v1:TW_MARKET:2026-09-03:NORMAL_CURRENT_DAY:FULL"
     assert targeted != full
     assert targeted == updater._execution_key(
         date(2026, 9, 3), target_symbols=("TPE:2330", "TWO:6129")
+    )
+    recovery = updater._execution_key(date(2026, 9, 3), execution_mode="RECOVERY")
+    assert recovery == (
+        "history-recovery:tw-reference-v1:TW_MARKET:2026-09-03:"
+        "HISTORY_RECOVERY:FULL"
+    )
+    assert recovery != full
+
+
+def test_history_recovery_checkpoint_namespace_is_distinct_without_schema_change():
+    captured = []
+
+    class FakeSession:
+        def scalar(self, _query):
+            return None
+
+        def add(self, value):
+            captured.append(value)
+
+        def commit(self):
+            return None
+
+    updater = PostCloseUpdater.__new__(PostCloseUpdater)
+    updater.session = FakeSession()
+    updater._active_execution_scope = HISTORY_RECOVERY
+    updater._active_execution_key = (
+        "history-recovery:tw-reference-v1:TW_MARKET:2026-09-30:HISTORY_RECOVERY:FULL"
+    )
+
+    updater._checkpoint_event(
+        run_id="history-run",
+        batch_key="A9_B2_FORMAL_PROCESSING",
+        status="COMPLETED",
+    )
+
+    metadata = captured[0].metadata_payload
+    assert metadata["executionScope"] == HISTORY_RECOVERY
+    assert metadata["executionKey"].startswith("history-recovery:")
+    assert metadata["checkpointNamespace"].startswith("HISTORY_RECOVERY:")
+
+
+def test_history_recovery_does_not_call_home_materializer(monkeypatch):
+    called = []
+    monkeypatch.setattr(
+        "topicpilot_api.live.post_close.materialize_home_v2",
+        lambda *_args, **_kwargs: called.append(True),
+    )
+    updater = PostCloseUpdater.__new__(PostCloseUpdater)
+    updater.session = SimpleNamespace()
+    updater._active_execution_scope = HISTORY_RECOVERY
+    updater._active_run_date = date(2026, 9, 30)
+    updater._now = lambda: datetime(2026, 10, 2, 1, 0, tzinfo=UTC)
+
+    result = updater._publish_market_facts_only(
+        date(2026, 9, 30),
+        source_run_id="history-run",
+        market_index_facts=(),
+        market_aggregate_facts=(),
+        market_institutional_flow_facts=(),
+        market_institutional_flow_result={"status": "SUCCESS"},
+        execution_scope=HISTORY_RECOVERY,
+    )
+
+    assert called == []
+    assert result["homePublication"] == {
+        "status": "FORBIDDEN",
+        "reasonCode": "HISTORY_RECOVERY_HOME_PUBLICATION_FORBIDDEN",
+        "publicationScope": HISTORY_RECOVERY,
+    }
+
+
+def test_history_recovery_snapshot_does_not_materialize_home(monkeypatch):
+    called = []
+
+    class FakeSnapshotEngine:
+        def __init__(self, _session):
+            pass
+
+        def run_once(self, **_kwargs):
+            return {"status": "SUCCESS", "topicCount": 2}
+
+    class FakeLifecycleEngine:
+        def __init__(self, _session):
+            pass
+
+        def run_once(self, **_kwargs):
+            return {"status": "SUCCESS"}
+
+    monkeypatch.setattr(
+        "topicpilot_api.live.post_close.TopicSnapshotEngine", FakeSnapshotEngine
+    )
+    monkeypatch.setattr(
+        "topicpilot_api.live.post_close.TopicLifecycleEngine", FakeLifecycleEngine
+    )
+    monkeypatch.setattr(
+        "topicpilot_api.live.post_close.materialize_bounded_formal_dates",
+        lambda *_args, **_kwargs: {
+            "rowsBefore": 0,
+            "rowsAfter": 2,
+            "writes": 2,
+            "preBoundaryBackfill": False,
+        },
+    )
+    monkeypatch.setattr(
+        "topicpilot_api.live.post_close.materialize_home_v2",
+        lambda *_args, **_kwargs: called.append(True),
+    )
+
+    updater = PostCloseUpdater.__new__(PostCloseUpdater)
+    updater.session = SimpleNamespace(rollback=lambda: None)
+    updater._active_execution_scope = HISTORY_RECOVERY
+    updater._active_run_date = date(2026, 9, 30)
+    updater._formal_snapshot_readback = lambda _date: {"status": "PASS", "rowCount": 2}
+
+    result = updater._run_snapshot(
+        date(2026, 9, 30),
+        source_run_id="history-run",
+        execution_scope=HISTORY_RECOVERY,
+    )
+
+    assert called == []
+    assert result["homePublication"]["status"] == "FORBIDDEN"
+
+
+def test_normal_current_day_blocks_home_date_mismatch(monkeypatch):
+    called = []
+    monkeypatch.setattr(
+        "topicpilot_api.live.post_close.materialize_home_v2",
+        lambda *_args, **_kwargs: called.append(True),
+    )
+    updater = PostCloseUpdater.__new__(PostCloseUpdater)
+    updater.session = SimpleNamespace()
+    updater._active_execution_scope = NORMAL_CURRENT_DAY
+    updater._active_run_date = date(2026, 10, 2)
+    updater._now = lambda: datetime(2026, 10, 2, 1, 0, tzinfo=UTC)
+
+    result = updater._publish_market_facts_only(
+        date(2026, 9, 30),
+        source_run_id="normal-run",
+        market_index_facts=(),
+        market_aggregate_facts=(),
+        market_institutional_flow_facts=(),
+        market_institutional_flow_result={"status": "SUCCESS"},
+        execution_scope=NORMAL_CURRENT_DAY,
+    )
+
+    assert called == []
+    assert result["homePublication"]["reasonCode"] == "NORMAL_CURRENT_DAY_HOME_DATE_MISMATCH"
+
+
+def test_history_formal_readback_does_not_query_home():
+    class NoHomeQuerySession:
+        def scalar(self, _query):
+            raise AssertionError("history recovery must not query HomePublication")
+
+    updater = PostCloseUpdater.__new__(PostCloseUpdater)
+    updater.session = NoHomeQuerySession()
+    updater._formal_snapshot_readback = lambda _date: {"status": "PASS", "rowCount": 2}
+    updater._institutional_flow_readback = lambda _date: {"status": "PASS"}
+
+    result = updater._formal_publication_readback(
+        date(2026, 9, 30),
+        run_id="history-run",
+        execution_scope=HISTORY_RECOVERY,
+    )
+
+    assert result["status"] == "PASS"
+    assert result["homePublication"]["status"] == "FORBIDDEN"
+    assert result["homePublication"]["publicationScope"] == HISTORY_RECOVERY
+
+
+def test_legacy_mixed_run_is_not_reused_for_history_recovery():
+    updater = PostCloseUpdater.__new__(PostCloseUpdater)
+    updater.config = SimpleNamespace(
+        reference_data_version="tw-reference-v1",
+        calendar_code="TW_MARKET",
+    )
+    legacy_run = SimpleNamespace(
+        metadata_payload={
+            "executionKey": "post-close:tw-reference-v1:TW_MARKET:2026-09-30:FULL",
+            "scope": "FULL",
+            "executionMode": "RECOVERY",
+        }
+    )
+    updater._runs_for_date = lambda _date: [legacy_run]
+
+    assert updater._find_existing_run(
+        date(2026, 9, 30), execution_mode="RECOVERY"
+    ) is None
+    assert updater._find_existing_run(
+        date(2026, 9, 30), execution_mode="MANUAL"
+    ) is None
+
+
+def test_history_recovery_key_converges_on_one_run_identity():
+    updater = PostCloseUpdater.__new__(PostCloseUpdater)
+    updater.config = SimpleNamespace(
+        reference_data_version="tw-reference-v1",
+        calendar_code="TW_MARKET",
+    )
+    execution_key = updater._execution_key(
+        date(2026, 9, 30), execution_mode="RECOVERY"
+    )
+    history_run = SimpleNamespace(
+        metadata_payload={
+            "executionKey": execution_key,
+            "executionScope": HISTORY_RECOVERY,
+            "scope": "FULL",
+        }
+    )
+    updater._runs_for_date = lambda _date: [history_run]
+
+    assert (
+        updater._find_existing_run(
+            date(2026, 9, 30), execution_mode="RECOVERY"
+        )
+        is history_run
     )
 
 
