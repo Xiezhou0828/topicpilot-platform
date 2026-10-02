@@ -13,6 +13,7 @@ import hashlib
 import json
 import sys
 from collections import Counter
+from collections.abc import Collection, Mapping
 from datetime import date, datetime
 from pathlib import Path
 from uuid import NAMESPACE_URL, UUID, uuid5
@@ -39,6 +40,11 @@ from topicpilot_api.normalizer.contracts import (
     ReferenceContext,
 )
 from topicpilot_api.normalizer.historical import HistoricalDailyBarNormalizer
+from topicpilot_api.previous_close_authority import (
+    G2PriceEvidence,
+    PreviousCloseEvidence,
+    previous_session_date,
+)
 from topicpilot_api.provider_preflight import (
     G2MarketContext,
     G2MarketFetch,
@@ -72,7 +78,9 @@ STAGES = (
 
 
 def replay_market(
-    raw: bytes, targets: list[list], market: str, day: date, probe: dict | None = None
+    raw: bytes, targets: list[list], market: str, day: date, probe: dict | None = None,
+    *, previous_closes: Mapping[str, PreviousCloseEvidence] | None = None,
+    closed_dates: Collection[date] = (),
 ) -> dict:
     """Replay existing adapter -> ingestion classifier -> mapper -> status resolver.
 
@@ -256,10 +264,12 @@ def replay_market(
         "Asia/Taipei",
         "TW_MARKET",
         tuple(codes),
+        {r[1]: r[2] for r in targets},
     )
     g2 = evaluate_provider_preflight(
         G2PreflightContext(
-            {"referenceLoadStatus": "READY"}, day, True, None, (context,)
+            {"referenceLoadStatus": "READY"}, day, True, None, (context,),
+            previous_session=previous_session_date(day, closed_dates),
         ),
         {
             market: G2MarketFetch(
@@ -269,6 +279,17 @@ def replay_market(
                 day,
                 frozenset(bars),
                 len(bars),
+                prices={r[1]: G2PriceEvidence(
+                    r[2], market, r[1], bars[r[1]].trading_date,
+                    bars[r[1]].close, provenance["payloadSha256"],
+                    provider_previous=PreviousCloseEvidence(
+                        r[2], market, r[1], previous_session_date(day, closed_dates),
+                        bars[r[1]].previous_close, cls.source_code,
+                        "PROVIDER_EXPLICIT_PREVIOUS_CLOSE", provenance["payloadSha256"], day,
+                    ) if bars[r[1]].previous_close is not None else None,
+                    formal_previous=(previous_closes or {}).get(r[1]),
+                ) for r in targets if r[1] in bars},
+                statuses={r[2]: resolutions[UUID(r[2])] for r in targets},
             )
         },
     )["markets"][0]
@@ -337,11 +358,11 @@ def replay_market(
     stage(
         12,
         len(close_codes),
-        len(close_codes & prior_codes),
+        g2["previousCloseCoveredCount"],
         "priced target",
-        "MISSING_PRIOR_CANONICAL_CLOSE" if close_codes - prior_codes else None,
-        sorted(close_codes - prior_codes),
-        status="PRIOR_SOURCE_PRESENCE_ONLY_NOT_EXTRACTED",
+        "PREVIOUS_CLOSE_AUTHORITY_NOT_READY" if g2["previousCloseCoveredCount"] != len(close_codes) else None,
+        [d["instrumentCode"] for d in g2["instrumentDecisions"] if d["closeValid"] and not d["previousCloseValid"]],
+        status="AUTHORITY_VALIDATED_COMPARATOR_ONLY_NOT_PERSISTED",
     )
     stage(
         13,
@@ -405,6 +426,7 @@ def replay_market(
         "g2ProviderRowGateStatus": g2["status"],
         "g2Error": g2["errorCode"],
         "g2MissingCodes": g2["missingIdentityCodes"],
+        "g2AuthorityEvidence": g2,
         "stages": stages,
         "decisions": decisions,
         "productionWriteSet": [],
@@ -455,6 +477,9 @@ def main() -> None:
                 "topicpilot_api.normalizer.historical",
                 "topicpilot_api.trading_status_authority",
                 "topicpilot_api.daily_market",
+                "topicpilot_api.provider_preflight",
+                "topicpilot_api.previous_close_authority",
+                "topicpilot_api.market_data.exchange",
             )
         },
         "productionWriteSet": [],
@@ -481,7 +506,7 @@ def main() -> None:
                     **{
                         k: v
                         for k, v in result.items()
-                        if k not in {"decisions", "stages"}
+                        if k not in {"decisions", "stages", "g2AuthorityEvidence"}
                     },
                 },
                 ensure_ascii=True,

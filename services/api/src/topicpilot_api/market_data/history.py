@@ -87,6 +87,7 @@ class HistoricalBar:
     low: Decimal | None
     close: Decimal | None
     volume: Decimal | None
+    previous_close: Decimal | None = None
 
 
 @dataclass(frozen=True)

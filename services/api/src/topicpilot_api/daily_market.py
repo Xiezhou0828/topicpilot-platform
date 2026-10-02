@@ -283,7 +283,22 @@ def read_daily_market_rows(
         params["expected_instrument_ids"] = tuple(expected_instrument_ids)
     query = text(
         f"""
-        WITH universe AS (
+        WITH previous_session AS (
+            SELECT max(day::date) AS trade_date
+            FROM generate_series(
+                CAST(:trade_date AS date) - interval '366 days',
+                CAST(:trade_date AS date) - interval '1 day', interval '1 day'
+            ) day
+            WHERE extract(isodow FROM day) < 6
+              AND (SELECT count(*) FROM topicpilot.reference_registry_sets
+                   WHERE status = 'ACTIVE') = 1
+              AND NOT EXISTS (
+                  SELECT 1 FROM topicpilot.reference_calendar_dates c
+                  JOIN topicpilot.reference_registry_sets r ON r.id = c.registry_set_id
+                  WHERE r.status = 'ACTIVE' AND c.calendar_code = 'TW_MARKET'
+                    AND c.calendar_date = day::date
+              )
+        ), universe AS (
             SELECT i.id, i.instrument_code, i.name, m.code AS market
             FROM topicpilot.instruments i
             JOIN topicpilot.markets m ON m.id = i.market_id
@@ -298,22 +313,22 @@ def read_daily_market_rows(
         ), current_price AS (
             SELECT DISTINCT ON (d.instrument_id)
                 d.instrument_id, d.close, d.observed_at, d.retrieved_at,
-                d.source_code, d.status_code, d.status_reason,
-                previous.close AS previous_close
+                d.source_code, d.status_code, d.status_reason
             FROM topicpilot.vw_daily_market_observations d
-            LEFT JOIN LATERAL (
-                SELECT prior.close
-                FROM topicpilot.vw_daily_market_observations prior
-                WHERE prior.instrument_id = d.instrument_id
-                  AND prior.trade_date < d.trade_date
-                  AND prior.close IS NOT NULL
-                ORDER BY prior.trade_date DESC, prior.observed_at DESC,
-                         prior.canonical_observation_id DESC
-                LIMIT 1
-            ) previous ON TRUE
             WHERE d.trade_date = :trade_date
             ORDER BY d.instrument_id, d.observed_at DESC,
                      d.retrieved_at DESC, d.canonical_observation_id DESC
+        ), prior_price AS (
+            SELECT DISTINCT ON (prior.instrument_id)
+                   prior.instrument_id, prior.close, prior.trade_date, prior.source_code,
+                   prior.canonical_observation_id, prior.quality_state
+            FROM topicpilot.vw_daily_market_observations prior
+            WHERE prior.trade_date = (SELECT trade_date FROM previous_session)
+              AND prior.close > 0 AND prior.quality_state = 'ACCEPTED'
+              AND prior.source_code = CASE WHEN prior.market_code = 'TPE'
+                  THEN 'TWSE_OFFICIAL_DAILY' ELSE 'TPEX_OFFICIAL_DAILY' END
+            ORDER BY prior.instrument_id, prior.observed_at DESC,
+                     prior.canonical_observation_id DESC
         ), current_status AS (
             SELECT DISTINCT ON (co.instrument_id)
                 co.instrument_id, co.id AS status_observation_id,
@@ -364,7 +379,12 @@ def read_daily_market_rows(
             GROUP BY r.instrument_id
         )
         SELECT u.id AS instrument_id, u.instrument_code AS symbol, u.name,
-               u.market, p.close, p.previous_close, p.observed_at,
+               u.market, p.close, previous.close AS previous_close, p.observed_at,
+               previous.trade_date AS previous_close_date,
+               previous.source_code AS previous_close_source,
+               previous.canonical_observation_id AS previous_close_lineage,
+               previous.quality_state AS previous_close_quality,
+               previous.instrument_id AS previous_close_instrument_id,
                p.retrieved_at, p.source_code, p.status_code AS price_status_code,
                p.status_reason AS price_status_reason,
                s.status_observation_id, s.status_code, s.status_reason,
@@ -377,6 +397,7 @@ def read_daily_market_rows(
                    AS affected_topic_slugs
         FROM universe u
         LEFT JOIN current_price p ON p.instrument_id = u.id
+        LEFT JOIN prior_price previous ON previous.instrument_id = u.id
         LEFT JOIN current_status s ON s.instrument_id = u.id
         LEFT JOIN last_price l ON l.instrument_id = u.id
         LEFT JOIN topic_memberships tm ON tm.instrument_id = u.id

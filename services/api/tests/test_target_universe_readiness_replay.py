@@ -9,20 +9,29 @@ from pathlib import Path
 from uuid import NAMESPACE_URL, uuid5
 
 import pytest
-from infra.scripts.replay_target_universe_readiness import replay_market
+from infra.scripts.replay_target_universe_readiness import replay_market as offline_replay
 
 from topicpilot_api.instrument_universe import (
     InstrumentLifecycle,
     InstrumentUniverseRow,
     build_date_effective_instrument_universe,
 )
+from topicpilot_api.previous_close_authority import PreviousCloseEvidence
 from topicpilot_api.reference_data import load_bundle
 
 DAY = date(2026, 10, 2)
 ROOT = Path(__file__).resolve().parents[3]
 
 
-def target(market, code, *, prior=True, prior_date="2026-09-30"):
+def replay_market(raw, targets, market, day):
+    # Only fabricated test comparators. Actual replay must supply governed evidence.
+    previous = {r[1]: PreviousCloseEvidence(r[2], market, r[1], date.fromisoformat(r[8]),
+        9, r[5], "FORMAL_CANONICAL_CLOSE", "synthetic-unit-test-canonical-row")
+        for r in targets if r[7] and r[8]}
+    return offline_replay(raw, targets, market, day, previous_closes=previous)
+
+
+def target(market, code, *, prior=True, prior_date="2026-10-01"):
     return [
         market,
         code,
@@ -140,7 +149,7 @@ def test_missing_previous_close_is_not_invented_or_reported_as_current_previous_
     )
     assert result["priorCanonicalCloseCount"] == result["currentPreviousCloseCount"] == 0
     assert result["priorComparatorPresenceComplete"] is False
-    assert result["stages"][11]["rejectionReason"] == "MISSING_PRIOR_CANONICAL_CLOSE"
+    assert result["stages"][11]["rejectionReason"] == "PREVIOUS_CLOSE_AUTHORITY_NOT_READY"
     assert result["productionReadinessProven"] is False
 
 
@@ -166,9 +175,8 @@ def test_2601_existing_corporate_action_authority_is_not_a_synthetic_price():
     assert result["acceptedPriceCandidates"] == 1
     assert result["formalCoveredCount"] == 2
     assert result["formalCoverageModelReady"] is True
-    # Provider-row coverage and formal price/status coverage are intentionally different gates.
-    assert result["g2ProviderRowGateStatus"] == "FAIL"
-    assert result["g2MissingCodes"] == ["2601"]
+    assert result["g2ProviderRowGateStatus"] == "PASS"
+    assert result["g2MissingCodes"] == []
 
 
 @pytest.mark.parametrize("bad_value", ["-1", "NaN", "Infinity", "garbage", "12"])
@@ -214,12 +222,17 @@ def test_actual_date_effective_bundle_accounting_is_553_not_total_registry_or_55
     assert len(bundle.instruments) == 556
     assert {m: len(codes) for m, codes in universe.items()} == {"TPE": 347, "TWO": 206}
     results = [
-        replay_market(payload(m, codes), [target(m, c) for c in codes], m, DAY)
+        replay_market(payload(m, [c for c in codes if c != "2601"]),
+            [target(m, c) for c in codes], m, DAY)
         for m, codes in universe.items()
     ]
     assert sum(r["targets"] for r in results) == 553
-    assert sum(r["matchedTargets"] for r in results) == 553
-    assert sum(len(r["missingTargets"]) for r in results) == 0
+    assert sum(r["matchedTargets"] for r in results) == 552
+    assert sum(r["acceptedPriceCandidates"] for r in results) == 552
+    assert sum(r["legitimateUnavailableCount"] for r in results) == 1
+    assert sum(r["formalCoveredCount"] for r in results) == 553
+    assert all(r["g2ProviderRowGateStatus"] == "PASS" for r in results)
+    assert [r["g2AuthorityEvidence"]["previousCloseCoveredCount"] for r in results] == [346, 206]
     assert all(r["formalCoverageModelReady"] for r in results)
     # Synthetic parser coverage is not a production observation or persisted identity proof.
     assert all(not r["productionReadinessProven"] for r in results)

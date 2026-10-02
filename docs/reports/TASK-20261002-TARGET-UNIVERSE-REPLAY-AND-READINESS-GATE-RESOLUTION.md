@@ -228,3 +228,154 @@ PR_CREATED=NO
 OWNER_DECISION_REQUIRED=YES
 PRODUCTION_RECOVERY_PREREQUISITES=NOT_PROVEN
 TASK_COMPLETE=YES (candidate implementation / analysis boundary only)
+
+## G2 previousClose authority alignment follow-up (2026-10-03)
+
+This section records the later Owner-approved implementation phase. Earlier sections and
+the three original JSON artifacts remain historical evidence for candidate `5247393`;
+their strict row-only G2 verdict and latest-earlier-price comparator description are not
+the policy of this follow-up. No earlier Production evidence is reinterpreted as a new
+readback or authorization.
+
+TASK_TYPE=implementation
+REQUIRED_TERMINAL_STATE=VALIDATED (Owner explicitly stops before canonical review)
+TASK_ID=TASK-20261002-TARGET-UNIVERSE-REPLAY-AND-READINESS-GATE-RESOLUTION
+AUTHORITY_BOUNDARY=Owner-approved G2 comparator/status coverage; local candidate only
+CANONICAL_SHA=3f2d4761c665931708517f0501c57f2be257b641 (provided baseline, not live readback)
+SOURCE_SHA=524739323befc2c3abcb0b48dbbc42b7ff54daf1 (verified clean starting candidate)
+MIGRATION_HEAD=0048_task_checkpoint_provider_metric_applicability
+SEMANTICS_CHANGED=G2 comparator and coverage only; no Topic/Score/Grade/Lifecycle policy change
+PRODUCTION_DEPENDENCY=NOT_EXECUTED
+FOLLOW_UP_REQUIRED=YES
+FOLLOW_UP_REASON=Owner canonical review/integration and separately authorized runtime/data verification
+WORKTREE_STATUS=ACTIVE; same existing branch; no second branch or PR
+FILES_CHANGED=11 (5 backend source, 1 audit script, 4 test files, this report)
+CANONICAL_RECONCILIATION_DISPOSITION=READY_FOR_CANONICAL_RECONCILIATION
+
+### Decisions and affected paths
+
+- `previous_close_authority.py`: typed comparator proof, positive finite numeric validation,
+  exact instrument/market/code/date identity, official source, authority, and nonempty lineage.
+  Provider evidence additionally binds target payload date and the same response hash.
+  Comparator values are excluded from public diagnostic metadata. No global hash change.
+- `provider_preflight.py`: G2 requires a target-date official positive close plus an accepted
+  comparator for each priced target. Context now carries persisted instrument IDs and the
+  previous session resolved using the existing governed TW_MARKET weekday/holiday/suspension
+  calendar. Row presence alone cannot PASS. Price/status/comparator coverage are separate counts.
+  Authority/version/date/transport/empty-payload failures still fail closed.
+- `market_data/history.py` and `market_data/exchange.py`: additive optional `previous_close`
+  in provider-neutral bars. Only explicitly named comparator fields (`previousClose`,
+  `前收盤價`, `前一交易日收盤價`) are recognized. No close-minus-change calculation, inferred
+  adjustment, month fallback, authority-version change, or additional request/retry behavior.
+  This support does not assert that the retained production payloads contain such a field.
+- `daily_market.py`: the comparator SELECT uses the exact previous governed session, same
+  instrument, correct official market source, ACCEPTED quality, positive close and canonical
+  observation lineage. It works independently of whether a target-date canonical price already
+  exists. Missing prior-session data remains null; Sep30 cannot substitute for Oct1 on Oct2.
+  The separate last-valid-price disclosure remains historical context, never a comparator fill.
+- `replay_target_universe_readiness.py`: offline G2 uses typed proofs and existing status
+  resolution. Prior-price presence booleans/dates alone never become invented numeric proofs.
+  Stage 12 now reports accepted comparator proofs, not merely earlier source presence.
+
+2601 still uses the unchanged corporate-action catalogue and TASK-024 resolver. Its existing
+TWSE official reduction authority resolves SUSPENDED / LEGITIMATE_UNAVAILABLE. Only a resolved,
+nonblocking, date-effective official/lifecycle status with lineage, keyed to the expected
+instrument ID, can account for a missing price; it is never counted as a price/comparator row.
+UNKNOWN, MISSING_MARKET_DATA, provider failure, expired authority and ungoverned/manual inputs
+remain blocking. No run, recovery key, checkpoint, publication writer or formula was changed.
+
+### Acceptance matrix and evidence boundary
+
+| State | G2 result / evidence |
+| --- | --- |
+| Target official close + explicit valid provider comparator | PASS; prior session date, target payload date, official source and matching response hash retained |
+| Target official close + same-instrument exact prior-session ACCEPTED official close | PASS; canonical observation lineage retained |
+| Prior close missing, zero, null, empty or nonfinite | FAIL; no fabricated comparator |
+| Wrong instrument, market, code, prior date, authority, quality or lineage | FAIL |
+| Invalid explicit numeric comparator despite valid alternate history | FAIL; invalid explicit evidence is not hidden by fallback |
+| Missing current close without formal no-trade authority | FAIL; history cannot replace current close |
+| Existing official 2601 suspension, no price | STATUS accounted; no synthetic price; no comparator required |
+| TPE 346 prices + 1 legitimate unavailable, TWO 206 prices, valid comparator proofs | Synthetic unit/parser fixture PASS; 552 priced + 1 status = 553 accounted |
+| Retained real target payloads / identities but no Oct1 numeric authority/lineage proofs | Both G2 markets FAIL; PREVIOUS_CLOSE_AUTHORITY_NOT_READY |
+| Weekend or Monday before new completed canonical session/publication | Existing Home read-model fixture selects Oct2 publication, not comparator date |
+| Monday completed session with its completed Home envelope | Existing read-model fixture selects Monday; no publication is created by a read or comparator |
+
+The retained Oct2 payload replay still accepts 346 TPE and 206 TWO price candidates; 2601
+accounts for the remaining TPE status target. All 553 persisted identities are accounted for.
+However, accepted comparator proof coverage is 0/346 and 0/206 with the preserved evidence.
+The old readback has Sep30 closes (Sep22 for 2601), not the required Oct1 authority/lineage.
+That proves an evidence gap, not the latest state of Production. No new provider HTTP request
+or Production DB query was performed in this follow-up. Missing numeric proofs were not
+filled using those date/presence flags. Both markets correctly remain FAIL, not readiness PASS.
+
+Full per-instrument diagnostic replay remains private in the task-local diagnostic directory;
+it is not part of this follow-up commit. No raw quote payload, price series, signed URL or
+credentials were added. Replay output SHA256:
+`5f04f68891e72d9390dfa6213acf3dc6b216b660c7fc2da27ab8d3e623dd3e35`.
+Source SHA256 bindings in that output include:
+
+- G2: `3f84dc2906b639cc1e2e5ab790f10aa46a55a3ae7ff246c0bf3d88899e38a4e0`
+- Comparator: `f2a8eb938d6097b2a1781522df1f762435e59527de4ef2c8dca92ece6c9d28e7`
+- Daily SELECT: `45be9028c41a66d987b457b4d2f98f22a8e3729ccbf13e8c4c6fcf1f0ae534c9`
+
+### Validation and baseline attribution
+
+Same task-local declared Python environment; isolated exact `5247393` baseline archive.
+Tests run from repository root with explicit source paths. All database test URLs cleared.
+
+- Baseline full backend: 1071 passed, 60 skipped.
+- Follow-up full backend: 1117 passed, 60 skipped; +46 cases, zero new failures.
+- Focused G2/provider/status/daily-market/Home/post-close: 170 passed, 1 skipped.
+- New tests cover explicit provider/previous formal close, wrong identity/date/hash, missing
+  comparator, zero/null/empty/nonfinite, unavailable status accounting, real bundle target
+  counts with synthetic prices, runtime wiring before current ingestion, SELECT guard,
+  unchanged weekend/Monday completed-publication date selection, and no price fill.
+- Changed-scope Ruff PASS. Full-repository Ruff remains existing debt: 856 raw / 843 unique
+  findings on baseline and follow-up, 843 unchanged, zero new and zero resolved. Not fixed.
+- Compile PASS; OpenAPI drift PASS; generated client unchanged and client tests 4 passed.
+- Migration graph: one unchanged head 0048, 49 revisions. No schema/migration changes or
+  migration execution. Database-backed tests were skipped, not claimed PASS; SQL guard/runtime
+  wiring tests are unit tests, not a persisted database or frontend E2E acceptance claim.
+- Diff check PASS. Home reader/writer, frontend, corporate-action/status policies, post-close
+  orchestration, migration graph and generated contracts unchanged from starting candidate.
+
+Corrected diagnostic invocations: initial focus list referenced two nonexistent separate
+post-close test filenames; collection stopped without tests. The existing combined contract
+test file was used for the accepted focused result. A PowerShell hash invocation needed an
+explicit path-array parameter; the corrected hashes above were read successfully. These are
+invocation errors, not candidate regressions. An empty local disposable PostgreSQL container
+was briefly initialized and removed with its own transient volume after exact ID/label
+verification; no application schema, migration or database test was run against it.
+The later raw Ruff-count summary also needed explicit UTF-8 decoding on Windows; the
+attribution gate itself already used UTF-8 and was unaffected.
+
+### Follow-up disposition
+
+ACHIEVED_TERMINAL_STATE=VALIDATED
+TASK_STATUS=CANDIDATE_COMMIT_READY
+G2_POLICY=TARGET_OFFICIAL_CLOSE_AND_EXACT_PRIOR_FORMAL_COMPARATOR_OR_EXPLICIT_PROVIDER_PROOF
+PREVIOUS_CLOSE_AUTHORITY=OFFICIAL_ONLY
+PREVIOUS_CLOSE_LINEAGE=REQUIRED_AND_INSTRUMENT_DATE_BOUND
+TPE_G2_STATUS=FIXTURE_PASS; RETAINED_REAL_EVIDENCE_FAIL_PREVIOUS_CLOSE_AUTHORITY_NOT_READY
+TWO_G2_STATUS=FIXTURE_PASS; RETAINED_REAL_EVIDENCE_FAIL_PREVIOUS_CLOSE_AUTHORITY_NOT_READY
+2601_STATUS=SUSPENDED / LEGITIMATE_UNAVAILABLE; UNCHANGED_AUTHORITY
+TARGET_COVERAGE=552_PRICE_PLUS_1_UNAVAILABLE_EQUALS_553_ACCOUNTED; NOT_553_PRICES
+HOME_DATE_SEMANTICS=UNCHANGED; COMPARATOR_DATE_NOT_HOME_DATE
+WEEKEND_BEHAVIOR=READ_MODEL_FIXTURE_PASS
+MONDAY_PRE_CLOSE_BEHAVIOR=READ_MODEL_FIXTURE_PASS
+MONDAY_POST_CLOSE_BEHAVIOR=COMPLETED_MONDAY_PUBLICATION_READ_MODEL_FIXTURE_PASS
+MIGRATION_REQUIRED=NO
+PRODUCTION_DEPLOYED=NO
+PRODUCTION_DB_MUTATED=NO
+RECOVERY_EXECUTED=NO
+POST_CLOSE_EXECUTED=NO
+RUN_2284_TOUCHED=NO
+UNAUTHORIZED_RETRY=NO
+HISTORICAL_REPLAY=NO (offline parser/normalizer replay only, no historical run)
+MANUAL_SQL=NO
+PUSH=NO
+CANONICAL_MERGE=NO
+PR_CREATED=NO
+NEXT_TASK_CHANGED=NO
+TASK_COMPLETE=YES_FOR_IMPLEMENTATION_SCOPE_ONLY
+NEXT_STEP=Owner canonical review and integration
