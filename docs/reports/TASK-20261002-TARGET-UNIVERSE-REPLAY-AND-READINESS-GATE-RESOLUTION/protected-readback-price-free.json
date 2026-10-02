@@ -1,0 +1,86 @@
+{
+  "contextReady": true,
+  "legitimateUnavailable": [
+    {
+      "market": "TPE",
+      "reason": "CAPITAL_REDUCTION_TRADING_SUSPENSION",
+      "source": "TWSE_OFFICIAL_REDUCTION",
+      "status": "SUSPENDED",
+      "symbol": "2601"
+    }
+  ],
+  "markets": {
+    "TPE": {
+      "currentCanonicalCloseCount": 0,
+      "currentRowPreviousCloseCount": 0,
+      "missingPriorCloseSymbols": [],
+      "priorCanonicalCloseCount": 347,
+      "priorCanonicalDates": {
+        "2026-09-22": 1,
+        "2026-09-30": 346
+      },
+      "targetCount": 347
+    },
+    "TWO": {
+      "currentCanonicalCloseCount": 0,
+      "currentRowPreviousCloseCount": 0,
+      "missingPriorCloseSymbols": [],
+      "priorCanonicalCloseCount": 206,
+      "priorCanonicalDates": {
+        "2026-09-30": 206
+      },
+      "targetCount": 206
+    }
+  },
+  "missingTargetIdentities": [],
+  "productionWriteSet": [],
+  "readOnly": true,
+  "recordedAt": "2026-10-02T16:40:22.803410+00:00",
+  "reference": {
+    "DUPLICATE_IDENTITIES": [],
+    "INSTRUMENT_COUNT": 555,
+    "MARKET_COUNT": 2,
+    "MISSING_INSTRUMENTS": [],
+    "MISSING_MARKETS": [],
+    "REFERENCE_ACTIVE": "YES",
+    "REFERENCE_CALENDAR_DATE_COUNT": 24,
+    "REFERENCE_LOAD_STATUS": "READY",
+    "REFERENCE_VERSION": "tw-reference-v1-rollover-0578862f98914eb7",
+    "adjustmentCatalogueCount": 3,
+    "calendarDateCount": 24,
+    "duplicateIdentities": [],
+    "expectedMarketCodes": [
+      "TPE",
+      "TWO"
+    ],
+    "instrumentCount": 555,
+    "marketCount": 2,
+    "missingInstruments": [],
+    "missingMarkets": [],
+    "missingReferenceContexts": [],
+    "referenceActive": "YES",
+    "referenceLoadStatus": "READY",
+    "referenceVersion": "tw-reference-v1-rollover-0578862f98914eb7",
+    "registrySetCount": 1,
+    "requiredContextCount": 1,
+    "tradingStatusCatalogueCount": 8
+  },
+  "referenceVersion": "tw-reference-v1-rollover-0578862f98914eb7",
+  "resolvedIdCount": 553,
+  "targetCount": 553,
+  "targetDate": "2026-10-02",
+  "targetIdentitySha256": "62cbfc31f3689d239b91acadf7d6c4620d74a94c281b2e7d01b2450546ae4da7",
+  "workerRevision": {
+    "readbackStatus": "READY",
+    "runtimeGitSha": "3f2d4761c665931708517f0501c57f2be257b641",
+    "source": "RENDER_GIT_COMMIT_OR_GIT_SHA"
+  },
+  "apiRevision": "NOT_VERIFIED_IN_THIS_TASK",
+  "transaction": {
+    "postgresql_readonly": true,
+    "isolation_level": "REPEATABLE READ",
+    "autoflush": false,
+    "committed": false
+  },
+  "surface": "Protected Worker shell; existing canonical load_g2_preflight_context/read_daily_market_rows/build_unavailable_instruments; no manual SQL"
+}

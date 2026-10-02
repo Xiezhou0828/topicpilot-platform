@@ -21,6 +21,7 @@ from topicpilot_api.market_data.availability import (
     PIPELINE_FAILURE_CODES,
     classify_availability,
 )
+from topicpilot_api.market_data.history import is_internal_missing_price_status
 from topicpilot_api.trading_status_authority import (
     CANONICAL_STATUS_SOURCES,
     AuthorityClass,
@@ -317,6 +318,7 @@ def read_daily_market_rows(
             SELECT DISTINCT ON (co.instrument_id)
                 co.instrument_id, co.id AS status_observation_id,
                 cts.status_code, cts.status_reason,
+                cts.status_context,
                 co.observed_at AS status_observed_at,
                 co.retrieved_at AS status_retrieved_at,
                 source.source_code AS status_source
@@ -366,6 +368,7 @@ def read_daily_market_rows(
                p.retrieved_at, p.source_code, p.status_code AS price_status_code,
                p.status_reason AS price_status_reason,
                s.status_observation_id, s.status_code, s.status_reason,
+               s.status_context,
                s.status_observed_at, s.status_retrieved_at, s.status_source,
                l.last_valid_price_date, l.last_valid_close,
                COALESCE(tm.formal_topic_membership_count, 0)
@@ -423,6 +426,11 @@ def build_unavailable_instruments(
             continue
         status_id = row.get("status_observation_id")
         source = str(row.get("status_source") or "")
+        status_context = row.get("status_context") or {}
+        internal_missing = is_internal_missing_price_status(
+            row.get("status_code"),
+            status_context.get("authorityOrigin") if isinstance(status_context, Mapping) else None,
+        )
         official = (
             (
                 TradingStatusAuthorityRecord(
@@ -436,7 +444,7 @@ def build_unavailable_instruments(
                     authority_class=AuthorityClass.OFFICIAL_EXCHANGE.value,
                 ),
             )
-            if status_id is not None and source in CANONICAL_STATUS_SOURCES
+            if status_id is not None and source in CANONICAL_STATUS_SOURCES and not internal_missing
             else ()
         )
         corporate_action = tuple(

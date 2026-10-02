@@ -48,6 +48,16 @@ DAILY_TRADING_STATUS_CODES: Final = frozenset(
 COVERED_NO_TRADE_STATUS_CODES: Final = frozenset(
     LEGITIMATE_UNAVAILABLE_CODES
 )
+INTERNAL_MISSING_PRICE_ORIGIN: Final = "INTERNAL_MISSING_PRICE_CLASSIFICATION"
+
+
+def is_internal_missing_price_status(status: object, origin: object) -> bool:
+    """Identify a tagged ingestion diagnostic, never an exchange status event.
+
+    Untagged/legacy UNKNOWN remains fail-closed under the existing authority
+    policy. An origin tag alone cannot exempt a target from price coverage.
+    """
+    return status == "UNKNOWN" and origin == INTERNAL_MISSING_PRICE_ORIGIN
 
 
 class HistoricalProviderError(ValueError):
@@ -94,6 +104,7 @@ class HistoricalFetchResult:
     instrument_status: str = "AVAILABLE"
     status_reason: str | None = None
     status_explicit: bool = False
+    status_authority_origin: str | None = None
 
     @property
     def available_close_count(self) -> int:

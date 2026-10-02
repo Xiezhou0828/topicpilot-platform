@@ -5,6 +5,11 @@ from __future__ import annotations
 from decimal import Decimal
 from typing import Any
 
+from topicpilot_api.market_data.history import (
+    INTERNAL_MISSING_PRICE_ORIGIN,
+    is_internal_missing_price_status,
+)
+
 from .contracts import (
     DAILY_TRADING_STATUS_CODES,
     NormalizationCandidate,
@@ -74,6 +79,7 @@ class HistoricalDailyBarNormalizer:
 
         status = payload.get("instrument_status")
         status_reason = payload.get("status_reason")
+        status_origin = payload.get("status_authority_origin")
         status_explicit = status is not None
         if status is None:
             status = "AVAILABLE" if values["close"] is not None else "UNKNOWN"
@@ -88,6 +94,10 @@ class HistoricalDailyBarNormalizer:
                     evidence={"value": status},
                 )
             )
+        if status_origin is not None and not is_internal_missing_price_status(
+            payload.get("instrument_status"), status_origin
+        ):
+            failures.append(NormalizationFailure("REJECTED", "INVALID_STATUS_AUTHORITY_ORIGIN"))
         if failures:
             return NormalizationResult((), tuple(failures))
         price_paths = tuple(json_pointer(key) for key in ("open", "high", "low", "close"))
@@ -131,6 +141,10 @@ class HistoricalDailyBarNormalizer:
                         "status_catalogue_version": reference.status_catalogue_version,
                         "status_context": {
                             "source_semantics": "DAILY_BAR",
+                            **(
+                                {"authorityOrigin": INTERNAL_MISSING_PRICE_ORIGIN}
+                                if status_origin is not None else {}
+                            ),
                             "coverageMeaning": (
                                 "PRICED"
                                 if values["close"] is not None
