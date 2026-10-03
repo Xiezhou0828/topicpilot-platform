@@ -539,11 +539,13 @@ def _provider_failure(exc: Exception) -> G2MarketFailure:
         "INVALID_NUMBER",
         "PROVIDER_DATE_MISMATCH",
     }
+    receipt = getattr(exc, "evidence", None)
+    decoded = receipt is None or receipt.get("stage") == "DATASET_PARSE"
     return G2MarketFailure(
         error_code=code,
-        reachable=code in parsed_codes,
-        payload_parsed=code in parsed_codes,
-        target_date_matched=code != "PROVIDER_DATE_MISMATCH",
+        reachable=code in parsed_codes or bool(receipt and receipt.get("payloadHash")),
+        payload_parsed=decoded and code in parsed_codes,
+        target_date_matched=decoded and code in parsed_codes and code != "PROVIDER_DATE_MISMATCH",
     )
 
 
@@ -601,6 +603,7 @@ def run_provider_preflight(
         market_batch=True,
     )
     market_results: dict[str, G2MarketFetch | G2MarketFailure] = {}
+    response_evidence: dict[str, dict[str, Any]] = {}
     for market in context.markets:
         registrations = registry.for_market(market.market_code)
         if len(registrations) != 1:
@@ -676,7 +679,29 @@ def run_provider_preflight(
             )
         except Exception as exc:
             market_results[market.market_code] = _provider_failure(exc)
-    return evaluate_provider_preflight(context, market_results)
+            receipt = dict(getattr(registration.adapter, "response_evidence", {}))
+            receipt.update(
+                errorCode=getattr(exc, "code", "PROVIDER_REQUEST_FAILED"),
+                exceptionClass=type(exc).__name__,
+            )
+            if not receipt.get("classification"):
+                code = receipt["errorCode"]
+                receipt["classification"] = (
+                    "PROVIDER_DATE_MISMATCH"
+                    if code == "PROVIDER_DATE_MISMATCH"
+                    else "PROVIDER_ENDPOINT_EMPTY"
+                    if code == "EXCHANGE_EMPTY_PAYLOAD"
+                    else "PROVIDER_NOT_READY"
+                    if code in {"EXCHANGE_NOT_READY", "EXCHANGE_NO_DATA"}
+                    else "PROVIDER_PARSER_REJECTION"
+                )
+            response_evidence[market.market_code] = receipt
+        else:
+            response_evidence[market.market_code] = dict(registration.adapter.response_evidence)
+    result = evaluate_provider_preflight(context, market_results)
+    for market in result["markets"]:
+        market["responseEvidence"] = response_evidence.get(market["marketCode"], {})
+    return result
 
 
 def build_database_failure_result(
