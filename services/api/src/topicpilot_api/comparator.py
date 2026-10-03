@@ -290,7 +290,9 @@ def persist_comparator(session: Session, plan: ComparatorPlan) -> dict[str, Any]
         source = _get_or_create_source(
             session,
             HistoricalSourceRegistration(
-                PROVIDER_AUTHORITY_BY_MARKET[market], PROVIDER_VERSION_BY_MARKET[market]
+                PROVIDER_AUTHORITY_BY_MARKET[market],
+                PROVIDER_VERSION_BY_MARKET[market],
+                licensing_classification="OFFICIAL_PUBLIC",
             ),
         )
         sources[market] = source
