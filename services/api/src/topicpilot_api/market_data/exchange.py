@@ -103,6 +103,17 @@ def _json(transport: Transport, url: str, timeout: float) -> Mapping[str, Any]:
     return payload
 
 
+def _explicit_previous_close(table: Mapping[str, Any], row: list[Any]) -> Decimal | None:
+    """Only an explicitly named comparator; never derive close minus change."""
+    indices = [index for index, name in enumerate(table["fields"])
+               if name in {"previousClose", "前收盤價", "前一交易日收盤價"}]
+    if not indices:
+        return None
+    if len(indices) != 1 or indices[0] >= len(row):
+        raise HistoricalProviderError("INVALID_PAYLOAD", "ambiguous previousClose field")
+    return _decimal(row[indices[0]], "previousClose")
+
+
 def _validate_bar(bar: HistoricalBar) -> None:
     values = (bar.open, bar.high, bar.low, bar.close)
     if all(value is not None for value in values):
@@ -269,6 +280,7 @@ class TwseOfficialDailyProvider:
                 low=_decimal(row[7], "low"),
                 close=_decimal(row[8], "close"),
                 volume=_decimal(row[2], "volume"),
+                previous_close=_explicit_previous_close(table, row),
             )
             _validate_bar(bar)
             bars[code] = bar
@@ -507,6 +519,7 @@ class TpexOfficialDailyProvider:
                 low=_decimal(row[6], "low"),
                 close=_decimal(row[2], "close"),
                 volume=_decimal(row[8], "volume"),
+                previous_close=_explicit_previous_close(table, row),
             )
             _validate_bar(bar)
             bars[code] = bar

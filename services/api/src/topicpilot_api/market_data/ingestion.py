@@ -35,6 +35,7 @@ from topicpilot_api.orm.models import (
 
 from .history import (
     COVERED_NO_TRADE_STATUS_CODES,
+    INTERNAL_MISSING_PRICE_ORIGIN,
     HistoricalBar,
     HistoricalFetchResult,
     HistoricalProvider,
@@ -159,6 +160,8 @@ def _bar_payload(result: HistoricalFetchResult, bar: HistoricalBar) -> dict[str,
     if result.status_explicit:
         payload["instrument_status"] = result.instrument_status
         payload["status_reason"] = result.status_reason
+        if result.status_authority_origin is not None:
+            payload["status_authority_origin"] = result.status_authority_origin
     return payload
 
 
@@ -167,7 +170,7 @@ def _status_payload(
 ) -> dict[str, str | None]:
     """Represent exchange-confirmed no-trade as evidence, not a fabricated bar."""
 
-    return {
+    payload = {
         "date": trading_date.isoformat(),
         "open": None,
         "high": None,
@@ -178,6 +181,9 @@ def _status_payload(
         "instrument_status": result.instrument_status if result.status_explicit else "UNKNOWN",
         "status_reason": result.status_reason,
     }
+    if result.status_authority_origin is not None:
+        payload["status_authority_origin"] = result.status_authority_origin
+    return payload
 
 
 def _load_instrument(session: Session, code: str, market_code: str) -> tuple[Instrument, Market]:
@@ -260,8 +266,13 @@ def classify_authoritative_no_trade_result(
                 f"{trading_date.isoformat()}"
             ),
             status_explicit=True,
+            status_authority_origin=None,
         )
     if result.has_priced_observation:
+        return result
+    if result.status_explicit and result.instrument_status == "UNKNOWN":
+        # A genuine explicit provider UNKNOWN is still blocking authority.
+        # Re-entry of an already tagged internal diagnostic is idempotent.
         return result
     return replace(
         result,
@@ -271,6 +282,7 @@ def classify_authoritative_no_trade_result(
             f"{trading_date.isoformat()}"
         ),
         status_explicit=True,
+        status_authority_origin=INTERNAL_MISSING_PRICE_ORIGIN,
     )
 
 

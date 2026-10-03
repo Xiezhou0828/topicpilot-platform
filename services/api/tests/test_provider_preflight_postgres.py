@@ -36,9 +36,11 @@ def _twse_payload(codes: tuple[str, ...]) -> bytes:
                         "最高價",
                         "最低價",
                         "收盤價",
+                        "previousClose",
                     ],
                     "data": [
-                        [code, "Fixture", "1,000", "10", "100,000", "100", "105", "99", "104"]
+                        [code, "Fixture", "1,000", "10", "100,000",
+                         "100", "105", "99", "104", "100"]
                         for code in codes
                     ],
                 }
@@ -65,9 +67,10 @@ def _tpex_payload(codes: tuple[str, ...]) -> bytes:
                         "最低",
                         "均價",
                         "成交股數",
+                        "previousClose",
                     ],
                     "data": [
-                        [code, "Fixture", "50", "+1", "49", "51", "48", "50", "3,000"]
+                        [code, "Fixture", "50", "+1", "49", "51", "48", "50", "3,000", "49"]
                         for code in codes
                     ],
                 }

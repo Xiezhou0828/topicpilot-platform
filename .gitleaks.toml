@@ -12,3 +12,34 @@ regexTarget = "match"
 regexes = [
   '''^(API_REVISION|WORKER_REVISION|WEB_REVISION|CANONICAL_SHA|CANDIDATE_SHA|RELEASED_SHA|PROMOTED_CANONICAL_SHA)=[0-9a-fA-F]{40}\r?$''',
 ]
+
+# Inherit the default detector unchanged. Only the four Owner-approved source
+# digests in the two historical replay reports are exceptions to this rule.
+# Each entry requires BOTH the exact path and the entire detector field/value match.
+# No commit, directory, arbitrary SHA-256, credential field or other rule is exempt.
+[[rules]]
+id = "generic-api-key"
+
+[[rules.allowlists]]
+description = "Verified baseline replay implementationSourceSha256 metadata"
+condition = "AND"
+regexTarget = "match"
+paths = [
+  '''^docs/reports/TASK-20261002-TARGET-UNIVERSE-REPLAY-AND-READINESS-GATE-RESOLUTION/baseline-replay-price-free\.json$''',
+]
+regexes = [
+  '''^topicpilot_api\.market_data\.history":[ \t]*"8eaf43cb5eca3f5055d8635db6fcf5023b7478d22aab78ba49421b51121d13ed"$''',
+  '''^topicpilot_api\.daily_market":[ \t]*"ffebdc7329a84d4bd8f23d07bc3eb6e62d7aac7d3cbe0ae6a9e327e0f4f16137"$''',
+]
+
+[[rules.allowlists]]
+description = "Verified candidate replay implementationSourceSha256 metadata"
+condition = "AND"
+regexTarget = "match"
+paths = [
+  '''^docs/reports/TASK-20261002-TARGET-UNIVERSE-REPLAY-AND-READINESS-GATE-RESOLUTION/candidate-replay-price-free\.json$''',
+]
+regexes = [
+  '''^topicpilot_api\.market_data\.history":[ \t]*"98c14ce7f150950a503f82851382835dceaed02bed56af1ff336e0fec83910d4"$''',
+  '''^topicpilot_api\.daily_market":[ \t]*"a77701fcc886ec90226130d569c797415b351604fa05ce0c557c31f06e14eb90"$''',
+]
