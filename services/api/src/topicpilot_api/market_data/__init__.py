@@ -1,5 +1,8 @@
 """Provider-neutral market-data capability contracts."""
 
+from importlib import import_module
+from typing import TYPE_CHECKING, Any
+
 from .aggregate_contract import (
     AggregateContractError,
     MarketAggregateResult,
@@ -35,12 +38,6 @@ from .index_contract import (
     parse_twse_market_index_ohlc,
     unavailable_market_index,
 )
-from .ingestion import (
-    HistoricalIngestionError,
-    HistoricalIngestionResult,
-    HistoricalSourceRegistration,
-    ingest_historical,
-)
 from .institutional_flow_contract import (
     INSTITUTIONAL_FLOW_ADAPTER_VERSION,
     TPEX_INSTITUTIONAL_FLOW_ENDPOINT,
@@ -65,6 +62,36 @@ from .yahoo_quote import (
     YAHOO_QUOTE_SOURCE_CODE,
     YahooQuoteProvider,
 )
+
+if TYPE_CHECKING:
+    from .ingestion import (
+        HistoricalIngestionError,
+        HistoricalIngestionResult,
+        HistoricalSourceRegistration,
+        ingest_historical,
+    )
+
+_INGESTION_EXPORTS = frozenset({
+    "HistoricalIngestionError",
+    "HistoricalIngestionResult",
+    "HistoricalSourceRegistration",
+    "ingest_historical",
+})
+
+
+def __getattr__(name: str) -> Any:
+    # Ingestion consumes normalizer; importing it while normalizer imports
+    # market_data.history would re-enter a partially initialized normalizer.
+    if name not in _INGESTION_EXPORTS:
+        raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+    value = getattr(import_module(f"{__name__}.ingestion"), name)
+    globals()[name] = value
+    return value
+
+
+def __dir__() -> list[str]:
+    return sorted(set(globals()) | _INGESTION_EXPORTS)
+
 
 __all__ = [
     "INSTITUTIONAL_FLOW_ADAPTER_VERSION",
