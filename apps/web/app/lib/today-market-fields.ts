@@ -7,7 +7,7 @@ export type HomeMarketTurnoverPreviousSession = components["schemas"]["HomeMarke
 export type HomeMarketDistribution = components["schemas"]["HomeMarketDistribution"];
 
 export type MarketDistributionDisplayMeta = {
-  scope: "COVERED_STOCKS" | "WHOLE_MARKET";
+  scope: "COVERED_STOCKS";
   title: string;
   completeCount: number;
   universeCount: number | null;
@@ -124,28 +124,23 @@ export function marketDistributionDisplayMeta(
   distribution: HomeMarketDistribution | null,
 ): MarketDistributionDisplayMeta {
   const coverage = distribution?.coverage ?? {};
-  const wholeMarket = coverage.scope === "WHOLE_MARKET";
   const universeCount = finiteNumber(coverage.eligibleUniverse) ? coverage.eligibleUniverse : null;
   const completeCount = finiteNumber(coverage.observedComplete)
     ? coverage.observedComplete
     : distribution?.eligible ?? 0;
   const coveragePct = finiteNumber(coverage.coveragePct)
     ? coverage.coveragePct
-    : universeCount !== null && universeCount > 0
-      ? completeCount / universeCount * 100
-      : null;
+    : null;
   return {
-    scope: wholeMarket ? "WHOLE_MARKET" : "COVERED_STOCKS",
-    title: wholeMarket ? "漲跌幅分布（上市＋上櫃全市場）" : "已覆蓋股票漲跌幅分布",
+    scope: "COVERED_STOCKS",
+    title: "已覆蓋股票漲跌幅分布",
     completeCount,
     universeCount,
     coveragePct,
     excludedCount: finiteNumber(coverage.excludedCount)
       ? coverage.excludedCount
       : distribution?.excluded ?? 0,
-    denominator: typeof coverage.distributionDenominator === "string"
-      ? coverage.distributionDenominator
-      : "COMPLETE_CLOSE_PREVIOUS_CLOSE",
+    denominator: "COMPLETE_CLOSE_PREVIOUS_CLOSE",
   };
 }
 
@@ -178,6 +173,28 @@ export function formatInstitutionalAmount(value: number | null | undefined): str
   }
   if (absolute >= 10_000) return `${sign}${formatMarketNumber(absolute / 10_000)} 萬`;
   return `${sign}${formatMarketNumber(absolute)} 元`;
+}
+
+export function institutionalAmountValue(value: unknown): number | null {
+  const parsed = typeof value === "number"
+    ? value
+    : typeof value === "string" && value.trim().length > 0 ? Number(value) : null;
+  return parsed !== null && Number.isFinite(parsed) ? parsed : null;
+}
+
+export function indexPointTone(
+  value: number | null | undefined,
+  previousClose: number | null | undefined,
+): "is-up" | "is-down" | "is-flat" | "is-unavailable" {
+  if (!finiteNumber(value) || value <= 0 || !finiteNumber(previousClose) || previousClose <= 0) {
+    return "is-unavailable";
+  }
+  return value > previousClose ? "is-up" : value < previousClose ? "is-down" : "is-flat";
+}
+
+export function publicHomeQualityNotes(notes: readonly string[]): string[] {
+  // Presentation only: diagnostic metadata stays available to operator surfaces.
+  return notes.filter((note) => !/public\.|ingestion|Home\.|backend|postgres|checkpoint|unavailable.?instrument|lastValidPrice|[A-Z][A-Z0-9]+_[A-Z0-9_]+/i.test(note));
 }
 
 export function formatMarketPercent(value: number | null | undefined): string {

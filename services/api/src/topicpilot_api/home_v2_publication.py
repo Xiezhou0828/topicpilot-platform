@@ -391,7 +391,10 @@ def build_market_distribution(
             previous_close = Decimal(str(row.get("previous_close")))
         except (InvalidOperation, TypeError, ValueError):
             continue
-        if not close.is_finite() or not previous_close.is_finite() or previous_close <= 0:
+        if (
+            not close.is_finite() or not previous_close.is_finite()
+            or close <= 0 or previous_close <= 0
+        ):
             continue
         change_pct = (close - previous_close) / previous_close * Decimal("100")
         counts[_distribution_bucket(change_pct)] += 1
@@ -802,6 +805,14 @@ def _index_fact_input(item: Any) -> dict[str, Any]:
             "lineage": getattr(item, "lineage", None),
             "status": status,
             "reasonCode": getattr(item, "status_reason", None),
+            "providerProvenance": {
+                "targetDate": getattr(item, "target_date", None),
+                "responseDate": getattr(item, "response_date", None),
+                "rawProviderDate": getattr(item, "raw_provider_date", None),
+                "responseHash": getattr(item, "response_content_hash", None),
+                "adapterVersion": getattr(item, "adapter_version", None),
+                "providerResponses": item.to_dict().get("providerResponses", []),
+            },
         }
     return dict(item)
 
@@ -1725,7 +1736,9 @@ def materialize_home_v2(
 
     distribution_payload = build_market_distribution(
         breadth_observations,
-        eligible_count=total_eligible,
+        # Official whole-market breadth is independent of the covered-stock
+        # distribution. Its population must not replace this subset's universe.
+        eligible_count=read_model_eligible,
         as_of=distribution_as_of,
     )
     market_health = {
@@ -1989,6 +2002,9 @@ def materialize_home_v2(
     publication_input = {
         "tradingDate": trading_date,
         "sourceRunId": source_run_id,
+        "marketIndexProvenance": {
+            item.get("market"): item.get("providerProvenance") for item in index_inputs
+        },
         "marketOverview": market_overview_payload,
         "dailyFocus": daily_section.payload,
         "mainTopics": main_topics_payload,
@@ -2134,6 +2150,10 @@ def materialize_home_v2(
                     "low": _number(item.get("low")),
                     "sourceDataset": item.get("sourceDataset"),
                     "sourceEndpoint": item.get("sourceEndpoint"),
+                    "providerProvenance": _json_safe(next(
+                        (fact.get("providerProvenance") for fact in index_inputs
+                         if fact.get("market") == item.get("market")), None,
+                    )),
                 },
             )
         )

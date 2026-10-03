@@ -18,6 +18,7 @@ import json
 import re
 import unicodedata
 from collections.abc import Callable, Mapping, Sequence
+from contextlib import suppress
 from dataclasses import dataclass, replace
 from datetime import date, datetime
 from decimal import Decimal, InvalidOperation
@@ -128,6 +129,9 @@ class MarketIndexResult:
     adapter_version: str
     status_reason: str | None = None
     response_content_hash: str | None = None
+    target_date: date | None = None
+    response_date: date | None = None
+    provider_responses: tuple[Mapping[str, Any], ...] = ()
 
     def to_dict(self) -> dict[str, Any]:
         """Return a JSON-safe shape for focused contract inspection."""
@@ -163,6 +167,9 @@ class MarketIndexResult:
             "adapterVersion": self.adapter_version,
             "statusReason": self.status_reason,
             "responseContentHash": self.response_content_hash,
+            "targetDate": self.target_date.isoformat() if self.target_date else None,
+            "responseDate": self.response_date.isoformat() if self.response_date else None,
+            "providerResponses": [dict(item) for item in self.provider_responses],
         }
 
 
@@ -314,6 +321,8 @@ def _unavailable(
     reason: str,
     raw_provider_date: str | None = None,
     response_content_hash: str | None = None,
+    target_date: date | None = None,
+    response_date: date | None = None,
 ) -> MarketIndexResult:
     metadata = _source_metadata(market)
     return MarketIndexResult(
@@ -345,6 +354,8 @@ def _unavailable(
         adapter_version=metadata["adapter_version"],
         status_reason=reason,
         response_content_hash=response_content_hash,
+        target_date=target_date,
+        response_date=response_date,
     )
 
 
@@ -462,6 +473,7 @@ def parse_twse_target_date_market_index(
 
     content_hash = _content_hash(payload)
     raw_provider_date: str | None = None
+    provider_date: date | None = None
     try:
         if not isinstance(payload, Mapping):
             raise IndexContractError(
@@ -477,6 +489,8 @@ def parse_twse_target_date_market_index(
                 reason="PROVIDER_DATE_MISMATCH",
                 raw_provider_date=raw_provider_date,
                 response_content_hash=content_hash,
+                target_date=target_date,
+                response_date=provider_date,
             )
         tables = payload.get("tables")
         if not isinstance(tables, list):
@@ -566,6 +580,8 @@ def parse_twse_target_date_market_index(
             ),
             adapter_version=TWSE_MARKET_INDEX_ADAPTER_VERSION,
             response_content_hash=content_hash,
+            target_date=target_date,
+            response_date=provider_date,
         )
     except IndexContractError as exc:
         return _unavailable(
@@ -575,6 +591,8 @@ def parse_twse_target_date_market_index(
             reason=exc.code,
             raw_provider_date=raw_provider_date,
             response_content_hash=content_hash,
+            target_date=target_date,
+            response_date=provider_date,
         )
 
 
@@ -808,6 +826,36 @@ def parse_tpex_index_crosscheck(payload: object) -> tuple[TpexIndexCrossCheck, .
     return tuple(points)
 
 
+def _with_response_provenance(
+    fact: MarketIndexResult, endpoint: str, target: date, raw: bytes | None,
+) -> MarketIndexResult:
+    """Bind a response to its dated request, including rejected response evidence.
+
+    The fetch boundary hashes the received bytes, not a re-serialized JSON body.
+    Parser-only callers retain the existing deterministic decoded-payload hash.
+    """
+    response_date = fact.response_date or fact.trading_date
+    if response_date is None and fact.raw_provider_date:
+        with suppress(IndexContractError):
+            response_date = _market_index_date(fact.raw_provider_date, "response date")
+    digest = hashlib.sha256(raw).hexdigest() if raw is not None else None
+    return replace(
+        fact,
+        target_date=target,
+        response_date=response_date,
+        source_endpoint=endpoint,
+        response_content_hash=digest,
+        provider_responses=({
+            "endpoint": endpoint,
+            "targetDate": target.isoformat(),
+            "responseDate": response_date.isoformat() if response_date else None,
+            "rawProviderDate": fact.raw_provider_date,
+            "responseHash": digest,
+            "adapterVersion": fact.adapter_version,
+        },),
+    )
+
+
 def _merge_twse_index_ohlc(
     close_fact: MarketIndexResult,
     ohlc_fact: MarketIndexResult,
@@ -815,7 +863,10 @@ def _merge_twse_index_ohlc(
     """Join TWSE's close/change report with its official OHLC report."""
 
     if close_fact.data_status is not IndexDataStatus.AVAILABLE:
-        return close_fact
+        return replace(
+            close_fact,
+            provider_responses=close_fact.provider_responses + ohlc_fact.provider_responses,
+        )
     if (
         ohlc_fact.data_status is not IndexDataStatus.AVAILABLE
         or ohlc_fact.trading_date != close_fact.trading_date
@@ -824,6 +875,7 @@ def _merge_twse_index_ohlc(
             close_fact,
             quality_status="SOURCE_CLOSE_VALID_OHLC_UNAVAILABLE",
             status_reason=ohlc_fact.status_reason or "OHLC_SOURCE_UNAVAILABLE",
+            provider_responses=close_fact.provider_responses + ohlc_fact.provider_responses,
         )
     combined_hash = hashlib.sha256(
         f"{close_fact.response_content_hash or ''}:{ohlc_fact.response_content_hash or ''}".encode()
@@ -834,7 +886,7 @@ def _merge_twse_index_ohlc(
         high=ohlc_fact.high,
         low=ohlc_fact.low,
         source_dataset=f"{TWSE_MARKET_INDEX_DATASET}+{TWSE_MARKET_INDEX_OHLC_DATASET}",
-        source_endpoint=f"{TWSE_MARKET_INDEX_ENDPOINT};{TWSE_MARKET_INDEX_OHLC_ENDPOINT}",
+        source_endpoint=f"{close_fact.source_endpoint};{ohlc_fact.source_endpoint}",
         source_field_path=f"{TWSE_INDEX_VALUE_PATH};{TWSE_INDEX_OHLC_VALUE_PATH}",
         quality_status="SOURCE_FIELDS_VALID_OHLC_AND_CLOSE",
         lineage=(
@@ -842,6 +894,7 @@ def _merge_twse_index_ohlc(
             "-> TAIEX close/change and OHLC rows -> market index contract"
         ),
         response_content_hash=combined_hash,
+        provider_responses=close_fact.provider_responses + ohlc_fact.provider_responses,
     )
 
 
@@ -861,9 +914,11 @@ def fetch_official_market_indexes(
 
     results: list[MarketIndexResult] = []
 
+    target_endpoint = f"{TWSE_MARKET_INDEX_ENDPOINT}?date={target_date:%Y%m%d}&response=json"
+    close_raw = None
     try:
-        target_endpoint = f"{TWSE_MARKET_INDEX_ENDPOINT}?date={target_date:%Y%m%d}&response=json"
-        close_payload = json.loads(transport(target_endpoint, timeout).decode("utf-8"))
+        close_raw = transport(target_endpoint, timeout)
+        close_payload = json.loads(close_raw.decode("utf-8"))
         close_fact = parse_twse_target_date_market_index(
             close_payload,
             target_date=target_date,
@@ -874,10 +929,13 @@ def fetch_official_market_indexes(
         close_fact = unavailable_market_index(
             "TPE", retrieved_at=retrieved_at, as_of=as_of, reason="PROVIDER_REQUEST_FAILED"
         )
+    close_fact = _with_response_provenance(close_fact, target_endpoint, target_date, close_raw)
 
+    ohlc_endpoint = f"{TWSE_MARKET_INDEX_OHLC_ENDPOINT}?date={target_date:%Y%m%d}&response=json"
+    ohlc_raw = None
     try:
-        ohlc_endpoint = f"{TWSE_MARKET_INDEX_OHLC_ENDPOINT}?date={target_date:%Y%m%d}&response=json"
-        ohlc_payload = json.loads(transport(ohlc_endpoint, timeout).decode("utf-8"))
+        ohlc_raw = transport(ohlc_endpoint, timeout)
+        ohlc_payload = json.loads(ohlc_raw.decode("utf-8"))
         ohlc_fact = parse_twse_market_index_ohlc(
             ohlc_payload,
             retrieved_at=retrieved_at,
@@ -888,6 +946,7 @@ def fetch_official_market_indexes(
         ohlc_fact = unavailable_market_index(
             "TPE", retrieved_at=retrieved_at, as_of=as_of, reason="OHLC_PROVIDER_REQUEST_FAILED"
         )
+    ohlc_fact = _with_response_provenance(ohlc_fact, ohlc_endpoint, target_date, ohlc_raw)
     results.append(_merge_twse_index_ohlc(close_fact, ohlc_fact))
 
     try:
