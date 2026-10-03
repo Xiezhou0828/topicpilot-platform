@@ -976,13 +976,13 @@ def test_institutional_flow_readback_requires_both_same_date_official_markets():
             "market": "TPE",
             "trading_date": target,
             "availability": "AVAILABLE",
-            "source_identity": "TPEX_INSTI_SUMMARY",
+            "source_identity": "TWSE_BFI82U",
         },
         {
             "market": "TWO",
             "trading_date": target,
             "availability": "AVAILABLE",
-            "source_identity": "TWSE_BFI82U",
+            "source_identity": "TPEX_INSTI_SUMMARY",
         },
     ]
     updater = PostCloseUpdater.__new__(PostCloseUpdater)
@@ -1007,13 +1007,13 @@ def test_formal_publication_readback_requires_published_home_and_flow():
                     "market": "TPE",
                     "trading_date": date(2026, 9, 3),
                     "availability": "AVAILABLE",
-                    "source_identity": "TPEX_INSTI_SUMMARY",
+                    "source_identity": "TWSE_BFI82U",
                 },
                 {
                     "market": "TWO",
                     "trading_date": date(2026, 9, 3),
                     "availability": "AVAILABLE",
-                    "source_identity": "TWSE_BFI82U",
+                    "source_identity": "TPEX_INSTI_SUMMARY",
                 },
             ]
 

@@ -2620,8 +2620,8 @@ class PostCloseUpdater:
 
         expected_markets = ("TPE", "TWO")
         expected_sources = {
-            "TPE": "TPEX_INSTI_SUMMARY",
-            "TWO": "TWSE_BFI82U",
+            "TPE": "TWSE_BFI82U",
+            "TWO": "TPEX_INSTI_SUMMARY",
         }
         try:
             rows = list(
