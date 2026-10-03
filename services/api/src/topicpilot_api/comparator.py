@@ -212,7 +212,8 @@ def prepare_comparator(
         registration = registry.for_market(market.market_code)[0]
         if (
             registration.code != PROVIDER_AUTHORITY_BY_MARKET[market.market_code]
-            or registration.adapter_version != PROVIDER_VERSION_BY_MARKET[market.market_code]
+            or registration.adapter.adapter_version
+            != PROVIDER_VERSION_BY_MARKET[market.market_code]
         ):
             raise ComparatorError("COMPARATOR_PROVIDER_AUTHORITY_MISMATCH")
         retrieved, bars = registration.adapter.fetch_market_day()
