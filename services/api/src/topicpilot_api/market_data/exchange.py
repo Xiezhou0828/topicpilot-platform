@@ -8,7 +8,6 @@ replacement for the licensed/private intraday runtime.
 
 from __future__ import annotations
 
-import json
 import re
 import time
 from collections.abc import Callable, Mapping
@@ -20,6 +19,7 @@ from urllib.request import Request, urlopen
 from zoneinfo import ZoneInfo
 
 from .history import HistoricalBar, HistoricalFetchResult, HistoricalProviderError
+from .receipt import ResponseBytes, read_json_receipt
 
 TAIPEI: Final = ZoneInfo("Asia/Taipei")
 TWSE_DAILY_SOURCE_CODE: Final = "TWSE_OFFICIAL_DAILY"
@@ -90,17 +90,18 @@ def _month_starts(start: date, end: date) -> tuple[date, ...]:
 def _read_url(url: str, timeout: float) -> bytes:
     request = Request(url, headers={"User-Agent": "TopicPilot-V2/1.0"})
     with urlopen(request, timeout=timeout) as response:
-        return response.read()
+        raw = ResponseBytes(response.read())
+        raw.http_status = response.status
+        return raw
 
 
-def _json(transport: Transport, url: str, timeout: float) -> Mapping[str, Any]:
-    try:
-        payload = json.loads(transport(url, timeout).decode("utf-8"))
-    except Exception as exc:
-        raise HistoricalProviderError("PROVIDER_REQUEST_FAILED", "exchange request failed") from exc
-    if not isinstance(payload, Mapping):
-        raise HistoricalProviderError("INVALID_PAYLOAD", "exchange response must be an object")
-    return payload
+def _json(
+    transport: Transport,
+    url: str,
+    timeout: float,
+    evidence: dict[str, Any] | None = None,
+) -> Mapping[str, Any]:
+    return read_json_receipt(transport, url, timeout, evidence if evidence is not None else {})
 
 
 def _explicit_previous_close(table: Mapping[str, Any], row: list[Any]) -> Decimal | None:
@@ -215,6 +216,7 @@ class TwseOfficialDailyProvider:
         self.last_market_failure_code: str | None = None
         self._market_cache: tuple[datetime, dict[str, HistoricalBar]] | None = None
         self._market_failure: HistoricalProviderError | None = None
+        self.response_evidence: dict[str, Any] = {}
 
     def _fetch_market_day_once(self) -> tuple[datetime, dict[str, HistoricalBar]]:
         if self.start_date != self.end_date:
@@ -232,7 +234,9 @@ class TwseOfficialDailyProvider:
                 "response": "json",
             }
         )
-        payload = _json(self.transport, f"{self.market_base_url}?{query}", self.timeout)
+        payload = _json(
+            self.transport, f"{self.market_base_url}?{query}", self.timeout, self.response_evidence
+        )
         if str(payload.get("stat", "")).upper() != "OK":
             raise HistoricalProviderError(
                 "EXCHANGE_NOT_READY", str(payload.get("stat", "unknown"))
@@ -457,6 +461,7 @@ class TpexOfficialDailyProvider:
         self.last_market_failure_code: str | None = None
         self._market_cache: tuple[datetime, dict[str, HistoricalBar]] | None = None
         self._market_failure: HistoricalProviderError | None = None
+        self.response_evidence: dict[str, Any] = {}
 
     def _fetch_market_day_once(self) -> tuple[datetime, dict[str, HistoricalBar]]:
         if self.start_date != self.end_date:
@@ -470,7 +475,9 @@ class TpexOfficialDailyProvider:
         query = urlencode(
             {"date": target_date.strftime("%Y/%m/%d"), "response": "json"}
         )
-        payload = _json(self.transport, f"{self.market_base_url}?{query}", self.timeout)
+        payload = _json(
+            self.transport, f"{self.market_base_url}?{query}", self.timeout, self.response_evidence
+        )
         if str(payload.get("stat", "")).lower() != "ok":
             raise HistoricalProviderError(
                 "EXCHANGE_NOT_READY", str(payload.get("stat", "unknown"))
