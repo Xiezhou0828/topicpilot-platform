@@ -1,6 +1,8 @@
 """One-shot Home completion persistence; disposable PostgreSQL only."""
 
 from copy import deepcopy
+from datetime import date
+from decimal import Decimal
 from hashlib import sha256
 from uuid import uuid4
 
@@ -131,6 +133,16 @@ def completion_db(postgres_engine, monkeypatch):
                         "status": "SUCCESS",
                         "publicationId": str(publication.id),
                         "publicationState": "PUBLISHED",
+                        "tradingDate": trading_date,
+                        "generatedAt": NOW,
+                        "sectionStatuses": {
+                            "marketOverview": {
+                                "dataDate": trading_date,
+                                "asOf": NOW,
+                                "testDecimal": Decimal("1.25"),
+                                "testNull": None,
+                            }
+                        },
                     }
 
                 def readback(*_a, **_kw):
@@ -144,7 +156,10 @@ def completion_db(postgres_engine, monkeypatch):
                         "status": "PASS" if published else "FAIL",
                         "topicSnapshot": {"status": "PASS"},
                         "institutionalFlow": {"status": "PASS"},
-                        "homePublication": {"status": "PASS" if published else "NOT_FOUND"},
+                        "homePublication": {
+                            "status": "PASS" if published else "NOT_FOUND",
+                            "publicationId": str(published) if published else None,
+                        },
                     }
 
                 monkeypatch.setattr(completion, "preflight", preflight)
@@ -172,6 +187,16 @@ def test_home_only_success_preserves_ingestion_and_protected_previous_run(comple
     assert run.status == "SUCCESS" and run.failure_code is None
     assert run.requested_count == run.success_count == 553 and run.failure_count == 0
     assert run.metadata_payload["providerPointCount"] == 552
+    assert (
+        run.metadata_payload["topicSnapshot"]["homePublication"]["tradingDate"]
+        == TARGET.isoformat()
+    )
+    overview = run.metadata_payload["topicSnapshot"]["homePublication"]["sectionStatuses"][
+        "marketOverview"
+    ]
+    assert overview["dataDate"] == TARGET.isoformat() and overview["asOf"] == NOW.isoformat()
+    assert overview["testDecimal"] == "1.25" and overview["testNull"] is None
+    assert isinstance(result["homePublication"]["tradingDate"], date)
     assert run.metadata_payload["ownerNormalExecution"] == previous_metadata["ownerNormalExecution"]
     assert run.metadata_payload["ownerNormalExecution"]["reentryAllowed"] is False
     assert (

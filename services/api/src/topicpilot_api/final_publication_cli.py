@@ -15,8 +15,9 @@ from topicpilot_api.comparator import read_comparator as read_comparator_lineage
 from topicpilot_api.config import get_settings
 from topicpilot_api.live.config import LiveRuntimeConfig
 from topicpilot_api.live.home_completion import OwnerHomeCompletion, validate_market_facts
+from topicpilot_api.live.home_receipt import OwnerPublishedHomeReceipt
 from topicpilot_api.live.normal_execution import OwnerNormalExecution
-from topicpilot_api.live.post_close import PostClosePreconditionError
+from topicpilot_api.live.post_close import PostClosePreconditionError, _json_safe
 from topicpilot_api.market_data.aggregate_contract import fetch_official_market_aggregates
 from topicpilot_api.market_data.exchange import _read_url
 from topicpilot_api.market_data.index_contract import fetch_official_market_indexes
@@ -39,6 +40,8 @@ def build_parser():
             "normal-run",
             "home-completion-preflight",
             "home-completion-apply",
+            "home-receipt-preflight",
+            "home-receipt-apply",
         ),
     )
     parser.add_argument("--target-date", required=True, type=date.fromisoformat)
@@ -48,6 +51,8 @@ def build_parser():
     parser.add_argument("--previous-run-id", type=UUID)
     parser.add_argument("--run-id", type=UUID)
     parser.add_argument("--completion-authorization-id", type=UUID)
+    parser.add_argument("--publication-id", type=UUID)
+    parser.add_argument("--receipt-authorization-id", type=UUID)
     parser.add_argument("--owner-authorized-once", action="store_true")
     parser.add_argument("--include-lineage", action="store_true")
     return parser
@@ -55,7 +60,12 @@ def build_parser():
 
 def main(argv=None):
     args = build_parser().parse_args(argv)
-    write = args.operation in {"comparator-apply", "normal-run", "home-completion-apply"}
+    write = args.operation in {
+        "comparator-apply",
+        "normal-run",
+        "home-completion-apply",
+        "home-receipt-apply",
+    }
     if write and not args.owner_authorized_once:
         raise SystemExit("EXPLICIT_OWNER_AUTHORIZATION_REQUIRED")
     # This operator approval is bounded to the dates in this closure. It is
@@ -95,6 +105,26 @@ def main(argv=None):
                     result["productionMutated"] = result["created"] > 0
                     if not args.include_lineage:
                         result["readback"].pop("lineage", None)
+            elif args.operation.startswith("home-receipt"):
+                if any(
+                    value is None
+                    for value in (
+                        args.run_id,
+                        args.publication_id,
+                        args.completion_authorization_id,
+                        args.receipt_authorization_id,
+                    )
+                ):
+                    raise PostClosePreconditionError("HOME_RECEIPT_IDENTITY_REQUIRED")
+                receipt = OwnerPublishedHomeReceipt(
+                    session,
+                    config,
+                    run_id=args.run_id,
+                    publication_id=args.publication_id,
+                    completion_id=args.completion_authorization_id,
+                    authorization_id=args.receipt_authorization_id,
+                )
+                result = receipt.complete_once() if write else receipt.preflight()
             elif args.operation.startswith("home-completion"):
                 if args.run_id is None or args.completion_authorization_id is None:
                     raise PostClosePreconditionError("HOME_COMPLETION_IDENTITY_REQUIRED")
@@ -182,7 +212,7 @@ def main(argv=None):
                     for market in result["providerPreflight"].get("markets", []):
                         for key in ("instrumentDecisions", "extraIdentityCodes"):
                             market.pop(key, None)
-            print(json.dumps(result, ensure_ascii=False, sort_keys=True))
+            print(json.dumps(_json_safe(result), ensure_ascii=False, sort_keys=True))
             return 0 if result["status"] in {"PASS", "READY", "PERSISTED"} else 1
     except (ComparatorError, PostClosePreconditionError) as exc:
         print(json.dumps({"status": "BLOCKED", "errorCode": exc.code, "operation": args.operation}))

@@ -27,7 +27,7 @@ from topicpilot_api.market_data.index_contract import IndexDataStatus
 from topicpilot_api.orm import HomePublication, LiveCollectorCheckpoint, LiveCollectorRun
 from topicpilot_api.provider_preflight import load_g2_preflight_context
 
-from .post_close import NORMAL_CURRENT_DAY, PostClosePreconditionError, PostCloseUpdater
+from .post_close import NORMAL_CURRENT_DAY, PostClosePreconditionError, PostCloseUpdater, _json_safe
 
 TARGET = date(2026, 10, 2)
 COMPLETION_KEY = "OWNER_HOME_ONLY_COMPLETION"
@@ -375,7 +375,7 @@ class OwnerHomeCompletion(PostCloseUpdater):
                 **metadata.get("forwardAutomation", {}),
                 "status": "SUCCESS",
             }
-            run.metadata_payload = metadata
+            run.metadata_payload = _json_safe(metadata)
             run.status, run.failure_code, run.failure_message = "SUCCESS", None, None
             run.freshness_state = "FRESH"
             run.completed_at = run.heartbeat_at = run.updated_at = self._now()
@@ -399,7 +399,9 @@ class OwnerHomeCompletion(PostCloseUpdater):
                 "failureCode": getattr(exc, "code", "HOME_COMPLETION_ORCHESTRATION_FAILURE"),
                 "operatorActionRequired": "REVIEW_NEW_AUTHORIZATION_CONTRACT",
             }
-            run.metadata_payload = {**run.metadata_payload, "ownerHomeCompletion": failure}
+            run.metadata_payload = _json_safe(
+                {**run.metadata_payload, "ownerHomeCompletion": failure}
+            )
             # The collector stays terminal PARTIAL. Even a stopped process
             # cannot leave a zombie RUNNING collector or permit another claim.
             self.session.commit()
