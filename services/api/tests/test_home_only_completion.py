@@ -10,6 +10,7 @@ from urllib.parse import parse_qs, urlsplit
 from uuid import uuid4
 
 import pytest
+
 from topicpilot_api import home_v2_publication as home
 from topicpilot_api.final_publication_cli import main
 from topicpilot_api.live.config import LiveRuntimeConfig
