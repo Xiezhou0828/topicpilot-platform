@@ -136,6 +136,8 @@ jobs:
           node-version: "22.13.0"
           cache: npm
           cache-dependency-path: apps/web/package-lock.json
+      - name: Web provenance guard regression tests
+        run: node --test infra/scripts/tests/web_deployment_provenance.test.mjs
       - name: Install locked dependencies
         run: npm ci --prefix apps/web
       - name: Lint
