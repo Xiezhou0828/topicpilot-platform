@@ -5,7 +5,7 @@ import { test } from "node:test";
 const page = await readFile(new URL("../app/components/v2/TodayMarketPage.tsx", import.meta.url), "utf8");
 
 test("Today market signals render only backend-active signals", () => {
-  assert.match(page, /\.filter\(\(signal\) => signal\.isActive !== false\)/);
+  assert.match(page, /\.filter\(\(signal\) => signal\.isActive === true && signal\.signalStatus === "ACTIVE"\)/);
   assert.doesNotMatch(page, /signal\.key ===|signal\.name ===|signal\.title ===/);
 });
 
@@ -23,4 +23,16 @@ test("Today market signal cards expose temporal and deterministic frequency fiel
   assert.match(page, /延續第 \$\{signal\.streakDays\} 日/);
   assert.match(page, /近20日發生 \$\{signal\.occurrenceDays20d\} 日/);
   assert.match(page, /signal\.frequencyMessage \?\? signal\.summary/);
+});
+
+test("Today market signals expose the complete formal catalog in a modal", () => {
+  assert.match(page, /aria-haspopup="dialog"/);
+  assert.match(page, /setShowCatalog\(true\)/);
+  assert.match(page, /role="dialog" aria-modal="true"/);
+  assert.match(page, /完整市場訊號目錄/);
+  assert.match(page, /signalReasonCode/);
+  assert.match(page, /signal\.signalTemporalStatus/);
+  assert.match(page, /current\?\.frequencyBand/);
+  assert.match(page, /current\?\.frequencyMessage/);
+  assert.match(page, /data\?\.signalCatalog/);
 });

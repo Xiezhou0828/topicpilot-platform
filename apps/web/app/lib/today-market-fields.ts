@@ -6,6 +6,16 @@ export type HomeMarketTurnover = components["schemas"]["HomeMarketTurnover"];
 export type HomeMarketTurnoverPreviousSession = components["schemas"]["HomeMarketTurnoverPreviousSession"];
 export type HomeMarketDistribution = components["schemas"]["HomeMarketDistribution"];
 
+export type MarketDistributionDisplayMeta = {
+  scope: "COVERED_STOCKS";
+  title: string;
+  completeCount: number;
+  universeCount: number | null;
+  coveragePct: number | null;
+  excludedCount: number;
+  denominator: string;
+};
+
 export type MarketFactState = "AVAILABLE" | "PARTIAL" | "UNAVAILABLE";
 
 const AVAILABLE_STATUSES = new Set(["AVAILABLE", "PUBLISHED", "FORMAL"]);
@@ -14,7 +24,7 @@ function normalizedStatus(status: string | null | undefined): string {
   return typeof status === "string" ? status.trim().toUpperCase() : "";
 }
 
-function finiteNumber(value: number | null | undefined): value is number {
+function finiteNumber(value: unknown): value is number {
   return typeof value === "number" && Number.isFinite(value);
 }
 
@@ -110,6 +120,30 @@ export function marketDistribution(overview: HomeMarketOverview | null): HomeMar
   return value;
 }
 
+export function marketDistributionDisplayMeta(
+  distribution: HomeMarketDistribution | null,
+): MarketDistributionDisplayMeta {
+  const coverage = distribution?.coverage ?? {};
+  const universeCount = finiteNumber(coverage.eligibleUniverse) ? coverage.eligibleUniverse : null;
+  const completeCount = finiteNumber(coverage.observedComplete)
+    ? coverage.observedComplete
+    : distribution?.eligible ?? 0;
+  const coveragePct = finiteNumber(coverage.coveragePct)
+    ? coverage.coveragePct
+    : null;
+  return {
+    scope: "COVERED_STOCKS",
+    title: "已覆蓋股票漲跌幅分布",
+    completeCount,
+    universeCount,
+    coveragePct,
+    excludedCount: finiteNumber(coverage.excludedCount)
+      ? coverage.excludedCount
+      : distribution?.excluded ?? 0,
+    denominator: "COMPLETE_CLOSE_PREVIOUS_CLOSE",
+  };
+}
+
 export function formatMarketNumber(value: number | null | undefined): string {
   return finiteNumber(value)
     ? new Intl.NumberFormat("zh-TW", { maximumFractionDigits: 2 }).format(value)
@@ -120,6 +154,47 @@ export function formatSignedMarketNumber(value: number | null | undefined): stri
   if (!finiteNumber(value)) return "尚未提供";
   const formatted = formatMarketNumber(Math.abs(value));
   return value > 0 ? `+${formatted}` : value < 0 ? `-${formatted}` : formatted;
+}
+
+export function formatInstitutionalAmount(value: number | null | undefined): string {
+  if (!finiteNumber(value)) return "尚未提供";
+  const sign = value < 0 ? "-" : "";
+  const absolute = Math.abs(value);
+  if (absolute >= 100_000_000) {
+    let billions = Math.floor(absolute / 100_000_000);
+    let tenThousands = Math.round((absolute - billions * 100_000_000) / 10_000);
+    if (tenThousands >= 10_000) {
+      billions += 1;
+      tenThousands = 0;
+    }
+    return tenThousands > 0
+      ? `${sign}${formatMarketNumber(billions)} 億 ${formatMarketNumber(tenThousands)} 萬`
+      : `${sign}${formatMarketNumber(billions)} 億`;
+  }
+  if (absolute >= 10_000) return `${sign}${formatMarketNumber(absolute / 10_000)} 萬`;
+  return `${sign}${formatMarketNumber(absolute)} 元`;
+}
+
+export function institutionalAmountValue(value: unknown): number | null {
+  const parsed = typeof value === "number"
+    ? value
+    : typeof value === "string" && value.trim().length > 0 ? Number(value) : null;
+  return parsed !== null && Number.isFinite(parsed) ? parsed : null;
+}
+
+export function indexPointTone(
+  value: number | null | undefined,
+  previousClose: number | null | undefined,
+): "is-up" | "is-down" | "is-flat" | "is-unavailable" {
+  if (!finiteNumber(value) || value <= 0 || !finiteNumber(previousClose) || previousClose <= 0) {
+    return "is-unavailable";
+  }
+  return value > previousClose ? "is-up" : value < previousClose ? "is-down" : "is-flat";
+}
+
+export function publicHomeQualityNotes(notes: readonly string[]): string[] {
+  // Presentation only: diagnostic metadata stays available to operator surfaces.
+  return notes.filter((note) => !/public\.|ingestion|Home\.|backend|postgres|checkpoint|unavailable.?instrument|lastValidPrice|[A-Z][A-Z0-9]+_[A-Z0-9_]+/i.test(note));
 }
 
 export function formatMarketPercent(value: number | null | undefined): string {

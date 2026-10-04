@@ -8,13 +8,13 @@ from typing import Any
 from topicpilot_api import __version__
 
 from ..release_provenance import runtime_git_sha
-from .exchange import TPEX_DAILY_ADAPTER_VERSION, TWSE_DAILY_ADAPTER_VERSION
+from .exchange import TPEX_OPENAPI_DAILY_ADAPTER_VERSION, TWSE_DAILY_ADAPTER_VERSION
 from .registry import build_historical_provider_registry
 from .taishin import TAISHIN_INTRADAY_ADAPTER_VERSION, TAISHIN_INTRADAY_SOURCE_CODE
 from .yahoo_quote import YAHOO_QUOTE_ADAPTER_VERSION, YAHOO_QUOTE_SOURCE_CODE
 
 EXPECTED_TWSE_ADAPTER_VERSION = TWSE_DAILY_ADAPTER_VERSION
-EXPECTED_TPEX_ADAPTER_VERSION = TPEX_DAILY_ADAPTER_VERSION
+EXPECTED_TPEX_ADAPTER_VERSION = TPEX_OPENAPI_DAILY_ADAPTER_VERSION
 
 
 def build_provider_lineage() -> dict[str, Any]:

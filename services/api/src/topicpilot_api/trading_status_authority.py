@@ -28,6 +28,7 @@ from .market_data.availability import (
     LEGITIMATE_UNAVAILABLE_CODES,
     MarketAvailability,
 )
+from .market_data.history import is_internal_missing_price_status
 from .orm import ReferenceInstrumentLifecycle, ReferenceRegistrySet
 
 OFFICIAL_DAILY_SOURCES = frozenset({"TWSE_OFFICIAL_DAILY", "TPEX_OFFICIAL_DAILY"})
@@ -259,6 +260,11 @@ def authority_from_official_daily_result(
     source = str(getattr(result, "source_code", ""))
     if source not in OFFICIAL_DAILY_SOURCES:
         raise TradingStatusAuthorityError(f"UNSUPPORTED_STATUS_SOURCE:{source or 'EMPTY'}")
+    if is_internal_missing_price_status(
+        getattr(result, "instrument_status", None),
+        getattr(result, "status_authority_origin", None),
+    ):
+        return None
     if not bool(getattr(result, "status_explicit", False)):
         return None
     raw_status = getattr(result, "instrument_status", None)
@@ -662,7 +668,12 @@ def read_effective_trading_status_authority(
         official: tuple[TradingStatusAuthorityRecord, ...] = ()
         if status_id is not None:
             source = str(row.get("status_source") or "")
-            if source in CANONICAL_STATUS_SOURCES:
+            status_context = row.get("status_context") or {}
+            internal_missing = is_internal_missing_price_status(
+                row.get("status_code"),
+                status_context.get("authorityOrigin") if isinstance(status_context, dict) else None,
+            )
+            if source in CANONICAL_STATUS_SOURCES and not internal_missing:
                 official = (
                     TradingStatusAuthorityRecord(
                         status_code=normalize_source_status(row.get("status_code"), source=source),

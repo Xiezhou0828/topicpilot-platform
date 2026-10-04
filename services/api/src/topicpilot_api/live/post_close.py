@@ -76,6 +76,8 @@ POST_CLOSE_PHASE_MODEL = (
     "FINAL_PUBLICATION",
     "COMPLETION",
 )
+NORMAL_CURRENT_DAY = "NORMAL_CURRENT_DAY"
+HISTORY_RECOVERY = "HISTORY_RECOVERY"
 _CHECKPOINT_BATCH_NUMBERS = {
     "SESSION_VALIDATION": 0,
     "INPUT_READINESS": 1,
@@ -83,6 +85,23 @@ _CHECKPOINT_BATCH_NUMBERS = {
     "FINAL_PUBLICATION": 3,
     "COMPLETION": 4,
 }
+
+
+def _execution_scope(execution_mode: str) -> str:
+    if execution_mode == "RECOVERY":
+        return HISTORY_RECOVERY
+    if execution_mode in {"SCHEDULED", "MANUAL"}:
+        return NORMAL_CURRENT_DAY
+    raise ValueError("invalid POST_CLOSE execution_mode")
+
+
+def _metadata_execution_scope(metadata: Mapping[str, Any]) -> str:
+    recorded = metadata.get("executionScope")
+    if recorded in {NORMAL_CURRENT_DAY, HISTORY_RECOVERY}:
+        return str(recorded)
+    if metadata.get("executionMode") == "RECOVERY" or metadata.get("recoveryOfRunId"):
+        return HISTORY_RECOVERY
+    return NORMAL_CURRENT_DAY
 
 
 def _official_transport(url: str, timeout: float) -> bytes:
@@ -307,6 +326,9 @@ class PostCloseUpdater:
         self._status_resolution_metrics = StatusResolutionMetrics()
         self._active_run_id: Any | None = None
         self._active_failure_stage = "POST_CLOSE_ORCHESTRATION"
+        self._active_run_date: date | None = None
+        self._active_execution_scope = NORMAL_CURRENT_DAY
+        self._active_execution_key: str | None = None
         self.session_clock = MarketSessionClock(
             config.timezone_name,
             config.session_open,
@@ -441,17 +463,20 @@ class PostCloseUpdater:
         run_date: date,
         *,
         target_symbols: Collection[str] | None = None,
+        execution_mode: str = "MANUAL",
     ) -> str:
-        """Return the one durable identity for one session/scope execution."""
+        """Return a deterministic identity separated by execution purpose."""
 
-        scope = "FULL" if target_symbols is None else "TARGETED"
+        execution_scope = _execution_scope(execution_mode)
+        run_scope = "FULL" if target_symbols is None else "TARGETED"
         scope_suffix = (
             "" if target_symbols is None else f":{stable_hash(tuple(target_symbols))[:32]}"
         )
+        prefix = "history-recovery" if execution_scope == HISTORY_RECOVERY else "post-close"
         return (
-            f"post-close:{self.config.reference_data_version}:"
+            f"{prefix}:{self.config.reference_data_version}:"
             f"{self.config.calendar_code}:{run_date.isoformat()}:"
-            f"{scope}{scope_suffix}"
+            f"{execution_scope}:{run_scope}{scope_suffix}"
         )
 
     @staticmethod
@@ -513,6 +538,15 @@ class PostCloseUpdater:
         )
         metadata_payload = dict(metadata or {})
         checkpoint_semantic = _checkpoint_semantics(batch_key)
+        execution_scope = getattr(self, "_active_execution_scope", NORMAL_CURRENT_DAY)
+        execution_key = getattr(self, "_active_execution_key", None)
+        metadata_payload.setdefault("executionScope", execution_scope)
+        metadata_payload.setdefault(
+            "checkpointNamespace",
+            f"{execution_scope}:{execution_key or run_id}",
+        )
+        if execution_key is not None:
+            metadata_payload.setdefault("executionKey", execution_key)
         metadata_payload.setdefault("checkpointSemantic", checkpoint_semantic)
         provider_metrics_applicability = _provider_metrics_applicability(batch_key)
         metadata_payload.setdefault("providerMetricsApplicability", provider_metrics_applicability)
@@ -787,27 +821,43 @@ class PostCloseUpdater:
         run_date: date,
         *,
         target_symbols: Collection[str] | None = None,
+        execution_mode: str = "MANUAL",
     ) -> LiveCollectorRun | None:
-        wanted_scope = "TARGETED" if target_symbols is not None else "FULL"
+        execution_scope = _execution_scope(execution_mode)
+        wanted_run_scope = "TARGETED" if target_symbols is not None else "FULL"
         wanted_symbols = tuple(target_symbols or ())
         wanted_execution_key = self._execution_key(
             run_date,
             target_symbols=wanted_symbols if target_symbols is not None else None,
+            execution_mode=execution_mode,
         )
-        fallback: LiveCollectorRun | None = None
+        legacy_execution_key = (
+            f"post-close:{self.config.reference_data_version}:"
+            f"{self.config.calendar_code}:{run_date.isoformat()}:"
+            f"{wanted_run_scope}"
+            f"{'' if target_symbols is None else ':' + stable_hash(wanted_symbols)[:32]}"
+            if execution_scope == NORMAL_CURRENT_DAY
+            else None
+        )
         for run in self._runs_for_date(run_date):
             metadata = run.metadata_payload or {}
-            if metadata.get("executionKey") == wanted_execution_key:
+            if (
+                metadata.get("executionKey") == wanted_execution_key
+                and _metadata_execution_scope(metadata) == execution_scope
+            ):
                 return run
-            scope = str(metadata.get("scope", "FULL")).upper()
-            if scope != wanted_scope:
+            if legacy_execution_key is None or metadata.get("executionKey") != legacy_execution_key:
                 continue
-            if wanted_scope == "TARGETED":
+            if _metadata_execution_scope(metadata) != NORMAL_CURRENT_DAY:
+                continue
+            if str(metadata.get("scope", "FULL")).upper() != wanted_run_scope:
+                continue
+            if wanted_run_scope == "TARGETED":
                 recorded = tuple(str(item) for item in metadata.get("targetSymbols", ()))
                 if recorded != wanted_symbols:
                     continue
-            fallback = fallback or run
-        return fallback
+            return run
+        return None
 
     def _completed_attempt_summary(
         self,
@@ -902,13 +952,22 @@ class PostCloseUpdater:
         execution_key = self._execution_key(
             run_date,
             target_symbols=target_symbols if scope == "TARGETED" else None,
+            execution_mode=execution_mode,
         )
+        execution_scope = _execution_scope(execution_mode)
+        if execution_scope == HISTORY_RECOVERY and recovery_of_run_id is not None:
+            raise PostClosePreconditionError("HISTORY_RECOVERY_CANNOT_REUSE_EXISTING_RUN")
         metadata = {
             "runType": "POST_CLOSE",
             "runDate": run_date.isoformat(),
             "targetDate": run_date.isoformat(),
             "scope": scope,
+            "executionScope": execution_scope,
             "executionKey": execution_key,
+            "checkpointNamespace": f"{execution_scope}:{execution_key}",
+            "homePublicationPolicy": (
+                "FORBIDDEN" if execution_scope == HISTORY_RECOVERY else "CURRENT_DAY_ONLY"
+            ),
             "sessionIdentity": {
                 "sessionDate": run_date.isoformat(),
                 "timezone": self.config.timezone_name,
@@ -918,10 +977,7 @@ class PostCloseUpdater:
             },
             "checkpointAuthority": "topicpilot.live_collector_checkpoints",
             "phaseModel": list(POST_CLOSE_PHASE_MODEL),
-            "forwardRunKey": (
-                f"post-close:{self.config.reference_data_version}:"
-                f"{self.config.calendar_code}:{run_date.isoformat()}"
-            ),
+            "forwardRunKey": execution_key if execution_scope == NORMAL_CURRENT_DAY else None,
             "timezone": self.config.timezone_name,
             "sessionCode": self.config.session_code,
             "calendarCode": self.config.calendar_code,
@@ -953,7 +1009,13 @@ class PostCloseUpdater:
         if recovery_of_run_id is not None:
             metadata["recoveryOfRunId"] = str(recovery_of_run_id)
         if recovery_of_run_id is None:
-            metadata["recoveryStrategy"] = "IN_PLACE_SESSION_RUN"
+            metadata["recoveryStrategy"] = (
+                "NEW_HISTORY_RUN"
+                if execution_scope == HISTORY_RECOVERY
+                else "NORMAL_CURRENT_DAY"
+            )
+        else:
+            metadata["recoveryStrategy"] = "EXPLICIT_RECOVERY_REFERENCE"
         run = LiveCollectorRun(
             id=uuid5(NAMESPACE_URL, f"topicpilot:{execution_key}"),
             run_type="POST_CLOSE",
@@ -1019,6 +1081,7 @@ class PostCloseUpdater:
             execution_key = self._execution_key(
                 run_date,
                 target_symbols=target_symbols if scope == "TARGETED" else None,
+                execution_mode=execution_mode,
             )
             existing = self.session.get(
                 LiveCollectorRun,
@@ -1029,7 +1092,8 @@ class PostCloseUpdater:
             return existing, False
 
     def _idempotent_result(self, run_date: date) -> PostCloseRunResult | None:
-        run_key = (
+        run_key = self._execution_key(run_date, execution_mode="SCHEDULED")
+        legacy_run_key = (
             f"post-close:{self.config.reference_data_version}:"
             f"{self.config.calendar_code}:{run_date.isoformat()}"
         )
@@ -1044,7 +1108,10 @@ class PostCloseUpdater:
         for run in runs:
             metadata = run.metadata_payload or {}
             forward = metadata.get("forwardAutomation") or {}
-            if metadata.get("forwardRunKey") != run_key or forward.get("status") != "SUCCESS":
+            if (
+                metadata.get("forwardRunKey") not in {run_key, legacy_run_key}
+                and metadata.get("executionKey") not in {run_key, legacy_run_key}
+            ) or forward.get("status") != "SUCCESS":
                 continue
             snapshot = metadata.get("topicSnapshot") or {}
             return PostCloseRunResult(
@@ -1201,12 +1268,14 @@ class PostCloseUpdater:
         existing_run = self._find_existing_run(
             run_date,
             target_symbols=target_symbols if is_targeted else None,
+            execution_mode=execution_mode,
         )
         active_other_scope = next(
             (
                 run
                 for run in self._runs_for_date(run_date)
-                if run.status == "RUNNING" and (existing_run is None or run.id != existing_run.id)
+                if run.status == "RUNNING"
+                and (existing_run is None or run.id != existing_run.id)
             ),
             None,
         )
@@ -1313,6 +1382,9 @@ class PostCloseUpdater:
 
         self._active_run_id = None
         self._active_failure_stage = "POST_CLOSE_ORCHESTRATION"
+        self._active_run_date = None
+        self._active_execution_scope = NORMAL_CURRENT_DAY
+        self._active_execution_key = None
         try:
             return self._run_once(
                 run_date=run_date,
@@ -1331,6 +1403,9 @@ class PostCloseUpdater:
         finally:
             self._active_run_id = None
             self._active_failure_stage = "POST_CLOSE_ORCHESTRATION"
+            self._active_run_date = None
+            self._active_execution_scope = NORMAL_CURRENT_DAY
+            self._active_execution_key = None
 
     def _run_once(
         self,
@@ -1368,11 +1443,22 @@ class PostCloseUpdater:
             target_symbols,
         )
         is_targeted = selected_by_market is not None
+        self._active_run_date = local_date
+        self._active_execution_scope = _execution_scope(execution_mode)
+        self._active_execution_key = self._execution_key(
+            local_date,
+            target_symbols=normalized_target_symbols if is_targeted else None,
+            execution_mode=execution_mode,
+        )
         requested_by_market = selected_by_market or expected_by_market
         instruments = self._instruments(requested_by_market)
         self._validate_instruments(instruments, requested_by_market)
         eligible_instrument_ids = tuple(instrument.id for instrument, _market in instruments)
-        idempotent = None if is_targeted else self._idempotent_result(local_date)
+        idempotent = (
+            None
+            if is_targeted or execution_mode == "RECOVERY"
+            else self._idempotent_result(local_date)
+        )
         if idempotent is not None:
             return idempotent
         run, reused, recovered_counts = self._prepare_run(
@@ -1388,6 +1474,11 @@ class PostCloseUpdater:
         if reused and run.status not in {"RUNNING"}:
             return self._existing_result(run, run_date=local_date)
         run_id = run.id
+        run_metadata = run.metadata_payload or {}
+        self._active_execution_scope = _metadata_execution_scope(run_metadata)
+        self._active_execution_key = str(
+            run_metadata.get("executionKey") or self._active_execution_key
+        )
         failure_codes: list[str] = []
         success_count = recovered_counts.get("success_count", 0)
         failure_count = recovered_counts.get("failure_count", 0)
@@ -2095,6 +2186,9 @@ class PostCloseUpdater:
             formal_readback = self._formal_publication_readback(
                 local_date,
                 run_id=run_id,
+                execution_scope=getattr(
+                    self, "_active_execution_scope", NORMAL_CURRENT_DAY
+                ),
             )
             formal_phase_key = "A9_B2_FORMAL_PROCESSING"
             formal_phase = self._latest_checkpoint(run_id, formal_phase_key)
@@ -2198,6 +2292,9 @@ class PostCloseUpdater:
                         market_index_facts=market_index_facts,
                         market_aggregate_facts=market_aggregate_facts,
                         market_institutional_flow_facts=(),
+                        execution_scope=getattr(
+                            self, "_active_execution_scope", NORMAL_CURRENT_DAY
+                        ),
                     )
                     snapshot_result["marketInstitutionalFlow"] = institutional_flow_persistence
                 else:
@@ -2208,10 +2305,17 @@ class PostCloseUpdater:
                         market_aggregate_facts=market_aggregate_facts,
                         market_institutional_flow_facts=market_institutional_flow_facts,
                         market_institutional_flow_result=institutional_flow_persistence,
+                        eligible_instrument_ids=eligible_instrument_ids,
+                        execution_scope=getattr(
+                            self, "_active_execution_scope", NORMAL_CURRENT_DAY
+                        ),
                     )
                 formal_readback = self._formal_publication_readback(
                     local_date,
                     run_id=run_id,
+                    execution_scope=getattr(
+                        self, "_active_execution_scope", NORMAL_CURRENT_DAY
+                    ),
                 )
                 snapshot_result["formalPublicationReadback"] = formal_readback
 
@@ -2363,6 +2467,8 @@ class PostCloseUpdater:
         market_aggregate_facts: Collection[Any],
         market_institutional_flow_facts: Collection[Any],
         market_institutional_flow_result: Mapping[str, Any] | None = None,
+        execution_scope: str | None = None,
+        eligible_instrument_ids: Collection[Any] | None = None,
     ) -> dict[str, Any]:
         """Publish formal exchange-level facts without bypassing stock gates.
 
@@ -2395,13 +2501,30 @@ class PostCloseUpdater:
                         "status": "PERSISTENCE_UNAVAILABLE",
                         "error": type(exc).__name__,
                     }
-            result["homePublication"] = materialize_home_v2(
-                self.session,
-                trading_date=snapshot_date,
-                source_run_id=source_run_id,
-                market_index_facts=tuple(market_index_facts),
-                market_aggregate_facts=tuple(market_aggregate_facts),
+            resolved_scope = execution_scope or getattr(
+                self, "_active_execution_scope", NORMAL_CURRENT_DAY
             )
+            if resolved_scope == HISTORY_RECOVERY:
+                result["homePublication"] = {
+                    "status": "FORBIDDEN",
+                    "reasonCode": "HISTORY_RECOVERY_HOME_PUBLICATION_FORBIDDEN",
+                    "publicationScope": HISTORY_RECOVERY,
+                }
+            elif snapshot_date != getattr(self, "_active_run_date", snapshot_date):
+                result["homePublication"] = {
+                    "status": "BLOCKED",
+                    "reasonCode": "NORMAL_CURRENT_DAY_HOME_DATE_MISMATCH",
+                    "publicationScope": NORMAL_CURRENT_DAY,
+                }
+            else:
+                result["homePublication"] = materialize_home_v2(
+                    self.session,
+                    trading_date=snapshot_date,
+                    source_run_id=source_run_id,
+                    expected_instrument_ids=eligible_instrument_ids,
+                    market_index_facts=tuple(market_index_facts),
+                    market_aggregate_facts=tuple(market_aggregate_facts),
+                )
             result["marketFactsPublication"] = {
                 "status": "SUCCESS",
                 "institutionalFlow": result.get("marketInstitutionalFlow"),
@@ -2517,8 +2640,8 @@ class PostCloseUpdater:
 
         expected_markets = ("TPE", "TWO")
         expected_sources = {
-            "TPE": "TPEX_INSTI_SUMMARY",
-            "TWO": "TWSE_BFI82U",
+            "TPE": "TWSE_BFI82U",
+            "TWO": "TPEX_INSTI_SUMMARY",
         }
         try:
             rows = list(
@@ -2605,12 +2728,17 @@ class PostCloseUpdater:
         snapshot_date: date,
         *,
         run_id: Any | None = None,
+        execution_scope: str | None = None,
     ) -> dict[str, Any]:
         """Read the authoritative outputs used by the completion gate."""
 
         topic = self._formal_snapshot_readback(snapshot_date)
+        resolved_scope = execution_scope or getattr(
+            self, "_active_execution_scope", NORMAL_CURRENT_DAY
+        )
+        history_recovery = resolved_scope == HISTORY_RECOVERY
         home = None
-        if run_id is not None:
+        if run_id is not None and not history_recovery:
             home = self.session.scalar(
                 select(HomePublication)
                 .where(
@@ -2623,6 +2751,9 @@ class PostCloseUpdater:
             )
         institutional_flow = self._institutional_flow_readback(snapshot_date)
         home_status = (
+            "FORBIDDEN"
+            if history_recovery
+            else
             "PASS"
             if home is not None and home.publication_state == "PUBLISHED"
             else "NOT_FOUND"
@@ -2633,7 +2764,7 @@ class PostCloseUpdater:
         lifecycle = self._formal_lifecycle_readback(snapshot_date)
         base_ready = (
             topic["status"] == "PASS"
-            and home_status == "PASS"
+            and (history_recovery or home_status == "PASS")
             and institutional_flow["status"] == "PASS"
         )
         return {
@@ -2652,6 +2783,12 @@ class PostCloseUpdater:
                 "publicationId": str(home.id) if home is not None else None,
                 "publicationState": home.publication_state if home is not None else None,
                 "authority": "topicpilot.home_publications",
+                "publicationScope": resolved_scope,
+                "reasonCode": (
+                    "HISTORY_RECOVERY_HOME_PUBLICATION_FORBIDDEN"
+                    if history_recovery
+                    else None
+                ),
             },
             "institutionalFlow": institutional_flow,
             "formalStrength": strength,
@@ -2813,6 +2950,7 @@ class PostCloseUpdater:
         market_index_facts: Collection[Any] = (),
         market_aggregate_facts: Collection[Any] = (),
         market_institutional_flow_facts: Collection[Any] = (),
+        execution_scope: str | None = None,
     ) -> dict[str, Any]:
         try:
             result = TopicSnapshotEngine(self.session).run_once(
@@ -2897,23 +3035,40 @@ class PostCloseUpdater:
                     result["formalStrengthReadback"] = {"status": "FAIL"}
                     result["lifecycle"] = {"status": "WAITING_FOR_FORMAL_SNAPSHOT"}
                     result["formalLifecycleReadback"] = {"status": "FAIL"}
-                try:
-                    result["homePublication"] = materialize_home_v2(
-                        self.session,
-                        trading_date=snapshot_date,
-                        source_run_id=source_run_id,
-                        market_index_facts=tuple(market_index_facts),
-                        market_aggregate_facts=tuple(market_aggregate_facts),
-                    )
-                except Exception as exc:
-                    # Home publication has its own typed gate.  A Home
-                    # persistence failure must not rewrite a successfully
-                    # materialized formal topic state as unavailable.
-                    self.session.rollback()
+                resolved_scope = execution_scope or getattr(
+                    self, "_active_execution_scope", NORMAL_CURRENT_DAY
+                )
+                if resolved_scope == HISTORY_RECOVERY:
                     result["homePublication"] = {
-                        "status": "HOME_PUBLICATION_UNAVAILABLE",
-                        "error": type(exc).__name__,
+                        "status": "FORBIDDEN",
+                        "reasonCode": "HISTORY_RECOVERY_HOME_PUBLICATION_FORBIDDEN",
+                        "publicationScope": HISTORY_RECOVERY,
                     }
+                elif snapshot_date != getattr(self, "_active_run_date", snapshot_date):
+                    result["homePublication"] = {
+                        "status": "BLOCKED",
+                        "reasonCode": "NORMAL_CURRENT_DAY_HOME_DATE_MISMATCH",
+                        "publicationScope": NORMAL_CURRENT_DAY,
+                    }
+                else:
+                    try:
+                        result["homePublication"] = materialize_home_v2(
+                            self.session,
+                            trading_date=snapshot_date,
+                            source_run_id=source_run_id,
+                            expected_instrument_ids=eligible_instrument_ids,
+                            market_index_facts=tuple(market_index_facts),
+                            market_aggregate_facts=tuple(market_aggregate_facts),
+                        )
+                    except Exception as exc:
+                        # Home publication has its own typed gate.  A Home
+                        # persistence failure must not rewrite a successfully
+                        # materialized formal topic state as unavailable.
+                        self.session.rollback()
+                        result["homePublication"] = {
+                            "status": "HOME_PUBLICATION_UNAVAILABLE",
+                            "error": type(exc).__name__,
+                        }
             elif market_closed:
                 result["lifecycle"] = {"status": "MARKET_CLOSED"}
             return result
@@ -2988,70 +3143,104 @@ class PostCloseUpdater:
         formal_state = snapshot_payload.get("formalTopicDailyState") or {}
         formal_readback = snapshot_payload.get("formalTopicSnapshotReadback") or {}
         is_market_closed = status == "MARKET_CLOSED"
-        metadata["forwardAutomation"] = {
-            "status": (
-                "SUCCESS"
-                if status == "SUCCESS"
-                and reconciliation_payload.get("downstreamReady") is True
-                and self._formal_snapshot_ready(snapshot_payload)
-                and (snapshot_payload.get("formalPublicationReadback") or {}).get("status")
-                == "PASS"
-                else "MARKET_CLOSED"
-                if status == "MARKET_CLOSED"
-                else "BLOCKED"
-            ),
-            "targetDate": reconciliation_payload.get("tradeDate"),
-            "formalEodPublication": (
-                "NOT_RUN"
-                if is_market_closed
-                else "PASS"
-                if reconciliation_payload.get("downstreamReady") is True
-                else "NOT_RUN"
-            ),
-            "formalEodReadback": (
-                "NOT_RUN"
-                if is_market_closed
-                else "PASS"
-                if reconciliation_payload.get("downstreamReady") is True
-                else "FAIL"
-            ),
-            "formalTopicSnapshotPublication": (
-                "NOT_RUN"
-                if is_market_closed
-                else "PASS"
-                if formal_state.get("status") == "SUCCESS"
-                else "FAIL"
-            ),
-            "formalTopicSnapshotReadback": (
-                "NOT_RUN" if is_market_closed else formal_readback.get("status", "FAIL")
-            ),
-            "formalStrengthPublication": (
-                "NOT_RUN"
-                if is_market_closed
-                else (snapshot_payload.get("formalStrength") or {}).get(
-                    "status", "NOT_AVAILABLE"
-                )
-            ),
-            "formalStrengthReadback": (
-                "NOT_RUN"
-                if is_market_closed
-                else (formal_readback.get("formalStrength") or {}).get("status", "FAIL")
-            ),
-            "formalLifecyclePublication": (
-                "NOT_RUN"
-                if is_market_closed
-                else (
-                    snapshot_payload.get("formalLifecycle")
-                    or snapshot_payload.get("lifecycle")
-                    or {}
-                ).get("status", "NOT_AVAILABLE")
-            ),
-            "formalLifecycleReadback": (
-                "NOT_RUN"
-                if is_market_closed
-                else (formal_readback.get("formalLifecycle") or {}).get("status", "FAIL")
-            ),
-        }
+        execution_scope = _metadata_execution_scope(metadata)
+        publication_readback = snapshot_payload.get("formalPublicationReadback") or {}
+        formal_chain_ready = (
+            self._formal_snapshot_ready(snapshot_payload)
+            and publication_readback.get("status") == "PASS"
+        )
+        if execution_scope == HISTORY_RECOVERY:
+            metadata["forwardAutomation"] = {
+                "status": "NOT_APPLICABLE",
+                "reasonCode": "HISTORY_RECOVERY_IS_NOT_CURRENT_DAY_PUBLICATION",
+            }
+            metadata["historyRecovery"] = {
+                "status": (
+                    "SUCCESS"
+                    if status == "SUCCESS" and formal_chain_ready
+                    else "MARKET_CLOSED"
+                    if status == "MARKET_CLOSED"
+                    else "BLOCKED"
+                ),
+                "targetDate": reconciliation_payload.get("tradeDate"),
+                "formalHistoryPublication": (
+                    "NOT_RUN"
+                    if is_market_closed
+                    else "PASS"
+                    if formal_chain_ready
+                    else "FAIL"
+                ),
+                "homePublication": "FORBIDDEN",
+                "homeWriteCount": 0,
+                "currentDayPresentation": "FORBIDDEN",
+            }
+        else:
+            metadata["forwardAutomation"] = {
+                "status": (
+                    "SUCCESS"
+                    if status == "SUCCESS"
+                    and reconciliation_payload.get("downstreamReady") is True
+                    and formal_chain_ready
+                    else "MARKET_CLOSED"
+                    if status == "MARKET_CLOSED"
+                    else "BLOCKED"
+                ),
+                "targetDate": reconciliation_payload.get("tradeDate"),
+                "formalEodPublication": (
+                    "NOT_RUN"
+                    if is_market_closed
+                    else "PASS"
+                    if reconciliation_payload.get("downstreamReady") is True
+                    else "NOT_RUN"
+                ),
+                "formalEodReadback": (
+                    "NOT_RUN"
+                    if is_market_closed
+                    else "PASS"
+                    if reconciliation_payload.get("downstreamReady") is True
+                    else "FAIL"
+                ),
+                "formalTopicSnapshotPublication": (
+                    "NOT_RUN"
+                    if is_market_closed
+                    else "PASS"
+                    if formal_state.get("status") == "SUCCESS"
+                    else "FAIL"
+                ),
+                "formalTopicSnapshotReadback": (
+                    "NOT_RUN" if is_market_closed else formal_readback.get("status", "FAIL")
+                ),
+                "formalStrengthPublication": (
+                    "NOT_RUN"
+                    if is_market_closed
+                    else (snapshot_payload.get("formalStrength") or {}).get(
+                        "status", "NOT_AVAILABLE"
+                    )
+                ),
+                "formalStrengthReadback": (
+                    "NOT_RUN"
+                    if is_market_closed
+                    else (publication_readback.get("formalStrength") or {}).get(
+                        "status", "FAIL"
+                    )
+                ),
+                "formalLifecyclePublication": (
+                    "NOT_RUN"
+                    if is_market_closed
+                    else (
+                        snapshot_payload.get("formalLifecycle")
+                        or snapshot_payload.get("lifecycle")
+                        or {}
+                    ).get("status", "NOT_AVAILABLE")
+                ),
+                "formalLifecycleReadback": (
+                    "NOT_RUN"
+                    if is_market_closed
+                    else (publication_readback.get("formalLifecycle") or {}).get(
+                        "status", "FAIL"
+                    )
+                ),
+            }
         run.metadata_payload = _json_safe(metadata)
         run.completed_at = now
         run.heartbeat_at = now

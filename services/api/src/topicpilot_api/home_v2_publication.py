@@ -13,7 +13,7 @@ from __future__ import annotations
 import hashlib
 import json
 from collections import defaultdict
-from collections.abc import Iterable, Mapping, Sequence
+from collections.abc import Collection, Iterable, Mapping, Sequence
 from dataclasses import dataclass
 from datetime import UTC, date, datetime
 from decimal import Decimal, InvalidOperation
@@ -391,7 +391,10 @@ def build_market_distribution(
             previous_close = Decimal(str(row.get("previous_close")))
         except (InvalidOperation, TypeError, ValueError):
             continue
-        if not close.is_finite() or not previous_close.is_finite() or previous_close <= 0:
+        if (
+            not close.is_finite() or not previous_close.is_finite()
+            or close <= 0 or previous_close <= 0
+        ):
             continue
         change_pct = (close - previous_close) / previous_close * Decimal("100")
         counts[_distribution_bucket(change_pct)] += 1
@@ -412,16 +415,21 @@ def build_market_distribution(
             for key, label in MARKET_DISTRIBUTION_BUCKETS
         ],
         "coverage": {
+            "scope": "COVERED_STOCKS",
             "denominator": "active date-effective EQUITY instruments in TPE/TWO",
-            "universeLabel": (
-                "上市＋上櫃活躍、具日期效力的 EQUITY；分布僅納入正式收盤與前收完整者"
-            ),
+            "distributionDenominator": "COMPLETE_CLOSE_PREVIOUS_CLOSE",
+            "universeLabel": "已覆蓋股票：正式收盤與前收完整者",
             "eligibleUniverse": int(eligible_count),
+            "observedComplete": eligible,
+            "coveragePct": round(eligible / int(eligible_count) * 100, 4)
+            if int(eligible_count)
+            else None,
             "percentageEligible": round(eligible / int(eligible_count) * 100, 4)
             if int(eligible_count)
             else 0,
             "breadthEligible": eligible,
             "distributionTotal": eligible,
+            "excludedCount": max(0, int(eligible_count) - eligible),
             "reconciliationStatus": "PASS" if eligible else "UNAVAILABLE",
             "exclusionCount": max(0, int(eligible_count) - eligible),
             "exclusionReason": (
@@ -437,9 +445,15 @@ def build_market_distribution(
 
 
 def _breadth(
-    session: Session, trading_date: date
+    session: Session, trading_date: date, *, expected_instrument_ids: Collection[Any] | None = None
 ) -> tuple[list[dict[str, Any]], datetime | None, list[dict[str, Any]]]:
-    raw_rows = read_daily_market_rows(session, trading_date)
+    raw_rows = (
+        read_daily_market_rows(session, trading_date)
+        if expected_instrument_ids is None
+        else read_daily_market_rows(
+            session, trading_date, expected_instrument_ids=expected_instrument_ids
+        )
+    )
     unavailable = build_unavailable_instruments(raw_rows, trade_date=trading_date)
     observations: list[dict[str, Any]] = []
     for row in raw_rows:
@@ -797,6 +811,14 @@ def _index_fact_input(item: Any) -> dict[str, Any]:
             "lineage": getattr(item, "lineage", None),
             "status": status,
             "reasonCode": getattr(item, "status_reason", None),
+            "providerProvenance": {
+                "targetDate": getattr(item, "target_date", None),
+                "responseDate": getattr(item, "response_date", None),
+                "rawProviderDate": getattr(item, "raw_provider_date", None),
+                "responseHash": getattr(item, "response_content_hash", None),
+                "adapterVersion": getattr(item, "adapter_version", None),
+                "providerResponses": item.to_dict().get("providerResponses", []),
+            },
         }
     return dict(item)
 
@@ -1593,6 +1615,7 @@ def materialize_home_v2(
     market_index_facts: Sequence[Any] = (),
     turnover_facts: Sequence[MarketTurnoverFact | Mapping[str, Any]] = (),
     market_aggregate_facts: Sequence[Any] = (),
+    expected_instrument_ids: Collection[Any] | None = None,
     now: datetime | None = None,
 ) -> dict[str, Any]:
     """Materialize and persist one deterministic Home envelope."""
@@ -1601,6 +1624,15 @@ def materialize_home_v2(
     trading_date = trading_date or _latest_canonical_date(session)
     if trading_date is None:
         raise ValueError("HOME_SOURCE_DATE_UNAVAILABLE")
+    # Normal execution supplies its already-authorized date-effective universe.
+    # Never infer eligibility from whether a price happened to arrive. Unknown
+    # or missing data *inside* that universe remains publication-blocking.
+    breadth_scope = {}
+    if expected_instrument_ids is not None:
+        scoped_ids = tuple(expected_instrument_ids)
+        if not scoped_ids or len({str(i) for i in scoped_ids}) != len(scoped_ids):
+            raise ValueError("HOME_EXECUTION_UNIVERSE_INVALID")
+        breadth_scope["expected_instrument_ids"] = scoped_ids
     index_inputs = [_index_fact_input(item) for item in market_index_facts]
     turnover_inputs = [_turnover_payload(item) for item in turnover_facts]
     aggregate_inputs = [_aggregate_fact_input(item) for item in market_aggregate_facts]
@@ -1641,11 +1673,15 @@ def materialize_home_v2(
         )
         breadth_rows = []
         try:
-            _canonical_rows, distribution_as_of, breadth_observations = _breadth(session, trading_date)
+            _canonical_rows, distribution_as_of, breadth_observations = _breadth(
+                session, trading_date, **breadth_scope
+            )
         except SQLAlchemyError:
             session.rollback()
     else:
-        breadth_rows, breadth_as_of, breadth_observations = _breadth(session, trading_date)
+        breadth_rows, breadth_as_of, breadth_observations = _breadth(
+            session, trading_date, **breadth_scope
+        )
         distribution_as_of = breadth_as_of
         breadth_payload = [
             {
@@ -1720,7 +1756,9 @@ def materialize_home_v2(
 
     distribution_payload = build_market_distribution(
         breadth_observations,
-        eligible_count=total_eligible,
+        # Official whole-market breadth is independent of the covered-stock
+        # distribution. Its population must not replace this subset's universe.
+        eligible_count=read_model_eligible,
         as_of=distribution_as_of,
     )
     market_health = {
@@ -1984,6 +2022,9 @@ def materialize_home_v2(
     publication_input = {
         "tradingDate": trading_date,
         "sourceRunId": source_run_id,
+        "marketIndexProvenance": {
+            item.get("market"): item.get("providerProvenance") for item in index_inputs
+        },
         "marketOverview": market_overview_payload,
         "dailyFocus": daily_section.payload,
         "mainTopics": main_topics_payload,
@@ -2129,6 +2170,10 @@ def materialize_home_v2(
                     "low": _number(item.get("low")),
                     "sourceDataset": item.get("sourceDataset"),
                     "sourceEndpoint": item.get("sourceEndpoint"),
+                    "providerProvenance": _json_safe(next(
+                        (fact.get("providerProvenance") for fact in index_inputs
+                         if fact.get("market") == item.get("market")), None,
+                    )),
                 },
             )
         )

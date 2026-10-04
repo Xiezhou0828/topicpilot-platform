@@ -4,9 +4,11 @@ from __future__ import annotations
 
 from collections import defaultdict
 from collections.abc import Callable, Mapping
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import date
+from hashlib import sha256
 from typing import Any
+from uuid import UUID
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -17,6 +19,7 @@ from topicpilot_api.instrument_universe import (
     LifecycleValidationError,
     build_date_effective_instrument_universe,
 )
+from topicpilot_api.market_data.availability import LEGITIMATE_UNAVAILABLE_CODES
 from topicpilot_api.market_data.lineage import (
     EXPECTED_TPEX_ADAPTER_VERSION,
     EXPECTED_TWSE_ADAPTER_VERSION,
@@ -29,7 +32,14 @@ from topicpilot_api.orm.models import (
     ReferenceInstrumentLifecycle,
     ReferenceRegistrySet,
 )
+from topicpilot_api.previous_close_authority import (
+    G2PriceEvidence,
+    PreviousCloseEvidence,
+    previous_session_date,
+    valid_close,
+)
 from topicpilot_api.reference_check import inspect_reference_preflight
+from topicpilot_api.trading_status_authority import TradingStatusResolution
 
 G2_GATE = "G2"
 REFERENCE_VERSION = "tw-reference-v1"
@@ -61,6 +71,7 @@ class G2MarketContext:
     timezone: str | None
     calendar_code: str | None
     instrument_codes: tuple[str, ...]
+    instrument_ids: Mapping[str, str] = field(default_factory=dict)
 
     @property
     def context_ready(self) -> bool:
@@ -69,6 +80,10 @@ class G2MarketContext:
             and self.timezone == TIMEZONE_BY_MARKET[self.market_code]
             and self.calendar_code == REQUIRED_CALENDAR_CODE
             and bool(self.instrument_codes)
+            and len(self.instrument_codes) == len(set(self.instrument_codes))
+            and all(self.instrument_ids.get(code) for code in self.instrument_codes)
+            and len({self.instrument_ids.get(code) for code in self.instrument_codes})
+                == len(self.instrument_codes)
         )
 
 
@@ -81,6 +96,7 @@ class G2PreflightContext:
     markets: tuple[G2MarketContext, ...]
     eligibility_error: str | None = None
     universe_rows: tuple[InstrumentUniverseRow, ...] = ()
+    previous_session: date | None = None
 
     @property
     def context_ready(self) -> bool:
@@ -88,6 +104,8 @@ class G2PreflightContext:
             self.reference_result.get("referenceLoadStatus") == "READY"
             and self.target_date_is_session
             and self.eligibility_error is None
+            and self.previous_session is not None
+            and self.previous_session < self.target_date
             and all(market.context_ready for market in self.markets)
         )
 
@@ -102,6 +120,8 @@ class G2MarketFetch:
     record_count: int
     payload_parsed: bool = True
     reachable: bool = True
+    prices: Mapping[str, G2PriceEvidence] = field(default_factory=dict)
+    statuses: Mapping[str, TradingStatusResolution] = field(default_factory=dict)
 
 
 @dataclass(frozen=True)
@@ -152,6 +172,7 @@ def _market_evidence(
             and data_available
             and coverage_complete
             and provider_version == context.provider_version
+            and error_code is None
         )
         else "FAIL"
     )
@@ -210,8 +231,77 @@ def evaluate_provider_preflight(
 
         codes = set(result.record_codes)
         expected_codes = set(market.instrument_codes)
-        covered_count = len(expected_codes & codes)
-        missing_codes = tuple(sorted(expected_codes - codes))
+        decisions = []
+        priced_codes, legitimate_codes = set(), set()
+        comparator_codes = set()
+        for code in sorted(expected_codes):
+            price = result.prices.get(code)
+            identity = market.instrument_ids.get(code)
+            status = result.statuses.get(identity or "")
+            close_ok = (
+                code in codes and price is not None and identity is not None
+                and (price.instrument_id, price.market_code, price.instrument_code)
+                == (identity, market.market_code, code)
+                and price.trading_date == context.target_date
+                and isinstance(price.response_hash, str)
+                and len(price.response_hash) == 64
+                and all(c in "0123456789abcdef" for c in price.response_hash)
+                and valid_close(price.close)
+            )
+            legitimate = (
+                not close_ok and (price is None or price.close is None)
+                and status is not None and status.resolved
+                and status.is_legitimate_unavailable and not status.blocks_publication
+                and status.status in LEGITIMATE_UNAVAILABLE_CODES
+                and bool(status.authority_source)
+                and not status.is_manual_override
+                and status.authority_class in {
+                    "OFFICIAL_EXCHANGE", "CORPORATE_ACTION", "REFERENCE_LIFECYCLE"
+                }
+                and bool(status.source_reference) and status.effective_from is not None
+                and status.effective_from <= context.target_date
+                and (status.effective_to is None or status.effective_to >= context.target_date)
+                and identity is not None
+            )
+            reason = None
+            previous = price.previous() if price is not None else None
+            if legitimate:
+                legitimate_codes.add(code)
+            elif not close_ok:
+                reason = "CURRENT_OFFICIAL_CLOSE_INVALID"
+            else:
+                priced_codes.add(code)
+                if context.previous_session is None:
+                    reason = "PREVIOUS_FORMAL_SESSION_NOT_RESOLVED"
+                elif previous is None:
+                    reason = "MISSING_PREVIOUS_FORMAL_CLOSE"
+                else:
+                    reason = previous.rejection_reason(
+                        instrument_id=identity, market=market.market_code, code=code,
+                        target=context.target_date, prior=context.previous_session,
+                    )
+                    if (
+                        reason is None and price.provider_previous is not None
+                        and previous.lineage != price.response_hash
+                    ):
+                        reason = "PREVIOUS_CLOSE_PAYLOAD_LINEAGE_MISMATCH"
+                if reason is None:
+                    comparator_codes.add(code)
+            decisions.append({
+                "instrumentCode": code, "instrumentId": identity,
+                "closeValid": bool(close_ok), "legitimateUnavailable": bool(legitimate),
+                "status": status.status if status is not None else None,
+                "statusSource": status.authority_source if status is not None else None,
+                "statusLineage": status.source_reference if status is not None else None,
+                "previousClose": previous.price_free_metadata() if previous else None,
+                "previousCloseValid": code in comparator_codes,
+                "errorCode": reason,
+                "responseHash": price.response_hash if price else None,
+                "syntheticOrFillUsed": False,
+            })
+        accounted_codes = priced_codes | legitimate_codes
+        covered_count = len(accounted_codes)
+        missing_codes = tuple(sorted(expected_codes - accounted_codes))
         extra_codes = tuple(sorted(codes - expected_codes))
         target_date_matched = result.target_date == context.target_date
         # The official market-level endpoint may include securities outside
@@ -220,8 +310,13 @@ def evaluate_provider_preflight(
         # expected-universe contract: every expected identity must be present.
         # Preserve out-of-scope provider codes in the evidence, but do not let
         # them turn complete expected-EQUITY coverage into a failure.
-        coverage_complete = bool(expected_codes) and not missing_codes
-        authority_ok = result.provider_authority == market.provider_authority
+        coverage_complete = (
+            bool(expected_codes) and not missing_codes and comparator_codes == priced_codes
+        )
+        authority_ok = (
+            result.provider_authority == market.provider_authority
+            and result.market_code == market.market_code
+        )
         version_ok = result.provider_version == market.provider_version
         error_code = None
         if not authority_ok or not version_ok:
@@ -232,6 +327,8 @@ def evaluate_provider_preflight(
             error_code = "EMPTY_MARKET_PAYLOAD"
         elif missing_codes:
             error_code = "PARTIAL_PROVIDER_COVERAGE"
+        elif comparator_codes != priced_codes:
+            error_code = "PREVIOUS_CLOSE_AUTHORITY_NOT_READY"
         evidence.append(
             _market_evidence(
                 market,
@@ -248,6 +345,17 @@ def evaluate_provider_preflight(
                 extra_identity_codes=extra_codes,
             )
         )
+        evidence[-1].update({
+            "priceCandidateCount": len(priced_codes),
+            "legitimateUnavailableCount": len(legitimate_codes),
+            "accountedTargetCount": covered_count,
+            "previousCloseCoveredCount": len(comparator_codes),
+            "previousCloseRequiredCount": len(priced_codes),
+            "previousSessionDate": (
+                context.previous_session.isoformat() if context.previous_session else None
+            ),
+            "instrumentDecisions": decisions,
+        })
 
     context_ok = context.context_ready
     status = "PASS" if context_ok and all(item["status"] == "PASS" for item in evidence) else "FAIL"
@@ -291,6 +399,7 @@ def load_g2_preflight_context(
         )
     )
     registry_id = registry_sets[0].id if len(registry_sets) == 1 else None
+    closed_dates = set()
     calendar_kind = None
     if registry_id is not None:
         calendar_kind = session.scalar(
@@ -300,6 +409,12 @@ def load_g2_preflight_context(
                 ReferenceCalendarDate.calendar_date == target_date,
             )
         )
+        closed_dates = set(session.scalars(
+            select(ReferenceCalendarDate.calendar_date).where(
+                ReferenceCalendarDate.registry_set_id == registry_id,
+                ReferenceCalendarDate.calendar_code == REQUIRED_CALENDAR_CODE,
+            )
+        ).all())
 
     market_rows = {
         row.code: row
@@ -390,6 +505,10 @@ def load_g2_preflight_context(
             timezone=getattr(market_rows.get(market_code), "timezone", None),
             calendar_code=getattr(market_rows.get(market_code), "calendar_code", None),
             instrument_codes=tuple(sorted(instruments_by_market.get(market_code, ()))),
+            instrument_ids={
+                str(row.instrument_code): str(row.id)
+                for row in instrument_rows if row.code == market_code
+            },
         )
         for market_code in CANONICAL_MARKETS
     )
@@ -401,6 +520,7 @@ def load_g2_preflight_context(
         markets=markets,
         eligibility_error=eligibility_error,
         universe_rows=tuple(universe_rows),
+        previous_session=previous_session_date(target_date, closed_dates) if registry_id else None,
     )
 
 
@@ -419,11 +539,13 @@ def _provider_failure(exc: Exception) -> G2MarketFailure:
         "INVALID_NUMBER",
         "PROVIDER_DATE_MISMATCH",
     }
+    receipt = getattr(exc, "evidence", None)
+    decoded = receipt is None or receipt.get("stage") == "DATASET_PARSE"
     return G2MarketFailure(
         error_code=code,
-        reachable=code in parsed_codes,
-        payload_parsed=code in parsed_codes,
-        target_date_matched=code != "PROVIDER_DATE_MISMATCH",
+        reachable=code in parsed_codes or bool(receipt and receipt.get("payloadHash")),
+        payload_parsed=decoded and code in parsed_codes,
+        target_date_matched=decoded and code in parsed_codes and code != "PROVIDER_DATE_MISMATCH",
     )
 
 
@@ -454,13 +576,34 @@ def run_provider_preflight(
         }
         return evaluate_provider_preflight(context, market_results)
 
+    from topicpilot_api.daily_market import read_daily_market_rows
+    from topicpilot_api.market_data.exchange import _read_url
+    from topicpilot_api.trading_status_authority import read_effective_trading_status_authority
+
+    ids = [UUID(market.instrument_ids[code])
+           for market in context.markets for code in market.instrument_codes]
+    formal_rows = {(row["market"], row["symbol"]): row for row in read_daily_market_rows(
+        session, target_date, expected_instrument_ids=ids,
+    )}
+    status_rows = {(row["market"], row["symbol"]): row
+                   for row in read_effective_trading_status_authority(
+        session, target_date, expected_instrument_ids=ids,
+    )}
+    response_hashes: dict[str, str] = {}
+
+    def observed_transport(url: str, timeout: float) -> bytes:
+        raw = (transport or _read_url)(url, timeout)
+        response_hashes[url] = sha256(raw).hexdigest()
+        return raw
+
     registry = build_historical_provider_registry(
         start_date=target_date,
         end_date=target_date,
-        exchange_transport=transport,
+        exchange_transport=observed_transport,
         market_batch=True,
     )
     market_results: dict[str, G2MarketFetch | G2MarketFailure] = {}
+    response_evidence: dict[str, dict[str, Any]] = {}
     for market in context.markets:
         registrations = registry.for_market(market.market_code)
         if len(registrations) != 1:
@@ -486,7 +629,44 @@ def run_provider_preflight(
             )
             continue
         try:
+            response_hashes.clear()
             _, bars = fetch_market_day()
+            payload_hash = next(iter(response_hashes.values())) if len(response_hashes) == 1 else ""
+            prices, statuses = {}, {}
+            for code in market.instrument_codes:
+                identity = market.instrument_ids[code]
+                row = formal_rows.get((market.market_code, code), {})
+                prior = None
+                if row.get("previous_close_lineage") is not None:
+                    prior = PreviousCloseEvidence(
+                        str(row.get("previous_close_instrument_id")), market.market_code, code,
+                        row["previous_close_date"], row.get("previous_close"),
+                        row["previous_close_source"], "FORMAL_CANONICAL_CLOSE",
+                        str(row["previous_close_lineage"]),
+                        quality_state=row["previous_close_quality"],
+                    )
+                bar = bars.get(code)
+                if bar is not None:
+                    provider_previous = None
+                    if bar.previous_close is not None and context.previous_session is not None:
+                        provider_previous = PreviousCloseEvidence(
+                            identity, market.market_code, code, context.previous_session,
+                            bar.previous_close, registration.code,
+                            "PROVIDER_EXPLICIT_PREVIOUS_CLOSE", payload_hash, target_date,
+                        )
+                    prices[code] = G2PriceEvidence(
+                        identity, market.market_code, code, bar.trading_date,
+                        bar.close, payload_hash, provider_previous, prior,
+                    )
+                status_row = status_rows.get((market.market_code, code))
+                if status_row is not None and str(status_row["instrumentId"]) == identity:
+                    statuses[identity] = TradingStatusResolution(
+                        status_row["resolvedStatus"], status_row["authoritySource"],
+                        status_row["reasonCode"], status_row["effectiveFrom"],
+                        status_row["effectiveTo"], status_row["sourceReference"],
+                        status_row["resolutionState"], status_row["blocksPublication"],
+                        status_row["isLegitimateUnavailable"], status_row["authorityClass"],
+                    )
             market_results[market.market_code] = G2MarketFetch(
                 market_code=market.market_code,
                 provider_authority=registration.code,
@@ -494,10 +674,34 @@ def run_provider_preflight(
                 target_date=target_date,
                 record_codes=frozenset(bars),
                 record_count=len(bars),
+                prices=prices,
+                statuses=statuses,
             )
         except Exception as exc:
             market_results[market.market_code] = _provider_failure(exc)
-    return evaluate_provider_preflight(context, market_results)
+            receipt = dict(getattr(registration.adapter, "response_evidence", {}))
+            receipt.update(
+                errorCode=getattr(exc, "code", "PROVIDER_REQUEST_FAILED"),
+                exceptionClass=type(exc).__name__,
+            )
+            if not receipt.get("classification"):
+                code = receipt["errorCode"]
+                receipt["classification"] = (
+                    "PROVIDER_DATE_MISMATCH"
+                    if code == "PROVIDER_DATE_MISMATCH"
+                    else "PROVIDER_ENDPOINT_EMPTY"
+                    if code == "EXCHANGE_EMPTY_PAYLOAD"
+                    else "PROVIDER_NOT_READY"
+                    if code in {"EXCHANGE_NOT_READY", "EXCHANGE_NO_DATA"}
+                    else "PROVIDER_PARSER_REJECTION"
+                )
+            response_evidence[market.market_code] = receipt
+        else:
+            response_evidence[market.market_code] = dict(registration.adapter.response_evidence)
+    result = evaluate_provider_preflight(context, market_results)
+    for market in result["markets"]:
+        market["responseEvidence"] = response_evidence.get(market["marketCode"], {})
+    return result
 
 
 def build_database_failure_result(

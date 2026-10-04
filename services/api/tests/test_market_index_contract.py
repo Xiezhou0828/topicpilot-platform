@@ -12,10 +12,12 @@ from topicpilot_api.market_data.index_contract import (
     TWSE_MARKET_AGGREGATE_SOURCE_IDENTITY,
     TWSE_MARKET_INDEX_IDENTITY,
     IndexDataStatus,
+    fetch_official_market_indexes,
     parse_tpex_index_crosscheck,
     parse_tpex_market_index,
     parse_twse_market_index,
     parse_twse_market_index_ohlc,
+    parse_twse_target_date_market_index,
     unavailable_market_index,
 )
 
@@ -57,6 +59,72 @@ def test_twse_ignores_non_target_index_rows():
 
     assert result.display_name == "Taiwan Stock Exchange Capitalization Weighted Stock Index"
     assert result.value != Decimal("51102.16")
+
+
+def test_twse_target_date_report_preserves_official_date_and_provenance():
+    result = parse_twse_target_date_market_index(
+        _fixture("twse_after_trading_mi_index_target_valid.json"),
+        target_date=date(2026, 8, 14),
+        retrieved_at=RETRIEVED_AT,
+        as_of=AS_OF,
+    )
+
+    assert result.data_status is IndexDataStatus.AVAILABLE
+    assert result.trading_date == date(2026, 8, 14)
+    assert result.raw_provider_date == "20260814"
+    assert result.value == Decimal("46021.48")
+    assert result.change == Decimal("503.41")
+    assert result.previous_close == Decimal("45518.07")
+    assert result.change_pct == Decimal("1.11")
+    assert result.source_dataset == "afterTrading.MI_INDEX"
+    assert result.source_endpoint.startswith("https://www.twse.com.tw/rwd/zh/afterTrading/MI_INDEX")
+    assert result.adapter_version == "twse-official-taiex-index.v3"
+    assert result.response_content_hash is not None
+
+
+def test_twse_target_date_report_mismatch_fails_closed():
+    result = parse_twse_target_date_market_index(
+        _fixture("twse_after_trading_mi_index_date_mismatch.json"),
+        target_date=date(2026, 8, 14),
+        retrieved_at=RETRIEVED_AT,
+        as_of=AS_OF,
+    )
+
+    assert result.data_status is IndexDataStatus.UNAVAILABLE
+    assert result.status_reason == "PROVIDER_DATE_MISMATCH"
+    assert result.raw_provider_date == "20260813"
+    assert result.value is None
+    assert result.previous_close is None
+
+
+def test_official_index_fetch_uses_target_date_twse_authority():
+    payloads = {
+        "afterTrading/MI_INDEX": _fixture("twse_after_trading_mi_index_target_valid.json"),
+        "MI_5MINS_HIST": _fixture("twse_mi_5mins_hist_valid.json"),
+        "tpex_index": _fixture("tpex_index_ohlc_valid.json"),
+    }
+    calls: list[str] = []
+
+    def transport(url: str, _timeout: float) -> bytes:
+        calls.append(url)
+        for marker, payload in payloads.items():
+            if marker in url:
+                return json.dumps(payload).encode("utf-8")
+        raise AssertionError(url)
+
+    results = fetch_official_market_indexes(
+        target_date=date(2026, 8, 14),
+        retrieved_at=RETRIEVED_AT,
+        as_of=AS_OF,
+        transport=transport,
+    )
+
+    taiex = next(item for item in results if item.market == "TPE")
+    assert taiex.data_status is IndexDataStatus.AVAILABLE
+    assert taiex.trading_date == date(2026, 8, 14)
+    assert taiex.value == Decimal("46021.48")
+    assert any("afterTrading/MI_INDEX?date=20260814" in url for url in calls)
+    assert all("openapi.twse.com.tw/v1/exchangeReport/MI_INDEX" not in url for url in calls)
 
 
 def test_twse_official_ohlc_history_maps_daily_bar_without_inventing_change():

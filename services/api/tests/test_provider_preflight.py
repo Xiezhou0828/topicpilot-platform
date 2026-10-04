@@ -5,6 +5,7 @@ from datetime import date
 
 import pytest
 
+from topicpilot_api.previous_close_authority import G2PriceEvidence, PreviousCloseEvidence
 from topicpilot_api.provider_preflight import (
     G2MarketContext,
     G2MarketFailure,
@@ -13,6 +14,15 @@ from topicpilot_api.provider_preflight import (
     evaluate_provider_preflight,
 )
 from topicpilot_api.provider_preflight_cli import build_parser
+
+
+def _fetch(market, authority, version, day, codes, count):
+    return G2MarketFetch(market, authority, version, day, codes, count, prices={
+        code: G2PriceEvidence(f"{market}:{code}", market, code, day, 10, "a" * 64,
+            formal_previous=PreviousCloseEvidence(f"{market}:{code}", market, code,
+                date(2026, 8, 6), 9, authority, "FORMAL_CANONICAL_CLOSE", "test-canonical-row"))
+        for code in codes
+    })
 
 
 def _context(*, target_date_is_session: bool = True) -> G2PreflightContext:
@@ -25,6 +35,7 @@ def _context(*, target_date_is_session: bool = True) -> G2PreflightContext:
             "Asia/Taipei",
             "TW_MARKET",
             ("2330", "2317"),
+            {c: f"TPE:{c}" for c in ("2330", "2317")},
         ),
         G2MarketContext(
             "TWO",
@@ -34,6 +45,7 @@ def _context(*, target_date_is_session: bool = True) -> G2PreflightContext:
             "Asia/Taipei",
             "TW_MARKET",
             ("4979", "6510"),
+            {c: f"TWO:{c}" for c in ("4979", "6510")},
         ),
     )
     return G2PreflightContext(
@@ -53,12 +65,13 @@ def _context(*, target_date_is_session: bool = True) -> G2PreflightContext:
         target_date_is_session=target_date_is_session,
         target_date_reason=None if target_date_is_session else "TARGET_DATE_WEEKEND",
         markets=markets,
+        previous_session=date(2026, 8, 6),
     )
 
 
 def _pass_results() -> dict[str, G2MarketFetch]:
     return {
-        "TPE": G2MarketFetch(
+        "TPE": _fetch(
             "TPE",
             "TWSE_OFFICIAL_DAILY",
             "twse-official-daily.v2",
@@ -66,7 +79,7 @@ def _pass_results() -> dict[str, G2MarketFetch]:
             frozenset({"2330", "2317"}),
             2,
         ),
-        "TWO": G2MarketFetch(
+        "TWO": _fetch(
             "TWO",
             "TPEX_OFFICIAL_DAILY",
             "tpex-official-daily.v2",
@@ -104,7 +117,7 @@ def test_provider_failure_on_one_market_fails_overall_without_fallback():
 
 def test_partial_provider_coverage_fails_even_when_payload_is_parsed():
     results = _pass_results()
-    results["TWO"] = G2MarketFetch(
+    results["TWO"] = _fetch(
         "TWO",
         "TPEX_OFFICIAL_DAILY",
         "tpex-official-daily.v2",
@@ -128,7 +141,7 @@ def test_partial_provider_coverage_fails_even_when_payload_is_parsed():
 
 def test_out_of_scope_provider_identity_is_reported_without_failing_expected_coverage():
     results = _pass_results()
-    results["TPE"] = G2MarketFetch(
+    results["TPE"] = _fetch(
         "TPE",
         "TWSE_OFFICIAL_DAILY",
         "twse-official-daily.v2",
@@ -150,7 +163,7 @@ def test_out_of_scope_provider_identity_is_reported_without_failing_expected_cov
 
 def test_missing_expected_identity_still_fails_when_provider_has_out_of_scope_identity():
     results = _pass_results()
-    results["TPE"] = G2MarketFetch(
+    results["TPE"] = _fetch(
         "TPE",
         "TWSE_OFFICIAL_DAILY",
         "twse-official-daily.v2",
@@ -171,7 +184,7 @@ def test_missing_expected_identity_still_fails_when_provider_has_out_of_scope_id
 
 def test_empty_market_payload_fails_even_when_provider_is_reachable():
     results = _pass_results()
-    results["TPE"] = G2MarketFetch(
+    results["TPE"] = _fetch(
         "TPE",
         "TWSE_OFFICIAL_DAILY",
         "twse-official-daily.v2",
@@ -211,7 +224,7 @@ def test_parse_failure_is_reported_without_provider_fallback():
 
 def test_target_date_mismatch_and_provider_authority_mismatch_fail_closed():
     results = _pass_results()
-    results["TPE"] = G2MarketFetch(
+    results["TPE"] = _fetch(
         "TPE",
         "YAHOO_CHART_DAILY",
         "yahoo-chart-daily.v1",

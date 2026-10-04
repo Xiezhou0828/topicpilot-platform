@@ -1,0 +1,100 @@
+name: Canonical Web artifact verification
+
+on:
+  workflow_dispatch:
+    inputs:
+      canonical_source_sha:
+        description: Exact canonical main SHA to build and verify (no deploy)
+        required: true
+        type: string
+      sites_parent_source_sha:
+        description: Exact current Sites parent SHA (history is never overwritten)
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: topicpilot-canonical-web-verification
+  cancel-in-progress: false
+
+jobs:
+  verify-artifact:
+    name: Verify exact canonical Worker artifact (no Production mutation)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      NEXT_PUBLIC_API_BASE_URL: https://topicpilot-api.onrender.com
+      CLOUDFLARE_SEND_METRICS: "false"
+      CANONICAL_SOURCE_SHA: ${{ inputs.canonical_source_sha }}
+      SITES_PARENT_SOURCE_SHA: ${{ inputs.sites_parent_source_sha }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.canonical_source_sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22.13.0"
+          cache: npm
+          cache-dependency-path: apps/web/package-lock.json
+      - name: Require canonical dispatch and validate guard regressions
+        run: |
+          test "$GITHUB_REF" = refs/heads/main
+          test "$GITHUB_SHA" = "$CANONICAL_SOURCE_SHA"
+          test "$GITHUB_WORKFLOW_SHA" = "$CANONICAL_SOURCE_SHA"
+          test "$GITHUB_RUN_ATTEMPT" = 1
+          node --test infra/scripts/tests/web_deployment_provenance.test.mjs
+      - name: Fresh locked canonical build with provenance
+        run: >-
+          node infra/scripts/web_deployment_provenance.mjs build
+          --repo-root . --canonical-source-sha "$CANONICAL_SOURCE_SHA"
+          --sites-parent-source-sha "$SITES_PARENT_SOURCE_SHA"
+      - name: Execute unchanged production Worker bundle and verify served bytes
+        run: |
+          cert_root="$RUNNER_TEMP/topicpilot-web-verification"
+          mkdir -p "$cert_root"
+          openssl req -x509 -newkey rsa:2048 -nodes -days 1 \
+            -keyout "$cert_root/local.key" -out "$cert_root/local.crt" \
+            -subj /CN=localhost -addext subjectAltName=DNS:localhost,IP:127.0.0.1 \
+            > "$cert_root/certificate-generation.log" 2>&1
+          # Wrangler writes .wrangler/tmp beneath its config directory, even
+          # with --no-bundle. Execute a byte-identical disposable copy; never
+          # allow its scratch files into the original publishable artifact.
+          cp -a apps/web/dist "$cert_root/runtime-input"
+          node apps/web/node_modules/wrangler/bin/wrangler.js dev \
+            --config "$cert_root/runtime-input/server/wrangler.json" --local --no-bundle \
+            --persist-to "$cert_root/state" \
+            --ip 127.0.0.1 --port 8443 --local-protocol https \
+            --https-key-path "$cert_root/local.key" --https-cert-path "$cert_root/local.crt" \
+            > "$cert_root/worker.log" 2>&1 &
+          worker_pid=$!
+          trap 'kill "$worker_pid" 2>/dev/null || true' EXIT
+          ready=false
+          for attempt in $(seq 1 20); do
+            if curl --fail --silent --cacert "$cert_root/local.crt" https://localhost:8443/__release.json > /dev/null; then
+              ready=true
+              break
+            fi
+            sleep 2
+          done
+          if [ "$ready" != true ]; then
+            tail -n 60 "$cert_root/worker.log"
+            exit 1
+          fi
+          NODE_EXTRA_CA_CERTS="$cert_root/local.crt" \
+            node infra/scripts/web_deployment_provenance.mjs ci-readback \
+            --repo-root . --canonical-source-sha "$CANONICAL_SOURCE_SHA" \
+            --sites-parent-source-sha "$SITES_PARENT_SOURCE_SHA" \
+            --artifact-dir apps/web/dist --runtime-url https://localhost:8443 \
+            --runtime-input-dir "$cert_root/runtime-input" \
+            --evidence-output work/web-runtime-release/runtime-evidence.json
+          cp -a apps/web/dist work/web-runtime-release/artifact
+      - name: Save the exact verified artifact and runtime receipt together
+        uses: actions/upload-artifact@v4
+        with:
+          name: canonical-web-${{ inputs.canonical_source_sha }}-${{ github.run_id }}-1
+          path: work/web-runtime-release/
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 7

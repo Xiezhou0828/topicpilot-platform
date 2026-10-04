@@ -20,7 +20,7 @@ from topicpilot_api.live.orchestrator import (
     ProviderRouter,
 )
 
-from .exchange import TpexOfficialDailyProvider, TwseOfficialDailyProvider
+from .exchange import TpexOfficialDailyProvider, TpexOpenApiDailyProvider, TwseOfficialDailyProvider
 from .history import HistoricalProvider, YahooChartHistoricalProvider
 from .taishin import TaishinIntradayProvider
 from .yahoo_quote import YahooQuoteProvider
@@ -134,6 +134,7 @@ def build_historical_provider_registry(
     end_date: date | None = None,
     exchange_transport: Callable[[str, float], bytes] | None = None,
     market_batch: bool = False,
+    tpex_target_date_batch: bool = False,
     readiness_max_attempts: int = 3,
     readiness_max_total_wait_seconds: float = 90.0,
     readiness_backoff_seconds: float = 30.0,
@@ -154,6 +155,11 @@ def build_historical_provider_registry(
     if readiness_clock is not None:
         readiness_kwargs["readiness_clock"] = readiness_clock
     registry = HistoricalProviderRegistry()
+    # Selection is explicit, never a retry/fallback after a failed request.
+    tpex_adapter = (
+        TpexOpenApiDailyProvider if market_batch and not tpex_target_date_batch
+        else TpexOfficialDailyProvider
+    )
     registry.register(
         HistoricalProviderRegistration(
             "TWSE_OFFICIAL_DAILY",
@@ -178,7 +184,7 @@ def build_historical_provider_registry(
     registry.register(
         HistoricalProviderRegistration(
             "TPEX_OFFICIAL_DAILY",
-            TpexOfficialDailyProvider(
+            tpex_adapter(
                 start_date=start,
                 end_date=end,
                 transport=exchange_transport,
@@ -186,7 +192,7 @@ def build_historical_provider_registry(
                 **readiness_kwargs,
             )
             if exchange_transport is not None
-            else TpexOfficialDailyProvider(
+            else tpex_adapter(
                 start_date=start,
                 end_date=end,
                 market_batch=market_batch,
