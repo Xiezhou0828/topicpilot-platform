@@ -112,7 +112,7 @@ def test_fetch_retains_dated_endpoints_raw_response_hashes_and_adapter_versions(
     assert fact.data_status is IndexDataStatus.AVAILABLE
     assert fact.previous_close == Decimal("98")
     assert (fact.open, fact.high, fact.low) == (100, 105, 95)
-    assert calls[0] == f"{TWSE_MARKET_INDEX_ENDPOINT}?date=20261002&response=json"
+    assert calls[0] == f"{TWSE_MARKET_INDEX_ENDPOINT}?date=20261002&type=IND&response=json"
     assert "date=20261002" in calls[1]
     first, second = fact.to_dict()["providerResponses"]
     assert first == {

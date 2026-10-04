@@ -35,7 +35,7 @@ TWSE_MARKET_INDEX_DISPLAY_NAME: Final = "Taiwan Stock Exchange Capitalization We
 TWSE_MARKET_INDEX_RAW_NAME: Final = "發行量加權股價指數"
 TWSE_MARKET_INDEX_DATASET: Final = "afterTrading.MI_INDEX"
 TWSE_MARKET_INDEX_ENDPOINT: Final = "https://www.twse.com.tw/rwd/zh/afterTrading/MI_INDEX"
-TWSE_MARKET_INDEX_ADAPTER_VERSION: Final = "twse-official-taiex-index.v2"
+TWSE_MARKET_INDEX_ADAPTER_VERSION: Final = "twse-official-taiex-index.v3"
 TWSE_MARKET_INDEX_OHLC_DATASET: Final = "indicesReport.MI_5MINS_HIST"
 TWSE_MARKET_INDEX_OHLC_ENDPOINT: Final = (
     "https://www.twse.com.tw/indicesReport/MI_5MINS_HIST"
@@ -914,7 +914,11 @@ def fetch_official_market_indexes(
 
     results: list[MarketIndexResult] = []
 
-    target_endpoint = f"{TWSE_MARKET_INDEX_ENDPOINT}?date={target_date:%Y%m%d}&response=json"
+    # Without a report type TWSE returns empty index-table placeholders even
+    # when stat=OK. IND explicitly requests the dated official index tables.
+    target_endpoint = (
+        f"{TWSE_MARKET_INDEX_ENDPOINT}?date={target_date:%Y%m%d}&type=IND&response=json"
+    )
     close_raw = None
     try:
         close_raw = transport(target_endpoint, timeout)

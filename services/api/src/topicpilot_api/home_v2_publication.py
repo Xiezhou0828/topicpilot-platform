@@ -13,7 +13,7 @@ from __future__ import annotations
 import hashlib
 import json
 from collections import defaultdict
-from collections.abc import Iterable, Mapping, Sequence
+from collections.abc import Collection, Iterable, Mapping, Sequence
 from dataclasses import dataclass
 from datetime import UTC, date, datetime
 from decimal import Decimal, InvalidOperation
@@ -445,9 +445,15 @@ def build_market_distribution(
 
 
 def _breadth(
-    session: Session, trading_date: date
+    session: Session, trading_date: date, *, expected_instrument_ids: Collection[Any] | None = None
 ) -> tuple[list[dict[str, Any]], datetime | None, list[dict[str, Any]]]:
-    raw_rows = read_daily_market_rows(session, trading_date)
+    raw_rows = (
+        read_daily_market_rows(session, trading_date)
+        if expected_instrument_ids is None
+        else read_daily_market_rows(
+            session, trading_date, expected_instrument_ids=expected_instrument_ids
+        )
+    )
     unavailable = build_unavailable_instruments(raw_rows, trade_date=trading_date)
     observations: list[dict[str, Any]] = []
     for row in raw_rows:
@@ -1609,6 +1615,7 @@ def materialize_home_v2(
     market_index_facts: Sequence[Any] = (),
     turnover_facts: Sequence[MarketTurnoverFact | Mapping[str, Any]] = (),
     market_aggregate_facts: Sequence[Any] = (),
+    expected_instrument_ids: Collection[Any] | None = None,
     now: datetime | None = None,
 ) -> dict[str, Any]:
     """Materialize and persist one deterministic Home envelope."""
@@ -1617,6 +1624,15 @@ def materialize_home_v2(
     trading_date = trading_date or _latest_canonical_date(session)
     if trading_date is None:
         raise ValueError("HOME_SOURCE_DATE_UNAVAILABLE")
+    # Normal execution supplies its already-authorized date-effective universe.
+    # Never infer eligibility from whether a price happened to arrive. Unknown
+    # or missing data *inside* that universe remains publication-blocking.
+    breadth_scope = {}
+    if expected_instrument_ids is not None:
+        scoped_ids = tuple(expected_instrument_ids)
+        if not scoped_ids or len({str(i) for i in scoped_ids}) != len(scoped_ids):
+            raise ValueError("HOME_EXECUTION_UNIVERSE_INVALID")
+        breadth_scope["expected_instrument_ids"] = scoped_ids
     index_inputs = [_index_fact_input(item) for item in market_index_facts]
     turnover_inputs = [_turnover_payload(item) for item in turnover_facts]
     aggregate_inputs = [_aggregate_fact_input(item) for item in market_aggregate_facts]
@@ -1657,11 +1673,15 @@ def materialize_home_v2(
         )
         breadth_rows = []
         try:
-            _canonical_rows, distribution_as_of, breadth_observations = _breadth(session, trading_date)
+            _canonical_rows, distribution_as_of, breadth_observations = _breadth(
+                session, trading_date, **breadth_scope
+            )
         except SQLAlchemyError:
             session.rollback()
     else:
-        breadth_rows, breadth_as_of, breadth_observations = _breadth(session, trading_date)
+        breadth_rows, breadth_as_of, breadth_observations = _breadth(
+            session, trading_date, **breadth_scope
+        )
         distribution_as_of = breadth_as_of
         breadth_payload = [
             {
