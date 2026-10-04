@@ -2294,6 +2294,7 @@ class PostCloseUpdater:
                         market_aggregate_facts=market_aggregate_facts,
                         market_institutional_flow_facts=market_institutional_flow_facts,
                         market_institutional_flow_result=institutional_flow_persistence,
+                        eligible_instrument_ids=eligible_instrument_ids,
                         execution_scope=getattr(
                             self, "_active_execution_scope", NORMAL_CURRENT_DAY
                         ),
@@ -2454,6 +2455,7 @@ class PostCloseUpdater:
         market_institutional_flow_facts: Collection[Any],
         market_institutional_flow_result: Mapping[str, Any] | None = None,
         execution_scope: str | None = None,
+        eligible_instrument_ids: Collection[Any] | None = None,
     ) -> dict[str, Any]:
         """Publish formal exchange-level facts without bypassing stock gates.
 
@@ -2506,6 +2508,7 @@ class PostCloseUpdater:
                     self.session,
                     trading_date=snapshot_date,
                     source_run_id=source_run_id,
+                    expected_instrument_ids=eligible_instrument_ids,
                     market_index_facts=tuple(market_index_facts),
                     market_aggregate_facts=tuple(market_aggregate_facts),
                 )
@@ -2846,6 +2849,7 @@ class PostCloseUpdater:
                             self.session,
                             trading_date=snapshot_date,
                             source_run_id=source_run_id,
+                            expected_instrument_ids=eligible_instrument_ids,
                             market_index_facts=tuple(market_index_facts),
                             market_aggregate_facts=tuple(market_aggregate_facts),
                         )

@@ -78,7 +78,7 @@ def test_twse_target_date_report_preserves_official_date_and_provenance():
     assert result.change_pct == Decimal("1.11")
     assert result.source_dataset == "afterTrading.MI_INDEX"
     assert result.source_endpoint.startswith("https://www.twse.com.tw/rwd/zh/afterTrading/MI_INDEX")
-    assert result.adapter_version == "twse-official-taiex-index.v2"
+    assert result.adapter_version == "twse-official-taiex-index.v3"
     assert result.response_content_hash is not None
 
 

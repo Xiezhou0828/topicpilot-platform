@@ -14,9 +14,12 @@ from topicpilot_api.comparator import ComparatorError, persist_comparator, prepa
 from topicpilot_api.comparator import read_comparator as read_comparator_lineage
 from topicpilot_api.config import get_settings
 from topicpilot_api.live.config import LiveRuntimeConfig
+from topicpilot_api.live.home_completion import OwnerHomeCompletion, validate_market_facts
 from topicpilot_api.live.normal_execution import OwnerNormalExecution
 from topicpilot_api.live.post_close import PostClosePreconditionError
+from topicpilot_api.market_data.aggregate_contract import fetch_official_market_aggregates
 from topicpilot_api.market_data.exchange import _read_url
+from topicpilot_api.market_data.index_contract import fetch_official_market_indexes
 from topicpilot_api.market_data.institutional_flow_contract import (
     fetch_official_market_institutional_flows,
 )
@@ -29,13 +32,22 @@ def build_parser():
     parser.add_argument(
         "--operation",
         required=True,
-        choices=("comparator-preflight", "comparator-apply", "normal-preflight", "normal-run"),
+        choices=(
+            "comparator-preflight",
+            "comparator-apply",
+            "normal-preflight",
+            "normal-run",
+            "home-completion-preflight",
+            "home-completion-apply",
+        ),
     )
     parser.add_argument("--target-date", required=True, type=date.fromisoformat)
     parser.add_argument("--comparator-date", type=date.fromisoformat)
     parser.add_argument("--expected-sha", required=True)
     parser.add_argument("--execution-id", type=UUID)
     parser.add_argument("--previous-run-id", type=UUID)
+    parser.add_argument("--run-id", type=UUID)
+    parser.add_argument("--completion-authorization-id", type=UUID)
     parser.add_argument("--owner-authorized-once", action="store_true")
     parser.add_argument("--include-lineage", action="store_true")
     return parser
@@ -43,7 +55,7 @@ def build_parser():
 
 def main(argv=None):
     args = build_parser().parse_args(argv)
-    write = args.operation in {"comparator-apply", "normal-run"}
+    write = args.operation in {"comparator-apply", "normal-run", "home-completion-apply"}
     if write and not args.owner_authorized_once:
         raise SystemExit("EXPLICIT_OWNER_AUTHORIZATION_REQUIRED")
     # This operator approval is bounded to the dates in this closure. It is
@@ -83,6 +95,35 @@ def main(argv=None):
                     result["productionMutated"] = result["created"] > 0
                     if not args.include_lineage:
                         result["readback"].pop("lineage", None)
+            elif args.operation.startswith("home-completion"):
+                if args.run_id is None or args.completion_authorization_id is None:
+                    raise PostClosePreconditionError("HOME_COMPLETION_IDENTITY_REQUIRED")
+                completion = OwnerHomeCompletion(
+                    session,
+                    config,
+                    run_id=args.run_id,
+                    authorization_id=args.completion_authorization_id,
+                )
+                result = completion.preflight()
+                if result["status"] == "PASS":
+                    now = datetime.now(UTC)
+                    indices = fetch_official_market_indexes(
+                        target_date=args.target_date,
+                        retrieved_at=now,
+                        as_of=now,
+                        transport=_read_url,
+                    )
+                    aggregates = fetch_official_market_aggregates(
+                        target_date=args.target_date,
+                        retrieved_at=now,
+                        as_of=now,
+                        transport=_read_url,
+                    )
+                    validate_market_facts(indices, aggregates)
+                    result["marketIndexes"] = [f.to_dict() for f in indices]
+                    result["marketAggregates"] = [f.to_dict() for f in aggregates]
+                    if write:
+                        result = completion.complete_once(indices=indices, aggregates=aggregates)
             else:
                 if args.execution_id is None or args.previous_run_id is None:
                     raise PostClosePreconditionError("NORMAL_EXECUTION_IDENTITY_REQUIRED")
