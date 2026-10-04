@@ -6,7 +6,7 @@ import path from "node:path";
 import test from "node:test";
 import {
   AUTHORITY, CI_REPOSITORY, CI_WORKFLOW, artifactFiles, readCiArchive,
-  readRuntime, validateCiEvidence, validateRecord, verifyArtifact, verifyCanonicalSource,
+  readRuntime, validateCiEvidence, validateRecord, verifyArtifact, verifyCanonicalSource, verifyRuntimeInputs,
 } from "../web_deployment_provenance.mjs";
 
 const canonical = "a".repeat(40);
@@ -160,4 +160,28 @@ test("artifact manifest includes server bytes, sidecars cannot self-attest runti
   assert.throws(() => verifyArtifact(root, canonical, parent), /ARTIFACT_MANIFEST_MISMATCH/);
   assert.throws(() => validateRecord({ ...proof, deployedRuntimeSha: canonical }, canonical, parent), /BUILD_CANNOT_ATTEST_RUNTIME/);
   assert.equal(readFileSync(path.join(root, file.path)).length, file.bytes);
+});
+
+test("isolated runtime scratch cannot enter the publishable artifact", (t) => {
+  const root = mkdtempSync(path.join(os.tmpdir(), "topicpilot-runtime-input-"));
+  t.after(() => rmSync(root, { recursive: true, force: true }));
+  for (const directory of ["server", "client/assets", ".openai"]) mkdirSync(path.join(root, directory), { recursive: true });
+  writeFileSync(path.join(root, "server/index.js"), "export default {fetch(){return new Response('synthetic')}}");
+  writeFileSync(path.join(root, file.path), bytes);
+  const files = artifactFiles(root);
+  const proof = { ...record, artifactFiles: files, artifactDigest: `sha256:${digest(JSON.stringify(files))}` };
+  for (const target of [".openai/release-provenance.json", "client/__release.json"]) writeFileSync(path.join(root, target), JSON.stringify(proof));
+  verifyArtifact(root, canonical, parent);
+  verifyRuntimeInputs(root, proof);
+  mkdirSync(path.join(root, "server/.wrangler/tmp"), { recursive: true });
+  writeFileSync(path.join(root, "server/.wrangler/tmp/scratch.js"), "synthetic tool scratch");
+  verifyRuntimeInputs(root, proof);
+  assert.throws(() => verifyArtifact(root, canonical, parent), /ARTIFACT_MANIFEST_MISMATCH/);
+  for (const target of ["server/index.js", file.path, ".openai/release-provenance.json", "client/__release.json"]) {
+    const original = readFileSync(path.join(root, target));
+    writeFileSync(path.join(root, target), target.endsWith(".json") ? "{}" : "changed canonical input");
+    assert.throws(() => verifyRuntimeInputs(root, proof), /RUNTIME_INPUT_/);
+    writeFileSync(path.join(root, target), original);
+  }
+  verifyRuntimeInputs(root, proof);
 });

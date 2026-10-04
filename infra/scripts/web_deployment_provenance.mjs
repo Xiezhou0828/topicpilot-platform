@@ -82,6 +82,28 @@ export function verifyArtifact(root, canonical, parent) {
   return record;
 }
 
+// Only the isolated verification runtime may add disposable tool scratch files.
+// Every canonical input byte must remain identical. This copy is NEVER an
+// archive/publication input; verifyArtifact still rejects extra files there.
+export function verifyRuntimeInputs(root, record) {
+  fail(lstatSync(root).isDirectory() && !lstatSync(root).isSymbolicLink(), "INVALID_RUNTIME_INPUT_ROOT");
+  for (const filename of [...record.artifactFiles.map((file) => file.path), ...RESERVED]) {
+    let cursor = root;
+    for (const part of filename.split("/")) {
+      cursor = path.join(cursor, part);
+      fail(!lstatSync(cursor).isSymbolicLink(), "RUNTIME_INPUT_SYMLINK_REJECTED");
+    }
+    fail(lstatSync(cursor).isFile(), "RUNTIME_INPUT_NOT_FILE");
+    const bytes = readFileSync(cursor);
+    if (RESERVED.has(filename)) {
+      fail(JSON.stringify(JSON.parse(bytes.toString("utf8"))) === JSON.stringify(record), "RUNTIME_INPUT_PROVENANCE_MISMATCH");
+    } else {
+      const expected = record.artifactFiles.find((file) => file.path === filename);
+      fail(bytes.length === expected.bytes && sha256(bytes) === expected.sha256, "RUNTIME_INPUT_BYTES_CHANGED");
+    }
+  }
+}
+
 export function verifyCanonicalSource(root, canonical, runGit = gitText) {
   exactSha(canonical, "canonicalSourceSha");
   fail(GITHUB_ORIGINS.has(runGit(root, ["remote", "get-url", "origin"])), "NON_CANONICAL_GITHUB_ORIGIN");
@@ -278,7 +300,7 @@ async function main() {
   const { values, positionals } = parseArgs({ allowPositionals: true, options: Object.fromEntries([
     "repo-root", "canonical-source-sha", "sites-parent-source-sha", "artifact-dir", "sites-checkout",
     "sites-successor-source-sha", "sites-current-source-sha", "runtime-url", "sites-supported-push-proof",
-    "ci-artifact-archive", "ci-run-id", "ci-artifact-id", "evidence-output",
+    "ci-artifact-archive", "ci-run-id", "ci-artifact-id", "evidence-output", "runtime-input-dir",
   ].map((name) => [name, { type: "string" }])) });
   const command = positionals[0];
   fail(positionals.length === 1 && ["build", "prepublish", "readback", "ci-readback"].includes(command), "EXPECTED_BUILD_PREPUBLISH_OR_READBACK");
@@ -304,12 +326,17 @@ async function main() {
         process.env.GITHUB_WORKFLOW_SHA === canonical && process.env.GITHUB_RUN_ATTEMPT === "1" &&
         process.env.GITHUB_REPOSITORY === CI_REPOSITORY &&
         process.env.GITHUB_WORKFLOW_REF === `${CI_REPOSITORY}/${CI_WORKFLOW}@refs/heads/main` &&
-        values["runtime-url"] === "https://localhost:8443" && process.env.NODE_EXTRA_CA_CERTS && values["evidence-output"], "CI_RUN_CONTEXT_REJECTED");
+        values["runtime-url"] === "https://localhost:8443" && process.env.NODE_EXTRA_CA_CERTS && values["evidence-output"] &&
+        process.env.RUNNER_TEMP && values["runtime-input-dir"], "CI_RUN_CONTEXT_REJECTED");
+      const runtimeInput = path.resolve(values["runtime-input-dir"]);
+      fail(runtimeInput.startsWith(path.resolve(process.env.RUNNER_TEMP) + path.sep) && runtimeInput !== bundle, "CI_RUNTIME_INPUT_NOT_DISPOSABLE");
+      verifyRuntimeInputs(runtimeInput, record);
       result = { ...await readRuntime(record, values["runtime-url"]), verificationEnvironment: CI_ENVIRONMENT,
         productionRuntimeVerified: false, githubActions: { repository: CI_REPOSITORY,
           runId: Number(process.env.GITHUB_RUN_ID), runAttempt: 1, workflowSha: process.env.GITHUB_WORKFLOW_SHA,
           workflowRef: process.env.GITHUB_WORKFLOW_REF, event: "workflow_dispatch", ref: "refs/heads/main" } };
       fail(Number.isSafeInteger(result.githubActions.runId) && result.githubActions.runId > 0, "INVALID_CI_IDENTIFIERS");
+      verifyRuntimeInputs(runtimeInput, record);
       verifyArtifact(bundle, canonical, parent);
       const output = path.resolve(values["evidence-output"]);
       fail(output.startsWith(path.join(root, "work") + path.sep), "CI_OUTPUT_OUTSIDE_WORK_DIRECTORY");
