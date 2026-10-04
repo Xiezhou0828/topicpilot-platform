@@ -165,7 +165,7 @@ def validate_market_facts(indices: Sequence[Any], aggregates: Sequence[Any]) -> 
         if (
             fact.trading_date != TARGET
             or fact.data_status != IndexDataStatus.AVAILABLE
-            or fact.source_provider != ("TWSE" if fact.market == "TPE" else "TPEX")
+            or fact.source_provider != ("TWSE" if fact.market == "TPE" else "TPEx")
             or not isinstance(fact.value, Decimal)
             or not fact.value.is_finite()
             or fact.value <= 0
