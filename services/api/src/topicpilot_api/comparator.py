@@ -17,6 +17,10 @@ from zoneinfo import ZoneInfo
 from sqlalchemy import select, text
 from sqlalchemy.orm import Session
 
+from topicpilot_api.market_data.exchange import (
+    TPEX_DAILY_ADAPTER_VERSION,
+    TWSE_DAILY_ADAPTER_VERSION,
+)
 from topicpilot_api.market_data.history import HistoricalBar
 from topicpilot_api.market_data.ingestion import (
     HistoricalSourceRegistration,
@@ -43,12 +47,15 @@ from topicpilot_api.orm.models import (
 from topicpilot_api.previous_close_authority import valid_close
 from topicpilot_api.provider_preflight import (
     PROVIDER_AUTHORITY_BY_MARKET,
-    PROVIDER_VERSION_BY_MARKET,
     load_g2_preflight_context,
 )
 from topicpilot_api.trading_status_authority import read_effective_trading_status_authority
 
 POLICY = "official-comparator-only.v1"
+COMPARATOR_PROVIDER_VERSION_BY_MARKET = {
+    "TPE": TWSE_DAILY_ADAPTER_VERSION,
+    "TWO": TPEX_DAILY_ADAPTER_VERSION,
+}
 
 
 class ComparatorError(ValueError):
@@ -83,7 +90,7 @@ class ComparatorPoint:
                 "instrumentCode": self.code,
                 "instrumentId": str(self.instrument_id),
                 "authority": PROVIDER_AUTHORITY_BY_MARKET[self.market],
-                "adapterVersion": PROVIDER_VERSION_BY_MARKET[self.market],
+                "adapterVersion": COMPARATOR_PROVIDER_VERSION_BY_MARKET[self.market],
                 "targetDate": self.bar.trading_date.isoformat(),
                 **dict(self.receipt),
             },
@@ -204,6 +211,7 @@ def prepare_comparator(
         end_date=comparator_date,
         exchange_transport=transport,
         market_batch=True,
+        tpex_target_date_batch=True,
         readiness_max_attempts=1,
         readiness_max_total_wait_seconds=0,
     )
@@ -213,7 +221,7 @@ def prepare_comparator(
         if (
             registration.code != PROVIDER_AUTHORITY_BY_MARKET[market.market_code]
             or registration.adapter.adapter_version
-            != PROVIDER_VERSION_BY_MARKET[market.market_code]
+            != COMPARATOR_PROVIDER_VERSION_BY_MARKET[market.market_code]
         ):
             raise ComparatorError("COMPARATOR_PROVIDER_AUTHORITY_MISMATCH")
         retrieved, bars = registration.adapter.fetch_market_day()
@@ -291,7 +299,7 @@ def persist_comparator(session: Session, plan: ComparatorPlan) -> dict[str, Any]
             session,
             HistoricalSourceRegistration(
                 PROVIDER_AUTHORITY_BY_MARKET[market],
-                PROVIDER_VERSION_BY_MARKET[market],
+                COMPARATOR_PROVIDER_VERSION_BY_MARKET[market],
                 licensing_classification="OFFICIAL_PUBLIC",
             ),
         )

@@ -7,6 +7,8 @@ import pytest
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
+from topicpilot_api.comparator import persist_comparator, prepare_comparator
+from topicpilot_api.market_data.receipt import ResponseBytes
 from topicpilot_api.provider_preflight import load_g2_preflight_context, run_provider_preflight
 
 pytestmark = pytest.mark.postgres
@@ -91,6 +93,27 @@ def test_provider_preflight_is_select_only_and_leaves_all_write_tables_unchanged
     if not context.context_ready:
         pytest.skip("requires the completed tw-reference-v1 identity/context state")
 
+    codes = {m.market_code: m.instrument_codes for m in context.markets}
+
+    def prior_transport(url: str, _timeout: float) -> bytes:
+        # Disposable test setup through the existing official comparator writer,
+        # not a fabricated previousClose field added to the OpenAPI schema.
+        market = "TPE" if "MI_INDEX" in url else "TWO"
+        document = json.loads(
+            _twse_payload(codes[market]) if market == "TPE" else _tpex_payload(codes[market])
+        )
+        document["date"] = "20260806"
+        raw = ResponseBytes(json.dumps(document).encode())
+        raw.http_status = 200
+        return raw
+
+    with Session(postgres_engine, expire_on_commit=False) as session:
+        plan = prepare_comparator(
+            session, comparator_date=date(2026, 8, 6), target_date=date(2026, 8, 7),
+            reference_version="tw-reference-v1", transport=prior_transport,
+        )
+        persist_comparator(session, plan)
+        session.commit()
     tables = (
         "markets",
         "instruments",
@@ -118,10 +141,15 @@ def test_provider_preflight_is_select_only_and_leaves_all_write_tables_unchanged
             return _twse_payload(
                 next(m.instrument_codes for m in context.markets if m.market_code == "TPE")
             )
-        if "dailyQuotes" in url:
-            return _tpex_payload(
-                next(m.instrument_codes for m in context.markets if m.market_code == "TWO")
-            )
+        if "tpex_mainboard_daily_close_quotes" in url:
+            return json.dumps([
+                {
+                    "Date": "1150807", "SecuritiesCompanyCode": code,
+                    "Open": "49", "High": "51", "Low": "48", "Close": "50",
+                    "TradingShares": "3000",
+                }
+                for code in codes["TWO"]
+            ]).encode()
         raise AssertionError(f"unexpected provider URL: {url}")
 
     with Session(postgres_engine, expire_on_commit=False) as session:

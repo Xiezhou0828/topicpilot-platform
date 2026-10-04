@@ -70,14 +70,14 @@ def test_reference_preflight_fails_closed_for_incomplete_context_and_duplicates(
     assert result["duplicateIdentities"] == ["TPE:2330"]
 
 
-def test_provider_lineage_reports_adapter_v2_and_authority_without_http():
+def test_provider_lineage_reports_current_adapters_and_authority_without_http():
     result = build_provider_lineage()
 
     assert result["status"] == "READY"
     assert result["postClose"]["marketBatch"] is True
     official = {item["sourceCode"]: item for item in result["providers"]}
     assert official["TWSE_OFFICIAL_DAILY"]["adapterVersion"] == "twse-official-daily.v2"
-    assert official["TPEX_OFFICIAL_DAILY"]["adapterVersion"] == "tpex-official-daily.v2"
+    assert official["TPEX_OFFICIAL_DAILY"]["adapterVersion"] == "tpex-official-openapi-daily.v1"
     assert official["TWSE_OFFICIAL_DAILY"]["marketBatch"] is True
     assert official["TPEX_OFFICIAL_DAILY"]["marketBatch"] is True
     assert official["YAHOO_CHART_DAILY"]["role"] == "VERIFICATION_ONLY"

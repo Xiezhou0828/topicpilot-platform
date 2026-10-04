@@ -9,6 +9,7 @@ from sqlalchemy import func, inspect, select
 from test_final_publication_contract import PRIOR, TARGET, point
 
 from topicpilot_api.comparator import (
+    COMPARATOR_PROVIDER_VERSION_BY_MARKET,
     ComparatorError,
     ComparatorPlan,
     persist_comparator,
@@ -36,7 +37,6 @@ from topicpilot_api.orm.models import (
 from topicpilot_api.orm.snapshots import TopicSnapshot
 from topicpilot_api.provider_preflight import (
     PROVIDER_AUTHORITY_BY_MARKET,
-    PROVIDER_VERSION_BY_MARKET,
 )
 
 
@@ -190,13 +190,13 @@ def official_source_fixture(comparator_fixture, request):
     source = session.scalar(
         select(MarketDataSource).where(
             MarketDataSource.source_code == PROVIDER_AUTHORITY_BY_MARKET[market_code],
-            MarketDataSource.adapter_version == PROVIDER_VERSION_BY_MARKET[market_code],
+            MarketDataSource.adapter_version == COMPARATOR_PROVIDER_VERSION_BY_MARKET[market_code],
         )
     )
     if source is None:
         source = MarketDataSource(
             source_code=PROVIDER_AUTHORITY_BY_MARKET[market_code],
-            adapter_version=PROVIDER_VERSION_BY_MARKET[market_code],
+            adapter_version=COMPARATOR_PROVIDER_VERSION_BY_MARKET[market_code],
         )
         session.add(source)
     # This controlled seed is local-only and rolled back by db_session. It

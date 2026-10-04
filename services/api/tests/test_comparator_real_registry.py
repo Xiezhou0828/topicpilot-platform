@@ -133,7 +133,10 @@ def test_prepare_comparator_real_registry_full_coverage_and_receipt(real_registr
     for market in ("TPE", "TWO"):
         registration = registry.for_market(market)[0]
         assert not hasattr(registration, "adapter_version")
-        assert registration.adapter.adapter_version == PROVIDER_VERSION_BY_MARKET[market]
+        assert (
+            registration.adapter.adapter_version
+            == comparator.COMPARATOR_PROVIDER_VERSION_BY_MARKET[market]
+        )
     # Do not replace the registry, registration, or adapter with permissive mocks.
     plan = comparator.prepare_comparator(
         object(),
@@ -160,7 +163,7 @@ def test_prepare_comparator_real_registry_full_coverage_and_receipt(real_registr
         assert receipt["payloadHash"] == sha256(raw).hexdigest()
         assert (
             point.payload()["comparatorProvenance"]["adapterVersion"]
-            == (PROVIDER_VERSION_BY_MARKET[point.market])
+            == comparator.COMPARATOR_PROVIDER_VERSION_BY_MARKET[point.market]
         )
 
 
