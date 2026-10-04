@@ -19,13 +19,17 @@ from urllib.request import Request, urlopen
 from zoneinfo import ZoneInfo
 
 from .history import HistoricalBar, HistoricalFetchResult, HistoricalProviderError
-from .receipt import ResponseBytes, read_json_receipt
+from .receipt import ResponseBytes, read_json_array_receipt, read_json_receipt
 
 TAIPEI: Final = ZoneInfo("Asia/Taipei")
 TWSE_DAILY_SOURCE_CODE: Final = "TWSE_OFFICIAL_DAILY"
 TWSE_DAILY_ADAPTER_VERSION: Final = "twse-official-daily.v2"
 TPEX_DAILY_SOURCE_CODE: Final = "TPEX_OFFICIAL_DAILY"
 TPEX_DAILY_ADAPTER_VERSION: Final = "tpex-official-daily.v2"
+TPEX_OPENAPI_DAILY_ADAPTER_VERSION: Final = "tpex-official-openapi-daily.v1"
+TPEX_OPENAPI_DAILY_ENDPOINT: Final = (
+    "https://www.tpex.org.tw/openapi/v1/tpex_mainboard_daily_close_quotes"
+)
 DEFAULT_READINESS_MAX_ATTEMPTS: Final = 3
 DEFAULT_READINESS_MAX_TOTAL_WAIT_SECONDS: Final = 90.0
 DEFAULT_READINESS_BACKOFF_SECONDS: Final = 30.0
@@ -653,14 +657,94 @@ class TpexOfficialDailyProvider:
         )
 
 
+class TpexOpenApiDailyProvider(TpexOfficialDailyProvider):
+    """Official latest snapshot, accepted only for its exact reported date.
+
+    No date query, historical fallback, close-minus-change comparator, or
+    NextReferencePrice substitution. TradingShares is already in shares.
+    The legacy target-date adapter remains separate for the comparator path.
+    """
+
+    adapter_version = TPEX_OPENAPI_DAILY_ADAPTER_VERSION
+
+    def __init__(self, **kwargs: Any) -> None:
+        kwargs.setdefault("market_base_url", TPEX_OPENAPI_DAILY_ENDPOINT)
+        kwargs.setdefault("market_batch", True)
+        if not kwargs["market_batch"]:
+            raise ValueError("TPEx OpenAPI requires market batch mode")
+        super().__init__(**kwargs)
+
+    def _fetch_market_day_once(self) -> tuple[datetime, dict[str, HistoricalBar]]:
+        if self.start_date != self.end_date:
+            raise HistoricalProviderError(
+                "MARKET_BATCH_DATE_WINDOW", "TPEx OpenAPI requires a single target date"
+            )
+        if self._market_cache is not None:
+            return self._market_cache
+        rows = read_json_array_receipt(
+            self.transport, self.market_base_url, self.timeout, self.response_evidence
+        )
+        self.response_evidence.update(
+            targetDate=self.start_date.isoformat(), adapterVersion=self.adapter_version,
+            dataset="tpex_mainboard_daily_close_quotes",
+        )
+        if not rows:
+            raise HistoricalProviderError("EXCHANGE_EMPTY_PAYLOAD", "TPEx OpenAPI has no rows")
+        required = {
+            "Date", "SecuritiesCompanyCode", "Open", "High", "Low", "Close", "TradingShares"
+        }
+        if any(not isinstance(row, Mapping) or not required.issubset(row) for row in rows):
+            raise HistoricalProviderError(
+                "INVALID_PAYLOAD", "TPEx OpenAPI row schema is incomplete"
+            )
+        dates = {str(row["Date"]).strip() for row in rows}
+        self.response_evidence["rawResponseDates"] = sorted(dates)
+        expected = f"{self.start_date.year - 1911:03d}{self.start_date:%m%d}"
+        if dates != {expected}:
+            raise HistoricalProviderError(
+                "PROVIDER_DATE_MISMATCH", "TPEx OpenAPI snapshot is not the exact target date"
+            )
+        self.response_evidence["responseDate"] = self.start_date.strftime("%Y%m%d")
+        bars: dict[str, HistoricalBar] = {}
+        for row in rows:
+            identity = row["SecuritiesCompanyCode"]
+            if not isinstance(identity, str):
+                raise HistoricalProviderError("INVALID_IDENTITY", "TPEx code must be a string")
+            code = _validate_identifier(identity.strip(), "instrument_code")
+            if code in bars:
+                raise HistoricalProviderError("DUPLICATE_INSTRUMENT_ROW", code)
+            bar = HistoricalBar(
+                trading_date=self.start_date,
+                open=_decimal(row["Open"], "open"),
+                high=_decimal(row["High"], "high"),
+                low=_decimal(row["Low"], "low"),
+                close=_decimal(row["Close"], "close"),
+                volume=_decimal(row["TradingShares"], "volume"),
+            )
+            _validate_bar(bar)
+            bars[code] = bar
+        self._market_cache = (self.clock(), bars)
+        return self._market_cache
+
+    def fetch_daily(self, instrument_code: str, market_code: str) -> HistoricalFetchResult:
+        instrument_code = _validate_identifier(instrument_code, "instrument_code")
+        market_code = _validate_identifier(market_code, "market_code")
+        if market_code != "TWO":
+            raise HistoricalProviderError("UNSUPPORTED_MARKET", market_code)
+        return self._fetch_market_instrument(instrument_code, market_code)
+
+
 __all__ = [
     "DEFAULT_READINESS_BACKOFF_SECONDS",
     "DEFAULT_READINESS_MAX_ATTEMPTS",
     "DEFAULT_READINESS_MAX_TOTAL_WAIT_SECONDS",
     "TPEX_DAILY_ADAPTER_VERSION",
     "TPEX_DAILY_SOURCE_CODE",
+    "TPEX_OPENAPI_DAILY_ADAPTER_VERSION",
+    "TPEX_OPENAPI_DAILY_ENDPOINT",
     "TWSE_DAILY_ADAPTER_VERSION",
     "TWSE_DAILY_SOURCE_CODE",
     "TpexOfficialDailyProvider",
+    "TpexOpenApiDailyProvider",
     "TwseOfficialDailyProvider",
 ]

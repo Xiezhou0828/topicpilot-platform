@@ -11,12 +11,12 @@ from urllib.error import HTTPError
 from .history import HistoricalProviderError
 
 
-def read_json_receipt(
+def _read_json_receipt(
     transport: Callable[[str, float], bytes],
     url: str,
     timeout: float,
     evidence: dict[str, Any],
-) -> Mapping[str, Any]:
+) -> Any:
     evidence.clear()
     evidence.update(
         endpoint=url,
@@ -55,6 +55,16 @@ def read_json_receipt(
         failure = HistoricalProviderError("INVALID_PAYLOAD", "exchange JSON decode failed")
         failure.evidence = dict(evidence)
         raise failure from exc
+    return payload
+
+
+def read_json_receipt(
+    transport: Callable[[str, float], bytes],
+    url: str,
+    timeout: float,
+    evidence: dict[str, Any],
+) -> Mapping[str, Any]:
+    payload = _read_json_receipt(transport, url, timeout, evidence)
     if not isinstance(payload, Mapping):
         evidence["classification"] = "PROVIDER_PAYLOAD_SCHEMA_CHANGE"
         failure = HistoricalProviderError("INVALID_PAYLOAD", "exchange response must be an object")
@@ -66,6 +76,23 @@ def read_json_receipt(
         rawStatus=str(payload.get("stat", "")),
         classification=None,
     )
+    return payload
+
+
+def read_json_array_receipt(
+    transport: Callable[[str, float], bytes],
+    url: str,
+    timeout: float,
+    evidence: dict[str, Any],
+) -> list[Any]:
+    """Opt-in array boundary; object-based providers keep their strict contract."""
+    payload = _read_json_receipt(transport, url, timeout, evidence)
+    if not isinstance(payload, list):
+        evidence["classification"] = "PROVIDER_PAYLOAD_SCHEMA_CHANGE"
+        failure = HistoricalProviderError("INVALID_PAYLOAD", "exchange response must be an array")
+        failure.evidence = dict(evidence)
+        raise failure
+    evidence.update(stage="DATASET_PARSE", classification=None)
     return payload
 
 
