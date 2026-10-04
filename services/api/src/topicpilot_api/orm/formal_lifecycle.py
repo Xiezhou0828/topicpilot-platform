@@ -22,7 +22,103 @@ from sqlalchemy import (
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
-from .base import Base, IdentityMixin, UpdatedAtMixin
+from .base import Base, CreatedAtMixin, IdentityMixin, UpdatedAtMixin
+
+
+class TopicScoreFormalResult(Base, IdentityMixin, CreatedAtMixin, UpdatedAtMixin):
+    """Formal daily Strength publication envelope.
+
+    Migration 0045 created this table before the ORM/read writer was wired.
+    Keep Strength separate from Lifecycle while sharing the exact PIT snapshot
+    and append-only correction identity.
+    """
+
+    __tablename__ = "topic_score_formal_results"
+    __table_args__ = (
+        CheckConstraint(
+            "publication_mode = 'FORMAL'", name="ck_topic_score_formal_publication_mode"
+        ),
+        CheckConstraint(
+            "publication_status IN ('UNAVAILABLE', 'PUBLISHED', 'SUPERSEDED')",
+            name="ck_topic_score_formal_publication_status",
+        ),
+        CheckConstraint(
+            "supersession_state IN ('ACTIVE', 'SUPERSEDED')",
+            name="ck_topic_score_formal_supersession_state",
+        ),
+        Index(
+            "ix_topic_score_formal_topic_date",
+            "topic_id",
+            "evaluation_date",
+            "publication_status",
+        ),
+        Index(
+            "ix_topic_score_formal_date",
+            "evaluation_date",
+            "topic_slug",
+            "publication_status",
+        ),
+        UniqueConstraint(
+            "topic_id",
+            "evaluation_date",
+            "contract_version",
+            "decision_revision",
+            name="uq_topic_score_formal_identity",
+        ),
+    )
+
+    evaluation_date: Mapped[date] = mapped_column(Date, nullable=False)
+    topic_id: Mapped[UUID] = mapped_column(
+        ForeignKey("topicpilot.topics.id", ondelete="RESTRICT"), nullable=False
+    )
+    topic_slug: Mapped[str] = mapped_column(String(128), nullable=False)
+    evaluation_status: Mapped[str] = mapped_column(String(32), nullable=False)
+    eligibility: Mapped[str] = mapped_column(String(32), nullable=False)
+    score: Mapped[Decimal | None] = mapped_column(Numeric(12, 4))
+    grade: Mapped[str | None] = mapped_column(String(8))
+    components: Mapped[dict[str, Any] | None] = mapped_column(JSONB)
+    eligibility_audit: Mapped[dict[str, Any] | None] = mapped_column(JSONB)
+    quality_flags: Mapped[dict[str, Any] | None] = mapped_column(JSONB)
+    publication_status: Mapped[str] = mapped_column(String(24), nullable=False)
+    publication_mode: Mapped[str] = mapped_column(String(16), nullable=False)
+    contract_version: Mapped[str] = mapped_column(String(96), nullable=False)
+    calculation_version: Mapped[str] = mapped_column(String(96), nullable=False)
+    policy_id: Mapped[str] = mapped_column(String(128), nullable=False)
+    policy_version: Mapped[str] = mapped_column(String(96), nullable=False)
+    d001_projection_id: Mapped[str | None] = mapped_column(String(128))
+    d001_projection_version: Mapped[str | None] = mapped_column(String(96))
+    input_snapshot_id: Mapped[UUID | None] = mapped_column(
+        ForeignKey("topicpilot.topic_snapshots.id", ondelete="RESTRICT")
+    )
+    input_snapshot_identity: Mapped[str | None] = mapped_column(String(256))
+    input_snapshot_hash: Mapped[str | None] = mapped_column(String(128))
+    membership_snapshot_id: Mapped[str | None] = mapped_column(String(128))
+    membership_snapshot_hash: Mapped[str | None] = mapped_column(String(128))
+    relation_version: Mapped[str | None] = mapped_column(String(128))
+    reference_registry_version: Mapped[str | None] = mapped_column(String(64))
+    mapping_policy_version: Mapped[str | None] = mapped_column(String(96))
+    session_code: Mapped[str | None] = mapped_column(String(128))
+    calendar_code: Mapped[str | None] = mapped_column(String(128))
+    source_artifact_id: Mapped[str | None] = mapped_column(String(128))
+    source_artifact_hash: Mapped[str | None] = mapped_column(String(128))
+    lineage: Mapped[dict[str, Any] | None] = mapped_column(JSONB)
+    lineage_hash: Mapped[str | None] = mapped_column(String(128))
+    member_fact_hashes: Mapped[dict[str, Any] | None] = mapped_column(JSONB)
+    decision_revision: Mapped[int] = mapped_column(
+        Integer, nullable=False, default=0, server_default="0"
+    )
+    supersedes_decision_id: Mapped[UUID | None] = mapped_column(
+        ForeignKey("topicpilot.topic_score_formal_results.id", ondelete="RESTRICT")
+    )
+    supersession_reason: Mapped[str | None] = mapped_column(String(128))
+    supersession_state: Mapped[str] = mapped_column(
+        String(16), nullable=False, default="ACTIVE", server_default="ACTIVE"
+    )
+    superseded_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    published_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    as_of_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    generated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    diagnostic_detail: Mapped[str | None] = mapped_column(Text)
 
 
 class TopicLifecycleFormalResult(Base, IdentityMixin, UpdatedAtMixin):
@@ -35,9 +131,7 @@ class TopicLifecycleFormalResult(Base, IdentityMixin, UpdatedAtMixin):
 
     __tablename__ = "topic_lifecycle_formal_results"
     __table_args__ = (
-        CheckConstraint(
-            "evaluation_mode = 'FORMAL'", name="ck_topic_lifecycle_formal_mode"
-        ),
+        CheckConstraint("evaluation_mode = 'FORMAL'", name="ck_topic_lifecycle_formal_mode"),
         CheckConstraint(
             "publication_status IN ('UNAVAILABLE', 'PUBLISHED', 'SUPERSEDED')",
             name="ck_topic_lifecycle_formal_publication_status",
@@ -140,4 +234,5 @@ class TopicLifecycleFormalResult(Base, IdentityMixin, UpdatedAtMixin):
     generated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     diagnostic_detail: Mapped[str | None] = mapped_column(Text)
 
-__all__ = ["TopicLifecycleFormalResult"]
+
+__all__ = ["TopicLifecycleFormalResult", "TopicScoreFormalResult"]

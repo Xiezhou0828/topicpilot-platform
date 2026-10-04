@@ -19,7 +19,7 @@ from . import (
 )
 from .base import Base
 from .canonical_observations import *  # noqa: F403
-from .formal_lifecycle import TopicLifecycleFormalResult
+from .formal_lifecycle import TopicLifecycleFormalResult, TopicScoreFormalResult
 from .home import HomeMarketFact, HomePublication, HomePublicationSection  # noqa: F401
 from .identity import *  # noqa: F403
 from .import_audit import LegacyImportArtifact, LegacyImportRecord, LegacyImportRun
@@ -70,6 +70,7 @@ __all__ = [
     "TopicAuthorityActivation",
     "TopicLifecycleFormalResult",
     "TopicLifecycleResult",
+    "TopicScoreFormalResult",
 ]
 for _module in (
     canonical_observations,

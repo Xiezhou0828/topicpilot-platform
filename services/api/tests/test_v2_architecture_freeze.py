@@ -38,6 +38,7 @@ IMPLEMENTED_V2_TABLES = {
     "home_publication_sections",
     "home_market_facts",
     "topic_lifecycle_formal_results",
+    "topic_score_formal_results",
     "topic_authority_activations",
     "relation_weight_authorities",
 }

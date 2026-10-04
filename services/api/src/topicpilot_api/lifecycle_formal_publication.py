@@ -21,6 +21,11 @@ from uuid import UUID
 from sqlalchemy import select
 from sqlalchemy.orm import Session, aliased
 
+from topicpilot_api.formal_lifecycle_evaluator import evaluate_formal_structural_lifecycle
+from topicpilot_api.formal_strength_publication import (
+    build_market_context,
+    read_formal_strength,
+)
 from topicpilot_api.orm import (
     Topic,
     TopicHierarchy,
@@ -45,7 +50,6 @@ from topicpilot_api.topic_snapshot_engine import read_price_evidence
 
 A9_FORMAL_TOPIC_SNAPSHOT_START = date(2026, 8, 24)
 FORMAL_SCOPE_CONTRACT_VERSION = "lifecycle-formal-leaf-scope.v1"
-FORMAL_SCOPE_EXPECTED_LEAVES = 107
 FORMAL_PUBLICATION_STATUS_PUBLISHED = "PUBLISHED"
 FORMAL_PUBLICATION_STATUS_UNAVAILABLE = "UNAVAILABLE"
 FORMAL_PUBLICATION_STATUS_SUPERSEDED = "SUPERSEDED"
@@ -94,15 +98,10 @@ def _canonical_hash(value: Mapping[str, Any]) -> str:
     return hashlib.sha256(encoded.encode("utf-8")).hexdigest()
 
 
-def input_snapshot_hash(
-    snapshot: TopicSnapshot, facts: Iterable[TopicSnapshotMemberFact]
-) -> str:
+def input_snapshot_hash(snapshot: TopicSnapshot, facts: Iterable[TopicSnapshotMemberFact]) -> str:
     """Create a stable identity for the exact formal snapshot input set."""
 
-    fact_hashes = sorted(
-        (str(fact.instrument_id), str(fact.fact_hash))
-        for fact in facts
-    )
+    fact_hashes = sorted((str(fact.instrument_id), str(fact.fact_hash)) for fact in facts)
     return _canonical_hash(
         {
             "snapshotIdentity": snapshot.snapshot_identity,
@@ -125,22 +124,18 @@ def _active_leaf_topics(session: Session, as_of_date: date) -> list[Topic]:
         session.scalars(
             select(TopicHierarchy.child_topic_id).where(
                 TopicHierarchy.valid_from <= as_of_date,
-                (TopicHierarchy.valid_to.is_(None))
-                | (TopicHierarchy.valid_to >= as_of_date),
+                (TopicHierarchy.valid_to.is_(None)) | (TopicHierarchy.valid_to >= as_of_date),
             )
         )
     )
     leaves = [
         topic
         for topic in topics
-        if topic.id in child_ids and topic.status not in ("DISABLED", "RETIRED")
+        if topic.id in child_ids
+        and topic.status not in ("DISABLED", "RETIRED")
+        and (getattr(topic, "valid_from", None) is None or topic.valid_from <= as_of_date)
+        and (getattr(topic, "valid_to", None) is None or topic.valid_to >= as_of_date)
     ]
-    if len(leaves) != FORMAL_SCOPE_EXPECTED_LEAVES:
-        raise ValueError(
-            "FORMAL_LEAF_SCOPE_RECONCILIATION_REQUIRED:"
-            f"{FORMAL_SCOPE_CONTRACT_VERSION}:"
-            f"expected={FORMAL_SCOPE_EXPECTED_LEAVES}:actual={len(leaves)}"
-        )
     return leaves
 
 
@@ -170,9 +165,7 @@ def _formal_snapshots_for_date(
     return grouped
 
 
-def _facts_for_snapshot(
-    session: Session, snapshot_id: UUID
-) -> list[TopicSnapshotMemberFact]:
+def _facts_for_snapshot(session: Session, snapshot_id: UUID) -> list[TopicSnapshotMemberFact]:
     return list(
         session.scalars(
             select(TopicSnapshotMemberFact)
@@ -228,10 +221,7 @@ def _formal_gate(
             lineage,
             input_snapshot_hash(snapshot, facts),
         )
-    if any(
-        not fact.structural_role or not fact.role_source
-        for fact in facts
-    ):
+    if any(not fact.structural_role or not fact.role_source for fact in facts):
         return FormalLifecycleGate(
             False,
             "INSUFFICIENT_FORMAL_INPUT:STRUCTURAL_ROLE_AUTHORITY_INCOMPLETE",
@@ -262,19 +252,38 @@ def _source_reference(snapshot: TopicSnapshot) -> dict[str, Any]:
 
 
 def _state_from_row(row: TopicLifecycleFormalResult) -> dict[str, Any]:
+    memory = row.state_memory or {}
+    last_published = memory.get("lastPublishedState") or {}
+
+    def as_date(value: Any) -> date | None:
+        if isinstance(value, date):
+            return value
+        if isinstance(value, str):
+            try:
+                return date.fromisoformat(value[:10])
+            except ValueError:
+                return None
+        return None
+
     return {
-        "final_stage": row.final_stage,
-        "stage_entered_at": row.stage_entered_at,
-        "stage_trading_days": row.stage_trading_days,
-        "candidate_stage": row.candidate_stage,
-        "candidate_streak": (row.confirmation_state or {}).get("candidateStreak", 0),
-        "state_memory": row.state_memory or {},
+        "final_stage": row.final_stage or last_published.get("finalStage"),
+        "stage_entered_at": as_date(
+            row.stage_entered_at or last_published.get("stageEnteredAt")
+        ),
+        "stage_trading_days": (
+            row.stage_trading_days
+            if row.stage_trading_days is not None
+            else last_published.get("stageTradingDays")
+        ),
+        "candidate_stage": row.candidate_stage or last_published.get("candidateStage"),
+        "candidate_streak": (row.confirmation_state or {}).get(
+            "candidateStreak", last_published.get("candidateStreak", 0)
+        ),
+        "state_memory": memory,
     }
 
 
-def _previous_formal_states(
-    session: Session, evaluation_date: date
-) -> dict[UUID, dict[str, Any]]:
+def _previous_formal_states(session: Session, evaluation_date: date) -> dict[UUID, dict[str, Any]]:
     successor = aliased(TopicLifecycleFormalResult)
     rows = list(
         session.scalars(
@@ -282,12 +291,12 @@ def _previous_formal_states(
             .where(
                 TopicLifecycleFormalResult.evaluation_date < evaluation_date,
                 TopicLifecycleFormalResult.contract_version == LIFECYCLE_CONTRACT_VERSION,
-                TopicLifecycleFormalResult.publication_status
-                == FORMAL_PUBLICATION_STATUS_PUBLISHED,
+                TopicLifecycleFormalResult.publication_status.in_(
+                    (FORMAL_PUBLICATION_STATUS_PUBLISHED, FORMAL_PUBLICATION_STATUS_UNAVAILABLE)
+                ),
                 ~select(successor.id)
                 .where(successor.supersedes_decision_id == TopicLifecycleFormalResult.id)
                 .exists(),
-                TopicLifecycleFormalResult.final_stage.is_not(None),
             )
             .order_by(
                 TopicLifecycleFormalResult.topic_id,
@@ -297,7 +306,21 @@ def _previous_formal_states(
     )
     states: dict[UUID, dict[str, Any]] = {}
     for row in rows:
-        states[row.topic_id] = _state_from_row(row)
+        candidate = _state_from_row(row)
+        if candidate["final_stage"] is not None:
+            states[row.topic_id] = candidate
+        elif row.publication_status == FORMAL_PUBLICATION_STATUS_UNAVAILABLE:
+            # Keep the last successful confirmed state in memory, but expose
+            # the gap to the next successful observation.  No state is
+            # published for the unavailable day itself.
+            prior = states.get(row.topic_id)
+            if prior is not None:
+                gap_dates = list((prior.get("state_memory") or {}).get("observationGapDates") or [])
+                gap_dates.append(row.evaluation_date.isoformat())
+                prior["state_memory"] = {
+                    **(prior.get("state_memory") or {}),
+                    "observationGapDates": sorted(set(gap_dates)),
+                }
     return states
 
 
@@ -331,13 +354,36 @@ def _unavailable_values(
     gate: FormalLifecycleGate,
     reason: str,
     diagnostic_detail: str | None = None,
+    prior_state: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     lineage = gate.lineage
+    prior_state = prior_state or {}
+    previous_stage = prior_state.get("final_stage")
+    previous_memory = dict(prior_state.get("state_memory") or {})
+    gap_dates = sorted(
+        {
+            *previous_memory.get("observationGapDates", ()),
+            evaluation_date.isoformat(),
+        }
+    )
+    stage_entered_at = prior_state.get("stage_entered_at")
+    previous_memory["lastPublishedState"] = {
+        "finalStage": previous_stage,
+        "stageEnteredAt": (
+            stage_entered_at.isoformat()
+            if isinstance(stage_entered_at, date)
+            else stage_entered_at
+        ),
+        "stageTradingDays": prior_state.get("stage_trading_days"),
+        "candidateStage": prior_state.get("candidate_stage"),
+        "candidateStreak": prior_state.get("candidate_streak", 0),
+    }
+    previous_memory["observationGapDates"] = gap_dates
     return {
         "evaluation_date": evaluation_date,
         "topic_id": topic.id,
         "topic_slug": topic.slug,
-        "previous_stage": None,
+        "previous_stage": previous_stage,
         "candidate_stage": None,
         "final_stage": None,
         "stage_entered_at": None,
@@ -359,7 +405,7 @@ def _unavailable_values(
         "persistence_evidence": None,
         "sample_confidence": None,
         "confirmation_state": None,
-        "state_memory": None,
+        "state_memory": previous_memory,
         "main_rise_segment": None,
         "segment_entry_date": None,
         "segment_anchor_date": None,
@@ -387,7 +433,7 @@ def _unavailable_values(
         "published_at": None,
         "as_of_at": snapshot.as_of_at if snapshot else None,
         "generated_at": datetime.now(UTC),
-        "diagnostic_detail": diagnostic_detail or f"facts={len(facts)}",
+        "diagnostic_detail": diagnostic_detail or f"facts={len(facts)};observationGap=true",
     }
 
 
@@ -402,16 +448,12 @@ def _result_values(
     source_reference = _source_reference(snapshot)
     source_reference["formalInitialization"] = {
         "mode": initialization_mode or "PRIOR_FORMAL_STATE",
-        "version": (
-            FORMAL_INITIALIZATION_CONTRACT_VERSION if initialization_mode else None
-        ),
+        "version": (FORMAL_INITIALIZATION_CONTRACT_VERSION if initialization_mode else None),
         "firstEligibleFormalDate": (
             result.trading_date.isoformat() if initialization_mode else None
         ),
         "logicalPriorState": BASE if initialization_mode else result.previous_stage,
-        "logicalPriorEntryDate": (
-            result.trading_date.isoformat() if initialization_mode else None
-        ),
+        "logicalPriorEntryDate": (result.trading_date.isoformat() if initialization_mode else None),
         "logicalPriorTradingDayCount": 0 if initialization_mode else None,
         "confirmationMemory": "EMPTY_DEFAULT_ZERO" if initialization_mode else None,
     }
@@ -437,7 +479,7 @@ def _result_values(
         "evaluation_mode": FORMAL_EVALUATION_MODE,
         "contract_version": LIFECYCLE_CONTRACT_VERSION,
         "policy_version": result.policy_version,
-        "calculation_version": LIFECYCLE_CALCULATION_VERSION,
+        "calculation_version": result.calculation_version,
         "leadership_evidence": result.evidence.leadership,
         "diffusion_evidence": result.evidence.diffusion,
         "group_strength_evidence": result.evidence.group_strength,
@@ -571,6 +613,7 @@ class FormalLifecyclePublisher:
         *,
         evaluation_date: date,
         eligible_topic_ids: Collection[UUID] | None = None,
+        market_index_facts: Iterable[Any] = (),
         persist: bool = True,
     ) -> FormalLifecycleRun:
         if evaluation_date < A9_FORMAL_TOPIC_SNAPSHOT_START:
@@ -584,6 +627,7 @@ class FormalLifecyclePublisher:
             leaves = [topic for topic in leaves if topic.id in allowed]
         snapshots = _formal_snapshots_for_date(self.session, evaluation_date)
         evidence = read_price_evidence(self.session, evaluation_date)
+        market_context = build_market_context(market_index_facts, evaluation_date).as_dict()
         previous = _previous_formal_states(self.session, evaluation_date)
         reason_breakdown: Counter[str] = Counter()
         topic_results: list[dict[str, Any]] = []
@@ -597,9 +641,7 @@ class FormalLifecyclePublisher:
             snapshot = candidates[0] if len(candidates) == 1 else None
             facts = _facts_for_snapshot(self.session, snapshot.id) if snapshot else []
             if not candidates:
-                gate = FormalLifecycleGate(
-                    False, "FORMAL_TOPIC_SNAPSHOT_NOT_PUBLISHED", {}, None
-                )
+                gate = FormalLifecycleGate(False, "FORMAL_TOPIC_SNAPSHOT_NOT_PUBLISHED", {}, None)
             elif len(candidates) > 1:
                 gate = FormalLifecycleGate(False, "AMBIGUOUS_FORMAL_SNAPSHOT", {}, None)
             else:
@@ -620,21 +662,53 @@ class FormalLifecyclePublisher:
                     prior, initialization_mode = _prior_or_bootstrap(
                         previous, topic.id, evaluation_date
                     )
-                    result = evaluate_formal_lifecycle(
-                        LifecycleInput(
-                            str(topic.id),
-                            evaluation_date,
-                            int(snapshot.stock_count),
-                            observations,
-                            prior["final_stage"],
-                            prior["stage_entered_at"],
-                            prior["stage_trading_days"],
-                            prior["candidate_stage"],
-                            int(prior["candidate_streak"] or 0),
-                            prior["state_memory"],
-                        ),
-                        self.policy,
+                    lifecycle_input = LifecycleInput(
+                        topic_id=str(topic.id),
+                        trading_date=evaluation_date,
+                        expected_member_count=int(snapshot.stock_count),
+                        observations=observations,
+                        previous_stage=prior["final_stage"],
+                        previous_stage_entered_at=prior["stage_entered_at"],
+                        previous_stage_trading_days=prior["stage_trading_days"],
+                        previous_candidate_stage=prior["candidate_stage"],
+                        previous_candidate_streak=int(prior["candidate_streak"] or 0),
+                        state_memory=prior["state_memory"],
                     )
+                    try:
+                        strength = read_formal_strength(self.session, topic.id, evaluation_date)
+                    except Exception:
+                        strength = None
+                    if (
+                        strength
+                        and strength.get("publicationStatus") == FORMAL_PUBLICATION_STATUS_PUBLISHED
+                    ):
+                        absolute = strength.get("absolute") or {}
+                        relative = strength.get("relative") or {}
+                        derivatives = strength.get("derivatives") or {}
+                        lifecycle_input = LifecycleInput(
+                            topic_id=lifecycle_input.topic_id,
+                            trading_date=lifecycle_input.trading_date,
+                            expected_member_count=lifecycle_input.expected_member_count,
+                            observations=lifecycle_input.observations,
+                            previous_stage=lifecycle_input.previous_stage,
+                            previous_stage_entered_at=lifecycle_input.previous_stage_entered_at,
+                            previous_stage_trading_days=lifecycle_input.previous_stage_trading_days,
+                            previous_candidate_stage=lifecycle_input.previous_candidate_stage,
+                            previous_candidate_streak=lifecycle_input.previous_candidate_streak,
+                            state_memory=lifecycle_input.state_memory,
+                            absolute_strength=absolute.get("strength", absolute.get("score")),
+                            relative_strength=relative.get("strength", relative.get("score")),
+                            absolute_grade=absolute.get("grade"),
+                            relative_grade=relative.get("grade"),
+                            derivative_evidence=derivatives,
+                            market_context=strength.get("marketContext") or market_context,
+                            formal_history=tuple(
+                                (lifecycle_input.state_memory or {}).get("derivativeHistory") or ()
+                            ),
+                        )
+                        result = evaluate_formal_structural_lifecycle(lifecycle_input)
+                    else:
+                        result = evaluate_formal_lifecycle(lifecycle_input, self.policy)
                     lineage = gate.lineage
                     input_hash = gate.input_snapshot_hash or input_snapshot_hash(snapshot, facts)
                     values = _result_values(
@@ -674,6 +748,7 @@ class FormalLifecyclePublisher:
                 facts=facts,
                 gate=gate,
                 reason=reason_value,
+                prior_state=previous.get(topic.id),
             )
             values_to_persist.append(values)
             topic_results.append(_topic_result_payload(values))
@@ -727,9 +802,9 @@ class FormalLifecyclePublisher:
         for run in runs:
             reason_breakdown.update(run.reason_breakdown)
         return {
-            "status": "SUCCESS" if runs and all(run.status == "SUCCESS" for run in runs) else (
-                "FAIL_CLOSED" if runs else "INSUFFICIENT_FORMAL_HISTORY"
-            ),
+            "status": "SUCCESS"
+            if runs and all(run.status == "SUCCESS" for run in runs)
+            else ("FAIL_CLOSED" if runs else "INSUFFICIENT_FORMAL_HISTORY"),
             "dates": [run.as_dict() for run in runs],
             "formalDates": [item.isoformat() for item in dates],
             "formalLifecycleTradingSessions": len(dates),
@@ -744,7 +819,7 @@ class FormalLifecyclePublisher:
             "evaluationMode": FORMAL_EVALUATION_MODE,
             "initializationContractVersion": FORMAL_INITIALIZATION_CONTRACT_VERSION,
             "formalScopeContractVersion": FORMAL_SCOPE_CONTRACT_VERSION,
-            "formalScopeLeaves": FORMAL_SCOPE_EXPECTED_LEAVES,
+            "formalScopeLeaves": runs[-1].expected_leaf_date_rows if runs else 0,
         }
 
     def _persist(self, values: dict[str, Any]) -> None:
@@ -883,7 +958,8 @@ def read_formal_lifecycle(session: Session, topic_id: UUID) -> dict[str, Any] | 
             "decisionRevision": getattr(current, "decision_revision", 0),
             "supersedesDecisionId": (
                 str(getattr(current, "supersedes_decision_id", None))
-                if getattr(current, "supersedes_decision_id", None) else None
+                if getattr(current, "supersedes_decision_id", None)
+                else None
             ),
             "supersessionReason": getattr(current, "supersession_reason", None),
         },

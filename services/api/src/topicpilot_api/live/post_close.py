@@ -19,12 +19,14 @@ from sqlalchemy.exc import DBAPIError, IntegrityError, SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from topicpilot_api.daily_market import DailyMarketReconciliation, reconcile_daily_market
+from topicpilot_api.formal_strength_publication import FormalStrengthPublisher
 from topicpilot_api.home_v2_publication import materialize_home_v2
 from topicpilot_api.instrument_universe import (
     INELIGIBLE_LIFECYCLE_STATUSES,
     evaluate_instrument_eligibility,
     resolve_lifecycle_status,
 )
+from topicpilot_api.lifecycle_formal_publication import FormalLifecyclePublisher
 from topicpilot_api.market_data.aggregate_contract import fetch_official_market_aggregates
 from topicpilot_api.market_data.availability import LEGITIMATE_UNAVAILABLE_CODES
 from topicpilot_api.market_data.index_contract import fetch_official_market_indexes
@@ -52,7 +54,6 @@ from topicpilot_api.orm import (
 )
 from topicpilot_api.provider_preflight import load_g2_preflight_context
 from topicpilot_api.topic_daily_state import materialize_bounded_formal_dates
-from topicpilot_api.topic_lifecycle_engine import TopicLifecycleEngine
 from topicpilot_api.topic_snapshot_engine import TopicSnapshotEngine
 from topicpilot_api.trading_status_authority import (
     StatusResolutionMetrics,
@@ -121,9 +122,7 @@ def _checkpoint_semantics(batch_key: str) -> str:
 
 def _provider_metrics_applicability(batch_key: str) -> str:
     return (
-        "ACTUAL"
-        if _checkpoint_semantics(batch_key) == "PROVIDER_INGESTION"
-        else "NOT_APPLICABLE"
+        "ACTUAL" if _checkpoint_semantics(batch_key) == "PROVIDER_INGESTION" else "NOT_APPLICABLE"
     )
 
 
@@ -161,6 +160,8 @@ def _readback_failure_metadata(
     if formal_readback.get("status") != "PASS":
         topic = formal_readback.get("topicSnapshot") or {}
         home = formal_readback.get("homePublication") or {}
+        strength = formal_readback.get("formalStrength") or {}
+        lifecycle = formal_readback.get("formalLifecycle") or {}
         return {
             "failureClassification": "FORMAL_PUBLICATION_READINESS_FAILURE",
             "failedSection": (
@@ -168,9 +169,19 @@ def _readback_failure_metadata(
                 if topic.get("status") != "PASS"
                 else "homePublication"
                 if home.get("status") != "PASS"
+                else "formalStrength"
+                if strength.get("status") != "PASS"
+                else "formalLifecycle"
+                if lifecycle.get("status") != "PASS"
                 else "formalPublication"
             ),
-            "reasonCode": "FORMAL_PUBLICATION_READBACK_NOT_READY",
+            "reasonCode": (
+                "FORMAL_STRENGTH_NOT_READY"
+                if strength.get("status") != "PASS"
+                else "FORMAL_LIFECYCLE_NOT_READY"
+                if lifecycle.get("status") != "PASS"
+                else "FORMAL_PUBLICATION_READBACK_NOT_READY"
+            ),
         }
     return {}
 
@@ -491,9 +502,7 @@ class PostCloseUpdater:
             return None  # type: ignore[return-value]
         if status not in {"IN_PROGRESS", "COMPLETED", "PARTIAL", "FAILED"}:
             raise ValueError("invalid POST_CLOSE checkpoint status")
-        previous_failure_stage = getattr(
-            self, "_active_failure_stage", "POST_CLOSE_ORCHESTRATION"
-        )
+        previous_failure_stage = getattr(self, "_active_failure_stage", "POST_CLOSE_ORCHESTRATION")
         self._active_failure_stage = f"{batch_key}_CHECKPOINT"
         latest = self._latest_checkpoint(run_id, batch_key)
         attempt_number = (latest.attempt_number + 1) if latest else 1
@@ -506,9 +515,7 @@ class PostCloseUpdater:
         checkpoint_semantic = _checkpoint_semantics(batch_key)
         metadata_payload.setdefault("checkpointSemantic", checkpoint_semantic)
         provider_metrics_applicability = _provider_metrics_applicability(batch_key)
-        metadata_payload.setdefault(
-            "providerMetricsApplicability", provider_metrics_applicability
-        )
+        metadata_payload.setdefault("providerMetricsApplicability", provider_metrics_applicability)
         failure_classification = _failure_classification_for_checkpoint(batch_key, status)
         if failure_classification is not None:
             metadata_payload.setdefault("failureClassification", failure_classification)
@@ -1884,9 +1891,7 @@ class PostCloseUpdater:
                         resolution_state=str(item["resolutionState"]),
                         blocks_publication=bool(item["blocksPublication"]),
                         is_legitimate_unavailable=bool(item["isLegitimateUnavailable"]),
-                        authority_class=(
-                            str(item.get("authorityClass") or "NONE")
-                        ),
+                        authority_class=(str(item.get("authorityClass") or "NONE")),
                     )
                     converted.append(resolution)
                     instrument_id = item.get("instrumentId")
@@ -2117,6 +2122,12 @@ class PostCloseUpdater:
                     {"status": "SUCCESS", "statusReason": "READBACK_REUSED"},
                 )
                 snapshot_result["formalTopicSnapshotReadback"] = formal_readback["topicSnapshot"]
+                snapshot_result["formalStrengthReadback"] = formal_readback.get(
+                    "formalStrength", {"status": "NOT_CHECKED"}
+                )
+                snapshot_result["formalLifecycleReadback"] = formal_readback.get(
+                    "formalLifecycle", {"status": "NOT_CHECKED"}
+                )
                 snapshot_result["formalPublicationReadback"] = formal_readback
                 if market_facts_phase is None or market_facts_phase.status != "COMPLETED":
                     self._checkpoint_event(
@@ -2217,9 +2228,7 @@ class PostCloseUpdater:
                         "marketFactsPublication": snapshot_result.get("marketFactsPublication"),
                         **_readback_failure_metadata(
                             formal_readback=formal_readback,
-                            market_facts_publication=snapshot_result.get(
-                                "marketFactsPublication"
-                            ),
+                            market_facts_publication=snapshot_result.get("marketFactsPublication"),
                         ),
                     },
                 )
@@ -2233,6 +2242,8 @@ class PostCloseUpdater:
                     batch_key="A9_B2_FORMAL_PROCESSING",
                     metadata={
                         "readback": formal_readback,
+                        "formalStrength": formal_readback.get("formalStrength"),
+                        "formalLifecycle": formal_readback.get("formalLifecycle"),
                         "semanticsChanged": False,
                     },
                 )
@@ -2241,6 +2252,8 @@ class PostCloseUpdater:
                     batch_key="FINAL_PUBLICATION",
                     metadata={
                         "formalPublication": formal_readback,
+                        "formalStrength": formal_readback.get("formalStrength"),
+                        "formalLifecycle": formal_readback.get("formalLifecycle"),
                         "homePublication": formal_readback["homePublication"],
                     },
                 )
@@ -2251,6 +2264,8 @@ class PostCloseUpdater:
                         batch_key="A9_B2_FORMAL_PROCESSING",
                         metadata={
                             "readback": formal_readback,
+                            "formalStrength": formal_readback.get("formalStrength"),
+                            "formalLifecycle": formal_readback.get("formalLifecycle"),
                             "semanticsChanged": False,
                         },
                     )
@@ -2270,9 +2285,7 @@ class PostCloseUpdater:
                         "readback": formal_readback,
                         **_readback_failure_metadata(
                             formal_readback=formal_readback,
-                            market_facts_publication=snapshot_result.get(
-                                "marketFactsPublication"
-                            ),
+                            market_facts_publication=snapshot_result.get("marketFactsPublication"),
                         ),
                     },
                 )
@@ -2458,6 +2471,10 @@ class PostCloseUpdater:
             and formal_readback.get("status") == "PASS"
         )
 
+    @staticmethod
+    def _formal_strength_ready(snapshot_result: Mapping[str, Any]) -> bool:
+        return (snapshot_result.get("formalStrengthReadback") or {}).get("status") == "PASS"
+
     def _formal_snapshot_readback(self, snapshot_date: date) -> dict[str, Any]:
         rows = self.session.scalars(
             select(TopicSnapshot).where(
@@ -2612,12 +2629,21 @@ class PostCloseUpdater:
             if home is None
             else "NOT_PUBLISHED"
         )
+        strength = self._formal_strength_readback(snapshot_date)
+        lifecycle = self._formal_lifecycle_readback(snapshot_date)
+        base_ready = (
+            topic["status"] == "PASS"
+            and home_status == "PASS"
+            and institutional_flow["status"] == "PASS"
+        )
         return {
             "status": (
                 "PASS"
-                if topic["status"] == "PASS"
-                and home_status == "PASS"
-                and institutional_flow["status"] == "PASS"
+                if base_ready
+                and strength["status"] in {"PASS", "NOT_CHECKED"}
+                and lifecycle["status"] in {"PASS", "NOT_CHECKED"}
+                else "PARTIAL"
+                if base_ready
                 else "FAIL"
             ),
             "topicSnapshot": topic,
@@ -2628,6 +2654,153 @@ class PostCloseUpdater:
                 "authority": "topicpilot.home_publications",
             },
             "institutionalFlow": institutional_flow,
+            "formalStrength": strength,
+            "formalLifecycle": lifecycle,
+        }
+
+    def _formal_strength_readback(self, snapshot_date: date) -> dict[str, Any]:
+        try:
+            rows = (
+                self.session.execute(
+                    text(
+                        """
+                    SELECT r.publication_status, r.evaluation_status
+                    FROM topicpilot.topic_score_formal_results r
+                    WHERE r.evaluation_date = :snapshot_date
+                      AND r.publication_mode = 'FORMAL'
+                      AND r.contract_version = 'topic-strength-lifecycle.formal.v1'
+                      AND NOT EXISTS (
+                          SELECT 1 FROM topicpilot.topic_score_formal_results successor
+                          WHERE successor.supersedes_decision_id = r.id
+                      )
+                    """
+                    ),
+                    {"snapshot_date": snapshot_date},
+                )
+                .mappings()
+                .all()
+            )
+            if rows and "publication_status" not in rows[0]:
+                return {"status": "NOT_CHECKED", "authority": "FORMAL_STRENGTH"}
+        except SQLAlchemyError as exc:
+            return {
+                "status": "FAIL",
+                "authority": "FORMAL_STRENGTH",
+                "reasonCode": "FORMAL_STRENGTH_READBACK_UNAVAILABLE",
+                "error": type(exc).__name__,
+            }
+        except Exception:
+            return {"status": "NOT_CHECKED", "authority": "FORMAL_STRENGTH"}
+        try:
+            expected_scope = self.session.execute(
+                text(
+                    """
+                    SELECT COUNT(DISTINCT t.id)
+                    FROM topicpilot.topics t
+                    JOIN topicpilot.topic_hierarchy h ON h.child_topic_id = t.id
+                    WHERE h.valid_from <= :snapshot_date
+                      AND (h.valid_to IS NULL OR h.valid_to >= :snapshot_date)
+                      AND t.status NOT IN ('DISABLED', 'RETIRED')
+                      AND (t.valid_from IS NULL OR t.valid_from <= :snapshot_date)
+                      AND (t.valid_to IS NULL OR t.valid_to >= :snapshot_date)
+                    """
+                ),
+                {"snapshot_date": snapshot_date},
+            ).scalar()
+        except SQLAlchemyError as exc:
+            return {
+                "status": "FAIL",
+                "authority": "FORMAL_STRENGTH",
+                "reasonCode": "FORMAL_STRENGTH_SCOPE_READBACK_UNAVAILABLE",
+                "error": type(exc).__name__,
+            }
+        except Exception:
+            return {"status": "NOT_CHECKED", "authority": "FORMAL_STRENGTH"}
+        published = sum(row["publication_status"] == "PUBLISHED" for row in rows)
+        return {
+            "status": (
+                "PASS"
+                if rows and expected_scope == len(rows) and published == len(rows)
+                else "PARTIAL"
+                if published
+                else "FAIL"
+            ),
+            "rowCount": len(rows),
+            "expectedScopeCount": expected_scope,
+            "publishedRowCount": published,
+            "authority": "topicpilot.topic_score_formal_results",
+        }
+
+    def _formal_lifecycle_readback(self, snapshot_date: date) -> dict[str, Any]:
+        try:
+            rows = (
+                self.session.execute(
+                    text(
+                        """
+                    SELECT r.publication_status
+                    FROM topicpilot.topic_lifecycle_formal_results r
+                    WHERE r.evaluation_date = :snapshot_date
+                      AND r.evaluation_mode = 'FORMAL'
+                      AND NOT EXISTS (
+                          SELECT 1 FROM topicpilot.topic_lifecycle_formal_results successor
+                          WHERE successor.supersedes_decision_id = r.id
+                      )
+                    """
+                    ),
+                    {"snapshot_date": snapshot_date},
+                )
+                .mappings()
+                .all()
+            )
+            if rows and "publication_status" not in rows[0]:
+                return {"status": "NOT_CHECKED", "authority": "FORMAL_LIFECYCLE"}
+        except SQLAlchemyError as exc:
+            return {
+                "status": "FAIL",
+                "authority": "FORMAL_LIFECYCLE",
+                "reasonCode": "FORMAL_LIFECYCLE_READBACK_UNAVAILABLE",
+                "error": type(exc).__name__,
+            }
+        except Exception:
+            return {"status": "NOT_CHECKED", "authority": "FORMAL_LIFECYCLE"}
+        try:
+            expected_scope = self.session.execute(
+                text(
+                    """
+                    SELECT COUNT(DISTINCT t.id)
+                    FROM topicpilot.topics t
+                    JOIN topicpilot.topic_hierarchy h ON h.child_topic_id = t.id
+                    WHERE h.valid_from <= :snapshot_date
+                      AND (h.valid_to IS NULL OR h.valid_to >= :snapshot_date)
+                      AND t.status NOT IN ('DISABLED', 'RETIRED')
+                      AND (t.valid_from IS NULL OR t.valid_from <= :snapshot_date)
+                      AND (t.valid_to IS NULL OR t.valid_to >= :snapshot_date)
+                    """
+                ),
+                {"snapshot_date": snapshot_date},
+            ).scalar()
+        except SQLAlchemyError as exc:
+            return {
+                "status": "FAIL",
+                "authority": "FORMAL_LIFECYCLE",
+                "reasonCode": "FORMAL_LIFECYCLE_SCOPE_READBACK_UNAVAILABLE",
+                "error": type(exc).__name__,
+            }
+        except Exception:
+            return {"status": "NOT_CHECKED", "authority": "FORMAL_LIFECYCLE"}
+        published = sum(row["publication_status"] == "PUBLISHED" for row in rows)
+        return {
+            "status": (
+                "PASS"
+                if rows and expected_scope == len(rows) and published == len(rows)
+                else "PARTIAL"
+                if published
+                else "FAIL"
+            ),
+            "rowCount": len(rows),
+            "expectedScopeCount": expected_scope,
+            "publishedRowCount": published,
+            "authority": "topicpilot.topic_lifecycle_formal_results",
         }
 
     def _run_snapshot(
@@ -2664,10 +2837,10 @@ class PostCloseUpdater:
                         snapshot_date
                     )
                 except Exception as exc:
-                    # Formal PIT materialization remains additive shadow work.
-                    # A missing authority/migration or transient failure must
-                    # not discard the canonical research snapshot already
-                    # committed above.
+                    # The canonical snapshot is retained, but the formal
+                    # publication chain is explicitly unavailable.  A
+                    # missing authority/migration or transient failure must
+                    # never be replaced by shadow output.
                     self.session.rollback()
                     result["formalTopicDailyState"] = {
                         "status": "FORMAL_STATE_UNAVAILABLE",
@@ -2675,21 +2848,55 @@ class PostCloseUpdater:
                     }
                 if result["formalTopicDailyState"]["status"] == "SUCCESS":
                     try:
-                        result["lifecycle"] = TopicLifecycleEngine(self.session).run_once(
+                        strength_run = FormalStrengthPublisher(self.session).run_once(
                             evaluation_date=snapshot_date,
+                            market_index_facts=tuple(market_index_facts),
+                        )
+                        result["formalStrength"] = strength_run.as_dict()
+                        result["formalStrengthReadback"] = self._formal_strength_readback(
+                            snapshot_date
                         )
                     except Exception as exc:
-                        # Lifecycle V1.1 is a parallel acceptance boundary.
-                        # Its failure is recorded without making the core
-                        # Home publication depend on an unaccepted policy
-                        # engine.
+                        # Strength and Lifecycle are independent publication
+                        # lanes.  Keep this failure local so Lifecycle still
+                        # gets a chance to publish from its own formal facts.
                         self.session.rollback()
-                        result["lifecycle"] = {
-                            "status": "LIFECYCLE_UNAVAILABLE",
+                        result["formalStrength"] = {
+                            "status": "FAIL_CLOSED",
+                            "unavailableRows": 0,
                             "error": type(exc).__name__,
                         }
+                        result["formalStrengthReadback"] = self._formal_strength_readback(
+                            snapshot_date
+                        )
+                    try:
+                        lifecycle_run = FormalLifecyclePublisher(self.session).run_once(
+                            evaluation_date=snapshot_date,
+                            market_index_facts=tuple(market_index_facts),
+                        )
+                        result["lifecycle"] = lifecycle_run.as_dict()
+                        result["formalLifecycle"] = result["lifecycle"]
+                        result["formalLifecycleReadback"] = self._formal_lifecycle_readback(
+                            snapshot_date
+                        )
+                    except Exception as exc:
+                        # Lifecycle is independently fail-closed; a Strength
+                        # error must not be allowed to fabricate or suppress
+                        # its audit row.
+                        self.session.rollback()
+                        result["lifecycle"] = {
+                            "status": "FAIL_CLOSED",
+                            "error": type(exc).__name__,
+                        }
+                        result["formalLifecycle"] = result["lifecycle"]
+                        result["formalLifecycleReadback"] = self._formal_lifecycle_readback(
+                            snapshot_date
+                        )
                 else:
+                    result["formalStrength"] = {"status": "WAITING_FOR_FORMAL_SNAPSHOT"}
+                    result["formalStrengthReadback"] = {"status": "FAIL"}
                     result["lifecycle"] = {"status": "WAITING_FOR_FORMAL_SNAPSHOT"}
+                    result["formalLifecycleReadback"] = {"status": "FAIL"}
                 try:
                     result["homePublication"] = materialize_home_v2(
                         self.session,
@@ -2787,6 +2994,8 @@ class PostCloseUpdater:
                 if status == "SUCCESS"
                 and reconciliation_payload.get("downstreamReady") is True
                 and self._formal_snapshot_ready(snapshot_payload)
+                and (snapshot_payload.get("formalPublicationReadback") or {}).get("status")
+                == "PASS"
                 else "MARKET_CLOSED"
                 if status == "MARKET_CLOSED"
                 else "BLOCKED"
@@ -2815,6 +3024,32 @@ class PostCloseUpdater:
             ),
             "formalTopicSnapshotReadback": (
                 "NOT_RUN" if is_market_closed else formal_readback.get("status", "FAIL")
+            ),
+            "formalStrengthPublication": (
+                "NOT_RUN"
+                if is_market_closed
+                else (snapshot_payload.get("formalStrength") or {}).get(
+                    "status", "NOT_AVAILABLE"
+                )
+            ),
+            "formalStrengthReadback": (
+                "NOT_RUN"
+                if is_market_closed
+                else (formal_readback.get("formalStrength") or {}).get("status", "FAIL")
+            ),
+            "formalLifecyclePublication": (
+                "NOT_RUN"
+                if is_market_closed
+                else (
+                    snapshot_payload.get("formalLifecycle")
+                    or snapshot_payload.get("lifecycle")
+                    or {}
+                ).get("status", "NOT_AVAILABLE")
+            ),
+            "formalLifecycleReadback": (
+                "NOT_RUN"
+                if is_market_closed
+                else (formal_readback.get("formalLifecycle") or {}).get("status", "FAIL")
             ),
         }
         run.metadata_payload = _json_safe(metadata)

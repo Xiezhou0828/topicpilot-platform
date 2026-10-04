@@ -111,6 +111,15 @@ class LifecycleInput:
     previous_candidate_stage: str | None = None
     previous_candidate_streak: int = 0
     state_memory: Mapping[str, Any] | None = None
+    # Formal post-close extensions.  Shadow callers can omit these fields and
+    # retain the compatibility evaluator above.
+    absolute_strength: float | None = None
+    relative_strength: float | None = None
+    absolute_grade: str | None = None
+    relative_grade: str | None = None
+    derivative_evidence: Mapping[str, Any] | None = None
+    market_context: Mapping[str, Any] | None = None
+    formal_history: tuple[Mapping[str, Any], ...] = ()
 
 
 @dataclass(frozen=True)

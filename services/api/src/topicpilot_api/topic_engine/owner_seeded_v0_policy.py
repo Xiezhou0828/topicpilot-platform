@@ -781,12 +781,15 @@ def evaluate_strength_view(
     *,
     view: Literal["ABSOLUTE", "RELATIVE"],
     policy: OwnerSeededV0Policy = DEFAULT_POLICY,
+    minimum_formal_member_count: int = 3,
 ) -> StrengthViewResult:
     """Evaluate one view with exact V0 curves and fail-closed input handling."""
 
     if not members:
         return _empty_view(view, members, "INSUFFICIENT_DATA", "NO_FORMAL_MEMBERS")
-    if len(members) < 3:
+    if minimum_formal_member_count < 0:
+        raise OwnerSeededV0Error("minimum_formal_member_count must be non-negative")
+    if len(members) < minimum_formal_member_count:
         return _empty_view(view, members, "NOT_EVALUABLE", "MINIMUM_FORMAL_MEMBER_COUNT_NOT_MET")
     ids = tuple(item.member_id for item in members)
     if len(ids) != len(set(ids)):

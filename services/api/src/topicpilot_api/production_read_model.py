@@ -409,10 +409,28 @@ TOPIC_ROWS_SQL = text(
               WHERE successor.supersedes_snapshot_id = topic_snapshots.id
           )
         ORDER BY topic_id, snapshot_date DESC, updated_at DESC
+    ), formal_strength AS (
+        SELECT DISTINCT ON (topic_id, evaluation_date)
+               topic_id, evaluation_date, score, grade, components,
+               evaluation_status, publication_status
+        FROM topicpilot.topic_score_formal_results r
+        WHERE r.publication_mode = 'FORMAL'
+          AND r.contract_version = 'topic-strength-lifecycle.formal.v1'
+          AND NOT EXISTS (
+              SELECT 1 FROM topicpilot.topic_score_formal_results successor
+              WHERE successor.supersedes_decision_id = r.id
+          )
+        ORDER BY r.topic_id, r.evaluation_date, r.decision_revision DESC,
+                 r.published_at DESC NULLS LAST
     )
     SELECT t.id AS topic_id, t.slug, t.name, t.description, t.status, t.display_metadata,
-           parent.name AS parent_name, latest.snapshot_date, latest.market_grade,
-           latest.topic_score, latest.topic_direction, latest.stock_count,
+           parent.name AS parent_name, latest.snapshot_date,
+           COALESCE(formal_strength.grade, latest.market_grade) AS market_grade,
+           COALESCE(formal_strength.score, latest.topic_score) AS topic_score,
+           formal_strength.components AS formal_strength_components,
+           formal_strength.evaluation_status AS formal_strength_status,
+           formal_strength.publication_status AS formal_strength_publication_status,
+           latest.topic_direction, latest.stock_count,
            latest.observed_stock_count, latest.coverage_pct, latest.data_status,
            latest.score_status, latest.publication_mode, latest.membership_mode,
            latest.publication_state, latest.trading_day_state, latest.freshness_state,
@@ -436,6 +454,9 @@ TOPIC_ROWS_SQL = text(
         LIMIT 1
     ) parent ON true
     JOIN latest ON latest.topic_id = t.id
+    LEFT JOIN formal_strength
+      ON formal_strength.topic_id = latest.topic_id
+     AND formal_strength.evaluation_date = latest.snapshot_date
     WHERE t.status NOT IN ('DISABLED', 'RETIRED')
       AND (CAST(:slug AS text) IS NULL OR t.slug = CAST(:slug AS text))
     ORDER BY t.slug
@@ -868,6 +889,47 @@ def _topic_read_item(
     }
 
 
+def _strength_read(session: Session, topic_row: Any, observation_dir: str | None) -> dict[str, Any]:
+    """Expose persisted formal Strength while retaining the diagnostic lane."""
+
+    result = build_topic_strength_lifecycle_read(topic_row["slug"], observation_dir)
+    components = topic_row.get("formal_strength_components")
+    if not isinstance(components, dict):
+        return result
+    owner = dict(result.get("ownerSeededV0") or {})
+    absolute = dict(components.get("absolute") or {})
+    relative = dict(components.get("relative") or {})
+    owner.update(
+        {
+            "status": (
+                "AVAILABLE"
+                if topic_row.get("formal_strength_publication_status") == "PUBLISHED"
+                else "UNAVAILABLE"
+            ),
+            "asOfDate": topic_row.get("snapshot_date"),
+            "formalDailyGrade": components.get("formalDailyGrade") or absolute.get("grade"),
+            "absolute": {
+                **absolute,
+                "score": absolute.get("strength", absolute.get("score")),
+                "grade": absolute.get("grade"),
+            },
+            "relative": {
+                **relative,
+                "score": relative.get("strength", relative.get("score")),
+                "grade": relative.get("grade"),
+            },
+            "marketContext": components.get("marketContext"),
+            "derivatives": components.get("derivatives"),
+            "qualityFlags": {
+                **(owner.get("qualityFlags") or {}),
+                **(components.get("qualityFlags") or {}),
+            },
+            "diagnosticOnly": False,
+        }
+    )
+    return {**result, "ownerSeededV0": owner}
+
+
 def _lifecycle_unavailable() -> dict[str, Any]:
     return {
         "currentStage": None,
@@ -1010,7 +1072,7 @@ def read_topics(
             row,
             [],
             _read_lifecycle(session, row["topic_id"]),
-            build_topic_strength_lifecycle_read(row["slug"], observation_dir),
+            _strength_read(session, row, observation_dir),
         )
         for row in rows
     ]
@@ -1041,7 +1103,7 @@ def read_topic(
         row,
         constituents,
         _read_lifecycle(session, row["topic_id"]),
-        build_topic_strength_lifecycle_read(row["slug"], observation_dir),
+        _strength_read(session, row, observation_dir),
     )
 
 

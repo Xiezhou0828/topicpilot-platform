@@ -223,14 +223,15 @@ def test_post_close_finalization_metadata_is_json_safe():
     }
 
 
-def test_post_close_materializes_formal_pit_state_before_shadow_lifecycle():
+def test_post_close_materializes_formal_pit_state_before_formal_publication():
     source = (
         Path(__file__).parents[1] / "src/topicpilot_api/live/post_close.py"
     ).read_text(encoding="utf-8")
 
     assert "materialize_bounded_formal_dates" in source
     assert 'dates=(snapshot_date,)' in source
-    assert "TopicLifecycleEngine(self.session).run_once" in source
+    assert "FormalStrengthPublisher(self.session).run_once" in source
+    assert "FormalLifecyclePublisher(self.session).run_once" in source
     assert 'result["formalTopicDailyState"]' in source
 
 
