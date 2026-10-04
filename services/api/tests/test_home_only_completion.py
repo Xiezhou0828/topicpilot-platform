@@ -1,6 +1,7 @@
 """Synthetic contract tests: never call official endpoints or Production."""
 
 from copy import deepcopy
+from dataclasses import replace
 from datetime import UTC, date, datetime
 from decimal import Decimal
 from hashlib import sha256
@@ -26,7 +27,7 @@ from topicpilot_api.market_data.aggregate_contract import (
     TPEX_DAILY_AGGREGATE_SOURCE,
     TWSE_DAILY_AGGREGATE_SOURCE,
 )
-from topicpilot_api.market_data.index_contract import IndexDataStatus
+from topicpilot_api.market_data.index_contract import IndexDataStatus, fetch_official_market_indexes
 
 NOW = datetime(2026, 10, 4, tzinfo=UTC)
 
@@ -229,7 +230,7 @@ def test_formal_topic_and_non_provider_null_metrics_are_not_inferred_from_zero()
 
 def market_facts():
     indices, aggregates = [], []
-    for market, source in (("TPE", "TWSE"), ("TWO", "TPEX")):
+    for market, source in (("TPE", "TWSE"), ("TWO", "TPEx")):
         endpoint = (
             f"https://www.{source.lower()}.com.tw/"
             if market == "TPE"
@@ -261,6 +262,76 @@ def market_facts():
             )
         )
     return indices, aggregates
+
+
+def parsed_official_index_pair():
+    """Exercise the real adapters with controlled synthetic responses, never HTTP."""
+    import json
+
+    from test_task025_reconstructed_scope import payload
+
+    def transport(url, _timeout):
+        if "afterTrading/MI_INDEX" in url:
+            assert parse_qs(urlsplit(url).query)["date"] == ["20261002"]
+            return json.dumps(payload()).encode()
+        if "MI_5MINS_HIST" in url:
+            return b'{"fixtureClassification":"TEST_ONLY_SYNTHETIC","data":[]}'
+        assert url == "https://www.tpex.org.tw/openapi/v1/tpex_index"
+        return json.dumps(
+            [
+                {
+                    "fixtureClassification": "TEST_ONLY_SYNTHETIC_NOT_MARKET_DATA",
+                    "Date": "20261002",
+                    "Open": "99",
+                    "High": "101",
+                    "Low": "98",
+                    "Close": "100",
+                    "Change": "2",
+                }
+            ]
+        ).encode()
+
+    return fetch_official_market_indexes(
+        target_date=TARGET, retrieved_at=NOW, as_of=NOW, transport=transport
+    )
+
+
+def test_home_completion_accepts_exact_provider_identity_from_real_index_adapters():
+    indices = parsed_official_index_pair()
+    _, aggregates = market_facts()
+    assert [f.source_provider for f in indices] == ["TWSE", "TPEx"]
+    assert all(f.data_status == IndexDataStatus.AVAILABLE for f in indices)
+    assert all(f.trading_date == TARGET and f.response_content_hash for f in indices)
+    assert indices[1].previous_close == Decimal(98)
+    validate_market_facts(indices, aggregates)
+
+
+@pytest.mark.parametrize("provider", ["TPEX", "tpex", "RESEARCH", "SHADOW", "TWSE"])
+def test_home_completion_rejects_noncontract_tpex_provider_identity(provider):
+    indices = parsed_official_index_pair()
+    _, aggregates = market_facts()
+    indices = (indices[0], replace(indices[1], source_provider=provider))
+    with pytest.raises(PostClosePreconditionError, match="HOME_COMPLETION_INDEX_NOT_READY"):
+        validate_market_facts(indices, aggregates)
+
+
+@pytest.mark.parametrize(
+    "field,value",
+    [
+        ("trading_date", date(2026, 10, 1)),
+        ("data_status", IndexDataStatus.UNAVAILABLE),
+        ("source_endpoint", "https://research.example/"),
+        ("response_content_hash", None),
+        ("lineage", None),
+        ("previous_close", Decimal(0)),
+    ],
+)
+def test_real_tpex_adapter_does_not_bypass_date_authority_or_comparator_gate(field, value):
+    indices = parsed_official_index_pair()
+    _, aggregates = market_facts()
+    indices = (indices[0], replace(indices[1], **{field: value}))
+    with pytest.raises(PostClosePreconditionError, match="HOME_COMPLETION_INDEX_NOT_READY"):
+        validate_market_facts(indices, aggregates)
 
 
 @pytest.mark.parametrize(
@@ -308,8 +379,6 @@ def test_taiex_transport_requires_explicit_index_report_type(monkeypatch):
     import json
 
     from test_task025_reconstructed_scope import DAY, NOW, payload
-
-    from topicpilot_api.market_data.index_contract import fetch_official_market_indexes
 
     def transport(url, _timeout):
         if "afterTrading/MI_INDEX" in url:
