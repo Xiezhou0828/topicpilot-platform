@@ -62,6 +62,7 @@ export type TopicLeafState = {
   lineage?: Record<string, unknown>;
   ownerSeededV0?: TopicOwnerSeededV0;
   forwardObservation?: TopicForwardObservation;
+  formalStrength?: TopicFormalStrength | null;
 };
 
 export type TopicOwnerSeededV0 = {
@@ -100,6 +101,23 @@ export type TopicForwardObservation = {
   unavailableReason?: string | null;
 };
 
+export type TopicFormalStrength = {
+  absolute: { score: number | null; grade: string | null };
+  relative: { score: number | null; grade: string | null };
+  asOfDate: string | null;
+  publicationStatus: "FORMAL";
+};
+
+export type TopicHistoryPoint = {
+  date: string;
+  absoluteScore: number | null;
+  absoluteGrade: string | null;
+  relativeScore: number | null;
+  relativeGrade: string | null;
+  lifecycleStage: string | null;
+  lifecycleDay: number | null;
+};
+
 export type TopicSummary = {
   topicId: string;
   slug: string;
@@ -129,6 +147,7 @@ export type TopicSummary = {
   lineage?: Record<string, unknown>;
   ownerSeededV0?: TopicOwnerSeededV0;
   forwardObservation?: TopicForwardObservation;
+  formalStrength?: TopicFormalStrength | null;
 };
 
 export type TopicStatus = {
@@ -223,6 +242,12 @@ type ApiTopicRotation = {
   topicSlug: string;
 };
 
+type ApiFormalSnapshot = {
+  snapshotDate: string;
+  topicScore: number | null;
+  marketGrade: string | null;
+};
+
 type SyntheticRelation = {
   stockCode: string;
   stockName: string;
@@ -259,6 +284,19 @@ function readableState(value: string | null | undefined): string {
 
 function roleFor(value: string | null | undefined): "代表股" | "核心股" | "關聯股" | null {
   return ROLE_LABELS[(value ?? "").trim().toUpperCase()] ?? null;
+}
+
+function formalStrengthFromApi(item: ApiTopicSummary): TopicFormalStrength | null {
+  const value = item.ownerSeededV0;
+  if (!value || value.status !== "AVAILABLE" || value.diagnosticOnly !== false) return null;
+  const numberOrNull = (candidate: unknown): number | null => typeof candidate === "number" && Number.isFinite(candidate) ? candidate : null;
+  const textOrNull = (candidate: unknown): string | null => typeof candidate === "string" && candidate.trim() ? candidate : null;
+  return {
+    absolute: { score: numberOrNull(value.absolute?.score), grade: textOrNull(value.absolute?.grade) },
+    relative: { score: numberOrNull(value.relative?.score), grade: textOrNull(value.relative?.grade) },
+    asOfDate: value.asOfDate ?? null,
+    publicationStatus: "FORMAL",
+  };
 }
 
 function normalizeHierarchy(catalog: TopicCatalogNode): TopicHierarchy {
@@ -322,6 +360,7 @@ function leafStateFromApi(item: ApiTopicSummary): TopicLeafState {
       latestAsOfDate: item.forwardObservation.latestAsOfDate ?? null,
       implementationShas: item.forwardObservation.implementationShas ?? [],
     },
+    formalStrength: formalStrengthFromApi(item),
   };
 }
 
@@ -370,6 +409,7 @@ function summaryFromCatalog(catalog: TopicCatalogNode, state: ApiTopicSummary | 
     lineage: leafState?.lineage,
     ownerSeededV0: leafState?.ownerSeededV0,
     forwardObservation: leafState?.forwardObservation,
+    formalStrength: leafState?.formalStrength ?? null,
   };
 }
 
@@ -682,6 +722,48 @@ export async function fetchTopic(slug: string): Promise<TopicResource<TopicDetai
     source: "api",
     error: stateResult.source === "unavailable" ? stateResult.error : null,
     data: detailFromCatalog(catalogResult.data, stateResult.data ?? null),
+  };
+}
+
+export async function fetchTopicHistory(slug: string, rangeDays: 20 | 60 | 120 = 20): Promise<TopicResource<TopicHistoryPoint[]>> {
+  const base = apiBaseUrl();
+  if (!base) {
+    return {
+      source: topicPreviewEnabled() ? "synthetic-snapshot" : "unavailable",
+      data: null,
+      error: "Preview 不提供正式 Topic 歷史序列；正式 API origin 尚未設定。",
+    };
+  }
+  const to = new Date();
+  const from = new Date(to.getTime() - rangeDays * 24 * 60 * 60 * 1000);
+  const params = new URLSearchParams({
+    from: from.toISOString().slice(0, 10),
+    to: to.toISOString().slice(0, 10),
+    limit: "200",
+    offset: "0",
+  });
+  const result = await request<{ items: ApiFormalSnapshot[] }>(
+    `/api/v2/topic-catalog/${encodeURIComponent(slug)}/snapshots?${params.toString()}`,
+  );
+  if (result.source !== "api" || !result.data) {
+    return { source: "unavailable", data: null, error: result.error ?? "正式 Topic 歷史尚未提供。" };
+  }
+  return {
+    source: "api",
+    data: result.data.items
+      .map((item) => ({
+        date: item.snapshotDate,
+        absoluteScore: item.topicScore,
+        absoluteGrade: item.marketGrade,
+        // The formal snapshot contract has no relative history field. Keep it
+        // unavailable instead of reusing Absolute or reconstructing a proxy.
+        relativeScore: null,
+        relativeGrade: null,
+        lifecycleStage: null,
+        lifecycleDay: null,
+      }))
+      .sort((left, right) => left.date.localeCompare(right.date)),
+    error: null,
   };
 }
 

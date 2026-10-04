@@ -20,8 +20,8 @@ test("Topic List exposes deferred grade and Lifecycle states without deriving th
   const page = await read("components/v2/TopicListPage.tsx");
   assert.match(page, /getTopicPublication/);
   assert.match(page, /data-publication-state=\{disclosure\.state\}/);
-  assert.match(page, /topic\.meta\.laneGrade \?\? <PublicationDisclosure disclosure=\{gradeDisclosure\}/);
-  assert.match(page, /<TopicLifecycle topics=\{overviewTopics\} preview=\{previewMode\} source=\{resource\.source\}/);
+  assert.match(page, /PublicationDisclosure/);
+  assert.match(page, /strengthView/);
   assert.doesNotMatch(page, /<DataState state="AVAILABLE" \/>/);
   assert.doesNotMatch(page, /getTopicOverviewMeta\([^\n]*true\)/);
 });
@@ -29,13 +29,13 @@ test("Topic List exposes deferred grade and Lifecycle states without deriving th
 test("Topic Detail discloses formal identity separately from unavailable domains", async () => {
   const page = await read("components/v2/TopicDetailPage.tsx");
   assert.match(page, /getTopicPublication/);
-  assert.match(page, /publication\.source/);
+  assert.match(page, /sourceLabel\(source\)/);
   assert.match(page, /publication\.grade/);
   assert.match(page, /publication\.summary/);
   assert.match(page, /publication\.events/);
   assert.match(page, /publication\.opportunity/);
   assert.match(page, /function FormalLifecycle/);
-  assert.match(page, /disclosure=\{disclosure\}/);
+  assert.match(page, /disclosure=\{publication\}/);
   assert.doesNotMatch(page, /getTopicOverviewMeta|derive.*lifecycle|calculate.*grade/i);
 });
 

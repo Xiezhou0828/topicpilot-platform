@@ -10,13 +10,10 @@ test("Topic group accordions keep closed cards from stretching in the same grid 
     read("components/v2/TopicListPage.tsx"),
     read("globals.css"),
   ]);
-  assert.match(page, /tp-topic-group-grid/);
-  assert.match(page, /openGroups/);
-  assert.match(page, /tp-topic-group-card \$\{isOpen \? "is-open" : ""\}/);
+  assert.match(page, /tp-topic-v1-parent-nav/);
+  assert.match(page, /selectedParent/);
+  assert.match(page, /tp-topic-v1-parent-nav/);
 
-  const rule = css.match(/\.tp-topic-group-grid\{([^}]*)\}/)?.[1];
-  assert.ok(rule, "Topic group grid rule should remain present");
-  assert.match(css, /\/\* Topic group accordions must size independently within a shared grid row\. \*\//);
-  assert.match(css, /\.tp-topic-group-grid\{align-items:start\}/);
-  assert.doesNotMatch(rule, /align-items:stretch/);
+  assert.match(css, /\.tp-topic-v1-parent-nav\{/);
+  assert.match(css, /grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/);
 });

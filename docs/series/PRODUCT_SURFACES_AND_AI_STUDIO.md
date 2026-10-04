@@ -29,6 +29,21 @@ relation authority.
 - AI may suggest or explain; it may not directly mutate canonical taxonomy,
   relations, product rules, or publication state.
 
+## Latest bounded implementation — Topic Experience V1
+
+The canonical V2 frontend now contains the validated Topic Overview and Topic
+Detail implementation: shared formal Absolute/Relative presentation labels,
+Leaf-only market map, Parent/Leaf exploration, five-stage Lifecycle display,
+structured Topic Knowledge, formal snapshot history, exact relation-member
+columns, Stock Detail links, and folded publication/lineage diagnostics. The
+browser remains a presentation layer; backend read models own Strength, Grade,
+Lifecycle, membership, roles, and publication authority.
+
+The implementation and validation evidence are recorded in
+[TASK-FE-TOPIC-EXPERIENCE-V1 canonical closure](../reports/TASK-FE-TOPIC-EXPERIENCE-V1-CANONICAL-CLOSURE.md).
+That report explicitly leaves Production unchanged; it is not a deployment
+authorization.
+
 ## Canonical authority
 
 - [Product roadmap](../product/TOPICPILOT_PRODUCT_ROADMAP.md)

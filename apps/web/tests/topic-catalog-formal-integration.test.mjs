@@ -23,15 +23,15 @@ test("Topic Catalog owns identity and all-catalog UI is explicitly Leaf-only", a
   assert.match(source, /\/api\/v2\/topics\?limit=500&offset=0/);
   assert.match(source, /summaryFromCatalog/);
   assert.match(page, /useState<GradeFilter>\("全部"\)/);
-  assert.match(page, /全部題材（Leaf 題材）/);
+  assert.match(page, /探索題材/);
   assert.match(page, /filter\(isLeafTopic\)/);
-  assert.match(page, /parent\.hierarchy\.children/);
+  assert.match(page, /topic\.hierarchy\.parents/);
   assert.match(page, /overviewTopics\.length/);
 });
 
 test("formal topic detail does not render synthetic research sections", async () => {
   const page = await read("components/v2/TopicDetailPage.tsx");
-  assert.match(page, /resource\?\.source === "synthetic-snapshot"/);
-  assert.match(page, /Production 不以 Preview 內容覆蓋正式題材 identity/);
-  assert.match(page, /resource\.source === "api" \? "資料日期待補" : "Preview"/);
+  assert.match(page, /source === "synthetic-snapshot"/);
+  assert.match(page, /Preview 不提供正式歷史序列/);
+  assert.match(page, /resource\?\.source === "unavailable"/);
 });

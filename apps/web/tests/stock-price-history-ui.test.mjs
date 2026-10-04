@@ -49,8 +49,8 @@ test("history is mounted additively in the shared Drawer and protects existing s
   assert.match(drawer, /isPreview=\{displayStock\.isPreview === true\}/);
   assert.match(drawer, /presentation/);
   assert.match(drawer, /FavoriteStar/);
-  assert.match(topic, /StockEncyclopediaDrawer/);
-  assert.match(topic, /presentation="inline"/);
+  assert.match(topic, /href=\{`\/stocks\/\$\{member\.code\}`\}/);
+  assert.match(topic, /正式成分與關聯股票/);
   for (const className of ["tp-stock-encyclopedia-drawer--push", "tp-stock-encyclopedia-drawer--inline", "tp-stock-history-table"]) {
     assert.match(css, new RegExp(className.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
   }

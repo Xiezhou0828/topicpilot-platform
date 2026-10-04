@@ -15,16 +15,17 @@ test("frontend freezes the Owner five-stage order and availability boundary", as
 });
 
 test("formal frontend mapping uses backend enums and does not promote legacy aliases", async () => {
-  const [contract, overview, detail] = await Promise.all([
+  const [contract, overview, detail, presentation] = await Promise.all([
     read("lib/topic-lifecycle-contract.ts"),
     read("components/v2/TopicListPage.tsx"),
     read("components/v2/TopicDetailPage.tsx"),
+    read("lib/topic-presentation.ts"),
   ]);
   assert.match(contract, /ownerStageFromBackend/);
-  assert.match(overview, /return ownerStageFromBackend\(stage\)/);
-  assert.match(detail, /return ownerStageFromBackend\(stage\)/);
-  assert.doesNotMatch(overview, /MATURE:\s*"高檔整理"/);
-  assert.doesNotMatch(detail, /DECLINING:\s*"退潮"/);
+  assert.match(overview, /lifecycleStageForOverview/);
+  assert.match(detail, /lifecycleStageForDetail/);
+  assert.match(presentation, /case "MATURE": return "成熟"/);
+  assert.match(presentation, /if \(stage === "BASE"\) return "尚未形成"/);
 });
 
 test("generated API declaration carries the lifecycle availability and lineage additions", async () => {

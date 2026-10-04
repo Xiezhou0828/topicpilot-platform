@@ -30,22 +30,22 @@ test("list surfaces use canonical parents and exclude parents from market lanes"
   const page = await read("components/v2/TopicListPage.tsx");
   assert.match(page, /function isLeafTopic/);
   assert.match(page, /filter\(isLeafTopic\)/);
-  assert.match(page, /topic\.hierarchy\.parents\.length/);
-  assert.match(page, /parent\.hierarchy\.children/);
-  assert.match(page, /全部題材（Leaf 題材）/);
+  assert.match(page, /topic\.hierarchy\.parents/);
+  assert.match(page, /const parents = useMemo/);
+  assert.match(page, /探索題材/);
   assert.match(page, /Leaf 題材/);
-  assert.match(page, /Parent Topic/);
+  assert.match(page, /Parent Topic 作為瀏覽入口/);
 });
 
 test("detail surfaces preserve Parent NOT_APPLICABLE and Leaf formal state boundaries", async () => {
   const page = await read("components/v2/TopicDetailPage.tsx");
-  assert.match(page, /function TopicHierarchySection/);
-  assert.match(page, /function ParentTopicState/);
+  assert.match(page, /function Hero/);
+  assert.match(page, /function TodayJudgementSection/);
   assert.match(page, /Snapshot NOT_APPLICABLE/);
   assert.match(page, /topic\.kind === "PARENT"/);
   assert.match(page, /topic\.lifecycle &&/);
   assert.match(page, /正式成分與關聯股票/);
-  assert.match(page, /不以名稱或 groupName 推導關係/);
+  assert.match(page, /canonical children/);
 });
 
 test("formal frontend remains fail closed and does not infer hierarchy from groupName", async () => {

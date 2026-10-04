@@ -11,21 +11,20 @@ test("topic catalog consumes backend lifecycle stages and keeps non-stage states
     read("components/v2/TopicListPage.tsx"),
   ]);
   assert.match(api, /lifecycle\?: TopicLifecycle/);
-  assert.match(page, /lifecycleStageAvailable/);
-  assert.match(page, /lifecycleForTopic\(topic, preview\)/);
-  assert.match(page, /formalLifecycleStage/);
-  assert.match(page, /lifecycleStatusLabel/);
-  assert.match(page, /data-lifecycle-status/);
+  assert.match(page, /lifecycleStageForOverview/);
+  assert.match(page, /lifecycleForTopic\(topic\)/);
+  assert.match(page, /OverviewLifecycleStage/);
+  assert.match(page, /currentStageTradingDays/);
 });
 
 test("topic detail displays backend lifecycle/shadow data and has explicit pending states", async () => {
   const page = await read("components/v2/TopicDetailPage.tsx");
   assert.match(page, /function FormalLifecycle/);
-  assert.match(page, /lifecycleStageAvailable/);
+  assert.match(page, /lifecycleStageForDetail/);
   assert.match(page, /dataStatus/);
-  assert.match(page, /StrengthEvidenceSection/);
+  assert.match(page, /OwnerSeededV0Section/);
   assert.match(page, /leader_change_pct/);
   assert.match(page, /<EmptyState title=/);
-  assert.match(page, /canonical backend Lifecycle read model/);
+  assert.match(page, /Formal lifecycle read model/);
   assert.match(page, /publication\.lifecycle/);
 });
