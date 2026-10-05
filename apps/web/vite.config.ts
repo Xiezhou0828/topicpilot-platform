@@ -2,6 +2,7 @@ import vinext from "vinext";
 import { defineConfig } from "vite";
 import hostingConfig from "./.openai/hosting.json" with { type: "json" };
 import { sites } from "./build/sites-vite-plugin.ts";
+import { createReadOnlyPreviewProxy } from "./preview_proxy.mjs";
 
 const SITE_CREATOR_PLACEHOLDER_DATABASE_ID =
   "00000000-0000-4000-8000-000000000000";
@@ -10,6 +11,20 @@ const { d1, r2 } = hostingConfig;
 
 // macOS Seatbelt blocks FSEvents, so Codex previews need polling for HMR.
 const isCodexSeatbeltSandbox = process.env.CODEX_SANDBOX === "seatbelt";
+const previewReadApiOrigin = process.env.TOPICPILOT_PREVIEW_READ_API_ORIGIN?.trim();
+const readOnlyPreviewProxy = previewReadApiOrigin
+  ? createReadOnlyPreviewProxy(previewReadApiOrigin)
+  : null;
+
+const localServerConfig = {
+  ...(isCodexSeatbeltSandbox ? { watch: { useFsEvents: false, usePolling: true } } : {}),
+  ...(readOnlyPreviewProxy
+    ? {
+        host: "127.0.0.1",
+        proxy: readOnlyPreviewProxy.proxy,
+      }
+    : {}),
+};
 
 const localBindingConfig = {
   main: "./worker/index.ts",
@@ -44,12 +59,11 @@ export default defineConfig(async () => {
   const { cloudflare } = await import("@cloudflare/vite-plugin");
 
   return {
-    server: isCodexSeatbeltSandbox
-      ? { watch: { useFsEvents: false, usePolling: true } }
-      : undefined,
+    server: Object.keys(localServerConfig).length > 0 ? localServerConfig : undefined,
     plugins: [
       vinext(),
       sites(),
+      ...(readOnlyPreviewProxy ? [readOnlyPreviewProxy.plugin] : []),
       cloudflare({
         viteEnvironment: { name: "rsc", childEnvironments: ["ssr"] },
         config: localBindingConfig,
