@@ -7,6 +7,7 @@
     "node": ">=22.13.0"
   },
   "scripts": {
+    "preview:review": "node infra/scripts/preview_review.mjs",
     "web:install": "npm ci --prefix apps/web",
     "web:dev": "npm run dev --prefix apps/web",
     "web:lint": "npm run lint --prefix apps/web",
