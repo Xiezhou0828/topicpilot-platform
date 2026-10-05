@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import UTC, date, datetime
-from collections.abc import Callable
 from typing import Any
 
 from sqlalchemy.orm import Session
