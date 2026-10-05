@@ -300,6 +300,45 @@ read path. This changes the data-access layer only; the original TopicPilot
 routes, navigation, styling, favorites, guide, and AI Studio remain the public
 frontend.
 
+## Non-Production Preview lane
+
+The current Sites project is the public Production surface. Its current live
+URL must not be repurposed as Preview, and the current project has no separately
+observed hosted Preview URL. The canonical `web-artifact-verification.yml`
+workflow verifies the `main` artifact only; it is not a Preview authority.
+
+The bounded v1 Preview lane is the manual GitHub Actions workflow
+`Non-Production Web Preview`:
+
+1. An operator supplies `candidate_ref` as a branch, tag, or exact commit SHA.
+2. The workflow resolves and records the exact checked-out SHA, runs the locked
+   frontend checks, and builds the candidate Web artifact.
+3. The result is uploaded as an immutable GitHub Actions artifact named with
+   the candidate SHA and run id, with a 14-day retention window. The artifact
+   includes `client/__preview.json` and `preview-reference.txt`; it is a
+   reference for review, not a hosted public URL.
+4. No Sites, Render, database, or Production promotion step is present.
+
+The default data mode is the checked-in synthetic snapshot, enabled only when
+both explicit Preview flags are set. An optional `api_base_url` must be an
+exact HTTPS origin and is treated as read-only. The frontend AI Studio
+orchestration URL is blank in this workflow, and the API contract remains
+GET-only with no write authority. A real Preview host may use a staging API
+only after that API and its disposable database are separately provisioned.
+
+Production CORS is not changed by this lane. If an isolated Preview host later
+needs a Production API origin, an Owner-approved exact-origin allowlist change
+is required; wildcard origins and credentialed browser access remain
+disallowed. UI-only review is therefore the safe default, while a full-stack
+Preview is a separate authorization and infrastructure decision.
+
+Product review of a Preview artifact must cover Topic Overview, Topic Detail,
+Strength, A/B/D, lifecycle variation, long names, empty/unavailable/loading/
+error states, drawer/navigation/mobile behavior, Taiwan red/green semantics,
+and the absence of engineering leakage or fabricated ranking claims. Approval
+of an artifact does not authorize Production publication: canonicalization,
+rebuild, verification, and the Production Sites handoff remain separate gates.
+
 ## CORS and browser verification
 
 After both surfaces are deployed:

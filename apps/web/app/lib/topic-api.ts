@@ -274,7 +274,7 @@ function apiBaseUrl(): string | null {
 }
 
 function topicPreviewEnabled(): boolean {
-  return process.env.NODE_ENV === "development"
+  return (process.env.NODE_ENV === "development" || process.env.NEXT_PUBLIC_PREVIEW_MODE === "true")
     && process.env.NEXT_PUBLIC_ENABLE_TOPIC_PREVIEW === "true";
 }
 
