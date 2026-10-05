@@ -136,7 +136,17 @@ class LiveScheduler:
                                 reasonCodes=list(getattr(result, "reason_codes", ())),
                                 executionMode="SCHEDULED",
                             )
-                            if result is None or run_status in {None, "SUCCESS", "MARKET_CLOSED"}:
+                            # The scheduler owns wake-up timing only.  A
+                            # terminal receipt owns the business outcome, so
+                            # deadline and closed-failure states must stop the
+                            # ordinary same-day retry loop as well.
+                            if result is None or run_status in {
+                                None,
+                                "SUCCESS",
+                                "MARKET_CLOSED",
+                                "DEADLINE_EXCEEDED",
+                                "FAILED_CLOSED",
+                            }:
                                 self._refresh_tracking()
                                 completed_post_close_date = local_date
                             else:

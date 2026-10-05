@@ -13,6 +13,17 @@ from topicpilot_api.provider_preflight import load_g2_preflight_context
 
 from .config import LiveRuntimeConfig
 from .post_close import PostCloseRunResult, PostCloseUpdater
+from .receipt import (
+    RECEIPT_COMPLETE,
+    RECEIPT_CORRECTION_COMPLETE,
+    RECEIPT_DEADLINE_EXCEEDED,
+    RECEIPT_FAILED_CLOSED,
+    RECEIPT_MARKET_CLOSED,
+    RECEIPT_WAITING_FOR_DATA,
+    append_operational_receipt,
+    hard_deadline_at,
+    read_latest_receipt,
+)
 
 
 @dataclass(frozen=True)
@@ -91,6 +102,113 @@ class DailyForwardRunner:
                 return candidate
         return None
 
+    def _latest_receipt(self, target_date: date) -> Any | None:
+        if self.session is None:
+            return None
+        return read_latest_receipt(self.session, target_date)
+
+    def _terminal_receipt_result(
+        self,
+        *,
+        target_date: date,
+        next_session: date | None,
+        replay: bool,
+        fallback: PostCloseRunResult | None = None,
+    ) -> DailyForwardRunResult | None:
+        receipt = self._latest_receipt(target_date)
+        if receipt is None:
+            return None
+        status = receipt.receipt_status
+        mapped = {
+            RECEIPT_COMPLETE: "SUCCESS",
+            RECEIPT_CORRECTION_COMPLETE: "SUCCESS",
+            RECEIPT_MARKET_CLOSED: "MARKET_CLOSED",
+            RECEIPT_WAITING_FOR_DATA: "WAITING_FOR_DATA",
+            RECEIPT_FAILED_CLOSED: "FAILED_CLOSED",
+            RECEIPT_DEADLINE_EXCEEDED: "DEADLINE_EXCEEDED",
+        }.get(status)
+        if mapped is None:
+            return None
+        if mapped == "WAITING_FOR_DATA" and fallback is None:
+            return None
+        return DailyForwardRunResult(
+            mapped,
+            target_date,
+            next_session,
+            tuple(
+                dict.fromkeys(
+                    [
+                        *(fallback.failure_codes if fallback is not None else ()),
+                        *(
+                            [receipt.reason_code]
+                            if receipt.reason_code is not None
+                            else []
+                        ),
+                    ]
+                )
+            ),
+            post_close=fallback,
+            replay=replay,
+        )
+
+    def _deadline_result(
+        self,
+        *,
+        target_date: date,
+        next_session: date | None,
+        now: datetime,
+    ) -> DailyForwardRunResult:
+        if self.session is not None:
+            append_operational_receipt(
+                self.session,
+                trading_date=target_date,
+                config=self.config,
+                execution_key=(
+                    f"post-close-deadline:{self.config.reference_data_version}:"
+                    f"{self.config.calendar_code}:{target_date.isoformat()}"
+                ),
+                receipt_status=RECEIPT_DEADLINE_EXCEEDED,
+                reason_code="HARD_DEADLINE_EXCEEDED",
+                now=now,
+                calendar_decision={
+                    "authority": "G2_REFERENCE_CALENDAR",
+                    "calendarCode": self.config.calendar_code,
+                    "referenceDataVersion": self.config.reference_data_version,
+                    "targetDate": target_date.isoformat(),
+                },
+            )
+        return DailyForwardRunResult(
+            "DEADLINE_EXCEEDED",
+            target_date,
+            next_session,
+            ("HARD_DEADLINE_EXCEEDED",),
+        )
+
+    def _map_post_close_result(
+        self,
+        result: PostCloseRunResult,
+        *,
+        target_date: date,
+        next_session: date | None,
+        replay: bool,
+    ) -> DailyForwardRunResult:
+        receipt_result = self._terminal_receipt_result(
+            target_date=target_date,
+            next_session=next_session,
+            replay=replay,
+            fallback=result,
+        )
+        if receipt_result is not None and receipt_result.status != "WAITING_FOR_DATA":
+            return receipt_result
+        return DailyForwardRunResult(
+            result.status,
+            target_date,
+            next_session,
+            result.failure_codes,
+            post_close=result,
+            replay=replay,
+        )
+
     def _latest_closed_session(self, now: datetime) -> tuple[date | None, tuple[str, ...]]:
         local_now = now.astimezone(self.updater.session_clock.timezone)
         close_time = time.fromisoformat(self.config.session_close)
@@ -120,14 +238,21 @@ class DailyForwardRunner:
         now = self._now()
         local_date = now.astimezone(self.updater.session_clock.timezone).date()
         if run_date is None:
-            target_date, resolution_reasons = self._latest_closed_session(now)
-            if target_date is None:
-                return DailyForwardRunResult(
-                    "BLOCKED",
-                    None,
-                    None,
-                    resolution_reasons,
-                )
+            if execution_mode == "SCHEDULED":
+                # The scheduler owns wake-up timing only.  The current local
+                # date is passed to G2 so a canonical holiday becomes a
+                # successful MARKET_CLOSED no-op rather than silently running
+                # the prior session.
+                target_date, resolution_reasons = local_date, ()
+            else:
+                target_date, resolution_reasons = self._latest_closed_session(now)
+                if target_date is None:
+                    return DailyForwardRunResult(
+                        "BLOCKED",
+                        None,
+                        None,
+                        resolution_reasons,
+                    )
         else:
             target_date = run_date
         is_replay = replay or (run_date is not None and target_date != local_date)
@@ -165,14 +290,22 @@ class DailyForwardRunner:
                 run_date=target_date,
                 execution_mode=execution_mode,
             )
-            return DailyForwardRunResult(
-                result.status,
-                target_date,
-                next_session,
-                result.failure_codes or (context.target_date_reason or "NON_TRADING_DAY",),
-                post_close=result,
+            mapped = self._map_post_close_result(
+                result,
+                target_date=target_date,
+                next_session=next_session,
                 replay=is_replay,
             )
+            if not mapped.reason_codes:
+                return DailyForwardRunResult(
+                    mapped.status,
+                    mapped.target_date,
+                    mapped.next_session_date,
+                    (context.target_date_reason or "NON_TRADING_DAY",),
+                    post_close=mapped.post_close,
+                    replay=mapped.replay,
+                )
+            return mapped
 
         local_time = now.astimezone(self.updater.session_clock.timezone).time()
         post_close_start = time.fromisoformat(self.config.post_close_start)
@@ -184,16 +317,33 @@ class DailyForwardRunner:
                 ("POST_CLOSE_WINDOW_NOT_REACHED",),
             )
 
+        if not is_replay:
+            existing = self._terminal_receipt_result(
+                target_date=target_date,
+                next_session=next_session,
+                replay=False,
+            )
+            if existing is not None and existing.status != "WAITING_FOR_DATA":
+                return existing
+            if self.session is not None and now.astimezone(
+                self.updater.session_clock.timezone
+            ) >= hard_deadline_at(
+                target_date, self.config
+            ):
+                return self._deadline_result(
+                    target_date=target_date,
+                    next_session=next_session,
+                    now=now,
+                )
+
         result = self.updater.run_once(
             run_date=target_date,
             execution_mode=execution_mode,
         )
-        return DailyForwardRunResult(
-            result.status,
-            target_date,
-            next_session,
-            result.failure_codes,
-            post_close=result,
+        return self._map_post_close_result(
+            result,
+            target_date=target_date,
+            next_session=next_session,
             replay=is_replay,
         )
 

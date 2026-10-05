@@ -317,3 +317,35 @@ def test_scheduler_keeps_running_after_post_close_finalization_failure():
     scheduler.run_forever(TimelineEvent())
 
     assert calls == ["POST_CLOSE"]
+
+
+def test_scheduler_stops_same_day_retry_after_terminal_receipt_failure():
+    class Collector:
+        repository = object()
+
+    class Result:
+        status = "DEADLINE_EXCEEDED"
+        target_date = date(2026, 8, 10)
+        reason_codes = ("HARD_DEADLINE_EXCEEDED",)
+
+    class TimelineEvent:
+        def __init__(self):
+            self.cycles = 0
+
+        def is_set(self):
+            return self.cycles >= 2
+
+        def wait(self, _seconds):
+            self.cycles += 1
+
+    calls = []
+    scheduler = LiveScheduler(
+        Collector(),
+        _config(),
+        clock=lambda: datetime(2026, 8, 10, 6, 0, tzinfo=UTC),
+        post_close_runner=lambda: calls.append("POST_CLOSE") or Result(),
+    )
+
+    scheduler.run_forever(TimelineEvent())
+
+    assert calls == ["POST_CLOSE"]

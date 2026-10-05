@@ -52,6 +52,8 @@ class LiveRuntimeConfig:
     session_open: str = "09:00"
     session_close: str = "13:30"
     post_close_start: str = "13:45"
+    soft_target: str = "14:30"
+    hard_deadline: str = "15:00"
     moving_average_period: int = 60
     reference_data_version: str = "tw-reference-v1"
     session_code: str = "REGULAR"
@@ -155,6 +157,8 @@ class LiveRuntimeConfig:
             "session_open",
             "session_close",
             "post_close_start",
+            "soft_target",
+            "hard_deadline",
             "reference_data_version",
             "session_code",
             "calendar_code",
@@ -169,11 +173,15 @@ class LiveRuntimeConfig:
         try:
             open_time = time.fromisoformat(self.session_open)
             close_time = time.fromisoformat(self.session_close)
-            time.fromisoformat(self.post_close_start)
+            post_close_start = time.fromisoformat(self.post_close_start)
+            soft_target = time.fromisoformat(self.soft_target)
+            hard_deadline = time.fromisoformat(self.hard_deadline)
         except ValueError as exc:
             raise ValueError("session times must be valid ISO times") from exc
         if open_time >= close_time:
             raise ValueError("session_open must precede session_close")
+        if not post_close_start <= soft_target <= hard_deadline:
+            raise ValueError("post_close_start must be <= soft_target <= hard_deadline")
         # The daily automation may be scheduled after midnight to process the
         # latest session whose canonical close has already elapsed.
 
@@ -190,6 +198,8 @@ class LiveRuntimeConfig:
             session_open=os.getenv("TOPICPILOT_LIVE_SESSION_OPEN", "09:00").strip(),
             session_close=os.getenv("TOPICPILOT_LIVE_SESSION_CLOSE", "13:30").strip(),
             post_close_start=os.getenv("TOPICPILOT_LIVE_POST_CLOSE_START", "13:45").strip(),
+            soft_target=os.getenv("TOPICPILOT_LIVE_SOFT_TARGET", "14:30").strip(),
+            hard_deadline=os.getenv("TOPICPILOT_LIVE_HARD_DEADLINE", "15:00").strip(),
             moving_average_period=_int("TOPICPILOT_LIVE_60MA_PERIOD", 60, minimum=1),
             reference_data_version=os.getenv(
                 "TOPICPILOT_LIVE_REFERENCE_DATA_VERSION", "tw-reference-v1"
@@ -300,6 +310,8 @@ class LiveRuntimeConfig:
             "sessionOpen": self.session_open,
             "sessionClose": self.session_close,
             "postCloseStart": self.post_close_start,
+            "softTarget": self.soft_target,
+            "hardDeadline": self.hard_deadline,
             "movingAveragePeriod": self.moving_average_period,
             "referenceDataVersion": self.reference_data_version,
             "sessionCode": self.session_code,

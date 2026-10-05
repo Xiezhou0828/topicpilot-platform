@@ -165,7 +165,88 @@ class LiveCollectorAttempt(Base, IdentityMixin, CreatedAtMixin):
     payload_hash: Mapped[str | None] = mapped_column(String(128))
 
 
+class DailyFormalPublicationReceipt(Base, IdentityMixin, CreatedAtMixin):
+    """Append-only semantic receipt for one daily formal publication state.
+
+    A new row is written for every durable state observation.  The execution
+    key and receipt hash make the same observation idempotent without allowing
+    a later correction to overwrite the original authority.
+    """
+
+    __tablename__ = "daily_formal_publication_receipts"
+    __table_args__ = (
+        CheckConstraint(
+            "receipt_status IN ("
+            "'COMPLETE', 'MARKET_CLOSED', 'WAITING_FOR_DATA', 'FAILED_CLOSED', "
+            "'DEADLINE_EXCEEDED', 'CORRECTION_COMPLETE', 'CORRECTION_FAILED'"
+            ")",
+            name="ck_daily_formal_publication_receipts_status",
+        ),
+        CheckConstraint(
+            "execution_generation >= 1 AND receipt_revision >= 1",
+            name="ck_daily_formal_publication_receipts_sequence",
+        ),
+        UniqueConstraint(
+            "execution_key",
+            "receipt_hash",
+            name="uq_daily_formal_publication_receipts_observation",
+        ),
+        Index(
+            "ix_daily_formal_publication_receipts_date_revision",
+            "trading_date",
+            "receipt_revision",
+            "created_at",
+        ),
+        Index(
+            "ix_daily_formal_publication_receipts_run",
+            "source_run_id",
+            "created_at",
+        ),
+    )
+
+    trading_date: Mapped[date] = mapped_column(nullable=False)
+    calendar_code: Mapped[str] = mapped_column(String(64), nullable=False)
+    reference_data_version: Mapped[str] = mapped_column(String(128), nullable=False)
+    calendar_decision: Mapped[dict[str, Any]] = mapped_column(JSONB, nullable=False)
+    execution_key: Mapped[str] = mapped_column(String(320), nullable=False)
+    execution_scope: Mapped[str] = mapped_column(String(64), nullable=False)
+    execution_generation: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    receipt_revision: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    source_run_id: Mapped[UUID | None] = mapped_column(
+        ForeignKey("topicpilot.live_collector_runs.id", ondelete="RESTRICT")
+    )
+    source_run_status: Mapped[str | None] = mapped_column(String(32))
+    started_at: Mapped[datetime | None] = mapped_column()
+    readiness_at: Mapped[datetime | None] = mapped_column()
+    publication_at: Mapped[datetime | None] = mapped_column()
+    completed_at: Mapped[datetime | None] = mapped_column()
+    post_close_state: Mapped[str] = mapped_column(String(64), nullable=False)
+    reconciliation_state: Mapped[str] = mapped_column(String(64), nullable=False)
+    absolute_strength_state: Mapped[str] = mapped_column(String(64), nullable=False)
+    relative_strength_state: Mapped[str] = mapped_column(String(64), nullable=False)
+    formal_grade_state: Mapped[str] = mapped_column(String(64), nullable=False)
+    lifecycle_state: Mapped[str] = mapped_column(String(64), nullable=False)
+    home_state: Mapped[str] = mapped_column(String(64), nullable=False)
+    formal_readback_state: Mapped[str] = mapped_column(String(64), nullable=False)
+    receipt_status: Mapped[str] = mapped_column(String(32), nullable=False)
+    failure_stage: Mapped[str | None] = mapped_column(String(128))
+    reason_code: Mapped[str | None] = mapped_column(String(128))
+    receipt_hash: Mapped[str] = mapped_column(String(128), nullable=False)
+    runtime_provenance: Mapped[dict[str, Any]] = mapped_column(JSONB, nullable=False)
+    formal_identifiers: Mapped[dict[str, Any]] = mapped_column(JSONB, nullable=False)
+    correction_lineage: Mapped[dict[str, Any]] = mapped_column(JSONB, nullable=False)
+    supersedes_receipt_id: Mapped[UUID | None] = mapped_column(
+        ForeignKey(
+            "topicpilot.daily_formal_publication_receipts.id",
+            ondelete="RESTRICT",
+        )
+    )
+    operational_events: Mapped[list[dict[str, Any]]] = mapped_column(JSONB, nullable=False)
+    payload: Mapped[dict[str, Any]] = mapped_column(JSONB, nullable=False)
+
+
 __all__ = [
+    "DailyFormalPublicationReceipt",
     "LiveCollectorAttempt",
     "LiveCollectorCheckpoint",
     "LiveCollectorRun",
