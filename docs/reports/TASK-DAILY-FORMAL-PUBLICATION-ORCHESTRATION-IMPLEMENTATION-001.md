@@ -6,7 +6,8 @@
 |---|---|
 | Task | `TASK-DAILY-FORMAL-PUBLICATION-ORCHESTRATION-IMPLEMENTATION-001` |
 | Repository | `Xiezhou0828/topicpilot-platform` |
-| Canonical source base | `a687c748e1b7d512449b69884626c58ac7d86d12` |
+| Canonical source base for implementation | `8894138fc930b4512541cacd5214162cd66b4c8f` |
+| Forensic baseline ancestor | `a687c748e1b7d512449b69884626c58ac7d86d12` |
 | Candidate implementation commit | `9a97feb98ff6405874747030412b93bc5df519e9` |
 | Canonical branch | `main` source baseline; local candidate branch retained, not pushed |
 | Migration head | `0049_task_daily_formal_publication_receipt` |
@@ -99,7 +100,8 @@ Remaining activation gaps are external-state gaps: apply migration `0049` in the
 
 ```text
 TASK_ID=TASK-DAILY-FORMAL-PUBLICATION-ORCHESTRATION-IMPLEMENTATION-001
-CANONICAL_BASE=a687c748e1b7d512449b69884626c58ac7d86d12
+CANONICAL_BASE=8894138fc930b4512541cacd5214162cd66b4c8f
+FORENSIC_BASE=a687c748e1b7d512449b69884626c58ac7d86d12
 IMPLEMENTATION_HEAD=9a97feb98ff6405874747030412b93bc5df519e9
 MIGRATION_HEAD=0049_task_daily_formal_publication_receipt
 FILES_CHANGED=14 implementation paths plus 1 handoff report; prior forensic report preserved as a separate commit
