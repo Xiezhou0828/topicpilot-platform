@@ -2,6 +2,8 @@
 
 ## Status
 
+`TASK=TASK-PREVIEW-STAGING-RELEASE-LANE-001`
+
 `TASK_STATUS=READY_FOR_OWNER_AUTHORIZATION`
 
 `TASK_TYPE=implementation`
@@ -13,6 +15,20 @@
 `TASK_COMPLETE=NO`
 
 `FOLLOW_UP_REQUIRED=YES`
+
+`PREVIEW_LANE_CURRENT_READINESS=PARTIAL`
+
+`CANONICAL_BRANCH=main`
+
+`CANONICAL_HEAD=a687c748e1b7d512449b69884626c58ac7d86d12`
+
+`ORIGIN_MAIN=a687c748e1b7d512449b69884626c58ac7d86d12`
+
+`WORKTREE=C:/Users/acer/Desktop/題材領航/task-021-checkpoint-lifecycle`
+
+`CURRENT_BRANCH=codex/task-preview-staging-release-lane-001`
+
+`ALEMBIC_HEAD=0048_task_checkpoint_provider_metric_applicability`
 
 The bounded non-Production implementation is present and locally validated on
 the task branch. No push, merge, hosted Preview publication, CORS mutation,
@@ -41,6 +57,15 @@ Production mutation, or Production promotion was authorized or performed.
 The existing `web-artifact-verification.yml` is a canonical-main verification
 workflow. The existing manual release workflow and Sites publishing flow are
 Production authorities. Neither was changed or invoked for this task.
+
+## Current authority map
+
+| Field | Authority |
+| --- | --- |
+| `CURRENT_WEB_BUILD_AUTHORITY` | Existing manual `deploy.yml` `package_web` path for Production; additive `preview-web.yml` for candidate Preview builds |
+| `CURRENT_ARTIFACT_AUTHORITY` | `infra/scripts/web_deployment_provenance.mjs` for canonical-main artifacts; `infra/scripts/preview_provenance.mjs` for Preview records |
+| `CURRENT_SITES_VERSION_AUTHORITY` | Sites project `appgprj_6a6ce02bd75c81919ab3678ebf013c53`, saved version history, current live version 73 |
+| `CURRENT_PRODUCTION_PROMOTION_AUTHORITY` | Protected Production jobs in `deploy.yml` plus the Sites publishing flow; not invoked |
 
 ## Selected architecture
 
@@ -123,6 +148,24 @@ The local validation record is complete:
 This report remains `VALIDATED`, not `CANONICALIZED`, until the Owner
 authorizes integration.
 
+## Required final handoff fields
+
+`TESTS=PASS — Preview provenance 8/8; focused frontend boundary 7/7; full
+frontend suite 206/206`
+
+`BUILD=PASS — Preview build completed and emitted the candidate artifact`
+
+`VALIDATION=PASS — exact candidate SHA, artifact provenance, snapshot,
+TypeScript, lint (0 errors), and clean diff verification`
+
+`OWNER_PRODUCT_REVIEW=DOCUMENTED_CHECKLIST_NOT_YET_APPROVED`
+
+`PREVIEW_TRIGGER=workflow_dispatch(candidate_ref, optional api_base_url)`
+
+`PREVIEW_URL_OR_REFERENCE=GitHub Actions artifact topicpilot-preview-<sha>-<run_id>; no hosted URL safely created`
+
+`REPORT=docs/reports/TASK-PREVIEW-STAGING-RELEASE-LANE-001.md`
+
 ## Parallel-work protection
 
 The shared Production release workflow, canonical web-artifact verification,
@@ -144,3 +187,23 @@ The remaining steps require explicit Owner or platform authorization:
 Deferred non-v1 work is hosted Preview URL provisioning, full-stack staging,
 artifact cleanup automation beyond retention, and screenshot/browser
 automation. None is represented as complete here.
+
+## Release boundary declarations
+
+`PRODUCTION_DEPLOY=NOT_AUTHORIZED_NOT_EXECUTED`
+
+`PRODUCTION_SITES_PROMOTION=NOT_AUTHORIZED_NOT_EXECUTED`
+
+`PRODUCTION_MIGRATION=NOT_AUTHORIZED_NOT_EXECUTED`
+
+`POST_CLOSE_MUTATION=NOT_AUTHORIZED_NOT_EXECUTED`
+
+`FORMAL_PUBLICATION_MUTATION=NOT_AUTHORIZED_NOT_EXECUTED`
+
+`PUSH=NOT_AUTHORIZED_NOT_EXECUTED`
+
+`NEXT_TASK=UNCHANGED`
+
+`NEXT_RECOMMENDED_ACTION=Owner authorizes canonical integration, then runs the
+manual Preview workflow; provision isolated private Sites/staging API only if
+a hosted or full-stack product review is required.`
