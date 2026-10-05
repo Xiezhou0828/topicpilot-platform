@@ -49,7 +49,7 @@ for human review under an explicit Preview environment.
 | `CANONICAL_BASE` | `8894138fc930b4512541cacd5214162cd66b4c8f` |
 | `ORIGIN_MAIN_AT_START` | `8894138fc930b4512541cacd5214162cd66b4c8f` |
 | `IMPLEMENTATION_BRANCH` | `codex/task-preview-review-environment-001` |
-| `IMPLEMENTATION_HEAD` | `46f211e349a256a325b410de48769342d35239e3` |
+| `IMPLEMENTATION_HEAD` | `5081d28dc464a57ee553f0d89a007d4a6be41fdf` |
 | `WORKTREE` | `C:\Users\acer\Desktop\topicpilot-platform-review-env-001` |
 | `WORKTREE_STATE` | clean at exact `IMPLEMENTATION_HEAD` after validation |
 | `CANONICAL_INTEGRATION` | pull request integration required; no direct main mutation |
@@ -111,7 +111,7 @@ browser access from `http://localhost:3000` had no CORS allow-origin header,
 while the existing public Sites origin was allowlisted. The local proxy avoids
 that CORS gap without changing the Production API.
 
-Proxy controls are fixed in `infra/scripts/preview_proxy.mjs`:
+Proxy controls are fixed in `apps/web/preview_proxy.mjs`:
 
 - upstream is HTTPS-only, except for local loopback development origins;
 - only `GET` and `HEAD` are accepted;
@@ -160,7 +160,7 @@ server. It reports:
 ```text
 TOPICPILOT_PREVIEW_REVIEW=READY
 REVIEW_MODE=EXACT_SHA_CANDIDATE
-PREVIEW_CANDIDATE_SHA=46f211e349a256a325b410de48769342d35239e3
+PREVIEW_CANDIDATE_SHA=5081d28dc464a57ee553f0d89a007d4a6be41fdf
 DATA_MODE=REAL_READ_ONLY
 LOCAL_PROXY_USED=YES
 DIAGNOSTICS_DEFAULT=OFF
