@@ -26,7 +26,7 @@ COMPETING_SCHEDULER=NONE_CONFIRMED
 - Canonical implementation base: `8894138fc930b4512541cacd5214162cd66b4c8f`.
 - Production release SHA: `6fff533168b1823052071f6d88d1f266397d327d`, the ordinary merge commit for [PR 74](https://github.com/Xiezhou0828/topicpilot-platform/pull/74).
 - The release preserved merge lineage; no squash, rebase, force push, or branch-protection change was used.
-- At activation, `origin/main` was `e47d43d9d5a5b64c86a8b14d6f86c9189016525e`; its intervening change was documentation-only and did not change the deployed API/Worker release tree. The closure report itself is documentation-only.
+- The GitHub `main` base for this closure is the deployed release SHA `6fff533…`; the closure report itself is documentation-only and does not require another API/Worker deployment.
 - The parent legacy checkout and unrelated pre-existing dirty files were preserved and not included in this report commit.
 
 ## Runtime provenance trust-failure contract
