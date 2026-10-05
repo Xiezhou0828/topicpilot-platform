@@ -51,6 +51,7 @@ def test_v2_metadata_contains_only_implemented_tables():
         "legacy_import_artifacts",
         "legacy_import_records",
         "topic_snapshot_member_facts",
+        "daily_formal_publication_receipts",
     }
     assert "detectors" not in tables
     assert "strategy_runs" not in tables

@@ -66,6 +66,7 @@ from topicpilot_api.trading_status_authority import (
 from .checkpoint_contract import checkpoint_stable_hash
 from .config import LiveRuntimeConfig
 from .persistence import LiveRepository
+from .receipt import append_receipt_for_run
 from .session import MarketSessionClock
 
 POST_CLOSE_PHASE_MODEL = (
@@ -3138,6 +3139,8 @@ class PostCloseUpdater:
                 ).to_dict(),
             }
         )
+        if reconciliation and reconciliation.downstream_ready:
+            metadata.setdefault("dataReadyAt", now.isoformat())
         reconciliation_payload = metadata.get("dailyMarketReconciliation") or {}
         snapshot_payload = metadata.get("topicSnapshot") or {}
         formal_state = snapshot_payload.get("formalTopicDailyState") or {}
@@ -3149,6 +3152,8 @@ class PostCloseUpdater:
             self._formal_snapshot_ready(snapshot_payload)
             and publication_readback.get("status") == "PASS"
         )
+        if formal_chain_ready:
+            metadata.setdefault("formalPublicationAt", now.isoformat())
         if execution_scope == HISTORY_RECOVERY:
             metadata["forwardAutomation"] = {
                 "status": "NOT_APPLICABLE",
@@ -3245,6 +3250,23 @@ class PostCloseUpdater:
         run.completed_at = now
         run.heartbeat_at = now
         run.updated_at = now
+        receipt = append_receipt_for_run(
+            self.session,
+            run,
+            self.config,
+            now=now,
+            commit=False,
+        )
+        metadata = dict(run.metadata_payload or {})
+        metadata["dailyFormalPublicationReceipt"] = {
+            "receiptId": str(receipt.id),
+            "receiptStatus": receipt.receipt_status,
+            "receiptRevision": receipt.receipt_revision,
+            "receiptHash": receipt.receipt_hash,
+            "readbackStatus": receipt.formal_readback_state,
+            "runtimeProvenanceStatus": (receipt.runtime_provenance or {}).get("status"),
+        }
+        run.metadata_payload = _json_safe(metadata)
         self.session.commit()
 
 

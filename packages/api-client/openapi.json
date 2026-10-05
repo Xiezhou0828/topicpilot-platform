@@ -12285,6 +12285,124 @@
         ]
       }
     },
+    "/api/v1/operations/live/publication-receipt": {
+      "get": {
+        "description": "Return the latest immutable daily formal publication receipt.",
+        "operationId": "publication_receipt_api_v1_operations_live_publication_receipt_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "tradingDate",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Tradingdate"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Publication Receipt Api V1 Operations Live Publication Receipt Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Publication Receipt",
+        "tags": [
+          "live-operations"
+        ]
+      }
+    },
+    "/api/v1/operations/live/publication-receipts": {
+      "get": {
+        "description": "Return immutable receipt history for one operator-selected date.",
+        "operationId": "publication_receipts_api_v1_operations_live_publication_receipts_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "tradingDate",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Tradingdate"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Publication Receipts Api V1 Operations Live Publication Receipts Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Publication Receipts",
+        "tags": [
+          "live-operations"
+        ]
+      }
+    },
     "/api/v1/operations/live/status": {
       "get": {
         "operationId": "status_api_v1_operations_live_status_get",

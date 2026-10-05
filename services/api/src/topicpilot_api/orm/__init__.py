@@ -25,6 +25,7 @@ from .identity import *  # noqa: F403
 from .import_audit import LegacyImportArtifact, LegacyImportRecord, LegacyImportRun
 from .lifecycle import TopicLifecycleResult
 from .live import (
+    DailyFormalPublicationReceipt,
     LiveCollectorAttempt,
     LiveCollectorCheckpoint,
     LiveCollectorRun,
@@ -51,6 +52,7 @@ from .topics import *  # noqa: F403
 
 __all__ = [
     "Base",
+    "DailyFormalPublicationReceipt",
     "LegacyImportArtifact",
     "LegacyImportRecord",
     "LegacyImportRun",
