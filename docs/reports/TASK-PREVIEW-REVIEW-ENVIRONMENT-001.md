@@ -50,9 +50,10 @@ for human review under an explicit Preview environment.
 | `ORIGIN_MAIN_AT_START` | `8894138fc930b4512541cacd5214162cd66b4c8f` |
 | `IMPLEMENTATION_BRANCH` | `codex/task-preview-review-environment-001` |
 | `IMPLEMENTATION_HEAD` | `5081d28dc464a57ee553f0d89a007d4a6be41fdf` |
+| `CANONICAL_HEAD_FINAL` | `dd95fd410d59fcf34cd432ba3852dfeb3a07d3cc` |
 | `WORKTREE` | `C:\Users\acer\Desktop\topicpilot-platform-review-env-001` |
 | `WORKTREE_STATE` | clean at exact `IMPLEMENTATION_HEAD` after validation |
-| `CANONICAL_INTEGRATION` | pull request integration required; no direct main mutation |
+| `CANONICAL_INTEGRATION` | PR #71 merged into `main`; no direct main mutation |
 
 The shared checkout was not reset, cleaned, or overwritten. It contained an
 unrelated closure/publication branch, so implementation was isolated in a
@@ -209,8 +210,7 @@ Production mutation authority.
 
 `FOLLOW_UP_REASON=Owner product review remains a human decision; no infrastructure authorization is required.`
 
-The remaining delivery action is ordinary repository integration of this
-already-validated branch through the project’s PR process. No cloud hosting,
-Production CORS authorization, staging database, or paid service is required
-for the Owner to begin local product review.
+Canonical integration is complete through PR #71. No cloud hosting, Production
+CORS authorization, staging database, or paid service is required for the Owner
+to begin local product review.
 
