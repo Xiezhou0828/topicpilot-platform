@@ -52,6 +52,10 @@ services:
         value: "30"
       - key: TOPICPILOT_LIVE_POST_CLOSE_START
         value: "13:45"
+      - key: TOPICPILOT_LIVE_SOFT_TARGET
+        value: "14:30"
+      - key: TOPICPILOT_LIVE_HARD_DEADLINE
+        value: "15:00"
       - key: TOPICPILOT_LIVE_MAX_RETRIES
         value: "2"
       - key: TOPICPILOT_LIVE_INTERVAL

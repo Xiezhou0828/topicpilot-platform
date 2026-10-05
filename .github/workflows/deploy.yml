@@ -16,9 +16,9 @@ on:
         description: Build and package the validated Sites frontend artifact
         required: true
         type: boolean
-        default: true
-      apply_migration_0048:
-        description: Apply exactly the approved 0048 Production migration
+        default: false
+      apply_migration_0049:
+        description: Apply exactly the approved 0049 Production migration
         required: true
         type: boolean
         default: false
@@ -55,9 +55,9 @@ jobs:
           docker compose config --quiet
           test -s render.yaml
 
-  migrate-production:
-    name: Apply Production migration 0048
-    if: ${{ inputs.apply_migration_0048 }}
+  migrate_production:
+    name: Apply Production migration 0049
+    if: ${{ inputs.apply_migration_0049 }}
     needs: validate
     runs-on: ubuntu-latest
     environment: production-db-maintenance
@@ -70,7 +70,7 @@ jobs:
           ref: ${{ inputs.release_ref }}
       - name: Build the exact release image
         run: docker build --file infra/docker/api.Dockerfile --tag topicpilot-migration:${{ inputs.release_ref }} .
-      - name: Require Production head 0047 before upgrade
+      - name: Require Production head 0048 before upgrade
         env:
           MIGRATION_DATABASE_URL: ${{ secrets.TOPICPILOT_PRODUCTION_DATABASE_URL }}
         run: |
@@ -81,37 +81,37 @@ jobs:
           docker run --rm --entrypoint python \
             --env MIGRATION_DATABASE_URL \
             "topicpilot-migration:${{ inputs.release_ref }}" \
-            -c 'import os, sys; from sqlalchemy import create_engine, text; e=create_engine(os.environ["MIGRATION_DATABASE_URL"], pool_pre_ping=True); c=e.connect(); rows=[str(r[0]) for r in c.execute(text("SELECT version_num FROM alembic_version ORDER BY version_num"))]; c.close(); expected=["0047_task_topic_role_strength_design_freeze"]; sys.exit(f"unexpected Production migration head: {rows!r}") if rows != expected else print("Production migration head precondition: 0047")'
-      - name: Apply exactly migration 0048
+            -c 'import os, sys; from sqlalchemy import create_engine, text; e=create_engine(os.environ["MIGRATION_DATABASE_URL"], pool_pre_ping=True); c=e.connect(); rows=[str(r[0]) for r in c.execute(text("SELECT version_num FROM alembic_version ORDER BY version_num"))]; c.close(); expected=["0048_task_checkpoint_provider_metric_applicability"]; sys.exit(f"unexpected Production migration head: {rows!r}") if rows != expected else print("Production migration head precondition: 0048")'
+      - name: Apply exactly migration 0049
         env:
           MIGRATION_DATABASE_URL: ${{ secrets.TOPICPILOT_PRODUCTION_DATABASE_URL }}
         run: |
           docker run --rm --entrypoint alembic \
             --env MIGRATION_DATABASE_URL \
             "topicpilot-migration:${{ inputs.release_ref }}" \
-            upgrade 0048_task_checkpoint_provider_metric_applicability
-      - name: Verify Production head and 0048 nullable metrics
+            upgrade 0049_task_daily_formal_publication_receipt
+      - name: Verify Production head and append-only receipt stream
         env:
           MIGRATION_DATABASE_URL: ${{ secrets.TOPICPILOT_PRODUCTION_DATABASE_URL }}
         run: |
           docker run --rm --entrypoint python \
             --env MIGRATION_DATABASE_URL \
             "topicpilot-migration:${{ inputs.release_ref }}" \
-            -c 'import os, sys; from sqlalchemy import create_engine, text; e=create_engine(os.environ["MIGRATION_DATABASE_URL"], pool_pre_ping=True); c=e.connect(); head=str(c.execute(text("SELECT version_num FROM alembic_version ORDER BY version_num")).scalar_one()); rows=c.execute(text("SELECT column_name, is_nullable, column_default FROM information_schema.columns WHERE table_schema = :schema AND table_name = :table AND column_name IN (:request, :failure) ORDER BY column_name"), {"schema": "topicpilot", "table": "live_collector_checkpoints", "request": "provider_request_count", "failure": "provider_failure_count"}).mappings().all(); c.close(); expected="0048_task_checkpoint_provider_metric_applicability"; sys.exit(f"unexpected Production migration head after upgrade: {head!r}") if head != expected else None; sys.exit(f"0048 nullable metric verification failed: {rows!r}") if any(row["is_nullable"] != "YES" or row["column_default"] is not None for row in rows) else print(f"Production migration head after upgrade: {head}; nullable metrics verified")'
+            -c 'import os, sys; from sqlalchemy import create_engine, text; e=create_engine(os.environ["MIGRATION_DATABASE_URL"], pool_pre_ping=True); c=e.connect(); head=str(c.execute(text("SELECT version_num FROM alembic_version ORDER BY version_num")).scalar_one()); table=str(c.execute(text("SELECT to_regclass(:qualified)"), {"qualified": "topicpilot.daily_formal_publication_receipts"}).scalar_one()); trigger_count=int(c.execute(text("SELECT count(*) FROM pg_trigger WHERE tgrelid = to_regclass(:qualified) AND tgname = :name AND NOT tgisinternal"), {"qualified": "topicpilot.daily_formal_publication_receipts", "name": "trg_daily_formal_publication_receipt_append_only"}).scalar_one()); c.close(); expected="0049_task_daily_formal_publication_receipt"; sys.exit(f"unexpected Production migration head after upgrade: {head!r}") if head != expected else None; sys.exit(f"receipt table verification failed: {table!r}") if table != "daily_formal_publication_receipts" else None; sys.exit(f"append-only trigger verification failed: {trigger_count}") if trigger_count != 1 else print(f"Production migration head after upgrade: {head}; append-only receipt stream verified")'
 
   deploy-worker:
     name: Trigger Render Worker deployment
-    if: ${{ inputs.deploy_worker }}
-    needs: validate
+    if: ${{ always() && needs.validate.result == 'success' && inputs.deploy_worker && (needs.migrate_production.result == 'success' || (!inputs.apply_migration_0049 && needs.migrate_production.result == 'skipped')) }}
+    needs: [validate, migrate_production]
     runs-on: ubuntu-latest
     environment: production-worker
     steps:
-      - name: Require migration 0048 before Worker release
+      - name: Require migration 0049 before Worker release
         env:
           PRODUCTION_API_ORIGIN: https://topicpilot-api.onrender.com
         run: |
           payload="$(curl --fail --silent --show-error "$PRODUCTION_API_ORIGIN/api/v1/admin/migration")"
-          python -c 'import json, sys; payload=json.loads(sys.argv[1]); expected="0048_task_checkpoint_provider_metric_applicability"; actual=payload.get("alembicRevision"); sys.exit(f"Worker release requires migration 0048, got {actual!r}") if actual != expected else print("Worker migration precondition: 0048")' "$payload"
+          python -c 'import json, sys; payload=json.loads(sys.argv[1]); expected="0049_task_daily_formal_publication_receipt"; actual=payload.get("alembicRevision"); sys.exit(f"Worker release requires migration 0049, got {actual!r}") if actual != expected else print("Worker migration precondition: 0049")' "$payload"
       - name: Trigger protected Worker deploy hook with exact SHA
         env:
           RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
@@ -130,11 +130,17 @@ jobs:
 
   deploy-api:
     name: Trigger Render API deployment
-    if: ${{ inputs.deploy_api }}
-    needs: validate
+    if: ${{ always() && needs.validate.result == 'success' && inputs.deploy_api && (needs.migrate_production.result == 'success' || (!inputs.apply_migration_0049 && needs.migrate_production.result == 'skipped')) }}
+    needs: [validate, migrate_production]
     runs-on: ubuntu-latest
     environment: production-api
     steps:
+      - name: Require migration 0049 before API release
+        env:
+          PRODUCTION_API_ORIGIN: https://topicpilot-api.onrender.com
+        run: |
+          payload="$(curl --fail --silent --show-error "$PRODUCTION_API_ORIGIN/api/v1/admin/migration")"
+          python -c 'import json, sys; payload=json.loads(sys.argv[1]); expected="0049_task_daily_formal_publication_receipt"; actual=payload.get("alembicRevision"); sys.exit(f"API release requires migration 0049, got {actual!r}") if actual != expected else print("API migration precondition: 0049")' "$payload"
       - name: Trigger protected deploy hook
         env:
           RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
