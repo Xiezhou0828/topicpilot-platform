@@ -28,6 +28,7 @@ FIRST_LIVE_DAILY_RUN_PENDING_NORMAL_SCHEDULER=NO_ACTIVATION_BLOCKED
 - [PR 72](https://github.com/Xiezhou0828/topicpilot-platform/pull/72) preserved lineage with an ordinary merge: `2651068c202a501566ce7feeaff6b3521fe105ad`.
 - A subsequent independent Preview merge advanced main to `dd95fd410d59fcf34cd432ba3852dfeb3a07d3cc`. The diff has nine files: Web preview configuration/proxy, preview runner/tests, README/report, root package command. It does not change `services/api`, `render.yaml`, or `.github/workflows/deploy.yml`.
 - CURRENT_ORIGIN_MAIN / RELEASE_CANONICAL_SHA / EXPECTED_ACTIVATION_SHA: `dd95fd410d59fcf34cd432ba3852dfeb3a07d3cc` at the final release/readback. API and dormant Worker were updated to this latest canonical commit; newer Preview work was not overwritten.
+- ORIGIN_MAIN_AFTER (closure reread): `e47d43d9d5a5b64c86a8b14d6f86c9189016525e`, merge of PR 73. Independent commit inspection shows only the Preview task report changed; no software/configuration changed and no further deployment was performed. Release identity remains `dd95fd4…`.
 - No unpushed local code was deployed. Parent legacy checkout and its unrelated dirty files were not modified. NEXT_TASK was not modified.
 
 Release preparation updated the existing protected release workflow to exact migration 0049 and the receipt relation/append-only trigger precondition, made Web packaging opt-in, explicitly documented frozen Worker timing in the blueprint, regenerated the affected API contracts, and corrected one import-order violation. It did not alter business formulas, authority, calendar decisions, readiness, or formal publication data.
@@ -47,6 +48,8 @@ The previous implementation report was independently read. Its full-suite count 
 | Provider-failure subprocess | Both isolated baseline and candidate boundary runs time out | Environmental subprocess failure; Linux release backend suite passes |
 
 Equivalent isolated boundary runs: baseline `8894138…`: 10 passed / 4 failed, 331.15 seconds; candidate `8ab5560…`: 10 passed / 4 failed, 253.08 seconds. Failure membership varies. The previous report also mentioned an unrelated market-data import timeout; its original full output was not sufficient to recover a unique seven-node-ID inventory. This table therefore identifies independently verified failure cases/categories rather than inventing original node IDs. No local failing run is labelled PASS.
+
+Current independently inspected test identities are `test_worker_import_boundary.py::test_clean_interpreter_first_import` (parameterized modules), `test_worker_startup_dry_run_never_calls_provider_or_database` (auto/post-close), `test_worker_missing_credentials_still_fail_closed`, `test_worker_provider_failure_is_not_reported_as_startup_success`, and `test_v2_architecture_freeze.py::test_v2_metadata_contains_only_implemented_tables`. Original seven-node-ID reconciliation is PARTIAL rather than falsely exhaustive; this is an additional evidence gap to close before activation.
 
 Validation evidence:
 
