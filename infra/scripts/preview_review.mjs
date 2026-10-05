@@ -24,7 +24,7 @@ function capture(command, args, options = {}) {
       cwd: options.cwd ?? REPO_ROOT,
       env: options.env ?? process.env,
       stdio: ["ignore", "pipe", "pipe"],
-      shell: false,
+      shell: process.platform === "win32" && command.endsWith(".cmd"),
     });
     let stdout = "";
     let stderr = "";
@@ -41,7 +41,7 @@ async function run(command, args, options = {}) {
       cwd: options.cwd ?? REPO_ROOT,
       env: options.env ?? process.env,
       stdio: "inherit",
-      shell: false,
+      shell: process.platform === "win32" && command.endsWith(".cmd"),
     });
     child.on("error", reject);
     child.on("close", (code, signal) => resolve({ code, signal }));
@@ -209,7 +209,7 @@ async function main() {
       cwd: REPO_ROOT,
       env,
       stdio: "inherit",
-      shell: false,
+      shell: process.platform === "win32",
     });
     child.on("error", (error) => { if (!stopRequested) console.error(error); });
     process.on("SIGINT", () => {
