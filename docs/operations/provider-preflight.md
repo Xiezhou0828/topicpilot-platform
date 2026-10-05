@@ -152,6 +152,33 @@ messages are not emitted into the contract; errorCode is sanitized and no
 DATABASE_URL, credentials, headers, cookies, tokens, or secret query
 parameters are printed.
 
+## Comparator and dimension scope
+
+G2 keeps source, target-date, formal-universe, and payload integrity gates
+global. A valid current official close with a missing exact-prior formal close
+is not automatically a market failure, however. The comparator resolver may
+return `ACCOUNTED_UNAVAILABLE` only when one official corporate-action
+authority record:
+
+- covers the exact prior formal session;
+- names the requested target date as its resume date;
+- ends before that resume date and does not expect a close; and
+- maps to a supported corporate-action comparator type.
+
+This decision carries the official source/reference and the action interval;
+it never creates a close, carries a prior close forward, or changes trading
+status authority. The instrument remains in formal Topic membership but is
+excluded from only the affected daily-comparator, daily-return, and
+relative-return calculation projection. Benchmark facts remain independently
+authoritative. An invalid, unknown, provider, date, lineage, or unsupported
+authority condition remains `ERROR`/fail-closed at its smallest justified
+scope.
+
+The market evidence exposes `comparatorAccountedUnavailableCount`, and each
+instrument decision exposes `comparatorStatus` and `dimensionEligibility` so
+downstream formal snapshot/Strength readers can preserve the distinction
+between READY, ACCOUNTED_UNAVAILABLE, and unresolved failure.
+
 ## PASS criteria
 
 G2 PASS requires all of the following:

@@ -23,6 +23,7 @@ from uuid import UUID
 from sqlalchemy import select
 from sqlalchemy.orm import Session, aliased
 
+from topicpilot_api.formal_eligibility import Dimension
 from topicpilot_api.orm import (
     Instrument,
     Market,
@@ -31,6 +32,9 @@ from topicpilot_api.orm import (
     TopicScoreFormalResult,
     TopicSnapshot,
     TopicSnapshotMemberFact,
+)
+from topicpilot_api.previous_close_authority import (
+    AUTHORIZED_CORPORATE_ACTION_COMPARATOR_UNAVAILABLE,
 )
 from topicpilot_api.release_provenance import runtime_git_sha
 from topicpilot_api.topic_engine.owner_seeded_v0_policy import (
@@ -352,11 +356,39 @@ def _gate(
         return FormalStrengthGate(False, f"SNAPSHOT_DATA_STATUS_{snapshot.data_status}", input_hash)
     if snapshot.stock_count <= 0 or len(facts) != snapshot.stock_count:
         return FormalStrengthGate(False, "FORMAL_MEMBER_COUNT_MISMATCH", input_hash)
-    if any(fact.fact_state != "OBSERVED" or fact.change_pct is None for fact in facts):
+    if any(fact.fact_state != "OBSERVED" for fact in facts):
         return FormalStrengthGate(False, "FORMAL_MEMBER_OBSERVATION_UNAVAILABLE", input_hash)
+    for fact in facts:
+        if fact.change_pct is not None:
+            continue
+        eligibility = (fact.raw_fact_payload or {}).get("dimensionEligibility") or {}
+        daily_return = eligibility.get(Dimension.DAILY_RETURN.value) or {}
+        if not (
+            daily_return.get("status") == "ACCOUNTED_UNAVAILABLE"
+            and daily_return.get("reasonCode")
+            == AUTHORIZED_CORPORATE_ACTION_COMPARATOR_UNAVAILABLE
+        ):
+            return FormalStrengthGate(False, "FORMAL_MEMBER_OBSERVATION_UNAVAILABLE", input_hash)
     if any(not fact.structural_role or not fact.role_source for fact in facts):
         return FormalStrengthGate(False, "STRUCTURAL_ROLE_AUTHORITY_INCOMPLETE", input_hash)
     return FormalStrengthGate(True, None, input_hash)
+
+
+def _return_eligible_facts(
+    facts: Iterable[TopicSnapshotMemberFact],
+) -> tuple[TopicSnapshotMemberFact, ...]:
+    """Project formal members into the daily-return calculation dimension."""
+
+    return tuple(
+        fact
+        for fact in facts
+        if (
+            ((fact.raw_fact_payload or {}).get("dimensionEligibility") or {})
+            .get(Dimension.DAILY_RETURN.value, {})
+            .get("status")
+            == "READY"
+        )
+    )
 
 
 def _market_map(session: Session, facts: Iterable[TopicSnapshotMemberFact]) -> dict[UUID, str]:
@@ -541,14 +573,15 @@ class FormalStrengthPublisher:
         history: Sequence[Mapping[str, Any]],
     ) -> dict[str, Any]:
         resolution = resolve_score_projection(self.session, topic.id, evaluation_date)
+        eligible_facts = _return_eligible_facts(facts)
         importance = {
             UUID(member.instrument_id): float(member.score_importance)
             for member in resolution.selected_score_members
         }
-        markets = _market_map(self.session, facts)
+        markets = _market_map(self.session, eligible_facts)
         benchmark_values = {"TWSE": context.tai_ex_return_pct, "TPEX": context.tpex_return_pct}
         observations: list[MemberObservation] = []
-        for fact in facts:
+        for fact in eligible_facts:
             role = str(fact.structural_role)
             market = _market_code(markets[fact.instrument_id])
             observations.append(
@@ -638,9 +671,13 @@ class FormalStrengthPublisher:
                 },
             },
             "eligibility_audit": {
-                "formalMemberCount": len(members),
-                "observedMemberCount": len(members),
-                "coveragePct": 100.0,
+                "formalMemberCount": len(facts),
+                "eligibleMemberCount": len(eligible_facts),
+                "accountedUnavailableMemberCount": len(facts) - len(eligible_facts),
+                "observedMemberCount": len(eligible_facts),
+                "coveragePct": (
+                    len(eligible_facts) * 100.0 / len(facts) if facts else 0.0
+                ),
                 "roleAuthorityComplete": True,
             },
             "quality_flags": quality_flags,

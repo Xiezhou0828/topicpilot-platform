@@ -13,6 +13,7 @@ from uuid import UUID
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from topicpilot_api.formal_eligibility import dimension_payload, project_return_dimensions
 from topicpilot_api.instrument_universe import (
     InstrumentLifecycle,
     InstrumentUniverseRow,
@@ -33,9 +34,13 @@ from topicpilot_api.orm.models import (
     ReferenceRegistrySet,
 )
 from topicpilot_api.previous_close_authority import (
+    ComparatorResolution,
+    ComparatorStatus,
+    ComparatorType,
     G2PriceEvidence,
     PreviousCloseEvidence,
     previous_session_date,
+    resolve_missing_daily_comparator,
     valid_close,
 )
 from topicpilot_api.reference_check import inspect_reference_preflight
@@ -234,6 +239,7 @@ def evaluate_provider_preflight(
         decisions = []
         priced_codes, legitimate_codes = set(), set()
         comparator_codes = set()
+        comparator_unavailable_codes = set()
         for code in sorted(expected_codes):
             price = result.prices.get(code)
             identity = market.instrument_ids.get(code)
@@ -265,16 +271,34 @@ def evaluate_provider_preflight(
             )
             reason = None
             previous = price.previous() if price is not None else None
+            comparator = None
             if legitimate:
                 legitimate_codes.add(code)
+                comparator = ComparatorResolution(
+                    ComparatorStatus.ACCOUNTED_UNAVAILABLE,
+                    None,
+                    status.reason_code or status.status,
+                    status.authority_source,
+                    status.source_reference,
+                )
             elif not close_ok:
                 reason = "CURRENT_OFFICIAL_CLOSE_INVALID"
             else:
                 priced_codes.add(code)
                 if context.previous_session is None:
                     reason = "PREVIOUS_FORMAL_SESSION_NOT_RESOLVED"
+                    comparator = ComparatorResolution(ComparatorStatus.ERROR, None, reason)
                 elif previous is None:
-                    reason = "MISSING_PREVIOUS_FORMAL_CLOSE"
+                    comparator = resolve_missing_daily_comparator(
+                        symbol=code,
+                        market=market.market_code,
+                        target=context.target_date,
+                        prior=context.previous_session,
+                    )
+                    if comparator.status == ComparatorStatus.ACCOUNTED_UNAVAILABLE:
+                        comparator_unavailable_codes.add(code)
+                    else:
+                        reason = comparator.reason_code or "MISSING_PREVIOUS_FORMAL_CLOSE"
                 else:
                     reason = previous.rejection_reason(
                         instrument_id=identity, market=market.market_code, code=code,
@@ -285,8 +309,53 @@ def evaluate_provider_preflight(
                         and previous.lineage != price.response_hash
                     ):
                         reason = "PREVIOUS_CLOSE_PAYLOAD_LINEAGE_MISMATCH"
-                if reason is None:
+                    comparator = (
+                        ComparatorResolution(
+                            ComparatorStatus.READY,
+                            ComparatorType.PREVIOUS_FORMAL_CLOSE,
+                            authority_source=previous.source,
+                            source_reference=previous.lineage,
+                        )
+                        if reason is None
+                        else ComparatorResolution(
+                            ComparatorStatus.ERROR,
+                            None,
+                            reason,
+                            previous.source,
+                            previous.lineage,
+                        )
+                    )
+                if reason is None and comparator is not None and comparator.ready:
                     comparator_codes.add(code)
+            if comparator is None:
+                comparator_status = (
+                    ComparatorStatus.READY
+                    if code in comparator_codes
+                    else ComparatorStatus.ERROR
+                )
+                comparator_reason = reason
+                comparator_source = previous.source if previous else None
+                comparator_reference = previous.lineage if previous else None
+                comparator_type = None
+            else:
+                comparator_status = comparator.status
+                comparator_reason = comparator.reason_code or reason
+                comparator_source = comparator.authority_source
+                comparator_reference = comparator.source_reference
+                comparator_type = (
+                    comparator.comparator_type.value
+                    if comparator.comparator_type is not None
+                    else None
+                )
+            if comparator is None:
+                comparator = ComparatorResolution(
+                    ComparatorStatus.ERROR,
+                    None,
+                    comparator_reason,
+                    comparator_source,
+                    comparator_reference,
+                )
+            dimensions = project_return_dimensions(comparator, current_price_ready=close_ok)
             decisions.append({
                 "instrumentCode": code, "instrumentId": identity,
                 "closeValid": bool(close_ok), "legitimateUnavailable": bool(legitimate),
@@ -295,6 +364,10 @@ def evaluate_provider_preflight(
                 "statusLineage": status.source_reference if status is not None else None,
                 "previousClose": previous.price_free_metadata() if previous else None,
                 "previousCloseValid": code in comparator_codes,
+                "comparatorStatus": comparator_status.value,
+                "comparatorType": comparator_type,
+                "comparatorReasonCode": comparator_reason,
+                "dimensionEligibility": dimension_payload(dimensions),
                 "errorCode": reason,
                 "responseHash": price.response_hash if price else None,
                 "syntheticOrFillUsed": False,
@@ -311,7 +384,9 @@ def evaluate_provider_preflight(
         # Preserve out-of-scope provider codes in the evidence, but do not let
         # them turn complete expected-EQUITY coverage into a failure.
         coverage_complete = (
-            bool(expected_codes) and not missing_codes and comparator_codes == priced_codes
+            bool(expected_codes)
+            and not missing_codes
+            and (comparator_codes | comparator_unavailable_codes) == priced_codes
         )
         authority_ok = (
             result.provider_authority == market.provider_authority
@@ -327,7 +402,7 @@ def evaluate_provider_preflight(
             error_code = "EMPTY_MARKET_PAYLOAD"
         elif missing_codes:
             error_code = "PARTIAL_PROVIDER_COVERAGE"
-        elif comparator_codes != priced_codes:
+        elif (comparator_codes | comparator_unavailable_codes) != priced_codes:
             error_code = "PREVIOUS_CLOSE_AUTHORITY_NOT_READY"
         evidence.append(
             _market_evidence(
@@ -351,6 +426,7 @@ def evaluate_provider_preflight(
             "accountedTargetCount": covered_count,
             "previousCloseCoveredCount": len(comparator_codes),
             "previousCloseRequiredCount": len(priced_codes),
+            "comparatorAccountedUnavailableCount": len(comparator_unavailable_codes),
             "previousSessionDate": (
                 context.previous_session.isoformat() if context.previous_session else None
             ),

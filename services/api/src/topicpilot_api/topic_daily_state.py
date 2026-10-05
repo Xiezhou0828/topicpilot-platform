@@ -21,6 +21,12 @@ from uuid import UUID
 from sqlalchemy import bindparam, func, or_, select, text
 from sqlalchemy.orm import Session, aliased
 
+from topicpilot_api.formal_eligibility import (
+    Dimension,
+    DimensionStatus,
+    dimension_payload,
+    project_return_dimensions,
+)
 from topicpilot_api.market_data.availability import LEGITIMATE_UNAVAILABLE_CODES
 from topicpilot_api.orm import (
     Instrument,
@@ -34,6 +40,13 @@ from topicpilot_api.orm import (
     Topic,
     TopicSnapshot,
     TopicSnapshotMemberFact,
+)
+from topicpilot_api.previous_close_authority import (
+    ComparatorResolution,
+    ComparatorStatus,
+    ComparatorType,
+    PreviousCloseEvidence,
+    resolve_missing_daily_comparator,
 )
 from topicpilot_api.topic_engine.structural_role_authority import (
     AUTHORITY_READ_HISTORICAL,
@@ -109,6 +122,7 @@ class SelectedMemberFact:
     fact_hash: str
     structural_role: str = "RELATED"
     role_source: str = "TEST_OR_LEGACY_UNAPPROVED"
+    dimension_eligibility: dict[str, dict[str, Any]] | None = None
 
 
 @dataclass(frozen=True)
@@ -440,9 +454,26 @@ def resolve_formal_membership(
 
 _PRICE_FACTS_SQL = text(
     """
-    WITH candidates AS (
+    WITH previous_session AS (
+        SELECT max(day::date) AS trading_date
+        FROM generate_series(
+            CAST(:trading_date AS date) - interval '366 days',
+            CAST(:trading_date AS date) - interval '1 day', interval '1 day'
+        ) day
+        WHERE extract(isodow FROM day) < 6
+          AND (SELECT count(*) FROM topicpilot.reference_registry_sets
+               WHERE status = 'ACTIVE') = 1
+          AND NOT EXISTS (
+              SELECT 1
+              FROM topicpilot.reference_calendar_dates c
+              JOIN topicpilot.reference_registry_sets r ON r.id = c.registry_set_id
+              WHERE r.status = 'ACTIVE'
+                AND c.calendar_code = 'TW_MARKET'
+                AND c.calendar_date = day::date
+          )
+    ), candidates AS (
         SELECT co.id, co.instrument_id, co.observed_at, co.retrieved_at,
-               co.content_hash, cp.close,
+               co.content_hash, cp.close, source.source_code,
                (co.observed_at AT TIME ZONE m.timezone)::date AS trading_date,
                ROW_NUMBER() OVER (
                    PARTITION BY co.instrument_id,
@@ -460,8 +491,12 @@ _PRICE_FACTS_SQL = text(
           AND co.family_code = 'PRICE'
           AND co.quality_state = 'ACCEPTED'
           AND source.observation_semantics = 'DAILY_BAR'
+          AND source.source_code = CASE WHEN m.code = 'TPE'
+              THEN 'TWSE_OFFICIAL_DAILY' ELSE 'TPEX_OFFICIAL_DAILY' END
           AND cp.close IS NOT NULL
-          AND (co.observed_at AT TIME ZONE m.timezone)::date <= :trading_date
+          AND (co.observed_at AT TIME ZONE m.timezone)::date IN (
+              :trading_date, (SELECT trading_date FROM previous_session)
+          )
           AND NOT EXISTS (
               SELECT 1 FROM topicpilot.canonical_observations successor
               WHERE successor.supersedes_id = co.id
@@ -470,15 +505,18 @@ _PRICE_FACTS_SQL = text(
           )
     ), daily AS (
         SELECT * FROM candidates WHERE same_day_rank = 1
-    ), ranked AS (
-        SELECT daily.*, ROW_NUMBER() OVER (
-            PARTITION BY instrument_id
-            ORDER BY trading_date DESC, observed_at DESC, retrieved_at DESC, id DESC
-        ) AS date_rank
+    ), exact_dates AS (
+        SELECT daily.*, 1 AS date_rank,
+               (SELECT trading_date FROM previous_session) AS formal_previous_session
         FROM daily
+        WHERE trading_date = :trading_date
+        UNION ALL
+        SELECT daily.*, 2 AS date_rank,
+               (SELECT trading_date FROM previous_session) AS formal_previous_session
+        FROM daily
+        WHERE trading_date = (SELECT trading_date FROM previous_session)
     )
-    SELECT * FROM ranked WHERE date_rank <= 2
-    ORDER BY instrument_id, date_rank
+    SELECT * FROM exact_dates ORDER BY instrument_id, date_rank
     """
 ).bindparams(bindparam("instrument_ids", expanding=True))
 
@@ -511,7 +549,7 @@ _VOLUME_FACTS_SQL = text(
 _STATUS_FACTS_SQL = text(
     """
     SELECT co.id, co.instrument_id, co.observed_at, co.retrieved_at, co.content_hash,
-           status.status_code, status.status_reason
+           status.status_code, status.status_reason, source.source_code
     FROM topicpilot.canonical_observations co
     JOIN topicpilot.canonical_trading_status_observations status
       ON status.canonical_observation_id = co.id
@@ -556,14 +594,95 @@ def read_canonical_member_facts(
 
     facts: list[SelectedMemberFact] = []
     for member in sorted(members, key=_member_sort_key):
-        price = price_by_instrument.get(member.instrument_id, {}).get(1)
-        previous = price_by_instrument.get(member.instrument_id, {}).get(2)
+        date_rows = price_by_instrument.get(member.instrument_id, {})
+        price = date_rows.get(1)
+        previous = date_rows.get(2)
         volume = volume_by_instrument.get(member.instrument_id)
         status = status_by_instrument.get(member.instrument_id)
         close = price["close"] if price is not None else None
         previous_close = previous["close"] if previous is not None else None
+        formal_previous_session = (
+            price.get("formal_previous_session")
+            if price is not None
+            else previous.get("formal_previous_session")
+            if previous is not None
+            else None
+        )
+        comparator: ComparatorResolution
+        status_code = status["status_code"] if status is not None else None
+        if close is None and status_code in NO_TRADE_STATUS_CODES:
+            comparator = ComparatorResolution(
+                ComparatorStatus.ACCOUNTED_UNAVAILABLE,
+                None,
+                str(status.get("status_reason") or status_code),
+                str(status.get("source_code") or ""),
+                str(status.get("id") or ""),
+            )
+        elif close is None:
+            comparator = ComparatorResolution(
+                ComparatorStatus.ERROR,
+                None,
+                "CURRENT_EOD_PRICE_UNAVAILABLE",
+            )
+        elif previous is not None and formal_previous_session is not None:
+            previous_evidence = PreviousCloseEvidence(
+                str(previous["instrument_id"]),
+                member.market_code,
+                member.instrument_code,
+                previous["trading_date"],
+                previous_close,
+                previous["source_code"],
+                "FORMAL_CANONICAL_CLOSE",
+                str(previous["id"]),
+                quality_state=str(previous.get("quality_state") or ""),
+            )
+            rejection = previous_evidence.rejection_reason(
+                instrument_id=str(member.instrument_id),
+                market=member.market_code,
+                code=member.instrument_code,
+                target=trading_date,
+                prior=formal_previous_session,
+            )
+            comparator = (
+                ComparatorResolution(
+                    ComparatorStatus.READY,
+                    ComparatorType.PREVIOUS_FORMAL_CLOSE,
+                    authority_source=previous_evidence.source,
+                    source_reference=previous_evidence.lineage,
+                )
+                if rejection is None
+                else ComparatorResolution(
+                    ComparatorStatus.ERROR,
+                    None,
+                    rejection,
+                    previous_evidence.source,
+                    previous_evidence.lineage,
+                )
+            )
+        elif formal_previous_session is not None:
+            comparator = resolve_missing_daily_comparator(
+                symbol=member.instrument_code,
+                market=member.market_code,
+                target=trading_date,
+                prior=formal_previous_session,
+            )
+        else:
+            comparator = ComparatorResolution(
+                ComparatorStatus.ERROR,
+                None,
+                "PREVIOUS_FORMAL_SESSION_NOT_RESOLVED",
+            )
+        dimensions = project_return_dimensions(
+            comparator,
+            current_price_ready=close is not None,
+        )
         change_pct = None
-        if close is not None and previous_close is not None and previous_close > 0:
+        if (
+            dimensions[Dimension.DAILY_RETURN].status == DimensionStatus.READY
+            and close is not None
+            and previous_close is not None
+            and previous_close > 0
+        ):
             change_pct = (close - previous_close) / previous_close * Decimal("100")
         if change_pct is None:
             classification = None
@@ -617,6 +736,7 @@ def read_canonical_member_facts(
             "roleAuthorityVersion": member.role_authority_version,
             "roleAuthorityHash": member.role_authority_hash,
             "roleLineageHash": member.role_lineage_hash,
+            "dimensionEligibility": dimension_payload(dimensions),
         }
         fact_hash = _hash_payload(raw)
         facts.append(
@@ -638,6 +758,7 @@ def read_canonical_member_facts(
                 fact_hash=fact_hash,
                 structural_role=member.structural_role,
                 role_source=member.role_source,
+                dimension_eligibility=dimension_payload(dimensions),
             )
         )
     return tuple(facts)

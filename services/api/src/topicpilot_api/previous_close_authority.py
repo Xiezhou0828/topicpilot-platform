@@ -6,9 +6,48 @@ from collections.abc import Collection
 from dataclasses import dataclass
 from datetime import date, timedelta
 from decimal import Decimal, InvalidOperation
+from enum import StrEnum
 from typing import Any
 
+from topicpilot_api.corporate_action_authority import (
+    CorporateActionAuthorityRecord,
+    load_corporate_action_authorities,
+)
+
 OFFICIAL_SOURCES = {"TPE": "TWSE_OFFICIAL_DAILY", "TWO": "TPEX_OFFICIAL_DAILY"}
+
+
+class ComparatorStatus(StrEnum):
+    """Status of the formal daily comparison reference."""
+
+    READY = "READY"
+    ACCOUNTED_UNAVAILABLE = "ACCOUNTED_UNAVAILABLE"
+    ERROR = "ERROR"
+
+
+class ComparatorType(StrEnum):
+    """Governed semantic types; none of these values is a price fill."""
+
+    PREVIOUS_FORMAL_CLOSE = "PREVIOUS_FORMAL_CLOSE"
+    LAST_VALID_FORMAL_CLOSE = "LAST_VALID_FORMAL_CLOSE"
+    EX_DIVIDEND_REFERENCE = "EX_DIVIDEND_REFERENCE"
+    EX_RIGHT_REFERENCE = "EX_RIGHT_REFERENCE"
+    EX_RIGHT_DIVIDEND_REFERENCE = "EX_RIGHT_DIVIDEND_REFERENCE"
+    SPLIT_ADJUSTED_REFERENCE = "SPLIT_ADJUSTED_REFERENCE"
+    CAPITAL_REDUCTION_REFERENCE = "CAPITAL_REDUCTION_REFERENCE"
+
+
+AUTHORIZED_CORPORATE_ACTION_COMPARATOR_UNAVAILABLE = (
+    "AUTHORIZED_CORPORATE_ACTION_COMPARATOR_UNAVAILABLE"
+)
+
+_COMPARATOR_TYPE_BY_ACTION = {
+    "CAPITAL_REDUCTION_SHARE_EXCHANGE": ComparatorType.CAPITAL_REDUCTION_REFERENCE,
+    "EX_DIVIDEND": ComparatorType.EX_DIVIDEND_REFERENCE,
+    "EX_RIGHT": ComparatorType.EX_RIGHT_REFERENCE,
+    "EX_RIGHT_DIVIDEND": ComparatorType.EX_RIGHT_DIVIDEND_REFERENCE,
+    "STOCK_SPLIT": ComparatorType.SPLIT_ADJUSTED_REFERENCE,
+}
 
 
 def previous_session_date(target: date, closed_dates: Collection[date]) -> date:
@@ -29,6 +68,126 @@ def valid_close(value: object) -> bool:
     except (InvalidOperation, ValueError):
         return False
     return number.is_finite() and number > 0
+
+
+@dataclass(frozen=True)
+class ComparatorResolution:
+    """Price-free comparator decision with authority lineage."""
+
+    status: ComparatorStatus
+    comparator_type: ComparatorType | None
+    reason_code: str | None = None
+    authority_source: str | None = None
+    source_reference: str | None = None
+    authority_action_type: str | None = None
+    effective_from: date | None = None
+    effective_to: date | None = None
+    resume_date: date | None = None
+
+    @property
+    def ready(self) -> bool:
+        return self.status == ComparatorStatus.READY
+
+    @property
+    def accounted_unavailable(self) -> bool:
+        return self.status == ComparatorStatus.ACCOUNTED_UNAVAILABLE
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "status": self.status.value,
+            "comparatorType": (
+                self.comparator_type.value if self.comparator_type is not None else None
+            ),
+            "reasonCode": self.reason_code,
+            "authoritySource": self.authority_source,
+            "sourceReference": self.source_reference,
+            "authorityActionType": self.authority_action_type,
+            "effectiveFrom": self.effective_from.isoformat() if self.effective_from else None,
+            "effectiveTo": self.effective_to.isoformat() if self.effective_to else None,
+            "resumeDate": self.resume_date.isoformat() if self.resume_date else None,
+        }
+
+
+def _resume_comparator_authority(
+    *,
+    symbol: str,
+    market: str,
+    target: date,
+    prior: date,
+    authorities: tuple[CorporateActionAuthorityRecord, ...],
+) -> ComparatorResolution:
+    candidates = tuple(
+        record
+        for record in authorities
+        if (
+            record.symbol == symbol
+            and record.market == market.upper()
+            and record.resume_date == target
+            and record.effective_to < target
+            and record.is_effective_on(prior)
+            and not record.expected_close
+        )
+    )
+    if not candidates:
+        return ComparatorResolution(
+            ComparatorStatus.ERROR,
+            None,
+            "MISSING_PREVIOUS_FORMAL_CLOSE",
+        )
+    if len(candidates) != 1:
+        return ComparatorResolution(
+            ComparatorStatus.ERROR,
+            None,
+            "CORPORATE_ACTION_COMPARATOR_AUTHORITY_CONFLICT",
+        )
+    record = candidates[0]
+    comparator_type = _COMPARATOR_TYPE_BY_ACTION.get(record.action_type)
+    if comparator_type is None:
+        return ComparatorResolution(
+            ComparatorStatus.ERROR,
+            None,
+            "CORPORATE_ACTION_COMPARATOR_TYPE_UNSUPPORTED",
+            record.source_authority,
+            record.source_reference,
+            record.action_type,
+            record.effective_from,
+            record.effective_to,
+            record.resume_date,
+        )
+    return ComparatorResolution(
+        ComparatorStatus.ACCOUNTED_UNAVAILABLE,
+        comparator_type,
+        AUTHORIZED_CORPORATE_ACTION_COMPARATOR_UNAVAILABLE,
+        record.source_authority,
+        record.source_reference,
+        record.action_type,
+        record.effective_from,
+        record.effective_to,
+        record.resume_date,
+    )
+
+
+def resolve_missing_daily_comparator(
+    *,
+    symbol: str,
+    market: str,
+    target: date,
+    prior: date,
+    authorities: tuple[CorporateActionAuthorityRecord, ...] | None = None,
+) -> ComparatorResolution:
+    """Resolve a missing exact-prior comparator without manufacturing a price."""
+
+    return _resume_comparator_authority(
+        symbol=symbol,
+        market=market,
+        target=target,
+        prior=prior,
+        authorities=(
+            authorities
+            if authorities is not None
+            else load_corporate_action_authorities()
+        ),
+    )
 
 
 @dataclass(frozen=True)
