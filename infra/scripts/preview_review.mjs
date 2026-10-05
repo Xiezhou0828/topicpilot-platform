@@ -5,7 +5,7 @@ import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { parseArgs } from "node:util";
 
-import { normalizeReadOnlyApiOrigin } from "./preview_proxy.mjs";
+import { normalizeReadOnlyApiOrigin } from "../../apps/web/preview_proxy.mjs";
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(SCRIPT_DIR, "../..");

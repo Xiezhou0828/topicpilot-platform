@@ -6,7 +6,7 @@ import {
   isAllowedPreviewProxyPath,
   isReadOnlyPreviewMethod,
   normalizeReadOnlyApiOrigin,
-} from "../preview_proxy.mjs";
+} from "../../../apps/web/preview_proxy.mjs";
 
 test("accepts HTTPS origins and local loopback origins", () => {
   assert.equal(normalizeReadOnlyApiOrigin("https://topicpilot-api.onrender.com"), "https://topicpilot-api.onrender.com");
