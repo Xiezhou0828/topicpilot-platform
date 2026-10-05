@@ -1,5 +1,6 @@
 import { spawn } from "node:child_process";
 import { promises as fs, readdirSync } from "node:fs";
+import net from "node:net";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { parseArgs } from "node:util";
@@ -155,13 +156,13 @@ async function prepareExactCandidate(config, env) {
   return candidateSha;
 }
 
-async function waitForUrl(url, child, timeoutMs = 90_000) {
+async function waitForUrl(url, child, timeoutMs = 180_000) {
   const deadline = Date.now() + timeoutMs;
   let lastError = "not yet reachable";
   while (Date.now() < deadline) {
     if (child.exitCode !== null) fail(`PREVIEW_SERVER_EXITED=${child.exitCode}`);
     try {
-      const response = await fetch(url, { signal: AbortSignal.timeout(5_000) });
+      const response = await fetch(url, { signal: AbortSignal.timeout(15_000) });
       if (response.ok) return response;
       lastError = `HTTP_${response.status}`;
     } catch (error) {
@@ -170,6 +171,14 @@ async function waitForUrl(url, child, timeoutMs = 90_000) {
     await new Promise((resolve) => setTimeout(resolve, 500));
   }
   fail(`PREVIEW_SERVER_NOT_READY=${lastError}`);
+}
+
+async function assertPortAvailable(port) {
+  await new Promise((resolve, reject) => {
+    const probe = net.createServer();
+    probe.once("error", () => reject(new Error(`PREVIEW_PORT_UNAVAILABLE=${port}`)));
+    probe.listen(port, "127.0.0.1", () => probe.close(resolve));
+  });
 }
 
 async function runReadOnlySmoke(config, child) {
@@ -205,6 +214,7 @@ async function main() {
       candidateSha = await gitOutput(["rev-parse", "--short", "HEAD"]);
     }
 
+    await assertPortAvailable(config.port);
     child = spawn(NPM, ["run", "dev", "--prefix", "apps/web", "--", "--host", "127.0.0.1", "--port", String(config.port)], {
       cwd: REPO_ROOT,
       env,
