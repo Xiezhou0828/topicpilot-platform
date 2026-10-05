@@ -32,6 +32,7 @@ RECEIPT_FAILED_CLOSED = "FAILED_CLOSED"
 RECEIPT_DEADLINE_EXCEEDED = "DEADLINE_EXCEEDED"
 RECEIPT_CORRECTION_COMPLETE = "CORRECTION_COMPLETE"
 RECEIPT_CORRECTION_FAILED = "CORRECTION_FAILED"
+RUNTIME_PROVENANCE_TRUST_FAILURE = "RUNTIME_PROVENANCE_TRUST_FAILURE"
 
 _SHA_PATTERN = re.compile(r"^[0-9a-f]{40}$", re.IGNORECASE)
 
@@ -114,7 +115,11 @@ def runtime_provenance(session: Session) -> dict[str, Any]:
     except Exception:
         migration_head = None
     migration_status = "READY" if migration_head else "UNVERIFIED"
-    known_required = worker_status == "READY" and migration_status == "READY"
+    known_required = (
+        worker_status == "READY"
+        and api_status == "READY"
+        and migration_status == "READY"
+    )
     return {
         "status": "READY" if known_required else "DEGRADED",
         "worker": {
@@ -139,6 +144,31 @@ def runtime_provenance(session: Session) -> dict[str, Any]:
         },
         "unknownIsVerified": False,
         "blocking": False,
+    }
+
+
+def runtime_provenance_event(
+    provenance: Mapping[str, Any], now: datetime
+) -> dict[str, Any] | None:
+    """Return an actionable event when required runtime proof is incomplete."""
+
+    # Web provenance is required when a Web artifact participates in the
+    # release. Worker receipts always require independent Worker, API, and
+    # migration proof for the live publication path.
+    required_components = ("worker", "api", "migration")
+    unverified = [
+        component
+        for component in required_components
+        if (provenance.get(component) or {}).get("readbackStatus") != "READY"
+    ]
+    if not unverified:
+        return None
+    return {
+        "code": RUNTIME_PROVENANCE_TRUST_FAILURE,
+        "severity": "CRITICAL",
+        "actionRequired": True,
+        "at": _as_utc(now).isoformat(),
+        "unverifiedComponents": unverified,
     }
 
 
@@ -384,6 +414,9 @@ def append_receipt_for_run(
             }
         )
     runtime = runtime_provenance(session)
+    runtime_event = runtime_provenance_event(runtime, current)
+    if runtime_event is not None:
+        events.append(runtime_event)
     correction = execution_scope == "HISTORY_RECOVERY"
     previous = _previous_authority(session, trading_date, execution_key) if correction else None
     correction_lineage = {
@@ -573,6 +606,17 @@ def append_correction_receipt(
         if status == RECEIPT_CORRECTION_COMPLETE
         else "CORRECTION_REPLAY_FAILED"
     )
+    runtime = runtime_provenance(session)
+    events = [
+        {
+            "code": event_code,
+            "severity": "INFO" if status == RECEIPT_CORRECTION_COMPLETE else "CRITICAL",
+            "at": current.isoformat(),
+        }
+    ]
+    runtime_event = runtime_provenance_event(runtime, current)
+    if runtime_event is not None:
+        events.append(runtime_event)
     receipt = DailyFormalPublicationReceipt(
         trading_date=trading_date,
         calendar_code=config.calendar_code,
@@ -605,20 +649,14 @@ def append_correction_receipt(
         failure_stage=None if status == RECEIPT_CORRECTION_COMPLETE else "CORRECTION_REPLAY",
         reason_code=reason_code,
         receipt_hash=receipt_hash,
-        runtime_provenance=runtime_provenance(session),
+        runtime_provenance=runtime,
         formal_identifiers={
             "lifecycleContractVersion": replay_result.get("contractVersion"),
             "calculationVersion": replay_result.get("calculationVersion"),
         },
         correction_lineage=lineage,
         supersedes_receipt_id=supersedes,
-        operational_events=[
-            {
-                "code": event_code,
-                "severity": "INFO" if status == RECEIPT_CORRECTION_COMPLETE else "CRITICAL",
-                "at": current.isoformat(),
-            }
-        ],
+        operational_events=events,
         payload=payload,
     )
     session.add(receipt)
@@ -647,6 +685,11 @@ def append_operational_receipt(
         "severity": "CRITICAL" if receipt_status == RECEIPT_DEADLINE_EXCEEDED else "WARNING",
         "at": current.isoformat(),
     }
+    runtime = runtime_provenance(session)
+    runtime_event = runtime_provenance_event(runtime, current)
+    events = [event]
+    if runtime_event is not None:
+        events.append(runtime_event)
     payload = {
         "schedulerAuthority": "WAKEUP_ONLY",
         "reasonCode": reason_code,
@@ -703,11 +746,11 @@ def append_operational_receipt(
         failure_stage="SCHEDULER",
         reason_code=reason_code,
         receipt_hash=receipt_hash,
-        runtime_provenance=runtime_provenance(session),
+        runtime_provenance=runtime,
         formal_identifiers={},
         correction_lineage={"kind": "NORMAL_DAILY_PUBLICATION", "replayRequired": False},
         supersedes_receipt_id=None,
-        operational_events=[event],
+        operational_events=events,
         payload=payload,
     )
     session.add(receipt)
@@ -765,6 +808,7 @@ __all__ = [
     "RECEIPT_FAILED_CLOSED",
     "RECEIPT_MARKET_CLOSED",
     "RECEIPT_WAITING_FOR_DATA",
+    "RUNTIME_PROVENANCE_TRUST_FAILURE",
     "append_correction_receipt",
     "append_operational_receipt",
     "append_receipt_for_run",
@@ -774,5 +818,6 @@ __all__ = [
     "read_receipts",
     "receipt_to_dict",
     "runtime_provenance",
+    "runtime_provenance_event",
     "soft_target_at",
 ]

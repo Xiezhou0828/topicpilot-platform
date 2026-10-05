@@ -5,10 +5,12 @@ from topicpilot_api.live.receipt import (
     RECEIPT_DEADLINE_EXCEEDED,
     RECEIPT_MARKET_CLOSED,
     RECEIPT_WAITING_FOR_DATA,
+    RUNTIME_PROVENANCE_TRUST_FAILURE,
     _receipt_status,
     hard_deadline_at,
     operational_phase,
     runtime_provenance,
+    runtime_provenance_event,
     soft_target_at,
 )
 
@@ -126,3 +128,55 @@ def test_unknown_runtime_provenance_is_never_verified(monkeypatch):
     assert provenance["api"]["readbackStatus"] == "UNVERIFIED"
     assert provenance["web"]["readbackStatus"] == "UNVERIFIED"
     assert provenance["migration"]["readbackStatus"] == "UNVERIFIED"
+
+
+def test_runtime_provenance_trust_failure_is_critical_and_actionable(monkeypatch):
+    monkeypatch.setattr(
+        "topicpilot_api.live.receipt.runtime_git_sha", lambda: "a" * 40
+    )
+    monkeypatch.delenv("TOPICPILOT_API_RUNTIME_SHA", raising=False)
+    monkeypatch.delenv("TOPICPILOT_WEB_ARTIFACT_SHA", raising=False)
+
+    class Result:
+        def scalar_one_or_none(self):
+            return "0049_task_daily_formal_publication_receipt"
+
+    class Session:
+        def execute(self, _statement):
+            return Result()
+
+    now = datetime(2026, 10, 5, 7, 0, tzinfo=UTC)
+    provenance = runtime_provenance(Session())
+    event = runtime_provenance_event(provenance, now)
+
+    assert provenance["status"] == "DEGRADED"
+    assert event == {
+        "code": RUNTIME_PROVENANCE_TRUST_FAILURE,
+        "severity": "CRITICAL",
+        "actionRequired": True,
+        "at": now.isoformat(),
+        "unverifiedComponents": ["api"],
+    }
+
+
+def test_runtime_provenance_event_is_absent_when_required_sources_are_ready(
+    monkeypatch,
+):
+    monkeypatch.setattr(
+        "topicpilot_api.live.receipt.runtime_git_sha", lambda: "a" * 40
+    )
+    monkeypatch.setenv("TOPICPILOT_API_RUNTIME_SHA", "b" * 40)
+
+    class Result:
+        def scalar_one_or_none(self):
+            return "0049_task_daily_formal_publication_receipt"
+
+    class Session:
+        def execute(self, _statement):
+            return Result()
+
+    provenance = runtime_provenance(Session())
+    assert provenance["status"] == "READY"
+    assert runtime_provenance_event(
+        provenance, datetime(2026, 10, 5, 7, 0, tzinfo=UTC)
+    ) is None
