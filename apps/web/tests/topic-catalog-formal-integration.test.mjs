@@ -5,9 +5,10 @@ import test from "node:test";
 const app = new URL("../app/", import.meta.url);
 const read = (path) => readFile(new URL(path, app), "utf8");
 
-test("production topic catalog fails closed without a formal API origin", async () => {
+test("production topic catalog fails closed unless explicit Preview mode is enabled", async () => {
   const source = await read("lib/topic-api.ts");
   assert.match(source, /process\.env\.NODE_ENV === "development"/);
+  assert.match(source, /process\.env\.NEXT_PUBLIC_PREVIEW_MODE === "true"/);
   assert.match(source, /NEXT_PUBLIC_ENABLE_TOPIC_PREVIEW === "true"/);
   assert.match(source, /production 不使用 Preview 題材清單替代/);
 });

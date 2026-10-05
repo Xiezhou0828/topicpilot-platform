@@ -1,0 +1,123 @@
+name: Non-Production Web Preview
+
+on:
+  workflow_dispatch:
+    inputs:
+      candidate_ref:
+        description: Branch, tag, or exact commit SHA to preview
+        required: true
+        type: string
+      api_base_url:
+        description: Optional HTTPS read-only API origin; leave empty for synthetic Preview data
+        required: false
+        default: ""
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: topicpilot-preview-${{ inputs.candidate_ref }}
+  cancel-in-progress: false
+
+jobs:
+  build-preview:
+    name: Build isolated Preview artifact
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      NEXT_PUBLIC_API_BASE_URL: ${{ inputs.api_base_url }}
+      NEXT_PUBLIC_ENABLE_DEMO_FALLBACK: "true"
+      NEXT_PUBLIC_PREVIEW_MODE: "true"
+      NEXT_PUBLIC_ENABLE_TOPIC_PREVIEW: "true"
+      NEXT_PUBLIC_AI_STUDIO_ORCHESTRATION_URL: ""
+      CLOUDFLARE_SEND_METRICS: "false"
+      CANDIDATE_REF: ${{ inputs.candidate_ref }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.candidate_ref }}
+          fetch-depth: 1
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22.13.0"
+          cache: npm
+          cache-dependency-path: apps/web/package-lock.json
+
+      - name: Resolve and record exact candidate SHA
+        id: candidate
+        run: |
+          candidate_sha="$(git rev-parse HEAD)"
+          test "$candidate_sha" = "$(git rev-parse --verify HEAD)"
+          echo "sha=$candidate_sha" >> "$GITHUB_OUTPUT"
+          node infra/scripts/preview_provenance.mjs write \
+            --repo-root . \
+            --candidate-sha "$candidate_sha" \
+            --candidate-ref "$CANDIDATE_REF" \
+            --api-base-url "$NEXT_PUBLIC_API_BASE_URL" \
+            --output apps/web/public/__preview.json
+
+      - name: Install locked frontend dependencies
+        run: npm ci --prefix apps/web
+
+      - name: Validate Preview provenance guard
+        run: node --test infra/scripts/tests/preview_provenance.test.mjs
+
+      - name: Validate synthetic fixture and frontend source
+        run: |
+          npm run demo:snapshot:check --prefix apps/web
+          npm run lint --prefix apps/web
+          (cd apps/web && npx tsc --noEmit)
+
+      - name: Build candidate Web artifact
+        run: npm run build --prefix apps/web
+
+      - name: Verify candidate provenance and run frontend tests
+        env:
+          CANDIDATE_SHA: ${{ steps.candidate.outputs.sha }}
+        run: |
+          node infra/scripts/preview_provenance.mjs verify \
+            --artifact-dir apps/web/dist \
+            --candidate-sha "$CANDIDATE_SHA"
+          (cd apps/web && node --test tests/*.test.mjs)
+
+      - name: Package immutable Preview reference
+        env:
+          CANDIDATE_SHA: ${{ steps.candidate.outputs.sha }}
+        run: |
+          mkdir -p "work/topicpilot-preview-$CANDIDATE_SHA"
+          cp -a apps/web/dist "work/topicpilot-preview-$CANDIDATE_SHA/artifact"
+          cp apps/web/dist/client/__preview.json "work/topicpilot-preview-$CANDIDATE_SHA/preview-provenance.json"
+          cat > "work/topicpilot-preview-$CANDIDATE_SHA/preview-reference.txt" <<EOF
+          PREVIEW_KIND=GITHUB_ACTIONS_ARTIFACT
+          CANDIDATE_SHA=$CANDIDATE_SHA
+          CANDIDATE_REF=$CANDIDATE_REF
+          API_TARGET=${NEXT_PUBLIC_API_BASE_URL:-SYNTHETIC_SNAPSHOT}
+          PREVIEW_WRITE_AUTHORITY=NONE
+          PRODUCTION_PROMOTION=NOT_AUTHORIZED_NOT_EXECUTED
+          EOF
+
+      - name: Publish immutable Preview artifact only
+        uses: actions/upload-artifact@v4
+        with:
+          name: topicpilot-preview-${{ steps.candidate.outputs.sha }}-${{ github.run_id }}
+          path: work/topicpilot-preview-${{ steps.candidate.outputs.sha }}/
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Write Preview handoff summary
+        env:
+          CANDIDATE_SHA: ${{ steps.candidate.outputs.sha }}
+        run: |
+          {
+            echo "## TopicPilot non-Production Preview"
+            echo ""
+            echo "- Candidate SHA: \`$CANDIDATE_SHA\`"
+            echo "- Candidate ref: \`$CANDIDATE_REF\`"
+            echo "- Data target: \`${NEXT_PUBLIC_API_BASE_URL:-SYNTHETIC_SNAPSHOT}\`"
+            echo "- Artifact: \`topicpilot-preview-$CANDIDATE_SHA-${GITHUB_RUN_ID}\`"
+            echo "- Production promotion: \`NOT_AUTHORIZED_NOT_EXECUTED\`"
+            echo "- Preview write authority: \`NONE\`"
+          } >> "$GITHUB_STEP_SUMMARY"

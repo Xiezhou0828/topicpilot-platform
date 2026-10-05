@@ -32,6 +32,7 @@
 - [Current project-state cold-start reconciliation](reports/TASK-DOC-CURRENT-PROJECT-STATE-COLD-START-HANDOFF-RECONCILIATION-001.md) — canonical startup/handoff state, evidence ledger, stale-claim disposition, and clean-reader acceptance result.
 - [Stock-004 canonical reconciliation closure](reports/TASK-OPS-STOCK-004-CANONICAL-RECONCILIATION-001.md) — closure evidence for release-hygiene workstream A.
 - [Documentation, fixture, and owner-disposition closure](reports/TASK-OPS-DOCUMENTATION-PROVIDERS-OWNER-DISPOSITION-AND-DB-INTEGRATION-FIXTURE-CLOSURE-001.md) — closure evidence for release-hygiene workstream B.
+- [Preview/staging release lane](reports/TASK-PREVIEW-STAGING-RELEASE-LANE-001.md) — non-Production candidate-to-artifact workflow, provenance boundary, and Owner authorization handoff.
 
 - [Project Context](../PROJECT_CONTEXT.md) — navigation/handoff, evidence-based status; not a product authority.
 - [Execution roadmap](ROADMAP.md) — implementation sequence and milestone context.
