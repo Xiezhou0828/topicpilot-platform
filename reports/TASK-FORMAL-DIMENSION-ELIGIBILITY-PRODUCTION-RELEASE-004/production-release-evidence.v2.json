@@ -1,0 +1,81 @@
+{
+  "task": "TASK-FORMAL-DIMENSION-ELIGIBILITY-PRODUCTION-RELEASE-004",
+  "status": "BLOCKED_PREDEPLOY_GATE",
+  "authorizedCandidate": "edcd73ce5b9f7390e6a5f9ee60915b6053ec3f91",
+  "currentEvidenceHead": "136c70d2675697813cdc24166d42fc0d313c9c30",
+  "canonicalRemoteHead": "e97f590cad497c0a23fb027fce39ec5891ea4bc1",
+  "mergeBase": "e97f590cad497c0a23fb027fce39ec5891ea4bc1",
+  "candidateAheadBy": 7,
+  "candidateBehindBy": 0,
+  "candidateAncestryValid": true,
+  "task005AncestorOfCandidate": true,
+  "runtimeFixPresent": true,
+  "unrelatedDiffPresent": false,
+  "productionBaseline": {
+    "apiSha": "6fff533168b1823052071f6d88d1f266397d327d",
+    "workerSha": "6fff533168b1823052071f6d88d1f266397d327d",
+    "alembicHead": "0049_task_daily_formal_publication_receipt",
+    "schedulerState": "ACTIVE_CONFIGURED",
+    "competingScheduler": "NONE_CONFIRMED",
+    "referenceDataVersion": "tw-reference-v1-rollover-0578862f98914eb7",
+    "latestPostClose": {
+      "id": "06d44574-214e-539d-ada4-dbf73d9eb971",
+      "tradingDate": "2026-10-06",
+      "status": "FAILED",
+      "failure": "TypeError: unsupported canonical value: float"
+    },
+    "receipts": {
+      "2026-10-05": "NOT_FOUND",
+      "2026-10-06": "NOT_FOUND"
+    }
+  },
+  "gates": {
+    "migrationRequired": false,
+    "providerDateAuthority": "UNPROVEN_BLOCKING",
+    "providerFinalityAuthority": "UNPROVEN_BLOCKING",
+    "providerContractPreflight": "BLOCKED_CURRENT_PROTECTED_READBACK_UNAVAILABLE",
+    "g2Revalidated": "PARTIAL_REFERENCE_CONFIG_READBACK_ONLY",
+    "g2ProductionReady": "NOT_CURRENTLY_PROVEN_BY_PROTECTED_READBACK",
+    "corporateActionRegression": "PASS",
+    "canonicalizationDeterminism": "PASS",
+    "postCloseBoundaryValidation": "PASS",
+    "workerReleaseBoundary": "PASS_LINUX",
+    "linuxCandidateValidation": "PASS",
+    "fullBackendValidation": "1277 passed, 23 skipped, 148 deselected, 1 warning, 0 failed",
+    "rollbackReady": true
+  },
+  "corporateAction": {
+    "instrument": "2601",
+    "officialClose": "6.45",
+    "officialLastBid": "6.44",
+    "previousTradedClose": "5.91",
+    "dailyComparisonReference": "7.06",
+    "expectedReturn": "-0.0864022662889518413597733711",
+    "specialCase": false
+  },
+  "deployment": {
+    "gate": "BLOCKED_PREDEPLOY_GATE",
+    "executed": false,
+    "pushExecuted": false,
+    "webRequired": false,
+    "webExecuted": false,
+    "migrationExecuted": false,
+    "schedulerMutated": false,
+    "rollbackExecuted": false
+  },
+  "historicalPreservation": {
+    "targetDate20261005Touched": false,
+    "original20261005FailedExecutionPreserved": true,
+    "targetDate20261006Replayed": false,
+    "original20261006FailedExecutionPreserved": true,
+    "historicalRecoveryExecuted": false,
+    "manualPostCloseExecuted": false,
+    "manualPublicationExecuted": false,
+    "d0": "PENDING_FIRST_NATURAL_SUCCESSFUL_TRADING_SESSION"
+  },
+  "blocker": {
+    "kind": "PROVIDER_DATE_FINALITY_PREFLIGHT",
+    "smallestExactBlocker": "Current protected canonical Production G2/provider-preflight PASS for 2026-10-05 is not available for readback; direct official TPEx HTTP 200 responses did not prove the requested target date.",
+    "nextAction": "Obtain protected read-only canonical provider/date/finality preflight PASS before push or deployment."
+  }
+}
