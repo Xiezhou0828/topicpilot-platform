@@ -1,0 +1,76 @@
+{
+  "task": "TASK-POST-CLOSE-FLOAT-CANONICALIZATION-RUNTIME-FAILURE-RECONCILIATION-001",
+  "status": "COMPLETE_RUNTIME_FAILURE_RECONCILIATION",
+  "code_sha": "edcd73ce5b9f7390e6a5f9ee60915b6053ec3f91",
+  "canonical_remote_head": "e97f590cad497c0a23fb027fce39ec5891ea4bc1",
+  "researched_base_sha": "dd7fa597cdc66243f80df1f8ad6d4b6dd7f82c8e",
+  "production": {
+    "api_sha": "6fff533168b1823052071f6d88d1f266397d327d",
+    "worker_sha": "6fff533168b1823052071f6d88d1f266397d327d",
+    "migration_head": "0049_task_daily_formal_publication_receipt",
+    "scheduler_state": "ACTIVE_CONFIGURED",
+    "reference_data_version": "tw-reference-v1-rollover-0578862f98914eb7"
+  },
+  "execution": {
+    "id": "06d44574-214e-539d-ada4-dbf73d9eb971",
+    "session_date": "2026-10-06",
+    "failure_class": "POST_CLOSE_FINALIZATION_RECEIPT_HASHING",
+    "failure_stage": "RECEIPT_HASHING",
+    "message": "TypeError: unsupported canonical value: float",
+    "semantic_fields": ["coveragePct", "coveredCoveragePct"],
+    "source_type": "finite Python float",
+    "value_source": "DailyMarketReconciliation integer-count division/rounding",
+    "canonicalizer": "topicpilot_api.normalizer.contracts.stable_hash",
+    "expected_type": "Decimal",
+    "non_finite_involved": false,
+    "root_cause_proven": true
+  },
+  "task_005": {
+    "implementation_sha": "c610f86302504bba1df4529b8461bbce7042d201",
+    "evidence_closure_sha": "876489301a8b243e71c19097b428d20b4e2fa231",
+    "relation": "UNRELATED_PREEXISTING_PRODUCTION_DEFECT",
+    "release_evidence_remains_closed": true
+  },
+  "fix": {
+    "scope": "receipt-boundary finite float to Decimal canonicalization",
+    "symbol_specific": false,
+    "date_specific": false,
+    "global_float_coercion": false,
+    "business_policy_changed": false,
+    "migration_required": false,
+    "scheduler_change_required": false
+  },
+  "tests": {
+    "focused_windows": "69 passed",
+    "corporate_action_g2_no_trade": "71 passed",
+    "linux_focused_worker_boundary": "156 passed",
+    "linux_full_backend": "1277 passed, 23 skipped, 148 deselected, 1 warning, 0 failed",
+    "ruff": "passed",
+    "task_owned_regression": "NONE",
+    "windows_cold_process_note": "5 pre-existing 0xC000070A environment failures; 11 related tests passed"
+  },
+  "corporate_action_regression": {
+    "previous_traded_close": "5.91",
+    "daily_comparison_reference": "7.06",
+    "current_close": "6.45",
+    "expected_return": "-0.0864022662889518413597733711",
+    "status": "PASS"
+  },
+  "composition": {
+    "task_005_ancestor_of_candidate": true,
+    "composed_release_candidate_required": false,
+    "runtime_fix_release_ready": true
+  },
+  "safety": {
+    "production_touched": false,
+    "production_write_set": "NONE",
+    "preview_touched": false,
+    "db_write_executed": false,
+    "migration_executed": false,
+    "scheduler_mutated": false,
+    "target_date_2026_10_05_touched": false,
+    "historical_recovery_executed": false,
+    "original_failed_execution_preserved": true,
+    "d0_manufactured": false
+  }
+}
