@@ -366,14 +366,15 @@ baseline or the task-owned write set.
 ```text
 CANONICAL_BASE=e97f590cad497c0a23fb027fce39ec5891ea4bc1
 IMPLEMENTATION_SHA=c610f86302504bba1df4529b8461bbce7042d201
-EVIDENCE_CLOSURE_SHA=TO_BE_FILLED_AFTER_REPORT_COMMIT
-RELEASE_CANDIDATE_SHA=TO_BE_FILLED_AFTER_REPORT_COMMIT
+EVIDENCE_CLOSURE_SHA=876489301a8b243e71c19097b428d20b4e2fa231
+RELEASE_CANDIDATE_SHA=876489301a8b243e71c19097b428d20b4e2fa231
 CANDIDATE_TREE_STATUS=TRACKED_FILES_CLEAN; pre-existing unrelated untracked reports preserved
 CANONICAL_PUSH=NO
 ```
 
-The report commit fills the two pending fields without staging or modifying
-any predecessor or unrelated untracked report.
+The evidence closure commit is the exact report/evidence commit above. A
+follow-up metadata-only commit fills these self-describing identifiers and
+does not stage or modify any predecessor or unrelated untracked report.
 
 ## 17. Non-Actions / Governance Proof
 
@@ -434,7 +435,7 @@ NO_RECONSTRUCTED_FORMAL_TOPIC_HISTORY=TRUE
 TASK_STATUS=COMPLETE_RELEASE_EVIDENCE_CLOSED
 CANONICAL_BASE=e97f590cad497c0a23fb027fce39ec5891ea4bc1
 IMPLEMENTATION_SHA=c610f86302504bba1df4529b8461bbce7042d201
-EVIDENCE_CLOSURE_SHA=TO_BE_FILLED_AFTER_REPORT_COMMIT
+EVIDENCE_CLOSURE_SHA=876489301a8b243e71c19097b428d20b4e2fa231
 
 OFFICIAL_TWSE_2601_20261005_CLOSE=6.45
 OFFICIAL_TWSE_2601_20261005_LAST_BID=6.44
