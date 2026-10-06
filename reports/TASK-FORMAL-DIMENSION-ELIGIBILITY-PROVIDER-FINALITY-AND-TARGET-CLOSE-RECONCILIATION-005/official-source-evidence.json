@@ -1,0 +1,111 @@
+{
+  "taskId": "TASK-FORMAL-DIMENSION-ELIGIBILITY-PROVIDER-FINALITY-AND-TARGET-CLOSE-RECONCILIATION-005",
+  "targetDate": "2026-10-05",
+  "officialTargetDaily": {
+    "endpoint": "https://www.twse.com.tw/rwd/zh/afterTrading/MI_INDEX?response=json&date=20261005&type=ALLBUT0999",
+    "httpStatus": 200,
+    "stat": "OK",
+    "responseDate": "20261005",
+    "rawResponseSha256": "25f98fcd444725208a7bb60785540a56d791d1f891e01c30124fcfce0dbedb72",
+    "fields": [
+      "證券代號",
+      "證券名稱",
+      "成交股數",
+      "成交筆數",
+      "成交金額",
+      "開盤價",
+      "最高價",
+      "最低價",
+      "收盤價",
+      "漲跌(+/-)",
+      "漲跌價差",
+      "最後揭示買價",
+      "最後揭示買量",
+      "最後揭示賣價",
+      "最後揭示賣量",
+      "本益比"
+    ],
+    "instrument2601": {
+      "row": [
+        "2601",
+        "益航",
+        "8,488,264",
+        "5,080",
+        "54,496,294",
+        "7.01",
+        "7.02",
+        "6.36",
+        "6.45",
+        "<p>X</p>",
+        "0.00",
+        "6.44",
+        "107",
+        "6.45",
+        "30",
+        "0.00"
+      ],
+      "close": "6.45",
+      "lastBid": "6.44",
+      "lastAsk": "6.45"
+    }
+  },
+  "officialCorporateAction": {
+    "endpoint": "https://www.twse.com.tw/rwd/zh/reducation/TWTAUU?startDate=20260901&endDate=20261031&response=json",
+    "httpStatus": 200,
+    "stat": "OK",
+    "responseSha256": "c7f9a65cb86e89363658c7d89c53580c3606f0fb63528b256003d250379c0337",
+    "instrument2601Row": [
+      "115/10/05",
+      "2601",
+      "益航",
+      "5.91",
+      "7.06",
+      "7.76",
+      "6.36",
+      "7.06",
+      "--",
+      "彌補虧損",
+      "2601  ,20260922"
+    ],
+    "previousTradedClose": "5.91",
+    "previousTradedCloseDate": "2026-09-22",
+    "dailyComparisonReference": "7.06",
+    "dailyComparisonReferenceDate": "2026-10-05"
+  },
+  "officialPreviousTradedClose": {
+    "endpoint": "https://www.twse.com.tw/rwd/zh/afterTrading/MI_INDEX?response=json&date=20260922&type=ALLBUT0999",
+    "httpStatus": 200,
+    "stat": "OK",
+    "responseDate": "20260922",
+    "responseSha256": "eb19ca95346045a8c11c6c9cec71d937df2e393af5e989835097a761185681b7",
+    "instrument2601Close": "5.91"
+  },
+  "officialGapDate": {
+    "endpoint": "https://www.twse.com.tw/rwd/zh/afterTrading/MI_INDEX?response=json&date=20261002&type=ALLBUT0999",
+    "httpStatus": 200,
+    "stat": "OK",
+    "responseDate": "20261002",
+    "responseSha256": "c2a26254e007a407e857121fb0a54301c9a48f1bdcbc7f58a20171089efec21f",
+    "instrument2601Present": false
+  },
+  "officialDetail": {
+    "endpoint": "https://www.twse.com.tw/rwd/zh/reducation/TWTAVUDetail?STK_NO=2601&FILE_DATE=20260922&response=json",
+    "httpStatus": 200,
+    "stat": "OK",
+    "responseSha256": "ffac2f5ccc09be16704286b21f44c74bb4ebcef497245d5898d047e905a971f0"
+  },
+  "candidateProviderReconstruction": {
+    "status": "PASS",
+    "providerResponseHash": "6b77e7e5a727f5e32dd1ae530197727f54976477543c3eb751a70578b7cc599d",
+    "ordinary2330PreviousFormalClose": "2500",
+    "instrument2601Close": "6.45",
+    "instrument2601ComparatorStatus": "READY",
+    "instrument2601PreviousTradedClose": "5.91",
+    "instrument2601ComparisonReference": "7.06",
+    "syntheticOrFillUsed": false
+  },
+  "forensicCalculation": {
+    "ratio": "-0.0864022662889518413597733711",
+    "percentage": "-8.640226628895184135977337110"
+  }
+}
