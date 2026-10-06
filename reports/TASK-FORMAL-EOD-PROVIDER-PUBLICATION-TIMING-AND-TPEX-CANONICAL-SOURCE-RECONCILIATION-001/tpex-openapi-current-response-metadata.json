@@ -1,0 +1,31 @@
+{
+  "targetDate": "2026-10-06",
+  "retrievedAtAsiaTaipei": "2026-10-07T01:51:12.843385+08:00",
+  "requestUrl": "https://www.tpex.org.tw/openapi/v1/tpex_mainboard_daily_close_quotes",
+  "requestParameters": {},
+  "httpStatus": 200,
+  "payloadShape": "JSON array",
+  "payloadSha256": "38cc9feff84511ec122547c981e6c6f5dd730d1f183c916e3f770b5590cbd61f",
+  "payloadBytes": 4775935,
+  "rowCount": 12194,
+  "availableDates": ["1151006"],
+  "servedDate": "1151006",
+  "servedDateGregorian": "2026-10-06",
+  "targetDateMatch": true,
+  "dateSemantics": "latest snapshot; no date query accepted by adapter",
+  "fields": ["Date", "SecuritiesCompanyCode", "CompanyName", "Close", "Change", "Open", "High", "Low", "Average", "TradingShares", "TransactionAmount", "TransactionNumber", "LatestBidPrice", "LatesAskPrice", "Capitals", "NextReferencePrice", "NextLimitUp", "NextLimitDown"],
+  "hasOHLC": true,
+  "hasVolume": true,
+  "hasTurnover": true,
+  "hasExplicitFinality": false,
+  "hasRevision": false,
+  "finalityAuthority": "NOT_PROVEN",
+  "representativeRows": {
+    "3105": {"open": "615.00", "high": "623.00", "low": "588.00", "close": "592.00", "volume": "19731700", "turnover": "11863581093", "parseable": true},
+    "6129": {"open": "14.55", "high": "14.55", "low": "14.25", "close": "14.40", "volume": "339617", "turnover": "4883484", "parseable": true},
+    "8069": {"open": "147.00", "high": "151.50", "low": "145.00", "close": "149.00", "volume": "10796741", "turnover": "1607943663", "parseable": true},
+    "6488": {"open": "1175.00", "high": "1260.00", "low": "1145.00", "close": "1205.00", "volume": "13913614", "turnover": "16835605385", "parseable": true},
+    "00411A": {"open": "11.01", "high": "11.07", "low": "11.00", "close": "11.05", "volume": "11061666", "turnover": "121992186", "parseable": true}
+  },
+  "rawPayloadPersisted": false
+}

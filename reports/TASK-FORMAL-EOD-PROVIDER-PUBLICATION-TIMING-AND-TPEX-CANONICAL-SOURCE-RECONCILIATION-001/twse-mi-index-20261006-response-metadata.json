@@ -1,0 +1,44 @@
+{
+  "targetDate": "2026-10-06",
+  "retrievedAtAsiaTaipei": "2026-10-07T01:51:11.295597+08:00",
+  "requestUrl": "https://www.twse.com.tw/rwd/zh/afterTrading/MI_INDEX?date=20261006&type=ALLBUT0999&response=json",
+  "httpStatus": 200,
+  "payloadStat": "OK",
+  "servedDate": "20261006",
+  "targetDateMatch": true,
+  "payloadSha256": "0ea61f48032efcd291aa7ac31c6799caf864040b291a92693579ae04f1000d11",
+  "payloadBytes": 247344,
+  "tableCount": 10,
+  "marketCloseTable": {
+    "identity": "daily close table; fields[0]=證券代號",
+    "rowCount": 1381,
+    "nonEmpty": true,
+    "fields": ["證券代號", "證券名稱", "成交股數", "成交筆數", "成交金額", "開盤價", "最高價", "最低價", "收盤價", "漲跌(+/-)", "漲跌價差", "最後揭示買價", "最後揭示買量", "最後揭示賣價", "最後揭示賣量", "本益比"]
+  },
+  "aggregateCrossCheck": {
+    "officialStatsTable": "大盤統計資訊",
+    "breadthTable": "漲跌證券數合計",
+    "tradingDate": "2026-10-06",
+    "turnoverTwd": "963671291269",
+    "eligible": 1083,
+    "observed": 1081,
+    "advancers": 462,
+    "decliners": 519,
+    "unchanged": 100,
+    "unavailable": 2,
+    "limitUp": 10,
+    "limitDown": 2
+  },
+  "representativeRows": {
+    "2330": {"open": "2575.00", "high": "2590.00", "low": "2565.00", "close": "2585.00", "volume": "20801802", "parseable": true},
+    "2601": {"open": "6.36", "high": "6.36", "low": "6.07", "close": "6.12", "volume": "5565731", "parseable": true},
+    "0050": {"open": "116.30", "high": "116.60", "low": "115.70", "close": "116.50", "volume": "70945715", "parseable": true}
+  },
+  "finality": {
+    "officialDailyResponse": "available and exact-date",
+    "explicitFinalityField": false,
+    "revisionField": false,
+    "authority": "NOT_PROVEN"
+  },
+  "rawPayloadPersisted": false
+}
