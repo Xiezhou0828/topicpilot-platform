@@ -265,3 +265,53 @@ Use `N/A` or `UNKNOWN` rather than guessing. Volatile values include the verific
 time and source of truth. Set `TASK_COMPLETE=YES` only when `ACHIEVED_TERMINAL_STATE` equals `REQUIRED_TERMINAL_STATE`. If incomplete or
 waiting at an approved authority boundary, say why, name the next boundary, and set
 `FOLLOW_UP_REQUIRED=YES`. Never report `BLOCKED` as an achieved terminal state.
+
+## 12. Lean operational EOD readiness
+
+`TOPICPILOT_LEAN_VALIDATION_POLICY_V1` is the canonical policy for the normal
+same-session EOD path. It replaces an unnecessarily strict exchange-level
+finality/no-revision requirement with a minimum sufficient
+`OPERATIONAL_EOD_READINESS` contract. The contract remains fail-closed for
+wrong, future, unexplained, or nonsensical dates; malformed or incomplete
+payloads; missing required coverage; material authority conflicts; missing
+Corporate Action comparator authority; look-ahead; survivorship; and any
+synthetic zero-fill or inferred value.
+
+The readiness state is explicit:
+
+- `READY` means an official source returned the requested session with a valid
+  payload, required rows and OHLCV, minimum coverage, and no material
+  authority conflict. An exchange promise of permanent finality is not a
+  prerequisite.
+- `WAIT` means the official source is temporarily unavailable/not ready or is
+  still serving the previous valid session during publication lag. The bounded
+  retry path may re-check the same session later; it must not publish partial
+  formal facts or create a fallback authority.
+- `BLOCKED` means the evidence is invalid or contradictory, including an
+  unexplained/future date mismatch, malformed required data, insufficient
+  coverage, or unresolved authority/comparator conflict. It must stop the
+  downstream formal path.
+
+The operational timing policy is 13:45 earliest eligibility, 14:30 soft
+warning, and 15:00 hard operational SLA alert. The 15:00 threshold is an alert
+and audit event, not a permanent same-session publication boundary. A later
+same-session `READY` result may use the normal publication path. Retries remain
+bounded per provider attempt and use the existing scheduler cadence; no busy
+loop, infinite in-process sleep, provider switch, new paid dependency, or
+unbounded fallback is permitted.
+
+The policy does not change the strict Corporate Action Price Authority v1
+contract. `previous_traded_close` and `daily_comparison_reference` remain
+conceptually distinct, neither is synthesized or inferred from price movement,
+and no special case or authority extension is allowed. Immutable receipts,
+correction/supersession lineage, chronological Lifecycle semantics, null for
+missing data, look-ahead protection, and survivorship protection remain in
+force. Historical Home is never republished by the normal EOD readiness path.
+
+Validation is impact-based: focused readiness/preflight tests are required for
+the changed contract, relevant backend/worker regressions are run when the
+application code changes, and broader suites are recorded when not run. A
+validated application-code change creates a new exact release candidate;
+previous release candidates are not silently promoted. Production deployment,
+database writes/migrations, scheduler mutation, and canonical promotion remain
+separate explicit authority boundaries.

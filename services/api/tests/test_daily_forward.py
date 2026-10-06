@@ -108,6 +108,19 @@ def test_daily_forward_after_midnight_targets_latest_closed_session():
     assert updater.calls == [(date(2026, 9, 9), "MANUAL")]
 
 
+def test_daily_forward_after_hard_sla_still_allows_retryable_same_session_wait():
+    runner, updater = _runner(
+        datetime(2026, 8, 31, 7, 1, tzinfo=UTC),
+        result_status="WAITING_LIVE_VALIDATION",
+    )
+
+    result = runner.run_once()
+
+    assert result.status == "WAITING_LIVE_VALIDATION"
+    assert result.target_date == date(2026, 8, 31)
+    assert updater.calls == [(date(2026, 8, 31), "MANUAL")]
+
+
 def test_daily_forward_restart_after_close_targets_same_day_idempotently():
     runner, updater = _runner(datetime(2026, 9, 9, 9, 5, tzinfo=UTC))
 

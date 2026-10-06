@@ -10,7 +10,7 @@ Canary, and Scheduler activation.
 The authoritative providers are fixed by the provider registry:
 
 - TPE: TWSE_OFFICIAL_DAILY, adapter twse-official-daily.v2
-- TWO: TPEX_OFFICIAL_DAILY, adapter tpex-official-daily.v2
+- TWO: TPEX_OFFICIAL_DAILY, adapter tpex-official-openapi-daily.v1
 - marketBatch: true
 - Yahoo daily: VERIFICATION_ONLY
 - Taishin: INTRADAY_ONLY
@@ -91,9 +91,13 @@ read-transaction state; there is no application mutation.
 8. Require a parsed payload, target-date match, non-empty market data, and
    complete coverage of that date-effective expected universe. The identity
    count is derived at runtime; 507, 314, 313, and 193 are not loader business
-   rules.
-9. Return one deterministic JSON result. Exit code 0 means PASS; exit code 1
-   means FAIL.
+   rules. An explicit exchange finality/no-revision promise is not a required
+   G2 input; later source correction remains covered by the immutable
+   correction/supersession path.
+9. Return one deterministic JSON result. The top-level `status` remains
+   `PASS | WAIT | FAIL` for compatibility, while `readinessState` is the
+   canonical `READY | WAIT | BLOCKED` decision. Exit code 0 means PASS or WAIT;
+   exit code 1 means FAIL/BLOCKED.
 
 ## Result contract
 
@@ -101,7 +105,8 @@ The command emits one JSON object with this shape:
 
     {
       "gate": "G2",
-      "status": "PASS | FAIL",
+      "status": "PASS | WAIT | FAIL",
+      "readinessState": "READY | WAIT | BLOCKED",
       "referenceVersion": "tw-reference-v1",
       "targetDate": "YYYY-MM-DD",
       "targetDateIsSession": true,
@@ -142,15 +147,46 @@ The command emits one JSON object with this shape:
           "extraInstrumentCount": 0,
           "coverageComplete": true,
           "status": "PASS",
+          "readinessState": "READY",
+          "readinessReasonCode": "OPERATIONAL_EOD_READY",
           "errorCode": null
         }
       ]
     }
 
-The TWO entry uses TPEX_OFFICIAL_DAILY and tpex-official-daily.v2. Error
+The TWO entry uses TPEX_OFFICIAL_DAILY and
+tpex-official-openapi-daily.v1, backed by the official TPEx OpenAPI daily
+close-quotes endpoint. The date-addressable TPEx dailyQuotes path remains an
+official comparator/history authority where its contract is required; it does
+not silently replace the formal market-batch registration. Error
 messages are not emitted into the contract; errorCode is sanitized and no
 DATABASE_URL, credentials, headers, cookies, tokens, or secret query
 parameters are printed.
+
+## Operational readiness semantics
+
+The minimum sufficient EOD contract is `OPERATIONAL_EOD_READINESS`; an
+exchange-level guarantee that the response can never be revised is not
+required for the normal publication attempt. The state is evaluated only from
+official evidence and the explicit target session:
+
+- `READY`: official source, requested session, valid payload, required rows and
+  OHLCV, minimum coverage, and no material authority conflict.
+- `WAIT`: `EXCHANGE_NOT_READY`, an empty publication payload, a bounded
+  temporary retrieval failure, or a response serving the previous valid
+  session while the target session is in publication lag. No formal write is
+  performed while waiting, and the existing scheduler cadence may retry.
+- `BLOCKED`: an unexplained, future, or nonsensical date mismatch; malformed
+  required data; insufficient required coverage; authority conflict; or
+  unresolved Corporate Action comparator authority. The path stops
+  fail-closed.
+
+`previous_traded_close` and `daily_comparison_reference` remain distinct
+Corporate Action Price Authority v1 concepts. Neither may be synthesized,
+inferred from price movement, or replaced by an unofficial source. Missing
+facts remain null/unavailable. G2 readiness also does not authorize historical
+recovery, Lifecycle replay, historical Home republish, scheduler mutation, or
+Production writes.
 
 ## Comparator and dimension scope
 
@@ -188,7 +224,7 @@ G2 PASS requires all of the following:
 - the TPE registration is exactly TWSE_OFFICIAL_DAILY /
   twse-official-daily.v2 with marketBatch=true;
 - the TWO registration is exactly TPEX_OFFICIAL_DAILY /
-  tpex-official-daily.v2 with marketBatch=true;
+  tpex-official-openapi-daily.v1 with marketBatch=true;
 - both official requests are reachable and payloads parse;
 - both payloads match the requested target date;
 - both payloads contain data;
@@ -204,7 +240,7 @@ to later explicitly authorized gates.
 
 ## FAIL criteria and stop rules
 
-G2 FAIL is returned for any of:
+G2 FAIL/BLOCKED is returned for any of:
 
 - reference context not READY;
 - invalid/non-session target date;
@@ -219,7 +255,12 @@ G2 FAIL is returned for any of:
 - malformed or unknown instrument lifecycle evidence;
 - any fallback or verification provider being used.
 
-On FAIL, preserve the JSON evidence and stop. Do not run
+Publication lag and temporary official unavailability are `WAIT`, not
+permanent G2 failure. A `WAIT` result preserves the read-only boundary and
+returns cleanly so the bounded scheduler cadence can retry. A `BLOCKED` result
+must stop the downstream formal path.
+
+On FAIL/BLOCKED, preserve the JSON evidence and stop. Do not run
 topicpilot-live --mode post-close, --apply, --activate, Topic Snapshot,
 Lifecycle, Opportunity, Canary, or Scheduler commands.
 

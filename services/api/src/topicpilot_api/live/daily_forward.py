@@ -21,7 +21,6 @@ from .receipt import (
     RECEIPT_MARKET_CLOSED,
     RECEIPT_WAITING_FOR_DATA,
     append_operational_receipt,
-    hard_deadline_at,
     read_latest_receipt,
 )
 
@@ -325,16 +324,11 @@ class DailyForwardRunner:
             )
             if existing is not None and existing.status != "WAITING_FOR_DATA":
                 return existing
-            if self.session is not None and now.astimezone(
-                self.updater.session_clock.timezone
-            ) >= hard_deadline_at(
-                target_date, self.config
-            ):
-                return self._deadline_result(
-                    target_date=target_date,
-                    next_session=next_session,
-                    now=now,
-                )
+            # 15:00 is a hard operational alert threshold, not a permanent
+            # same-session publication boundary.  The updater records WAIT
+            # and the existing scheduler cadence retries without sleeping a
+            # worker indefinitely.  A later READY result may still publish
+            # this same session through the normal idempotent path.
 
         result = self.updater.run_once(
             run_date=target_date,

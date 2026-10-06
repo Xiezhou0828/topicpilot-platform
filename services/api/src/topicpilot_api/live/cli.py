@@ -181,7 +181,12 @@ def main(argv: list[str] | None = None) -> int:
                 )
                 return (
                     0
-                    if result is None or result.status in {"SUCCESS", "PARTIAL", "MARKET_CLOSED"}
+                    if result is None or result.status in {
+                        "SUCCESS",
+                        "PARTIAL",
+                        "MARKET_CLOSED",
+                        "WAITING_LIVE_VALIDATION",
+                    }
                     else 1
                 )
 

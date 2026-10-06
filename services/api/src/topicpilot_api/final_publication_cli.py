@@ -172,48 +172,65 @@ def main(argv=None):
                     )
                     result["providerPreflight"] = provider
                     now = datetime.now(UTC)
-                    flows = fetch_official_market_institutional_flows(
-                        target_date=args.target_date,
-                        retrieved_at=now,
-                        as_of=now,
-                        transport=_read_url,
-                    )
-                    result["institutionalFlow"] = [
-                        {
-                            "market": f.market,
-                            "availability": f.availability,
-                            "tradingDate": str(f.trading_date),
-                            "reason": f.status_reason,
-                            "source": f.source_identity,
-                            "lineage": f.lineage_hash,
-                        }
-                        for f in flows
-                    ]
-                    if provider["status"] != "PASS":
+                    if provider["status"] == "WAIT":
+                        wait_reason = next(
+                            (
+                                market.get("readinessReasonCode")
+                                for market in provider.get("markets", [])
+                                if market.get("readinessState") == "WAIT"
+                            ),
+                            "WAIT_PROVIDER_NOT_READY",
+                        )
+                        result.update(status="WAIT", reasonCodes=[wait_reason])
+                    elif provider["status"] != "PASS":
                         result.update(status="BLOCKED", reasonCodes=["PROVIDER_G2_NOT_READY"])
-                    elif (
-                        len(flows) != 2
-                        or {f.market for f in flows} != {"TPE", "TWO"}
-                        or any(
-                            f.availability != "AVAILABLE" or f.trading_date != args.target_date
+                    else:
+                        flows = fetch_official_market_institutional_flows(
+                            target_date=args.target_date,
+                            retrieved_at=now,
+                            as_of=now,
+                            transport=_read_url,
+                        )
+                        result["institutionalFlow"] = [
+                            {
+                                "market": f.market,
+                                "availability": f.availability,
+                                "tradingDate": str(f.trading_date),
+                                "reason": f.status_reason,
+                                "source": f.source_identity,
+                                "lineage": f.lineage_hash,
+                            }
                             for f in flows
-                        )
-                    ):
-                        result.update(
-                            status="BLOCKED", reasonCodes=["INSTITUTIONAL_FLOW_NOT_READY"]
-                        )
-                    if write and result["status"] == "PASS":
-                        executed = updater.run_once(
-                            run_date=args.target_date, execution_mode="MANUAL"
-                        )
-                        result["normalRun"] = executed.to_dict()
-                        result["status"] = "PASS" if executed.status == "SUCCESS" else "FAILED"
+                        ]
+                        if (
+                            len(flows) != 2
+                            or {f.market for f in flows} != {"TPE", "TWO"}
+                            or any(
+                                f.availability != "AVAILABLE" or f.trading_date != args.target_date
+                                for f in flows
+                            )
+                        ):
+                            result.update(
+                                status="BLOCKED", reasonCodes=["INSTITUTIONAL_FLOW_NOT_READY"]
+                            )
+                        if write and result["status"] == "PASS":
+                            executed = updater.run_once(
+                                run_date=args.target_date, execution_mode="MANUAL"
+                            )
+                            result["normalRun"] = executed.to_dict()
+                            result["status"] = (
+                                "PASS"
+                                if executed.status == "SUCCESS"
+                                else "WAIT"
+                                if executed.status == "WAITING_LIVE_VALIDATION"
+                                else "FAILED"
+                            )
                 if not args.include_lineage and "providerPreflight" in result:
                     for market in result["providerPreflight"].get("markets", []):
                         for key in ("instrumentDecisions", "extraIdentityCodes"):
                             market.pop(key, None)
             print(json.dumps(_json_safe(result), ensure_ascii=False, sort_keys=True))
-            return 0 if result["status"] in {"PASS", "READY", "PERSISTED"} else 1
+            return 0 if result["status"] in {"PASS", "READY", "WAIT", "PERSISTED"} else 1
     except (ComparatorError, PostClosePreconditionError) as exc:
         print(json.dumps({"status": "BLOCKED", "errorCode": exc.code, "operation": args.operation}))
         return 1

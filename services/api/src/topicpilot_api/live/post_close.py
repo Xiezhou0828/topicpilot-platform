@@ -40,6 +40,11 @@ from topicpilot_api.market_data.institutional_flow_contract import (
     persist_market_institutional_flows,
 )
 from topicpilot_api.market_data.rate_limit import RateLimitedTransport
+from topicpilot_api.market_data.readiness import (
+    OperationalReadiness,
+    classify_provider_error,
+    parse_reported_session,
+)
 from topicpilot_api.market_data.registry import build_historical_provider_registry
 from topicpilot_api.normalizer import HISTORICAL_MAPPING_POLICY_VERSION, MappingPolicy
 from topicpilot_api.normalizer.contracts import stable_hash
@@ -1182,6 +1187,30 @@ class PostCloseUpdater:
             }
         )
 
+    @staticmethod
+    def _provider_readiness_decision(
+        exc: Exception,
+        adapter: Any,
+        *,
+        target_date: date,
+        previous_session: date | None,
+    ):
+        evidence = getattr(adapter, "response_evidence", {}) or {}
+        reported_dates = evidence.get("rawResponseDates") or ()
+        if isinstance(reported_dates, str):
+            reported_dates = (reported_dates,)
+        served_session = (
+            parse_reported_session(reported_dates[0])
+            if len(reported_dates) == 1
+            else None
+        )
+        return classify_provider_error(
+            str(getattr(exc, "code", "PROVIDER_REQUEST_FAILED")),
+            target_session=target_date,
+            served_session=served_session,
+            previous_session=previous_session,
+        )
+
     def _record_history_attempt(
         self,
         *,
@@ -1486,6 +1515,7 @@ class PostCloseUpdater:
         skipped_count = recovered_counts.get("skipped_count", 0)
         retry_count = recovered_counts.get("retry_count", 0)
         point_count = recovered_counts.get("point_count", 0)
+        waiting_reason_codes: list[str] = []
         status_resolution_candidates: dict[Any, bool] = {}
         self._ensure_completed_checkpoint(
             run_id=run_id,
@@ -1735,6 +1765,14 @@ class PostCloseUpdater:
                 ):
                     provider_error_code = str(provider_exception.code)
                     provider_error_message = str(provider_exception)
+                    readiness = self._provider_readiness_decision(
+                        provider_exception,
+                        registration.adapter,
+                        target_date=local_date,
+                        previous_session=context.previous_session,
+                    )
+                    if readiness.state is OperationalReadiness.WAIT:
+                        waiting_reason_codes.append(readiness.reason_code)
                     fallback_failure_count = 0
                     with self.session.begin():
                         completed = self._now()
@@ -1881,6 +1919,19 @@ class PostCloseUpdater:
                     metadata={"market": market.code, "sessionDate": local_date},
                 )
             self._heartbeat(run_id, self._now())
+
+        if waiting_reason_codes and not is_targeted:
+            return self._finalize_waiting_run(
+                run_id=run_id,
+                local_date=local_date,
+                eligible_instrument_ids=eligible_instrument_ids,
+                success_count=success_count,
+                failure_count=failure_count,
+                skipped_count=skipped_count,
+                retry_count=retry_count,
+                point_count=point_count,
+                failure_codes=tuple(sorted(set(waiting_reason_codes))),
+            )
 
         bounded_status_resolution = self._resolve_missing_statuses(
             run_id=run_id,
@@ -2146,6 +2197,88 @@ class PostCloseUpdater:
             0,
             final_failure_codes,
             snapshot_result["topicCount"],
+            snapshot_result["status"],
+            local_date.isoformat(),
+            False,
+            getattr(self, "_status_resolution_metrics", StatusResolutionMetrics()).to_dict(),
+        )
+
+    def _finalize_waiting_run(
+        self,
+        *,
+        run_id: Any,
+        local_date: date,
+        eligible_instrument_ids: Collection[Any],
+        success_count: int,
+        failure_count: int,
+        skipped_count: int,
+        retry_count: int,
+        point_count: int,
+        failure_codes: Collection[str],
+    ) -> PostCloseRunResult:
+        """Persist a retryable EOD wait without entering downstream publication."""
+
+        reconciliation = reconcile_daily_market(
+            self.session,
+            local_date,
+            expected_instrument_ids=eligible_instrument_ids,
+            status_resolutions=getattr(self, "_status_resolution_by_instrument_id", {}),
+        )
+        final_failure_codes = tuple(dict.fromkeys(failure_codes)) or (
+            "WAIT_PROVIDER_PUBLICATION_LAG",
+        )
+        snapshot_result = {
+            "snapshotDate": local_date.isoformat(),
+            "topicCount": 0,
+            "status": "WAITING_FOR_OPERATIONAL_EOD",
+            "readinessState": OperationalReadiness.WAIT.value,
+        }
+        self._checkpoint_event(
+            run_id=run_id,
+            batch_key="FINAL_PUBLICATION",
+            status="PARTIAL",
+            failed_count=0,
+            metadata={
+                "readinessState": OperationalReadiness.WAIT.value,
+                "reasonCodes": list(final_failure_codes),
+                "publication": "NOT_RUN",
+            },
+        )
+        self._finish_with_retry(
+            run_id,
+            status="WAITING_LIVE_VALIDATION",
+            success_count=success_count,
+            failure_count=failure_count,
+            skipped_count=skipped_count,
+            retry_count=retry_count,
+            point_count=point_count,
+            failure_codes=final_failure_codes,
+            snapshot_result=snapshot_result,
+            reconciliation=reconciliation,
+            now=self._now(),
+        )
+        self._checkpoint_event(
+            run_id=run_id,
+            batch_key="COMPLETION",
+            status="PARTIAL",
+            metadata={
+                "runStatus": "WAITING_LIVE_VALIDATION",
+                "readinessState": OperationalReadiness.WAIT.value,
+                "failureCodes": final_failure_codes,
+            },
+        )
+        return PostCloseRunResult(
+            str(run_id),
+            "WAITING_LIVE_VALIDATION",
+            len(eligible_instrument_ids),
+            success_count,
+            failure_count,
+            skipped_count,
+            retry_count,
+            point_count,
+            0,
+            final_failure_codes,
+            0,
             snapshot_result["status"],
             local_date.isoformat(),
             False,
@@ -3110,6 +3243,8 @@ class PostCloseUpdater:
             if status == "SUCCESS"
             else "NOT_APPLICABLE"
             if status == "MARKET_CLOSED"
+            else "WAITING"
+            if status == "WAITING_LIVE_VALIDATION"
             else "PARTIAL"
         )
         run.provider_status = (
@@ -3117,6 +3252,8 @@ class PostCloseUpdater:
             if status in {"SUCCESS", "PARTIAL"}
             else "NOT_CALLED"
             if status == "MARKET_CLOSED"
+            else "WAIT"
+            if status == "WAITING_LIVE_VALIDATION"
             else "ERROR"
         )
         run.failure_code = failure_codes[0] if failure_codes else None
@@ -3127,6 +3264,13 @@ class PostCloseUpdater:
                 "skippedCount": skipped_count,
                 "providerPointCount": point_count,
                 "failureCodes": list(failure_codes),
+                "readinessState": (
+                    OperationalReadiness.READY.value
+                    if status == "SUCCESS"
+                    else OperationalReadiness.WAIT.value
+                    if status == "WAITING_LIVE_VALIDATION"
+                    else OperationalReadiness.BLOCKED.value
+                ),
                 "dailyMarketReconciliation": (
                     reconciliation.to_dict() if reconciliation else {"status": "NOT_RUN"}
                 ),
@@ -3186,6 +3330,8 @@ class PostCloseUpdater:
                     if status == "SUCCESS"
                     and reconciliation_payload.get("downstreamReady") is True
                     and formal_chain_ready
+                    else "WAIT"
+                    if status == "WAITING_LIVE_VALIDATION"
                     else "MARKET_CLOSED"
                     if status == "MARKET_CLOSED"
                     else "BLOCKED"
@@ -3194,6 +3340,8 @@ class PostCloseUpdater:
                 "formalEodPublication": (
                     "NOT_RUN"
                     if is_market_closed
+                    else "WAIT"
+                    if status == "WAITING_LIVE_VALIDATION"
                     else "PASS"
                     if reconciliation_payload.get("downstreamReady") is True
                     else "NOT_RUN"
@@ -3201,6 +3349,8 @@ class PostCloseUpdater:
                 "formalEodReadback": (
                     "NOT_RUN"
                     if is_market_closed
+                    else "WAIT"
+                    if status == "WAITING_LIVE_VALIDATION"
                     else "PASS"
                     if reconciliation_payload.get("downstreamReady") is True
                     else "FAIL"

@@ -54,7 +54,9 @@ def main(argv: list[str] | None = None) -> int:
         if engine is not None:
             engine.dispose()
     print(json.dumps(result, ensure_ascii=False, sort_keys=True))
-    return 0 if result["status"] == "PASS" else 1
+    # WAIT is a clean, retryable operational outcome; only BLOCKED/FAIL
+    # should make the read-only command fail closed at the process boundary.
+    return 0 if result["status"] in {"PASS", "WAIT"} else 1
 
 
 if __name__ == "__main__":

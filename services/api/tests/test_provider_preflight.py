@@ -102,17 +102,63 @@ def test_provider_preflight_passes_only_with_official_full_market_coverage():
     assert [market["recordCount"] for market in result["markets"]] == [2, 2]
 
 
-def test_provider_failure_on_one_market_fails_overall_without_fallback():
+def test_temporary_provider_failure_waits_without_fallback():
     results = _pass_results()
     results["TPE"] = G2MarketFailure("PROVIDER_REQUEST_FAILED")
 
     result = evaluate_provider_preflight(_context(), results)
 
-    assert result["status"] == "FAIL"
+    assert result["status"] == "WAIT"
+    assert result["readinessState"] == "WAIT"
     assert result["fallbackAllowed"] is False
     assert result["markets"][0]["errorCode"] == "PROVIDER_REQUEST_FAILED"
+    assert result["markets"][0]["readinessReasonCode"] == "WAIT_PROVIDER_TEMPORARY_UNAVAILABLE"
     assert result["markets"][0]["reachable"] is False
     assert result["markets"][1]["status"] == "PASS"
+
+
+def test_transient_provider_not_ready_is_wait_without_fallback():
+    results = _pass_results()
+    results["TPE"] = G2MarketFailure("EXCHANGE_NOT_READY")
+
+    result = evaluate_provider_preflight(_context(), results)
+
+    assert result["status"] == "WAIT"
+    assert result["readinessState"] == "WAIT"
+    assert result["markets"][0]["readinessState"] == "WAIT"
+    assert result["markets"][0]["readinessReasonCode"] == "WAIT_PROVIDER_NOT_READY"
+    assert result["fallbackAllowed"] is False
+
+
+def test_previous_session_date_mismatch_is_wait_but_future_date_is_blocked():
+    results = _pass_results()
+    results["TPE"] = G2MarketFailure(
+        "PROVIDER_DATE_MISMATCH",
+        reachable=True,
+        payload_parsed=True,
+        served_session=date(2026, 8, 6),
+    )
+
+    waiting = evaluate_provider_preflight(_context(), results)
+
+    assert waiting["status"] == "WAIT"
+    assert waiting["markets"][0]["readinessReasonCode"] == (
+        "WAIT_PROVIDER_PUBLICATION_LAG"
+    )
+
+    results["TPE"] = G2MarketFailure(
+        "PROVIDER_DATE_MISMATCH",
+        reachable=True,
+        payload_parsed=True,
+        served_session=date(2026, 8, 8),
+    )
+    blocked = evaluate_provider_preflight(_context(), results)
+
+    assert blocked["status"] == "FAIL"
+    assert blocked["readinessState"] == "BLOCKED"
+    assert blocked["markets"][0]["readinessReasonCode"] == (
+        "BLOCKED_PROVIDER_DATE_AUTHORITY"
+    )
 
 
 def test_partial_provider_coverage_fails_even_when_payload_is_parsed():

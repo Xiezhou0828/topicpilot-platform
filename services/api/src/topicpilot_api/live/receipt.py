@@ -342,6 +342,11 @@ def _receipt_status(
             if execution_scope == "HISTORY_RECOVERY"
             else RECEIPT_COMPLETE
         )
+    if run_status == "WAITING_LIVE_VALIDATION":
+        # WAIT is retryable.  The 15:00 alert is operationally critical, but
+        # it must not become a permanent publication failure that prevents a
+        # later same-session readiness check.
+        return RECEIPT_WAITING_FOR_DATA
     if _as_utc(now) >= hard_deadline_at(trading_date, config) and not data_ready:
         return RECEIPT_DEADLINE_EXCEEDED
     if not data_ready:
@@ -430,7 +435,7 @@ def append_receipt_for_run(
                 "at": current.isoformat(),
             }
         )
-    if status == RECEIPT_DEADLINE_EXCEEDED:
+    if current >= hard_deadline_at(trading_date, config) and not data_ready:
         events.append(
             {
                 "code": "HARD_DEADLINE_EXCEEDED",

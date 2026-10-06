@@ -25,6 +25,12 @@ from topicpilot_api.market_data.lineage import (
     EXPECTED_TPEX_ADAPTER_VERSION,
     EXPECTED_TWSE_ADAPTER_VERSION,
 )
+from topicpilot_api.market_data.readiness import (
+    OperationalReadiness,
+    classify_eod_readiness,
+    classify_provider_error,
+    parse_reported_session,
+)
 from topicpilot_api.market_data.registry import build_historical_provider_registry
 from topicpilot_api.orm.models import (
     Instrument,
@@ -136,6 +142,7 @@ class G2MarketFailure:
     reachable: bool = False
     payload_parsed: bool = False
     target_date_matched: bool = False
+    served_session: date | None = None
 
 
 def _reference_summary(result: Mapping[str, Any]) -> dict[str, Any]:
@@ -167,20 +174,9 @@ def _market_evidence(
     provider_version: str | None = None,
     missing_identity_codes: tuple[str, ...] = (),
     extra_identity_codes: tuple[str, ...] = (),
+    readiness_state: OperationalReadiness = OperationalReadiness.BLOCKED,
+    readiness_reason_code: str | None = None,
 ) -> dict[str, Any]:
-    status = (
-        "PASS"
-        if (
-            reachable
-            and payload_parsed
-            and target_date_matched
-            and data_available
-            and coverage_complete
-            and provider_version == context.provider_version
-            and error_code is None
-        )
-        else "FAIL"
-    )
     expected_count = len(context.instrument_codes)
     return {
         "marketCode": context.market_code,
@@ -199,7 +195,15 @@ def _market_evidence(
         "extraIdentityCodes": list(sorted(extra_identity_codes)),
         "extraInstrumentCount": len(extra_identity_codes),
         "coverageComplete": coverage_complete,
-        "status": status,
+        "status": (
+            "PASS"
+            if readiness_state is OperationalReadiness.READY
+            else "WAIT"
+            if readiness_state is OperationalReadiness.WAIT
+            else "FAIL"
+        ),
+        "readinessState": readiness_state.value,
+        "readinessReasonCode": readiness_reason_code,
         "errorCode": error_code,
     }
 
@@ -217,6 +221,12 @@ def evaluate_provider_preflight(
             G2MarketFailure("PROVIDER_RESULT_MISSING"),
         )
         if isinstance(result, G2MarketFailure):
+            decision = classify_provider_error(
+                result.error_code,
+                target_session=context.target_date,
+                served_session=result.served_session,
+                previous_session=context.previous_session,
+            )
             evidence.append(
                 _market_evidence(
                     market,
@@ -230,6 +240,8 @@ def evaluate_provider_preflight(
                     error_code=result.error_code,
                     provider_version=result.provider_version,
                     missing_identity_codes=tuple(market.instrument_codes),
+                    readiness_state=decision.state,
+                    readiness_reason_code=decision.reason_code,
                 )
             )
             continue
@@ -415,6 +427,26 @@ def evaluate_provider_preflight(
             error_code = "PARTIAL_PROVIDER_COVERAGE"
         elif (comparator_codes | comparator_unavailable_codes) != priced_codes:
             error_code = "PREVIOUS_CLOSE_AUTHORITY_NOT_READY"
+        readiness = (
+            classify_eod_readiness(
+                source_official=authority_ok and version_ok,
+                retrieval_succeeded=result.reachable,
+                target_session=context.target_date,
+                served_session=result.target_date,
+                payload_valid=result.payload_parsed,
+                required_rows_present=result.record_count > 0,
+                required_ohlcv_parseable=bool(priced_codes | legitimate_codes),
+                minimum_coverage=coverage_complete,
+                previous_session=context.previous_session,
+            )
+            if error_code is None
+            else classify_provider_error(
+                error_code,
+                target_session=context.target_date,
+                served_session=result.target_date,
+                previous_session=context.previous_session,
+            )
+        )
         evidence.append(
             _market_evidence(
                 market,
@@ -429,6 +461,8 @@ def evaluate_provider_preflight(
                 provider_version=result.provider_version,
                 missing_identity_codes=missing_codes,
                 extra_identity_codes=extra_codes,
+                readiness_state=readiness.state,
+                readiness_reason_code=readiness.reason_code,
             )
         )
         evidence[-1].update({
@@ -445,10 +479,25 @@ def evaluate_provider_preflight(
         })
 
     context_ok = context.context_ready
-    status = "PASS" if context_ok and all(item["status"] == "PASS" for item in evidence) else "FAIL"
+    states = [item["readinessState"] for item in evidence]
+    readiness_state = (
+        OperationalReadiness.BLOCKED
+        if not context_ok or OperationalReadiness.BLOCKED.value in states
+        else OperationalReadiness.WAIT
+        if OperationalReadiness.WAIT.value in states
+        else OperationalReadiness.READY
+    )
+    status = (
+        "PASS"
+        if readiness_state is OperationalReadiness.READY
+        else "WAIT"
+        if readiness_state is OperationalReadiness.WAIT
+        else "FAIL"
+    )
     return {
         "gate": G2_GATE,
         "status": status,
+        "readinessState": readiness_state.value,
         "referenceVersion": context.reference_result.get("referenceVersion"),
         "targetDate": context.target_date.isoformat(),
         "targetDateIsSession": context.target_date_is_session,
@@ -611,7 +660,10 @@ def load_g2_preflight_context(
     )
 
 
-def _provider_failure(exc: Exception) -> G2MarketFailure:
+def _provider_failure(
+    exc: Exception,
+    evidence: Mapping[str, Any] | None = None,
+) -> G2MarketFailure:
     code = getattr(exc, "code", None)
     if not isinstance(code, str) or not code:
         code = "PROVIDER_REQUEST_FAILED"
@@ -626,13 +678,21 @@ def _provider_failure(exc: Exception) -> G2MarketFailure:
         "INVALID_NUMBER",
         "PROVIDER_DATE_MISMATCH",
     }
-    receipt = getattr(exc, "evidence", None)
-    decoded = receipt is None or receipt.get("stage") == "DATASET_PARSE"
+    raw_evidence = evidence if evidence is not None else getattr(exc, "evidence", None)
+    receipt = raw_evidence or {}
+    decoded = raw_evidence is None or receipt.get("stage") == "DATASET_PARSE"
+    reported_dates = receipt.get("rawResponseDates") or ()
+    if isinstance(reported_dates, str):
+        reported_dates = (reported_dates,)
+    served_session = None
+    if len(reported_dates) == 1:
+        served_session = parse_reported_session(reported_dates[0])
     return G2MarketFailure(
         error_code=code,
         reachable=code in parsed_codes or bool(receipt and receipt.get("payloadHash")),
         payload_parsed=decoded and code in parsed_codes,
         target_date_matched=decoded and code in parsed_codes and code != "PROVIDER_DATE_MISMATCH",
+        served_session=served_session,
     )
 
 
@@ -765,7 +825,6 @@ def run_provider_preflight(
                 statuses=statuses,
             )
         except Exception as exc:
-            market_results[market.market_code] = _provider_failure(exc)
             receipt = dict(getattr(registration.adapter, "response_evidence", {}))
             receipt.update(
                 errorCode=getattr(exc, "code", "PROVIDER_REQUEST_FAILED"),
@@ -782,6 +841,7 @@ def run_provider_preflight(
                     if code in {"EXCHANGE_NOT_READY", "EXCHANGE_NO_DATA"}
                     else "PROVIDER_PARSER_REJECTION"
                 )
+            market_results[market.market_code] = _provider_failure(exc, receipt)
             response_evidence[market.market_code] = receipt
         else:
             response_evidence[market.market_code] = dict(registration.adapter.response_evidence)
@@ -811,6 +871,7 @@ def build_database_failure_result(
         "productionWriteSet": [],
         "nonReferenceWriteSet": [],
         "fallbackAllowed": False,
+        "readinessState": OperationalReadiness.BLOCKED.value,
         "reference": {
             "referenceVersion": reference_version,
             "referenceLoadStatus": "NOT_READY",
@@ -835,6 +896,8 @@ def build_database_failure_result(
                 "extraInstrumentCount": 0,
                 "coverageComplete": False,
                 "status": "FAIL",
+                "readinessState": OperationalReadiness.BLOCKED.value,
+                "readinessReasonCode": error_code,
                 "errorCode": error_code,
             }
             for market_code in CANONICAL_MARKETS
