@@ -1,18 +1,110 @@
+import math
 from datetime import UTC, date, datetime
+from decimal import Decimal
+from types import SimpleNamespace
+from uuid import uuid4
 
+import pytest
+
+from topicpilot_api.daily_market import assess_daily_coverage
 from topicpilot_api.live.config import LiveRuntimeConfig
 from topicpilot_api.live.receipt import (
     RECEIPT_DEADLINE_EXCEEDED,
     RECEIPT_MARKET_CLOSED,
     RECEIPT_WAITING_FOR_DATA,
     RUNTIME_PROVENANCE_TRUST_FAILURE,
+    _receipt_stable_hash,
     _receipt_status,
+    append_receipt_for_run,
     hard_deadline_at,
     operational_phase,
     runtime_provenance,
     runtime_provenance_event,
     soft_target_at,
 )
+from topicpilot_api.normalizer.contracts import stable_hash
+
+
+def test_receipt_hash_canonicalizes_finite_reconciliation_floats_at_boundary():
+    reconciliation = assess_daily_coverage(
+        trade_date=date(2026, 10, 6),
+        expected_by_market={"TPE": 500, "TWO": 53},
+        observed_by_market={"TPE": 500, "TWO": 53},
+        priced_by_market={"TPE": 499, "TWO": 53},
+        covered_by_market={"TPE": 499, "TWO": 53},
+    ).to_dict()
+
+    assert isinstance(reconciliation["coveragePct"], float)
+    assert isinstance(reconciliation["coveredCoveragePct"], float)
+    assert _receipt_stable_hash({"reconciliation": reconciliation}) == _receipt_stable_hash(
+        {
+            "reconciliation": {
+                **reconciliation,
+                "coveragePct": Decimal(str(reconciliation["coveragePct"])),
+                "coveredCoveragePct": Decimal(str(reconciliation["coveredCoveragePct"])),
+            }
+        }
+    )
+
+
+@pytest.mark.parametrize("value", [math.nan, math.inf, -math.inf])
+def test_receipt_hash_rejects_non_finite_float(value):
+    with pytest.raises(ValueError, match="finite numeric values"):
+        _receipt_stable_hash({"value": value})
+
+
+def test_receipt_float_boundary_is_not_a_global_float_coercion():
+    with pytest.raises(TypeError, match="unsupported canonical value: float"):
+        stable_hash({"coveragePct": 99.8192})
+
+    assert _receipt_stable_hash({"value": 0.1}) == _receipt_stable_hash(
+        {"value": Decimal("0.1")}
+    )
+    assert _receipt_stable_hash({"value": 0.1}) == _receipt_stable_hash({"value": "0.1"})
+
+
+def test_post_close_receipt_boundary_accepts_reconciliation_float(monkeypatch):
+    reconciliation = assess_daily_coverage(
+        trade_date=date(2026, 10, 6),
+        expected_by_market={"TPE": 500, "TWO": 53},
+        observed_by_market={"TPE": 500, "TWO": 53},
+        priced_by_market={"TPE": 499, "TWO": 53},
+        covered_by_market={"TPE": 499, "TWO": 53},
+    ).to_dict()
+    now = datetime(2026, 10, 6, 8, 0, tzinfo=UTC)
+    run = SimpleNamespace(
+        id=uuid4(),
+        status="PARTIAL",
+        started_at=now,
+        completed_at=now,
+        metadata_payload={
+            "runDate": "2026-10-06",
+            "executionKey": "post-close:test:2026-10-06:FULL",
+            "dailyMarketReconciliation": reconciliation,
+            "topicSnapshot": {"formalPublicationReadback": {"status": "FAIL"}},
+        },
+    )
+
+    class Session:
+        def scalar(self, _statement):
+            return None
+
+        def add(self, value):
+            self.added = value
+
+    monkeypatch.setattr(
+        "topicpilot_api.live.receipt.runtime_provenance",
+        lambda _session: {},
+    )
+
+    receipt = append_receipt_for_run(
+        Session(),
+        run,
+        LiveRuntimeConfig(),
+        now=now,
+    )
+
+    assert receipt.receipt_hash
 
 
 def test_frozen_daily_publication_timing_is_exposed_and_ordered():

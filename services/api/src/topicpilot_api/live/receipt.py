@@ -7,10 +7,12 @@ not replace any of them and it is never updated in place.
 
 from __future__ import annotations
 
+import math
 import os
 import re
 from collections.abc import Mapping
 from datetime import UTC, date, datetime, time
+from decimal import Decimal
 from typing import Any
 from uuid import UUID
 from zoneinfo import ZoneInfo
@@ -47,6 +49,37 @@ def _json_safe(value: Any) -> Any:
     if isinstance(value, UUID):
         return str(value)
     return value
+
+
+def _canonicalize_receipt_hash_value(value: Any) -> Any:
+    """Adapt finite runtime metrics to the existing deterministic hash contract.
+
+    The shared normalizer deliberately rejects Python floats.  Receipt hash
+    material is a bounded read-model projection, however, and its
+    reconciliation coverage metrics are intentionally exposed as finite
+    floats.  Convert only those receipt-boundary numeric values through their
+    shortest decimal spelling; leave the global normalizer unchanged and
+    reject non-finite values before hashing.
+    """
+
+    if isinstance(value, float):
+        if not math.isfinite(value):
+            raise ValueError("receipt canonicalization requires finite numeric values")
+        return Decimal(str(value))
+    if isinstance(value, Mapping):
+        return {
+            str(key): _canonicalize_receipt_hash_value(item)
+            for key, item in value.items()
+        }
+    if isinstance(value, (list, tuple)):
+        return [_canonicalize_receipt_hash_value(item) for item in value]
+    return value
+
+
+def _receipt_stable_hash(value: Any) -> str:
+    """Hash receipt material without weakening the shared normalizer."""
+
+    return stable_hash(_canonicalize_receipt_hash_value(value))
 
 
 def _as_utc(value: datetime) -> datetime:
@@ -449,7 +482,7 @@ def append_receipt_for_run(
             "correctionLineage": correction_lineage,
         }
     )
-    receipt_hash = stable_hash(hash_material)
+    receipt_hash = _receipt_stable_hash(hash_material)
     existing = session.scalar(
         select(DailyFormalPublicationReceipt).where(
             DailyFormalPublicationReceipt.execution_key == execution_key,
@@ -573,7 +606,7 @@ def append_correction_receipt(
             "authority": "FORMAL_LIFECYCLE_REPLAY",
         }
     )
-    receipt_hash = stable_hash(
+    receipt_hash = _receipt_stable_hash(
         _json_safe(
             {
                 "tradingDate": trading_date,
@@ -695,7 +728,7 @@ def append_operational_receipt(
         "reasonCode": reason_code,
         "hardDeadline": hard_deadline_at(trading_date, config).isoformat(),
     }
-    receipt_hash = stable_hash(
+    receipt_hash = _receipt_stable_hash(
         {
             "tradingDate": trading_date,
             "executionKey": execution_key,
