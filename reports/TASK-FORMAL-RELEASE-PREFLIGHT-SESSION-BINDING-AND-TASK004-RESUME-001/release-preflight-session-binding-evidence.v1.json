@@ -1,0 +1,130 @@
+{
+  "task": "TASK-FORMAL-RELEASE-PREFLIGHT-SESSION-BINDING-AND-TASK004-RESUME-001",
+  "status": "BLOCKED_CURRENT_PREFLIGHT_PROVIDER_DATE",
+  "canonicalRemoteHead": "e97f590cad497c0a23fb027fce39ec5891ea4bc1",
+  "authorizedCandidate": "edcd73ce5b9f7390e6a5f9ee60915b6053ec3f91",
+  "candidateAncestryValid": true,
+  "task005AncestorOfCandidate": true,
+  "runtimeFixPresent": true,
+  "unrelatedDiffPresent": false,
+  "sessionBinding": {
+    "rootCause": "TASK-004 carried the fixed 2026-10-05 regression date into the current release gate",
+    "correctionRequired": true,
+    "correctionScope": "governance/release-preflight session selection",
+    "applicationCodeChangeRequired": false,
+    "historicalRegressionSession": "2026-10-05",
+    "currentReleasePreflightSession": "2026-10-06",
+    "formalHistoricalGenesisDate": "PENDING_FIRST_NATURAL_SUCCESSFUL_TRADING_SESSION",
+    "resolver": "DailyForwardRunner._latest_closed_session with Asia/Taipei close boundary and canonical G2 context"
+  },
+  "regressionSession": {
+    "date": "2026-10-05",
+    "role": "2601 corporate-action/provider-finality regression fixture",
+    "providerRefetchRequiredForCurrentRelease": false,
+    "corporateActionRegression": "PASS",
+    "officialClose": "6.45",
+    "officialLastBid": "6.44",
+    "previousTradedClose": "5.91",
+    "dailyComparisonReference": "7.06",
+    "expectedReturn": "-0.0864022662889518413597733711"
+  },
+  "currentPreflightSession": {
+    "date": "2026-10-06",
+    "source": "canonical DailyForwardRunner semantics plus natural Production checkpoint metadata",
+    "calendarStatus": "ELIGIBLE_BY_TW_MARKET_REFERENCE_BINDING; current protected G2 session-row readback unavailable",
+    "completed": "YES_FOR_CLOSE_BOUNDARY",
+    "referenceBundleCheck": "PASS; generated bundle unchanged; no 2026-10-06 closure row"
+  },
+  "existingExecutionEvidence": {
+    "runId": "06d44574-214e-539d-ada4-dbf73d9eb971",
+    "sessionDate": "2026-10-06",
+    "failureClass": "POST_CLOSE_FINALIZATION_RECEIPT_HASHING",
+    "failureMessage": "TypeError: unsupported canonical value: float",
+    "forensicWorkflowRunId": 37469617239,
+    "forensicToolSha": "e97f590cad497c0a23fb027fce39ec5891ea4bc1",
+    "transactionReadOnly": true,
+    "databaseRole": "topicpilot_forensic_readonly",
+    "providerFetch": "ATTEMPTED",
+    "targetDate": "2026-10-06",
+    "dateAuthority": "FAIL / TWO PROVIDER_DATE_MISMATCH; TPE EXCHANGE_NOT_READY",
+    "finalityAuthority": "NOT_PROVEN",
+    "g2Authority": "NOT_EXPLICITLY_RECORDED",
+    "eodCompleteness": "FAIL",
+    "sufficientForPreflight": false,
+    "marketSummary": {
+      "TPE": {"attempts": 347, "failures": 347, "successes": 0, "error": "EXCHANGE_NOT_READY"},
+      "TWO": {"attempts": 206, "failures": 206, "successes": 0, "error": "PROVIDER_DATE_MISMATCH"}
+    },
+    "errorSummary": {"EXCHANGE_NOT_READY": 347, "PROVIDER_DATE_MISMATCH": 206},
+    "providerStatus": "553 ERROR",
+    "currentSessionSuccessCount": 0,
+    "currentSessionFailedCount": 553,
+    "currentSessionAccountedUnavailable": 0,
+    "currentSessionUnresolvedRequired": 553,
+    "currentSessionEodReadiness": "FAIL / PARTIAL"
+  },
+  "currentOfficialSourceSmoke": {
+    "twse20261006": "HTTP 200; stat=OK; response date=20261006",
+    "tpexCurrent": "HTTP 200; returned ROC date=1151006 (=20261006)",
+    "interpretation": "source-date smoke only; not canonical Production G2/finality/completeness proof"
+  },
+  "providerDate": "FAIL_CURRENT_SESSION",
+  "providerFinality": "NOT_PROVEN",
+  "providerContractPreflight": "FAIL",
+  "g2": {
+    "referenceRegistry": "CONFIGURED_REFERENCE_VERSION; CURRENT PROTECTED READBACK UNAVAILABLE",
+    "markets": "NOT_CURRENTLY_READABLE",
+    "instruments": "NOT_CURRENTLY_READABLE",
+    "targetSessionPresent": "NOT_CURRENTLY_READABLE",
+    "duplicates": "NOT_CURRENTLY_READABLE",
+    "missingRequired": "NOT_CURRENTLY_READABLE",
+    "revalidated": "NO_CURRENT_SESSION_PROTECTED_READBACK",
+    "productionReady": "NOT_PROVEN"
+  },
+  "candidateValidation": {
+    "focusedSessionProviderG2ReceiptTests": "128 passed",
+    "canonicalizationDeterminism": "PASS",
+    "postCloseBoundary": "PASS",
+    "workerReleaseBoundary": "PASS_LINUX",
+    "linuxCandidateValidation": "PASS",
+    "fullBackend": "1277 passed, 23 skipped, 148 deselected, 1 warning, 0 failed",
+    "windows0xc000070a": "RECORDED_ENVIRONMENT_LIMITATION; NOT WAIVED"
+  },
+  "productionBefore": {
+    "apiSha": "6fff533168b1823052071f6d88d1f266397d327d",
+    "workerSha": "6fff533168b1823052071f6d88d1f266397d327d",
+    "alembicHead": "0049_task_daily_formal_publication_receipt",
+    "scheduler": "ACTIVE_CONFIGURED",
+    "competingScheduler": "NONE_CONFIRMED",
+    "referenceDataVersion": "tw-reference-v1-rollover-0578862f98914eb7"
+  },
+  "predeployGate": "BLOCKED_CURRENT_PREFLIGHT_PROVIDER_DATE",
+  "releaseAuthorization": "EXISTING_TASK004_AUTHORIZATION_FOR_EXACT_CANDIDATE_ONLY",
+  "push": {"required": true, "executed": false, "target": "NOT_EXECUTED", "sha": null},
+  "deployment": {"executed": false, "apiSha": null, "workerSha": null, "webExecuted": false, "migrationExecuted": false},
+  "postdeploy": {"apiHealth": "NOT_RUN", "workerHealth": "NOT_RUN", "providerSmoke": "NOT_RUN"},
+  "scheduler": {"unchanged": true, "mutated": false},
+  "rollback": {
+    "apiSha": "6fff533168b1823052071f6d88d1f266397d327d",
+    "workerSha": "6fff533168b1823052071f6d88d1f266397d327d",
+    "dbHead": "0049_task_daily_formal_publication_receipt",
+    "ready": true,
+    "executed": false
+  },
+  "d0": "PENDING_FIRST_NATURAL_SUCCESSFUL_TRADING_SESSION",
+  "nonActions": {
+    "targetDate20261005Touched": false,
+    "original20261005FailedExecutionPreserved": true,
+    "targetDate20261006Replayed": false,
+    "original20261006FailedExecutionPreserved": true,
+    "historicalRecoveryExecuted": false,
+    "manualPostCloseExecuted": false,
+    "manualPublicationExecuted": false,
+    "previewTouched": false,
+    "selectionTouched": false,
+    "dbWriteOutsideDeployment": false,
+    "schedulerMutated": false,
+    "nextTaskModified": false
+  },
+  "nextAction": "Obtain current 2026-10-06 canonical protected provider-preflight/G2 readback PASS; then resume exact candidate release gates without replay"
+}
