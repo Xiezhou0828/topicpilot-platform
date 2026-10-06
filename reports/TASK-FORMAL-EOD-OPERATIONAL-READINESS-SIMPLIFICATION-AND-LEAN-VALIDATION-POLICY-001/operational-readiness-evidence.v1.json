@@ -1,0 +1,137 @@
+{
+  "taskId": "TASK-FORMAL-EOD-OPERATIONAL-READINESS-SIMPLIFICATION-AND-LEAN-VALIDATION-POLICY-001",
+  "taskStatus": "COMPLETE_LEAN_READINESS_IMPLEMENTED_RELEASE_REAUTH_REQUIRED",
+  "canonicalRemoteHead": "e97f590cad497c0a23fb027fce39ec5891ea4bc1",
+  "implementationBaseSha": "9a5c35ae0398d55b9232d88dc727aa2111cfa92a",
+  "implementationSha": "debf81f68185c1a12c1294840838e32d956eda1f",
+  "worktree": "E:\\TopicPilot\\w\\pcf001",
+  "branch": "codex/post-close-float-canonicalization-reconciliation-001",
+  "policy": {
+    "version": "TOPICPILOT_LEAN_VALIDATION_POLICY_V1",
+    "implemented": true,
+    "canonicalDocument": "docs/policies/development-process.md",
+    "finalityFlagRequired": false,
+    "noRevisionGuaranteeRequired": false
+  },
+  "readinessModel": {
+    "states": ["READY", "WAIT", "BLOCKED"],
+    "officialSourceRequired": true,
+    "targetSessionMatchRequired": true,
+    "validRequiredPayloadRequired": true,
+    "minimumCoverageRequired": true,
+    "materialAuthorityConflictAllowed": false,
+    "exchangeNotReady": "WAIT",
+    "previousSessionPublicationLag": "WAIT",
+    "malformedRequiredData": "BLOCKED",
+    "authorityConflict": "BLOCKED",
+    "futureOrUnexplainedDateMismatch": "BLOCKED",
+    "post1500LatePublicationAllowed": true
+  },
+  "providerAuthority": {
+    "switchExecuted": false,
+    "TPE": {
+      "sourceCode": "TWSE_OFFICIAL_DAILY",
+      "adapterVersion": "twse-official-daily.v2",
+      "endpointFamily": "MI_INDEX"
+    },
+    "TWO": {
+      "sourceCode": "TPEX_OFFICIAL_DAILY",
+      "adapterVersion": "tpex-official-openapi-daily.v1",
+      "endpointFamily": "tpex_mainboard_daily_close_quotes"
+    },
+    "dualSourceRequiredGlobally": false
+  },
+  "historicalEvidence": {
+    "targetDate": "2026-10-06",
+    "originalExecutionPreserved": true,
+    "replayed": false,
+    "twse": {
+      "httpSuccess": true,
+      "servedDate": "2026-10-06",
+      "targetDateMatch": true,
+      "payloadShapeValid": true
+    },
+    "tpexDailyQuotes": {
+      "httpSuccess": true,
+      "servedDate": "2026-10-06",
+      "targetDateMatch": true
+    },
+    "tpexOpenApi": {
+      "servedDate": "1151006",
+      "targetDateMatch": true,
+      "rowCount": 12194
+    },
+    "sameSessionReconciliation": {
+      "status": "PASS",
+      "ohlcMismatch": 0,
+      "volumeMismatch": 0
+    }
+  },
+  "validation": {
+    "focusedTests": {
+      "status": "PASS",
+      "passed": 93,
+      "commandScope": "readiness, provider preflight, daily forward, receipt, post-close, live CLI/runtime"
+    },
+    "relevantRegressionTests": {
+      "status": "PASS",
+      "passed": 143,
+      "commandScope": "expanded backend/worker contracts including final publication and daily market"
+    },
+    "lint": {
+      "tool": "ruff",
+      "status": "PASS",
+      "scope": "all changed Python files"
+    },
+    "diffCheck": "PASS",
+    "fullBackend": "NOT_RUN",
+    "fullBackendRequiredForCompletion": false
+  },
+  "implementation": {
+    "applicationCodeChanged": true,
+    "newReleaseCandidateRequired": true,
+    "previousAuthorizedCandidate": "edcd73ce5b9f7390e6a5f9ee60915b6053ec3f91",
+    "currentTask004CandidateSuperseded": true,
+    "newPaidDependency": false,
+    "databaseMigration": false,
+    "schedulerMutation": false,
+    "providerRegistryMutation": false,
+    "changedAreas": [
+      "market_data.readiness",
+      "provider_preflight",
+      "post_close readiness wait",
+      "daily forward hard-SLA semantics",
+      "publication and live CLI wait handling",
+      "canonical governance and provider-preflight documentation",
+      "focused and relevant tests"
+    ]
+  },
+  "safety": {
+    "immutableReceiptPreserved": true,
+    "correctionPathPreserved": true,
+    "corporateActionAuthorityPreserved": true,
+    "missingDataZeroFillAllowed": false,
+    "lookaheadProtectionPreserved": true,
+    "survivorshipProtectionPreserved": true,
+    "historicalHomeRepublished": false,
+    "formalHistoricalGenesisDate": "PENDING_FIRST_NATURAL_SUCCESSFUL_TRADING_SESSION"
+  },
+  "mutationLedger": {
+    "productionDeployment": false,
+    "productionWriteSet": [],
+    "databaseMigrationExecuted": false,
+    "schedulerMutated": false,
+    "targetDate20261005Touched": false,
+    "targetDate20261006Replayed": false,
+    "historicalRecoveryExecuted": false,
+    "formalPublicationExecuted": false,
+    "previewTouched": false,
+    "pushExecuted": false,
+    "nextTaskModified": false
+  },
+  "terminal": {
+    "productionReleaseReady": false,
+    "ownerReleaseAuthorizationRequired": true,
+    "nextAction": "Owner review and explicit reauthorization of the new exact SHA for canonical promotion and Production release; no deployment in this task"
+  }
+}
