@@ -104,6 +104,68 @@ def test_twse_market_batch_fetches_once_and_resolves_multiple_symbols():
     assert second.bars[0].close == Decimal("204")
 
 
+def test_twse_mi_index_close_is_not_last_bid_or_last_ask():
+    payload = json.dumps(
+        {
+            "stat": "OK",
+            "date": "20261005",
+            "tables": [
+                {
+                    "fields": [
+                        "證券代號",
+                        "證券名稱",
+                        "成交股數",
+                        "成交筆數",
+                        "成交金額",
+                        "開盤價",
+                        "最高價",
+                        "最低價",
+                        "收盤價",
+                        "漲跌(+/-)",
+                        "漲跌價差",
+                        "最後揭示買價",
+                        "最後揭示買量",
+                        "最後揭示賣價",
+                        "最後揭示賣量",
+                        "本益比",
+                    ],
+                    "data": [
+                        [
+                            "2601",
+                            "益航",
+                            "8,488,264",
+                            "5,080",
+                            "54,496,294",
+                            "7.01",
+                            "7.02",
+                            "6.36",
+                            "6.45",
+                            "<p>X</p>",
+                            "0.00",
+                            "6.44",
+                            "107",
+                            "6.45",
+                            "30",
+                            "0.00",
+                        ]
+                    ],
+                }
+            ],
+        },
+        ensure_ascii=False,
+    ).encode()
+    provider = TwseOfficialDailyProvider(
+        start_date=date(2026, 10, 5),
+        end_date=date(2026, 10, 5),
+        market_batch=True,
+        transport=lambda _url, _timeout: payload,
+    )
+
+    bar = provider.fetch_daily("2601", "TPE").bars[0]
+    assert bar.close == Decimal("6.45")
+    assert bar.close != Decimal("6.44")
+
+
 def test_tpex_market_batch_fetches_once_and_resolves_multiple_symbols():
     urls: list[str] = []
     payload = json.dumps(

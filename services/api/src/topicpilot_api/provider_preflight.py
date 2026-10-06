@@ -295,7 +295,9 @@ def evaluate_provider_preflight(
                         target=context.target_date,
                         prior=context.previous_session,
                     )
-                    if comparator.status == ComparatorStatus.ACCOUNTED_UNAVAILABLE:
+                    if comparator.status == ComparatorStatus.READY:
+                        comparator_codes.add(code)
+                    elif comparator.status == ComparatorStatus.ACCOUNTED_UNAVAILABLE:
                         comparator_unavailable_codes.add(code)
                     else:
                         reason = comparator.reason_code or "MISSING_PREVIOUS_FORMAL_CLOSE"
@@ -315,6 +317,14 @@ def evaluate_provider_preflight(
                             ComparatorType.PREVIOUS_FORMAL_CLOSE,
                             authority_source=previous.source,
                             source_reference=previous.lineage,
+                            previous_traded_close=previous.value,
+                            previous_traded_close_date=previous.as_of_date,
+                            previous_traded_close_authority=previous.authority,
+                            previous_traded_close_lineage=previous.lineage,
+                            comparison_reference=previous.value,
+                            comparison_reference_date=previous.as_of_date,
+                            comparison_reference_authority=previous.authority,
+                            comparison_reference_lineage=previous.lineage,
                         )
                         if reason is None
                         else ComparatorResolution(
@@ -367,6 +377,7 @@ def evaluate_provider_preflight(
                 "comparatorStatus": comparator_status.value,
                 "comparatorType": comparator_type,
                 "comparatorReasonCode": comparator_reason,
+                "comparatorAuthority": comparator.to_dict(),
                 "dimensionEligibility": dimension_payload(dimensions),
                 "errorCode": reason,
                 "responseHash": price.response_hash if price else None,

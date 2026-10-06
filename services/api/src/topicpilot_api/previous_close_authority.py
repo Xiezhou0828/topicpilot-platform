@@ -13,6 +13,11 @@ from topicpilot_api.corporate_action_authority import (
     CorporateActionAuthorityRecord,
     load_corporate_action_authorities,
 )
+from topicpilot_api.corporate_action_price_authority import (
+    CorporateActionPriceAuthorityError,
+    CorporateActionPriceAuthorityRecord,
+    load_corporate_action_price_authorities,
+)
 
 OFFICIAL_SOURCES = {"TPE": "TWSE_OFFICIAL_DAILY", "TWO": "TPEX_OFFICIAL_DAILY"}
 
@@ -72,7 +77,7 @@ def valid_close(value: object) -> bool:
 
 @dataclass(frozen=True)
 class ComparatorResolution:
-    """Price-free comparator decision with authority lineage."""
+    """Comparator decision with separate price-basis and provenance lineage."""
 
     status: ComparatorStatus
     comparator_type: ComparatorType | None
@@ -83,6 +88,14 @@ class ComparatorResolution:
     effective_from: date | None = None
     effective_to: date | None = None
     resume_date: date | None = None
+    previous_traded_close: Any | None = None
+    previous_traded_close_date: date | None = None
+    previous_traded_close_authority: str | None = None
+    previous_traded_close_lineage: str | None = None
+    comparison_reference: Any | None = None
+    comparison_reference_date: date | None = None
+    comparison_reference_authority: str | None = None
+    comparison_reference_lineage: str | None = None
 
     @property
     def ready(self) -> bool:
@@ -105,6 +118,30 @@ class ComparatorResolution:
             "effectiveFrom": self.effective_from.isoformat() if self.effective_from else None,
             "effectiveTo": self.effective_to.isoformat() if self.effective_to else None,
             "resumeDate": self.resume_date.isoformat() if self.resume_date else None,
+            "previousTradedClose": (
+                str(self.previous_traded_close)
+                if self.previous_traded_close is not None
+                else None
+            ),
+            "previousTradedCloseDate": (
+                self.previous_traded_close_date.isoformat()
+                if self.previous_traded_close_date
+                else None
+            ),
+            "previousTradedCloseAuthority": self.previous_traded_close_authority,
+            "previousTradedCloseLineage": self.previous_traded_close_lineage,
+            "comparisonReference": (
+                str(self.comparison_reference)
+                if self.comparison_reference is not None
+                else None
+            ),
+            "comparisonReferenceDate": (
+                self.comparison_reference_date.isoformat()
+                if self.comparison_reference_date
+                else None
+            ),
+            "comparisonReferenceAuthority": self.comparison_reference_authority,
+            "comparisonReferenceLineage": self.comparison_reference_lineage,
         }
 
 
@@ -115,6 +152,7 @@ def _resume_comparator_authority(
     target: date,
     prior: date,
     authorities: tuple[CorporateActionAuthorityRecord, ...],
+    price_authorities: tuple[CorporateActionPriceAuthorityRecord, ...],
 ) -> ComparatorResolution:
     candidates = tuple(
         record
@@ -154,6 +192,52 @@ def _resume_comparator_authority(
             record.effective_to,
             record.resume_date,
         )
+    price_candidates = tuple(
+        price_record
+        for price_record in price_authorities
+        if (
+            price_record.symbol == record.symbol
+            and price_record.market == record.market
+            and price_record.action_type == record.action_type
+            and price_record.effective_from == record.effective_from
+            and price_record.effective_to == record.effective_to
+            and price_record.resume_date == record.resume_date
+            and price_record.is_applicable_on(target=target, prior=prior)
+        )
+    )
+    if len(price_candidates) > 1:
+        return ComparatorResolution(
+            ComparatorStatus.ERROR,
+            None,
+            "CORPORATE_ACTION_PRICE_AUTHORITY_CONFLICT",
+            record.source_authority,
+            record.source_reference,
+            record.action_type,
+            record.effective_from,
+            record.effective_to,
+            record.resume_date,
+        )
+    if price_candidates:
+        price_record = price_candidates[0]
+        return ComparatorResolution(
+            ComparatorStatus.READY,
+            comparator_type,
+            "AUTHORIZED_CORPORATE_ACTION_COMPARISON_REFERENCE",
+            price_record.source_authority,
+            price_record.source_reference,
+            record.action_type,
+            record.effective_from,
+            record.effective_to,
+            record.resume_date,
+            price_record.previous_traded_close,
+            price_record.previous_traded_close_date,
+            price_record.previous_traded_close_source,
+            price_record.previous_traded_close_response_hash,
+            price_record.comparison_reference,
+            price_record.comparison_reference_date,
+            price_record.source_authority,
+            price_record.source_response_hash,
+        )
     return ComparatorResolution(
         ComparatorStatus.ACCOUNTED_UNAVAILABLE,
         comparator_type,
@@ -174,19 +258,34 @@ def resolve_missing_daily_comparator(
     target: date,
     prior: date,
     authorities: tuple[CorporateActionAuthorityRecord, ...] | None = None,
+    price_authorities: tuple[CorporateActionPriceAuthorityRecord, ...] | None = None,
 ) -> ComparatorResolution:
-    """Resolve a missing exact-prior comparator without manufacturing a price."""
+    """Resolve a missing exact-prior comparator without manufacturing a price.
+
+    A status-only corporate-action record remains accounted-unavailable.  A
+    separate, fully sourced price authority can make only the comparison
+    dimension ready; it never changes the last-traded-close provenance.
+    """
+
+    if authorities is None:
+        authorities = load_corporate_action_authorities()
+    if price_authorities is None:
+        try:
+            price_authorities = load_corporate_action_price_authorities()
+        except CorporateActionPriceAuthorityError:
+            return ComparatorResolution(
+                ComparatorStatus.ERROR,
+                None,
+                "CORPORATE_ACTION_PRICE_AUTHORITY_UNAVAILABLE",
+            )
 
     return _resume_comparator_authority(
         symbol=symbol,
         market=market,
         target=target,
         prior=prior,
-        authorities=(
-            authorities
-            if authorities is not None
-            else load_corporate_action_authorities()
-        ),
+        authorities=authorities,
+        price_authorities=price_authorities,
     )
 
 

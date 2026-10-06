@@ -1,7 +1,11 @@
 from datetime import date
+from decimal import Decimal
 from types import SimpleNamespace
 
 from topicpilot_api.corporate_action_authority import corporate_action_from_mapping
+from topicpilot_api.corporate_action_price_authority import (
+    corporate_action_price_authority_from_mapping,
+)
 from topicpilot_api.formal_eligibility import (
     Dimension,
     DimensionStatus,
@@ -20,6 +24,7 @@ from topicpilot_api.provider_preflight import (
     G2PreflightContext,
     evaluate_provider_preflight,
 )
+from topicpilot_api.topic_daily_state import _calculate_daily_change_pct
 
 
 def _resume_authority(symbol: str = "9999"):
@@ -40,6 +45,32 @@ def _resume_authority(symbol: str = "9999"):
     )
 
 
+def _resume_price_authority(symbol: str = "9999"):
+    return corporate_action_price_authority_from_mapping(
+        {
+            "symbol": symbol,
+            "market": "TPE",
+            "actionType": "CAPITAL_REDUCTION_SHARE_EXCHANGE",
+            "effectiveFrom": "2026-09-23",
+            "effectiveTo": "2026-10-03",
+            "resumeDate": "2026-10-05",
+            "previousTradedCloseDate": "2026-09-22",
+            "previousTradedClose": "5.91",
+            "comparisonReferenceDate": "2026-10-05",
+            "comparisonReference": "7.06",
+            "sourceAuthority": "TWSE_OFFICIAL_REDUCTION",
+            "sourceReference": "https://www.twse.com.tw/official/price/9999",
+            "sourceResponseHash": "a" * 64,
+            "previousTradedCloseSource": "TWSE_OFFICIAL_DAILY",
+            "previousTradedCloseSourceReference": "https://www.twse.com.tw/official/daily/9999",
+            "previousTradedCloseResponseHash": "b" * 64,
+            "detailSourceReference": "https://www.twse.com.tw/official/detail/9999",
+            "detailResponseHash": "c" * 64,
+            "finality": "FINAL",
+        }
+    )
+
+
 def test_generic_resume_authority_accounts_only_the_missing_comparator():
     resolution = resolve_missing_daily_comparator(
         symbol="9999",
@@ -52,6 +83,37 @@ def test_generic_resume_authority_accounts_only_the_missing_comparator():
     assert resolution.comparator_type == ComparatorType.CAPITAL_REDUCTION_REFERENCE
     assert resolution.reason_code == "AUTHORIZED_CORPORATE_ACTION_COMPARATOR_UNAVAILABLE"
     assert resolution.source_reference.endswith("9999")
+
+
+def test_generic_price_authority_keeps_provenance_distinct_from_comparison_reference():
+    resolution = resolve_missing_daily_comparator(
+        symbol="9999",
+        market="TPE",
+        target=date(2026, 10, 5),
+        prior=date(2026, 10, 2),
+        authorities=(_resume_authority(),),
+        price_authorities=(_resume_price_authority(),),
+    )
+    assert resolution.status == ComparatorStatus.READY
+    assert resolution.previous_traded_close == Decimal("5.91")
+    assert resolution.previous_traded_close_date == date(2026, 9, 22)
+    assert resolution.comparison_reference == Decimal("7.06")
+    assert resolution.comparison_reference_date == date(2026, 10, 5)
+    assert resolution.previous_traded_close != resolution.comparison_reference
+
+
+def test_price_authority_conflict_fails_closed_without_selecting_a_value():
+    resolution = resolve_missing_daily_comparator(
+        symbol="9999",
+        market="TPE",
+        target=date(2026, 10, 5),
+        prior=date(2026, 10, 2),
+        authorities=(_resume_authority(),),
+        price_authorities=(_resume_price_authority(), _resume_price_authority()),
+    )
+    assert resolution.status == ComparatorStatus.ERROR
+    assert resolution.reason_code == "CORPORATE_ACTION_PRICE_AUTHORITY_CONFLICT"
+    assert resolution.comparison_reference is None
 
 
 def test_g2_resume_day_accounts_one_missing_comparator_without_batch_failure(monkeypatch):
@@ -143,10 +205,86 @@ def test_real_2601_resume_date_is_the_generic_regression_fixture():
         target=date(2026, 10, 5),
         prior=date(2026, 10, 2),
     )
-    assert resolution.status == ComparatorStatus.ACCOUNTED_UNAVAILABLE
+    assert resolution.status == ComparatorStatus.READY
+    assert resolution.reason_code == "AUTHORIZED_CORPORATE_ACTION_COMPARISON_REFERENCE"
     assert resolution.authority_source == "TWSE_OFFICIAL_REDUCTION"
     assert resolution.effective_to == date(2026, 10, 3)
     assert resolution.resume_date == date(2026, 10, 5)
+    assert resolution.previous_traded_close == Decimal("5.91")
+    assert resolution.comparison_reference == Decimal("7.06")
+
+
+def test_real_2601_provider_preflight_uses_official_reference_not_bid_side_value():
+    from topicpilot_api.previous_close_authority import G2PriceEvidence
+
+    target = date(2026, 10, 5)
+    market = G2MarketContext(
+        "TPE",
+        "TWSE_OFFICIAL_DAILY",
+        "twse-official-daily.v2",
+        "TWSE",
+        "Asia/Taipei",
+        "TW_MARKET",
+        ("2601",),
+        {"2601": "TPE:2601"},
+    )
+    result = evaluate_provider_preflight(
+        G2PreflightContext(
+            {"referenceLoadStatus": "READY"},
+            target,
+            True,
+            None,
+            (market,),
+            previous_session=date(2026, 10, 2),
+        ),
+        {
+            "TPE": G2MarketFetch(
+                "TPE",
+                "TWSE_OFFICIAL_DAILY",
+                "twse-official-daily.v2",
+                target,
+                frozenset({"2601"}),
+                1,
+                prices={
+                    "2601": G2PriceEvidence(
+                        "TPE:2601", "TPE", "2601", target, Decimal("6.45"), "d" * 64
+                    )
+                },
+            )
+        },
+    )
+    decision = result["markets"][0]["instrumentDecisions"][0]
+    assert result["status"] == "PASS"
+    assert decision["comparatorStatus"] == "READY"
+    assert decision["comparatorAuthority"]["comparisonReference"] == "7.06"
+    assert decision["comparatorAuthority"]["previousTradedClose"] == "5.91"
+    assert decision["comparatorAuthority"]["comparisonReference"] != "6.44"
+
+
+def test_resume_day_daily_return_uses_reference_not_last_traded_close():
+    comparator = resolve_missing_daily_comparator(
+        symbol="2601",
+        market="TPE",
+        target=date(2026, 10, 5),
+        prior=date(2026, 10, 2),
+    )
+    change = _calculate_daily_change_pct(
+        close=Decimal("6.45"), comparator=comparator, previous_close=None
+    )
+    assert change == (Decimal("6.45") - Decimal("7.06")) / Decimal("7.06") * Decimal("100")
+
+
+def test_corporate_action_price_authority_must_match_the_authorized_resume_interval():
+    resolution = resolve_missing_daily_comparator(
+        symbol="9999",
+        market="TPE",
+        target=date(2026, 10, 6),
+        prior=date(2026, 10, 5),
+        authorities=(_resume_authority(),),
+        price_authorities=(_resume_price_authority(),),
+    )
+    assert resolution.status == ComparatorStatus.ERROR
+    assert resolution.reason_code == "MISSING_PREVIOUS_FORMAL_CLOSE"
 
 
 def test_return_dimensions_are_independent_of_benchmark():

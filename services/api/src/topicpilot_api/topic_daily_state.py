@@ -162,6 +162,23 @@ def _json_value(value: Any) -> Any:
     return value
 
 
+def _calculate_daily_change_pct(
+    *, close: Decimal | None, comparator: ComparatorResolution, previous_close: Decimal | None
+) -> Decimal | None:
+    """Calculate only from an authoritative daily comparison reference."""
+
+    if not comparator.ready or close is None:
+        return None
+    comparison_reference = (
+        comparator.comparison_reference
+        if comparator.comparison_reference is not None
+        else previous_close
+    )
+    if comparison_reference is None or comparison_reference <= 0:
+        return None
+    return (close - comparison_reference) / comparison_reference * Decimal("100")
+
+
 def _canonicalize(value: Any) -> Any:
     if isinstance(value, dict):
         return {str(key): _canonicalize(item) for key, item in value.items()}
@@ -649,6 +666,14 @@ def read_canonical_member_facts(
                     ComparatorType.PREVIOUS_FORMAL_CLOSE,
                     authority_source=previous_evidence.source,
                     source_reference=previous_evidence.lineage,
+                    previous_traded_close=previous_evidence.value,
+                    previous_traded_close_date=previous_evidence.as_of_date,
+                    previous_traded_close_authority=previous_evidence.authority,
+                    previous_traded_close_lineage=previous_evidence.lineage,
+                    comparison_reference=previous_evidence.value,
+                    comparison_reference_date=previous_evidence.as_of_date,
+                    comparison_reference_authority=previous_evidence.authority,
+                    comparison_reference_lineage=previous_evidence.lineage,
                 )
                 if rejection is None
                 else ComparatorResolution(
@@ -676,14 +701,28 @@ def read_canonical_member_facts(
             comparator,
             current_price_ready=close is not None,
         )
-        change_pct = None
-        if (
-            dimensions[Dimension.DAILY_RETURN].status == DimensionStatus.READY
-            and close is not None
-            and previous_close is not None
-            and previous_close > 0
-        ):
-            change_pct = (close - previous_close) / previous_close * Decimal("100")
+        previous_traded_close = comparator.previous_traded_close
+        previous_traded_close_date = comparator.previous_traded_close_date
+        comparison_reference = comparator.comparison_reference
+        comparison_reference_date = comparator.comparison_reference_date
+        if comparator.ready and comparison_reference is None and previous_close is not None:
+            # Normal continuity retains the existing formal prior close as the
+            # comparison basis.  Corporate-action resume authorities provide
+            # an independent reference above and never enter this fallback.
+            comparison_reference = previous_close
+            comparison_reference_date = formal_previous_session
+        if comparator.ready and previous_traded_close is None and previous_close is not None:
+            previous_traded_close = previous_close
+            previous_traded_close_date = formal_previous_session
+        change_pct = (
+            _calculate_daily_change_pct(
+                close=close,
+                comparator=comparator,
+                previous_close=previous_close,
+            )
+            if dimensions[Dimension.DAILY_RETURN].status == DimensionStatus.READY
+            else None
+        )
         if change_pct is None:
             classification = None
         elif change_pct > 0:
@@ -723,6 +762,15 @@ def read_canonical_member_facts(
             "tradingStatusObservationId": str(status["id"]) if status is not None else None,
             "close": _json_value(close),
             "previousClose": _json_value(previous_close),
+            "previousTradedClose": _json_value(previous_traded_close),
+            "previousTradedCloseDate": _json_value(previous_traded_close_date),
+            "previousTradedCloseAuthority": comparator.previous_traded_close_authority,
+            "previousTradedCloseLineage": comparator.previous_traded_close_lineage,
+            "dailyComparisonReference": _json_value(comparison_reference),
+            "dailyComparisonReferenceDate": _json_value(comparison_reference_date),
+            "dailyComparisonReferenceAuthority": comparator.comparison_reference_authority,
+            "dailyComparisonReferenceLineage": comparator.comparison_reference_lineage,
+            "comparatorAuthority": comparator.to_dict(),
             "changePct": _json_value(change_pct),
             "observedClassification": classification,
             "tradingStatus": status_code,
