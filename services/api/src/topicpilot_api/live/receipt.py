@@ -120,7 +120,10 @@ def operational_phase(
     if data_ready:
         return "DATA_READY"
     if current >= hard_deadline_at(trading_date, config):
-        return RECEIPT_DEADLINE_EXCEEDED
+        # The hard deadline is an operational alert boundary, not a terminal
+        # publication phase. Keep the state retryable for the same session;
+        # append_receipt_for_run records the critical deadline event below.
+        return RECEIPT_WAITING_FOR_DATA
     if current >= soft_target_at(trading_date, config):
         return "SOFT_TARGET_NOT_READY"
     return RECEIPT_WAITING_FOR_DATA

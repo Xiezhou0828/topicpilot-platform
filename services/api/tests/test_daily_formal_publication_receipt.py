@@ -9,7 +9,6 @@ import pytest
 from topicpilot_api.daily_market import assess_daily_coverage
 from topicpilot_api.live.config import LiveRuntimeConfig
 from topicpilot_api.live.receipt import (
-    RECEIPT_DEADLINE_EXCEEDED,
     RECEIPT_MARKET_CLOSED,
     RECEIPT_WAITING_FOR_DATA,
     RUNTIME_PROVENANCE_TRUST_FAILURE,
@@ -149,7 +148,7 @@ def test_operational_phase_does_not_turn_clock_into_data_ready():
             config,
             data_ready=False,
         )
-        == RECEIPT_DEADLINE_EXCEEDED
+        == RECEIPT_WAITING_FOR_DATA
     )
     assert (
         operational_phase(
