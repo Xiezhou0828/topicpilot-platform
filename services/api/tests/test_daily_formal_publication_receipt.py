@@ -172,6 +172,26 @@ def test_operational_phase_does_not_turn_clock_into_data_ready():
     )
 
 
+def test_receipt_wait_remains_retryable_after_operational_deadline():
+    config = LiveRuntimeConfig()
+    metadata = {
+        "dailyMarketReconciliation": {"downstreamReady": False},
+        "topicSnapshot": {"formalPublicationReadback": {"status": "WAIT"}},
+    }
+
+    assert (
+        _receipt_status(
+            "PARTIAL",
+            metadata,
+            "NORMAL_CURRENT_DAY",
+            datetime(2026, 10, 5, 7, 1, tzinfo=UTC),
+            date(2026, 10, 5),
+            config,
+        )
+        == RECEIPT_WAITING_FOR_DATA
+    )
+
+
 def test_receipt_status_requires_reconciliation_and_formal_readback():
     config = LiveRuntimeConfig()
     now = datetime(2026, 10, 5, 6, 0, tzinfo=UTC)

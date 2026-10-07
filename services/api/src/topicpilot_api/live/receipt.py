@@ -347,9 +347,9 @@ def _receipt_status(
         # it must not become a permanent publication failure that prevents a
         # later same-session readiness check.
         return RECEIPT_WAITING_FOR_DATA
-    if _as_utc(now) >= hard_deadline_at(trading_date, config) and not data_ready:
-        return RECEIPT_DEADLINE_EXCEEDED
     if not data_ready:
+        # The hard deadline remains an operational alert boundary. It must not
+        # turn a retryable current-day wait into a terminal publication status.
         return RECEIPT_WAITING_FOR_DATA
     return (
         RECEIPT_CORRECTION_FAILED

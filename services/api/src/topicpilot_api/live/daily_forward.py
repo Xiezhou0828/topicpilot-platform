@@ -287,6 +287,7 @@ class DailyForwardRunner:
         if not context.target_date_is_session:
             result = self.updater.run_once(
                 run_date=target_date,
+                allow_terminal_recovery=execution_mode == "SCHEDULED",
                 execution_mode=execution_mode,
             )
             mapped = self._map_post_close_result(
@@ -332,6 +333,7 @@ class DailyForwardRunner:
 
         result = self.updater.run_once(
             run_date=target_date,
+            allow_terminal_recovery=execution_mode == "SCHEDULED",
             execution_mode=execution_mode,
         )
         return self._map_post_close_result(
