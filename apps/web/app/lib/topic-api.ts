@@ -1,6 +1,7 @@
 import rawSnapshotJson from "./web_snapshot.json";
 import type { RawSnapshot, RawStock, RawTopic } from "./types";
 import type { components } from "./generated-api";
+import { toFormalTopicSnapshotResource } from "./formal-topic-snapshot";
 import type { LifecycleAvailability } from "./topic-lifecycle-contract";
 import { getPreviewTopicIdentities, getPreviewTopicIdentity, getPreviewTopicRotation, groupNameLabel, PREVIEW_LABEL, readableFreshness, readableTopicState, topicNameLabel, type TopicDirection, type TopicRotationEvent } from "./topic-preview";
 
@@ -365,7 +366,10 @@ function leafStateFromApi(item: ApiTopicSummary): TopicLeafState {
 }
 
 function snapshotLeafState(catalog: TopicCatalogNode): Pick<TopicSummary, "dataDate" | "score" | "grade" | "direction" | "coveragePct" | "constituentCount"> {
-  const snapshot = catalog.currentFormalSnapshot.snapshot;
+  // The catalog is the current canonical route.  Re-check the publication
+  // envelope here so malformed or downgraded payloads fail closed at the
+  // frontend boundary instead of becoming Topic data by accident.
+  const snapshot = toFormalTopicSnapshotResource(catalog.currentFormalSnapshot).data;
   return {
     dataDate: snapshot?.snapshotDate ?? null,
     score: snapshot?.topicScore ?? null,
