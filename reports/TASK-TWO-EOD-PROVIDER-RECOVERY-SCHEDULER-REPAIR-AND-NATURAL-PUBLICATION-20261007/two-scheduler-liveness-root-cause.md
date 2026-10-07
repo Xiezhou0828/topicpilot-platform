@@ -23,3 +23,14 @@ A second boundary issue converted the 15:00 operational deadline into a terminal
 
 After release, the natural worker must produce a fresh readback for 2026-10-07 showing the same deterministic run identity, a fresh official TPEx target-date response, protected expected-scope coverage, formal snapshot publication, and downstream readiness. Until then, the repair is code-verified but the business outcome remains unpublished.
 
+## Final production readback
+
+Release `646deea23ebfd7afb415201d0f9b2f11ab6fd099` restarted the Worker and the
+natural scheduler continued the same `e3892200-f46d-5029-854b-77f05cd5dd29`
+session. The final run completed at 16:59:35 Asia/Taipei. After the 6173
+corporate-action authority was available, the run reached `DATA_READY`,
+`DailyMarketReconciliation=READY`, and covered all 553 instruments without a
+historical replay. The receipt remained `FAILED_CLOSED` only because Formal
+Strength and Formal Lifecycle lacked publishable formal observations; no fake
+receipt or manual formal insertion was used.
+

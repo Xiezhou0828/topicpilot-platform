@@ -5,7 +5,7 @@
 - Scope: current-session TPEx provider recovery and natural post-close publication on 2026-10-07 (Asia/Taipei).
 - Historical replay: **not performed**. The failed 2026-10-05 and 2026-10-06 runs remain historical evidence only.
 - Runtime baseline at investigation: production worker/API health reported `af3c26543ce1da9b4b2988a19b01026cfd1b7c97`; production migration was `0049_task_daily_formal_publication_receipt`.
-- Current code result: **repair implemented and locally verified; release/publication gate remains explicit until the repaired commit is released and a fresh natural run is observed**.
+- Final result: **engineering recovery complete; natural market reconciliation reached READY, but Formal Strength/Lifecycle fail-closed and no formal publication was emitted**.
 
 ## Provider decision
 
@@ -57,4 +57,13 @@ The repaired code must be released as one immutable commit to both API and worke
 5. the receipt contains formal publication identifiers and downstream readiness.
 
 Until all five checks pass, the terminal state is `FIX_IMPLEMENTED_NOT_YET_NATURALLY_PUBLISHED`, not `SUCCESS`.
+
+## Final post-release readback
+
+- The governed release was deployed to both API and Worker at `646deea23ebfd7afb415201d0f9b2f11ab6fd099`; migration `0049_task_daily_formal_publication_receipt` remained current and no migration was run.
+- The natural process reused run `e3892200-f46d-5029-854b-77f05cd5dd29`; it did not replay 2026-10-05 or 2026-10-06 and did not create a second run identity.
+- The 6173 cash-reduction schedule was reconciled to the existing official corporate-action authority boundary: TWO, suspended 2026-10-07 through 2026-10-16, resume boundary 2026-10-19, 6% reduction. No price was supplied or inferred.
+- Final receipt revision 4 (`fe3f02b3-13a2-49e8-b29f-eca63ee9d92d`) shows expected 553, covered 553, priced 552, and one legitimate unavailable instrument: 6173 `SUSPENDED`. TPE is 347/347; TWO is 205 priced plus 6173 accounted as legitimate unavailable, therefore 206/206 covered. `DailyMarketReconciliation.downstreamReady=true`.
+- Formal Topic snapshot reached PASS for 45 published rows on 2026-10-07. Formal Strength and Formal Lifecycle remained `FAIL_CLOSED` (107 expected rows, zero published rows), with reasons including `FORMAL_TOPIC_SNAPSHOT_NOT_PUBLISHED`, `OBSERVED_MEMBER_FACT_MISSING_PRICE_EVIDENCE`, and `SNAPSHOT_DATA_STATUS_PARTIAL`. Consequently `publicationAt=null`, `publicationStatus=FAILED_CLOSED`, and `FORMAL_D0=NOT_YET_ESTABLISHED`.
+- Direct API `/healthz` and the Worker receipt provenance both report the release SHA. The receipt's separate `TOPICPILOT_API_RUNTIME_SHA` marker remains the stale `6fff533168b1823052071f6d88d1f266397d327d`; this is an externally managed provenance configuration issue and must not be treated as proof that the API is on that revision.
 

@@ -23,3 +23,13 @@ The source probe was read-only and retained only as evidence: OpenAPI SHA-256 `3
 
 The public endpoint proves source freshness, not formal publication completeness. The protected lifecycle/universe readback must still determine the expected target scope, reject stale tracking rows, and prove formal snapshot coverage. No static universe count is embedded in the implementation.
 
+## Final production outcome
+
+The official corporate-action authority for 6173 was added without changing
+authority semantics or introducing a fallback provider. The natural retry then
+resolved the only missing TWO row as `SUSPENDED` with
+`CAPITAL_REDUCTION_TRADING_SUSPENSION`; it did not create a price and did not
+forward-fill 2026-10-07. Final coverage was 206/206 covered (205 priced plus
+one legitimate unavailable), while formal downstream publication remained
+blocked later by the existing Formal Strength/Lifecycle input gates.
+
