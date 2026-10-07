@@ -40,6 +40,31 @@ def test_sanitized_official_twse_reduction_record_is_generic_and_date_effective(
     ) == ()
 
 
+def test_sanitized_official_tpex_reduction_record_covers_6173_suspension():
+    records = load_corporate_action_authorities()
+    record = next(item for item in records if item.symbol == "6173")
+
+    assert record.market == "TWO"
+    assert record.action_type == "CAPITAL_REDUCTION_SHARE_EXCHANGE"
+    assert record.source_authority == "TPEX_OFFICIAL_REDUCTION"
+    assert record.source_reference == "https://mops.twse.com.tw/mops/web/t05st01"
+    assert record.status_mapping == MarketAvailability.SUSPENDED.value
+    assert record.reason_code == "CAPITAL_REDUCTION_TRADING_SUSPENSION"
+    assert record.expected_close is False
+    assert str(record.reduction_ratio_pct) == "6"
+
+    assert corporate_action_authorities_for(
+        symbol="6173", market="TWO", trading_date=date(2026, 10, 6)
+    ) == ()
+    for trading_date in (date(2026, 10, 7), date(2026, 10, 16)):
+        assert corporate_action_authorities_for(
+            symbol="6173", market="TWO", trading_date=trading_date
+        ) == (record,)
+    assert corporate_action_authorities_for(
+        symbol="6173", market="TWO", trading_date=date(2026, 10, 19)
+    ) == ()
+
+
 def test_corporate_action_input_requires_official_provenance_and_safe_dates():
     payload = {
         "symbol": "1234",
