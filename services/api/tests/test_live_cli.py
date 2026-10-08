@@ -2,7 +2,7 @@ from datetime import date, datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
-from topicpilot_api.live.cli import resolve_decision
+from topicpilot_api.live.cli import resolve_decision, result_exit_code
 from topicpilot_api.live.config import LiveRuntimeConfig
 from topicpilot_api.live.session import MarketSessionClock
 
@@ -38,6 +38,18 @@ def test_cli_auto_keeps_configured_closed_date_out_of_post_close():
         _clock(config),
         now=datetime(2026, 8, 10, 13, 45, tzinfo=ZoneInfo("Asia/Taipei")),
     ) == "WAIT"
+
+
+def test_one_shot_cli_does_not_report_partial_or_waiting_as_success():
+    class Result:
+        def __init__(self, status: str):
+            self.status = status
+
+    assert result_exit_code(None) == 0
+    assert result_exit_code(Result("SUCCESS")) == 0
+    assert result_exit_code(Result("MARKET_CLOSED")) == 0
+    for status in ("PARTIAL", "WAITING_LIVE_VALIDATION", "WAITING", "SKIPPED", "FAILED"):
+        assert result_exit_code(Result(status)) == 1
 
 
 def test_runtime_defaults_keep_the_frozen_trigger_boundary(monkeypatch):

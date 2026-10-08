@@ -98,6 +98,21 @@ def resolve_decision(
     return decision
 
 
+def result_exit_code(result: object | None) -> int:
+    """Return success only when a one-shot run completed or was market-closed.
+
+    A partial or waiting result has a durable receipt and is operationally
+    meaningful, but it is not a successful formal publication.  Returning a
+    non-zero code prevents task runners from treating those outcomes as a
+    completed publication based on process status alone.
+    """
+
+    if result is None:
+        return 0
+    status = getattr(result, "status", None)
+    return 0 if status in {"SUCCESS", "MARKET_CLOSED"} else 1
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
@@ -179,16 +194,7 @@ def main(argv: list[str] | None = None) -> int:
                     result=result_payload,
                     providerHealth=provider_router.health_snapshot(),
                 )
-                return (
-                    0
-                    if result is None or result.status in {
-                        "SUCCESS",
-                        "PARTIAL",
-                        "MARKET_CLOSED",
-                        "WAITING_LIVE_VALIDATION",
-                    }
-                    else 1
-                )
+                return result_exit_code(result)
 
             stop = __import__("threading").Event()
             signal.signal(signal.SIGTERM, lambda *_: stop.set())
