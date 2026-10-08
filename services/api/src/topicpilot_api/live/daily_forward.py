@@ -324,8 +324,9 @@ class DailyForwardRunner:
             )
             if existing is not None and existing.status != "WAITING_FOR_DATA":
                 return existing
-            # 15:00 is a hard operational alert threshold, not a permanent
-            # same-session publication boundary.  The updater records WAIT
+            # The configured price hard deadline is an operational alert
+            # threshold, not a permanent same-session publication boundary.
+            # The updater records WAIT
             # and the existing scheduler cadence retries without sleeping a
             # worker indefinitely.  A later READY result may still publish
             # this same session through the normal idempotent path.

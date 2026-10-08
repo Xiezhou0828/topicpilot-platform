@@ -104,6 +104,18 @@ def hard_deadline_at(trading_date: date, config: LiveRuntimeConfig) -> datetime:
     return _local_boundary(trading_date, config.hard_deadline, config.timezone_name)
 
 
+def late_data_target_at(trading_date: date, config: LiveRuntimeConfig) -> datetime:
+    return _local_boundary(trading_date, config.late_data_target, config.timezone_name)
+
+
+def late_data_hard_deadline_at(trading_date: date, config: LiveRuntimeConfig) -> datetime:
+    return _local_boundary(
+        trading_date,
+        config.late_data_hard_deadline,
+        config.timezone_name,
+    )
+
+
 def operational_phase(
     now: datetime,
     trading_date: date,
@@ -336,16 +348,33 @@ def _receipt_status(
         return RECEIPT_MARKET_CLOSED
     formal_ready = readback.get("status") == "PASS"
     data_ready = reconciliation.get("downstreamReady") is True
+    late_data = snapshot.get("lateDataEnrichment")
+    late_data_pending = (
+        isinstance(late_data, Mapping)
+        and late_data.get("status") not in {"PASS", "NOT_APPLICABLE"}
+    )
     if run_status == "SUCCESS" and data_ready and formal_ready:
+        if late_data_pending:
+            return (
+                RECEIPT_DEADLINE_EXCEEDED
+                if _as_utc(now) >= late_data_hard_deadline_at(trading_date, config)
+                else RECEIPT_WAITING_FOR_DATA
+            )
         return (
             RECEIPT_CORRECTION_COMPLETE
             if execution_scope == "HISTORY_RECOVERY"
             else RECEIPT_COMPLETE
         )
     if run_status == "WAITING_LIVE_VALIDATION":
-        # WAIT is retryable.  The 15:00 alert is operationally critical, but
-        # it must not become a permanent publication failure that prevents a
-        # later same-session readiness check.
+        if late_data_pending and _as_utc(now) >= late_data_hard_deadline_at(
+            trading_date, config
+        ):
+            return RECEIPT_DEADLINE_EXCEEDED
+        if not data_ready and _as_utc(now) >= hard_deadline_at(trading_date, config):
+            return RECEIPT_DEADLINE_EXCEEDED
+        # WAIT is retryable.  The price and late-data alerts are operationally
+        # critical, but they must not become a permanent publication failure
+        # that prevents a later same-session readiness check.
         return RECEIPT_WAITING_FOR_DATA
     if _as_utc(now) >= hard_deadline_at(trading_date, config) and not data_ready:
         return RECEIPT_DEADLINE_EXCEEDED
@@ -380,11 +409,20 @@ def _summary_payload(metadata: Mapping[str, Any]) -> dict[str, Any]:
                     "formalLifecycleReadback",
                     "homePublication",
                     "formalPublicationReadback",
+                    "lateDataEnrichment",
                 )
                 if key in snapshot
             },
             "forwardAutomation": metadata.get("forwardAutomation") or {},
             "historyRecovery": metadata.get("historyRecovery") or {},
+            "publicationStages": metadata.get("publicationStages") or {},
+            "dayCompletionState": (
+                "LATE_DATA_PENDING"
+                if isinstance(snapshot.get("lateDataEnrichment"), Mapping)
+                and (snapshot.get("lateDataEnrichment") or {}).get("status")
+                not in {"PASS", "NOT_APPLICABLE"}
+                else "COMPLETE"
+            ),
         }
     )
 
@@ -419,12 +457,23 @@ def append_receipt_for_run(
     snapshot = metadata.get("topicSnapshot") or {}
     readback = snapshot.get("formalPublicationReadback") or {}
     data_ready = reconciliation.get("downstreamReady") is True
-    phase = operational_phase(
-        current,
-        trading_date,
-        config,
-        data_ready=data_ready,
-        market_closed=status == RECEIPT_MARKET_CLOSED,
+    late_data = snapshot.get("lateDataEnrichment")
+    late_data_pending = (
+        isinstance(late_data, Mapping)
+        and late_data.get("status") not in {"PASS", "NOT_APPLICABLE"}
+    )
+    phase = (
+        "LATE_DATA_DEADLINE"
+        if late_data_pending and current >= late_data_hard_deadline_at(trading_date, config)
+        else "LATE_DATA_ENRICHMENT"
+        if late_data_pending and data_ready
+        else operational_phase(
+            current,
+            trading_date,
+            config,
+            data_ready=data_ready,
+            market_closed=status == RECEIPT_MARKET_CLOSED,
+        )
     )
     events: list[dict[str, Any]] = []
     if not data_ready and current >= soft_target_at(trading_date, config):
@@ -439,6 +488,14 @@ def append_receipt_for_run(
         events.append(
             {
                 "code": "HARD_DEADLINE_EXCEEDED",
+                "severity": "CRITICAL",
+                "at": current.isoformat(),
+            }
+        )
+    if late_data_pending and current >= late_data_hard_deadline_at(trading_date, config):
+        events.append(
+            {
+                "code": "LATE_DATA_HARD_DEADLINE_EXCEEDED",
                 "severity": "CRITICAL",
                 "at": current.isoformat(),
             }
@@ -851,6 +908,8 @@ __all__ = [
     "append_operational_receipt",
     "append_receipt_for_run",
     "hard_deadline_at",
+    "late_data_hard_deadline_at",
+    "late_data_target_at",
     "operational_phase",
     "read_latest_receipt",
     "read_receipts",
