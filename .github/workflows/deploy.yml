@@ -22,6 +22,16 @@ on:
         required: true
         type: boolean
         default: false
+      apply_migration_0050:
+        description: Apply the owner-authorized eight retired Topic cleanup
+        required: true
+        type: boolean
+        default: false
+      confirmation_0050:
+        description: Type DELETE_EIGHT_RETIRED_TOPICS when applying cleanup 0050
+        required: false
+        type: string
+        default: ""
       deploy_worker:
         description: Trigger the protected Render live Worker deploy hook
         required: true
@@ -99,19 +109,69 @@ jobs:
             "topicpilot-migration:${{ inputs.release_ref }}" \
             -c 'import os, sys; from sqlalchemy import create_engine, text; e=create_engine(os.environ["MIGRATION_DATABASE_URL"], pool_pre_ping=True); c=e.connect(); head=str(c.execute(text("SELECT version_num FROM alembic_version ORDER BY version_num")).scalar_one()); table_exists=c.execute(text("SELECT to_regclass(:qualified) IS NOT NULL"), {"qualified": "topicpilot.daily_formal_publication_receipts"}).scalar_one(); trigger_count=int(c.execute(text("SELECT count(*) FROM pg_trigger WHERE tgrelid = to_regclass(:qualified) AND tgname = :name AND NOT tgisinternal"), {"qualified": "topicpilot.daily_formal_publication_receipts", "name": "trg_daily_formal_publication_receipt_append_only"}).scalar_one()); c.close(); expected="0049_task_daily_formal_publication_receipt"; sys.exit(f"unexpected Production migration head after upgrade: {head!r}") if head != expected else None; sys.exit("receipt table verification failed") if not table_exists else None; sys.exit(f"append-only trigger verification failed: {trigger_count}") if trigger_count != 1 else print(f"Production migration head after upgrade: {head}; append-only receipt stream verified")'
 
+  purge_retired_topics:
+    name: Purge the eight retired Topic rows
+    if: ${{ inputs.apply_migration_0050 }}
+    needs: validate
+    runs-on: ubuntu-latest
+    environment: production-db-maintenance
+    concurrency:
+      group: topicpilot-production-db-maintenance
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.release_ref }}
+      - name: Require the exact destructive confirmation
+        env:
+          CONFIRMATION: ${{ inputs.confirmation_0050 }}
+        run: test "$CONFIRMATION" = "DELETE_EIGHT_RETIRED_TOPICS"
+      - name: Build the exact cleanup image
+        run: docker build --file infra/docker/api.Dockerfile --tag topicpilot-retired-topic-purge:${{ inputs.release_ref }} .
+      - name: Require Production migration head 0049
+        env:
+          MIGRATION_DATABASE_URL: ${{ secrets.TOPICPILOT_PRODUCTION_DATABASE_URL }}
+        run: |
+          if [ -z "$MIGRATION_DATABASE_URL" ]; then
+            echo "TOPICPILOT_PRODUCTION_DATABASE_URL is not configured in production-db-maintenance." >&2
+            exit 1
+          fi
+          docker run --rm --entrypoint python \
+            --env MIGRATION_DATABASE_URL \
+            "topicpilot-retired-topic-purge:${{ inputs.release_ref }}" \
+            -c 'import os, sys; from sqlalchemy import create_engine, text; e=create_engine(os.environ["MIGRATION_DATABASE_URL"], pool_pre_ping=True); c=e.connect(); rows=[str(r[0]) for r in c.execute(text("SELECT version_num FROM public.alembic_version ORDER BY version_num"))]; c.close(); expected=["0049_task_daily_formal_publication_receipt"]; sys.exit(f"unexpected Production migration head: {rows!r}") if rows != expected else print("Production migration head precondition: 0049")'
+      - name: Apply the owner-authorized cleanup transaction
+        env:
+          MIGRATION_DATABASE_URL: ${{ secrets.TOPICPILOT_PRODUCTION_DATABASE_URL }}
+          TOPICPILOT_ALLOW_RETIRED_TOPIC_PURGE: "1"
+        run: |
+          docker run --rm --entrypoint alembic \
+            --env MIGRATION_DATABASE_URL \
+            --env TOPICPILOT_ALLOW_RETIRED_TOPIC_PURGE \
+            "topicpilot-retired-topic-purge:${{ inputs.release_ref }}" \
+            upgrade 0050_task_purge_retired_topics
+      - name: Verify the clean 132-topic database state
+        env:
+          MIGRATION_DATABASE_URL: ${{ secrets.TOPICPILOT_PRODUCTION_DATABASE_URL }}
+        run: |
+          docker run --rm --entrypoint python \
+            --env MIGRATION_DATABASE_URL \
+            "topicpilot-retired-topic-purge:${{ inputs.release_ref }}" \
+            -c 'import os, sys; from sqlalchemy import create_engine, text; e=create_engine(os.environ["MIGRATION_DATABASE_URL"], pool_pre_ping=True); c=e.connect(); head=str(c.execute(text("SELECT version_num FROM public.alembic_version ORDER BY version_num")).scalar_one()); total=int(c.execute(text("SELECT count(*) FROM topicpilot.topics")).scalar_one()); retired=int(c.execute(text("SELECT count(*) FROM topicpilot.topics WHERE status = $$RETIRED$$")).scalar_one()); target=int(c.execute(text("SELECT count(*) FROM topicpilot.topics WHERE slug IN ($$PCB$$, $$其他建設$$, $$其他晶圓材料$$, $$其他自動化$$, $$其他資安$$, $$其他高速互連$$, $$大型金融權值$$, $$特殊金屬材料$$)")).scalar_one()); dangling=int(c.execute(text("SELECT count(*) FROM topicpilot.instrument_topic_relations r LEFT JOIN topicpilot.topics t ON t.id=r.topic_id WHERE t.id IS NULL")).scalar_one()); c.close(); checks=(head == "0050_task_purge_retired_topics" and total == 132 and retired == 0 and target == 0 and dangling == 0); sys.exit(f"cleanup verification failed: head={head}, total={total}, retired={retired}, target={target}, dangling={dangling}") if not checks else print("Production cleanup verified: head=0050, topics=132, retired=0, target=0, dangling_relations=0")'
+
   deploy-worker:
     name: Trigger Render Worker deployment
-    if: ${{ always() && needs.validate.result == 'success' && inputs.deploy_worker && (needs.migrate_production.result == 'success' || (!inputs.apply_migration_0049 && needs.migrate_production.result == 'skipped')) }}
-    needs: [validate, migrate_production]
+    if: ${{ always() && needs.validate.result == 'success' && inputs.deploy_worker && (needs.migrate_production.result == 'success' || (!inputs.apply_migration_0049 && needs.migrate_production.result == 'skipped')) && (needs.purge_retired_topics.result == 'success' || (!inputs.apply_migration_0050 && needs.purge_retired_topics.result == 'skipped')) }}
+    needs: [validate, migrate_production, purge_retired_topics]
     runs-on: ubuntu-latest
     environment: production-worker
     steps:
-      - name: Require migration 0049 before Worker release
+      - name: Require compatible Production migration before Worker release
         env:
           PRODUCTION_API_ORIGIN: https://topicpilot-api.onrender.com
         run: |
           payload="$(curl --fail --silent --show-error "$PRODUCTION_API_ORIGIN/api/v1/admin/migration")"
-          python -c 'import json, sys; payload=json.loads(sys.argv[1]); expected="0049_task_daily_formal_publication_receipt"; actual=payload.get("alembicRevision"); sys.exit(f"Worker release requires migration 0049, got {actual!r}") if actual != expected else print("Worker migration precondition: 0049")' "$payload"
+          python -c 'import json, sys; payload=json.loads(sys.argv[1]); allowed={"0049_task_daily_formal_publication_receipt", "0050_task_purge_retired_topics"}; actual=payload.get("alembicRevision"); sys.exit(f"Worker release requires migration 0049 or 0050, got {actual!r}") if actual not in allowed else print(f"Worker migration precondition: {actual}")' "$payload"
       - name: Trigger protected Worker deploy hook with exact SHA
         env:
           RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
@@ -130,17 +190,17 @@ jobs:
 
   deploy-api:
     name: Trigger Render API deployment
-    if: ${{ always() && needs.validate.result == 'success' && inputs.deploy_api && (needs.migrate_production.result == 'success' || (!inputs.apply_migration_0049 && needs.migrate_production.result == 'skipped')) }}
-    needs: [validate, migrate_production]
+    if: ${{ always() && needs.validate.result == 'success' && inputs.deploy_api && (needs.migrate_production.result == 'success' || (!inputs.apply_migration_0049 && needs.migrate_production.result == 'skipped')) && (needs.purge_retired_topics.result == 'success' || (!inputs.apply_migration_0050 && needs.purge_retired_topics.result == 'skipped')) }}
+    needs: [validate, migrate_production, purge_retired_topics]
     runs-on: ubuntu-latest
     environment: production-api
     steps:
-      - name: Require migration 0049 before API release
+      - name: Require compatible Production migration before API release
         env:
           PRODUCTION_API_ORIGIN: https://topicpilot-api.onrender.com
         run: |
           payload="$(curl --fail --silent --show-error "$PRODUCTION_API_ORIGIN/api/v1/admin/migration")"
-          python -c 'import json, sys; payload=json.loads(sys.argv[1]); expected="0049_task_daily_formal_publication_receipt"; actual=payload.get("alembicRevision"); sys.exit(f"API release requires migration 0049, got {actual!r}") if actual != expected else print("API migration precondition: 0049")' "$payload"
+          python -c 'import json, sys; payload=json.loads(sys.argv[1]); allowed={"0049_task_daily_formal_publication_receipt", "0050_task_purge_retired_topics"}; actual=payload.get("alembicRevision"); sys.exit(f"API release requires migration 0049 or 0050, got {actual!r}") if actual not in allowed else print(f"API migration precondition: {actual}")' "$payload"
       - name: Trigger protected deploy hook
         env:
           RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
