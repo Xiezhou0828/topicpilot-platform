@@ -111,10 +111,15 @@ def test_frozen_daily_publication_timing_is_exposed_and_ordered():
     config = LiveRuntimeConfig()
 
     assert config.post_close_start == "13:45"
-    assert config.soft_target == "14:30"
-    assert config.hard_deadline == "15:00"
-    assert config.as_dict()["softTarget"] == "14:30"
-    assert config.as_dict()["hardDeadline"] == "15:00"
+    assert config.twse_ingestion_start == "15:37"
+    assert config.tpex_ingestion_start == "15:42"
+    assert config.tpex_retry_start == "15:52"
+    assert config.soft_target == "16:07"
+    assert config.hard_deadline == "17:00"
+    assert config.late_data_target == "18:33"
+    assert config.late_data_hard_deadline == "20:10"
+    assert config.as_dict()["softTarget"] == "16:07"
+    assert config.as_dict()["hardDeadline"] == "17:00"
     assert soft_target_at(date(2026, 10, 5), config) < hard_deadline_at(
         date(2026, 10, 5), config
     )
@@ -135,7 +140,7 @@ def test_operational_phase_does_not_turn_clock_into_data_ready():
     )
     assert (
         operational_phase(
-            datetime(2026, 10, 5, 6, 31, tzinfo=UTC),
+            datetime(2026, 10, 5, 8, 8, tzinfo=UTC),
             trading_date,
             config,
             data_ready=False,
@@ -144,7 +149,7 @@ def test_operational_phase_does_not_turn_clock_into_data_ready():
     )
     assert (
         operational_phase(
-            datetime(2026, 10, 5, 7, 0, tzinfo=UTC),
+            datetime(2026, 10, 5, 9, 0, tzinfo=UTC),
             trading_date,
             config,
             data_ready=False,
@@ -153,7 +158,7 @@ def test_operational_phase_does_not_turn_clock_into_data_ready():
     )
     assert (
         operational_phase(
-            datetime(2026, 10, 5, 7, 0, tzinfo=UTC),
+            datetime(2026, 10, 5, 9, 0, tzinfo=UTC),
             trading_date,
             config,
             data_ready=True,
@@ -162,7 +167,7 @@ def test_operational_phase_does_not_turn_clock_into_data_ready():
     )
     assert (
         operational_phase(
-            datetime(2026, 10, 5, 7, 0, tzinfo=UTC),
+            datetime(2026, 10, 5, 9, 0, tzinfo=UTC),
             trading_date,
             config,
             data_ready=False,

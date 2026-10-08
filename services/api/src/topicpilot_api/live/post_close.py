@@ -73,6 +73,13 @@ from .config import LiveRuntimeConfig
 from .persistence import LiveRepository
 from .receipt import append_receipt_for_run
 from .session import MarketSessionClock
+from .staging import (
+    TPEX_MARKET,
+    TWSE_MARKET,
+    eligible_markets,
+    local_time,
+    tpex_retry_window_open,
+)
 
 POST_CLOSE_PHASE_MODEL = (
     "SESSION_VALIDATION",
@@ -168,7 +175,7 @@ def _readback_failure_metadata(
     market_facts_publication: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     flow = formal_readback.get("institutionalFlow") or {}
-    if flow.get("status") != "PASS":
+    if formal_readback.get("lateDataRequired", True) and flow.get("status") != "PASS":
         return {
             "failureClassification": "INSTITUTIONAL_FLOW_READBACK_FAILURE",
             "failedSection": "institutionalFlow",
@@ -983,6 +990,52 @@ class PostCloseUpdater:
             },
             "checkpointAuthority": "topicpilot.live_collector_checkpoints",
             "phaseModel": list(POST_CLOSE_PHASE_MODEL),
+            "publicationStageModel": [
+                "POST_CLOSE_PREFLIGHT",
+                "WAITING_TWSE_WINDOW",
+                "TWSE_INGESTING",
+                "TWSE_SAFE_COMPUTATION",
+                "TPEX_INGESTING",
+                "COMBINED_RECONCILIATION",
+                "FORMAL_PUBLICATION",
+                "PRICE_BASED_FINAL",
+                "LATE_DATA_ENRICHMENT",
+                "DAY_COMPLETE",
+            ],
+            "stagePolicy": {
+                "twseIngestionStart": self.config.twse_ingestion_start,
+                "tpexIngestionStart": self.config.tpex_ingestion_start,
+                "tpexRetryStart": self.config.tpex_retry_start,
+                "combinedReadinessTarget": self.config.soft_target,
+                "priceHardDeadline": self.config.hard_deadline,
+                "lateDataTarget": self.config.late_data_target,
+                "lateDataHardDeadline": self.config.late_data_hard_deadline,
+                "schedulerPollSeconds": self.config.poll_interval_seconds,
+            },
+            "publicationStages": {
+                "preflight": {
+                    "status": "PENDING",
+                    "target": self.config.post_close_start,
+                },
+                "twse": {
+                    "status": "PENDING",
+                    "target": self.config.twse_ingestion_start,
+                },
+                "tpex": {
+                    "status": "PENDING",
+                    "target": self.config.tpex_ingestion_start,
+                },
+                "combined": {
+                    "status": "PENDING",
+                    "target": self.config.soft_target,
+                },
+                "formal": {"status": "PENDING"},
+                "lateData": {
+                    "status": "PENDING",
+                    "target": self.config.late_data_target,
+                    "hardDeadline": self.config.late_data_hard_deadline,
+                },
+            },
             "forwardRunKey": execution_key if execution_scope == NORMAL_CURRENT_DAY else None,
             "timezone": self.config.timezone_name,
             "sessionCode": self.config.session_code,
@@ -1602,6 +1655,49 @@ class PostCloseUpdater:
                 getattr(self, "_status_resolution_metrics", StatusResolutionMetrics()).to_dict(),
             )
 
+        # POST_CLOSE at 13:45 is deliberately a preflight-only state.  The
+        # persistent worker keeps polling; no exchange endpoint is touched
+        # until the first market-specific eligibility window.
+        current_now = self._now()
+        eligible_market_codes = set(eligible_markets(current_now, self.config))
+        if not is_targeted and not eligible_market_codes:
+            self._update_publication_stage(
+                run_id,
+                "preflight",
+                "READY",
+                state="POST_CLOSE_PREFLIGHT",
+                nextStage="TWSE",
+                nextEligibleAt=f"{local_date.isoformat()}T{self.config.twse_ingestion_start}:00",
+            )
+            self._update_publication_stage(
+                run_id,
+                "twse",
+                "WAITING_FOR_WINDOW",
+                state="WAITING_TWSE_WINDOW",
+                nextEligibleAt=f"{local_date.isoformat()}T{self.config.twse_ingestion_start}:00",
+            )
+            return self._finalize_waiting_run(
+                run_id=run_id,
+                local_date=local_date,
+                eligible_instrument_ids=eligible_instrument_ids,
+                success_count=success_count,
+                failure_count=failure_count,
+                skipped_count=skipped_count,
+                retry_count=retry_count,
+                point_count=point_count,
+                failure_codes=("WAITING_TWSE_WINDOW",),
+                stage_code="WAITING_TWSE_WINDOW",
+                snapshot_status="WAITING_FOR_TWSE_WINDOW",
+            )
+        if not is_targeted:
+            self._update_publication_stage(
+                run_id,
+                "preflight",
+                "READY",
+                state="POST_CLOSE_PREFLIGHT",
+                completedAt=self._now(),
+            )
+
         transport = RateLimitedTransport(
             _official_transport,
             requests_per_minute=self.config.history_requests_per_minute,
@@ -1626,25 +1722,73 @@ class PostCloseUpdater:
             calendar_code=self.config.calendar_code,
         )
 
-        market_batches: list[list[tuple[Instrument, Market]]] = []
+        market_batches: list[tuple[int, str, list[tuple[Instrument, Market]]]] = []
+        all_batch_index = 0
         for market_code in ("TPE", "TWO"):
             market_instruments = [item for item in instruments if item[1].code == market_code]
             for batch_start in range(0, len(market_instruments), self.config.history_batch_size):
+                all_batch_index += 1
                 market_batches.append(
-                    market_instruments[batch_start : batch_start + self.config.history_batch_size]
+                    (
+                        all_batch_index,
+                        market_code,
+                        market_instruments[
+                            batch_start : batch_start + self.config.history_batch_size
+                        ],
+                    )
                 )
 
-        for batch_index, batch in enumerate(market_batches, start=1):
+        if (
+            not is_targeted
+            and local_time(current_now, self.config)
+            >= clock_time.fromisoformat(self.config.hard_deadline)
+            and not (
+                self._market_batches_ready(run_id, market_batches, TWSE_MARKET)
+                and self._market_batches_ready(run_id, market_batches, TPEX_MARKET)
+            )
+        ):
+            return self._finalize_waiting_run(
+                run_id=run_id,
+                local_date=local_date,
+                eligible_instrument_ids=eligible_instrument_ids,
+                success_count=success_count,
+                failure_count=failure_count,
+                skipped_count=skipped_count,
+                retry_count=retry_count,
+                point_count=point_count,
+                failure_codes=("PRICE_HARD_DEADLINE_EXCEEDED",),
+                stage_code="PRICE_HARD_DEADLINE_EXCEEDED",
+                snapshot_status="PRICE_HARD_DEADLINE_EXCEEDED",
+            )
+
+        for batch_index, market_code, batch in market_batches:
+            if not is_targeted and market_code not in eligible_market_codes:
+                continue
             market = batch[0][1]
             batch_key = self._checkpoint_key("FORMAL_MARKET_FACTS", f"{market.code}:{batch_index}")
             previous_checkpoint = self._latest_checkpoint(run_id, batch_key)
             if previous_checkpoint is not None and previous_checkpoint.status == "COMPLETED":
-                success_count += previous_checkpoint.succeeded_count
-                failure_count += previous_checkpoint.failed_count
-                skipped_count += previous_checkpoint.skipped_count
-                retry_count += previous_checkpoint.retry_count
-                point_count += previous_checkpoint.provider_request_count or 0
                 continue
+            if (
+                not is_targeted
+                and market_code == TPEX_MARKET
+                and previous_checkpoint is not None
+                and not tpex_retry_window_open(current_now, self.config)
+            ):
+                continue
+            self._update_publication_stage(
+                run_id,
+                "twse" if market_code == TWSE_MARKET else "tpex",
+                "INGESTING",
+                state=("TWSE_INGESTING" if market_code == TWSE_MARKET else "TPEX_INGESTING"),
+                market=market_code,
+                checkpoint=batch_key,
+                target=(
+                    self.config.twse_ingestion_start
+                    if market_code == TWSE_MARKET
+                    else self.config.tpex_ingestion_start
+                ),
+            )
             self._checkpoint_event(
                 run_id=run_id,
                 batch_key=batch_key,
@@ -1664,6 +1808,8 @@ class PostCloseUpdater:
             batch_success_count = 0
             batch_skipped_count = 0
             batch_point_count = 0
+            batch_priced_count = 0
+            batch_covered_count = 0
             try:
                 # One transaction covers the whole provider batch.  A single
                 # provider/normalizer failure falls back to savepoint-isolated
@@ -1733,6 +1879,14 @@ class PostCloseUpdater:
                             if is_targeted and error_code:
                                 failure_codes.append(error_code)
                 batch_point_count = result.provider_point_count
+                batch_priced_count = result.priced_count
+                batch_covered_count = result.covered_count
+                batch_trading_status_count = sum(
+                    1
+                    for item in result.instrument_results
+                    if item.covered_count
+                    and item.instrument_status in LEGITIMATE_UNAVAILABLE_CODES
+                )
                 success_count += batch_success_count
                 skipped_count += batch_skipped_count
                 point_count += batch_point_count
@@ -1747,7 +1901,13 @@ class PostCloseUpdater:
                     skipped_count=batch_skipped_count,
                     retry_count=batch_retry_count,
                     provider_request_count=batch_point_count,
-                    metadata={"market": market.code, "sessionDate": local_date},
+                    metadata={
+                        "market": market.code,
+                        "sessionDate": local_date,
+                        "pricedCount": batch_priced_count,
+                        "coveredCount": batch_covered_count,
+                        "acceptedTradingStatusCount": batch_trading_status_count,
+                    },
                 )
             except Exception as exc:
                 provider_exception = exc
@@ -1806,6 +1966,9 @@ class PostCloseUpdater:
                             "market": market.code,
                             "sessionDate": local_date,
                             "providerErrorCode": provider_error_code,
+                            "pricedCount": 0,
+                            "coveredCount": 0,
+                            "acceptedTradingStatusCount": 0,
                         },
                     )
                     self._heartbeat(run_id, self._now())
@@ -1819,6 +1982,9 @@ class PostCloseUpdater:
                 fallback_skipped_count = 0
                 fallback_failure_count = 0
                 fallback_point_count = 0
+                fallback_priced_count = 0
+                fallback_covered_count = 0
+                fallback_trading_status_count = 0
                 with self.session.begin():
                     for instrument, item_market in batch:
                         item_started = self._now()
@@ -1862,6 +2028,12 @@ class PostCloseUpdater:
                             ) = self._history_attempt_outcome(summary)
                             provider_status = summary.instrument_status
                             fallback_point_count += single_result.provider_point_count
+                            fallback_priced_count += single_result.priced_count
+                            fallback_covered_count += single_result.covered_count
+                            fallback_trading_status_count += int(
+                                summary.covered_count
+                                and summary.instrument_status in LEGITIMATE_UNAVAILABLE_CODES
+                            )
                             if attempt_status == "SUCCESS":
                                 fallback_success_count += 1
                             else:
@@ -1916,11 +2088,70 @@ class PostCloseUpdater:
                     retry_count=batch_retry_count,
                     provider_request_count=fallback_point_count,
                     provider_failure_count=fallback_failure_count,
-                    metadata={"market": market.code, "sessionDate": local_date},
+                    metadata={
+                        "market": market.code,
+                        "sessionDate": local_date,
+                        "pricedCount": fallback_priced_count,
+                        "coveredCount": fallback_covered_count,
+                        "acceptedTradingStatusCount": fallback_trading_status_count,
+                    },
                 )
             self._heartbeat(run_id, self._now())
 
-        if waiting_reason_codes and not is_targeted:
+        twse_instrument_ids = tuple(
+            instrument.id for instrument, market in instruments if market.code == TWSE_MARKET
+        )
+        twse_safe_tracking_count = 0
+        twse_safe_failure = None
+        if not is_targeted and self._market_batches_ready(run_id, market_batches, TWSE_MARKET):
+            twse_safe_tracking_count, twse_safe_failure = self._run_twse_safe_computation(
+                run_id=run_id,
+                local_date=local_date,
+                twse_instrument_ids=twse_instrument_ids,
+            )
+        if twse_safe_failure:
+            failure_codes.append(twse_safe_failure)
+
+        tpex_ready = self._market_batches_ready(run_id, market_batches, TPEX_MARKET)
+        both_markets_eligible = is_targeted or TPEX_MARKET in eligible_market_codes
+        stage_wait_reasons = list(waiting_reason_codes)
+        if not both_markets_eligible and not is_targeted:
+            stage_wait_reasons.append("WAITING_TPEX_WINDOW")
+        elif not tpex_ready and not is_targeted:
+            stage_wait_reasons.append("TPEX_DATA_NOT_READY")
+
+        if stage_wait_reasons and not is_targeted:
+            twse_stage_ready = self._market_batches_ready(
+                run_id, market_batches, TWSE_MARKET
+            )
+            twse_readback = self._market_stage_readback(
+                run_id, market_batches, TWSE_MARKET, trading_date=local_date
+            )
+            tpex_readback = self._market_stage_readback(
+                run_id, market_batches, TPEX_MARKET, trading_date=local_date
+            )
+            self._update_publication_stage(
+                run_id,
+                "twse",
+                "READY" if twse_stage_ready else "WAITING_SOURCE_DATA",
+                state="TWSE_SOURCE_READY" if twse_stage_ready else "TWSE_WAITING",
+                trackingCount=twse_safe_tracking_count,
+                readback=twse_readback,
+            )
+            self._update_publication_stage(
+                run_id,
+                "tpex",
+                "READY" if tpex_ready else "WAITING_SOURCE_DATA",
+                state="TPEX_SOURCE_READY" if tpex_ready else "TPEX_WAITING",
+                readback=tpex_readback,
+                nextEligibleAt=(
+                    f"{local_date.isoformat()}T{self.config.tpex_ingestion_start}:00"
+                    if not both_markets_eligible
+                    else f"{local_date.isoformat()}T{self.config.tpex_retry_start}:00"
+                    if not tpex_retry_window_open(current_now, self.config)
+                    else None
+                ),
+        )
             return self._finalize_waiting_run(
                 run_id=run_id,
                 local_date=local_date,
@@ -1930,7 +2161,13 @@ class PostCloseUpdater:
                 skipped_count=skipped_count,
                 retry_count=retry_count,
                 point_count=point_count,
-                failure_codes=tuple(sorted(set(waiting_reason_codes))),
+                failure_codes=tuple(sorted(set(stage_wait_reasons))),
+                stage_code=(
+                    "WAITING_TPEX_WINDOW"
+                    if not both_markets_eligible
+                    else "TPEX_DATA_NOT_READY"
+                ),
+                snapshot_status="WAITING_FOR_TPEX",
             )
 
         bounded_status_resolution = self._resolve_missing_statuses(
@@ -1958,6 +2195,25 @@ class PostCloseUpdater:
                 failure_codes=tuple(sorted(set(failure_codes))),
             )
 
+        self._update_publication_stage(
+            run_id,
+            "twse",
+            "READY",
+            state="TWSE_SOURCE_READY",
+            trackingCount=twse_safe_tracking_count,
+            readback=self._market_stage_readback(
+                run_id, market_batches, TWSE_MARKET, trading_date=local_date
+            ),
+        )
+        self._update_publication_stage(
+            run_id,
+            "tpex",
+            "READY",
+            state="TPEX_SOURCE_READY",
+            readback=self._market_stage_readback(
+                run_id, market_batches, TPEX_MARKET, trading_date=local_date
+            ),
+        )
         return self._finalize_collected_run(
             run_id=run_id,
             local_date=local_date,
@@ -1977,6 +2233,333 @@ class PostCloseUpdater:
         run.heartbeat_at = now
         run.updated_at = now
         self.session.commit()
+
+    def _update_publication_stage(
+        self,
+        run_id: Any,
+        stage: str,
+        status: str,
+        **values: Any,
+    ) -> None:
+        """Persist stage readback in the existing run JSON authority."""
+
+        run = self.session.get(LiveCollectorRun, run_id)
+        if run is None:
+            return
+        metadata = dict(run.metadata_payload or {})
+        stages = dict(metadata.get("publicationStages") or {})
+        stages[stage] = {
+            "status": status,
+            "updatedAt": self._now(),
+            **values,
+        }
+        metadata["publicationStages"] = stages
+        metadata["currentStage"] = stage
+        run.metadata_payload = _json_safe(metadata)
+        run.updated_at = self._now()
+        commit = getattr(self.session, "commit", None)
+        if callable(commit):
+            commit()
+
+    def _market_batches_ready(
+        self,
+        run_id: Any,
+        market_batches: Collection[tuple[int, str, Collection[tuple[Instrument, Market]]]],
+        market_code: str,
+    ) -> bool:
+        selected = [item for item in market_batches if item[1] == market_code]
+        if not selected:
+            return True
+        for index, code, _batch in selected:
+            checkpoint = self._latest_checkpoint(
+                run_id,
+                self._checkpoint_key("FORMAL_MARKET_FACTS", f"{code}:{index}"),
+            )
+            if checkpoint is None or checkpoint.status != "COMPLETED":
+                return False
+        return True
+
+    def _market_stage_readback(
+        self,
+        run_id: Any,
+        market_batches: Collection[tuple[int, str, Collection[tuple[Instrument, Market]]]],
+        market_code: str,
+        *,
+        trading_date: date | None = None,
+        now: datetime | None = None,
+    ) -> dict[str, Any]:
+        """Project market-local checkpoint counters for operator readback."""
+
+        selected = [item for item in market_batches if item[1] == market_code]
+        expected = sum(len(batch) for _index, _code, batch in selected)
+        rows: list[tuple[str, Any]] = []
+        for index, code, _batch in selected:
+            key = self._checkpoint_key("FORMAL_MARKET_FACTS", f"{code}:{index}")
+            checkpoint = self._latest_checkpoint(run_id, key)
+            if checkpoint is not None:
+                rows.append((key, checkpoint))
+        checkpoint_metadata = [
+            (key, checkpoint, checkpoint.metadata_payload or {})
+            for key, checkpoint in rows
+        ]
+        covered = sum(
+            int(metadata.get("coveredCount", 0) or 0)
+            or int(checkpoint.succeeded_count or 0)
+            for _key, checkpoint, metadata in checkpoint_metadata
+        )
+        priced = sum(
+            int(metadata.get("pricedCount", 0) or 0)
+            for _key, _checkpoint, metadata in checkpoint_metadata
+        )
+        accepted_trading_status = sum(
+            int(metadata.get("acceptedTradingStatusCount", 0) or 0)
+            for _key, _checkpoint, metadata in checkpoint_metadata
+        )
+        failed = sum(
+            int(checkpoint.failed_count or 0)
+            for _key, checkpoint, _metadata in checkpoint_metadata
+        )
+        skipped = sum(
+            int(checkpoint.skipped_count or 0)
+            for _key, checkpoint, _metadata in checkpoint_metadata
+        )
+        retry_count = sum(
+            int(checkpoint.retry_count or 0)
+            for _key, checkpoint, _metadata in checkpoint_metadata
+        )
+        completed = sum(
+            checkpoint.status == "COMPLETED"
+            for _key, checkpoint, _metadata in checkpoint_metadata
+        )
+        status_resolutions = getattr(self, "_status_resolution_by_instrument_id", {})
+        market_instrument_ids = {
+            getattr(
+                item[0] if isinstance(item, (tuple, list)) and len(item) >= 2 else item,
+                "id",
+                item[0] if isinstance(item, (tuple, list)) and len(item) >= 2 else item,
+            )
+            for _index, _code, batch in selected
+            for item in batch
+        }
+        accepted_trading_status += sum(
+            int(bool(getattr(resolution, "is_legitimate_unavailable", False)))
+            for instrument_id, resolution in status_resolutions.items()
+            if instrument_id in market_instrument_ids
+        )
+        status = (
+            "READY"
+            if selected and completed == len(selected)
+            else "WAITING_SOURCE_DATA"
+            if rows
+            else "NOT_STARTED"
+        )
+        source_identity = (
+            "TWSE_OFFICIAL_DAILY" if market_code == TWSE_MARKET else "TPEX_OFFICIAL_DAILY"
+        )
+        session_dates = {
+            str(metadata.get("sessionDate"))
+            for _key, _checkpoint, metadata in checkpoint_metadata
+            if metadata.get("sessionDate") is not None
+        }
+        resolved_trading_date = trading_date
+        if resolved_trading_date is None and len(session_dates) == 1:
+            with suppress(ValueError):
+                resolved_trading_date = date.fromisoformat(next(iter(session_dates)))
+        source_data_date = (
+            resolved_trading_date.isoformat()
+            if resolved_trading_date is not None
+            else next(iter(session_dates), None)
+        )
+        source_observation_times = [
+            str(metadata["sourceObservationTime"])
+            for _key, _checkpoint, metadata in checkpoint_metadata
+            if metadata.get("sourceObservationTime") is not None
+        ]
+        latest_source_observation_time = (
+            max(source_observation_times) if source_observation_times else None
+        )
+        retry_timestamps = [
+            getattr(checkpoint, "created_at", None)
+            for _key, checkpoint, _metadata in checkpoint_metadata
+            if int(checkpoint.retry_count or 0) > 0
+            or int(getattr(checkpoint, "attempt_number", 1) or 1) > 1
+        ]
+        retry_timestamps = [item for item in retry_timestamps if item is not None]
+        last_retry = (
+            max(retry_timestamps).isoformat()
+            if retry_timestamps and hasattr(max(retry_timestamps), "isoformat")
+            else str(max(retry_timestamps)) if retry_timestamps else None
+        )
+        error_categories = sorted(
+            {
+                str(value)
+                for _key, _checkpoint, metadata in checkpoint_metadata
+                for field in ("errorCategory", "providerErrorCode", "reasonCode")
+                for value in (metadata.get(field),)
+                if value
+            }
+        )
+        current_now = now
+        if current_now is None:
+            now_factory = getattr(self, "_now", None)
+            current_now = now_factory() if callable(now_factory) else None
+        next_eligible_retry: str | None = None
+        if status != "READY" and resolved_trading_date is not None and current_now is not None:
+            current_local = local_time(current_now, self.config)
+            if market_code == TWSE_MARKET and current_local < clock_time.fromisoformat(
+                self.config.twse_ingestion_start
+            ):
+                next_time = self.config.twse_ingestion_start
+            elif market_code == TPEX_MARKET and current_local < clock_time.fromisoformat(
+                self.config.tpex_ingestion_start
+            ):
+                next_time = self.config.tpex_ingestion_start
+            elif market_code == TPEX_MARKET and current_local < clock_time.fromisoformat(
+                self.config.tpex_retry_start
+            ):
+                next_time = self.config.tpex_retry_start
+            elif current_local < clock_time.fromisoformat(self.config.hard_deadline):
+                next_eligible_retry = (
+                    current_now + timedelta(seconds=self.config.poll_interval_seconds)
+                ).isoformat()
+                next_time = None
+            else:
+                next_time = None
+            if next_time is not None:
+                next_eligible_retry = datetime.combine(
+                    resolved_trading_date,
+                    clock_time.fromisoformat(next_time),
+                    tzinfo=ZoneInfo(self.config.timezone_name),
+                ).astimezone(UTC).isoformat()
+        checkpoint_identity = [
+            {
+                "batchKey": key,
+                "attemptNumber": getattr(checkpoint, "attempt_number", None),
+                "checkpointHash": getattr(checkpoint, "checkpoint_hash", None),
+            }
+            for key, checkpoint, _metadata in checkpoint_metadata
+        ]
+        return {
+            "market": market_code,
+            "sourceIdentity": source_identity,
+            "latestSourceObservationTime": latest_source_observation_time,
+            "sourceObservationTimeReason": (
+                None
+                if latest_source_observation_time is not None
+                else "PROVIDER_CONTRACT_DID_NOT_EMIT_OBSERVATION_TIME"
+            ),
+            "sourceDataDate": source_data_date,
+            "expectedInstrumentCount": expected,
+            "acceptedPriceCount": priced,
+            "acceptedTradingStatusCount": accepted_trading_status,
+            "acceptedCoverageCount": covered,
+            "unavailableCount": max(0, expected - covered),
+            "validationFailureCount": failed,
+            "skippedCount": skipped,
+            "retryCount": retry_count,
+            "lastRetry": last_retry,
+            "nextEligibleRetry": next_eligible_retry,
+            "errorCategory": error_categories or None,
+            "coverageResult": (
+                "COMPLETE" if status == "READY" else "PARTIAL" if rows else "NOT_STARTED"
+            ),
+            "completedBatchCount": completed,
+            "batchCount": len(selected),
+            "readinessState": status,
+            "checkpointKeys": [key for key, _checkpoint in rows],
+            "checkpointIdentity": checkpoint_identity,
+        }
+
+    def _run_twse_safe_computation(
+        self,
+        *,
+        run_id: Any,
+        local_date: date,
+        twse_instrument_ids: Collection[Any],
+    ) -> tuple[int, str | None]:
+        """Refresh only listed-market tracking after TWSE checkpoints pass."""
+
+        if not twse_instrument_ids:
+            return 0, None
+        batch_key = "TWSE_SAFE_COMPUTATION"
+        previous = self._latest_checkpoint(run_id, batch_key)
+        if previous is not None and previous.status == "COMPLETED":
+            return int((previous.metadata_payload or {}).get("trackingCount", 0) or 0), None
+        self._update_publication_stage(
+            run_id,
+            "twseSafeComputation",
+            "RUNNING",
+            scope="TWSE_ONLY",
+            publication="NOT_FORMAL",
+        )
+        self._checkpoint_event(
+            run_id=run_id,
+            batch_key=batch_key,
+            batch_number=125,
+            status="IN_PROGRESS",
+            metadata={
+                "market": TWSE_MARKET,
+                "scope": "TWSE_ONLY",
+                "publication": "NOT_FORMAL",
+                "computation": "TRACKING_UNIVERSE_60MA",
+                "sessionDate": local_date,
+            },
+        )
+        try:
+            tracking_count = self._refresh_tracking_universe_with_retry(
+                now=self._now(),
+                eligible_instrument_ids=twse_instrument_ids,
+            )
+        except Exception as exc:
+            reason = f"TWSE_SAFE_COMPUTATION_{type(exc).__name__}"
+            self.session.rollback()
+            self._checkpoint_event(
+                run_id=run_id,
+                batch_key=batch_key,
+                batch_number=125,
+                status="FAILED",
+                failed_count=1,
+                metadata={
+                    "market": TWSE_MARKET,
+                    "scope": "TWSE_ONLY",
+                    "publication": "NOT_FORMAL",
+                    "reasonCode": reason,
+                },
+            )
+            self._update_publication_stage(
+                run_id,
+                "twseSafeComputation",
+                "FAILED",
+                scope="TWSE_ONLY",
+                publication="NOT_FORMAL",
+                reasonCode=reason,
+            )
+            return 0, reason
+        self._checkpoint_event(
+            run_id=run_id,
+            batch_key=batch_key,
+            batch_number=125,
+            status="COMPLETED",
+            processed_count=len(twse_instrument_ids),
+            succeeded_count=tracking_count,
+            metadata={
+                "market": TWSE_MARKET,
+                "scope": "TWSE_ONLY",
+                "publication": "NOT_FORMAL",
+                "computation": "TRACKING_UNIVERSE_60MA",
+                "trackingCount": tracking_count,
+                "sessionDate": local_date,
+            },
+        )
+        self._update_publication_stage(
+            run_id,
+            "twseSafeComputation",
+            "READY",
+            scope="TWSE_ONLY",
+            publication="NOT_FORMAL",
+            trackingCount=tracking_count,
+        )
+        return tracking_count, None
 
     def _resolve_missing_statuses(
         self,
@@ -2215,6 +2798,8 @@ class PostCloseUpdater:
         retry_count: int,
         point_count: int,
         failure_codes: Collection[str],
+        stage_code: str = "WAIT_PROVIDER_PUBLICATION_LAG",
+        snapshot_status: str = "WAITING_FOR_OPERATIONAL_EOD",
     ) -> PostCloseRunResult:
         """Persist a retryable EOD wait without entering downstream publication."""
 
@@ -2227,11 +2812,20 @@ class PostCloseUpdater:
         final_failure_codes = tuple(dict.fromkeys(failure_codes)) or (
             "WAIT_PROVIDER_PUBLICATION_LAG",
         )
+        self._update_publication_stage(
+            run_id,
+            "combined",
+            "WAITING",
+            state=stage_code,
+            reasonCodes=list(final_failure_codes),
+            target=self.config.soft_target,
+        )
         snapshot_result = {
             "snapshotDate": local_date.isoformat(),
             "topicCount": 0,
-            "status": "WAITING_FOR_OPERATIONAL_EOD",
+            "status": snapshot_status,
             "readinessState": OperationalReadiness.WAIT.value,
+            "blockingStage": stage_code,
         }
         self._checkpoint_event(
             run_id=run_id,
@@ -2323,11 +2917,10 @@ class PostCloseUpdater:
                 execution_scope=getattr(
                     self, "_active_execution_scope", NORMAL_CURRENT_DAY
                 ),
+                require_late_data=False,
             )
             formal_phase_key = "A9_B2_FORMAL_PROCESSING"
             formal_phase = self._latest_checkpoint(run_id, formal_phase_key)
-            market_facts_key = "FORMAL_MARKET_FACTS:OFFICIAL"
-            market_facts_phase = self._latest_checkpoint(run_id, market_facts_key)
             if (
                 reconciliation.downstream_ready
                 and formal_phase is not None
@@ -2357,57 +2950,36 @@ class PostCloseUpdater:
                     "formalLifecycle", {"status": "NOT_CHECKED"}
                 )
                 snapshot_result["formalPublicationReadback"] = formal_readback
-                if market_facts_phase is None or market_facts_phase.status != "COMPLETED":
-                    self._checkpoint_event(
-                        run_id=run_id,
-                        batch_key=market_facts_key,
-                        batch_number=150,
-                        status="COMPLETED",
-                        metadata={
-                            "publicationAuthority": "topicpilot.market_institutional_flow_daily",
-                            "readback": formal_readback.get("institutionalFlow"),
-                            "reconciledFromCommittedOutputs": True,
-                        },
-                    )
             else:
-                market_index_facts = fetch_official_market_indexes(
-                    target_date=local_date,
-                    retrieved_at=self._now(),
-                    as_of=self._now(),
-                    transport=_official_transport,
-                )
-                market_aggregate_facts = fetch_official_market_aggregates(
-                    target_date=local_date,
-                    retrieved_at=self._now(),
-                    as_of=self._now(),
-                    transport=_official_transport,
-                )
-                market_institutional_flow_facts = fetch_official_market_institutional_flows(
-                    target_date=local_date,
-                    retrieved_at=self._now(),
-                    as_of=self._now(),
-                    transport=_official_transport,
-                )
-                self._checkpoint_event(
-                    run_id=run_id,
-                    batch_key=market_facts_key,
-                    batch_number=150,
-                    status="IN_PROGRESS",
-                    metadata={
-                        "sessionDate": local_date,
-                        "publicationAuthority": "topicpilot.market_institutional_flow_daily",
-                        "sourceIdentities": sorted(
-                            {
-                                str(getattr(fact, "source_identity", ""))
-                                for fact in market_institutional_flow_facts
-                            }
-                        ),
-                    },
-                )
-                institutional_flow_persistence = self._persist_official_institutional_flow(
-                    tuple(market_institutional_flow_facts),
-                    existing_readback=formal_readback.get("institutionalFlow"),
-                )
+                try:
+                    market_index_facts = fetch_official_market_indexes(
+                        target_date=local_date,
+                        retrieved_at=self._now(),
+                        as_of=self._now(),
+                        transport=_official_transport,
+                    )
+                    market_aggregate_facts = fetch_official_market_aggregates(
+                        target_date=local_date,
+                        retrieved_at=self._now(),
+                        as_of=self._now(),
+                        transport=_official_transport,
+                    )
+                except Exception as exc:
+                    self.session.rollback()
+                    reason = f"FORMAL_MARKET_FACTS_SOURCE_NOT_READY:{type(exc).__name__}"
+                    return self._finalize_waiting_run(
+                        run_id=run_id,
+                        local_date=local_date,
+                        eligible_instrument_ids=eligible_instrument_ids,
+                        success_count=success_count,
+                        failure_count=failure_count,
+                        skipped_count=skipped_count,
+                        retry_count=retry_count,
+                        point_count=point_count,
+                        failure_codes=tuple(sorted(set((*failure_codes, reason)))),
+                        stage_code="COMBINED_MARKET_FACTS_NOT_READY",
+                        snapshot_status="WAITING_FOR_MARKET_FACTS",
+                    )
                 if reconciliation.downstream_ready:
                     self._checkpoint_event(
                         run_id=run_id,
@@ -2430,15 +3002,13 @@ class PostCloseUpdater:
                             self, "_active_execution_scope", NORMAL_CURRENT_DAY
                         ),
                     )
-                    snapshot_result["marketInstitutionalFlow"] = institutional_flow_persistence
                 else:
                     snapshot_result = self._publish_market_facts_only(
                         local_date,
                         source_run_id=str(run_id),
                         market_index_facts=market_index_facts,
                         market_aggregate_facts=market_aggregate_facts,
-                        market_institutional_flow_facts=market_institutional_flow_facts,
-                        market_institutional_flow_result=institutional_flow_persistence,
+                        market_institutional_flow_facts=(),
                         eligible_instrument_ids=eligible_instrument_ids,
                         execution_scope=getattr(
                             self, "_active_execution_scope", NORMAL_CURRENT_DAY
@@ -2450,26 +3020,9 @@ class PostCloseUpdater:
                     execution_scope=getattr(
                         self, "_active_execution_scope", NORMAL_CURRENT_DAY
                     ),
+                    require_late_data=False,
                 )
                 snapshot_result["formalPublicationReadback"] = formal_readback
-
-                flow_readback = formal_readback.get("institutionalFlow", {})
-                self._checkpoint_event(
-                    run_id=run_id,
-                    batch_key=market_facts_key,
-                    batch_number=150,
-                    status=("COMPLETED" if flow_readback.get("status") == "PASS" else "FAILED"),
-                    failed_count=0 if flow_readback.get("status") == "PASS" else 1,
-                    metadata={
-                        "publicationAuthority": "topicpilot.market_institutional_flow_daily",
-                        "readback": flow_readback,
-                        "marketFactsPublication": snapshot_result.get("marketFactsPublication"),
-                        **_readback_failure_metadata(
-                            formal_readback=formal_readback,
-                            market_facts_publication=snapshot_result.get("marketFactsPublication"),
-                        ),
-                    },
-                )
             if "formalPublicationReadback" not in snapshot_result:
                 snapshot_result["formalPublicationReadback"] = formal_readback
             formal_ready = self._formal_snapshot_ready(snapshot_result)
@@ -2527,7 +3080,69 @@ class PostCloseUpdater:
                         ),
                     },
                 )
+            if formal_ready and formal_publication_ready:
+                self._update_publication_stage(
+                    run_id,
+                    "combined",
+                    "READY",
+                    state="COMBINED_MARKET_READY",
+                    reconciliation=(
+                        reconciliation.to_dict()
+                        if hasattr(reconciliation, "to_dict")
+                        else {
+                            "downstreamReady": bool(
+                                getattr(reconciliation, "downstream_ready", False)
+                            ),
+                            "reasonCodes": list(
+                                getattr(reconciliation, "reason_codes", ())
+                            ),
+                        }
+                    ),
+                )
+                self._update_publication_stage(
+                    run_id,
+                    "formal",
+                    "READY",
+                    state="PRICE_BASED_FORMAL_READY",
+                    readback=formal_readback,
+                )
+                late_data = (
+                    self._late_data_enrichment(
+                        run_id=run_id,
+                        local_date=local_date,
+                    )
+                    if hasattr(self, "config")
+                    else {"status": "NOT_APPLICABLE", "state": "TEST_FIXTURE"}
+                )
+                snapshot_result["lateDataEnrichment"] = late_data
+                if late_data["status"] == "WAITING":
+                    status = "WAITING_LIVE_VALIDATION"
+                elif late_data["status"] == "DEADLINE_EXCEEDED":
+                    # The price-based Formal chain remains authoritative, but
+                    # the day is explicitly incomplete at the late-data
+                    # deadline.  Receipt logic exposes DEADLINE_EXCEEDED.
+                    status = "SUCCESS"
+                    self._update_publication_stage(
+                        run_id,
+                        "formal",
+                        "READY",
+                        state="PRICE_BASED_FINAL_LATE_DATA_INCOMPLETE",
+                        lateDataState=late_data["state"],
+                    )
             final_failure_codes = tuple(sorted(set(failure_codes)))
+            if formal_ready and formal_publication_ready and snapshot_result.get(
+                "lateDataEnrichment", {}
+            ).get("status") == "WAITING":
+                final_failure_codes = tuple(
+                    sorted(set(final_failure_codes) | {"LATE_DATA_NOT_READY"})
+                )
+            elif snapshot_result.get("lateDataEnrichment", {}).get("status") == "DEADLINE_EXCEEDED":
+                final_failure_codes = tuple(
+                    sorted(
+                        set(final_failure_codes)
+                        | {"LATE_DATA_HARD_DEADLINE_EXCEEDED"}
+                    )
+                )
             if not (formal_ready and formal_publication_ready):
                 if status == "SUCCESS":
                     status = "PARTIAL"
@@ -2559,11 +3174,29 @@ class PostCloseUpdater:
                 reconciliation=reconciliation,
                 now=self._now(),
             )
+            if status == "WAITING_LIVE_VALIDATION":
+                self._checkpoint_event(
+                    run_id=run_id,
+                    batch_key="COMPLETION",
+                    status="PARTIAL",
+                    metadata={
+                        "runStatus": status,
+                        "formalReadback": formal_readback,
+                        "failureCodes": final_failure_codes,
+                        "blockingStage": "LATE_DATA_ENRICHMENT",
+                    },
+                )
             if status in {"SUCCESS", "PARTIAL", "FAILED"}:
                 self._checkpoint_event(
                     run_id=run_id,
                     batch_key="COMPLETION",
-                    status="COMPLETED" if status == "SUCCESS" else "PARTIAL",
+                    status=(
+                        "COMPLETED"
+                        if status == "SUCCESS"
+                        and snapshot_result.get("lateDataEnrichment", {}).get("status")
+                        in {"PASS", "NOT_APPLICABLE", "DEADLINE_EXCEEDED"}
+                        else "PARTIAL"
+                    ),
                     metadata={
                         "runStatus": status,
                         "formalReadback": formal_readback,
@@ -2574,9 +3207,15 @@ class PostCloseUpdater:
             self._mark_finalization_failure(run_id, exc)
             raise
 
+        result_status = (
+            "DEADLINE_EXCEEDED"
+            if snapshot_result.get("lateDataEnrichment", {}).get("status")
+            == "DEADLINE_EXCEEDED"
+            else status
+        )
         return PostCloseRunResult(
             str(run_id),
-            status,
+            result_status,
             len(eligible_instrument_ids),
             success_count,
             failure_count,
@@ -2717,6 +3356,181 @@ class PostCloseUpdater:
                 "available": 0,
                 "error": type(exc).__name__,
             }
+
+    def _late_data_enrichment(
+        self,
+        *,
+        run_id: Any,
+        local_date: date,
+    ) -> dict[str, Any]:
+        """Run the late institutional-flow lane independently of Formal.
+
+        Institutional flow is the only late dataset currently consumed by
+        the live Formal readback.  Margin/securities-lending data are not
+        silently invented here; the design document records that separate
+        product decision as a bounded limitation.
+        """
+
+        batch_key = "LATE_DATA_ENRICHMENT"
+        previous = self._latest_checkpoint(run_id, batch_key)
+        if previous is not None and previous.status == "COMPLETED":
+            readback = (previous.metadata_payload or {}).get("readback") or {}
+            if readback.get("status") == "PASS":
+                return {
+                    "status": "PASS",
+                    "state": "LATE_DATA_READY",
+                    "readback": readback,
+                    "execution": "REUSED_CHECKPOINT",
+                }
+
+        existing = self._institutional_flow_readback(local_date)
+        if existing.get("status") == "PASS":
+            self._checkpoint_event(
+                run_id=run_id,
+                batch_key=batch_key,
+                batch_number=160,
+                status="COMPLETED",
+                metadata={
+                    "dataset": "institutional_flow",
+                    "readback": existing,
+                    "execution": "REUSED_CANONICAL_FACTS",
+                    "sessionDate": local_date,
+                },
+            )
+            self._update_publication_stage(
+                run_id,
+                "lateData",
+                "READY",
+                state="LATE_DATA_READY",
+                readback=existing,
+            )
+            return {
+                "status": "PASS",
+                "state": "LATE_DATA_READY",
+                "readback": existing,
+                "execution": "REUSED_CANONICAL_FACTS",
+            }
+
+        now = self._now()
+        current = local_time(now, self.config)
+        if current < clock_time.fromisoformat(self.config.late_data_target):
+            next_target = f"{local_date.isoformat()}T{self.config.late_data_target}:00"
+            self._checkpoint_event(
+                run_id=run_id,
+                batch_key=batch_key,
+                batch_number=160,
+                status="PARTIAL",
+                metadata={
+                    "dataset": "institutional_flow",
+                    "state": "WAITING_LATE_DATA_WINDOW",
+                    "nextEligibleAt": next_target,
+                    "readback": existing,
+                    "sessionDate": local_date,
+                },
+            )
+            self._update_publication_stage(
+                run_id,
+                "lateData",
+                "WAITING_FOR_WINDOW",
+                state="WAITING_LATE_DATA_WINDOW",
+                nextEligibleAt=next_target,
+                readback=existing,
+            )
+            return {
+                "status": "WAITING",
+                "state": "WAITING_LATE_DATA_WINDOW",
+                "nextEligibleAt": next_target,
+                "readback": existing,
+            }
+
+        self._update_publication_stage(
+            run_id,
+            "lateData",
+            "INGESTING",
+            state="LATE_DATA_ENRICHMENT",
+            target=self.config.late_data_target,
+        )
+        self._checkpoint_event(
+            run_id=run_id,
+            batch_key=batch_key,
+            batch_number=160,
+            status="IN_PROGRESS",
+            metadata={
+                "dataset": "institutional_flow",
+                "state": "LATE_DATA_ENRICHMENT",
+                "sessionDate": local_date,
+            },
+        )
+        try:
+            facts = fetch_official_market_institutional_flows(
+                target_date=local_date,
+                retrieved_at=now,
+                as_of=now,
+                transport=_official_transport,
+            )
+            persistence = self._persist_official_institutional_flow(
+                tuple(facts),
+                existing_readback=existing,
+            )
+            readback = self._institutional_flow_readback(local_date)
+        except Exception as exc:
+            self.session.rollback()
+            persistence = {"status": "SOURCE_NOT_READY", "error": type(exc).__name__}
+            readback = {
+                "status": "FAIL",
+                "reasonCode": "LATE_DATA_SOURCE_NOT_READY",
+                "authority": "topicpilot.market_institutional_flow_daily",
+            }
+
+        if readback.get("status") == "PASS":
+            result = {
+                "status": "PASS",
+                "state": "LATE_DATA_READY",
+                "persistence": persistence,
+                "readback": readback,
+            }
+            checkpoint_status = "COMPLETED"
+            stage_status = "READY"
+        else:
+            deadline = clock_time.fromisoformat(self.config.late_data_hard_deadline)
+            terminal = current >= deadline
+            result = {
+                "status": "DEADLINE_EXCEEDED" if terminal else "WAITING",
+                "state": "LATE_DATA_DEADLINE" if terminal else "LATE_DATA_WAITING",
+                "persistence": persistence,
+                "readback": readback,
+                "reasonCode": (
+                    "LATE_DATA_HARD_DEADLINE_EXCEEDED"
+                    if terminal
+                    else "LATE_DATA_NOT_READY"
+                ),
+            }
+            checkpoint_status = "PARTIAL"
+            stage_status = "DEADLINE_EXCEEDED" if terminal else "WAITING_SOURCE_DATA"
+        self._checkpoint_event(
+            run_id=run_id,
+            batch_key=batch_key,
+            batch_number=160,
+            status=checkpoint_status,
+            failed_count=0 if checkpoint_status == "COMPLETED" else 1,
+            metadata={
+                "dataset": "institutional_flow",
+                "state": result["state"],
+                "persistence": persistence,
+                "readback": readback,
+                "reasonCode": result.get("reasonCode"),
+                "sessionDate": local_date,
+            },
+        )
+        self._update_publication_stage(
+            run_id,
+            "lateData",
+            stage_status,
+            state=result["state"],
+            readback=readback,
+            reasonCode=result.get("reasonCode"),
+        )
+        return result
 
     @staticmethod
     def _formal_snapshot_ready(snapshot_result: Mapping[str, Any]) -> bool:
@@ -2863,8 +3677,9 @@ class PostCloseUpdater:
         *,
         run_id: Any | None = None,
         execution_scope: str | None = None,
+        require_late_data: bool = True,
     ) -> dict[str, Any]:
-        """Read the authoritative outputs used by the completion gate."""
+        """Read authoritative outputs with an explicit late-data boundary."""
 
         topic = self._formal_snapshot_readback(snapshot_date)
         resolved_scope = execution_scope or getattr(
@@ -2899,7 +3714,7 @@ class PostCloseUpdater:
         base_ready = (
             topic["status"] == "PASS"
             and (history_recovery or home_status == "PASS")
-            and institutional_flow["status"] == "PASS"
+            and (not require_late_data or institutional_flow["status"] == "PASS")
         )
         return {
             "status": (
@@ -2925,6 +3740,7 @@ class PostCloseUpdater:
                 ),
             },
             "institutionalFlow": institutional_flow,
+            "lateDataRequired": require_late_data,
             "formalStrength": strength,
             "formalLifecycle": lifecycle,
         }
@@ -3292,6 +4108,11 @@ class PostCloseUpdater:
         is_market_closed = status == "MARKET_CLOSED"
         execution_scope = _metadata_execution_scope(metadata)
         publication_readback = snapshot_payload.get("formalPublicationReadback") or {}
+        late_data_payload = snapshot_payload.get("lateDataEnrichment")
+        late_data_ready = late_data_payload is None or late_data_payload.get("status") in {
+            "PASS",
+            "NOT_APPLICABLE",
+        }
         formal_chain_ready = (
             self._formal_snapshot_ready(snapshot_payload)
             and publication_readback.get("status") == "PASS"
@@ -3330,8 +4151,10 @@ class PostCloseUpdater:
                     if status == "SUCCESS"
                     and reconciliation_payload.get("downstreamReady") is True
                     and formal_chain_ready
+                    and late_data_ready
                     else "WAIT"
                     if status == "WAITING_LIVE_VALIDATION"
+                    or (status == "SUCCESS" and formal_chain_ready and not late_data_ready)
                     else "MARKET_CLOSED"
                     if status == "MARKET_CLOSED"
                     else "BLOCKED"
