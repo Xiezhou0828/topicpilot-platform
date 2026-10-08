@@ -932,15 +932,16 @@ def run_topics_api_diagnostic(
             if identity:
                 database_name = _sanitize_text(identity[0].get("database_name"), limit=128)
             try:
-                migration_head = _sanitize_text(
-                    connection.execute(
-                        text(
-                            "SELECT version_num FROM public.alembic_version "
-                            "ORDER BY version_num LIMIT 1"
-                        )
-                    ).scalar_one_or_none(),
-                    limit=128,
-                )
+                with connection.begin_nested():
+                    migration_head = _sanitize_text(
+                        connection.execute(
+                            text(
+                                "SELECT version_num FROM public.alembic_version "
+                                "ORDER BY version_num LIMIT 1"
+                            )
+                        ).scalar_one_or_none(),
+                        limit=128,
+                    )
             except Exception as exc:
                 metadata_failures.append(
                     {
