@@ -23,6 +23,11 @@ REPORT_COMMIT = "524739323befc2c3abcb0b48dbbc42b7ff54daf1"
 REPORT_DIRECTORY = (
     "docs/reports/TASK-20261002-TARGET-UNIVERSE-REPLAY-AND-READINESS-GATE-RESOLUTION"
 )
+FORMAL_CLOSURE_REPORT = (
+    "docs/reports/"
+    "TASK-FORMAL-STRENGTH-LIFECYCLE-20261007-FAIL-CLOSED-ROOT-CAUSE-AND-NATURAL-PUBLICATION-004.md"
+)
+PRODUCTION_RUNTIME_COMMIT = "646deea23ebfd7afb415201d0f9b2f11ab6fd099"
 REPORT_SOURCES = {
     "baseline-replay-price-free.json": "3f2d4761c665931708517f0501c57f2be257b641",
     "candidate-replay-price-free.json": REPORT_COMMIT,
@@ -159,9 +164,26 @@ def main() -> None:
     assert set(rule) == {"id", "allowlists"}
     assert rule["id"] == "generic-api-key"  # No default detector attributes replaced.
     allowlists = rule["allowlists"]
-    assert len(allowlists) == 2
+    assert len(allowlists) == 3
+    production_entry = allowlists[0]
+    assert set(production_entry) == {
+        "description",
+        "condition",
+        "regexTarget",
+        "paths",
+        "regexes",
+    }
+    assert production_entry["condition"] == "AND"
+    assert production_entry["regexTarget"] == "match"
+    assert production_entry["paths"] == [
+        "^" + FORMAL_CLOSURE_REPORT.replace(".", r"\.") + "$"
+    ]
+    assert production_entry["regexes"] == [
+        rf"^PRODUCTION_API_SHA={PRODUCTION_RUNTIME_COMMIT}$",
+        rf"^PRODUCTION_API_RUNTIME_COMMIT={PRODUCTION_RUNTIME_COMMIT}$",
+    ]
     approved = approved_metadata()
-    for entry, filename in zip(allowlists, REPORT_SOURCES, strict=True):
+    for entry, filename in zip(allowlists[1:], REPORT_SOURCES, strict=True):
         assert set(entry) == {"description", "condition", "regexTarget", "paths", "regexes"}
         assert entry["condition"] == "AND"
         assert entry["regexTarget"] == "match"
