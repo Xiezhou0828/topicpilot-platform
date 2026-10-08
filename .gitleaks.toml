@@ -13,6 +13,13 @@ regexes = [
   '''^(API_REVISION|WORKER_REVISION|WEB_REVISION|CANONICAL_SHA|CANDIDATE_SHA|RELEASED_SHA|PROMOTED_CANONICAL_SHA)=[0-9a-fA-F]{40}\r?$''',
 ]
 
+# Inherit the default detector unchanged. Only the four Owner-approved source
+# digests in the two historical replay reports are exceptions to this rule.
+# Each entry requires BOTH the exact path and the entire detector field/value match.
+# No commit, directory, arbitrary SHA-256, credential field or other rule is exempt.
+[[rules]]
+id = "generic-api-key"
+
 [[rules.allowlists]]
 description = "Verified production runtime commit metadata in the formal closure report"
 condition = "AND"
@@ -24,13 +31,6 @@ regexes = [
   '''^PRODUCTION_API_SHA=646deea23ebfd7afb415201d0f9b2f11ab6fd099$''',
   '''^PRODUCTION_API_RUNTIME_COMMIT=646deea23ebfd7afb415201d0f9b2f11ab6fd099$''',
 ]
-
-# Inherit the default detector unchanged. Only the four Owner-approved source
-# digests in the two historical replay reports are exceptions to this rule.
-# Each entry requires BOTH the exact path and the entire detector field/value match.
-# No commit, directory, arbitrary SHA-256, credential field or other rule is exempt.
-[[rules]]
-id = "generic-api-key"
 
 [[rules.allowlists]]
 description = "Verified baseline replay implementationSourceSha256 metadata"
