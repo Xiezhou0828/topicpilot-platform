@@ -9,8 +9,8 @@ from __future__ import annotations
 
 import os
 
-import sqlalchemy as sa
 from alembic import op
+import sqlalchemy as sa
 
 revision = "0050_task_purge_retired_topics"
 down_revision = "0049_task_daily_formal_publication_receipt"
@@ -98,7 +98,7 @@ def upgrade() -> None:
     # Capture dependency identities before deleting any parent rows.  The
     # temporary sets make the purge explicit and keep unrelated instruments,
     # observations, and canonical market data outside the deletion boundary.
-    for name, statement in {
+    for _name, statement in {
         "_topic_purge_relation_ids": """
             CREATE TEMP TABLE _topic_purge_relation_ids ON COMMIT DROP AS
             SELECT r.id
