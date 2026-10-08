@@ -91,14 +91,108 @@ jobs:
         run: |
           python infra/scripts/check_system_of_record_boundaries.py
           python -m pytest services/api/tests/test_system_of_record_boundaries.py
-      - name: Migrate an empty PostgreSQL database
+      - name: Migrate an empty PostgreSQL database through reversible head
         working-directory: services/api
-        run: python -m alembic upgrade head
+        run: python -m alembic upgrade 0049_task_daily_formal_publication_receipt
       - name: Migration rollback smoke test
         working-directory: services/api
         run: |
           python -m alembic downgrade -1
-          python -m alembic upgrade head
+          python -m alembic upgrade 0049_task_daily_formal_publication_receipt
+      - name: Seed the exact disposable 0050 authority fixture
+        working-directory: services/api
+        run: |
+          python - <<'PY'
+          import os
+          import uuid
+
+          from sqlalchemy import create_engine, text
+
+          retired_slugs = (
+              "PCB",
+              "其他建設",
+              "其他晶圓材料",
+              "其他自動化",
+              "其他資安",
+              "其他高速互連",
+              "大型金融權值",
+              "特殊金屬材料",
+          )
+          rows = [
+              {
+                  "id": str(uuid.uuid5(uuid.NAMESPACE_URL, f"ci-0050-fixture:{slug}")),
+                  "slug": slug,
+                  "name": slug,
+                  "status": "RETIRED",
+              }
+              for slug in retired_slugs
+          ]
+          rows.extend(
+              {
+                  "id": str(uuid.uuid5(uuid.NAMESPACE_URL, f"ci-0050-fixture:enabled:{index}")),
+                  "slug": f"ci-0050-enabled-{index:03d}",
+                  "name": f"CI 0050 Enabled {index:03d}",
+                  "status": "ENABLED",
+              }
+              for index in range(132)
+          )
+          engine = create_engine(os.environ["DATABASE_URL"])
+          with engine.begin() as connection:
+              connection.execute(
+                  text(
+                      """
+                      INSERT INTO topicpilot.topics
+                          (id, slug, name, status, dictionary_version, valid_from)
+                      VALUES (:id, :slug, :name, :status, 'ci-0050-fixture.v1', DATE '2026-01-01')
+                      """
+                  ),
+                  rows,
+              )
+              counts = connection.execute(
+                  text(
+                      """
+                      SELECT count(*) AS total,
+                             count(*) FILTER (WHERE status = 'RETIRED') AS retired,
+                             count(*) FILTER (WHERE status <> 'RETIRED') AS active
+                      FROM topicpilot.topics
+                      """
+                  )
+              ).one()
+          assert (counts.total, counts.retired, counts.active) == (140, 8, 132), counts
+          PY
+      - name: Apply guarded 0050 in disposable PostgreSQL database
+        working-directory: services/api
+        env:
+          TOPICPILOT_ALLOW_RETIRED_TOPIC_PURGE: "1"
+        run: python -m alembic upgrade head
+      - name: Verify disposable 0050 postcondition
+        working-directory: services/api
+        run: |
+          python - <<'PY'
+          import os
+
+          from sqlalchemy import create_engine, text
+
+          engine = create_engine(os.environ["DATABASE_URL"])
+          with engine.connect() as connection:
+              counts = connection.execute(
+                  text(
+                      """
+                      SELECT count(*) AS total,
+                             count(*) FILTER (WHERE status = 'RETIRED') AS retired
+                      FROM topicpilot.topics
+                      """
+                  )
+              ).one()
+              revision = connection.execute(
+                  text("SELECT version_num FROM alembic_version")
+              ).scalar_one()
+          assert (counts.total, counts.retired, revision) == (
+              132,
+              0,
+              "0050_task_purge_retired_topics",
+          ), (counts, revision)
+          PY
       - name: Production forensic disposable PostgreSQL privilege test
         env:
           TEST_DATABASE_URL: ${{ env.DATABASE_URL }}
