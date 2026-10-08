@@ -15,14 +15,17 @@ from uuid import UUID
 from zoneinfo import ZoneInfo
 
 from sqlalchemy import create_engine, text
+from sqlalchemy.orm import Session
 
 FORENSIC_COMMAND_POST_CLOSE_RUN_READBACK = "POST_CLOSE_RUN_READBACK"
 FORENSIC_COMMAND_POST_CLOSE_DATE_READBACK = "POST_CLOSE_DATE_READBACK"
 FORENSIC_COMMAND_SCHEMA_PREFLIGHT = "PRODUCTION_READONLY_SCHEMA_PREFLIGHT"
+FORENSIC_COMMAND_TOPICS_API_DIAGNOSTIC = "TOPICS_API_READ_MODEL_DIAGNOSTIC"
 SUPPORTED_FORENSIC_COMMANDS = (
     FORENSIC_COMMAND_POST_CLOSE_RUN_READBACK,
     FORENSIC_COMMAND_POST_CLOSE_DATE_READBACK,
     FORENSIC_COMMAND_SCHEMA_PREFLIGHT,
+    FORENSIC_COMMAND_TOPICS_API_DIAGNOSTIC,
 )
 TARGET_TABLE_SCOPE = (
     "topicpilot.live_collector_runs",
@@ -838,6 +841,235 @@ def run_schema_preflight(
     }
 
 
+def _safe_diagnostic_error(exc: Exception) -> dict[str, str | None]:
+    return {
+        "exceptionType": type(exc).__name__,
+        "message": _sanitize_text(str(exc)),
+    }
+
+
+def _safe_topic_identity(row: Mapping[str, Any]) -> dict[str, str | None]:
+    return {
+        "topicId": _sanitize_text(row.get("topic_id"), limit=128),
+        "slug": _sanitize_text(row.get("slug"), limit=128),
+        "snapshotDate": _as_iso(row.get("snapshot_date")),
+        "scoreStatus": _sanitize_text(row.get("score_status"), limit=64),
+        "formalStrengthStatus": _sanitize_text(
+            row.get("formal_strength_status"), limit=64
+        ),
+        "formalStrengthPublicationStatus": _sanitize_text(
+            row.get("formal_strength_publication_status"), limit=64
+        ),
+    }
+
+
+def _safe_diagnostic_failure(
+    *,
+    layer: str,
+    row: Mapping[str, Any],
+    exc: Exception,
+) -> dict[str, Any]:
+    return {
+        "layer": layer,
+        "topic": _safe_topic_identity(row),
+        "error": _safe_diagnostic_error(exc),
+    }
+
+
+def run_topics_api_diagnostic(
+    *,
+    database_url: str,
+    expected_role: str,
+    forensic_tool_sha: str,
+    engine_factory: Callable[..., Any] | None = None,
+    now: datetime | None = None,
+) -> dict[str, Any]:
+    """Reproduce the formal Topics read path without calling the HTTP route.
+
+    This is intentionally a fixed, bounded SELECT-only diagnostic.  It uses the
+    same SQL, lifecycle/strength builders, and Pydantic response models as the
+    route so a data-dependent 500 can be attributed without exposing a traceback
+    or accepting raw SQL from a workflow dispatch.
+    """
+
+    if not database_url:
+        raise ForensicReadbackError("BLOCKED_PRODUCTION_READONLY_SECRET_MISSING")
+    if not expected_role:
+        raise ForensicReadbackError("PRODUCTION_READONLY_ROLE_EXPECTATION_MISSING")
+    tool_sha = validate_forensic_sha(forensic_tool_sha)
+
+    from topicpilot_api.production_read_model import (
+        TOPIC_ROWS_SQL,
+        _date_now,
+        _read_lifecycle,
+        _strength_read,
+        _topic_read_item,
+    )
+    from topicpilot_api.schemas import TopicReadModel, TopicReadModelPage
+
+    engine = (engine_factory or create_engine)(database_url, pool_pre_ping=True)
+    failures: list[dict[str, Any]] = []
+    rows: list[Mapping[str, Any]] = []
+    as_of_date = _date_now()
+    current_user = ""
+    session_user = ""
+    transaction_read_only = False
+    database_name: str | None = None
+    migration_head: str | None = None
+    validated_item_count = 0
+    try:
+        with engine.connect() as connection, connection.begin():
+            current_user, session_user, transaction_read_only = _read_only_identity(
+                connection, expected_role
+            )
+            identity = _execute_mappings(
+                connection,
+                """
+                SELECT current_database() AS database_name
+                """,
+            )
+            if identity:
+                database_name = _sanitize_text(identity[0].get("database_name"), limit=128)
+            migration_head = _sanitize_text(
+                connection.execute(
+                    text(
+                        "SELECT version_num FROM public.alembic_version "
+                        "ORDER BY version_num LIMIT 1"
+                    )
+                ).scalar_one_or_none(),
+                limit=128,
+            )
+            with Session(
+                bind=connection,
+                autoflush=False,
+                expire_on_commit=False,
+            ) as session:
+                try:
+                    rows = list(
+                        session.execute(
+                            TOPIC_ROWS_SQL,
+                            {"as_of_date": as_of_date, "slug": None},
+                        ).mappings()
+                    )
+                except Exception as exc:
+                    failures.append(
+                        {
+                            "layer": "READ_MODEL_QUERY",
+                            "topic": None,
+                            "error": _safe_diagnostic_error(exc),
+                        }
+                    )
+
+                valid_items: list[dict[str, Any]] = []
+                if not failures:
+                    for row in rows:
+                        lifecycle: dict[str, Any] | None = None
+                        strength: dict[str, Any] | None = None
+                        try:
+                            lifecycle = _read_lifecycle(session, row["topic_id"])
+                        except Exception as exc:
+                            failures.append(
+                                _safe_diagnostic_failure(
+                                    layer="LIFECYCLE_READ", row=row, exc=exc
+                                )
+                            )
+                        try:
+                            strength = _strength_read(session, row, None)
+                        except Exception as exc:
+                            failures.append(
+                                _safe_diagnostic_failure(
+                                    layer="STRENGTH_READ", row=row, exc=exc
+                                )
+                            )
+                        try:
+                            item = _topic_read_item(row, [], lifecycle, strength)
+                        except Exception as exc:
+                            failures.append(
+                                _safe_diagnostic_failure(
+                                    layer="READ_MODEL_BUILD", row=row, exc=exc
+                                )
+                            )
+                            continue
+                        try:
+                            TopicReadModel.model_validate(item)
+                        except Exception as exc:
+                            failures.append(
+                                _safe_diagnostic_failure(
+                                    layer="ITEM_RESPONSE_VALIDATION", row=row, exc=exc
+                                )
+                            )
+                            continue
+                        valid_items.append(item)
+                    validated_item_count = len(valid_items)
+
+                payload = {
+                    "items": valid_items,
+                    "total": len(rows),
+                    "limit": 200,
+                    "offset": 0,
+                    "query": {"slug": None},
+                }
+                page_validation: dict[str, Any]
+                if failures:
+                    page_validation = {"status": "NOT_ATTEMPTED"}
+                else:
+                    try:
+                        TopicReadModelPage.model_validate(payload)
+                    except Exception as exc:
+                        failures.append(
+                            {
+                                "layer": "PAGE_RESPONSE_VALIDATION",
+                                "topic": None,
+                                "error": _safe_diagnostic_error(exc),
+                            }
+                        )
+                        page_validation = {
+                            "status": "FAIL",
+                            "error": _safe_diagnostic_error(exc),
+                        }
+                    else:
+                        page_validation = {
+                            "status": "PASS",
+                            "validatedItemCount": len(valid_items),
+                        }
+    except ForensicReadbackError:
+        raise
+    except Exception as exc:
+        raise ForensicReadbackError(
+            "TOPICS_API_DIAGNOSTIC_QUERY_FAILED", type(exc).__name__
+        ) from exc
+    finally:
+        engine.dispose()
+
+    generated_at = now or datetime.now(UTC)
+    if generated_at.tzinfo is None:
+        generated_at = generated_at.replace(tzinfo=UTC)
+    failure_layers = sorted({str(item["layer"]) for item in failures})
+    if "PAGE_RESPONSE_VALIDATION" in failure_layers:
+        root_cause = "RESPONSE_MODEL_VALIDATION"
+    elif failure_layers:
+        root_cause = "READ_MODEL_DATA_OR_QUERY_FAILURE"
+    else:
+        root_cause = "NO_FAILURE_REPRODUCED"
+    return {
+        "forensicToolSha": tool_sha,
+        "databaseName": database_name,
+        "databaseRole": current_user,
+        "sessionUser": session_user,
+        "transactionReadOnly": transaction_read_only,
+        "migrationHead": migration_head,
+        "asOfDate": as_of_date.isoformat(),
+        "topicRowCount": len(rows),
+        "validatedItemCount": validated_item_count,
+        "buildFailureCount": len(failures),
+        "failureLayers": failure_layers,
+        "failures": failures[:50],
+        "pageValidation": page_validation,
+        "rootCause": root_cause,
+        "generatedAt": generated_at.astimezone(UTC).isoformat().replace("+00:00", "Z"),
+    }
+
+
 def read_post_close_run(
     *,
     database_url: str,
@@ -1054,6 +1286,14 @@ def main(argv: list[str] | None = None) -> int:
         forensic_tool_sha = os.environ.get("TOPICPILOT_FORENSIC_TOOL_SHA", "")
         if args.command == FORENSIC_COMMAND_SCHEMA_PREFLIGHT:
             payload = run_schema_preflight(
+                database_url=database_url,
+                expected_role=expected_role,
+                forensic_tool_sha=forensic_tool_sha,
+            )
+        elif args.command == FORENSIC_COMMAND_TOPICS_API_DIAGNOSTIC:
+            if args.run_id or args.trading_date:
+                raise ForensicReadbackError("TOPICS_DIAGNOSTIC_DOES_NOT_ACCEPT_SCOPE_INPUT")
+            payload = run_topics_api_diagnostic(
                 database_url=database_url,
                 expected_role=expected_role,
                 forensic_tool_sha=forensic_tool_sha,

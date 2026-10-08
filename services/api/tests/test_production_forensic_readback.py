@@ -13,6 +13,7 @@ from topicpilot_api.production_forensic_readback import (
     ERROR_SUMMARY_QUERY,
     FORENSIC_COMMAND_POST_CLOSE_DATE_READBACK,
     FORENSIC_COMMAND_POST_CLOSE_RUN_READBACK,
+    FORENSIC_COMMAND_TOPICS_API_DIAGNOSTIC,
     MARKET_SUMMARY_QUERY,
     PRIVILEGE_QUERY,
     PROVIDER_STATUS_SUMMARY_QUERY,
@@ -38,6 +39,12 @@ def test_only_the_fixed_command_is_allowed() -> None:
     )
     with pytest.raises(ForensicReadbackError, match="FORENSIC_COMMAND_NOT_ALLOWED"):
         validate_command("SELECT * FROM topicpilot.live_collector_runs")
+
+
+def test_topics_api_diagnostic_is_an_allowlisted_fixed_command() -> None:
+    assert validate_command(FORENSIC_COMMAND_TOPICS_API_DIAGNOSTIC) == (
+        FORENSIC_COMMAND_TOPICS_API_DIAGNOSTIC
+    )
 
 
 def test_date_bound_command_accepts_only_canonical_trading_date() -> None:
