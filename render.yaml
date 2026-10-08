@@ -52,10 +52,20 @@ services:
         value: "30"
       - key: TOPICPILOT_LIVE_POST_CLOSE_START
         value: "13:45"
+      - key: TOPICPILOT_LIVE_TWSE_INGESTION_START
+        value: "15:37"
+      - key: TOPICPILOT_LIVE_TPEX_INGESTION_START
+        value: "15:42"
+      - key: TOPICPILOT_LIVE_TPEX_RETRY_START
+        value: "15:52"
       - key: TOPICPILOT_LIVE_SOFT_TARGET
-        value: "14:30"
+        value: "16:07"
       - key: TOPICPILOT_LIVE_HARD_DEADLINE
-        value: "15:00"
+        value: "17:00"
+      - key: TOPICPILOT_LIVE_LATE_DATA_TARGET
+        value: "18:33"
+      - key: TOPICPILOT_LIVE_LATE_DATA_HARD_DEADLINE
+        value: "20:10"
       - key: TOPICPILOT_LIVE_MAX_RETRIES
         value: "2"
       - key: TOPICPILOT_LIVE_INTERVAL

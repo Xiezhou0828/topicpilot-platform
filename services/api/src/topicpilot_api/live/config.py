@@ -52,8 +52,13 @@ class LiveRuntimeConfig:
     session_open: str = "09:00"
     session_close: str = "13:30"
     post_close_start: str = "13:45"
-    soft_target: str = "14:30"
-    hard_deadline: str = "15:00"
+    twse_ingestion_start: str = "15:37"
+    tpex_ingestion_start: str = "15:42"
+    tpex_retry_start: str = "15:52"
+    soft_target: str = "16:07"
+    hard_deadline: str = "17:00"
+    late_data_target: str = "18:33"
+    late_data_hard_deadline: str = "20:10"
     moving_average_period: int = 60
     reference_data_version: str = "tw-reference-v1"
     session_code: str = "REGULAR"
@@ -157,8 +162,13 @@ class LiveRuntimeConfig:
             "session_open",
             "session_close",
             "post_close_start",
+            "twse_ingestion_start",
+            "tpex_ingestion_start",
+            "tpex_retry_start",
             "soft_target",
             "hard_deadline",
+            "late_data_target",
+            "late_data_hard_deadline",
             "reference_data_version",
             "session_code",
             "calendar_code",
@@ -174,14 +184,31 @@ class LiveRuntimeConfig:
             open_time = time.fromisoformat(self.session_open)
             close_time = time.fromisoformat(self.session_close)
             post_close_start = time.fromisoformat(self.post_close_start)
+            twse_ingestion_start = time.fromisoformat(self.twse_ingestion_start)
+            tpex_ingestion_start = time.fromisoformat(self.tpex_ingestion_start)
+            tpex_retry_start = time.fromisoformat(self.tpex_retry_start)
             soft_target = time.fromisoformat(self.soft_target)
             hard_deadline = time.fromisoformat(self.hard_deadline)
+            late_data_target = time.fromisoformat(self.late_data_target)
+            late_data_hard_deadline = time.fromisoformat(self.late_data_hard_deadline)
         except ValueError as exc:
             raise ValueError("session times must be valid ISO times") from exc
         if open_time >= close_time:
             raise ValueError("session_open must precede session_close")
-        if not post_close_start <= soft_target <= hard_deadline:
-            raise ValueError("post_close_start must be <= soft_target <= hard_deadline")
+        if not (
+            post_close_start
+            <= twse_ingestion_start
+            <= tpex_ingestion_start
+            <= tpex_retry_start
+            <= soft_target
+            <= hard_deadline
+            <= late_data_target
+            <= late_data_hard_deadline
+        ):
+            raise ValueError(
+                "publication stage times must be ordered from post_close_start "
+                "through late_data_hard_deadline"
+            )
         # The daily automation may be scheduled after midnight to process the
         # latest session whose canonical close has already elapsed.
 
@@ -198,8 +225,19 @@ class LiveRuntimeConfig:
             session_open=os.getenv("TOPICPILOT_LIVE_SESSION_OPEN", "09:00").strip(),
             session_close=os.getenv("TOPICPILOT_LIVE_SESSION_CLOSE", "13:30").strip(),
             post_close_start=os.getenv("TOPICPILOT_LIVE_POST_CLOSE_START", "13:45").strip(),
-            soft_target=os.getenv("TOPICPILOT_LIVE_SOFT_TARGET", "14:30").strip(),
-            hard_deadline=os.getenv("TOPICPILOT_LIVE_HARD_DEADLINE", "15:00").strip(),
+            twse_ingestion_start=os.getenv(
+                "TOPICPILOT_LIVE_TWSE_INGESTION_START", "15:37"
+            ).strip(),
+            tpex_ingestion_start=os.getenv(
+                "TOPICPILOT_LIVE_TPEX_INGESTION_START", "15:42"
+            ).strip(),
+            tpex_retry_start=os.getenv("TOPICPILOT_LIVE_TPEX_RETRY_START", "15:52").strip(),
+            soft_target=os.getenv("TOPICPILOT_LIVE_SOFT_TARGET", "16:07").strip(),
+            hard_deadline=os.getenv("TOPICPILOT_LIVE_HARD_DEADLINE", "17:00").strip(),
+            late_data_target=os.getenv("TOPICPILOT_LIVE_LATE_DATA_TARGET", "18:33").strip(),
+            late_data_hard_deadline=os.getenv(
+                "TOPICPILOT_LIVE_LATE_DATA_HARD_DEADLINE", "20:10"
+            ).strip(),
             moving_average_period=_int("TOPICPILOT_LIVE_60MA_PERIOD", 60, minimum=1),
             reference_data_version=os.getenv(
                 "TOPICPILOT_LIVE_REFERENCE_DATA_VERSION", "tw-reference-v1"
@@ -310,8 +348,13 @@ class LiveRuntimeConfig:
             "sessionOpen": self.session_open,
             "sessionClose": self.session_close,
             "postCloseStart": self.post_close_start,
+            "twseIngestionStart": self.twse_ingestion_start,
+            "tpexIngestionStart": self.tpex_ingestion_start,
+            "tpexRetryStart": self.tpex_retry_start,
             "softTarget": self.soft_target,
             "hardDeadline": self.hard_deadline,
+            "lateDataTarget": self.late_data_target,
+            "lateDataHardDeadline": self.late_data_hard_deadline,
             "movingAveragePeriod": self.moving_average_period,
             "referenceDataVersion": self.reference_data_version,
             "sessionCode": self.session_code,
