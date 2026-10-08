@@ -9,8 +9,9 @@ from __future__ import annotations
 
 import os
 
-from alembic import op
 import sqlalchemy as sa
+
+from alembic import op
 
 revision = "0050_task_purge_retired_topics"
 down_revision = "0049_task_daily_formal_publication_receipt"
