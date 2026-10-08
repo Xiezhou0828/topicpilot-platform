@@ -909,6 +909,7 @@ def run_topics_api_diagnostic(
 
     engine = (engine_factory or create_engine)(database_url, pool_pre_ping=True)
     failures: list[dict[str, Any]] = []
+    metadata_failures: list[dict[str, Any]] = []
     rows: list[Mapping[str, Any]] = []
     as_of_date = _date_now()
     current_user = ""
@@ -930,15 +931,23 @@ def run_topics_api_diagnostic(
             )
             if identity:
                 database_name = _sanitize_text(identity[0].get("database_name"), limit=128)
-            migration_head = _sanitize_text(
-                connection.execute(
-                    text(
-                        "SELECT version_num FROM public.alembic_version "
-                        "ORDER BY version_num LIMIT 1"
-                    )
-                ).scalar_one_or_none(),
-                limit=128,
-            )
+            try:
+                migration_head = _sanitize_text(
+                    connection.execute(
+                        text(
+                            "SELECT version_num FROM public.alembic_version "
+                            "ORDER BY version_num LIMIT 1"
+                        )
+                    ).scalar_one_or_none(),
+                    limit=128,
+                )
+            except Exception as exc:
+                metadata_failures.append(
+                    {
+                        "layer": "MIGRATION_HEAD_READ",
+                        "error": _safe_diagnostic_error(exc),
+                    }
+                )
             with Session(
                 bind=connection,
                 autoflush=False,
@@ -1036,7 +1045,8 @@ def run_topics_api_diagnostic(
         raise
     except Exception as exc:
         raise ForensicReadbackError(
-            "TOPICS_API_DIAGNOSTIC_QUERY_FAILED", type(exc).__name__
+            "TOPICS_API_DIAGNOSTIC_QUERY_FAILED",
+            f"{type(exc).__name__}: {_sanitize_text(str(exc))}",
         ) from exc
     finally:
         engine.dispose()
@@ -1058,6 +1068,7 @@ def run_topics_api_diagnostic(
         "sessionUser": session_user,
         "transactionReadOnly": transaction_read_only,
         "migrationHead": migration_head,
+        "metadataFailures": metadata_failures,
         "asOfDate": as_of_date.isoformat(),
         "topicRowCount": len(rows),
         "validatedItemCount": validated_item_count,
@@ -1337,7 +1348,17 @@ def main(argv: list[str] | None = None) -> int:
         )
         return 0
     except ForensicReadbackError as exc:
-        print(json.dumps({"status": "BLOCKED", "code": exc.code}), file=sys.stderr)
+        print(
+            json.dumps(
+                {
+                    "status": "BLOCKED",
+                    "code": exc.code,
+                    "message": _sanitize_text(str(exc)),
+                },
+                ensure_ascii=False,
+            ),
+            file=sys.stderr,
+        )
         return 2
 
 
