@@ -35,7 +35,7 @@ services:
   migrate:
     build: *api-build
     environment: *api-env
-    command: ["/bin/sh", "-c", "alembic upgrade head"]
+    command: ["/bin/sh", "-c", "alembic upgrade 0049_task_daily_formal_publication_receipt"]
     depends_on:
       postgres:
         condition: service_healthy
@@ -55,13 +55,27 @@ services:
         condition: service_completed_successfully
     restart: "no"
 
+  purge:
+    build: *api-build
+    environment:
+      <<: *api-env
+      TOPICPILOT_ALLOW_RETIRED_TOPIC_PURGE: "1"
+    command:
+      - /bin/sh
+      - -c
+      - python tools/seed_compose_0050_fixture.py && alembic upgrade head
+    depends_on:
+      seed:
+        condition: service_completed_successfully
+    restart: "no"
+
   api:
     build: *api-build
     environment: *api-env
     ports:
       - "${API_PORT:-8000}:8000"
     depends_on:
-      seed:
+      purge:
         condition: service_completed_successfully
     healthcheck:
       test:
@@ -95,7 +109,7 @@ services:
       TOPICPILOT_HISTORY_RETRY_BACKOFF_SECONDS: ${TOPICPILOT_HISTORY_RETRY_BACKOFF_SECONDS:-2.0}
     command: ["topicpilot-live"]
     depends_on:
-      seed:
+      purge:
         condition: service_completed_successfully
     restart: unless-stopped
 

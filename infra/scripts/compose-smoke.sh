@@ -2,7 +2,7 @@
 set -euo pipefail
 
 cleanup() {
-  docker compose logs --no-color web api migrate seed postgres 2>/dev/null || true
+  docker compose logs --no-color web api purge migrate seed postgres 2>/dev/null || true
   docker compose down --volumes --remove-orphans
 }
 trap cleanup EXIT
