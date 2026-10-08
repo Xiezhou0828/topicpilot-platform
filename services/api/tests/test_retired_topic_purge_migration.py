@@ -2,7 +2,7 @@ from pathlib import Path
 
 
 MIGRATION = Path(__file__).parents[1] / "alembic" / "versions" / "0050_task_purge_retired_topics.py"
-WORKFLOW = Path(__file__).parents[3] / ".github" / "workflows" / "purge-retired-topics.yml"
+WORKFLOW = Path(__file__).parents[3] / ".github" / "workflows" / "deploy.yml"
 
 
 def test_retired_topic_purge_is_exactly_guarded_and_scoped() -> None:
@@ -29,5 +29,6 @@ def test_purge_workflow_requires_exact_sha_and_confirmation() -> None:
     source = WORKFLOW.read_text(encoding="utf-8")
     assert "release_ref" in source
     assert "DELETE_EIGHT_RETIRED_TOPICS" in source
+    assert "apply_migration_0050" in source
     assert "production-db-maintenance" in source
     assert "upgrade 0050_task_purge_retired_topics" in source

@@ -22,6 +22,16 @@ on:
         required: true
         type: boolean
         default: false
+      apply_migration_0050:
+        description: Apply the owner-authorized eight retired Topic cleanup
+        required: true
+        type: boolean
+        default: false
+      confirmation_0050:
+        description: Type DELETE_EIGHT_RETIRED_TOPICS when applying cleanup 0050
+        required: false
+        type: string
+        default: ""
       deploy_worker:
         description: Trigger the protected Render live Worker deploy hook
         required: true
@@ -99,10 +109,60 @@ jobs:
             "topicpilot-migration:${{ inputs.release_ref }}" \
             -c 'import os, sys; from sqlalchemy import create_engine, text; e=create_engine(os.environ["MIGRATION_DATABASE_URL"], pool_pre_ping=True); c=e.connect(); head=str(c.execute(text("SELECT version_num FROM alembic_version ORDER BY version_num")).scalar_one()); table_exists=c.execute(text("SELECT to_regclass(:qualified) IS NOT NULL"), {"qualified": "topicpilot.daily_formal_publication_receipts"}).scalar_one(); trigger_count=int(c.execute(text("SELECT count(*) FROM pg_trigger WHERE tgrelid = to_regclass(:qualified) AND tgname = :name AND NOT tgisinternal"), {"qualified": "topicpilot.daily_formal_publication_receipts", "name": "trg_daily_formal_publication_receipt_append_only"}).scalar_one()); c.close(); expected="0049_task_daily_formal_publication_receipt"; sys.exit(f"unexpected Production migration head after upgrade: {head!r}") if head != expected else None; sys.exit("receipt table verification failed") if not table_exists else None; sys.exit(f"append-only trigger verification failed: {trigger_count}") if trigger_count != 1 else print(f"Production migration head after upgrade: {head}; append-only receipt stream verified")'
 
+  purge_retired_topics:
+    name: Purge the eight retired Topic rows
+    if: ${{ inputs.apply_migration_0050 }}
+    needs: validate
+    runs-on: ubuntu-latest
+    environment: production-db-maintenance
+    concurrency:
+      group: topicpilot-production-db-maintenance
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.release_ref }}
+      - name: Require the exact destructive confirmation
+        env:
+          CONFIRMATION: ${{ inputs.confirmation_0050 }}
+        run: test "$CONFIRMATION" = "DELETE_EIGHT_RETIRED_TOPICS"
+      - name: Build the exact cleanup image
+        run: docker build --file infra/docker/api.Dockerfile --tag topicpilot-retired-topic-purge:${{ inputs.release_ref }} .
+      - name: Require Production migration head 0049
+        env:
+          MIGRATION_DATABASE_URL: ${{ secrets.TOPICPILOT_PRODUCTION_DATABASE_URL }}
+        run: |
+          if [ -z "$MIGRATION_DATABASE_URL" ]; then
+            echo "TOPICPILOT_PRODUCTION_DATABASE_URL is not configured in production-db-maintenance." >&2
+            exit 1
+          fi
+          docker run --rm --entrypoint python \
+            --env MIGRATION_DATABASE_URL \
+            "topicpilot-retired-topic-purge:${{ inputs.release_ref }}" \
+            -c 'import os, sys; from sqlalchemy import create_engine, text; e=create_engine(os.environ["MIGRATION_DATABASE_URL"], pool_pre_ping=True); c=e.connect(); rows=[str(r[0]) for r in c.execute(text("SELECT version_num FROM public.alembic_version ORDER BY version_num"))]; c.close(); expected=["0049_task_daily_formal_publication_receipt"]; sys.exit(f"unexpected Production migration head: {rows!r}") if rows != expected else print("Production migration head precondition: 0049")'
+      - name: Apply the owner-authorized cleanup transaction
+        env:
+          MIGRATION_DATABASE_URL: ${{ secrets.TOPICPILOT_PRODUCTION_DATABASE_URL }}
+          TOPICPILOT_ALLOW_RETIRED_TOPIC_PURGE: "1"
+        run: |
+          docker run --rm --entrypoint alembic \
+            --env MIGRATION_DATABASE_URL \
+            --env TOPICPILOT_ALLOW_RETIRED_TOPIC_PURGE \
+            "topicpilot-retired-topic-purge:${{ inputs.release_ref }}" \
+            upgrade 0050_task_purge_retired_topics
+      - name: Verify the clean 132-topic database state
+        env:
+          MIGRATION_DATABASE_URL: ${{ secrets.TOPICPILOT_PRODUCTION_DATABASE_URL }}
+        run: |
+          docker run --rm --entrypoint python \
+            --env MIGRATION_DATABASE_URL \
+            "topicpilot-retired-topic-purge:${{ inputs.release_ref }}" \
+            -c 'import os, sys; from sqlalchemy import create_engine, text; e=create_engine(os.environ["MIGRATION_DATABASE_URL"], pool_pre_ping=True); c=e.connect(); head=str(c.execute(text("SELECT version_num FROM public.alembic_version ORDER BY version_num")).scalar_one()); total=int(c.execute(text("SELECT count(*) FROM topicpilot.topics")).scalar_one()); retired=int(c.execute(text("SELECT count(*) FROM topicpilot.topics WHERE status = $$RETIRED$$")).scalar_one()); target=int(c.execute(text("SELECT count(*) FROM topicpilot.topics WHERE slug IN ($$PCB$$, $$其他建設$$, $$其他晶圓材料$$, $$其他自動化$$, $$其他資安$$, $$其他高速互連$$, $$大型金融權值$$, $$特殊金屬材料$$)")).scalar_one()); dangling=int(c.execute(text("SELECT count(*) FROM topicpilot.instrument_topic_relations r LEFT JOIN topicpilot.topics t ON t.id=r.topic_id WHERE t.id IS NULL")).scalar_one()); c.close(); checks=(head == "0050_task_purge_retired_topics" and total == 132 and retired == 0 and target == 0 and dangling == 0); sys.exit(f"cleanup verification failed: head={head}, total={total}, retired={retired}, target={target}, dangling={dangling}") if not checks else print("Production cleanup verified: head=0050, topics=132, retired=0, target=0, dangling_relations=0")'
+
   deploy-worker:
     name: Trigger Render Worker deployment
-    if: ${{ always() && needs.validate.result == 'success' && inputs.deploy_worker && (needs.migrate_production.result == 'success' || (!inputs.apply_migration_0049 && needs.migrate_production.result == 'skipped')) }}
-    needs: [validate, migrate_production]
+    if: ${{ always() && needs.validate.result == 'success' && inputs.deploy_worker && (needs.migrate_production.result == 'success' || (!inputs.apply_migration_0049 && needs.migrate_production.result == 'skipped')) && (needs.purge_retired_topics.result == 'success' || (!inputs.apply_migration_0050 && needs.purge_retired_topics.result == 'skipped')) }}
+    needs: [validate, migrate_production, purge_retired_topics]
     runs-on: ubuntu-latest
     environment: production-worker
     steps:
@@ -130,8 +190,8 @@ jobs:
 
   deploy-api:
     name: Trigger Render API deployment
-    if: ${{ always() && needs.validate.result == 'success' && inputs.deploy_api && (needs.migrate_production.result == 'success' || (!inputs.apply_migration_0049 && needs.migrate_production.result == 'skipped')) }}
-    needs: [validate, migrate_production]
+    if: ${{ always() && needs.validate.result == 'success' && inputs.deploy_api && (needs.migrate_production.result == 'success' || (!inputs.apply_migration_0049 && needs.migrate_production.result == 'skipped')) && (needs.purge_retired_topics.result == 'success' || (!inputs.apply_migration_0050 && needs.purge_retired_topics.result == 'skipped')) }}
+    needs: [validate, migrate_production, purge_retired_topics]
     runs-on: ubuntu-latest
     environment: production-api
     steps:
@@ -223,20 +283,27 @@ jobs:
               raise SystemExit(f"/readyz is not ready: {ready!r}")
           json_get("/openapi.json")
 
-          topics = json_get("/api/v2/topics?limit=200&offset=0")
-          topic_items = topics.get("items", [])
-          topic_total = topics.get("total")
-          # The formal read model reports the current enabled/effective topic
-          # authority.  Do not freeze this package gate to a historical row
-          # count; an empty formal publication is also a truthful result.
-          if not isinstance(topic_total, int) or topic_total < 0 or len(topic_items) != topic_total:
+          catalog = json_get("/api/v2/topic-catalog?limit=500&offset=0")
+          topic_items = catalog.get("items", [])
+          topic_total = catalog.get("total")
+          # Topic identity is governed by the canonical 132-topic Catalog.
+          # The flat /api/v2/topics route is optional Leaf-state enrichment and
+          # must not be used as the identity or vocabulary release gate.
+          if topic_total != 132 or len(topic_items) != topic_total:
               raise SystemExit(
-                  f"formal topic contract mismatch: total={topic_total} "
+                  f"canonical Topic Catalog mismatch: total={topic_total} "
                   f"items={len(topic_items)}"
               )
+          canonical_names = {
+              str(item.get("slug")): str(item.get("name"))
+              for item in topic_items
+              if item.get("slug") and item.get("name")
+          }
+          if len(canonical_names) != 132:
+              raise SystemExit("canonical Topic Catalog contains duplicate or incomplete identities")
           slug = topic_items[0].get("slug") if topic_items else None
           if slug:
-              json_get("/api/v2/topics/" + quote(slug, safe=""))
+              json_get("/api/v2/topic-catalog/" + quote(slug, safe=""))
 
           stocks = json_get("/api/v2/stocks?limit=1000&offset=0")
           stock_items = stocks.get("items", [])
@@ -246,6 +313,18 @@ jobs:
                   f"formal stock contract mismatch: total={stock_total} "
                   f"items={len(stock_items)}"
               )
+          for stock in stock_items:
+              for relation in stock.get("topicRelations", []):
+                  relation_slug = str(relation.get("topicSlug") or "")
+                  relation_name = str(relation.get("topicName") or "")
+                  if relation_slug not in canonical_names:
+                      raise SystemExit(
+                          f"stock {stock.get('symbol')} has non-canonical Topic {relation_slug!r}"
+                      )
+                  if relation_name != canonical_names[relation_slug]:
+                      raise SystemExit(
+                          f"stock {stock.get('symbol')} has Topic name mismatch for {relation_slug!r}"
+                      )
           details = {str(item.get("symbol")): item for item in stock_items}
           for symbol in ("2330", "6806"):
               if symbol not in details:
@@ -255,7 +334,7 @@ jobs:
                   raise SystemExit(f"stock detail identity mismatch for {symbol}")
 
           status, headers, _ = request(
-              "/api/v2/topics",
+              "/api/v2/topic-catalog",
               method="OPTIONS",
               headers={
                   "Origin": site_origin,
