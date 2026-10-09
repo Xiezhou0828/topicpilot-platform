@@ -1,5 +1,7 @@
 # Generated workbook verification
 
+> **RETIRED / HISTORICAL ONLY — 2026-10-09.** The path below records a historical non-Production verification artifact and is preserved for audit traceability. The workbook is no longer a current, canonical, formal, Production, or daily maintenance source and must not be used for new work. Use `docs/operations/database-maintenance-excel.md` and `E:\topicpilot-artifacts\database-maintenance-excel\TopicPilot_Database_Maintenance.xlsx` for the current controlled workflow.
+
 ```text
 GENERATED_WORKBOOK_PATH=E:\topicpilot-stock-maint-bootstrap-001\artifacts\TopicPilot_股票維護_001D3_驗證.xlsx
 GENERATED_WORKBOOK_STATUS=PASS_FALLBACK_EXPORT_FROM_RECONCILED_GENERATOR_DATA

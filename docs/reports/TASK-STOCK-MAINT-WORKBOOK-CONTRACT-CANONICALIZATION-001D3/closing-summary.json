@@ -1,6 +1,10 @@
 {
   "task_id": "TASK-STOCK-MAINT-WORKBOOK-CONTRACT-CANONICALIZATION-001D3",
   "task_status": "COMPLETE_WORKBOOK_CONTRACT_CANONICALIZATION_COMMITTED",
+  "artifact_lifecycle": "RETIRED_HISTORICAL_ONLY",
+  "retired_on": "2026-10-09",
+  "current_formal_workbook_path": "E:\\topicpilot-artifacts\\database-maintenance-excel\\TopicPilot_Database_Maintenance.xlsx",
+  "retirement_note": "Historical non-Production verification artifact; do not use as current, canonical, formal, Production, or daily maintenance input.",
   "worktree_path": "E:\\topicpilot-stock-maint-bootstrap-001\\canonical-main",
   "branch_name": "codex/task-stock-maint-001d2",
   "baseline_head": "9cea8840bd71926959813fdb876303982a04c260",
