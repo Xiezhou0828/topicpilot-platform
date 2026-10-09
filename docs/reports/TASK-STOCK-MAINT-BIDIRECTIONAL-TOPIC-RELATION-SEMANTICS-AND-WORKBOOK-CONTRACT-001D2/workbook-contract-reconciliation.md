@@ -1,5 +1,7 @@
 # Workbook contract reconciliation
 
+> **HISTORICAL ONLY.** This document records the 001D/001D2 candidate-surface reconciliation. It is not the active maintenance runbook or a second canonical specification. Use `docs/operations/database-maintenance-excel.md` and `E:\topicpilot-artifacts\database-maintenance-excel\TopicPilot_Database_Maintenance.xlsx` for current maintenance work.
+
 `PROPOSED_WORKBOOK_SCHEMA_STATUS=SUFFICIENT_WITH_CHANGES`
 
 The preferred shape is sufficient after the changes below. The current two

@@ -2,6 +2,12 @@
 
 The canonical implementation lives in `E:\TopicPilot\topicpilot-platform` on `main`. The workbook is an Owner-facing input surface; it does not write PostgreSQL.
 
+## Legacy artifact status
+
+`E:\topicpilot-stock-maint-bootstrap-001\artifacts\TopicPilot_股票維護_001D3_驗證.xlsx` is **RETIRED / HISTORICAL ONLY**. It was a non-Production verification artifact from the 001D3 workbook-contract task, not the current, canonical, formal, Production, or daily maintenance source. Do not use it as a new-task input, maintenance baseline, or data source.
+
+The default formal maintenance workbook is `E:\topicpilot-artifacts\database-maintenance-excel\TopicPilot_Database_Maintenance.xlsx`. A workbook at that path is a snapshot, not PostgreSQL authority; if freshness matters, re-run the controlled read-only export or verify its source timestamp and migration head before editing. Excel remains an Owner-facing input surface, and all database changes must go through the controlled importer and Owner authorization described below.
+
 ## Refresh
 
 Run the read-only refresh command from the repository root:
