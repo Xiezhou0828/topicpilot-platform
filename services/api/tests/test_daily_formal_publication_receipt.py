@@ -9,7 +9,6 @@ import pytest
 from topicpilot_api.daily_market import assess_daily_coverage
 from topicpilot_api.live.config import LiveRuntimeConfig
 from topicpilot_api.live.receipt import (
-    RECEIPT_DEADLINE_EXCEEDED,
     RECEIPT_MARKET_CLOSED,
     RECEIPT_WAITING_FOR_DATA,
     RUNTIME_PROVENANCE_TRUST_FAILURE,
@@ -154,7 +153,7 @@ def test_operational_phase_does_not_turn_clock_into_data_ready():
             config,
             data_ready=False,
         )
-        == RECEIPT_DEADLINE_EXCEEDED
+        == RECEIPT_WAITING_FOR_DATA
     )
     assert (
         operational_phase(
@@ -174,6 +173,26 @@ def test_operational_phase_does_not_turn_clock_into_data_ready():
             market_closed=True,
         )
         == RECEIPT_MARKET_CLOSED
+    )
+
+
+def test_receipt_wait_remains_retryable_after_operational_deadline():
+    config = LiveRuntimeConfig()
+    metadata = {
+        "dailyMarketReconciliation": {"downstreamReady": False},
+        "topicSnapshot": {"formalPublicationReadback": {"status": "WAIT"}},
+    }
+
+    assert (
+        _receipt_status(
+            "PARTIAL",
+            metadata,
+            "NORMAL_CURRENT_DAY",
+            datetime(2026, 10, 5, 7, 1, tzinfo=UTC),
+            date(2026, 10, 5),
+            config,
+        )
+        == RECEIPT_WAITING_FOR_DATA
     )
 
 

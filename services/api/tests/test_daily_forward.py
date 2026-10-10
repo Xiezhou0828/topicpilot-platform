@@ -31,9 +31,17 @@ class FakeUpdater:
         )
         self.result_status = result_status
         self.calls: list[tuple[date, str]] = []
+        self.reentry_flags: list[bool] = []
 
-    def run_once(self, *, run_date: date, execution_mode: str = "MANUAL"):
+    def run_once(
+        self,
+        *,
+        run_date: date,
+        execution_mode: str = "MANUAL",
+        allow_terminal_recovery: bool = False,
+    ):
         self.calls.append((run_date, execution_mode))
+        self.reentry_flags.append(allow_terminal_recovery)
         return PostCloseRunResult(
             "run-1",
             self.result_status,
@@ -114,11 +122,12 @@ def test_daily_forward_after_hard_sla_still_allows_retryable_same_session_wait()
         result_status="WAITING_LIVE_VALIDATION",
     )
 
-    result = runner.run_once()
+    result = runner.run_once(execution_mode="SCHEDULED")
 
     assert result.status == "WAITING_LIVE_VALIDATION"
     assert result.target_date == date(2026, 8, 31)
-    assert updater.calls == [(date(2026, 8, 31), "MANUAL")]
+    assert updater.calls == [(date(2026, 8, 31), "SCHEDULED")]
+    assert updater.reentry_flags == [True]
 
 
 def test_daily_forward_restart_after_close_targets_same_day_idempotently():
@@ -177,6 +186,7 @@ def test_daily_forward_marks_natural_worker_run_as_scheduled():
 
     assert result.status == "SUCCESS"
     assert updater.calls == [(date(2026, 8, 31), "SCHEDULED")]
+    assert updater.reentry_flags == [True]
 
 
 def test_daily_forward_result_is_deterministically_serializable():

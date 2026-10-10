@@ -20,7 +20,7 @@ from topicpilot_api.live.orchestrator import (
     ProviderRouter,
 )
 
-from .exchange import TpexOfficialDailyProvider, TpexOpenApiDailyProvider, TwseOfficialDailyProvider
+from .exchange import TpexOfficialDailyProvider, TwseOfficialDailyProvider
 from .history import HistoricalProvider, YahooChartHistoricalProvider
 from .taishin import TaishinIntradayProvider
 from .yahoo_quote import YahooQuoteProvider
@@ -155,11 +155,12 @@ def build_historical_provider_registry(
     if readiness_clock is not None:
         readiness_kwargs["readiness_clock"] = readiness_clock
     registry = HistoricalProviderRegistry()
+    # The date-addressable TPEx dailyQuotes surface is the normal current-day
+    # authority. The latest-snapshot OpenAPI adapter remains available for
+    # bounded diagnostics, but it cannot prove the requested session date and
+    # is therefore not selected for formal post-close ingestion.
     # Selection is explicit, never a retry/fallback after a failed request.
-    tpex_adapter = (
-        TpexOpenApiDailyProvider if market_batch and not tpex_target_date_batch
-        else TpexOfficialDailyProvider
-    )
+    tpex_adapter = TpexOfficialDailyProvider
     registry.register(
         HistoricalProviderRegistration(
             "TWSE_OFFICIAL_DAILY",
