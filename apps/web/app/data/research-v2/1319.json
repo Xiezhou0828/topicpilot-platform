@@ -1,0 +1,1856 @@
+{
+  "schemaVersion": "company-research-view.v2",
+  "inputSchemaVersion": "stock-research-bootstrap.v1",
+  "researchId": "SRD-1319-FIRST-PASS-20261011-001",
+  "stock": {
+    "code": "1319",
+    "nameZh": "東陽",
+    "market": "TPE"
+  },
+  "researchVersion": "v1.0-natural-source-first-pass",
+  "researchAsOf": "2026-10-10",
+  "coverageStatus": "PARTIAL",
+  "publicationStatus": "UNPUBLISHED",
+  "summary": "東陽是台灣上市汽車零組件製造商，主要同時經營售後維修市場（AM）與原廠配套市場（OEM），以塑膠、鈑金、模具與相關車用零組件的設計、製造、銷售和全球供應為核心。",
+  "groups": [
+    {
+      "id": "company_overview",
+      "title": "公司研究概況",
+      "summary": "全球汽車售後維修零件與 OEM 零組件的整合製造商。",
+      "positioning": "東陽以 AM 碰撞替換零件為主要營收支柱，同時經營 OEM 車用零組件與模具／研發能力。",
+      "facts": [
+        "公司 1319.TW，總部與主要工廠位於台南。",
+        "2025 年合併營收為新台幣 250.94 億元。",
+        "2025 年營收結構為 AM 約 75%、OEM 約 25%。"
+      ],
+      "operatingModel": "AM 全球售後維修通路＋OEM 車廠與車用供應鏈配套，搭配模具開發、材料／製程與海外製造。",
+      "coreBusiness": "汽車塑膠件、鈑金件、模具、冷卻與其他車用零組件的開發、製造與銷售。",
+      "products": "保險桿、車頭／水箱護罩、儀表板、引擎蓋、葉子板、冷卻件、模具與 AGS 等。",
+      "industryRole": "位於汽車產業中游，連接材料、模具與製程供應商，以及車廠、維修通路與車身修理市場。",
+      "coreObservation": "AM 比重高於 OEM；後續應分開觀察 AM 的產品廣度與通路，以及 OEM 的客戶、產能與產品升級。",
+      "fullResearch": {
+        "summary": "東陽是台灣上市汽車零組件製造商，主要同時經營售後維修市場（AM）與原廠配套市場（OEM），以塑膠、鈑金、模具與相關車用零組件的設計、製造、銷售和全球供應為核心。",
+        "facts": [
+          "公司 1319.TW，總部與主要工廠位於台南。",
+          "2025 年合併營收為新台幣 250.94 億元。",
+          "2025 年營收結構為 AM 約 75%、OEM 約 25%。"
+        ],
+        "inference": "公司定位以全球汽車碰撞維修零件供應與 OEM 零組件整合為主；電動車、智慧座艙與發光前端等方向是產品開發與市場機會，不能直接等同於獨立題材營收。",
+        "v2": {
+          "summary": {
+            "text": "全球汽車售後維修零件與 OEM 零組件的整合製造商。",
+            "sourceEvidenceIds": [
+              "1319-P2-001",
+              "1319-P1-002",
+              "1319-P3-005"
+            ],
+            "status": "READY"
+          },
+          "positioning": {
+            "text": "東陽以 AM 碰撞替換零件為主要營收支柱，同時經營 OEM 車用零組件與模具／研發能力。",
+            "sourceEvidenceIds": [
+              "1319-P1-002",
+              "1319-P3-005"
+            ],
+            "status": "READY"
+          },
+          "operatingModel": {
+            "text": "AM 全球售後維修通路＋OEM 車廠與車用供應鏈配套，搭配模具開發、材料／製程與海外製造。",
+            "sourceEvidenceIds": [
+              "1319-P1-002",
+              "1319-P3-005"
+            ],
+            "status": "READY"
+          },
+          "coreBusiness": {
+            "text": "汽車塑膠件、鈑金件、模具、冷卻與其他車用零組件的開發、製造與銷售。",
+            "sourceEvidenceIds": [
+              "1319-P1-002",
+              "1319-P3-005"
+            ],
+            "status": "READY"
+          },
+          "products": {
+            "text": "保險桿、車頭／水箱護罩、儀表板、引擎蓋、葉子板、冷卻件、模具與 AGS 等。",
+            "sourceEvidenceIds": [
+              "1319-P1-002",
+              "1319-P3-005"
+            ],
+            "status": "READY"
+          },
+          "industryRole": {
+            "text": "位於汽車產業中游，連接材料、模具與製程供應商，以及車廠、維修通路與車身修理市場。",
+            "sourceEvidenceIds": [
+              "1319-P1-002",
+              "1319-P3-007"
+            ],
+            "status": "READY"
+          },
+          "coreObservation": {
+            "text": "AM 比重高於 OEM；後續應分開觀察 AM 的產品廣度與通路，以及 OEM 的客戶、產能與產品升級。",
+            "sourceEvidenceIds": [
+              "1319-P3-005"
+            ],
+            "status": "READY"
+          }
+        }
+      },
+      "sourceSection": [
+        "company_positioning",
+        "products_services"
+      ],
+      "evidenceIds": [
+        "1319-P2-001",
+        "1319-P1-002",
+        "1319-P3-005",
+        "1319-P1-002",
+        "1319-P3-005"
+      ]
+    },
+    {
+      "id": "business_structure",
+      "title": "產品與營收結構",
+      "summary": "AM 為主要營收支柱，OEM 為第二支柱；公司層級營收與部門／市場資料可呈現，但不能把題材或單一產品獲利臆估。",
+      "businessGroups": [
+        {
+          "id": "am",
+          "name": "售後維修市場（AM）",
+          "summary": "面向全球碰撞維修與替換零件市場，提供塑膠件、鈑金件與多品項供應。",
+          "products": [
+            "am-plastic",
+            "am-sheet-metal",
+            "am-cooling"
+          ],
+          "applications": [
+            "車身碰撞維修",
+            "保險理賠維修",
+            "全球售後通路"
+          ],
+          "sourceEvidenceIds": [
+            "1319-P1-002",
+            "1319-P3-005"
+          ],
+          "status": "READY"
+        },
+        {
+          "id": "oem",
+          "name": "原廠配套市場（OEM）",
+          "summary": "提供車廠與車用供應鏈塑膠件、模具、儀表板與其他配套零組件。",
+          "products": [
+            "oem-dashboard",
+            "oem-bumper",
+            "oem-mould"
+          ],
+          "applications": [
+            "車廠組裝",
+            "車型開發",
+            "車用供應鏈"
+          ],
+          "sourceEvidenceIds": [
+            "1319-P1-002",
+            "1319-P3-005"
+          ],
+          "status": "READY"
+        },
+        {
+          "id": "rd-and-new-products",
+          "name": "研發與新產品",
+          "summary": "持續投入輕量化、智慧座艙、發光格柵、發光保險桿與 AGS 等產品開發。",
+          "products": [
+            "smart-cockpit",
+            "luminous-front-end",
+            "ags"
+          ],
+          "applications": [
+            "電動車外觀",
+            "智慧座艙",
+            "節能與空氣動力"
+          ],
+          "sourceEvidenceIds": [
+            "1319-P1-002",
+            "1319-P3-005"
+          ],
+          "status": "PARTIAL"
+        }
+      ],
+      "products": [
+        {
+          "id": "am-plastic",
+          "name": "AM 塑膠碰撞件",
+          "summary": "保險桿、格柵、葉子板、引擎蓋與冷卻相關產品。",
+          "businessGroupId": "am",
+          "applications": [
+            "碰撞維修",
+            "保險理賠"
+          ],
+          "sourceEvidenceIds": [
+            "1319-P1-002",
+            "1319-P3-005"
+          ],
+          "status": "READY"
+        },
+        {
+          "id": "oem-dashboard",
+          "name": "OEM 儀表板與內外裝件",
+          "summary": "供應車廠車型開發與組裝的儀表板、保險桿、格柵等。",
+          "businessGroupId": "oem",
+          "applications": [
+            "OEM 車型",
+            "車內裝飾"
+          ],
+          "sourceEvidenceIds": [
+            "1319-P1-002",
+            "1319-P3-005"
+          ],
+          "status": "READY"
+        },
+        {
+          "id": "oem-mould",
+          "name": "模具與模具開發",
+          "summary": "支援多品項車用零組件開發；法說簡報揭露模具庫與持續開發投入。",
+          "businessGroupId": "oem",
+          "applications": [
+            "車型開發",
+            "塑膠射出"
+          ],
+          "sourceEvidenceIds": [
+            "1319-P3-005"
+          ],
+          "status": "READY"
+        },
+        {
+          "id": "smart-cockpit",
+          "name": "智慧座艙與觸控裝飾",
+          "summary": "年報揭露 3D 半透膜、觸控、手勢與聲控等研發方向。",
+          "businessGroupId": "rd-and-new-products",
+          "applications": [
+            "智慧座艙",
+            "人機互動"
+          ],
+          "sourceEvidenceIds": [
+            "1319-P1-002"
+          ],
+          "status": "PARTIAL"
+        },
+        {
+          "id": "luminous-front-end",
+          "name": "發光格柵與發光保險桿",
+          "summary": "年報揭露電動車前端發光格柵與發光保險桿研發。",
+          "businessGroupId": "rd-and-new-products",
+          "applications": [
+            "電動車前端",
+            "LED 與光學裝飾"
+          ],
+          "sourceEvidenceIds": [
+            "1319-P1-002"
+          ],
+          "status": "PARTIAL"
+        },
+        {
+          "id": "ags",
+          "name": "主動式進氣格柵（AGS）",
+          "summary": "用於調整氣流與風阻，支援節能及引擎工作溫度管理。",
+          "businessGroupId": "rd-and-new-products",
+          "applications": [
+            "車輛節能",
+            "空氣動力"
+          ],
+          "sourceEvidenceIds": [
+            "1319-P1-002"
+          ],
+          "status": "PARTIAL"
+        }
+      ],
+      "revenue": {
+        "datasets": [
+          {
+            "period": "FY2025",
+            "periodType": "ANNUAL",
+            "reportingBasis": "CONSOLIDATED",
+            "currency": "TWD",
+            "unit": "PERCENT",
+            "total": 100,
+            "items": [
+              {
+                "id": "am",
+                "name": "售後維修市場（AM）",
+                "value": 75,
+                "businessGroupId": "am",
+                "sourceEvidenceIds": [
+                  "1319-P3-005"
+                ]
+              },
+              {
+                "id": "oem",
+                "name": "原廠配套市場（OEM）",
+                "value": 25,
+                "businessGroupId": "oem",
+                "sourceEvidenceIds": [
+                  "1319-P3-005"
+                ]
+              }
+            ],
+            "sourceEvidenceIds": [
+              "1319-P3-005"
+            ],
+            "status": "READY",
+            "chartEligible": true
+          }
+        ],
+        "metrics": [],
+        "narrative": "2025 年合併營收 250.94 億元，AM 約占 75%、OEM 約占 25%；2025 年主要銷售地區為美國 44.72%、中國 17.38%、台灣 15.72%、其他 22.18%。",
+        "basis": "原研究包提供的事業群／產品文字說明；未將文字自行解析成未經驗證的數字。",
+        "status": "PARTIAL"
+      },
+      "profit": {
+        "datasets": [],
+        "metrics": [],
+        "narrative": "2026/09 法說簡報提供 AM 與 OEM 的毛利率與平均月營收比較；未取得可將獨立產品或正式題材完全對應的產品別獲利。",
+        "basis": "部門損益與產品別獲利分開保留；不得把其他部門或權益法收益視為單一產品獲利。",
+        "status": "PARTIAL"
+      },
+      "investments": {
+        "items": [
+          {
+            "id": "ru-yang",
+            "name": "如陽工業",
+            "holdingPercent": 58.95,
+            "business": "OEM 儀表板",
+            "materiality": "BOTH",
+            "materialityReason": "年報與法說列為主要關係企業及產品鏈節點。",
+            "sourceEvidenceIds": [
+              "1319-P1-002",
+              "1319-P3-005"
+            ],
+            "status": "READY"
+          },
+          {
+            "id": "tong-yang-holding",
+            "name": "Tong Yang Holding Corporation",
+            "holdingPercent": 100,
+            "business": "中國 OEM 投資平台",
+            "materiality": "BOTH",
+            "materialityReason": "承接中國 OEM 子公司與海外營運布局。",
+            "sourceEvidenceIds": [
+              "1319-P1-002",
+              "1319-P3-005"
+            ],
+            "status": "READY"
+          },
+          {
+            "id": "how-bond",
+            "name": "How Bond Investment",
+            "holdingPercent": 100,
+            "business": "AM 塑膠件投資",
+            "materiality": "STRATEGIC",
+            "materialityReason": "與 AM 產品供應及海外布局相關。",
+            "sourceEvidenceIds": [
+              "1319-P1-002",
+              "1319-P3-005"
+            ],
+            "status": "READY"
+          }
+        ],
+        "summary": "年報與法說列有多家子公司與轉投資清冊；營收與策略重要性可確認，但本包不把轉投資公司營收或權益法損益直接當成母公司單一產品獲利。",
+        "materialityBasis": "財務＋策略重大性；本次 v1 內容仍以文字研究為主，未臆造持股或貢獻數字。",
+        "limitations": [
+          "長約覆蓋率未取得可驗證比例或金額",
+          "產品別毛利／營業利益未取得完整可比口徑",
+          "正式題材獨立收入與獲利未揭露"
+        ],
+        "status": "READY",
+        "reason": "年報與法說有投資清冊及營運關係；被投資公司獨立獲利貢獻仍需依各期附註分別閱讀。"
+      },
+      "fullResearch": {
+        "known": "2025 年合併營收 250.94 億元，AM 約占 75%、OEM 約占 25%；2025 年主要銷售地區為美國 44.72%、中國 17.38%、台灣 15.72%、其他 22.18%。",
+        "geography": "2025 年美國、 中國與台灣合計約占 77.82% 營收；地區收入是公司層級地理口徑，不等於特定題材收入。",
+        "segmentProfit": "2026/09 法說簡報提供 AM 與 OEM 的毛利率與平均月營收比較；未取得可將獨立產品或正式題材完全對應的產品別獲利。",
+        "investmentProfitDrivers": "年報與法說列有多家子公司與轉投資清冊；營收與策略重要性可確認，但本包不把轉投資公司營收或權益法損益直接當成母公司單一產品獲利。",
+        "notEstablished": [
+          "長約覆蓋率未取得可驗證比例或金額",
+          "產品別毛利／營業利益未取得完整可比口徑",
+          "正式題材獨立收入與獲利未揭露"
+        ],
+        "v2": {
+          "summary": {
+            "text": "AM 為主要營收支柱，OEM 為第二支柱；公司層級營收與部門／市場資料可呈現，但不能把題材或單一產品獲利臆估。",
+            "sourceEvidenceIds": [
+              "1319-P1-002",
+              "1319-P3-005"
+            ],
+            "status": "PARTIAL"
+          },
+          "revenueDatasets": [
+            {
+              "period": "FY2025",
+              "periodType": "ANNUAL",
+              "reportingBasis": "CONSOLIDATED",
+              "currency": "TWD",
+              "unit": "PERCENT",
+              "total": 100,
+              "items": [
+                {
+                  "id": "am",
+                  "name": "售後維修市場（AM）",
+                  "value": 75,
+                  "businessGroupId": "am",
+                  "sourceEvidenceIds": [
+                    "1319-P3-005"
+                  ]
+                },
+                {
+                  "id": "oem",
+                  "name": "原廠配套市場（OEM）",
+                  "value": 25,
+                  "businessGroupId": "oem",
+                  "sourceEvidenceIds": [
+                    "1319-P3-005"
+                  ]
+                }
+              ],
+              "sourceEvidenceIds": [
+                "1319-P3-005"
+              ],
+              "status": "READY",
+              "chartEligible": true
+            }
+          ],
+          "profitDatasets": [],
+          "financialMetrics": [
+            {
+              "id": "revenue-2025",
+              "type": "FACT",
+              "label": "合併營收",
+              "value": 25094.263,
+              "unit": "TWD_MILLION",
+              "period": "FY2025",
+              "periodType": "ANNUAL",
+              "reportingBasis": "CONSOLIDATED",
+              "metricDefinition": "公司合併營業收入，原始單位新台幣仟元換算為百萬元。",
+              "sourceEvidenceIds": [
+                "1319-P1-002"
+              ],
+              "status": "READY"
+            },
+            {
+              "id": "revenue-q2-2026",
+              "type": "FACT",
+              "label": "2026 第二季營收",
+              "value": 5663,
+              "unit": "TWD_MILLION",
+              "period": "2026-Q2",
+              "periodType": "QUARTER",
+              "reportingBasis": "CONSOLIDATED",
+              "metricDefinition": "法人說明會簡報列示之單季合併營收。",
+              "sourceEvidenceIds": [
+                "1319-P3-005",
+                "1319-P1-004"
+              ],
+              "status": "READY"
+            },
+            {
+              "id": "gross-margin-q2-2026",
+              "type": "FACT",
+              "label": "2026 第二季合併毛利率",
+              "value": 32.53,
+              "unit": "PERCENT",
+              "period": "2026-Q2",
+              "periodType": "QUARTER",
+              "reportingBasis": "CONSOLIDATED",
+              "metricDefinition": "法人說明會簡報列示之合併毛利率。",
+              "sourceEvidenceIds": [
+                "1319-P3-005"
+              ],
+              "status": "READY"
+            },
+            {
+              "id": "operating-income-q2-2026",
+              "type": "FACT",
+              "label": "2026 第二季營業利益",
+              "value": 892,
+              "unit": "TWD_MILLION",
+              "period": "2026-Q2",
+              "periodType": "QUARTER",
+              "reportingBasis": "CONSOLIDATED",
+              "metricDefinition": "法人說明會簡報列示之單季營業利益。",
+              "sourceEvidenceIds": [
+                "1319-P3-005"
+              ],
+              "status": "READY"
+            },
+            {
+              "id": "am-share-fy2025",
+              "type": "FACT",
+              "label": "2025 AM 營收比重",
+              "value": 75,
+              "unit": "PERCENT",
+              "period": "FY2025",
+              "periodType": "ANNUAL",
+              "reportingBasis": "CONSOLIDATED",
+              "metricDefinition": "法人說明會簡報列示 AM 佔合併營收比例。",
+              "sourceEvidenceIds": [
+                "1319-P3-005"
+              ],
+              "status": "READY"
+            }
+          ],
+          "managementTopics": [
+            {
+              "id": "management-am-oem",
+              "topic": "AM／OEM 結構",
+              "summary": "管理層以 AM 比重較高、OEM 產品與市場布局並行描述營運結構。",
+              "statementDate": "2026-09-10",
+              "sourceEvidenceIds": [
+                "1319-P3-005"
+              ],
+              "status": "MANAGEMENT"
+            },
+            {
+              "id": "management-capacity",
+              "topic": "模具開發與產能擴充",
+              "summary": "管理層持續強調模具開發、產品覆蓋與海外產能配置。",
+              "statementDate": "2026-09-10",
+              "sourceEvidenceIds": [
+                "1319-P3-005"
+              ],
+              "status": "MANAGEMENT"
+            }
+          ],
+          "investmentItems": [
+            {
+              "id": "ru-yang",
+              "name": "如陽工業",
+              "holdingPercent": 58.95,
+              "business": "OEM 儀表板",
+              "materiality": "BOTH",
+              "materialityReason": "年報與法說列為主要關係企業及產品鏈節點。",
+              "sourceEvidenceIds": [
+                "1319-P1-002",
+                "1319-P3-005"
+              ],
+              "status": "READY"
+            },
+            {
+              "id": "tong-yang-holding",
+              "name": "Tong Yang Holding Corporation",
+              "holdingPercent": 100,
+              "business": "中國 OEM 投資平台",
+              "materiality": "BOTH",
+              "materialityReason": "承接中國 OEM 子公司與海外營運布局。",
+              "sourceEvidenceIds": [
+                "1319-P1-002",
+                "1319-P3-005"
+              ],
+              "status": "READY"
+            },
+            {
+              "id": "how-bond",
+              "name": "How Bond Investment",
+              "holdingPercent": 100,
+              "business": "AM 塑膠件投資",
+              "materiality": "STRATEGIC",
+              "materialityReason": "與 AM 產品供應及海外布局相關。",
+              "sourceEvidenceIds": [
+                "1319-P1-002",
+                "1319-P3-005"
+              ],
+              "status": "READY"
+            }
+          ],
+          "investmentStatus": "READY",
+          "investmentReason": "年報與法說有投資清冊及營運關係；被投資公司獨立獲利貢獻仍需依各期附註分別閱讀。"
+        }
+      },
+      "sourceSection": [
+        "products_services",
+        "revenue_structure"
+      ],
+      "evidenceIds": [
+        "1319-P1-002",
+        "1319-P3-005",
+        "1319-P1-002",
+        "1319-P1-003",
+        "1319-P1-004",
+        "1319-P3-005"
+      ]
+    },
+    {
+      "id": "industry_position",
+      "title": "產業鏈與競爭位置",
+      "summary": "年報將東陽定位為台灣汽車零組件產業的主要業者，並以產品廣度、全球布局、模具累積、物流與通路能力作為競爭基礎。",
+      "chains": [
+        {
+          "id": "am-aftermarket-chain",
+          "name": "AM 碰撞維修零件鏈",
+          "upstream": "PP、ABS、鋼材、塗料與模具",
+          "companyRole": "塑膠／鈑金碰撞件設計製造與全球供應",
+          "downstream": "進口商、經銷商、批發商、車身修理廠與保險維修市場",
+          "businessGroupId": "am",
+          "sourceEvidenceIds": [
+            "1319-P1-002",
+            "1319-P3-005"
+          ],
+          "evidenceIds": [
+            "1319-P1-002",
+            "1319-P3-005"
+          ],
+          "status": "READY"
+        },
+        {
+          "id": "oem-vehicle-chain",
+          "name": "OEM 車用零組件鏈",
+          "upstream": "金屬、塑膠材料、模具與製程設備",
+          "companyRole": "儀表板、保險桿、格柵、模具及其他配套件",
+          "downstream": "台灣與中國車廠、組裝廠及車用供應鏈",
+          "businessGroupId": "oem",
+          "sourceEvidenceIds": [
+            "1319-P1-002",
+            "1319-P3-005"
+          ],
+          "evidenceIds": [
+            "1319-P1-002",
+            "1319-P3-005"
+          ],
+          "status": "READY"
+        },
+        {
+          "id": "smart-vehicle-chain",
+          "name": "智慧／電動車產品開發鏈",
+          "upstream": "光學膜、LED、SMT、半透材料、電子控制與塑膠製程",
+          "companyRole": "智慧座艙、發光格柵、發光保險桿與 AGS 研發／產品化",
+          "downstream": "新車型、電動車前端與車內人機互動應用",
+          "businessGroupId": "rd-and-new-products",
+          "sourceEvidenceIds": [
+            "1319-P1-002"
+          ],
+          "evidenceIds": [
+            "1319-P1-002"
+          ],
+          "status": "TEXT_ONLY"
+        }
+      ],
+      "customers": [],
+      "competitors": [
+        "東陽（1319）",
+        "東陽事業關係企業",
+        "帝寶（6605）",
+        "堤維西（1522）"
+      ],
+      "competitivePosition": "年報將東陽定位為台灣汽車零組件產業的主要業者，並以產品廣度、全球布局、模具累積、物流與通路能力作為競爭基礎。",
+      "limitations": [
+        "同業成本曲線尚未形成一致的產品、期間與成本口徑",
+        "市場占有率部分為公司／管理層揭露，與第三方統計仍需分開標示",
+        "競爭優勢不等於未來獲利保證"
+      ],
+      "fullResearch": {
+        "supplyChain": {
+          "upstream": "主要材料包含鋼捲、鋁板、PP、ABS 與塗料；年報列示中鋼、CSAC、台塑、住友商事、台化、台達化學與塗料供應商等供應來源。",
+          "operations": "東陽位於汽車零組件中游，具備塑膠射出、鈑金、模具、塗裝、研發與海外／中國製造能力。",
+          "downstream": "下游包含車廠、車輛組裝廠、OEM 供應鏈、AM 進口商／經銷商／批發商、車身修理廠與獨立維修通路。",
+          "v2": {
+            "chains": [
+              {
+                "id": "am-aftermarket-chain",
+                "name": "AM 碰撞維修零件鏈",
+                "upstream": "PP、ABS、鋼材、塗料與模具",
+                "companyRole": "塑膠／鈑金碰撞件設計製造與全球供應",
+                "downstream": "進口商、經銷商、批發商、車身修理廠與保險維修市場",
+                "businessGroupId": "am",
+                "sourceEvidenceIds": [
+                  "1319-P1-002",
+                  "1319-P3-005"
+                ],
+                "evidenceIds": [
+                  "1319-P1-002",
+                  "1319-P3-005"
+                ],
+                "status": "READY"
+              },
+              {
+                "id": "oem-vehicle-chain",
+                "name": "OEM 車用零組件鏈",
+                "upstream": "金屬、塑膠材料、模具與製程設備",
+                "companyRole": "儀表板、保險桿、格柵、模具及其他配套件",
+                "downstream": "台灣與中國車廠、組裝廠及車用供應鏈",
+                "businessGroupId": "oem",
+                "sourceEvidenceIds": [
+                  "1319-P1-002",
+                  "1319-P3-005"
+                ],
+                "evidenceIds": [
+                  "1319-P1-002",
+                  "1319-P3-005"
+                ],
+                "status": "READY"
+              },
+              {
+                "id": "smart-vehicle-chain",
+                "name": "智慧／電動車產品開發鏈",
+                "upstream": "光學膜、LED、SMT、半透材料、電子控制與塑膠製程",
+                "companyRole": "智慧座艙、發光格柵、發光保險桿與 AGS 研發／產品化",
+                "downstream": "新車型、電動車前端與車內人機互動應用",
+                "businessGroupId": "rd-and-new-products",
+                "sourceEvidenceIds": [
+                  "1319-P1-002"
+                ],
+                "evidenceIds": [
+                  "1319-P1-002"
+                ],
+                "status": "TEXT_ONLY"
+              }
+            ]
+          }
+        },
+        "competition": {
+          "positioning": "年報將東陽定位為台灣汽車零組件產業的主要業者，並以產品廣度、全球布局、模具累積、物流與通路能力作為競爭基礎。",
+          "peerScope": [
+            "東陽（1319）",
+            "東陽事業關係企業",
+            "帝寶（6605）",
+            "堤維西（1522）"
+          ],
+          "unresolved": [
+            "同業成本曲線尚未形成一致的產品、期間與成本口徑",
+            "市場占有率部分為公司／管理層揭露，與第三方統計仍需分開標示",
+            "競爭優勢不等於未來獲利保證"
+          ],
+          "v2": {
+            "summary": "東陽的競爭位置來自 AM 產品廣度、模具庫、全球供應與 OEM 客戶整合；成本曲線目前不形成結論。",
+            "peerScope": [
+              "帝寶（6605）",
+              "堤維西（1522）"
+            ],
+            "advantages": [
+              {
+                "name": "產品廣度與一站式供應",
+                "summary": "法說簡報揭露超過 25,000 個品項與全球車型覆蓋。",
+                "sourceEvidenceIds": [
+                  "1319-P3-005"
+                ]
+              },
+              {
+                "name": "模具與全球製造布局",
+                "summary": "持續模具開發、台灣／中國／美國產能與通路布局。",
+                "sourceEvidenceIds": [
+                  "1319-P1-002",
+                  "1319-P3-005"
+                ]
+              }
+            ],
+            "limitations": [
+              "同業成本曲線未形成",
+              "部分市占與競爭敘述為公司管理層說法",
+              "AM/OEM 客戶與產品口徑不可直接混用"
+            ]
+          }
+        }
+      },
+      "sourceSection": [
+        "supply_chain",
+        "competitive_position"
+      ],
+      "evidenceIds": [
+        "1319-P1-002",
+        "1319-P3-005",
+        "1319-P1-002",
+        "1319-P3-005",
+        "1319-P3-007"
+      ]
+    },
+    {
+      "id": "growth_and_risks",
+      "title": "成長驅動與主要風險",
+      "summary": "研究觀察，不等於獲利預測或正式題材認定。",
+      "growthFactors": [
+        {
+          "id": "growth-am",
+          "name": "AM 市場與產品覆蓋",
+          "summary": "AM 占比高且產品品項廣，北美與歐洲通路仍是主要觀察方向。",
+          "horizon": "中期",
+          "indicators": [
+            "AM 營收與毛利率",
+            "北美市場出貨",
+            "認證產品比例"
+          ],
+          "sourceEvidenceIds": [
+            "1319-P3-005"
+          ],
+          "relatedRiskIds": [
+            "risk-demand"
+          ],
+          "status": "READY"
+        },
+        {
+          "id": "growth-new-products",
+          "name": "智慧座艙與電動車產品化",
+          "summary": "研發已揭露，但是否形成量產與獲利仍待後續公告與法說確認。",
+          "horizon": "中期",
+          "indicators": [
+            "量產車型",
+            "客戶導入",
+            "產品營收"
+          ],
+          "sourceEvidenceIds": [
+            "1319-P1-002"
+          ],
+          "relatedRiskIds": [
+            "risk-rd"
+          ],
+          "status": "PARTIAL"
+        },
+        {
+          "id": "growth-tooling",
+          "name": "模具開發與供應整合",
+          "summary": "一站式供應與模具能力有助於提升產品覆蓋與客戶黏著。",
+          "horizon": "中期",
+          "indicators": [
+            "模具開發投入",
+            "產品品項",
+            "產能利用"
+          ],
+          "sourceEvidenceIds": [
+            "1319-P3-005"
+          ],
+          "relatedRiskIds": [
+            "risk-cost"
+          ],
+          "status": "READY"
+        }
+      ],
+      "riskFactors": [
+        {
+          "id": "risk-demand",
+          "name": "車市與維修需求波動",
+          "summary": "車廠產量、售後維修需求與全球市場景氣會影響營收與產能配置。",
+          "indicators": [
+            "OEM 營收",
+            "AM 出貨",
+            "庫存與稼動率"
+          ],
+          "sourceEvidenceIds": [
+            "1319-P1-002"
+          ],
+          "relatedGrowthIds": [
+            "growth-am"
+          ],
+          "status": "READY",
+          "horizon": null
+        },
+        {
+          "id": "risk-cost",
+          "name": "材料、模具與製造成本",
+          "summary": "原材料、半成品、人工、製造費用與模具折舊均會影響毛利。",
+          "indicators": [
+            "AM/OEM 毛利率",
+            "材料成本占比",
+            "模具折舊"
+          ],
+          "sourceEvidenceIds": [
+            "1319-P3-005"
+          ],
+          "relatedGrowthIds": [
+            "growth-tooling"
+          ],
+          "status": "READY",
+          "horizon": null
+        },
+        {
+          "id": "risk-rd",
+          "name": "新產品量產與客戶導入",
+          "summary": "研發方向與正式量產收入之間仍存在時間差。",
+          "indicators": [
+            "客戶導入",
+            "量產車型",
+            "新產品營收"
+          ],
+          "sourceEvidenceIds": [
+            "1319-P1-002"
+          ],
+          "relatedGrowthIds": [
+            "growth-new-products"
+          ],
+          "status": "PARTIAL",
+          "horizon": null
+        }
+      ],
+      "fullResearch": {
+        "growth": {
+          "classification": "研究觀察，不等於獲利預測或正式題材認定。",
+          "drivers": [
+            {
+              "name": "AM 產品廣度與北美市場",
+              "summary": "AM 仍為主要營收支柱，北美是重要市場；產品覆蓋與認證有助於維持通路競爭力。",
+              "sourceEvidenceIds": [
+                "1319-P1-002",
+                "1319-P3-005"
+              ]
+            },
+            {
+              "name": "模具開發與產品升級",
+              "summary": "模具庫、持續開發與高值化產品可支援新車型與一站式供應。",
+              "sourceEvidenceIds": [
+                "1319-P3-005"
+              ]
+            },
+            {
+              "name": "智慧座艙與電動車前端產品",
+              "summary": "年報揭露智慧座艙、發光格柵、發光保險桿等研發，仍需追蹤量產與收入轉換。",
+              "sourceEvidenceIds": [
+                "1319-P1-002"
+              ]
+            },
+            {
+              "name": "海外與中國 OEM 產能整合",
+              "summary": "中國 OEM 廠與全球製造布局可支援客戶在地供應，但需關注汽車市場與產能效率。",
+              "sourceEvidenceIds": [
+                "1319-P1-002",
+                "1319-P3-005"
+              ]
+            }
+          ],
+          "v2": {
+            "growthFactors": [
+              {
+                "id": "growth-am",
+                "name": "AM 市場與產品覆蓋",
+                "summary": "AM 占比高且產品品項廣，北美與歐洲通路仍是主要觀察方向。",
+                "horizon": "中期",
+                "indicators": [
+                  "AM 營收與毛利率",
+                  "北美市場出貨",
+                  "認證產品比例"
+                ],
+                "sourceEvidenceIds": [
+                  "1319-P3-005"
+                ],
+                "relatedRiskIds": [
+                  "risk-demand"
+                ],
+                "status": "READY"
+              },
+              {
+                "id": "growth-new-products",
+                "name": "智慧座艙與電動車產品化",
+                "summary": "研發已揭露，但是否形成量產與獲利仍待後續公告與法說確認。",
+                "horizon": "中期",
+                "indicators": [
+                  "量產車型",
+                  "客戶導入",
+                  "產品營收"
+                ],
+                "sourceEvidenceIds": [
+                  "1319-P1-002"
+                ],
+                "relatedRiskIds": [
+                  "risk-rd"
+                ],
+                "status": "PARTIAL"
+              },
+              {
+                "id": "growth-tooling",
+                "name": "模具開發與供應整合",
+                "summary": "一站式供應與模具能力有助於提升產品覆蓋與客戶黏著。",
+                "horizon": "中期",
+                "indicators": [
+                  "模具開發投入",
+                  "產品品項",
+                  "產能利用"
+                ],
+                "sourceEvidenceIds": [
+                  "1319-P3-005"
+                ],
+                "relatedRiskIds": [
+                  "risk-cost"
+                ],
+                "status": "READY"
+              }
+            ]
+          }
+        },
+        "risks": {
+          "riskPolicy": "風險只呈現已揭露因素與研究待查核項，不作機率或損益臆估。",
+          "risks": [
+            {
+              "name": "汽車需求與景氣循環",
+              "summary": "車市、維修需求、庫存與客戶訂單波動可能影響出貨。",
+              "sourceEvidenceIds": [
+                "1319-P1-002"
+              ]
+            },
+            {
+              "name": "原物料與成本壓力",
+              "summary": "塑膠、鋼材、鋁材、塗料與模具折舊會影響成本和毛利；成本轉嫁能力需持續觀察。",
+              "sourceEvidenceIds": [
+                "1319-P1-002",
+                "1319-P3-005"
+              ]
+            },
+            {
+              "name": "關稅、匯率與地緣市場",
+              "summary": "年報及公司 IR 已指出美國關稅與新台幣匯率對 2025 年營運有影響。",
+              "sourceEvidenceIds": [
+                "1319-P2-001",
+                "1319-P1-002"
+              ]
+            },
+            {
+              "name": "客戶集中與合約揭露限制",
+              "summary": "年報以代號揭露超過 10% 客戶，未能取得完整客戶名稱與長約覆蓋率。",
+              "sourceEvidenceIds": [
+                "1319-P1-002"
+              ]
+            },
+            {
+              "name": "研發量產轉換",
+              "summary": "智慧座艙與電動車相關產品尚需以量產、出貨及收入證據驗證。",
+              "sourceEvidenceIds": [
+                "1319-P1-002"
+              ]
+            }
+          ],
+          "v2": {
+            "riskFactors": [
+              {
+                "id": "risk-demand",
+                "name": "車市與維修需求波動",
+                "summary": "車廠產量、售後維修需求與全球市場景氣會影響營收與產能配置。",
+                "indicators": [
+                  "OEM 營收",
+                  "AM 出貨",
+                  "庫存與稼動率"
+                ],
+                "sourceEvidenceIds": [
+                  "1319-P1-002"
+                ],
+                "relatedGrowthIds": [
+                  "growth-am"
+                ],
+                "status": "READY"
+              },
+              {
+                "id": "risk-cost",
+                "name": "材料、模具與製造成本",
+                "summary": "原材料、半成品、人工、製造費用與模具折舊均會影響毛利。",
+                "indicators": [
+                  "AM/OEM 毛利率",
+                  "材料成本占比",
+                  "模具折舊"
+                ],
+                "sourceEvidenceIds": [
+                  "1319-P3-005"
+                ],
+                "relatedGrowthIds": [
+                  "growth-tooling"
+                ],
+                "status": "READY"
+              },
+              {
+                "id": "risk-rd",
+                "name": "新產品量產與客戶導入",
+                "summary": "研發方向與正式量產收入之間仍存在時間差。",
+                "indicators": [
+                  "客戶導入",
+                  "量產車型",
+                  "新產品營收"
+                ],
+                "sourceEvidenceIds": [
+                  "1319-P1-002"
+                ],
+                "relatedGrowthIds": [
+                  "growth-new-products"
+                ],
+                "status": "PARTIAL"
+              }
+            ]
+          }
+        }
+      },
+      "sourceSection": [
+        "growth_drivers",
+        "risks"
+      ],
+      "evidenceIds": [
+        "1319-P1-002",
+        "1319-P3-005",
+        "1319-P1-006",
+        "1319-P1-002",
+        "1319-P2-001",
+        "1319-P3-005"
+      ]
+    },
+    {
+      "id": "financial_commentary",
+      "title": "財報與法說會補充",
+      "summary": "2025 年合併營收 250.94 億元，AM 約占 75%、OEM 約占 25%；2025 年主要銷售地區為美國 44.72%、中國 17.38%、台灣 15.72%、其他 22.18%。",
+      "metrics": [
+        {
+          "id": "revenue-2025",
+          "type": "FACT",
+          "label": "合併營收",
+          "value": 25094.263,
+          "unit": "TWD_MILLION",
+          "period": "FY2025",
+          "periodType": "ANNUAL",
+          "reportingBasis": "CONSOLIDATED",
+          "metricDefinition": "公司合併營業收入，原始單位新台幣仟元換算為百萬元。",
+          "sourceEvidenceIds": [
+            "1319-P1-002"
+          ],
+          "status": "READY"
+        },
+        {
+          "id": "revenue-q2-2026",
+          "type": "FACT",
+          "label": "2026 第二季營收",
+          "value": 5663,
+          "unit": "TWD_MILLION",
+          "period": "2026-Q2",
+          "periodType": "QUARTER",
+          "reportingBasis": "CONSOLIDATED",
+          "metricDefinition": "法人說明會簡報列示之單季合併營收。",
+          "sourceEvidenceIds": [
+            "1319-P3-005",
+            "1319-P1-004"
+          ],
+          "status": "READY"
+        },
+        {
+          "id": "gross-margin-q2-2026",
+          "type": "FACT",
+          "label": "2026 第二季合併毛利率",
+          "value": 32.53,
+          "unit": "PERCENT",
+          "period": "2026-Q2",
+          "periodType": "QUARTER",
+          "reportingBasis": "CONSOLIDATED",
+          "metricDefinition": "法人說明會簡報列示之合併毛利率。",
+          "sourceEvidenceIds": [
+            "1319-P3-005"
+          ],
+          "status": "READY"
+        },
+        {
+          "id": "operating-income-q2-2026",
+          "type": "FACT",
+          "label": "2026 第二季營業利益",
+          "value": 892,
+          "unit": "TWD_MILLION",
+          "period": "2026-Q2",
+          "periodType": "QUARTER",
+          "reportingBasis": "CONSOLIDATED",
+          "metricDefinition": "法人說明會簡報列示之單季營業利益。",
+          "sourceEvidenceIds": [
+            "1319-P3-005"
+          ],
+          "status": "READY"
+        },
+        {
+          "id": "am-share-fy2025",
+          "type": "FACT",
+          "label": "2025 AM 營收比重",
+          "value": 75,
+          "unit": "PERCENT",
+          "period": "FY2025",
+          "periodType": "ANNUAL",
+          "reportingBasis": "CONSOLIDATED",
+          "metricDefinition": "法人說明會簡報列示 AM 佔合併營收比例。",
+          "sourceEvidenceIds": [
+            "1319-P3-005"
+          ],
+          "status": "READY"
+        }
+      ],
+      "items": [
+        {
+          "id": "financial-fact-01",
+          "type": "FACT",
+          "label": "營收與收入結構",
+          "summary": "2025 年合併營收 250.94 億元，AM 約占 75%、OEM 約占 25%；2025 年主要銷售地區為美國 44.72%、中國 17.38%、台灣 15.72%、其他 22.18%。",
+          "period": null,
+          "periodType": null,
+          "reportingBasis": null,
+          "unit": null,
+          "baseline": null,
+          "definition": null
+        },
+        {
+          "id": "financial-fact-02",
+          "type": "FACT",
+          "label": "部門損益",
+          "summary": "2026/09 法說簡報提供 AM 與 OEM 的毛利率與平均月營收比較；未取得可將獨立產品或正式題材完全對應的產品別獲利。",
+          "period": null,
+          "periodType": null,
+          "reportingBasis": null,
+          "unit": null,
+          "baseline": null,
+          "definition": null
+        },
+        {
+          "id": "financial-fact-03",
+          "type": "FACT",
+          "label": "地區別收入",
+          "summary": "2025 年美國、 中國與台灣合計約占 77.82% 營收；地區收入是公司層級地理口徑，不等於特定題材收入。",
+          "period": null,
+          "periodType": null,
+          "reportingBasis": null,
+          "unit": null,
+          "baseline": null,
+          "definition": null
+        },
+        {
+          "id": "financial-method-01",
+          "type": "ANALYSIS",
+          "label": "研究解讀範圍",
+          "summary": "本輪以 2025 年報、最新兩季季報、最新兩次法說會及官方 IR 索引為固定最低查核範圍；第三方文字鏡像僅作文件定位與交叉核對。",
+          "period": null,
+          "periodType": null,
+          "reportingBasis": null,
+          "unit": null,
+          "baseline": null,
+          "definition": null
+        }
+      ],
+      "managementTopics": [
+        {
+          "id": "management-am-oem",
+          "topic": "AM／OEM 結構",
+          "summary": "管理層以 AM 比重較高、OEM 產品與市場布局並行描述營運結構。",
+          "statementDate": "2026-09-10",
+          "sourceEvidenceIds": [
+            "1319-P3-005"
+          ],
+          "status": "MANAGEMENT"
+        },
+        {
+          "id": "management-capacity",
+          "topic": "模具開發與產能擴充",
+          "summary": "管理層持續強調模具開發、產品覆蓋與海外產能配置。",
+          "statementDate": "2026-09-10",
+          "sourceEvidenceIds": [
+            "1319-P3-005"
+          ],
+          "status": "MANAGEMENT"
+        }
+      ],
+      "fullResearch": {
+        "revenueStructure": {
+          "known": "2025 年合併營收 250.94 億元，AM 約占 75%、OEM 約占 25%；2025 年主要銷售地區為美國 44.72%、中國 17.38%、台灣 15.72%、其他 22.18%。",
+          "geography": "2025 年美國、 中國與台灣合計約占 77.82% 營收；地區收入是公司層級地理口徑，不等於特定題材收入。",
+          "segmentProfit": "2026/09 法說簡報提供 AM 與 OEM 的毛利率與平均月營收比較；未取得可將獨立產品或正式題材完全對應的產品別獲利。",
+          "investmentProfitDrivers": "年報與法說列有多家子公司與轉投資清冊；營收與策略重要性可確認，但本包不把轉投資公司營收或權益法損益直接當成母公司單一產品獲利。",
+          "notEstablished": [
+            "長約覆蓋率未取得可驗證比例或金額",
+            "產品別毛利／營業利益未取得完整可比口徑",
+            "正式題材獨立收入與獲利未揭露"
+          ],
+          "v2": {
+            "summary": {
+              "text": "AM 為主要營收支柱，OEM 為第二支柱；公司層級營收與部門／市場資料可呈現，但不能把題材或單一產品獲利臆估。",
+              "sourceEvidenceIds": [
+                "1319-P1-002",
+                "1319-P3-005"
+              ],
+              "status": "PARTIAL"
+            },
+            "revenueDatasets": [
+              {
+                "period": "FY2025",
+                "periodType": "ANNUAL",
+                "reportingBasis": "CONSOLIDATED",
+                "currency": "TWD",
+                "unit": "PERCENT",
+                "total": 100,
+                "items": [
+                  {
+                    "id": "am",
+                    "name": "售後維修市場（AM）",
+                    "value": 75,
+                    "businessGroupId": "am",
+                    "sourceEvidenceIds": [
+                      "1319-P3-005"
+                    ]
+                  },
+                  {
+                    "id": "oem",
+                    "name": "原廠配套市場（OEM）",
+                    "value": 25,
+                    "businessGroupId": "oem",
+                    "sourceEvidenceIds": [
+                      "1319-P3-005"
+                    ]
+                  }
+                ],
+                "sourceEvidenceIds": [
+                  "1319-P3-005"
+                ],
+                "status": "READY",
+                "chartEligible": true
+              }
+            ],
+            "profitDatasets": [],
+            "financialMetrics": [
+              {
+                "id": "revenue-2025",
+                "type": "FACT",
+                "label": "合併營收",
+                "value": 25094.263,
+                "unit": "TWD_MILLION",
+                "period": "FY2025",
+                "periodType": "ANNUAL",
+                "reportingBasis": "CONSOLIDATED",
+                "metricDefinition": "公司合併營業收入，原始單位新台幣仟元換算為百萬元。",
+                "sourceEvidenceIds": [
+                  "1319-P1-002"
+                ],
+                "status": "READY"
+              },
+              {
+                "id": "revenue-q2-2026",
+                "type": "FACT",
+                "label": "2026 第二季營收",
+                "value": 5663,
+                "unit": "TWD_MILLION",
+                "period": "2026-Q2",
+                "periodType": "QUARTER",
+                "reportingBasis": "CONSOLIDATED",
+                "metricDefinition": "法人說明會簡報列示之單季合併營收。",
+                "sourceEvidenceIds": [
+                  "1319-P3-005",
+                  "1319-P1-004"
+                ],
+                "status": "READY"
+              },
+              {
+                "id": "gross-margin-q2-2026",
+                "type": "FACT",
+                "label": "2026 第二季合併毛利率",
+                "value": 32.53,
+                "unit": "PERCENT",
+                "period": "2026-Q2",
+                "periodType": "QUARTER",
+                "reportingBasis": "CONSOLIDATED",
+                "metricDefinition": "法人說明會簡報列示之合併毛利率。",
+                "sourceEvidenceIds": [
+                  "1319-P3-005"
+                ],
+                "status": "READY"
+              },
+              {
+                "id": "operating-income-q2-2026",
+                "type": "FACT",
+                "label": "2026 第二季營業利益",
+                "value": 892,
+                "unit": "TWD_MILLION",
+                "period": "2026-Q2",
+                "periodType": "QUARTER",
+                "reportingBasis": "CONSOLIDATED",
+                "metricDefinition": "法人說明會簡報列示之單季營業利益。",
+                "sourceEvidenceIds": [
+                  "1319-P3-005"
+                ],
+                "status": "READY"
+              },
+              {
+                "id": "am-share-fy2025",
+                "type": "FACT",
+                "label": "2025 AM 營收比重",
+                "value": 75,
+                "unit": "PERCENT",
+                "period": "FY2025",
+                "periodType": "ANNUAL",
+                "reportingBasis": "CONSOLIDATED",
+                "metricDefinition": "法人說明會簡報列示 AM 佔合併營收比例。",
+                "sourceEvidenceIds": [
+                  "1319-P3-005"
+                ],
+                "status": "READY"
+              }
+            ],
+            "managementTopics": [
+              {
+                "id": "management-am-oem",
+                "topic": "AM／OEM 結構",
+                "summary": "管理層以 AM 比重較高、OEM 產品與市場布局並行描述營運結構。",
+                "statementDate": "2026-09-10",
+                "sourceEvidenceIds": [
+                  "1319-P3-005"
+                ],
+                "status": "MANAGEMENT"
+              },
+              {
+                "id": "management-capacity",
+                "topic": "模具開發與產能擴充",
+                "summary": "管理層持續強調模具開發、產品覆蓋與海外產能配置。",
+                "statementDate": "2026-09-10",
+                "sourceEvidenceIds": [
+                  "1319-P3-005"
+                ],
+                "status": "MANAGEMENT"
+              }
+            ],
+            "investmentItems": [
+              {
+                "id": "ru-yang",
+                "name": "如陽工業",
+                "holdingPercent": 58.95,
+                "business": "OEM 儀表板",
+                "materiality": "BOTH",
+                "materialityReason": "年報與法說列為主要關係企業及產品鏈節點。",
+                "sourceEvidenceIds": [
+                  "1319-P1-002",
+                  "1319-P3-005"
+                ],
+                "status": "READY"
+              },
+              {
+                "id": "tong-yang-holding",
+                "name": "Tong Yang Holding Corporation",
+                "holdingPercent": 100,
+                "business": "中國 OEM 投資平台",
+                "materiality": "BOTH",
+                "materialityReason": "承接中國 OEM 子公司與海外營運布局。",
+                "sourceEvidenceIds": [
+                  "1319-P1-002",
+                  "1319-P3-005"
+                ],
+                "status": "READY"
+              },
+              {
+                "id": "how-bond",
+                "name": "How Bond Investment",
+                "holdingPercent": 100,
+                "business": "AM 塑膠件投資",
+                "materiality": "STRATEGIC",
+                "materialityReason": "與 AM 產品供應及海外布局相關。",
+                "sourceEvidenceIds": [
+                  "1319-P1-002",
+                  "1319-P3-005"
+                ],
+                "status": "READY"
+              }
+            ],
+            "investmentStatus": "READY",
+            "investmentReason": "年報與法說有投資清冊及營運關係；被投資公司獨立獲利貢獻仍需依各期附註分別閱讀。"
+          }
+        },
+        "researchHistory": {
+          "method": "本輪以 2025 年報、最新兩季季報、最新兩次法說會及官方 IR 索引為固定最低查核範圍；第三方文字鏡像僅作文件定位與交叉核對。",
+          "coverage": [
+            {
+              "scope": "去年的年報",
+              "period": "FY2025",
+              "status": "已取得",
+              "evidenceIds": [
+                "1319-P1-002"
+              ]
+            },
+            {
+              "scope": "最新兩季季報",
+              "period": "2026-Q1、2026-Q2",
+              "status": "已取得並核對固定附註範圍",
+              "evidenceIds": [
+                "1319-P1-003",
+                "1319-P1-004"
+              ]
+            },
+            {
+              "scope": "最新兩次法說會",
+              "period": "2026-03-10、2026-09-16/17",
+              "status": "簡報已取得；逐字稿／問答未取得",
+              "evidenceIds": [
+                "1319-P1-006",
+                "1319-P3-005"
+              ]
+            },
+            {
+              "scope": "二次缺口補查",
+              "period": "截至 2026-10-10",
+              "status": "已查年報、季報、法說、轉投資與供應鏈欄位；長約覆蓋率及產品別獲利仍未形成數字",
+              "evidenceIds": [
+                "1319-P1-002",
+                "1319-P1-003",
+                "1319-P1-004",
+                "1319-P1-006",
+                "1319-P3-005"
+              ]
+            }
+          ],
+          "limitations": [
+            "沒有完整法說逐字稿與問答",
+            "長約覆蓋率未揭露",
+            "產品別獲利未取得一致正式口徑",
+            "同業成本曲線未形成",
+            "正式題材獨立財務貢獻未揭露"
+          ]
+        }
+      },
+      "sourceSection": [
+        "revenue_structure",
+        "research_history"
+      ],
+      "evidenceIds": [
+        "1319-P1-002",
+        "1319-P1-003",
+        "1319-P1-004",
+        "1319-P3-005",
+        "1319-P2-001",
+        "1319-P1-002",
+        "1319-P1-003",
+        "1319-P1-004",
+        "1319-P1-006",
+        "1319-P3-005"
+      ]
+    },
+    {
+      "id": "sources_and_limitations",
+      "title": "研究來源與資料限制",
+      "summary": "保留研究包實際使用的來源、日期、原始連結與資料缺口。",
+      "updatedAt": "2026-10-10",
+      "periods": [
+        "2026-10-10"
+      ],
+      "sources": [
+        {
+          "id": "1319-P2-001",
+          "title": "官方索引頁；個別文件仍依原始報告或簡報逐一核對。",
+          "documentTitle": "官方索引頁；個別文件仍依原始報告或簡報逐一核對。",
+          "type": "OFFICIAL_IR_PAGE",
+          "publisher": "東陽事業集團",
+          "publishedAt": "2026-10-08",
+          "documentDate": "2026-10-08",
+          "retrievedAt": "2026-10-11",
+          "url": "https://www.tyg.com.tw/en/investor_relations/",
+          "status": "AVAILABLE",
+          "claim": "公司投資人專區確認 1319.TW、公司名稱、官方網站、2025 年營運摘要，以及 2026/09/16-17 與 2026/03/10 兩次法人活動日期。",
+          "tier": "P2"
+        },
+        {
+          "id": "1319-P1-002",
+          "title": "研究截至日前最近完整年度年報。",
+          "documentTitle": "研究截至日前最近完整年度年報。",
+          "type": "OFFICIAL_ANNUAL_REPORT",
+          "publisher": "東陽實業廠股份有限公司",
+          "publishedAt": "2026-05-28",
+          "documentDate": "2026-05-28",
+          "retrievedAt": "2026-10-11",
+          "url": "https://www.tyg.com.tw/?sdm_process_download=1&download_id=3637",
+          "status": "AVAILABLE",
+          "claim": "2025 年報揭露公司主要產品、AM/OEM 業務、全球市場、供應商與客戶揭露、研發方向、競爭位置、重大風險、轉投資清冊及 2025 年合併營收。",
+          "tier": "P1"
+        },
+        {
+          "id": "1319-P1-003",
+          "title": "官方財報下載入口；未取得逐字法說問答。",
+          "documentTitle": "官方財報下載入口；未取得逐字法說問答。",
+          "type": "OFFICIAL_Q1_FINANCIAL_REPORT",
+          "publisher": "東陽實業廠股份有限公司",
+          "publishedAt": "2026-05-13",
+          "documentDate": "2026-05-13",
+          "retrievedAt": "2026-10-11",
+          "url": "https://www.tyg.com.tw/?sdm_process_download=1&download_id=3612",
+          "status": "AVAILABLE",
+          "claim": "2026 第一季合併財務報告及附註列為固定查核範圍；本輪以其核對財務期間、資產負債、損益、現金流、部門與投資揭露。",
+          "tier": "P1"
+        },
+        {
+          "id": "1319-P1-004",
+          "title": "官方財報下載入口；產品別獲利與長約覆蓋率未見可安全填入的明確揭露。",
+          "documentTitle": "官方財報下載入口；產品別獲利與長約覆蓋率未見可安全填入的明確揭露。",
+          "type": "OFFICIAL_Q2_FINANCIAL_REPORT",
+          "publisher": "東陽實業廠股份有限公司",
+          "publishedAt": "2026-08-13",
+          "documentDate": "2026-08-13",
+          "retrievedAt": "2026-10-11",
+          "url": "https://www.tyg.com.tw/?sdm_process_download=1&download_id=3613",
+          "status": "AVAILABLE",
+          "claim": "2026 第二季合併財務報告及附註列為最新季報查核範圍；本輪以其核對 H1 財務口徑、部門／投資附註、合約、存貨與重大事項。",
+          "tier": "P1"
+        },
+        {
+          "id": "1319-P1-006",
+          "title": "僅取得簡報；未取得完整逐字稿或問答文字。",
+          "documentTitle": "僅取得簡報；未取得完整逐字稿或問答文字。",
+          "type": "MOPS_IR_PRESENTATION",
+          "publisher": "公開資訊觀測站／東陽實業廠股份有限公司",
+          "publishedAt": "2026-03-10",
+          "documentDate": "2026-03-10",
+          "retrievedAt": "2026-10-11",
+          "url": "https://mopsov.twse.com.tw/nas/STR/131920260304M001.pdf",
+          "status": "AVAILABLE",
+          "claim": "2026/03/10 法說簡報作為前一次法說內容，與年報、Q1/Q2 季報交叉檢查營運展望、產品、產能、客戶、成本與管理層說法。",
+          "tier": "P1"
+        },
+        {
+          "id": "1319-P2-008",
+          "title": "前端只需保留公司官方網站入口。",
+          "documentTitle": "前端只需保留公司官方網站入口。",
+          "type": "OFFICIAL_COMPANY_WEBSITE",
+          "publisher": "東陽事業集團",
+          "publishedAt": null,
+          "documentDate": null,
+          "retrievedAt": "2026-10-11",
+          "url": "https://www.tyg.com.tw/",
+          "status": "AVAILABLE",
+          "claim": "公司官方網站作為前端對外可呈現的公司入口來源；完整證據細節仍保留於內部研究包。",
+          "tier": "P2"
+        }
+      ],
+      "gaps": [
+        {
+          "fieldPath": "revenue_structure.longTermContractCoverage",
+          "status": "NOT_DISCLOSED",
+          "reason": "年報、最新兩季季報與最新兩次法說簡報未提供可驗證的長約覆蓋率比例、金額或合約量；質性客戶合作不能反推。",
+          "evidenceIds": [
+            "1319-P1-002",
+            "1319-P1-003",
+            "1319-P1-004",
+            "1319-P1-006",
+            "1319-P3-005"
+          ]
+        },
+        {
+          "fieldPath": "revenue_structure.productLevelProfit",
+          "status": "NOT_DISCLOSED",
+          "reason": "可取得 AM/OEM 及公司層級毛利資訊，但未取得完整產品別毛利或營業利益，不能以營收組合替代。",
+          "evidenceIds": [
+            "1319-P1-002",
+            "1319-P1-004",
+            "1319-P3-005"
+          ]
+        },
+        {
+          "fieldPath": "competitive_position.peerCostCurve",
+          "status": "MISSING",
+          "reason": "已列候選同業，但沒有至少兩家在同產品、同期間、同成本定義下的可比成本資料，因此不形成成本曲線。",
+          "evidenceIds": [
+            "1319-P1-002",
+            "1319-P3-007"
+          ]
+        },
+        {
+          "fieldPath": "topicResearch.topicSpecificFinancialContribution",
+          "status": "NOT_DISCLOSED",
+          "reason": "公司公開財務資料以 AM/OEM、地區或公司層級呈現，未將 EV、ADAS 或車用電子正式題材獨立拆分。",
+          "evidenceIds": [
+            "1319-P1-003",
+            "1319-P1-004",
+            "1319-P3-005"
+          ]
+        },
+        {
+          "fieldPath": "researchHistory.latestConferenceTranscripts",
+          "status": "SOURCE_UNAVAILABLE",
+          "reason": "本輪取得最新兩次法說簡報與官方索引，但未取得可核對的完整逐字稿／問答文字。",
+          "evidenceIds": [
+            "1319-P2-001",
+            "1319-P1-006",
+            "1319-P3-005"
+          ]
+        }
+      ],
+      "conflicts": [],
+      "uncertainties": [
+        "長約覆蓋率未取得可驗證比例或金額",
+        "產品別毛利／營業利益未取得完整可比口徑",
+        "正式題材獨立收入與獲利未揭露",
+        "同業成本曲線尚未形成一致的產品、期間與成本口徑",
+        "市場占有率部分為公司／管理層揭露，與第三方統計仍需分開標示",
+        "競爭優勢不等於未來獲利保證"
+      ],
+      "sourceSection": [
+        "company_positioning",
+        "products_services",
+        "revenue_structure",
+        "supply_chain",
+        "competitive_position",
+        "growth_drivers",
+        "risks",
+        "topic_research",
+        "research_history"
+      ],
+      "evidenceIds": [
+        "1319-P2-001",
+        "1319-P1-002",
+        "1319-P3-005",
+        "1319-P1-002",
+        "1319-P3-005",
+        "1319-P1-002",
+        "1319-P1-003",
+        "1319-P1-004",
+        "1319-P3-005",
+        "1319-P1-002",
+        "1319-P3-005",
+        "1319-P1-002",
+        "1319-P3-005",
+        "1319-P3-007",
+        "1319-P1-002",
+        "1319-P3-005",
+        "1319-P1-006",
+        "1319-P1-002",
+        "1319-P2-001",
+        "1319-P3-005",
+        "1319-P1-002",
+        "1319-P1-003",
+        "1319-P1-004",
+        "1319-P3-005",
+        "1319-P2-001",
+        "1319-P1-002",
+        "1319-P1-003",
+        "1319-P1-004",
+        "1319-P1-006",
+        "1319-P3-005"
+      ]
+    }
+  ],
+  "topicBoundary": {
+    "formalTopics": [
+      {
+        "topicId": "1f0d1fd6-a41b-4baa-836b-d0461d30e11e",
+        "topicName": "電動車／EV",
+        "relationType": "SECONDARY",
+        "structuralRole": "RELATED",
+        "approvalState": "APPROVED"
+      },
+      {
+        "topicId": "8ab347f8-2ab4-4d68-bbf0-bc026d8bec8e",
+        "topicName": "其他車用電子",
+        "relationType": "PRIMARY",
+        "structuralRole": "REPRESENTATIVE",
+        "approvalState": "APPROVED"
+      },
+      {
+        "topicId": "9828f439-2ced-4b49-9d9e-8016b5676e1c",
+        "topicName": "ADAS",
+        "relationType": "SECONDARY",
+        "structuralRole": "RELATED",
+        "approvalState": "APPROVED"
+      }
+    ],
+    "researchObservations": [
+      {
+        "name": "既有正式關聯需以產品導入與量產證據持續驗證",
+        "summary": "年報與法說揭露電動車前端、智慧座艙、發光格柵及相關電子／控制研發，但本輪沒有把研發方向擴寫成新增題材。",
+        "status": "RESEARCH_OBSERVATION",
+        "sourceEvidenceIds": [
+          "1319-P1-002",
+          "1319-P3-005"
+        ]
+      },
+      {
+        "name": "題材獨立財務貢獻未揭露",
+        "summary": "AM、OEM 與公司層級財務資料可呈現，但不能把題材名稱直接對應到收入或獲利。",
+        "status": "UNDISCLOSED",
+        "sourceEvidenceIds": [
+          "1319-P1-003",
+          "1319-P1-004",
+          "1319-P3-005"
+        ]
+      }
+    ],
+    "formalTopicMutation": "NO",
+    "fullResearch": {
+      "existingFormalTopics": [
+        {
+          "topicId": "1f0d1fd6-a41b-4baa-836b-d0461d30e11e",
+          "topicName": "電動車／EV",
+          "relationType": "SECONDARY",
+          "structuralRole": "RELATED",
+          "approvalState": "APPROVED"
+        },
+        {
+          "topicId": "8ab347f8-2ab4-4d68-bbf0-bc026d8bec8e",
+          "topicName": "其他車用電子",
+          "relationType": "PRIMARY",
+          "structuralRole": "REPRESENTATIVE",
+          "approvalState": "APPROVED"
+        },
+        {
+          "topicId": "9828f439-2ced-4b49-9d9e-8016b5676e1c",
+          "topicName": "ADAS",
+          "relationType": "SECONDARY",
+          "structuralRole": "RELATED",
+          "approvalState": "APPROVED"
+        }
+      ],
+      "formalCandidates": [],
+      "researchObservations": [
+        {
+          "name": "既有正式關聯需以產品導入與量產證據持續驗證",
+          "summary": "年報與法說揭露電動車前端、智慧座艙、發光格柵及相關電子／控制研發，但本輪沒有把研發方向擴寫成新增題材。",
+          "status": "RESEARCH_OBSERVATION",
+          "sourceEvidenceIds": [
+            "1319-P1-002",
+            "1319-P3-005"
+          ]
+        },
+        {
+          "name": "題材獨立財務貢獻未揭露",
+          "summary": "AM、OEM 與公司層級財務資料可呈現，但不能把題材名稱直接對應到收入或獲利。",
+          "status": "UNDISCLOSED",
+          "sourceEvidenceIds": [
+            "1319-P1-003",
+            "1319-P1-004",
+            "1319-P3-005"
+          ]
+        }
+      ],
+      "reviewCandidates": [],
+      "formalTopicMutation": "NO"
+    }
+  },
+  "limitations": [
+    {
+      "fieldPath": "revenue_structure.longTermContractCoverage",
+      "status": "NOT_DISCLOSED",
+      "reason": "年報、最新兩季季報與最新兩次法說簡報未提供可驗證的長約覆蓋率比例、金額或合約量；質性客戶合作不能反推。",
+      "evidenceIds": [
+        "1319-P1-002",
+        "1319-P1-003",
+        "1319-P1-004",
+        "1319-P1-006",
+        "1319-P3-005"
+      ]
+    },
+    {
+      "fieldPath": "revenue_structure.productLevelProfit",
+      "status": "NOT_DISCLOSED",
+      "reason": "可取得 AM/OEM 及公司層級毛利資訊，但未取得完整產品別毛利或營業利益，不能以營收組合替代。",
+      "evidenceIds": [
+        "1319-P1-002",
+        "1319-P1-004",
+        "1319-P3-005"
+      ]
+    },
+    {
+      "fieldPath": "competitive_position.peerCostCurve",
+      "status": "MISSING",
+      "reason": "已列候選同業，但沒有至少兩家在同產品、同期間、同成本定義下的可比成本資料，因此不形成成本曲線。",
+      "evidenceIds": [
+        "1319-P1-002",
+        "1319-P3-007"
+      ]
+    },
+    {
+      "fieldPath": "topicResearch.topicSpecificFinancialContribution",
+      "status": "NOT_DISCLOSED",
+      "reason": "公司公開財務資料以 AM/OEM、地區或公司層級呈現，未將 EV、ADAS 或車用電子正式題材獨立拆分。",
+      "evidenceIds": [
+        "1319-P1-003",
+        "1319-P1-004",
+        "1319-P3-005"
+      ]
+    },
+    {
+      "fieldPath": "researchHistory.latestConferenceTranscripts",
+      "status": "SOURCE_UNAVAILABLE",
+      "reason": "本輪取得最新兩次法說簡報與官方索引，但未取得可核對的完整逐字稿／問答文字。",
+      "evidenceIds": [
+        "1319-P2-001",
+        "1319-P1-006",
+        "1319-P3-005"
+      ]
+    }
+  ]
+}
+
+

@@ -1,0 +1,3145 @@
+{
+  "schemaVersion": "company-research-view.v2",
+  "inputSchemaVersion": "stock-research-bootstrap.v1",
+  "researchId": "SRD-1303-20261010-001",
+  "stock": {
+    "code": "1303",
+    "nameZh": "南亞",
+    "market": "TPE"
+  },
+  "researchVersion": "v1.0-official-annual-q2-ir-refresh",
+  "researchAsOf": "2026-10-10",
+  "coverageStatus": "PARTIAL",
+  "publicationStatus": "UNPUBLISHED",
+  "summary": "南亞是以塑膠加工、化工原料、電子材料與聚酯產品為核心的綜合材料公司；2026 年上半年獲利改善同時受到電子材料本業與轉投資收益影響。",
+  "groups": [
+    {
+      "id": "company_overview",
+      "title": "公司研究概況",
+      "summary": "南亞是多事業群綜合材料製造商；電子材料是目前較明確的成長方向，但獲利仍需拆開觀察本業、化工／聚酯循環與轉投資收益。",
+      "positioning": "南亞是以塑膠加工、化工原料、電子材料與聚酯為核心的多事業群綜合材料製造商，透過多元產品與全球生產／銷售網路服務電子、化工、聚酯及塑膠加工市場。理解公司獲利時，需把各事業群本業表現與南亞科技、台塑石化等轉投資／權益法收益分開觀察；電子材料目前是較明確的營運方向，但不能用單一 CCL 或塑化產品代表全公司。",
+      "facts": [
+        "官方公司資料確認股票代號 1303、上市身分、主要業務與公司定位。",
+        "2025 年度年報及 2026 年兩季財報顯示公司為多事業群營運，不應只以單一 CCL 或單一塑化產品理解。"
+      ],
+      "operatingModel": "多事業群製造與全球生產／銷售網路並行，收入與獲利需依事業群及投資收益分開觀察。",
+      "coreBusiness": "本業涵蓋電子材料、塑膠產品、塑膠原料／化工與聚酯；轉投資收益另列，不併入產品營業利益。",
+      "products": "產品由玻纖、樹脂、銅箔、CCL、PCB、化工原料、聚酯與塑膠加工品組成。",
+      "industryRole": "同時位於電子材料、化工、聚酯與塑膠加工產業鏈，不能用單一 CCL 或單一塑化產品代表全公司。",
+      "coreObservation": "電子材料本業改善與轉投資收益同時影響 2026 年上半年獲利，兩者不可混為同一成長來源。",
+      "fullResearch": {
+        "summary": "南亞是以塑膠加工、化工原料、電子材料與聚酯產品為核心的綜合材料公司；2026 年上半年獲利改善同時受到電子材料本業與轉投資收益影響。",
+        "facts": [
+          "官方公司資料確認股票代號 1303、上市身分、主要業務與公司定位。",
+          "2025 年度年報及 2026 年兩季財報顯示公司為多事業群營運，不應只以單一 CCL 或單一塑化產品理解。"
+        ],
+        "inference": "電子材料是目前最明確的營運成長方向，但公司獲利仍包含化工／聚酯循環與轉投資收益，需拆開觀察。",
+        "v2": {
+          "summary": "南亞是多事業群綜合材料製造商；電子材料是目前較明確的成長方向，但獲利仍需拆開觀察本業、化工／聚酯循環與轉投資收益。",
+          "positioning": {
+            "summary": "以塑膠加工、化工原料、電子材料與聚酯為核心的綜合材料公司。",
+            "status": "READY",
+            "evidenceIds": [
+              "1303-P2-001",
+              "1303-P2-002"
+            ]
+          },
+          "operatingModel": {
+            "summary": "多事業群製造與全球生產／銷售網路並行，收入與獲利需依事業群及投資收益分開觀察。",
+            "status": "READY",
+            "evidenceIds": [
+              "1303-P2-002",
+              "1303-P2-003"
+            ]
+          },
+          "coreBusiness": {
+            "summary": "本業涵蓋電子材料、塑膠產品、塑膠原料／化工與聚酯；轉投資收益另列，不併入產品營業利益。",
+            "status": "READY",
+            "evidenceIds": [
+              "1303-P2-002",
+              "1303-P2-003",
+              "1303-P2-009"
+            ]
+          },
+          "products": {
+            "summary": "產品由玻纖、樹脂、銅箔、CCL、PCB、化工原料、聚酯與塑膠加工品組成。",
+            "status": "READY",
+            "evidenceIds": [
+              "1303-P2-001",
+              "1303-P2-002",
+              "1303-P2-005"
+            ]
+          },
+          "industryRole": {
+            "summary": "同時位於電子材料、化工、聚酯與塑膠加工產業鏈，不能用單一 CCL 或單一塑化產品代表全公司。",
+            "status": "READY",
+            "evidenceIds": [
+              "1303-P2-002",
+              "1303-P2-005"
+            ]
+          },
+          "coreObservation": {
+            "summary": "電子材料本業改善與轉投資收益同時影響 2026 年上半年獲利，兩者不可混為同一成長來源。",
+            "status": "READY",
+            "evidenceIds": [
+              "1303-P2-003",
+              "1303-P2-005"
+            ]
+          }
+        }
+      },
+      "sourceSection": [
+        "company_positioning",
+        "products_services"
+      ],
+      "evidenceIds": [
+        "1303-P2-001",
+        "1303-P2-002",
+        "1303-P2-003",
+        "1303-P2-005",
+        "1303-P2-001",
+        "1303-P2-002",
+        "1303-P2-004",
+        "1303-P2-005"
+      ]
+    },
+    {
+      "id": "business_structure",
+      "title": "產品與營收結構",
+      "summary": "2026 年上半年電子材料是最大事業群；部門損益與轉投資／權益法收益必須分開閱讀。",
+      "businessGroups": [
+        {
+          "id": "electronic-materials",
+          "name": "電子材料",
+          "summary": "玻纖、樹脂、銅箔、CCL 與 PCB 材料鏈。",
+          "products": [
+            "product-glass-fiber-yarn",
+            "product-glass-fiber-cloth",
+            "product-epoxy-resin",
+            "product-copper-foil",
+            "product-ccl",
+            "product-pcb"
+          ],
+          "applications": [
+            "AI／雲端",
+            "高速運算",
+            "伺服器",
+            "網通",
+            "車用板"
+          ],
+          "sourceEvidenceIds": [
+            "1303-P2-002",
+            "1303-P2-005"
+          ],
+          "status": "READY"
+        },
+        {
+          "id": "chemical",
+          "name": "塑膠原料／化工",
+          "summary": "乙二醇、雙酚 A、可塑劑等化工原料與加工材料。",
+          "products": [
+            "product-eg",
+            "product-bpa",
+            "product-plasticizer"
+          ],
+          "applications": [
+            "化工原料",
+            "工業用途"
+          ],
+          "sourceEvidenceIds": [
+            "1303-P2-002",
+            "1303-P2-003"
+          ],
+          "status": "READY"
+        },
+        {
+          "id": "polyester",
+          "name": "聚酯",
+          "summary": "聚酯粒、聚酯纖維與聚酯膜產品。",
+          "products": [
+            "product-polyester"
+          ],
+          "applications": [
+            "紡織",
+            "包材",
+            "工業用途"
+          ],
+          "sourceEvidenceIds": [
+            "1303-P2-002",
+            "1303-P2-005"
+          ],
+          "status": "READY"
+        },
+        {
+          "id": "plastic-products",
+          "name": "塑膠產品",
+          "summary": "塑膠加工品與相關終端材料。",
+          "products": [
+            "product-plastic-processing"
+          ],
+          "applications": [
+            "建材",
+            "包材",
+            "工業用途"
+          ],
+          "sourceEvidenceIds": [
+            "1303-P2-001",
+            "1303-P2-002"
+          ],
+          "status": "READY"
+        }
+      ],
+      "products": [
+        {
+          "id": "product-glass-fiber-yarn",
+          "name": "玻纖絲",
+          "businessGroupId": "electronic-materials",
+          "applications": [
+            "電子材料"
+          ],
+          "sourceEvidenceIds": [
+            "1303-P2-002",
+            "1303-P2-005"
+          ],
+          "status": "READY"
+        },
+        {
+          "id": "product-glass-fiber-cloth",
+          "name": "玻纖布",
+          "businessGroupId": "electronic-materials",
+          "applications": [
+            "CCL",
+            "電子材料"
+          ],
+          "sourceEvidenceIds": [
+            "1303-P2-002",
+            "1303-P2-005"
+          ],
+          "status": "READY"
+        },
+        {
+          "id": "product-epoxy-resin",
+          "name": "環氧樹脂",
+          "businessGroupId": "electronic-materials",
+          "applications": [
+            "CCL",
+            "電子材料"
+          ],
+          "sourceEvidenceIds": [
+            "1303-P2-002",
+            "1303-P2-004",
+            "1303-P2-005"
+          ],
+          "status": "READY"
+        },
+        {
+          "id": "product-copper-foil",
+          "name": "銅箔",
+          "businessGroupId": "electronic-materials",
+          "applications": [
+            "CCL",
+            "PCB"
+          ],
+          "sourceEvidenceIds": [
+            "1303-P2-002",
+            "1303-P2-005"
+          ],
+          "status": "READY"
+        },
+        {
+          "id": "product-ccl",
+          "name": "銅箔基板（CCL）",
+          "businessGroupId": "electronic-materials",
+          "applications": [
+            "高速運算",
+            "伺服器",
+            "網通"
+          ],
+          "sourceEvidenceIds": [
+            "1303-P2-002",
+            "1303-P2-005"
+          ],
+          "status": "READY"
+        },
+        {
+          "id": "product-pcb",
+          "name": "印刷電路板（PCB）",
+          "businessGroupId": "electronic-materials",
+          "applications": [
+            "伺服器",
+            "車用板",
+            "電子產品"
+          ],
+          "sourceEvidenceIds": [
+            "1303-P2-002",
+            "1303-P2-004"
+          ],
+          "status": "READY"
+        },
+        {
+          "id": "product-eg",
+          "name": "乙二醇（EG）",
+          "businessGroupId": "chemical",
+          "applications": [
+            "化工原料"
+          ],
+          "sourceEvidenceIds": [
+            "1303-P2-002",
+            "1303-P2-003"
+          ],
+          "status": "READY"
+        },
+        {
+          "id": "product-bpa",
+          "name": "雙酚 A（BPA）",
+          "businessGroupId": "chemical",
+          "applications": [
+            "化工原料"
+          ],
+          "sourceEvidenceIds": [
+            "1303-P2-002",
+            "1303-P2-003"
+          ],
+          "status": "READY"
+        },
+        {
+          "id": "product-plasticizer",
+          "name": "可塑劑",
+          "businessGroupId": "chemical",
+          "applications": [
+            "塑膠加工"
+          ],
+          "sourceEvidenceIds": [
+            "1303-P2-002"
+          ],
+          "status": "READY"
+        },
+        {
+          "id": "product-polyester",
+          "name": "聚酯粒／纖維／膜",
+          "businessGroupId": "polyester",
+          "applications": [
+            "紡織",
+            "包材"
+          ],
+          "sourceEvidenceIds": [
+            "1303-P2-002",
+            "1303-P2-005"
+          ],
+          "status": "READY"
+        },
+        {
+          "id": "product-plastic-processing",
+          "name": "塑膠加工品",
+          "businessGroupId": "plastic-products",
+          "applications": [
+            "建材",
+            "包材",
+            "工業用途"
+          ],
+          "sourceEvidenceIds": [
+            "1303-P2-001",
+            "1303-P2-002"
+          ],
+          "status": "READY"
+        }
+      ],
+      "revenue": {
+        "datasets": [
+          {
+            "id": "revenue-h1-2026-external-segment",
+            "period": "2026-01-01/2026-06-30",
+            "periodType": "H1",
+            "reportingBasis": "CONSOLIDATED_EXTERNAL_CUSTOMER_REVENUE_BY_BUSINESS_GROUP",
+            "currency": "TWD",
+            "unit": "TWD_100_MILLION",
+            "total": 1522.43,
+            "items": [
+              {
+                "id": "plastic-products",
+                "name": "塑膠產品",
+                "value": 193.23,
+                "share": 0.126922,
+                "businessGroupId": "plastic-products",
+                "sourceEvidenceIds": [
+                  "1303-P2-003"
+                ]
+              },
+              {
+                "id": "chemical",
+                "name": "塑膠原料／化工",
+                "value": 256.99,
+                "share": 0.168803,
+                "businessGroupId": "chemical",
+                "sourceEvidenceIds": [
+                  "1303-P2-003"
+                ]
+              },
+              {
+                "id": "electronic-materials",
+                "name": "電子材料",
+                "value": 801.98,
+                "share": 0.526776,
+                "businessGroupId": "electronic-materials",
+                "sourceEvidenceIds": [
+                  "1303-P2-003"
+                ]
+              },
+              {
+                "id": "polyester",
+                "name": "聚酯",
+                "value": 240.18,
+                "share": 0.157761,
+                "businessGroupId": "polyester",
+                "sourceEvidenceIds": [
+                  "1303-P2-003"
+                ]
+              },
+              {
+                "id": "other",
+                "name": "其他",
+                "value": 30.05,
+                "share": 0.019738,
+                "businessGroupId": null,
+                "sourceEvidenceIds": [
+                  "1303-P2-003"
+                ]
+              }
+            ],
+            "sourceEvidenceIds": [
+              "1303-P2-003"
+            ],
+            "reconciliation": "分類金額合計等於 1,522.43 億元；各分類同為 2026 H1 合併外部客戶收入，適合營收結構圖，不代表獲利占比。",
+            "chartEligible": true,
+            "status": "READY"
+          }
+        ],
+        "metrics": [],
+        "narrative": "2026 年上半年外部收入約 1,522.43 億元：塑膠產品約 193.23 億元、塑膠原料／化工約 256.99 億元、電子材料約 801.98 億元、聚酯約 240.18 億元、其他約 30.05 億元。電子材料約占 52.7%，為最大業務群。",
+        "basis": "原研究包提供的事業群／產品文字說明；未將文字自行解析成未經驗證的數字。",
+        "status": "PARTIAL"
+      },
+      "profit": {
+        "datasets": [
+          {
+            "id": "profit-h1-2026-segment-pretax",
+            "period": "2026-01-01/2026-06-30",
+            "periodType": "H1",
+            "reportingBasis": "CONSOLIDATED_SEGMENT_PRETAX_PROFIT_LOSS",
+            "currency": "TWD",
+            "unit": "TWD_100_MILLION",
+            "total": 468.44,
+            "items": [
+              {
+                "id": "plastic-products",
+                "name": "塑膠產品",
+                "value": 19.2,
+                "businessGroupId": "plastic-products",
+                "sourceEvidenceIds": [
+                  "1303-P2-003"
+                ]
+              },
+              {
+                "id": "chemical",
+                "name": "塑膠原料／化工",
+                "value": -14.52,
+                "businessGroupId": "chemical",
+                "sourceEvidenceIds": [
+                  "1303-P2-003"
+                ]
+              },
+              {
+                "id": "electronic-materials",
+                "name": "電子材料",
+                "value": 138.07,
+                "businessGroupId": "electronic-materials",
+                "sourceEvidenceIds": [
+                  "1303-P2-003"
+                ]
+              },
+              {
+                "id": "polyester",
+                "name": "聚酯",
+                "value": 4.75,
+                "businessGroupId": "polyester",
+                "sourceEvidenceIds": [
+                  "1303-P2-003"
+                ]
+              },
+              {
+                "id": "other",
+                "name": "其他",
+                "value": 400.84,
+                "businessGroupId": null,
+                "sourceEvidenceIds": [
+                  "1303-P2-003"
+                ]
+              },
+              {
+                "id": "eliminations",
+                "name": "抵銷",
+                "value": -79.9,
+                "businessGroupId": null,
+                "sourceEvidenceIds": [
+                  "1303-P2-003"
+                ]
+              }
+            ],
+            "sourceEvidenceIds": [
+              "1303-P2-003"
+            ],
+            "reconciliation": "這是部門損益／稅前口徑，不是產品別毛利；其他部門含重要權益法／轉投資因素，禁止當成單一產品獲利圖。",
+            "chartEligible": false,
+            "status": "PARTIAL"
+          }
+        ],
+        "metrics": [],
+        "narrative": "同一份季報的上半年部門損益約為：塑膠產品 19.20 億元、塑膠原料／化工 -14.52 億元、電子材料 138.07 億元、聚酯 4.75 億元、其他 400.84 億元、抵銷 -79.90 億元；其他部門包含重要轉投資／權益法因素，不等於單一產品獲利。",
+        "basis": "部門損益與產品別獲利分開保留；不得把其他部門或權益法收益視為單一產品獲利。",
+        "status": "PARTIAL"
+      },
+      "investments": {
+        "items": [
+          {
+            "id": "investment-nanya-technology",
+            "name": "南亞科技",
+            "stockCode": "2408",
+            "relationshipType": "轉投資公司",
+            "holdingPercent": 29.3,
+            "materiality": "BOTH",
+            "materialityReason": "研究資料指出其是 2026 H1 權益法收益的重要傳導來源；同時提供 DRAM／晶圓與電子材料鏈的策略關聯。",
+            "businessDescription": "DRAM 晶片及晶圓",
+            "financialImpact": "影響南亞權益法／業外獲利；2026 年第一季法說會橋接顯示，相較 2025 年第四季的權益法投資收益增加中，南亞科技貢獻約 43.8 億元；此為管理層變動橋接，不是南亞科技完整淨利，也未併入南亞電子材料營收。",
+            "strategicImpact": "與電子材料及半導體相關業務形成策略曝險。",
+            "accountingTreatment": null,
+            "sourceEvidenceIds": [
+              "1303-P2-003",
+              "1303-P2-005",
+              "1303-P2-009"
+            ],
+            "status": "PARTIAL"
+          },
+          {
+            "id": "investment-formosa-petrochemical",
+            "name": "台塑石化",
+            "stockCode": "6505",
+            "relationshipType": "轉投資公司",
+            "holdingPercent": 23.11,
+            "materiality": "BOTH",
+            "materialityReason": "研究資料指出其影響南亞業外／權益法收益，且使南亞承受石化景氣與原料鏈的策略曝險。",
+            "businessDescription": "汽柴油等石油製品及乙烯、丙烯等石油化學品",
+            "financialImpact": "影響南亞權益法／業外獲利；2026 年第一季法說會橋接顯示，相較 2025 年第四季的權益法投資收益增加中，台塑石化貢獻約 35.3 億元；此為管理層變動橋接，不是台塑石化完整淨利，也未在本 view 指派未逐項對帳的公司別金額。",
+            "strategicImpact": "連結石化原料與產品價格循環。",
+            "accountingTreatment": null,
+            "sourceEvidenceIds": [
+              "1303-P2-003",
+              "1303-P2-005",
+              "1303-P2-009"
+            ],
+            "status": "PARTIAL"
+          },
+          {
+            "id": "investment-nanya-pcb",
+            "name": "南亞電路板",
+            "stockCode": "8046",
+            "relationshipType": "轉投資公司",
+            "holdingPercent": 66.97,
+            "materiality": "STRATEGIC",
+            "materialityReason": "官方轉投資資料確認其為 PCB／IC 載板公司，與南亞電子材料鏈有直接策略關聯；本包沒有把其收入當作南亞本業。",
+            "businessDescription": "印刷電路板、IC 載板",
+            "financialImpact": null,
+            "strategicImpact": "補足電子材料與 PCB 應用鏈的策略位置。",
+            "accountingTreatment": null,
+            "sourceEvidenceIds": [
+              "1303-P2-009"
+            ],
+            "status": "PARTIAL"
+          }
+        ],
+        "summary": "南亞官方轉投資清單包含南亞科技、台塑石化、南亞電路板、台灣必成、南中石化、麥寮汽電、台朔重工、台塑資源及台塑新智能等。2026 年上半年獲利解讀中，南亞科技與台塑石化是主要權益法收益傳導來源；本包沒有把轉投資收益算成南亞電子材料本業。",
+        "materialityBasis": "財務＋策略重大性；本次 v1 內容仍以文字研究為主，未臆造持股或貢獻數字。",
+        "limitations": [
+          "土地開發獨立收入與毛利拆分",
+          "CCL、PCB、玻纖布等單一產品毛利／營業利益"
+        ],
+        "status": "PARTIAL",
+        "reason": "已結構化三項具有財務或策略重大性的主要轉投資；會計處理與各公司獨立獲利金額仍需逐一對帳，不在本次推估。"
+      },
+      "fullResearch": {
+        "known": "2026 年上半年外部收入約 1,522.43 億元：塑膠產品約 193.23 億元、塑膠原料／化工約 256.99 億元、電子材料約 801.98 億元、聚酯約 240.18 億元、其他約 30.05 億元。電子材料約占 52.7%，為最大業務群。",
+        "segmentProfit": "同一份季報的上半年部門損益約為：塑膠產品 19.20 億元、塑膠原料／化工 -14.52 億元、電子材料 138.07 億元、聚酯 4.75 億元、其他 400.84 億元、抵銷 -79.90 億元；其他部門包含重要轉投資／權益法因素，不等於單一產品獲利。",
+        "investmentProfitDrivers": "南亞官方轉投資清單包含南亞科技、台塑石化、南亞電路板、台灣必成、南中石化、麥寮汽電、台朔重工、台塑資源及台塑新智能等。2026 年上半年獲利解讀中，南亞科技與台塑石化是主要權益法收益傳導來源；本包沒有把轉投資收益算成南亞電子材料本業。",
+        "investmentCoverage": "已納入主要轉投資結構與獲利傳導，但未逐一完成所有轉投資公司／海外子公司的獨立研究包與收入獲利拆分。",
+        "notEstablished": [
+          "土地開發獨立收入與毛利拆分",
+          "CCL、PCB、玻纖布等單一產品毛利／營業利益"
+        ],
+        "reason": "官方財報提供事業群層級的收入與部門損益，但沒有提供所有單一產品的獲利橋接；本包不從收入占比反推產品毛利。",
+        "v2": {
+          "summary": {
+            "summary": "2026 年上半年電子材料是最大事業群；部門損益與轉投資／權益法收益必須分開閱讀。",
+            "status": "READY",
+            "evidenceIds": [
+              "1303-P2-003",
+              "1303-P2-005"
+            ]
+          },
+          "revenueDatasets": [
+            {
+              "id": "revenue-h1-2026-external-segment",
+              "period": "2026-01-01/2026-06-30",
+              "periodType": "H1",
+              "reportingBasis": "CONSOLIDATED_EXTERNAL_CUSTOMER_REVENUE_BY_BUSINESS_GROUP",
+              "currency": "TWD",
+              "unit": "TWD_100_MILLION",
+              "total": 1522.43,
+              "items": [
+                {
+                  "id": "plastic-products",
+                  "name": "塑膠產品",
+                  "value": 193.23,
+                  "share": 0.126922,
+                  "businessGroupId": "plastic-products",
+                  "sourceEvidenceIds": [
+                    "1303-P2-003"
+                  ]
+                },
+                {
+                  "id": "chemical",
+                  "name": "塑膠原料／化工",
+                  "value": 256.99,
+                  "share": 0.168803,
+                  "businessGroupId": "chemical",
+                  "sourceEvidenceIds": [
+                    "1303-P2-003"
+                  ]
+                },
+                {
+                  "id": "electronic-materials",
+                  "name": "電子材料",
+                  "value": 801.98,
+                  "share": 0.526776,
+                  "businessGroupId": "electronic-materials",
+                  "sourceEvidenceIds": [
+                    "1303-P2-003"
+                  ]
+                },
+                {
+                  "id": "polyester",
+                  "name": "聚酯",
+                  "value": 240.18,
+                  "share": 0.157761,
+                  "businessGroupId": "polyester",
+                  "sourceEvidenceIds": [
+                    "1303-P2-003"
+                  ]
+                },
+                {
+                  "id": "other",
+                  "name": "其他",
+                  "value": 30.05,
+                  "share": 0.019738,
+                  "businessGroupId": null,
+                  "sourceEvidenceIds": [
+                    "1303-P2-003"
+                  ]
+                }
+              ],
+              "sourceEvidenceIds": [
+                "1303-P2-003"
+              ],
+              "reconciliation": "分類金額合計等於 1,522.43 億元；各分類同為 2026 H1 合併外部客戶收入，適合營收結構圖，不代表獲利占比。",
+              "chartEligible": true,
+              "status": "READY"
+            }
+          ],
+          "profitDatasets": [
+            {
+              "id": "profit-h1-2026-segment-pretax",
+              "period": "2026-01-01/2026-06-30",
+              "periodType": "H1",
+              "reportingBasis": "CONSOLIDATED_SEGMENT_PRETAX_PROFIT_LOSS",
+              "currency": "TWD",
+              "unit": "TWD_100_MILLION",
+              "total": 468.44,
+              "items": [
+                {
+                  "id": "plastic-products",
+                  "name": "塑膠產品",
+                  "value": 19.2,
+                  "businessGroupId": "plastic-products",
+                  "sourceEvidenceIds": [
+                    "1303-P2-003"
+                  ]
+                },
+                {
+                  "id": "chemical",
+                  "name": "塑膠原料／化工",
+                  "value": -14.52,
+                  "businessGroupId": "chemical",
+                  "sourceEvidenceIds": [
+                    "1303-P2-003"
+                  ]
+                },
+                {
+                  "id": "electronic-materials",
+                  "name": "電子材料",
+                  "value": 138.07,
+                  "businessGroupId": "electronic-materials",
+                  "sourceEvidenceIds": [
+                    "1303-P2-003"
+                  ]
+                },
+                {
+                  "id": "polyester",
+                  "name": "聚酯",
+                  "value": 4.75,
+                  "businessGroupId": "polyester",
+                  "sourceEvidenceIds": [
+                    "1303-P2-003"
+                  ]
+                },
+                {
+                  "id": "other",
+                  "name": "其他",
+                  "value": 400.84,
+                  "businessGroupId": null,
+                  "sourceEvidenceIds": [
+                    "1303-P2-003"
+                  ]
+                },
+                {
+                  "id": "eliminations",
+                  "name": "抵銷",
+                  "value": -79.9,
+                  "businessGroupId": null,
+                  "sourceEvidenceIds": [
+                    "1303-P2-003"
+                  ]
+                }
+              ],
+              "sourceEvidenceIds": [
+                "1303-P2-003"
+              ],
+              "reconciliation": "這是部門損益／稅前口徑，不是產品別毛利；其他部門含重要權益法／轉投資因素，禁止當成單一產品獲利圖。",
+              "chartEligible": false,
+              "status": "PARTIAL"
+            }
+          ],
+          "financialMetrics": [
+            {
+              "id": "revenue-2025-annual",
+              "label": "合併營收",
+              "value": 2599.1,
+              "unit": "TWD_100_MILLION",
+              "currency": "TWD",
+              "period": "2025-01-01/2025-12-31",
+              "periodType": "ANNUAL",
+              "reportingBasis": "CONSOLIDATED",
+              "metricDefinition": "合併營業收入",
+              "sourceEvidenceIds": [
+                "1303-P2-002"
+              ],
+              "type": "FACT",
+              "status": "READY"
+            },
+            {
+              "id": "pretax-2025-annual",
+              "label": "稅前淨利",
+              "value": 64.6,
+              "unit": "TWD_100_MILLION",
+              "currency": "TWD",
+              "period": "2025-01-01/2025-12-31",
+              "periodType": "ANNUAL",
+              "reportingBasis": "CONSOLIDATED",
+              "metricDefinition": "合併稅前淨利",
+              "sourceEvidenceIds": [
+                "1303-P2-002"
+              ],
+              "type": "FACT",
+              "status": "READY"
+            },
+            {
+              "id": "revenue-2026-q1",
+              "label": "合併營收",
+              "value": 685.96,
+              "unit": "TWD_100_MILLION",
+              "currency": "TWD",
+              "period": "2026-01-01/2026-03-31",
+              "periodType": "Q1",
+              "reportingBasis": "CONSOLIDATED",
+              "metricDefinition": "合併營業收入",
+              "sourceEvidenceIds": [
+                "1303-P2-004"
+              ],
+              "type": "FACT",
+              "status": "READY"
+            },
+            {
+              "id": "pretax-2026-q1",
+              "label": "稅前淨利",
+              "value": 160.8,
+              "unit": "TWD_100_MILLION",
+              "currency": "TWD",
+              "period": "2026-01-01/2026-03-31",
+              "periodType": "Q1",
+              "reportingBasis": "CONSOLIDATED",
+              "metricDefinition": "合併稅前淨利",
+              "sourceEvidenceIds": [
+                "1303-P2-004"
+              ],
+              "type": "FACT",
+              "status": "READY"
+            },
+            {
+              "id": "attributable-profit-2026-q1",
+              "label": "歸屬母公司淨利",
+              "value": 146.75,
+              "unit": "TWD_100_MILLION",
+              "currency": "TWD",
+              "period": "2026-01-01/2026-03-31",
+              "periodType": "Q1",
+              "reportingBasis": "CONSOLIDATED_ATTRIBUTABLE_TO_PARENT",
+              "metricDefinition": "歸屬母公司業主之淨利",
+              "sourceEvidenceIds": [
+                "1303-P2-004"
+              ],
+              "type": "FACT",
+              "status": "READY"
+            },
+            {
+              "id": "eps-2026-q1",
+              "label": "每股盈餘",
+              "value": 1.8,
+              "unit": "TWD_PER_SHARE",
+              "currency": "TWD",
+              "period": "2026-01-01/2026-03-31",
+              "periodType": "Q1",
+              "reportingBasis": "CONSOLIDATED",
+              "metricDefinition": "基本每股盈餘",
+              "sourceEvidenceIds": [
+                "1303-P2-004"
+              ],
+              "type": "FACT",
+              "status": "READY"
+            },
+            {
+              "id": "revenue-2026-q2",
+              "label": "合併營收",
+              "value": 836.47,
+              "unit": "TWD_100_MILLION",
+              "currency": "TWD",
+              "period": "2026-04-01/2026-06-30",
+              "periodType": "Q2",
+              "reportingBasis": "CONSOLIDATED",
+              "metricDefinition": "合併營業收入",
+              "sourceEvidenceIds": [
+                "1303-P2-003"
+              ],
+              "type": "FACT",
+              "status": "READY"
+            },
+            {
+              "id": "eps-2026-q2",
+              "label": "每股盈餘",
+              "value": 3.37,
+              "unit": "TWD_PER_SHARE",
+              "currency": "TWD",
+              "period": "2026-04-01/2026-06-30",
+              "periodType": "Q2",
+              "reportingBasis": "CONSOLIDATED",
+              "metricDefinition": "基本每股盈餘",
+              "sourceEvidenceIds": [
+                "1303-P2-003"
+              ],
+              "type": "FACT",
+              "status": "READY"
+            },
+            {
+              "id": "revenue-2026-h1",
+              "label": "合併營收",
+              "value": 1522.43,
+              "unit": "TWD_100_MILLION",
+              "currency": "TWD",
+              "period": "2026-01-01/2026-06-30",
+              "periodType": "H1",
+              "reportingBasis": "CONSOLIDATED",
+              "metricDefinition": "合併營業收入",
+              "sourceEvidenceIds": [
+                "1303-P2-003"
+              ],
+              "type": "FACT",
+              "status": "READY"
+            },
+            {
+              "id": "pretax-2026-h1",
+              "label": "稅前淨利",
+              "value": 468.44,
+              "unit": "TWD_100_MILLION",
+              "currency": "TWD",
+              "period": "2026-01-01/2026-06-30",
+              "periodType": "H1",
+              "reportingBasis": "CONSOLIDATED",
+              "metricDefinition": "合併稅前淨利",
+              "sourceEvidenceIds": [
+                "1303-P2-003"
+              ],
+              "type": "FACT",
+              "status": "READY"
+            },
+            {
+              "id": "eps-2026-h1",
+              "label": "累計每股盈餘",
+              "value": 5.17,
+              "unit": "TWD_PER_SHARE",
+              "currency": "TWD",
+              "period": "2026-01-01/2026-06-30",
+              "periodType": "H1",
+              "reportingBasis": "CONSOLIDATED",
+              "metricDefinition": "累計基本每股盈餘",
+              "sourceEvidenceIds": [
+                "1303-P2-003"
+              ],
+              "type": "FACT",
+              "status": "READY"
+            },
+            {
+              "id": "equity-method-income-change-nanya-tech-q1-2026",
+              "label": "權益法投資收益增加貢獻（南亞科技）",
+              "value": 43.8,
+              "unit": "TWD_100_MILLION",
+              "currency": "TWD",
+              "period": "2026-Q1",
+              "periodType": "Q1",
+              "reportingBasis": "MANAGEMENT_IR_EQUITY_METHOD_INCOME_CHANGE_QOQ",
+              "metricDefinition": "2026 年第一季相較 2025 年第四季，管理層簡報所列權益法投資收益增加中的南亞科技貢獻；不是南亞科技完整淨利，也不是南亞公司本業營收。",
+              "comparisonPeriod": "2025-Q4",
+              "sourceEvidenceIds": [
+                "1303-P2-005"
+              ],
+              "type": "MANAGEMENT",
+              "status": "PARTIAL"
+            },
+            {
+              "id": "equity-method-income-change-formosa-petrochemical-q1-2026",
+              "label": "權益法投資收益增加貢獻（台塑石化）",
+              "value": 35.3,
+              "unit": "TWD_100_MILLION",
+              "currency": "TWD",
+              "period": "2026-Q1",
+              "periodType": "Q1",
+              "reportingBasis": "MANAGEMENT_IR_EQUITY_METHOD_INCOME_CHANGE_QOQ",
+              "metricDefinition": "2026 年第一季相較 2025 年第四季，管理層簡報所列權益法投資收益增加中的台塑石化貢獻；不是台塑石化完整淨利，也不是南亞公司本業營收。",
+              "comparisonPeriod": "2025-Q4",
+              "sourceEvidenceIds": [
+                "1303-P2-005"
+              ],
+              "type": "MANAGEMENT",
+              "status": "PARTIAL"
+            }
+          ],
+          "investmentItems": [
+            {
+              "id": "investment-nanya-technology",
+              "name": "南亞科技",
+              "stockCode": "2408",
+              "relationshipType": "轉投資公司",
+              "holdingPercent": 29.3,
+              "materiality": "BOTH",
+              "materialityReason": "研究資料指出其是 2026 H1 權益法收益的重要傳導來源；同時提供 DRAM／晶圓與電子材料鏈的策略關聯。",
+              "businessDescription": "DRAM 晶片及晶圓",
+              "financialImpact": "影響南亞權益法／業外獲利；2026 年第一季法說會橋接顯示，相較 2025 年第四季的權益法投資收益增加中，南亞科技貢獻約 43.8 億元；此為管理層變動橋接，不是南亞科技完整淨利，也未併入南亞電子材料營收。",
+              "strategicImpact": "與電子材料及半導體相關業務形成策略曝險。",
+              "accountingTreatment": null,
+              "sourceEvidenceIds": [
+                "1303-P2-003",
+                "1303-P2-005",
+                "1303-P2-009"
+              ],
+              "status": "PARTIAL"
+            },
+            {
+              "id": "investment-formosa-petrochemical",
+              "name": "台塑石化",
+              "stockCode": "6505",
+              "relationshipType": "轉投資公司",
+              "holdingPercent": 23.11,
+              "materiality": "BOTH",
+              "materialityReason": "研究資料指出其影響南亞業外／權益法收益，且使南亞承受石化景氣與原料鏈的策略曝險。",
+              "businessDescription": "汽柴油等石油製品及乙烯、丙烯等石油化學品",
+              "financialImpact": "影響南亞權益法／業外獲利；2026 年第一季法說會橋接顯示，相較 2025 年第四季的權益法投資收益增加中，台塑石化貢獻約 35.3 億元；此為管理層變動橋接，不是台塑石化完整淨利，也未在本 view 指派未逐項對帳的公司別金額。",
+              "strategicImpact": "連結石化原料與產品價格循環。",
+              "accountingTreatment": null,
+              "sourceEvidenceIds": [
+                "1303-P2-003",
+                "1303-P2-005",
+                "1303-P2-009"
+              ],
+              "status": "PARTIAL"
+            },
+            {
+              "id": "investment-nanya-pcb",
+              "name": "南亞電路板",
+              "stockCode": "8046",
+              "relationshipType": "轉投資公司",
+              "holdingPercent": 66.97,
+              "materiality": "STRATEGIC",
+              "materialityReason": "官方轉投資資料確認其為 PCB／IC 載板公司，與南亞電子材料鏈有直接策略關聯；本包沒有把其收入當作南亞本業。",
+              "businessDescription": "印刷電路板、IC 載板",
+              "financialImpact": null,
+              "strategicImpact": "補足電子材料與 PCB 應用鏈的策略位置。",
+              "accountingTreatment": null,
+              "sourceEvidenceIds": [
+                "1303-P2-009"
+              ],
+              "status": "PARTIAL"
+            }
+          ],
+          "investmentStatus": "PARTIAL",
+          "investmentReason": "已結構化三項具有財務或策略重大性的主要轉投資；會計處理與各公司獨立獲利金額仍需逐一對帳，不在本次推估。",
+          "managementTopics": [
+            {
+              "id": "management-electronic-material-demand",
+              "topic": "電子材料需求與稼動率",
+              "summary": "法說資料說明 AI／雲端與高階電子材料需求、部分產品稼動率及供需狀況；這是管理層對營運現況的說明，不等同保證獲利。",
+              "statementDate": "2026-09-11",
+              "sourceEvidenceIds": [
+                "1303-P2-005"
+              ],
+              "status": "MANAGEMENT"
+            },
+            {
+              "id": "management-chemical-polyester-outlook",
+              "topic": "化工與聚酯展望",
+              "summary": "法說資料說明化工／聚酯受原料、產能、需求與地緣政治影響；前景仍需跟隨價差與供需驗證。",
+              "statementDate": "2026-09-11",
+              "sourceEvidenceIds": [
+                "1303-P2-005"
+              ],
+              "status": "MANAGEMENT"
+            },
+            {
+              "id": "management-transformation-plan",
+              "topic": "高值化與轉型計畫",
+              "summary": "年報與法說提到半導體材料、醫療材料、低碳與數位轉型方向；目前列為規劃／觀察，不視為已實現收入。",
+              "statementDate": "2026-06-09",
+              "sourceEvidenceIds": [
+                "1303-P2-002",
+                "1303-P2-005"
+              ],
+              "status": "MANAGEMENT"
+            }
+          ]
+        }
+      },
+      "sourceSection": [
+        "products_services",
+        "revenue_structure"
+      ],
+      "evidenceIds": [
+        "1303-P2-001",
+        "1303-P2-002",
+        "1303-P2-004",
+        "1303-P2-005",
+        "1303-P2-002",
+        "1303-P2-003",
+        "1303-P2-004",
+        "1303-P2-005",
+        "1303-P2-009"
+      ]
+    },
+    {
+      "id": "industry_position",
+      "title": "產業鏈與競爭位置",
+      "summary": "南亞具備玻纖、樹脂、銅箔、CCL 與 PCB 的材料鏈布局，但公司業務多元，電子材料的公司整體獲利比重與產品別競爭順位仍需逐季驗證。",
+      "chains": [
+        {
+          "id": "chain-electronic-materials",
+          "name": "電子材料",
+          "businessGroupId": "electronic-materials",
+          "upstream": "銅價、玻纖、樹脂與化學原料。",
+          "companyRole": "玻纖絲／布、環氧樹脂、銅箔、CCL 與 PCB。",
+          "downstream": "AI／雲端、高速運算、伺服器、網通與車用板應用。",
+          "competitiveAdvantages": [
+            "公司具備玻纖、樹脂、銅箔、CCL 與 PCB 的材料鏈布局。"
+          ],
+          "competitiveConstraints": [
+            "產品別獲利與客戶集中度未揭露。"
+          ],
+          "competitors": [
+            "台玻",
+            "富喬",
+            "聯茂",
+            "台燿"
+          ],
+          "evidenceIds": [
+            "1303-P2-002",
+            "1303-P2-005",
+            "1303-P3-002"
+          ],
+          "status": "PARTIAL"
+        },
+        {
+          "id": "chain-chemical",
+          "name": "塑膠原料／化工",
+          "businessGroupId": "chemical",
+          "upstream": "化學原料、能源、產能與地緣政治。",
+          "companyRole": "乙二醇、雙酚 A、可塑劑等化工原料。",
+          "downstream": "化工原料、塑膠加工與工業用途。",
+          "competitiveAdvantages": [],
+          "competitiveConstraints": [
+            "需求、產品報價與原料成本具有景氣循環。"
+          ],
+          "competitors": [
+            "台塑",
+            "台化"
+          ],
+          "evidenceIds": [
+            "1303-P2-002",
+            "1303-P2-003",
+            "1303-P2-005"
+          ],
+          "status": "TEXT_ONLY"
+        },
+        {
+          "id": "chain-polyester",
+          "name": "聚酯",
+          "businessGroupId": "polyester",
+          "upstream": "原料、能源與產能供需。",
+          "companyRole": "聚酯粒、聚酯纖維與聚酯膜。",
+          "downstream": "紡織、包材與工業用途。",
+          "competitiveAdvantages": [],
+          "competitiveConstraints": [
+            "傳統需求、產能增加與原料價格可能壓縮價差。"
+          ],
+          "competitors": [
+            "台化"
+          ],
+          "evidenceIds": [
+            "1303-P2-002",
+            "1303-P2-005"
+          ],
+          "status": "TEXT_ONLY"
+        }
+      ],
+      "customers": [],
+      "competitors": [
+        "化工／聚酯：台塑、台化等",
+        "玻纖布：台玻、富喬等",
+        "CCL：聯茂、台燿等"
+      ],
+      "competitivePosition": "南亞具備玻纖、樹脂、銅箔、CCL 與 PCB 的材料鏈布局，但公司業務多元，電子材料的公司整體獲利比重與產品別競爭順位仍需逐季驗證。",
+      "limitations": [
+        "同業可比成本曲線",
+        "長約覆蓋率",
+        "單一產品別獲利",
+        "客戶集中度"
+      ],
+      "fullResearch": {
+        "supplyChain": {
+          "upstream": "電子材料受銅價、玻纖、樹脂與化學原料成本影響；化工／聚酯受原料、能源、產能與地緣政治影響。",
+          "operations": [
+            "年報列出 2026 年電子材料計畫／預估銷售量，包括 CCL、銅箔、玻纖布、玻纖絲、PCB 與環氧樹脂。",
+            "法說資料指出部分電子材料稼動率高於九成，但未對所有產品逐項公開最新實際稼動率。"
+          ],
+          "downstream": "產品應用涵蓋 AI／雲端、高速運算、伺服器、網通、車用板、建材、包材、紡織及工業用途；未取得足夠客戶級名單與訂單金額。",
+          "v2": {
+            "chains": [
+              {
+                "id": "chain-electronic-materials",
+                "name": "電子材料",
+                "businessGroupId": "electronic-materials",
+                "upstream": "銅價、玻纖、樹脂與化學原料。",
+                "companyRole": "玻纖絲／布、環氧樹脂、銅箔、CCL 與 PCB。",
+                "downstream": "AI／雲端、高速運算、伺服器、網通與車用板應用。",
+                "competitiveAdvantages": [
+                  "公司具備玻纖、樹脂、銅箔、CCL 與 PCB 的材料鏈布局。"
+                ],
+                "competitiveConstraints": [
+                  "產品別獲利與客戶集中度未揭露。"
+                ],
+                "competitors": [
+                  "台玻",
+                  "富喬",
+                  "聯茂",
+                  "台燿"
+                ],
+                "evidenceIds": [
+                  "1303-P2-002",
+                  "1303-P2-005",
+                  "1303-P3-002"
+                ],
+                "status": "PARTIAL"
+              },
+              {
+                "id": "chain-chemical",
+                "name": "塑膠原料／化工",
+                "businessGroupId": "chemical",
+                "upstream": "化學原料、能源、產能與地緣政治。",
+                "companyRole": "乙二醇、雙酚 A、可塑劑等化工原料。",
+                "downstream": "化工原料、塑膠加工與工業用途。",
+                "competitiveAdvantages": [],
+                "competitiveConstraints": [
+                  "需求、產品報價與原料成本具有景氣循環。"
+                ],
+                "competitors": [
+                  "台塑",
+                  "台化"
+                ],
+                "evidenceIds": [
+                  "1303-P2-002",
+                  "1303-P2-003",
+                  "1303-P2-005"
+                ],
+                "status": "TEXT_ONLY"
+              },
+              {
+                "id": "chain-polyester",
+                "name": "聚酯",
+                "businessGroupId": "polyester",
+                "upstream": "原料、能源與產能供需。",
+                "companyRole": "聚酯粒、聚酯纖維與聚酯膜。",
+                "downstream": "紡織、包材與工業用途。",
+                "competitiveAdvantages": [],
+                "competitiveConstraints": [
+                  "傳統需求、產能增加與原料價格可能壓縮價差。"
+                ],
+                "competitors": [
+                  "台化"
+                ],
+                "evidenceIds": [
+                  "1303-P2-002",
+                  "1303-P2-005"
+                ],
+                "status": "TEXT_ONLY"
+              }
+            ]
+          }
+        },
+        "competition": {
+          "positioning": "南亞具備玻纖、樹脂、銅箔、CCL 與 PCB 的材料鏈布局，但公司業務多元，電子材料的公司整體獲利比重與產品別競爭順位仍需逐季驗證。",
+          "peerScope": [
+            "化工／聚酯：台塑、台化等",
+            "玻纖布：台玻、富喬等",
+            "CCL：聯茂、台燿等"
+          ],
+          "peerCurveStatus": "資料不足／未形成可比曲線。尚未取得同期間、同規格、同地區、同製程及一致口徑的同業每噸成本或產品毛利，不能估算成本曲線。",
+          "unresolved": [
+            "同業可比成本曲線",
+            "長約覆蓋率",
+            "單一產品別獲利",
+            "客戶集中度"
+          ]
+        }
+      },
+      "sourceSection": [
+        "supply_chain",
+        "competitive_position"
+      ],
+      "evidenceIds": [
+        "1303-P2-002",
+        "1303-P2-003",
+        "1303-P2-005",
+        "1303-P2-006",
+        "1303-P2-002",
+        "1303-P2-003",
+        "1303-P2-005",
+        "1303-P3-002"
+      ]
+    },
+    {
+      "id": "growth_and_risks",
+      "title": "成長驅動與主要風險",
+      "summary": "電子材料需求與事業群獲利是目前最直接的營運驅動；轉型專案屬中期觀察；轉投資收益須與本業分開。",
+      "growthFactors": [
+        {
+          "id": "growth-electronic-material-demand",
+          "name": "高階電子材料需求",
+          "summary": "AI／雲端與高速運算需求若延續，可能支持 CCL、銅箔、玻纖布與 PCB 的出貨與產品組合。",
+          "mechanism": "需求與高階規格認證改善，帶動電子材料出貨、稼動率與產品組合。",
+          "affectedBusinesses": [
+            "electronic-materials"
+          ],
+          "observationIndicators": [
+            "電子材料外部收入",
+            "高階產品稼動率",
+            "法說供需與認證進度"
+          ],
+          "timeHorizon": "NEAR_TO_MEDIUM",
+          "relatedRiskIds": [
+            "risk-electronic-cycle",
+            "risk-supply-expansion"
+          ],
+          "supportingEvidenceIds": [
+            "1303-P2-003",
+            "1303-P2-005"
+          ],
+          "status": "OBSERVED",
+          "sourceEvidenceIds": [
+            "1303-P2-003",
+            "1303-P2-005"
+          ],
+          "indicators": [
+            "電子材料外部收入",
+            "高階產品稼動率",
+            "法說供需與認證進度"
+          ],
+          "horizon": "NEAR_TO_MEDIUM"
+        },
+        {
+          "id": "growth-product-mix",
+          "name": "電子材料產品組合",
+          "summary": "CCL、銅箔、玻纖布與高頻高速材料的產品組合改善，是本業獲利觀察重點。",
+          "mechanism": "高階規格占比與需求結構改變，可能影響事業群收入與部門損益。",
+          "affectedBusinesses": [
+            "electronic-materials"
+          ],
+          "observationIndicators": [
+            "電子材料部門損益",
+            "產品群收入",
+            "高階規格量產"
+          ],
+          "timeHorizon": "MEDIUM",
+          "relatedRiskIds": [
+            "risk-product-profitability"
+          ],
+          "supportingEvidenceIds": [
+            "1303-P2-002",
+            "1303-P2-003",
+            "1303-P2-005"
+          ],
+          "status": "OBSERVED",
+          "sourceEvidenceIds": [
+            "1303-P2-002",
+            "1303-P2-003",
+            "1303-P2-005"
+          ],
+          "indicators": [
+            "電子材料部門損益",
+            "產品群收入",
+            "高階規格量產"
+          ],
+          "horizon": "MEDIUM"
+        },
+        {
+          "id": "growth-chemical-polyester-spread",
+          "name": "化工／聚酯價差修復",
+          "summary": "原料供應、產品報價與產能調整若改善，可能支持化工／聚酯本業修復。",
+          "mechanism": "產品價格與原料、能源成本的價差變化影響事業群損益。",
+          "affectedBusinesses": [
+            "chemical",
+            "polyester"
+          ],
+          "observationIndicators": [
+            "產品價差",
+            "原料成本",
+            "部門損益"
+          ],
+          "timeHorizon": "CYCLICAL",
+          "relatedRiskIds": [
+            "risk-chemical-cycle",
+            "risk-cost-pass-through"
+          ],
+          "supportingEvidenceIds": [
+            "1303-P2-003",
+            "1303-P2-005"
+          ],
+          "status": "OBSERVED",
+          "sourceEvidenceIds": [
+            "1303-P2-003",
+            "1303-P2-005"
+          ],
+          "indicators": [
+            "產品價差",
+            "原料成本",
+            "部門損益"
+          ],
+          "horizon": "CYCLICAL"
+        },
+        {
+          "id": "growth-investment-income",
+          "name": "轉投資收益傳導",
+          "summary": "南亞科技與台塑石化等轉投資獲利會影響南亞稅前及歸母獲利，但不等同本業產品需求。",
+          "mechanism": "權益法／業外收益隨被投資公司景氣變化傳導至母公司獲利。",
+          "affectedBusinesses": [
+            "investment-portfolio"
+          ],
+          "observationIndicators": [
+            "權益法投資收益",
+            "主要轉投資公司獲利",
+            "母公司稅前淨利"
+          ],
+          "timeHorizon": "CYCLICAL",
+          "relatedRiskIds": [
+            "risk-investment-cycle"
+          ],
+          "supportingEvidenceIds": [
+            "1303-P2-003",
+            "1303-P2-009"
+          ],
+          "status": "OBSERVED",
+          "sourceEvidenceIds": [
+            "1303-P2-003",
+            "1303-P2-009"
+          ],
+          "indicators": [
+            "權益法投資收益",
+            "主要轉投資公司獲利",
+            "母公司稅前淨利"
+          ],
+          "horizon": "CYCLICAL"
+        },
+        {
+          "id": "growth-transformation-plan",
+          "name": "高值化與轉型計畫",
+          "summary": "半導體材料、醫療材料、低碳與數位轉型是中期規劃，尚不視為已實現收入。",
+          "mechanism": "研發、認證與量產進度若完成，才可能形成新的產品收入與獲利。",
+          "affectedBusinesses": [
+            "electronic-materials",
+            "chemical"
+          ],
+          "observationIndicators": [
+            "量產公告",
+            "產品收入",
+            "資本支出與專案進度"
+          ],
+          "timeHorizon": "LONG_TERM_PLAN",
+          "relatedRiskIds": [
+            "risk-execution"
+          ],
+          "supportingEvidenceIds": [
+            "1303-P2-002",
+            "1303-P2-005"
+          ],
+          "status": "PLANNED",
+          "sourceEvidenceIds": [
+            "1303-P2-002",
+            "1303-P2-005"
+          ],
+          "indicators": [
+            "量產公告",
+            "產品收入",
+            "資本支出與專案進度"
+          ],
+          "horizon": "LONG_TERM_PLAN"
+        }
+      ],
+      "riskFactors": [
+        {
+          "id": "risk-electronic-cycle",
+          "name": "電子材料供需與報價循環反轉",
+          "summary": "需求或報價循環反轉，可能使電子材料收入與部門損益下修。",
+          "mechanism": "供需轉弱會影響出貨、價格與稼動率。",
+          "affectedBusinesses": [
+            "electronic-materials"
+          ],
+          "observationIndicators": [
+            "電子材料收入",
+            "報價與稼動率",
+            "部門損益"
+          ],
+          "relatedGrowthIds": [
+            "growth-electronic-material-demand"
+          ],
+          "supportingEvidenceIds": [
+            "1303-P2-003",
+            "1303-P2-005"
+          ],
+          "status": "MATERIAL",
+          "sourceEvidenceIds": [
+            "1303-P2-003",
+            "1303-P2-005"
+          ],
+          "indicators": [
+            "電子材料收入",
+            "報價與稼動率",
+            "部門損益"
+          ],
+          "horizon": null
+        },
+        {
+          "id": "risk-supply-expansion",
+          "name": "CCL／銅箔／玻纖布供給增加",
+          "summary": "供給擴張可能削弱高階材料的供需緊張與議價能力。",
+          "mechanism": "新增產能高於需求成長時，價格與產品組合可能承壓。",
+          "affectedBusinesses": [
+            "electronic-materials"
+          ],
+          "observationIndicators": [
+            "同業新增產能",
+            "供需與價格",
+            "稼動率"
+          ],
+          "relatedGrowthIds": [
+            "growth-electronic-material-demand",
+            "growth-product-mix"
+          ],
+          "supportingEvidenceIds": [
+            "1303-P2-002",
+            "1303-P2-005"
+          ],
+          "status": "MATERIAL",
+          "sourceEvidenceIds": [
+            "1303-P2-002",
+            "1303-P2-005"
+          ],
+          "indicators": [
+            "同業新增產能",
+            "供需與價格",
+            "稼動率"
+          ],
+          "horizon": null
+        },
+        {
+          "id": "risk-chemical-cycle",
+          "name": "化工／聚酯需求疲弱與新增產能",
+          "summary": "傳統需求疲弱或中國新增產能增加，可能壓低化工／聚酯價差。",
+          "mechanism": "需求與供給變化影響產品價格及部門損益。",
+          "affectedBusinesses": [
+            "chemical",
+            "polyester"
+          ],
+          "observationIndicators": [
+            "需求與產能",
+            "產品價差",
+            "部門損益"
+          ],
+          "relatedGrowthIds": [
+            "growth-chemical-polyester-spread"
+          ],
+          "supportingEvidenceIds": [
+            "1303-P2-002",
+            "1303-P2-005"
+          ],
+          "status": "MATERIAL",
+          "sourceEvidenceIds": [
+            "1303-P2-002",
+            "1303-P2-005"
+          ],
+          "indicators": [
+            "需求與產能",
+            "產品價差",
+            "部門損益"
+          ],
+          "horizon": null
+        },
+        {
+          "id": "risk-cost-pass-through",
+          "name": "銅價與原料成本轉嫁不足",
+          "summary": "銅價、能源與化學原料成本上升若無法轉嫁，可能壓縮毛利。",
+          "mechanism": "投入成本變動與產品報價調整不同步，形成毛利壓力。",
+          "affectedBusinesses": [
+            "electronic-materials",
+            "chemical",
+            "polyester"
+          ],
+          "observationIndicators": [
+            "銅價與原料成本",
+            "產品價格",
+            "部門毛利／損益"
+          ],
+          "relatedGrowthIds": [
+            "growth-product-mix",
+            "growth-chemical-polyester-spread"
+          ],
+          "supportingEvidenceIds": [
+            "1303-P2-003",
+            "1303-P2-005"
+          ],
+          "status": "MATERIAL",
+          "sourceEvidenceIds": [
+            "1303-P2-003",
+            "1303-P2-005"
+          ],
+          "indicators": [
+            "銅價與原料成本",
+            "產品價格",
+            "部門毛利／損益"
+          ],
+          "horizon": null
+        },
+        {
+          "id": "risk-investment-cycle",
+          "name": "轉投資收益循環性",
+          "summary": "2026 年上半年較高的轉投資收益不宜直接年化，可能隨被投資公司景氣反轉。",
+          "mechanism": "權益法及業外收益受主要轉投資公司獲利變化影響。",
+          "affectedBusinesses": [
+            "investment-portfolio"
+          ],
+          "observationIndicators": [
+            "主要轉投資公司獲利",
+            "權益法投資收益",
+            "母公司稅前淨利"
+          ],
+          "relatedGrowthIds": [
+            "growth-investment-income"
+          ],
+          "supportingEvidenceIds": [
+            "1303-P2-003",
+            "1303-P2-009"
+          ],
+          "status": "MATERIAL",
+          "sourceEvidenceIds": [
+            "1303-P2-003",
+            "1303-P2-009"
+          ],
+          "indicators": [
+            "主要轉投資公司獲利",
+            "權益法投資收益",
+            "母公司稅前淨利"
+          ],
+          "horizon": null
+        },
+        {
+          "id": "risk-execution",
+          "name": "認證、量產與轉型執行不如預期",
+          "summary": "尚未量產的高值化、半導體材料與醫療材料計畫，仍有認證、投資與執行風險。",
+          "mechanism": "若專案未完成商業化，規劃中的收入與獲利不會實現。",
+          "affectedBusinesses": [
+            "electronic-materials",
+            "chemical"
+          ],
+          "observationIndicators": [
+            "認證與量產",
+            "資本支出",
+            "新產品收入"
+          ],
+          "relatedGrowthIds": [
+            "growth-transformation-plan"
+          ],
+          "supportingEvidenceIds": [
+            "1303-P2-002",
+            "1303-P2-005"
+          ],
+          "status": "MATERIAL",
+          "sourceEvidenceIds": [
+            "1303-P2-002",
+            "1303-P2-005"
+          ],
+          "indicators": [
+            "認證與量產",
+            "資本支出",
+            "新產品收入"
+          ],
+          "horizon": null
+        },
+        {
+          "id": "risk-product-profitability",
+          "name": "產品別獲利與客戶資料不足",
+          "summary": "缺少單一產品獲利、客戶集中度與長約覆蓋率，限制獲利品質判讀。",
+          "mechanism": "無法將事業群損益安全拆解至產品、客戶或合約層級。",
+          "affectedBusinesses": [
+            "electronic-materials",
+            "chemical",
+            "polyester"
+          ],
+          "observationIndicators": [
+            "產品別毛利揭露",
+            "客戶集中度",
+            "長約覆蓋率"
+          ],
+          "relatedGrowthIds": [
+            "growth-product-mix"
+          ],
+          "supportingEvidenceIds": [
+            "1303-P2-003",
+            "1303-P2-004",
+            "1303-P2-005"
+          ],
+          "status": "DATA_LIMITATION",
+          "sourceEvidenceIds": [
+            "1303-P2-003",
+            "1303-P2-004",
+            "1303-P2-005"
+          ],
+          "indicators": [
+            "產品別毛利揭露",
+            "客戶集中度",
+            "長約覆蓋率"
+          ],
+          "horizon": null
+        }
+      ],
+      "fullResearch": {
+        "growth": {
+          "drivers": [
+            "AI／雲端與高速運算帶動高階電子材料需求",
+            "CCL、銅箔、玻纖布與高頻高速材料的產品組合與供需",
+            "化工／聚酯價差與原料供應改善",
+            "南亞科技與台塑石化等轉投資收益",
+            "半導體材料、醫療材料、低碳與數位轉型計畫"
+          ],
+          "classification": "電子材料需求與事業群獲利是目前最直接的營運驅動；轉型專案屬中期觀察；轉投資收益須與本業分開。",
+          "v2": {
+            "growthFactors": [
+              {
+                "id": "growth-electronic-material-demand",
+                "name": "高階電子材料需求",
+                "summary": "AI／雲端與高速運算需求若延續，可能支持 CCL、銅箔、玻纖布與 PCB 的出貨與產品組合。",
+                "mechanism": "需求與高階規格認證改善，帶動電子材料出貨、稼動率與產品組合。",
+                "affectedBusinesses": [
+                  "electronic-materials"
+                ],
+                "observationIndicators": [
+                  "電子材料外部收入",
+                  "高階產品稼動率",
+                  "法說供需與認證進度"
+                ],
+                "timeHorizon": "NEAR_TO_MEDIUM",
+                "relatedRiskIds": [
+                  "risk-electronic-cycle",
+                  "risk-supply-expansion"
+                ],
+                "supportingEvidenceIds": [
+                  "1303-P2-003",
+                  "1303-P2-005"
+                ],
+                "status": "OBSERVED"
+              },
+              {
+                "id": "growth-product-mix",
+                "name": "電子材料產品組合",
+                "summary": "CCL、銅箔、玻纖布與高頻高速材料的產品組合改善，是本業獲利觀察重點。",
+                "mechanism": "高階規格占比與需求結構改變，可能影響事業群收入與部門損益。",
+                "affectedBusinesses": [
+                  "electronic-materials"
+                ],
+                "observationIndicators": [
+                  "電子材料部門損益",
+                  "產品群收入",
+                  "高階規格量產"
+                ],
+                "timeHorizon": "MEDIUM",
+                "relatedRiskIds": [
+                  "risk-product-profitability"
+                ],
+                "supportingEvidenceIds": [
+                  "1303-P2-002",
+                  "1303-P2-003",
+                  "1303-P2-005"
+                ],
+                "status": "OBSERVED"
+              },
+              {
+                "id": "growth-chemical-polyester-spread",
+                "name": "化工／聚酯價差修復",
+                "summary": "原料供應、產品報價與產能調整若改善，可能支持化工／聚酯本業修復。",
+                "mechanism": "產品價格與原料、能源成本的價差變化影響事業群損益。",
+                "affectedBusinesses": [
+                  "chemical",
+                  "polyester"
+                ],
+                "observationIndicators": [
+                  "產品價差",
+                  "原料成本",
+                  "部門損益"
+                ],
+                "timeHorizon": "CYCLICAL",
+                "relatedRiskIds": [
+                  "risk-chemical-cycle",
+                  "risk-cost-pass-through"
+                ],
+                "supportingEvidenceIds": [
+                  "1303-P2-003",
+                  "1303-P2-005"
+                ],
+                "status": "OBSERVED"
+              },
+              {
+                "id": "growth-investment-income",
+                "name": "轉投資收益傳導",
+                "summary": "南亞科技與台塑石化等轉投資獲利會影響南亞稅前及歸母獲利，但不等同本業產品需求。",
+                "mechanism": "權益法／業外收益隨被投資公司景氣變化傳導至母公司獲利。",
+                "affectedBusinesses": [
+                  "investment-portfolio"
+                ],
+                "observationIndicators": [
+                  "權益法投資收益",
+                  "主要轉投資公司獲利",
+                  "母公司稅前淨利"
+                ],
+                "timeHorizon": "CYCLICAL",
+                "relatedRiskIds": [
+                  "risk-investment-cycle"
+                ],
+                "supportingEvidenceIds": [
+                  "1303-P2-003",
+                  "1303-P2-009"
+                ],
+                "status": "OBSERVED"
+              },
+              {
+                "id": "growth-transformation-plan",
+                "name": "高值化與轉型計畫",
+                "summary": "半導體材料、醫療材料、低碳與數位轉型是中期規劃，尚不視為已實現收入。",
+                "mechanism": "研發、認證與量產進度若完成，才可能形成新的產品收入與獲利。",
+                "affectedBusinesses": [
+                  "electronic-materials",
+                  "chemical"
+                ],
+                "observationIndicators": [
+                  "量產公告",
+                  "產品收入",
+                  "資本支出與專案進度"
+                ],
+                "timeHorizon": "LONG_TERM_PLAN",
+                "relatedRiskIds": [
+                  "risk-execution"
+                ],
+                "supportingEvidenceIds": [
+                  "1303-P2-002",
+                  "1303-P2-005"
+                ],
+                "status": "PLANNED"
+              }
+            ]
+          }
+        },
+        "risks": {
+          "risks": [
+            "電子材料供需與報價循環反轉",
+            "CCL、銅箔與玻纖布供給增加",
+            "化工／聚酯需求疲弱與中國新增產能",
+            "銅價與原料成本無法完全轉嫁",
+            "高額轉投資收益的景氣循環性",
+            "認證、量產與轉型專案執行不如預期",
+            "產品別獲利、客戶集中度與長約資料不足"
+          ],
+          "riskPolicy": "本節是研究風險清單，不代表已完成法律、財務或客戶盡職調查。",
+          "v2": {
+            "riskFactors": [
+              {
+                "id": "risk-electronic-cycle",
+                "name": "電子材料供需與報價循環反轉",
+                "summary": "需求或報價循環反轉，可能使電子材料收入與部門損益下修。",
+                "mechanism": "供需轉弱會影響出貨、價格與稼動率。",
+                "affectedBusinesses": [
+                  "electronic-materials"
+                ],
+                "observationIndicators": [
+                  "電子材料收入",
+                  "報價與稼動率",
+                  "部門損益"
+                ],
+                "relatedGrowthIds": [
+                  "growth-electronic-material-demand"
+                ],
+                "supportingEvidenceIds": [
+                  "1303-P2-003",
+                  "1303-P2-005"
+                ],
+                "status": "MATERIAL"
+              },
+              {
+                "id": "risk-supply-expansion",
+                "name": "CCL／銅箔／玻纖布供給增加",
+                "summary": "供給擴張可能削弱高階材料的供需緊張與議價能力。",
+                "mechanism": "新增產能高於需求成長時，價格與產品組合可能承壓。",
+                "affectedBusinesses": [
+                  "electronic-materials"
+                ],
+                "observationIndicators": [
+                  "同業新增產能",
+                  "供需與價格",
+                  "稼動率"
+                ],
+                "relatedGrowthIds": [
+                  "growth-electronic-material-demand",
+                  "growth-product-mix"
+                ],
+                "supportingEvidenceIds": [
+                  "1303-P2-002",
+                  "1303-P2-005"
+                ],
+                "status": "MATERIAL"
+              },
+              {
+                "id": "risk-chemical-cycle",
+                "name": "化工／聚酯需求疲弱與新增產能",
+                "summary": "傳統需求疲弱或中國新增產能增加，可能壓低化工／聚酯價差。",
+                "mechanism": "需求與供給變化影響產品價格及部門損益。",
+                "affectedBusinesses": [
+                  "chemical",
+                  "polyester"
+                ],
+                "observationIndicators": [
+                  "需求與產能",
+                  "產品價差",
+                  "部門損益"
+                ],
+                "relatedGrowthIds": [
+                  "growth-chemical-polyester-spread"
+                ],
+                "supportingEvidenceIds": [
+                  "1303-P2-002",
+                  "1303-P2-005"
+                ],
+                "status": "MATERIAL"
+              },
+              {
+                "id": "risk-cost-pass-through",
+                "name": "銅價與原料成本轉嫁不足",
+                "summary": "銅價、能源與化學原料成本上升若無法轉嫁，可能壓縮毛利。",
+                "mechanism": "投入成本變動與產品報價調整不同步，形成毛利壓力。",
+                "affectedBusinesses": [
+                  "electronic-materials",
+                  "chemical",
+                  "polyester"
+                ],
+                "observationIndicators": [
+                  "銅價與原料成本",
+                  "產品價格",
+                  "部門毛利／損益"
+                ],
+                "relatedGrowthIds": [
+                  "growth-product-mix",
+                  "growth-chemical-polyester-spread"
+                ],
+                "supportingEvidenceIds": [
+                  "1303-P2-003",
+                  "1303-P2-005"
+                ],
+                "status": "MATERIAL"
+              },
+              {
+                "id": "risk-investment-cycle",
+                "name": "轉投資收益循環性",
+                "summary": "2026 年上半年較高的轉投資收益不宜直接年化，可能隨被投資公司景氣反轉。",
+                "mechanism": "權益法及業外收益受主要轉投資公司獲利變化影響。",
+                "affectedBusinesses": [
+                  "investment-portfolio"
+                ],
+                "observationIndicators": [
+                  "主要轉投資公司獲利",
+                  "權益法投資收益",
+                  "母公司稅前淨利"
+                ],
+                "relatedGrowthIds": [
+                  "growth-investment-income"
+                ],
+                "supportingEvidenceIds": [
+                  "1303-P2-003",
+                  "1303-P2-009"
+                ],
+                "status": "MATERIAL"
+              },
+              {
+                "id": "risk-execution",
+                "name": "認證、量產與轉型執行不如預期",
+                "summary": "尚未量產的高值化、半導體材料與醫療材料計畫，仍有認證、投資與執行風險。",
+                "mechanism": "若專案未完成商業化，規劃中的收入與獲利不會實現。",
+                "affectedBusinesses": [
+                  "electronic-materials",
+                  "chemical"
+                ],
+                "observationIndicators": [
+                  "認證與量產",
+                  "資本支出",
+                  "新產品收入"
+                ],
+                "relatedGrowthIds": [
+                  "growth-transformation-plan"
+                ],
+                "supportingEvidenceIds": [
+                  "1303-P2-002",
+                  "1303-P2-005"
+                ],
+                "status": "MATERIAL"
+              },
+              {
+                "id": "risk-product-profitability",
+                "name": "產品別獲利與客戶資料不足",
+                "summary": "缺少單一產品獲利、客戶集中度與長約覆蓋率，限制獲利品質判讀。",
+                "mechanism": "無法將事業群損益安全拆解至產品、客戶或合約層級。",
+                "affectedBusinesses": [
+                  "electronic-materials",
+                  "chemical",
+                  "polyester"
+                ],
+                "observationIndicators": [
+                  "產品別毛利揭露",
+                  "客戶集中度",
+                  "長約覆蓋率"
+                ],
+                "relatedGrowthIds": [
+                  "growth-product-mix"
+                ],
+                "supportingEvidenceIds": [
+                  "1303-P2-003",
+                  "1303-P2-004",
+                  "1303-P2-005"
+                ],
+                "status": "DATA_LIMITATION"
+              }
+            ]
+          }
+        }
+      },
+      "sourceSection": [
+        "growth_drivers",
+        "risks"
+      ],
+      "evidenceIds": [
+        "1303-P2-002",
+        "1303-P2-003",
+        "1303-P2-005",
+        "1303-P3-002",
+        "1303-P2-002",
+        "1303-P2-003",
+        "1303-P2-005",
+        "1303-P2-006"
+      ]
+    },
+    {
+      "id": "financial_commentary",
+      "title": "財報與法說會補充",
+      "summary": "2026 年上半年外部收入約 1,522.43 億元：塑膠產品約 193.23 億元、塑膠原料／化工約 256.99 億元、電子材料約 801.98 億元、聚酯約 240.18 億元、其他約 30.05 億元。電子材料約占 52.7%，為最大業務群。",
+      "metrics": [
+        {
+          "id": "revenue-2025-annual",
+          "label": "合併營收",
+          "value": 2599.1,
+          "unit": "TWD_100_MILLION",
+          "currency": "TWD",
+          "period": "2025-01-01/2025-12-31",
+          "periodType": "ANNUAL",
+          "reportingBasis": "CONSOLIDATED",
+          "metricDefinition": "合併營業收入",
+          "sourceEvidenceIds": [
+            "1303-P2-002"
+          ],
+          "type": "FACT",
+          "status": "READY"
+        },
+        {
+          "id": "pretax-2025-annual",
+          "label": "稅前淨利",
+          "value": 64.6,
+          "unit": "TWD_100_MILLION",
+          "currency": "TWD",
+          "period": "2025-01-01/2025-12-31",
+          "periodType": "ANNUAL",
+          "reportingBasis": "CONSOLIDATED",
+          "metricDefinition": "合併稅前淨利",
+          "sourceEvidenceIds": [
+            "1303-P2-002"
+          ],
+          "type": "FACT",
+          "status": "READY"
+        },
+        {
+          "id": "revenue-2026-q1",
+          "label": "合併營收",
+          "value": 685.96,
+          "unit": "TWD_100_MILLION",
+          "currency": "TWD",
+          "period": "2026-01-01/2026-03-31",
+          "periodType": "Q1",
+          "reportingBasis": "CONSOLIDATED",
+          "metricDefinition": "合併營業收入",
+          "sourceEvidenceIds": [
+            "1303-P2-004"
+          ],
+          "type": "FACT",
+          "status": "READY"
+        },
+        {
+          "id": "pretax-2026-q1",
+          "label": "稅前淨利",
+          "value": 160.8,
+          "unit": "TWD_100_MILLION",
+          "currency": "TWD",
+          "period": "2026-01-01/2026-03-31",
+          "periodType": "Q1",
+          "reportingBasis": "CONSOLIDATED",
+          "metricDefinition": "合併稅前淨利",
+          "sourceEvidenceIds": [
+            "1303-P2-004"
+          ],
+          "type": "FACT",
+          "status": "READY"
+        },
+        {
+          "id": "attributable-profit-2026-q1",
+          "label": "歸屬母公司淨利",
+          "value": 146.75,
+          "unit": "TWD_100_MILLION",
+          "currency": "TWD",
+          "period": "2026-01-01/2026-03-31",
+          "periodType": "Q1",
+          "reportingBasis": "CONSOLIDATED_ATTRIBUTABLE_TO_PARENT",
+          "metricDefinition": "歸屬母公司業主之淨利",
+          "sourceEvidenceIds": [
+            "1303-P2-004"
+          ],
+          "type": "FACT",
+          "status": "READY"
+        },
+        {
+          "id": "eps-2026-q1",
+          "label": "每股盈餘",
+          "value": 1.8,
+          "unit": "TWD_PER_SHARE",
+          "currency": "TWD",
+          "period": "2026-01-01/2026-03-31",
+          "periodType": "Q1",
+          "reportingBasis": "CONSOLIDATED",
+          "metricDefinition": "基本每股盈餘",
+          "sourceEvidenceIds": [
+            "1303-P2-004"
+          ],
+          "type": "FACT",
+          "status": "READY"
+        },
+        {
+          "id": "revenue-2026-q2",
+          "label": "合併營收",
+          "value": 836.47,
+          "unit": "TWD_100_MILLION",
+          "currency": "TWD",
+          "period": "2026-04-01/2026-06-30",
+          "periodType": "Q2",
+          "reportingBasis": "CONSOLIDATED",
+          "metricDefinition": "合併營業收入",
+          "sourceEvidenceIds": [
+            "1303-P2-003"
+          ],
+          "type": "FACT",
+          "status": "READY"
+        },
+        {
+          "id": "eps-2026-q2",
+          "label": "每股盈餘",
+          "value": 3.37,
+          "unit": "TWD_PER_SHARE",
+          "currency": "TWD",
+          "period": "2026-04-01/2026-06-30",
+          "periodType": "Q2",
+          "reportingBasis": "CONSOLIDATED",
+          "metricDefinition": "基本每股盈餘",
+          "sourceEvidenceIds": [
+            "1303-P2-003"
+          ],
+          "type": "FACT",
+          "status": "READY"
+        },
+        {
+          "id": "revenue-2026-h1",
+          "label": "合併營收",
+          "value": 1522.43,
+          "unit": "TWD_100_MILLION",
+          "currency": "TWD",
+          "period": "2026-01-01/2026-06-30",
+          "periodType": "H1",
+          "reportingBasis": "CONSOLIDATED",
+          "metricDefinition": "合併營業收入",
+          "sourceEvidenceIds": [
+            "1303-P2-003"
+          ],
+          "type": "FACT",
+          "status": "READY"
+        },
+        {
+          "id": "pretax-2026-h1",
+          "label": "稅前淨利",
+          "value": 468.44,
+          "unit": "TWD_100_MILLION",
+          "currency": "TWD",
+          "period": "2026-01-01/2026-06-30",
+          "periodType": "H1",
+          "reportingBasis": "CONSOLIDATED",
+          "metricDefinition": "合併稅前淨利",
+          "sourceEvidenceIds": [
+            "1303-P2-003"
+          ],
+          "type": "FACT",
+          "status": "READY"
+        },
+        {
+          "id": "eps-2026-h1",
+          "label": "累計每股盈餘",
+          "value": 5.17,
+          "unit": "TWD_PER_SHARE",
+          "currency": "TWD",
+          "period": "2026-01-01/2026-06-30",
+          "periodType": "H1",
+          "reportingBasis": "CONSOLIDATED",
+          "metricDefinition": "累計基本每股盈餘",
+          "sourceEvidenceIds": [
+            "1303-P2-003"
+          ],
+          "type": "FACT",
+          "status": "READY"
+        },
+        {
+          "id": "equity-method-income-change-nanya-tech-q1-2026",
+          "label": "權益法投資收益增加貢獻（南亞科技）",
+          "value": 43.8,
+          "unit": "TWD_100_MILLION",
+          "currency": "TWD",
+          "period": "2026-Q1",
+          "periodType": "Q1",
+          "reportingBasis": "MANAGEMENT_IR_EQUITY_METHOD_INCOME_CHANGE_QOQ",
+          "metricDefinition": "2026 年第一季相較 2025 年第四季，管理層簡報所列權益法投資收益增加中的南亞科技貢獻；不是南亞科技完整淨利，也不是南亞公司本業營收。",
+          "comparisonPeriod": "2025-Q4",
+          "sourceEvidenceIds": [
+            "1303-P2-005"
+          ],
+          "type": "MANAGEMENT",
+          "status": "PARTIAL"
+        },
+        {
+          "id": "equity-method-income-change-formosa-petrochemical-q1-2026",
+          "label": "權益法投資收益增加貢獻（台塑石化）",
+          "value": 35.3,
+          "unit": "TWD_100_MILLION",
+          "currency": "TWD",
+          "period": "2026-Q1",
+          "periodType": "Q1",
+          "reportingBasis": "MANAGEMENT_IR_EQUITY_METHOD_INCOME_CHANGE_QOQ",
+          "metricDefinition": "2026 年第一季相較 2025 年第四季，管理層簡報所列權益法投資收益增加中的台塑石化貢獻；不是台塑石化完整淨利，也不是南亞公司本業營收。",
+          "comparisonPeriod": "2025-Q4",
+          "sourceEvidenceIds": [
+            "1303-P2-005"
+          ],
+          "type": "MANAGEMENT",
+          "status": "PARTIAL"
+        }
+      ],
+      "items": [
+        {
+          "id": "financial-fact-01",
+          "type": "FACT",
+          "label": "營收與收入結構",
+          "summary": "2026 年上半年外部收入約 1,522.43 億元：塑膠產品約 193.23 億元、塑膠原料／化工約 256.99 億元、電子材料約 801.98 億元、聚酯約 240.18 億元、其他約 30.05 億元。電子材料約占 52.7%，為最大業務群。",
+          "period": null,
+          "periodType": null,
+          "reportingBasis": null,
+          "unit": null,
+          "baseline": null,
+          "definition": null
+        },
+        {
+          "id": "financial-fact-02",
+          "type": "FACT",
+          "label": "部門損益",
+          "summary": "同一份季報的上半年部門損益約為：塑膠產品 19.20 億元、塑膠原料／化工 -14.52 億元、電子材料 138.07 億元、聚酯 4.75 億元、其他 400.84 億元、抵銷 -79.90 億元；其他部門包含重要轉投資／權益法因素，不等於單一產品獲利。",
+          "period": null,
+          "periodType": null,
+          "reportingBasis": null,
+          "unit": null,
+          "baseline": null,
+          "definition": null
+        },
+        {
+          "id": "financial-method-01",
+          "type": "ANALYSIS",
+          "label": "研究解讀範圍",
+          "summary": "以公司官方年報、最新兩季合併財報、最近兩次官方法說簡報與公司投資人資料為主，搭配 CMoney 第二級資料交叉核對；不以市場敘事取代官方證據。",
+          "period": null,
+          "periodType": null,
+          "reportingBasis": null,
+          "unit": null,
+          "baseline": null,
+          "definition": null
+        }
+      ],
+      "managementTopics": [
+        {
+          "id": "management-electronic-material-demand",
+          "topic": "電子材料需求與稼動率",
+          "summary": "法說資料說明 AI／雲端與高階電子材料需求、部分產品稼動率及供需狀況；這是管理層對營運現況的說明，不等同保證獲利。",
+          "statementDate": "2026-09-11",
+          "sourceEvidenceIds": [
+            "1303-P2-005"
+          ],
+          "status": "MANAGEMENT"
+        },
+        {
+          "id": "management-chemical-polyester-outlook",
+          "topic": "化工與聚酯展望",
+          "summary": "法說資料說明化工／聚酯受原料、產能、需求與地緣政治影響；前景仍需跟隨價差與供需驗證。",
+          "statementDate": "2026-09-11",
+          "sourceEvidenceIds": [
+            "1303-P2-005"
+          ],
+          "status": "MANAGEMENT"
+        },
+        {
+          "id": "management-transformation-plan",
+          "topic": "高值化與轉型計畫",
+          "summary": "年報與法說提到半導體材料、醫療材料、低碳與數位轉型方向；目前列為規劃／觀察，不視為已實現收入。",
+          "statementDate": "2026-06-09",
+          "sourceEvidenceIds": [
+            "1303-P2-002",
+            "1303-P2-005"
+          ],
+          "status": "MANAGEMENT"
+        }
+      ],
+      "fullResearch": {
+        "revenueStructure": {
+          "known": "2026 年上半年外部收入約 1,522.43 億元：塑膠產品約 193.23 億元、塑膠原料／化工約 256.99 億元、電子材料約 801.98 億元、聚酯約 240.18 億元、其他約 30.05 億元。電子材料約占 52.7%，為最大業務群。",
+          "segmentProfit": "同一份季報的上半年部門損益約為：塑膠產品 19.20 億元、塑膠原料／化工 -14.52 億元、電子材料 138.07 億元、聚酯 4.75 億元、其他 400.84 億元、抵銷 -79.90 億元；其他部門包含重要轉投資／權益法因素，不等於單一產品獲利。",
+          "investmentProfitDrivers": "南亞官方轉投資清單包含南亞科技、台塑石化、南亞電路板、台灣必成、南中石化、麥寮汽電、台朔重工、台塑資源及台塑新智能等。2026 年上半年獲利解讀中，南亞科技與台塑石化是主要權益法收益傳導來源；本包沒有把轉投資收益算成南亞電子材料本業。",
+          "investmentCoverage": "已納入主要轉投資結構與獲利傳導，但未逐一完成所有轉投資公司／海外子公司的獨立研究包與收入獲利拆分。",
+          "notEstablished": [
+            "土地開發獨立收入與毛利拆分",
+            "CCL、PCB、玻纖布等單一產品毛利／營業利益"
+          ],
+          "reason": "官方財報提供事業群層級的收入與部門損益，但沒有提供所有單一產品的獲利橋接；本包不從收入占比反推產品毛利。",
+          "v2": {
+            "summary": {
+              "summary": "2026 年上半年電子材料是最大事業群；部門損益與轉投資／權益法收益必須分開閱讀。",
+              "status": "READY",
+              "evidenceIds": [
+                "1303-P2-003",
+                "1303-P2-005"
+              ]
+            },
+            "revenueDatasets": [
+              {
+                "id": "revenue-h1-2026-external-segment",
+                "period": "2026-01-01/2026-06-30",
+                "periodType": "H1",
+                "reportingBasis": "CONSOLIDATED_EXTERNAL_CUSTOMER_REVENUE_BY_BUSINESS_GROUP",
+                "currency": "TWD",
+                "unit": "TWD_100_MILLION",
+                "total": 1522.43,
+                "items": [
+                  {
+                    "id": "plastic-products",
+                    "name": "塑膠產品",
+                    "value": 193.23,
+                    "share": 0.126922,
+                    "businessGroupId": "plastic-products",
+                    "sourceEvidenceIds": [
+                      "1303-P2-003"
+                    ]
+                  },
+                  {
+                    "id": "chemical",
+                    "name": "塑膠原料／化工",
+                    "value": 256.99,
+                    "share": 0.168803,
+                    "businessGroupId": "chemical",
+                    "sourceEvidenceIds": [
+                      "1303-P2-003"
+                    ]
+                  },
+                  {
+                    "id": "electronic-materials",
+                    "name": "電子材料",
+                    "value": 801.98,
+                    "share": 0.526776,
+                    "businessGroupId": "electronic-materials",
+                    "sourceEvidenceIds": [
+                      "1303-P2-003"
+                    ]
+                  },
+                  {
+                    "id": "polyester",
+                    "name": "聚酯",
+                    "value": 240.18,
+                    "share": 0.157761,
+                    "businessGroupId": "polyester",
+                    "sourceEvidenceIds": [
+                      "1303-P2-003"
+                    ]
+                  },
+                  {
+                    "id": "other",
+                    "name": "其他",
+                    "value": 30.05,
+                    "share": 0.019738,
+                    "businessGroupId": null,
+                    "sourceEvidenceIds": [
+                      "1303-P2-003"
+                    ]
+                  }
+                ],
+                "sourceEvidenceIds": [
+                  "1303-P2-003"
+                ],
+                "reconciliation": "分類金額合計等於 1,522.43 億元；各分類同為 2026 H1 合併外部客戶收入，適合營收結構圖，不代表獲利占比。",
+                "chartEligible": true,
+                "status": "READY"
+              }
+            ],
+            "profitDatasets": [
+              {
+                "id": "profit-h1-2026-segment-pretax",
+                "period": "2026-01-01/2026-06-30",
+                "periodType": "H1",
+                "reportingBasis": "CONSOLIDATED_SEGMENT_PRETAX_PROFIT_LOSS",
+                "currency": "TWD",
+                "unit": "TWD_100_MILLION",
+                "total": 468.44,
+                "items": [
+                  {
+                    "id": "plastic-products",
+                    "name": "塑膠產品",
+                    "value": 19.2,
+                    "businessGroupId": "plastic-products",
+                    "sourceEvidenceIds": [
+                      "1303-P2-003"
+                    ]
+                  },
+                  {
+                    "id": "chemical",
+                    "name": "塑膠原料／化工",
+                    "value": -14.52,
+                    "businessGroupId": "chemical",
+                    "sourceEvidenceIds": [
+                      "1303-P2-003"
+                    ]
+                  },
+                  {
+                    "id": "electronic-materials",
+                    "name": "電子材料",
+                    "value": 138.07,
+                    "businessGroupId": "electronic-materials",
+                    "sourceEvidenceIds": [
+                      "1303-P2-003"
+                    ]
+                  },
+                  {
+                    "id": "polyester",
+                    "name": "聚酯",
+                    "value": 4.75,
+                    "businessGroupId": "polyester",
+                    "sourceEvidenceIds": [
+                      "1303-P2-003"
+                    ]
+                  },
+                  {
+                    "id": "other",
+                    "name": "其他",
+                    "value": 400.84,
+                    "businessGroupId": null,
+                    "sourceEvidenceIds": [
+                      "1303-P2-003"
+                    ]
+                  },
+                  {
+                    "id": "eliminations",
+                    "name": "抵銷",
+                    "value": -79.9,
+                    "businessGroupId": null,
+                    "sourceEvidenceIds": [
+                      "1303-P2-003"
+                    ]
+                  }
+                ],
+                "sourceEvidenceIds": [
+                  "1303-P2-003"
+                ],
+                "reconciliation": "這是部門損益／稅前口徑，不是產品別毛利；其他部門含重要權益法／轉投資因素，禁止當成單一產品獲利圖。",
+                "chartEligible": false,
+                "status": "PARTIAL"
+              }
+            ],
+            "financialMetrics": [
+              {
+                "id": "revenue-2025-annual",
+                "label": "合併營收",
+                "value": 2599.1,
+                "unit": "TWD_100_MILLION",
+                "currency": "TWD",
+                "period": "2025-01-01/2025-12-31",
+                "periodType": "ANNUAL",
+                "reportingBasis": "CONSOLIDATED",
+                "metricDefinition": "合併營業收入",
+                "sourceEvidenceIds": [
+                  "1303-P2-002"
+                ],
+                "type": "FACT",
+                "status": "READY"
+              },
+              {
+                "id": "pretax-2025-annual",
+                "label": "稅前淨利",
+                "value": 64.6,
+                "unit": "TWD_100_MILLION",
+                "currency": "TWD",
+                "period": "2025-01-01/2025-12-31",
+                "periodType": "ANNUAL",
+                "reportingBasis": "CONSOLIDATED",
+                "metricDefinition": "合併稅前淨利",
+                "sourceEvidenceIds": [
+                  "1303-P2-002"
+                ],
+                "type": "FACT",
+                "status": "READY"
+              },
+              {
+                "id": "revenue-2026-q1",
+                "label": "合併營收",
+                "value": 685.96,
+                "unit": "TWD_100_MILLION",
+                "currency": "TWD",
+                "period": "2026-01-01/2026-03-31",
+                "periodType": "Q1",
+                "reportingBasis": "CONSOLIDATED",
+                "metricDefinition": "合併營業收入",
+                "sourceEvidenceIds": [
+                  "1303-P2-004"
+                ],
+                "type": "FACT",
+                "status": "READY"
+              },
+              {
+                "id": "pretax-2026-q1",
+                "label": "稅前淨利",
+                "value": 160.8,
+                "unit": "TWD_100_MILLION",
+                "currency": "TWD",
+                "period": "2026-01-01/2026-03-31",
+                "periodType": "Q1",
+                "reportingBasis": "CONSOLIDATED",
+                "metricDefinition": "合併稅前淨利",
+                "sourceEvidenceIds": [
+                  "1303-P2-004"
+                ],
+                "type": "FACT",
+                "status": "READY"
+              },
+              {
+                "id": "attributable-profit-2026-q1",
+                "label": "歸屬母公司淨利",
+                "value": 146.75,
+                "unit": "TWD_100_MILLION",
+                "currency": "TWD",
+                "period": "2026-01-01/2026-03-31",
+                "periodType": "Q1",
+                "reportingBasis": "CONSOLIDATED_ATTRIBUTABLE_TO_PARENT",
+                "metricDefinition": "歸屬母公司業主之淨利",
+                "sourceEvidenceIds": [
+                  "1303-P2-004"
+                ],
+                "type": "FACT",
+                "status": "READY"
+              },
+              {
+                "id": "eps-2026-q1",
+                "label": "每股盈餘",
+                "value": 1.8,
+                "unit": "TWD_PER_SHARE",
+                "currency": "TWD",
+                "period": "2026-01-01/2026-03-31",
+                "periodType": "Q1",
+                "reportingBasis": "CONSOLIDATED",
+                "metricDefinition": "基本每股盈餘",
+                "sourceEvidenceIds": [
+                  "1303-P2-004"
+                ],
+                "type": "FACT",
+                "status": "READY"
+              },
+              {
+                "id": "revenue-2026-q2",
+                "label": "合併營收",
+                "value": 836.47,
+                "unit": "TWD_100_MILLION",
+                "currency": "TWD",
+                "period": "2026-04-01/2026-06-30",
+                "periodType": "Q2",
+                "reportingBasis": "CONSOLIDATED",
+                "metricDefinition": "合併營業收入",
+                "sourceEvidenceIds": [
+                  "1303-P2-003"
+                ],
+                "type": "FACT",
+                "status": "READY"
+              },
+              {
+                "id": "eps-2026-q2",
+                "label": "每股盈餘",
+                "value": 3.37,
+                "unit": "TWD_PER_SHARE",
+                "currency": "TWD",
+                "period": "2026-04-01/2026-06-30",
+                "periodType": "Q2",
+                "reportingBasis": "CONSOLIDATED",
+                "metricDefinition": "基本每股盈餘",
+                "sourceEvidenceIds": [
+                  "1303-P2-003"
+                ],
+                "type": "FACT",
+                "status": "READY"
+              },
+              {
+                "id": "revenue-2026-h1",
+                "label": "合併營收",
+                "value": 1522.43,
+                "unit": "TWD_100_MILLION",
+                "currency": "TWD",
+                "period": "2026-01-01/2026-06-30",
+                "periodType": "H1",
+                "reportingBasis": "CONSOLIDATED",
+                "metricDefinition": "合併營業收入",
+                "sourceEvidenceIds": [
+                  "1303-P2-003"
+                ],
+                "type": "FACT",
+                "status": "READY"
+              },
+              {
+                "id": "pretax-2026-h1",
+                "label": "稅前淨利",
+                "value": 468.44,
+                "unit": "TWD_100_MILLION",
+                "currency": "TWD",
+                "period": "2026-01-01/2026-06-30",
+                "periodType": "H1",
+                "reportingBasis": "CONSOLIDATED",
+                "metricDefinition": "合併稅前淨利",
+                "sourceEvidenceIds": [
+                  "1303-P2-003"
+                ],
+                "type": "FACT",
+                "status": "READY"
+              },
+              {
+                "id": "eps-2026-h1",
+                "label": "累計每股盈餘",
+                "value": 5.17,
+                "unit": "TWD_PER_SHARE",
+                "currency": "TWD",
+                "period": "2026-01-01/2026-06-30",
+                "periodType": "H1",
+                "reportingBasis": "CONSOLIDATED",
+                "metricDefinition": "累計基本每股盈餘",
+                "sourceEvidenceIds": [
+                  "1303-P2-003"
+                ],
+                "type": "FACT",
+                "status": "READY"
+              },
+              {
+                "id": "equity-method-income-change-nanya-tech-q1-2026",
+                "label": "權益法投資收益增加貢獻（南亞科技）",
+                "value": 43.8,
+                "unit": "TWD_100_MILLION",
+                "currency": "TWD",
+                "period": "2026-Q1",
+                "periodType": "Q1",
+                "reportingBasis": "MANAGEMENT_IR_EQUITY_METHOD_INCOME_CHANGE_QOQ",
+                "metricDefinition": "2026 年第一季相較 2025 年第四季，管理層簡報所列權益法投資收益增加中的南亞科技貢獻；不是南亞科技完整淨利，也不是南亞公司本業營收。",
+                "comparisonPeriod": "2025-Q4",
+                "sourceEvidenceIds": [
+                  "1303-P2-005"
+                ],
+                "type": "MANAGEMENT",
+                "status": "PARTIAL"
+              },
+              {
+                "id": "equity-method-income-change-formosa-petrochemical-q1-2026",
+                "label": "權益法投資收益增加貢獻（台塑石化）",
+                "value": 35.3,
+                "unit": "TWD_100_MILLION",
+                "currency": "TWD",
+                "period": "2026-Q1",
+                "periodType": "Q1",
+                "reportingBasis": "MANAGEMENT_IR_EQUITY_METHOD_INCOME_CHANGE_QOQ",
+                "metricDefinition": "2026 年第一季相較 2025 年第四季，管理層簡報所列權益法投資收益增加中的台塑石化貢獻；不是台塑石化完整淨利，也不是南亞公司本業營收。",
+                "comparisonPeriod": "2025-Q4",
+                "sourceEvidenceIds": [
+                  "1303-P2-005"
+                ],
+                "type": "MANAGEMENT",
+                "status": "PARTIAL"
+              }
+            ],
+            "investmentItems": [
+              {
+                "id": "investment-nanya-technology",
+                "name": "南亞科技",
+                "stockCode": "2408",
+                "relationshipType": "轉投資公司",
+                "holdingPercent": 29.3,
+                "materiality": "BOTH",
+                "materialityReason": "研究資料指出其是 2026 H1 權益法收益的重要傳導來源；同時提供 DRAM／晶圓與電子材料鏈的策略關聯。",
+                "businessDescription": "DRAM 晶片及晶圓",
+                "financialImpact": "影響南亞權益法／業外獲利；2026 年第一季法說會橋接顯示，相較 2025 年第四季的權益法投資收益增加中，南亞科技貢獻約 43.8 億元；此為管理層變動橋接，不是南亞科技完整淨利，也未併入南亞電子材料營收。",
+                "strategicImpact": "與電子材料及半導體相關業務形成策略曝險。",
+                "accountingTreatment": null,
+                "sourceEvidenceIds": [
+                  "1303-P2-003",
+                  "1303-P2-005",
+                  "1303-P2-009"
+                ],
+                "status": "PARTIAL"
+              },
+              {
+                "id": "investment-formosa-petrochemical",
+                "name": "台塑石化",
+                "stockCode": "6505",
+                "relationshipType": "轉投資公司",
+                "holdingPercent": 23.11,
+                "materiality": "BOTH",
+                "materialityReason": "研究資料指出其影響南亞業外／權益法收益，且使南亞承受石化景氣與原料鏈的策略曝險。",
+                "businessDescription": "汽柴油等石油製品及乙烯、丙烯等石油化學品",
+                "financialImpact": "影響南亞權益法／業外獲利；2026 年第一季法說會橋接顯示，相較 2025 年第四季的權益法投資收益增加中，台塑石化貢獻約 35.3 億元；此為管理層變動橋接，不是台塑石化完整淨利，也未在本 view 指派未逐項對帳的公司別金額。",
+                "strategicImpact": "連結石化原料與產品價格循環。",
+                "accountingTreatment": null,
+                "sourceEvidenceIds": [
+                  "1303-P2-003",
+                  "1303-P2-005",
+                  "1303-P2-009"
+                ],
+                "status": "PARTIAL"
+              },
+              {
+                "id": "investment-nanya-pcb",
+                "name": "南亞電路板",
+                "stockCode": "8046",
+                "relationshipType": "轉投資公司",
+                "holdingPercent": 66.97,
+                "materiality": "STRATEGIC",
+                "materialityReason": "官方轉投資資料確認其為 PCB／IC 載板公司，與南亞電子材料鏈有直接策略關聯；本包沒有把其收入當作南亞本業。",
+                "businessDescription": "印刷電路板、IC 載板",
+                "financialImpact": null,
+                "strategicImpact": "補足電子材料與 PCB 應用鏈的策略位置。",
+                "accountingTreatment": null,
+                "sourceEvidenceIds": [
+                  "1303-P2-009"
+                ],
+                "status": "PARTIAL"
+              }
+            ],
+            "investmentStatus": "PARTIAL",
+            "investmentReason": "已結構化三項具有財務或策略重大性的主要轉投資；會計處理與各公司獨立獲利金額仍需逐一對帳，不在本次推估。",
+            "managementTopics": [
+              {
+                "id": "management-electronic-material-demand",
+                "topic": "電子材料需求與稼動率",
+                "summary": "法說資料說明 AI／雲端與高階電子材料需求、部分產品稼動率及供需狀況；這是管理層對營運現況的說明，不等同保證獲利。",
+                "statementDate": "2026-09-11",
+                "sourceEvidenceIds": [
+                  "1303-P2-005"
+                ],
+                "status": "MANAGEMENT"
+              },
+              {
+                "id": "management-chemical-polyester-outlook",
+                "topic": "化工與聚酯展望",
+                "summary": "法說資料說明化工／聚酯受原料、產能、需求與地緣政治影響；前景仍需跟隨價差與供需驗證。",
+                "statementDate": "2026-09-11",
+                "sourceEvidenceIds": [
+                  "1303-P2-005"
+                ],
+                "status": "MANAGEMENT"
+              },
+              {
+                "id": "management-transformation-plan",
+                "topic": "高值化與轉型計畫",
+                "summary": "年報與法說提到半導體材料、醫療材料、低碳與數位轉型方向；目前列為規劃／觀察，不視為已實現收入。",
+                "statementDate": "2026-06-09",
+                "sourceEvidenceIds": [
+                  "1303-P2-002",
+                  "1303-P2-005"
+                ],
+                "status": "MANAGEMENT"
+              }
+            ]
+          }
+        },
+        "researchHistory": {
+          "version": "v1.0-official-annual-q2-ir-refresh",
+          "asOf": "2026-10-10",
+          "method": "以公司官方年報、最新兩季合併財報、最近兩次官方法說簡報與公司投資人資料為主，搭配 CMoney 第二級資料交叉核對；不以市場敘事取代官方證據。",
+          "publication": "UNPUBLISHED",
+          "nextReview": "完成負責人審查後，再決定是否發布研究內容；正式題材若需變更，另走題材治理流程。"
+        }
+      },
+      "sourceSection": [
+        "revenue_structure",
+        "research_history"
+      ],
+      "evidenceIds": [
+        "1303-P2-002",
+        "1303-P2-003",
+        "1303-P2-004",
+        "1303-P2-005",
+        "1303-P2-009",
+        "1303-P2-001",
+        "1303-P2-002",
+        "1303-P2-003",
+        "1303-P2-004",
+        "1303-P2-005",
+        "1303-P2-006",
+        "1303-P3-001",
+        "1303-P2-008"
+      ]
+    },
+    {
+      "id": "sources_and_limitations",
+      "title": "研究來源與資料限制",
+      "summary": "保留研究包實際使用的來源、日期、原始連結與資料缺口。",
+      "updatedAt": "2026-10-10",
+      "periods": [
+        "2026-10-10"
+      ],
+      "sources": [
+        {
+          "id": "1303-P2-001",
+          "title": "公司官方基本資料。",
+          "documentTitle": "公司官方基本資料。",
+          "type": "OFFICIAL_COMPANY_PROFILE",
+          "publisher": "南亞塑膠工業股份有限公司",
+          "publishedAt": "2026-07-30",
+          "documentDate": "2026-07-30",
+          "retrievedAt": "2026-10-10",
+          "url": "https://www.npc.com.tw/j2npc/zhtw/CompanyProfile.jsp",
+          "status": "AVAILABLE",
+          "claim": "官方公司資料確認 1303 南亞的上市身分、塑膠工業分類、主要業務、成立與上市資訊、董事長、資本額及公司網站。",
+          "tier": "P2"
+        },
+        {
+          "id": "1303-P2-002",
+          "title": "最近一個完整會計年度的正式年報。",
+          "documentTitle": "最近一個完整會計年度的正式年報。",
+          "type": "OFFICIAL_ANNUAL_REPORT",
+          "publisher": "南亞塑膠工業股份有限公司",
+          "publishedAt": "2026-06-09",
+          "documentDate": "2026-06-09",
+          "retrievedAt": "2026-10-10",
+          "url": "https://www.npc.com.tw/npcfile/public/report/year/20260609134904006.pdf",
+          "status": "AVAILABLE",
+          "claim": "114 年度年報揭露 2025 年營收、產品／事業群、產銷與預估銷售量、轉型計畫、電子材料、化工、聚酯與風險資訊。",
+          "tier": "P2"
+        },
+        {
+          "id": "1303-P2-003",
+          "title": "截至 2026-06-30。",
+          "documentTitle": "截至 2026-06-30。",
+          "type": "OFFICIAL_Q2_FINANCIAL_REPORT",
+          "publisher": "南亞塑膠工業股份有限公司",
+          "publishedAt": "2026-08-14",
+          "documentDate": "2026-08-14",
+          "retrievedAt": "2026-10-10",
+          "url": "https://www.npc.com.tw/npcfile/public/report/finreport/20260814172944001.pdf",
+          "status": "AVAILABLE",
+          "claim": "2026 年第二季合併財報揭露單季及上半年合併損益、產品／事業群外部收入、部門損益、地區別收入及附註資訊。",
+          "tier": "P2"
+        },
+        {
+          "id": "1303-P2-004",
+          "title": "截至 2026-03-31。",
+          "documentTitle": "截至 2026-03-31。",
+          "type": "OFFICIAL_Q1_FINANCIAL_REPORT",
+          "publisher": "南亞塑膠工業股份有限公司",
+          "publishedAt": "2026-05-20",
+          "documentDate": "2026-05-20",
+          "retrievedAt": "2026-10-10",
+          "url": "https://www.npc.com.tw/npcfile/public/report/finreport/20260520103455482.pdf",
+          "status": "AVAILABLE",
+          "claim": "2026 年第一季合併財報揭露單季損益、產品收入、業務群部門損益、地區別收入與權益法投資收益。",
+          "tier": "P2"
+        },
+        {
+          "id": "1303-P2-005",
+          "title": "官方簡報；未取得逐字稿。",
+          "documentTitle": "官方簡報；未取得逐字稿。",
+          "type": "OFFICIAL_IR_CONFERENCE",
+          "publisher": "南亞塑膠工業股份有限公司",
+          "publishedAt": "2026-09-11",
+          "documentDate": "2026-09-11",
+          "retrievedAt": "2026-10-10",
+          "url": "https://www.npc.com.tw/npcfile/public/report/premat/20260910134353986.pdf",
+          "status": "AVAILABLE",
+          "claim": "2026 年 9 月 11 日法說簡報說明上半年營收與獲利、電子材料需求與供需、化工／聚酯展望、產業風險與第三季方向。",
+          "tier": "P2"
+        },
+        {
+          "id": "1303-P2-006",
+          "title": "官方簡報；未取得逐字稿；內容期間與 9/11 簡報相同。",
+          "documentTitle": "官方簡報；未取得逐字稿；內容期間與 9/11 簡報相同。",
+          "type": "OFFICIAL_IR_CONFERENCE",
+          "publisher": "南亞塑膠工業股份有限公司",
+          "publishedAt": "2026-09-04",
+          "documentDate": "2026-09-04",
+          "retrievedAt": "2026-10-10",
+          "url": "https://www.npc.com.tw/npcfile/public/report/premat/20260910134527482.pdf",
+          "status": "AVAILABLE",
+          "claim": "2026 年 9 月 4 日法說簡報提供與 9 月 11 日相同期間的上半年營運概況，作為最近兩次官方法說活動的日期核對。",
+          "tier": "P2"
+        },
+        {
+          "id": "1303-P2-007",
+          "title": "2026 年 1-8 月累計合併營收約 2,134.17 億元。",
+          "documentTitle": "2026 年 1-8 月累計合併營收約 2,134.17 億元。",
+          "type": "OFFICIAL_MONTHLY_REVENUE",
+          "publisher": "南亞塑膠工業股份有限公司",
+          "publishedAt": "2026-09-09",
+          "documentDate": "2026-09-09",
+          "retrievedAt": "2026-10-10",
+          "url": "https://www.npc.com.tw/j2npc/zhtw/investor/Monthly%20Revenue",
+          "status": "PARTIAL",
+          "claim": "官方每月營收頁列出 2026 年 1 至 8 月營收；截至查核時 9 月欄位尚未更新，因此不以未更新資料推導 9 月結論。",
+          "tier": "P2"
+        },
+        {
+          "id": "1303-P2-009",
+          "title": "官方頁面同時列示中國大陸、香港、美國及越南／印尼／開曼的子公司與投資事業；本包先聚焦對本業與權益法收益有研究意義的主要公司。",
+          "documentTitle": "官方頁面同時列示中國大陸、香港、美國及越南／印尼／開曼的子公司與投資事業；本包先聚焦對本業與權益法收益有研究意義的主要公司。",
+          "type": "OFFICIAL_INVESTMENT_PORTFOLIO",
+          "publisher": "南亞塑膠工業股份有限公司",
+          "publishedAt": "2026-07-30",
+          "documentDate": "2026-07-30",
+          "retrievedAt": "2026-10-10",
+          "url": "https://www.npc.com.tw/j2npc/zhtw/Investment.jsp",
+          "status": "AVAILABLE",
+          "claim": "官方轉投資事業頁面列示南亞科技、台塑石化、南亞電路板、台灣必成、南中石化、麥寮汽電、台朔重工、台塑資源與台塑新智能等主要轉投資及持股比例與業務。",
+          "tier": "P2"
+        },
+        {
+          "id": "1303-P2-008",
+          "title": "CCL 字串需以 132 題材唯一權威的正式名稱銅箔基板CCL理解；是否正規化另走治理流程。",
+          "documentTitle": "CCL 字串需以 132 題材唯一權威的正式名稱銅箔基板CCL理解；是否正規化另走治理流程。",
+          "type": "READ_ONLY_TOPIC_MAPPING_FIXTURE",
+          "publisher": "TopicPilot repository fixture",
+          "publishedAt": null,
+          "documentDate": null,
+          "retrievedAt": "2026-10-10",
+          "url": "https://github.com/Xiezhou0828/topicpilot-platform/blob/15062944476759ec28a9eaebf13ace901717e846/fixtures/research/topic_universe_mapping.v1.csv",
+          "status": "AVAILABLE",
+          "claim": "唯讀映射 fixture 對 1303 列出 CCL、玻纖布、化工原料／塑化報價三項 MATCHED 記錄；本次不寫入或變更。",
+          "tier": "P2"
+        }
+      ],
+      "gaps": [
+        {
+          "fieldPath": "revenue_structure.landDevelopmentRevenueSplit",
+          "status": "NOT_DISCLOSED",
+          "reason": "已查年報、最新兩季財報與最近兩次法說；未取得可獨立拆分的土地開發收入、成本或毛利。此欄位為非強制補充資料。",
+          "evidenceIds": [
+            "1303-P2-002",
+            "1303-P2-003",
+            "1303-P2-005",
+            "1303-P2-006"
+          ]
+        },
+        {
+          "fieldPath": "competitive_position.comparableCostCurve",
+          "status": "NOT_DISCLOSED",
+          "reason": "已建立同業候選範圍，但沒有一致期間、產品、地區、製程及成本口徑的同業數據；本次不形成估算曲線。",
+          "evidenceIds": [
+            "1303-P2-002",
+            "1303-P2-003",
+            "1303-P2-005"
+          ]
+        },
+        {
+          "fieldPath": "competitive_position.longTermContractCoverage",
+          "status": "NOT_DISCLOSED",
+          "reason": "年報、兩季財報與兩次法說未揭露長約占營收、出貨量、產能或合約金額比例；不以需求強勁推算長約覆蓋率。",
+          "evidenceIds": [
+            "1303-P2-002",
+            "1303-P2-003",
+            "1303-P2-005",
+            "1303-P2-006"
+          ]
+        },
+        {
+          "fieldPath": "competitive_position.productLevelProfitability",
+          "status": "NOT_DISCLOSED",
+          "reason": "季報揭露事業群收入與部門損益，但未揭露 CCL、PCB、玻纖布、環氧樹脂等單一產品的毛利或營業利益；不能由產品收入反推。",
+          "evidenceIds": [
+            "1303-P2-003",
+            "1303-P2-004"
+          ]
+        },
+        {
+          "fieldPath": "customer_structure.customerConcentration",
+          "status": "NOT_DISCLOSED",
+          "reason": "法說有應用市場與需求敘述，但未取得足夠的客戶名稱、集中度或單一客戶占比資料。",
+          "evidenceIds": [
+            "1303-P2-002",
+            "1303-P2-005",
+            "1303-P2-006"
+          ]
+        },
+        {
+          "fieldPath": "latest_ir.transcript",
+          "status": "RETRIEVAL_BLOCKED",
+          "reason": "官方投資人頁可取得最近兩次簡報，但本次未取得逐字稿；未自行補寫未公開問答。",
+          "evidenceIds": [
+            "1303-P2-005",
+            "1303-P2-006"
+          ]
+        },
+        {
+          "fieldPath": "topic_mapping.cclCanonicalName",
+          "status": "AUTHORITY_MISMATCH",
+          "reason": "唯讀 fixture 使用 CCL 字串，而 132 題材唯一權威正式名稱為銅箔基板CCL；本包不直接變更關聯或欄位。",
+          "evidenceIds": [
+            "1303-P2-008"
+          ]
+        }
+      ],
+      "conflicts": [],
+      "uncertainties": [
+        "土地開發獨立收入與毛利拆分",
+        "CCL、PCB、玻纖布等單一產品毛利／營業利益",
+        "同業可比成本曲線",
+        "長約覆蓋率",
+        "單一產品別獲利",
+        "客戶集中度"
+      ],
+      "sourceSection": [
+        "company_positioning",
+        "products_services",
+        "revenue_structure",
+        "supply_chain",
+        "competitive_position",
+        "growth_drivers",
+        "risks",
+        "topic_research",
+        "research_history"
+      ],
+      "evidenceIds": [
+        "1303-P2-001",
+        "1303-P2-002",
+        "1303-P2-003",
+        "1303-P2-005",
+        "1303-P2-001",
+        "1303-P2-002",
+        "1303-P2-004",
+        "1303-P2-005",
+        "1303-P2-002",
+        "1303-P2-003",
+        "1303-P2-004",
+        "1303-P2-005",
+        "1303-P2-009",
+        "1303-P2-002",
+        "1303-P2-003",
+        "1303-P2-005",
+        "1303-P2-006",
+        "1303-P2-002",
+        "1303-P2-003",
+        "1303-P2-005",
+        "1303-P3-002",
+        "1303-P2-002",
+        "1303-P2-003",
+        "1303-P2-005",
+        "1303-P3-002",
+        "1303-P2-002",
+        "1303-P2-003",
+        "1303-P2-005",
+        "1303-P2-006",
+        "1303-P2-001",
+        "1303-P2-002",
+        "1303-P2-005",
+        "1303-P2-008",
+        "1303-P2-001",
+        "1303-P2-002",
+        "1303-P2-003",
+        "1303-P2-004",
+        "1303-P2-005",
+        "1303-P2-006",
+        "1303-P3-001",
+        "1303-P2-008"
+      ]
+    }
+  ],
+  "topicBoundary": {
+    "formalTopics": [
+      "銅箔基板CCL",
+      "玻纖布",
+      "化工原料／塑化報價"
+    ],
+    "researchObservations": [
+      "AI／高階電子材料需求",
+      "轉投資收益",
+      "半導體材料與醫療材料轉型計畫"
+    ],
+    "formalTopicMutation": "NO",
+    "fullResearch": {
+      "formalTopicBoundary": "正式題材只引用目前唯一 132 題材權威；本包不建立、不更名、不寫入正式題材。",
+      "existingFormalTopics": [
+        "銅箔基板CCL",
+        "玻纖布",
+        "化工原料／塑化報價"
+      ],
+      "reviewCandidates": [],
+      "researchObservations": [
+        "AI／高階電子材料需求",
+        "轉投資收益",
+        "半導體材料與醫療材料轉型計畫"
+      ],
+      "note": "研究觀察不等於正式 Topic；本次建議保留既有三項，不新增、不刪除、不改權重。"
+    }
+  },
+  "limitations": [
+    {
+      "fieldPath": "revenue_structure.landDevelopmentRevenueSplit",
+      "status": "NOT_DISCLOSED",
+      "reason": "已查年報、最新兩季財報與最近兩次法說；未取得可獨立拆分的土地開發收入、成本或毛利。此欄位為非強制補充資料。",
+      "evidenceIds": [
+        "1303-P2-002",
+        "1303-P2-003",
+        "1303-P2-005",
+        "1303-P2-006"
+      ]
+    },
+    {
+      "fieldPath": "competitive_position.comparableCostCurve",
+      "status": "NOT_DISCLOSED",
+      "reason": "已建立同業候選範圍，但沒有一致期間、產品、地區、製程及成本口徑的同業數據；本次不形成估算曲線。",
+      "evidenceIds": [
+        "1303-P2-002",
+        "1303-P2-003",
+        "1303-P2-005"
+      ]
+    },
+    {
+      "fieldPath": "competitive_position.longTermContractCoverage",
+      "status": "NOT_DISCLOSED",
+      "reason": "年報、兩季財報與兩次法說未揭露長約占營收、出貨量、產能或合約金額比例；不以需求強勁推算長約覆蓋率。",
+      "evidenceIds": [
+        "1303-P2-002",
+        "1303-P2-003",
+        "1303-P2-005",
+        "1303-P2-006"
+      ]
+    },
+    {
+      "fieldPath": "competitive_position.productLevelProfitability",
+      "status": "NOT_DISCLOSED",
+      "reason": "季報揭露事業群收入與部門損益，但未揭露 CCL、PCB、玻纖布、環氧樹脂等單一產品的毛利或營業利益；不能由產品收入反推。",
+      "evidenceIds": [
+        "1303-P2-003",
+        "1303-P2-004"
+      ]
+    },
+    {
+      "fieldPath": "customer_structure.customerConcentration",
+      "status": "NOT_DISCLOSED",
+      "reason": "法說有應用市場與需求敘述，但未取得足夠的客戶名稱、集中度或單一客戶占比資料。",
+      "evidenceIds": [
+        "1303-P2-002",
+        "1303-P2-005",
+        "1303-P2-006"
+      ]
+    },
+    {
+      "fieldPath": "latest_ir.transcript",
+      "status": "RETRIEVAL_BLOCKED",
+      "reason": "官方投資人頁可取得最近兩次簡報，但本次未取得逐字稿；未自行補寫未公開問答。",
+      "evidenceIds": [
+        "1303-P2-005",
+        "1303-P2-006"
+      ]
+    },
+    {
+      "fieldPath": "topic_mapping.cclCanonicalName",
+      "status": "AUTHORITY_MISMATCH",
+      "reason": "唯讀 fixture 使用 CCL 字串，而 132 題材唯一權威正式名稱為銅箔基板CCL；本包不直接變更關聯或欄位。",
+      "evidenceIds": [
+        "1303-P2-008"
+      ]
+    }
+  ]
+}

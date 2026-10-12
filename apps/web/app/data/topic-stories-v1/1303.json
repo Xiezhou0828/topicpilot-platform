@@ -1,0 +1,768 @@
+{
+  "schemaVersion": "stock-topic-evidence-collection.v1",
+  "stockId": "1303",
+  "stockName": "南亞",
+  "formalAuthorityVersion": "topic-authority-lifecycle-formal-scope.20260911.v2",
+  "structuralRoleAuthorityVersion": "structural-role-authority-20260912.v4",
+  "researchAsOfDate": "2026-10-10",
+  "formalTopicMutation": "NO",
+  "stories": [
+    {
+      "schemaVersion": "stock-topic-evidence-view.v1",
+      "stockId": "1303",
+      "stockName": "南亞",
+      "topicId": "41a04db1-5dc2-4dce-904d-189a602f5461",
+      "canonicalTopicName": "化工原料／塑化報價",
+      "formalAssociationReference": {
+        "relationId": "59fa0aad-5322-58c9-8c19-7ca856c0b529",
+        "relationType": "PRIMARY",
+        "approvalState": "APPROVED",
+        "referenceSource": "2026_REVISED_MARKET_UPDATE"
+      },
+      "formalAuthorityVersion": "topic-authority-lifecycle-formal-scope.20260911.v2",
+      "effectiveDate": "2026-08-24",
+      "structuralRoleReference": {
+        "relationId": "59fa0aad-5322-58c9-8c19-7ca856c0b529",
+        "structuralRole": "CORE",
+        "relationType": "PRIMARY",
+        "authorityVersion": "structural-role-authority-20260912.v4",
+        "effectiveDate": "2026-08-24"
+      },
+      "researchAsOfDate": "2026-10-10",
+      "researchStatus": "READY_WITH_LIMITATIONS",
+      "storyPattern": "PRICE_PROFIT_TRANSMISSION",
+      "storyTitle": "化工原料／塑化報價",
+      "storySummary": "南亞有乙二醇、雙酚 A、可塑劑等化工原料業務，正式關聯可由產品與化工事業群直接確認；題材對獲利的影響仍需觀察價格、原料與部門損益，不能由事業群收入直接推算題材貢獻。",
+      "companyParticipationSummary": "CONFIRMED_PRODUCT_AND_SEGMENT_RELATION",
+      "sections": [
+        {
+          "sectionId": "relationship_summary",
+          "title": "正式關聯與公司角色",
+          "summary": "南亞有乙二醇、雙酚 A、可塑劑等化工原料業務，正式關聯可由產品與化工事業群直接確認；題材對獲利的影響仍需觀察價格、原料與部門損益，不能由事業群收入直接推算題材貢獻。",
+          "evidenceRefs": [
+            "1303-P2-002",
+            "1303-P2-003",
+            "1303-P2-005"
+          ]
+        },
+        {
+          "sectionId": "product_technology_evidence",
+          "title": "產品與技術證據",
+          "summary": "詳見節點、證據與限制欄位。",
+          "evidenceRefs": [
+            "1303-P2-002",
+            "1303-P2-003",
+            "1303-P2-005"
+          ]
+        },
+        {
+          "sectionId": "financial_impact",
+          "title": "營運與財務影響",
+          "summary": "詳見節點、證據與限制欄位。",
+          "evidenceRefs": [
+            "1303-P2-002",
+            "1303-P2-003",
+            "1303-P2-005"
+          ]
+        },
+        {
+          "sectionId": "support_vs_uncertainty",
+          "title": "已確認與資料缺口",
+          "summary": "詳見節點、證據與限制欄位。",
+          "evidenceRefs": [
+            "1303-P2-002",
+            "1303-P2-003",
+            "1303-P2-005"
+          ]
+        },
+        {
+          "sectionId": "watch_indicators",
+          "title": "後續觀察重點",
+          "summary": "詳見節點、證據與限制欄位。",
+          "evidenceRefs": [
+            "1303-P2-002",
+            "1303-P2-003",
+            "1303-P2-005"
+          ]
+        },
+        {
+          "sectionId": "source_evidence",
+          "title": "研究來源",
+          "summary": "詳見節點、證據與限制欄位。",
+          "evidenceRefs": [
+            "1303-P2-002",
+            "1303-P2-003",
+            "1303-P2-005"
+          ]
+        }
+      ],
+      "nodes": [
+        {
+          "nodeId": "chemical-inputs",
+          "label": "化學原料／能源成本",
+          "nodeType": "MATERIAL_OR_INPUT",
+          "description": "化學原料／能源成本",
+          "companyParticipation": "CONFIRMED",
+          "evidenceStatus": "FACT",
+          "evidenceRefs": [
+            "1303-P2-005"
+          ],
+          "visualHint": null
+        },
+        {
+          "nodeId": "chemical-products",
+          "label": "乙二醇／雙酚 A／可塑劑",
+          "nodeType": "PRODUCT_OR_RELATION",
+          "description": "乙二醇／雙酚 A／可塑劑",
+          "companyParticipation": "CONFIRMED",
+          "evidenceStatus": "FACT",
+          "evidenceRefs": [
+            "1303-P2-002",
+            "1303-P2-003",
+            "1303-P2-005"
+          ],
+          "visualHint": null
+        },
+        {
+          "nodeId": "chemical-segment",
+          "label": "塑膠原料／化工事業群",
+          "nodeType": "MATERIAL_OR_INPUT",
+          "description": "塑膠原料／化工事業群",
+          "companyParticipation": "CONFIRMED",
+          "evidenceStatus": "FACT",
+          "evidenceRefs": [
+            "1303-P2-002",
+            "1303-P2-003"
+          ],
+          "visualHint": null
+        }
+      ],
+      "edges": [
+        {
+          "edgeId": "41a04db1-5dc2-4dce-904d-189a602f5461-edge-01",
+          "sourceNodeId": "chemical-inputs",
+          "targetNodeId": "chemical-products",
+          "relationType": "INFERRED",
+          "relationDescription": "INFERRED",
+          "evidenceStatus": "INFERENCE",
+          "evidenceRefs": [
+            "1303-P2-005"
+          ]
+        },
+        {
+          "edgeId": "41a04db1-5dc2-4dce-904d-189a602f5461-edge-02",
+          "sourceNodeId": "chemical-products",
+          "targetNodeId": "chemical-segment",
+          "relationType": "DIRECT",
+          "relationDescription": "DIRECT",
+          "evidenceStatus": "FACT",
+          "evidenceRefs": [
+            "1303-P2-002",
+            "1303-P2-003"
+          ]
+        }
+      ],
+      "evidence": [
+        {
+          "evidenceId": "1303-P2-002",
+          "title": "2025 年度年報產品與事業群",
+          "claim": "年報揭露化工、聚酯、塑膠原料與產品結構。",
+          "evidenceType": "OFFICIAL_ANNUAL_REPORT",
+          "sourceRef": "1303-P2-002",
+          "sourceDate": "2026-06-09",
+          "documentTitle": "2025 年度年報產品與事業群",
+          "documentLocator": "南亞塑膠工業股份有限公司",
+          "sourceUrl": "https://www.npc.com.tw/npcfile/public/report/year/20260609134904006.pdf",
+          "evidenceStatus": "FACT",
+          "limitations": "未拆題材收入與產品獲利。"
+        },
+        {
+          "evidenceId": "1303-P2-003",
+          "title": "2026 年第二季合併財報",
+          "claim": "H1 塑膠原料／化工外部收入約 256.99 億元，部門稅前損益約 -14.52 億元。",
+          "evidenceType": "OFFICIAL_Q2_FINANCIAL_REPORT",
+          "sourceRef": "1303-P2-003",
+          "sourceDate": "2026-08-14",
+          "documentTitle": "2026 年第二季合併財報",
+          "documentLocator": "南亞塑膠工業股份有限公司",
+          "sourceUrl": "https://www.npc.com.tw/npcfile/public/report/finreport/20260814172944001.pdf",
+          "evidenceStatus": "FACT",
+          "limitations": "不是題材專屬數字。"
+        },
+        {
+          "evidenceId": "1303-P2-005",
+          "title": "2026 年 9 月 11 日法說簡報",
+          "claim": "管理層說明化工／聚酯受原料、產能、需求與地緣政治影響。",
+          "evidenceType": "OFFICIAL_IR_CONFERENCE",
+          "sourceRef": "1303-P2-005",
+          "sourceDate": "2026-09-11",
+          "documentTitle": "2026 年 9 月 11 日法說簡報",
+          "documentLocator": "南亞塑膠工業股份有限公司",
+          "sourceUrl": "https://www.npc.com.tw/npcfile/public/report/premat/20260910134353986.pdf",
+          "evidenceStatus": "INFERENCE",
+          "limitations": "未取得產品級價格與逐字稿。"
+        }
+      ],
+      "financialImpact": [
+        {
+          "metricName": "事業群收入",
+          "metricValue": 256.99,
+          "unit": "TWD_100_MILLION",
+          "period": "2026-H1",
+          "scope": "segment",
+          "scopeLabel": "事業群收入",
+          "sourceRef": "1303-P2-002",
+          "evidenceStatus": "FACT",
+          "attributionLimitations": "事業群數字不等於題材獨立貢獻。"
+        },
+        {
+          "metricName": "事業群損益",
+          "metricValue": -14.52,
+          "unit": "TWD_100_MILLION",
+          "period": "2026-H1",
+          "scope": "segment",
+          "scopeLabel": "事業群損益",
+          "sourceRef": "1303-P2-002",
+          "evidenceStatus": "FACT",
+          "attributionLimitations": "事業群數字不等於題材獨立貢獻。"
+        }
+      ],
+      "timeline": [],
+      "limitations": [
+        "未取得單一化工產品收入／毛利",
+        "未取得同口徑成本曲線",
+        "不能由事業群收入推算題材獲利"
+      ],
+      "watchIndicators": [
+        "化工產品價格與原料成本",
+        "塑膠原料／化工部門收入與損益",
+        "法說對價差與稼動率的說明",
+        "產品別毛利或長約比例是否開始揭露"
+      ],
+      "formalTopicMutation": "NO"
+    },
+    {
+      "schemaVersion": "stock-topic-evidence-view.v1",
+      "stockId": "1303",
+      "stockName": "南亞",
+      "topicId": "62ace0c4-980f-49c3-a3ed-955d07db4ff0",
+      "canonicalTopicName": "銅箔基板CCL",
+      "formalAssociationReference": {
+        "relationId": "263992d2-c741-5634-8a73-72282b96286c",
+        "relationType": "SECONDARY",
+        "approvalState": "APPROVED",
+        "referenceSource": "2026_REVISED_MARKET_UPDATE"
+      },
+      "formalAuthorityVersion": "topic-authority-lifecycle-formal-scope.20260911.v2",
+      "effectiveDate": "2026-08-24",
+      "structuralRoleReference": {
+        "relationId": "263992d2-c741-5634-8a73-72282b96286c",
+        "structuralRole": "CORE",
+        "relationType": "SECONDARY",
+        "authorityVersion": "structural-role-authority-20260912.v4",
+        "effectiveDate": "2026-08-24"
+      },
+      "researchAsOfDate": "2026-10-10",
+      "researchStatus": "READY_WITH_LIMITATIONS",
+      "storyPattern": "PRODUCT_SUPPLY_CHAIN",
+      "storyTitle": "銅箔基板CCL",
+      "storySummary": "南亞實際具備玻纖、樹脂、銅箔、CCL 與 PCB 電子材料產品，CCL 正式關聯的產品證據明確；研究可量化到 Q1 CCL 產品收入與 H1 電子材料事業群，但尚不能推導 CCL 題材獨立獲利。",
+      "companyParticipationSummary": "CONFIRMED_PRODUCT_RELATION_WITH_PARTIAL_OPERATING_EVIDENCE",
+      "sections": [
+        {
+          "sectionId": "relationship_summary",
+          "title": "正式關聯與公司角色",
+          "summary": "南亞實際具備玻纖、樹脂、銅箔、CCL 與 PCB 電子材料產品，CCL 正式關聯的產品證據明確；研究可量化到 Q1 CCL 產品收入與 H1 電子材料事業群，但尚不能推導 CCL 題材獨立獲利。",
+          "evidenceRefs": [
+            "1303-P2-002",
+            "1303-P2-003",
+            "1303-P2-004",
+            "1303-P2-005"
+          ]
+        },
+        {
+          "sectionId": "product_technology_evidence",
+          "title": "產品與技術證據",
+          "summary": "詳見節點、證據與限制欄位。",
+          "evidenceRefs": [
+            "1303-P2-002",
+            "1303-P2-003",
+            "1303-P2-004",
+            "1303-P2-005"
+          ]
+        },
+        {
+          "sectionId": "supply_chain_flow",
+          "title": "產業鏈與曝險路徑",
+          "summary": "詳見節點、證據與限制欄位。",
+          "evidenceRefs": [
+            "1303-P2-002",
+            "1303-P2-003",
+            "1303-P2-004",
+            "1303-P2-005"
+          ]
+        },
+        {
+          "sectionId": "financial_impact",
+          "title": "營運與財務影響",
+          "summary": "詳見節點、證據與限制欄位。",
+          "evidenceRefs": [
+            "1303-P2-002",
+            "1303-P2-003",
+            "1303-P2-004",
+            "1303-P2-005"
+          ]
+        },
+        {
+          "sectionId": "support_vs_uncertainty",
+          "title": "已確認與資料缺口",
+          "summary": "詳見節點、證據與限制欄位。",
+          "evidenceRefs": [
+            "1303-P2-002",
+            "1303-P2-003",
+            "1303-P2-004",
+            "1303-P2-005"
+          ]
+        },
+        {
+          "sectionId": "watch_indicators",
+          "title": "後續觀察重點",
+          "summary": "詳見節點、證據與限制欄位。",
+          "evidenceRefs": [
+            "1303-P2-002",
+            "1303-P2-003",
+            "1303-P2-004",
+            "1303-P2-005"
+          ]
+        },
+        {
+          "sectionId": "source_evidence",
+          "title": "研究來源",
+          "summary": "詳見節點、證據與限制欄位。",
+          "evidenceRefs": [
+            "1303-P2-002",
+            "1303-P2-003",
+            "1303-P2-004",
+            "1303-P2-005"
+          ]
+        }
+      ],
+      "nodes": [
+        {
+          "nodeId": "materials",
+          "label": "玻纖／樹脂／銅箔",
+          "nodeType": "MATERIAL_OR_INPUT",
+          "description": "玻纖／樹脂／銅箔",
+          "companyParticipation": "CONFIRMED",
+          "evidenceStatus": "FACT",
+          "evidenceRefs": [
+            "1303-P2-002"
+          ],
+          "visualHint": null
+        },
+        {
+          "nodeId": "ccl",
+          "label": "銅箔基板 CCL",
+          "nodeType": "MATERIAL_OR_INPUT",
+          "description": "銅箔基板 CCL",
+          "companyParticipation": "CONFIRMED",
+          "evidenceStatus": "FACT",
+          "evidenceRefs": [
+            "1303-P2-002",
+            "1303-P2-003",
+            "1303-P2-004",
+            "1303-P2-005"
+          ],
+          "visualHint": null
+        },
+        {
+          "nodeId": "pcb-applications",
+          "label": "高速運算／伺服器／網通應用",
+          "nodeType": "APPLICATION_OR_MARKET",
+          "description": "高速運算／伺服器／網通應用",
+          "companyParticipation": "CONFIRMED",
+          "evidenceStatus": "FACT",
+          "evidenceRefs": [
+            "1303-P2-002",
+            "1303-P2-005"
+          ],
+          "visualHint": null
+        },
+        {
+          "nodeId": "electronic-segment",
+          "label": "電子材料事業群",
+          "nodeType": "BUSINESS_GROUP_OR_FINANCIAL",
+          "description": "電子材料事業群",
+          "companyParticipation": "CONFIRMED",
+          "evidenceStatus": "FACT",
+          "evidenceRefs": [
+            "1303-P2-003",
+            "1303-P2-004"
+          ],
+          "visualHint": null
+        }
+      ],
+      "edges": [
+        {
+          "edgeId": "62ace0c4-980f-49c3-a3ed-955d07db4ff0-edge-01",
+          "sourceNodeId": "materials",
+          "targetNodeId": "ccl",
+          "relationType": "DIRECT",
+          "relationDescription": "DIRECT",
+          "evidenceStatus": "FACT",
+          "evidenceRefs": [
+            "1303-P2-002"
+          ]
+        },
+        {
+          "edgeId": "62ace0c4-980f-49c3-a3ed-955d07db4ff0-edge-02",
+          "sourceNodeId": "ccl",
+          "targetNodeId": "pcb-applications",
+          "relationType": "SUPPORTED_APPLICATION",
+          "relationDescription": "SUPPORTED_APPLICATION",
+          "evidenceStatus": "INFERENCE",
+          "evidenceRefs": [
+            "1303-P2-002",
+            "1303-P2-005"
+          ]
+        },
+        {
+          "edgeId": "62ace0c4-980f-49c3-a3ed-955d07db4ff0-edge-03",
+          "sourceNodeId": "ccl",
+          "targetNodeId": "electronic-segment",
+          "relationType": "DIRECT_PRODUCT_TO_SEGMENT_CONTEXT",
+          "relationDescription": "DIRECT_PRODUCT_TO_SEGMENT_CONTEXT",
+          "evidenceStatus": "FACT",
+          "evidenceRefs": [
+            "1303-P2-003",
+            "1303-P2-004"
+          ]
+        }
+      ],
+      "evidence": [
+        {
+          "evidenceId": "1303-P2-002",
+          "title": "年報電子材料產品與產銷",
+          "claim": "年報列示玻纖布、環氧樹脂、銅箔、CCL 與 PCB 等電子材料。",
+          "evidenceType": "OFFICIAL_ANNUAL_REPORT",
+          "sourceRef": "1303-P2-002",
+          "sourceDate": "2026-06-09",
+          "documentTitle": "年報電子材料產品與產銷",
+          "documentLocator": "南亞塑膠工業股份有限公司",
+          "sourceUrl": "https://www.npc.com.tw/npcfile/public/report/year/20260609134904006.pdf",
+          "evidenceStatus": "FACT",
+          "limitations": "產品別獲利未揭露。"
+        },
+        {
+          "evidenceId": "1303-P2-004",
+          "title": "2026 年第一季合併財報",
+          "claim": "研究包記錄 Q1 CCL 外部客戶收入約 82.46 億元。",
+          "evidenceType": "OFFICIAL_Q1_FINANCIAL_REPORT",
+          "sourceRef": "1303-P2-004",
+          "sourceDate": "2026-05-20",
+          "documentTitle": "2026 年第一季合併財報",
+          "documentLocator": "南亞塑膠工業股份有限公司",
+          "sourceUrl": "https://www.npc.com.tw/npcfile/public/report/finreport/20260520103455482.pdf",
+          "evidenceStatus": "FACT",
+          "limitations": "不是毛利或題材淨貢獻。"
+        },
+        {
+          "evidenceId": "1303-P2-003",
+          "title": "2026 年第二季合併財報",
+          "claim": "H1 電子材料事業群外部收入約 801.98 億元。",
+          "evidenceType": "OFFICIAL_Q2_FINANCIAL_REPORT",
+          "sourceRef": "1303-P2-003",
+          "sourceDate": "2026-08-14",
+          "documentTitle": "2026 年第二季合併財報",
+          "documentLocator": "南亞塑膠工業股份有限公司",
+          "sourceUrl": "https://www.npc.com.tw/npcfile/public/report/finreport/20260814172944001.pdf",
+          "evidenceStatus": "FACT",
+          "limitations": "事業群包含多項產品。"
+        },
+        {
+          "evidenceId": "1303-P2-005",
+          "title": "2026 年 9 月 11 日法說簡報",
+          "claim": "說明高階電子材料需求、供需與部分稼動率。",
+          "evidenceType": "OFFICIAL_IR_CONFERENCE",
+          "sourceRef": "1303-P2-005",
+          "sourceDate": "2026-09-11",
+          "documentTitle": "2026 年 9 月 11 日法說簡報",
+          "documentLocator": "南亞塑膠工業股份有限公司",
+          "sourceUrl": "https://www.npc.com.tw/npcfile/public/report/premat/20260910134353986.pdf",
+          "evidenceStatus": "INFERENCE",
+          "limitations": "特定客戶與訂單金額未取得。"
+        }
+      ],
+      "financialImpact": [
+        {
+          "metricName": "產品收入",
+          "metricValue": 82.46,
+          "unit": "TWD_100_MILLION",
+          "period": "2026-Q1",
+          "scope": "product",
+          "scopeLabel": "產品收入",
+          "sourceRef": "1303-P2-002",
+          "evidenceStatus": "FACT",
+          "attributionLimitations": "兩個數字期間與層級不同，不相加且不代表 CCL 題材獲利。"
+        },
+        {
+          "metricName": "事業群收入",
+          "metricValue": 801.98,
+          "unit": "TWD_100_MILLION",
+          "period": "2026-H1",
+          "scope": "segment",
+          "scopeLabel": "事業群收入",
+          "sourceRef": "1303-P2-002",
+          "evidenceStatus": "FACT",
+          "attributionLimitations": "兩個數字期間與層級不同，不相加且不代表 CCL 題材獲利。"
+        },
+        {
+          "metricName": "題材可對應產品收入",
+          "metricValue": 82.46,
+          "unit": "TWD_100_MILLION",
+          "period": "2026-Q1",
+          "scope": "product",
+          "scopeLabel": "題材相關產品",
+          "sourceRef": "1303-P2-002",
+          "evidenceStatus": "FACT",
+          "attributionLimitations": "仍非題材獨立獲利。"
+        }
+      ],
+      "timeline": [],
+      "limitations": [
+        "未取得 CCL 產品別毛利",
+        "未取得客戶／訂單金額",
+        "其他未經正式關聯核准的應用方向不納入本故事"
+      ],
+      "watchIndicators": [
+        "CCL 單項季度收入",
+        "電子材料部門損益",
+        "高階產品稼動率與認證進度",
+        "產品組合與同業供給"
+      ],
+      "formalTopicMutation": "NO"
+    },
+    {
+      "schemaVersion": "stock-topic-evidence-view.v1",
+      "stockId": "1303",
+      "stockName": "南亞",
+      "topicId": "98c92dc1-dabd-427c-b3b8-5b98a47e1f97",
+      "canonicalTopicName": "玻纖布",
+      "formalAssociationReference": {
+        "relationId": "922e98c3-92b3-577c-bdb7-a5f99fc21d7e",
+        "relationType": "SECONDARY",
+        "approvalState": "APPROVED",
+        "referenceSource": "2026_REVISED_MARKET_UPDATE"
+      },
+      "formalAuthorityVersion": "topic-authority-lifecycle-formal-scope.20260911.v2",
+      "effectiveDate": "2026-08-24",
+      "structuralRoleReference": {
+        "relationId": "922e98c3-92b3-577c-bdb7-a5f99fc21d7e",
+        "structuralRole": "REPRESENTATIVE",
+        "relationType": "SECONDARY",
+        "authorityVersion": "structural-role-authority-20260912.v4",
+        "effectiveDate": "2026-08-24"
+      },
+      "researchAsOfDate": "2026-10-10",
+      "researchStatus": "READY_WITH_LIMITATIONS",
+      "storyPattern": "PRODUCT_SUPPLY_CHAIN",
+      "storyTitle": "玻纖布",
+      "storySummary": "南亞的玻纖布是電子材料事業群中的產品，並由研究包明確列出 CCL／電子材料應用；故事主線是材料節點到 CCL 的產品證據，不是把電子材料事業群或 CCL 收入直接當成玻纖布獲利。",
+      "companyParticipationSummary": "CONFIRMED_PRODUCT_RELATION_WITH_UNQUANTIFIED_CONTRIBUTION",
+      "sections": [
+        {
+          "sectionId": "relationship_summary",
+          "title": "正式關聯與公司角色",
+          "summary": "南亞的玻纖布是電子材料事業群中的產品，並由研究包明確列出 CCL／電子材料應用；故事主線是材料節點到 CCL 的產品證據，不是把電子材料事業群或 CCL 收入直接當成玻纖布獲利。",
+          "evidenceRefs": [
+            "1303-P2-002",
+            "1303-P2-003",
+            "1303-P2-005"
+          ]
+        },
+        {
+          "sectionId": "product_technology_evidence",
+          "title": "產品與技術證據",
+          "summary": "詳見節點、證據與限制欄位。",
+          "evidenceRefs": [
+            "1303-P2-002",
+            "1303-P2-003",
+            "1303-P2-005"
+          ]
+        },
+        {
+          "sectionId": "supply_chain_flow",
+          "title": "產業鏈與曝險路徑",
+          "summary": "詳見節點、證據與限制欄位。",
+          "evidenceRefs": [
+            "1303-P2-002",
+            "1303-P2-003",
+            "1303-P2-005"
+          ]
+        },
+        {
+          "sectionId": "support_vs_uncertainty",
+          "title": "已確認與資料缺口",
+          "summary": "詳見節點、證據與限制欄位。",
+          "evidenceRefs": [
+            "1303-P2-002",
+            "1303-P2-003",
+            "1303-P2-005"
+          ]
+        },
+        {
+          "sectionId": "watch_indicators",
+          "title": "後續觀察重點",
+          "summary": "詳見節點、證據與限制欄位。",
+          "evidenceRefs": [
+            "1303-P2-002",
+            "1303-P2-003",
+            "1303-P2-005"
+          ]
+        },
+        {
+          "sectionId": "source_evidence",
+          "title": "研究來源",
+          "summary": "詳見節點、證據與限制欄位。",
+          "evidenceRefs": [
+            "1303-P2-002",
+            "1303-P2-003",
+            "1303-P2-005"
+          ]
+        }
+      ],
+      "nodes": [
+        {
+          "nodeId": "glass-fiber-cloth",
+          "label": "玻纖布",
+          "nodeType": "MATERIAL_OR_INPUT",
+          "description": "玻纖布",
+          "companyParticipation": "CONFIRMED",
+          "evidenceStatus": "FACT",
+          "evidenceRefs": [
+            "1303-P2-002"
+          ],
+          "visualHint": null
+        },
+        {
+          "nodeId": "ccl-use",
+          "label": "CCL 應用",
+          "nodeType": "APPLICATION_OR_MARKET",
+          "description": "CCL 應用",
+          "companyParticipation": "CONFIRMED",
+          "evidenceStatus": "FACT",
+          "evidenceRefs": [
+            "1303-P2-002",
+            "1303-P2-003"
+          ],
+          "visualHint": null
+        },
+        {
+          "nodeId": "electronic-materials",
+          "label": "電子材料事業群",
+          "nodeType": "BUSINESS_GROUP_OR_FINANCIAL",
+          "description": "電子材料事業群",
+          "companyParticipation": "CONFIRMED",
+          "evidenceStatus": "FACT",
+          "evidenceRefs": [
+            "1303-P2-002",
+            "1303-P2-003"
+          ],
+          "visualHint": null
+        }
+      ],
+      "edges": [
+        {
+          "edgeId": "98c92dc1-dabd-427c-b3b8-5b98a47e1f97-edge-01",
+          "sourceNodeId": "glass-fiber-cloth",
+          "targetNodeId": "ccl-use",
+          "relationType": "DIRECT_APPLICATION",
+          "relationDescription": "DIRECT_APPLICATION",
+          "evidenceStatus": "FACT",
+          "evidenceRefs": [
+            "1303-P2-002"
+          ]
+        },
+        {
+          "edgeId": "98c92dc1-dabd-427c-b3b8-5b98a47e1f97-edge-02",
+          "sourceNodeId": "ccl-use",
+          "targetNodeId": "electronic-materials",
+          "relationType": "DIRECT_BUSINESS_GROUP_CONTEXT",
+          "relationDescription": "DIRECT_BUSINESS_GROUP_CONTEXT",
+          "evidenceStatus": "FACT",
+          "evidenceRefs": [
+            "1303-P2-002",
+            "1303-P2-003"
+          ]
+        }
+      ],
+      "evidence": [
+        {
+          "evidenceId": "1303-P2-002",
+          "title": "年報玻纖與電子材料產品",
+          "claim": "產品清單包含玻纖絲與玻纖布，玻纖布應用列為 CCL／電子材料。",
+          "evidenceType": "OFFICIAL_ANNUAL_REPORT",
+          "sourceRef": "1303-P2-002",
+          "sourceDate": "2026-06-09",
+          "documentTitle": "年報玻纖與電子材料產品",
+          "documentLocator": "南亞塑膠工業股份有限公司",
+          "sourceUrl": "https://www.npc.com.tw/npcfile/public/report/year/20260609134904006.pdf",
+          "evidenceStatus": "FACT",
+          "limitations": "未拆玻纖布財務數字。"
+        },
+        {
+          "evidenceId": "1303-P2-005",
+          "title": "法說電子材料需求與稼動率",
+          "claim": "管理層說明電子材料需求、供需與部分稼動率。",
+          "evidenceType": "OFFICIAL_IR_CONFERENCE",
+          "sourceRef": "1303-P2-005",
+          "sourceDate": "2026-09-11",
+          "documentTitle": "法說電子材料需求與稼動率",
+          "documentLocator": "南亞塑膠工業股份有限公司",
+          "sourceUrl": "https://www.npc.com.tw/npcfile/public/report/premat/20260910134353986.pdf",
+          "evidenceStatus": "INFERENCE",
+          "limitations": "未指向玻纖布單項數字。"
+        },
+        {
+          "evidenceId": "1303-P2-003",
+          "title": "電子材料事業群財務背景",
+          "claim": "H1 電子材料事業群有合計收入與部門損益。",
+          "evidenceType": "OFFICIAL_Q2_FINANCIAL_REPORT",
+          "sourceRef": "1303-P2-003",
+          "sourceDate": "2026-08-14",
+          "documentTitle": "電子材料事業群財務背景",
+          "documentLocator": "南亞塑膠工業股份有限公司",
+          "sourceUrl": "https://www.npc.com.tw/npcfile/public/report/finreport/20260814172944001.pdf",
+          "evidenceStatus": "FACT",
+          "limitations": "不能反推玻纖布獲利。"
+        }
+      ],
+      "financialImpact": [
+        {
+          "metricName": "事業群收入",
+          "metricValue": 801.98,
+          "unit": "TWD_100_MILLION",
+          "period": "2026-H1",
+          "scope": "segment",
+          "scopeLabel": "事業群收入",
+          "sourceRef": "1303-P2-002",
+          "evidenceStatus": "FACT",
+          "attributionLimitations": "電子材料事業群合計不得視為玻纖布題材收入或獲利。"
+        }
+      ],
+      "timeline": [],
+      "limitations": [
+        "未取得玻纖布單項收入、毛利、客戶或出貨量",
+        "未取得產品級成本曲線",
+        "只能呈現材料產品關聯"
+      ],
+      "watchIndicators": [
+        "玻纖布單項銷售／產銷量",
+        "電子級與低介電產品認證",
+        "玻纖布稼動率與價格",
+        "CCL 客戶需求"
+      ],
+      "formalTopicMutation": "NO"
+    }
+  ]
+}

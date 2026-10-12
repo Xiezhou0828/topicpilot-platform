@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import importlib
 from datetime import date
 from typing import Annotated
 
@@ -10,6 +11,8 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from topicpilot_api.admin import router as admin_router
+from topicpilot_api.company_research.api import router as company_research_router
+from topicpilot_api.company_research.store import FileCompanyResearchReadStore
 from topicpilot_api.config import Settings, get_settings
 from topicpilot_api.constants import STRATEGY_HORIZONS, STRATEGY_KEYS
 from topicpilot_api.database import get_db
@@ -74,6 +77,29 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         ),
     )
     application.state.settings = app_settings
+    application.state.company_research_read_store = FileCompanyResearchReadStore(
+        app_settings.research_read_model_path
+    )
+    # The financial research surface is an explicitly opt-in Preview boundary.
+    # Keep it out of formal runtime imports so the system-of-record checker can
+    # distinguish the controlled research read model from TopicPilot authority.
+    financial_research_router = importlib.import_module(
+        "topicpilot_api.financial_research.api"
+    ).router
+    financial_store_module = importlib.import_module(
+        "topicpilot_api.financial_research.store"
+    )
+    if app_settings.real_financial_preview:
+        preview_module = importlib.import_module(
+            "topicpilot_api.financial_research.real_preview"
+        )
+        application.state.financial_research_store = (
+            preview_module.build_real_financial_preview_store()
+        )
+    else:
+        application.state.financial_research_store = (
+            financial_store_module.EmptyFinancialResearchStore()
+        )
     application.add_middleware(
         CORSMiddleware,
         allow_origins=list(app_settings.cors_origins),
@@ -83,10 +109,12 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     )
     install_problem_handlers(application)
     application.include_router(admin_router)
+    application.include_router(company_research_router)
     application.include_router(topic_intelligence_router)
     application.include_router(topic_catalog_router)
     application.include_router(recommendation_router)
     application.include_router(production_read_model_router)
+    application.include_router(financial_research_router)
     application.include_router(topic_snapshot_router)
     application.include_router(opportunity_shadow_router)
     application.include_router(live_router)
