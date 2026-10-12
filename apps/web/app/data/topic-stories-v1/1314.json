@@ -1,0 +1,904 @@
+{
+  "schemaVersion": "stock-topic-evidence-collection.v1",
+  "stockId": "1314",
+  "stockName": "中石化",
+  "formalAuthorityVersion": "topic-authority-lifecycle-formal-scope.20260911.v2",
+  "structuralRoleAuthorityVersion": "structural-role-authority-20260912.v4",
+  "researchAsOfDate": "2026-10-10",
+  "formalTopicMutation": "NO",
+  "stories": [
+    {
+      "schemaVersion": "stock-topic-evidence-view.v1",
+      "stockId": "1314",
+      "stockName": "中石化",
+      "topicId": "41a04db1-5dc2-4dce-904d-189a602f5461",
+      "canonicalTopicName": "化工原料／塑化報價",
+      "formalAssociationReference": {
+        "relationId": "407fa3bc-e8e6-5d5b-a0d7-e97a602ba68a",
+        "relationType": "SECONDARY",
+        "approvalState": "APPROVED",
+        "referenceSource": "fixtures/research/topic_universe_mapping.v1.csv"
+      },
+      "formalAuthorityVersion": "topic-authority-lifecycle-formal-scope.20260911.v2",
+      "effectiveDate": "2026-08-24",
+      "structuralRoleReference": {
+        "relationId": "407fa3bc-e8e6-5d5b-a0d7-e97a602ba68a",
+        "structuralRole": "CORE",
+        "relationType": "SECONDARY",
+        "authorityVersion": "structural-role-authority-20260912.v4",
+        "effectiveDate": "2026-08-24"
+      },
+      "researchAsOfDate": "2026-10-10",
+      "researchStatus": "READY_WITH_LIMITATIONS",
+      "storyPattern": "PRICE_PROFIT_TRANSMISSION",
+      "storyTitle": "化工原料／塑化報價",
+      "storySummary": "AN／CPL 是中石化的直接化工產品與產能主線，法說提供產品營收、稼動率與價差背景，季報提供部門收入與損益。故事可呈現價格循環到部門損益，但不能視為穩定獲利或題材獨立貢獻。",
+      "companyParticipationSummary": "CONFIRMED_PRODUCT_CAPACITY_AND_SEGMENT_RELATION",
+      "sections": [
+        {
+          "sectionId": "relationship_summary",
+          "title": "正式關聯與公司角色",
+          "summary": "AN／CPL 是中石化的直接化工產品與產能主線，法說提供產品營收、稼動率與價差背景，季報提供部門收入與損益。故事可呈現價格循環到部門損益，但不能視為穩定獲利或題材獨立貢獻。",
+          "evidenceRefs": [
+            "1314-P2-001",
+            "1314-P2-005",
+            "1314-P2-006",
+            "1314-P2-007"
+          ]
+        },
+        {
+          "sectionId": "product_technology_evidence",
+          "title": "產品與技術證據",
+          "summary": "詳見節點、證據與限制欄位。",
+          "evidenceRefs": [
+            "1314-P2-001",
+            "1314-P2-005",
+            "1314-P2-006",
+            "1314-P2-007"
+          ]
+        },
+        {
+          "sectionId": "supply_chain_flow",
+          "title": "產業鏈與曝險路徑",
+          "summary": "詳見節點、證據與限制欄位。",
+          "evidenceRefs": [
+            "1314-P2-001",
+            "1314-P2-005",
+            "1314-P2-006",
+            "1314-P2-007"
+          ]
+        },
+        {
+          "sectionId": "financial_impact",
+          "title": "營運與財務影響",
+          "summary": "詳見節點、證據與限制欄位。",
+          "evidenceRefs": [
+            "1314-P2-001",
+            "1314-P2-005",
+            "1314-P2-006",
+            "1314-P2-007"
+          ]
+        },
+        {
+          "sectionId": "evidence_timeline",
+          "title": "事件與時間軸",
+          "summary": "詳見節點、證據與限制欄位。",
+          "evidenceRefs": [
+            "1314-P2-001",
+            "1314-P2-005",
+            "1314-P2-006",
+            "1314-P2-007"
+          ]
+        },
+        {
+          "sectionId": "watch_indicators",
+          "title": "後續觀察重點",
+          "summary": "詳見節點、證據與限制欄位。",
+          "evidenceRefs": [
+            "1314-P2-001",
+            "1314-P2-005",
+            "1314-P2-006",
+            "1314-P2-007"
+          ]
+        },
+        {
+          "sectionId": "source_evidence",
+          "title": "研究來源",
+          "summary": "詳見節點、證據與限制欄位。",
+          "evidenceRefs": [
+            "1314-P2-001",
+            "1314-P2-005",
+            "1314-P2-006",
+            "1314-P2-007"
+          ]
+        }
+      ],
+      "nodes": [
+        {
+          "nodeId": "an-cpl-products",
+          "label": "AN／CPL 產品",
+          "nodeType": "PRODUCT_OR_RELATION",
+          "description": "AN／CPL 產品",
+          "companyParticipation": "CONFIRMED",
+          "evidenceStatus": "FACT",
+          "evidenceRefs": [
+            "1314-P2-005",
+            "1314-P2-006"
+          ],
+          "visualHint": null
+        },
+        {
+          "nodeId": "capacity",
+          "label": "產能與稼動率",
+          "nodeType": "OPERATING_INDICATOR",
+          "description": "產能與稼動率",
+          "companyParticipation": "CONFIRMED",
+          "evidenceStatus": "FACT",
+          "evidenceRefs": [
+            "1314-P2-005",
+            "1314-P2-006"
+          ],
+          "visualHint": null
+        },
+        {
+          "nodeId": "spread",
+          "label": "產品／原料價差",
+          "nodeType": "MATERIAL_OR_INPUT",
+          "description": "產品／原料價差",
+          "companyParticipation": "CONFIRMED",
+          "evidenceStatus": "FACT",
+          "evidenceRefs": [
+            "1314-P2-006",
+            "1314-P2-007"
+          ],
+          "visualHint": null
+        },
+        {
+          "nodeId": "segment-profit",
+          "label": "部門收入與損益",
+          "nodeType": "BUSINESS_GROUP_OR_FINANCIAL",
+          "description": "部門收入與損益",
+          "companyParticipation": "CONFIRMED",
+          "evidenceStatus": "FACT",
+          "evidenceRefs": [
+            "1314-P2-006",
+            "1314-P2-007"
+          ],
+          "visualHint": null
+        }
+      ],
+      "edges": [
+        {
+          "edgeId": "41a04db1-5dc2-4dce-904d-189a602f5461-edge-01",
+          "sourceNodeId": "an-cpl-products",
+          "targetNodeId": "capacity",
+          "relationType": "DIRECT",
+          "relationDescription": "DIRECT",
+          "evidenceStatus": "FACT",
+          "evidenceRefs": [
+            "1314-P2-005",
+            "1314-P2-006"
+          ]
+        },
+        {
+          "edgeId": "41a04db1-5dc2-4dce-904d-189a602f5461-edge-02",
+          "sourceNodeId": "capacity",
+          "targetNodeId": "spread",
+          "relationType": "SUPPORTED_OPERATING_MECHANISM",
+          "relationDescription": "SUPPORTED_OPERATING_MECHANISM",
+          "evidenceStatus": "INFERENCE",
+          "evidenceRefs": [
+            "1314-P2-006"
+          ]
+        },
+        {
+          "edgeId": "41a04db1-5dc2-4dce-904d-189a602f5461-edge-03",
+          "sourceNodeId": "spread",
+          "targetNodeId": "segment-profit",
+          "relationType": "INFERRED_TO_FINANCIAL_IMPACT",
+          "relationDescription": "INFERRED_TO_FINANCIAL_IMPACT",
+          "evidenceStatus": "INFERENCE",
+          "evidenceRefs": [
+            "1314-P2-006",
+            "1314-P2-007"
+          ]
+        }
+      ],
+      "evidence": [
+        {
+          "evidenceId": "1314-P2-001",
+          "title": "公司產品與產業定位",
+          "claim": "公司定位於塑膠原料產業，主要產品含 CPL 與 AN。",
+          "evidenceType": "OFFICIAL_COMPANY_PROFILE",
+          "sourceRef": "1314-P2-001",
+          "sourceDate": null,
+          "documentTitle": "公司產品與產業定位",
+          "documentLocator": "中國石油化學工業開發股份有限公司",
+          "sourceUrl": "https://www.cpdc.com.tw/cn/about_profile",
+          "evidenceStatus": "FACT",
+          "limitations": "未給題材獲利。"
+        },
+        {
+          "evidenceId": "1314-P2-005",
+          "title": "2025 年度年報",
+          "claim": "揭露 AN、CPL、尼龍粒、OPP 的產品、產能、市占與供需。",
+          "evidenceType": "OFFICIAL_ANNUAL_REPORT",
+          "sourceRef": "1314-P2-005",
+          "sourceDate": "2026-03-31",
+          "documentTitle": "2025 年度年報",
+          "documentLocator": "中國石油化學工業開發股份有限公司",
+          "sourceUrl": "https://www.cpdc.com.tw/uploads/2026_AGM/2025_1314_20260522F04_AR%20(CH)01.pdf",
+          "evidenceStatus": "FACT",
+          "limitations": "長約比例與產品別獲利未揭露。"
+        },
+        {
+          "evidenceId": "1314-P2-006",
+          "title": "2026 年 9 月 11 日法說簡報",
+          "claim": "揭露 H1 產品營收、主要工廠稼動率、CPL／PA6／AN 市況與原物料趨勢。",
+          "evidenceType": "OFFICIAL_IR_CONFERENCE",
+          "sourceRef": "1314-P2-006",
+          "sourceDate": "2026-09-11",
+          "documentTitle": "2026 年 9 月 11 日法說簡報",
+          "documentLocator": "中國石油化學工業開發股份有限公司／公開資訊觀測站",
+          "sourceUrl": "https://mopsov.twse.com.tw/nas/STR/131420260911M001.pdf",
+          "evidenceStatus": "INFERENCE",
+          "limitations": "部分產品數字為約數。"
+        },
+        {
+          "evidenceId": "1314-P2-007",
+          "title": "2026 年第二季合併財報",
+          "claim": "H1 AN／醋酸收入 35.8843 億元、損益 -3.48965 億元；CPL 收入 37.89882 億元、損益 3.52725 億元。",
+          "evidenceType": "OFFICIAL_Q2_FINANCIAL_REPORT",
+          "sourceRef": "1314-P2-007",
+          "sourceDate": "2026-08-14",
+          "documentTitle": "2026 年第二季合併財報",
+          "documentLocator": "臺灣證券交易所電子資料查詢作業／中國石油化學工業開發股份有限公司",
+          "sourceUrl": "https://doc.twse.com.tw/server-java/t57sb01?co_id=1314&colorchg=1&mtype=A&step=1&year=115",
+          "evidenceStatus": "FACT",
+          "limitations": "不是產品題材獨立毛利。"
+        }
+      ],
+      "financialImpact": [
+        {
+          "metricName": "丙烯腈／醋酸及附屬產品收入",
+          "metricValue": 3588430,
+          "unit": "TWD_1000",
+          "period": "2026-H1",
+          "scope": "segment",
+          "scopeLabel": "丙烯腈／醋酸及附屬產品",
+          "sourceRef": "1314-P2-001",
+          "evidenceStatus": "FACT",
+          "attributionLimitations": "部門數字不是題材獨立收入。"
+        },
+        {
+          "metricName": "丙烯腈／醋酸及附屬產品損益",
+          "metricValue": -348965,
+          "unit": "TWD_1000",
+          "period": "2026-H1",
+          "scope": "segment",
+          "scopeLabel": "丙烯腈／醋酸及附屬產品",
+          "sourceRef": "1314-P2-001",
+          "evidenceStatus": "FACT",
+          "attributionLimitations": "部門損益不是題材獨立獲利。"
+        },
+        {
+          "metricName": "己內醯胺及附屬產品收入",
+          "metricValue": 3789882,
+          "unit": "TWD_1000",
+          "period": "2026-H1",
+          "scope": "segment",
+          "scopeLabel": "己內醯胺及附屬產品",
+          "sourceRef": "1314-P2-001",
+          "evidenceStatus": "FACT",
+          "attributionLimitations": "部門數字不是題材獨立收入。"
+        },
+        {
+          "metricName": "己內醯胺及附屬產品損益",
+          "metricValue": 352725,
+          "unit": "TWD_1000",
+          "period": "2026-H1",
+          "scope": "segment",
+          "scopeLabel": "己內醯胺及附屬產品",
+          "sourceRef": "1314-P2-001",
+          "evidenceStatus": "FACT",
+          "attributionLimitations": "部門損益不是題材獨立獲利。"
+        }
+      ],
+      "timeline": [
+        {
+          "eventId": "41a04db1-5dc2-4dce-904d-189a602f5461-event-01",
+          "eventDate": null,
+          "datePrecision": "UNDISCLOSED",
+          "eventTitle": "公司產品與產業定位",
+          "eventType": "OFFICIAL_DISCLOSURE",
+          "milestoneStatus": "已公開揭露",
+          "evidenceRefs": [
+            "1314-P2-001"
+          ],
+          "description": "公司定位於塑膠原料產業，主要產品含 CPL 與 AN。"
+        },
+        {
+          "eventId": "41a04db1-5dc2-4dce-904d-189a602f5461-event-02",
+          "eventDate": "2026-03-31",
+          "datePrecision": "DAY",
+          "eventTitle": "2025 年度年報",
+          "eventType": "OFFICIAL_DISCLOSURE",
+          "milestoneStatus": "已公開揭露",
+          "evidenceRefs": [
+            "1314-P2-005"
+          ],
+          "description": "揭露 AN、CPL、尼龍粒、OPP 的產品、產能、市占與供需。"
+        },
+        {
+          "eventId": "41a04db1-5dc2-4dce-904d-189a602f5461-event-03",
+          "eventDate": "2026-09-11",
+          "datePrecision": "DAY",
+          "eventTitle": "2026 年 9 月 11 日法說簡報",
+          "eventType": "MANAGEMENT_PLAN",
+          "milestoneStatus": "管理層計畫／待驗證",
+          "evidenceRefs": [
+            "1314-P2-006"
+          ],
+          "description": "揭露 H1 產品營收、主要工廠稼動率、CPL／PA6／AN 市況與原物料趨勢。"
+        },
+        {
+          "eventId": "41a04db1-5dc2-4dce-904d-189a602f5461-event-04",
+          "eventDate": "2026-08-14",
+          "datePrecision": "DAY",
+          "eventTitle": "2026 年第二季合併財報",
+          "eventType": "OFFICIAL_DISCLOSURE",
+          "milestoneStatus": "已公開揭露",
+          "evidenceRefs": [
+            "1314-P2-007"
+          ],
+          "description": "H1 AN／醋酸收入 35.8843 億元、損益 -3.48965 億元；CPL 收入 37.89882 億元、損益 3.52725 億元。"
+        }
+      ],
+      "limitations": [
+        "未取得同業同口徑成本曲線",
+        "長約覆蓋率未揭露",
+        "產品別毛利未揭露"
+      ],
+      "watchIndicators": [
+        "AN／CPL 價差與原料成本",
+        "主要工廠稼動率",
+        "AN／CPL 部門收入與損益",
+        "新增產能與產線調整"
+      ],
+      "formalTopicMutation": "NO"
+    },
+    {
+      "schemaVersion": "stock-topic-evidence-view.v1",
+      "stockId": "1314",
+      "stockName": "中石化",
+      "topicId": "610b70ab-d199-43db-a64c-13156c2ebcca",
+      "canonicalTopicName": "住宅營建",
+      "formalAssociationReference": {
+        "relationId": "6b2ea905-844c-5d18-8160-651b6996b9d1",
+        "relationType": "SECONDARY",
+        "approvalState": "APPROVED",
+        "referenceSource": "2026_NEW_TOPIC_ADDITION"
+      },
+      "formalAuthorityVersion": "topic-authority-lifecycle-formal-scope.20260911.v2",
+      "effectiveDate": "2026-08-24",
+      "structuralRoleReference": {
+        "relationId": "6b2ea905-844c-5d18-8160-651b6996b9d1",
+        "structuralRole": "RELATED",
+        "relationType": "SECONDARY",
+        "authorityVersion": "structural-role-authority-20260912.v4",
+        "effectiveDate": "2026-08-24"
+      },
+      "researchAsOfDate": "2026-10-10",
+      "researchStatus": "READY_WITH_LIMITATIONS",
+      "storyPattern": "EVIDENCE_GAP",
+      "storyTitle": "住宅營建",
+      "storySummary": "住宅營建是正式核准關聯，但本次研究只確認土地、投資性不動產與資產活化線索，沒有取得住宅建案、餘屋、交屋、代銷或住宅收入證據。因此保留正式關聯，不把其他部門損益或土地資產改寫成住宅營建貢獻。",
+      "companyParticipationSummary": "FORMAL_RELATION_WITH_INSUFFICIENT_CURRENT_EVIDENCE",
+      "sections": [
+        {
+          "sectionId": "relationship_summary",
+          "title": "正式關聯與公司角色",
+          "summary": "住宅營建是正式核准關聯，但本次研究只確認土地、投資性不動產與資產活化線索，沒有取得住宅建案、餘屋、交屋、代銷或住宅收入證據。因此保留正式關聯，不把其他部門損益或土地資產改寫成住宅營建貢獻。",
+          "evidenceRefs": [
+            "1314-P2-003",
+            "1314-P2-005",
+            "1314-P2-007"
+          ]
+        },
+        {
+          "sectionId": "support_vs_uncertainty",
+          "title": "已確認與資料缺口",
+          "summary": "詳見節點、證據與限制欄位。",
+          "evidenceRefs": [
+            "1314-P2-003",
+            "1314-P2-005",
+            "1314-P2-007"
+          ]
+        },
+        {
+          "sectionId": "evidence_timeline",
+          "title": "事件與時間軸",
+          "summary": "詳見節點、證據與限制欄位。",
+          "evidenceRefs": [
+            "1314-P2-003",
+            "1314-P2-005",
+            "1314-P2-007"
+          ]
+        },
+        {
+          "sectionId": "watch_indicators",
+          "title": "後續觀察重點",
+          "summary": "詳見節點、證據與限制欄位。",
+          "evidenceRefs": [
+            "1314-P2-003",
+            "1314-P2-005",
+            "1314-P2-007"
+          ]
+        },
+        {
+          "sectionId": "source_evidence",
+          "title": "研究來源",
+          "summary": "詳見節點、證據與限制欄位。",
+          "evidenceRefs": [
+            "1314-P2-003",
+            "1314-P2-005",
+            "1314-P2-007"
+          ]
+        }
+      ],
+      "nodes": [
+        {
+          "nodeId": "formal-relation",
+          "label": "正式住宅營建關聯",
+          "nodeType": "APPLICATION_OR_MARKET",
+          "description": "正式住宅營建關聯",
+          "companyParticipation": "NOT_CONFIRMED",
+          "evidenceStatus": "FACT",
+          "evidenceRefs": [
+            "1314-P2-003",
+            "1314-P2-005",
+            "1314-P2-007"
+          ],
+          "visualHint": null
+        },
+        {
+          "nodeId": "land-assets",
+          "label": "土地／投資性不動產線索",
+          "nodeType": "ASSET_OR_PROJECT",
+          "description": "土地／投資性不動產線索",
+          "companyParticipation": "NOT_CONFIRMED",
+          "evidenceStatus": "FACT",
+          "evidenceRefs": [
+            "1314-P2-003",
+            "1314-P2-005",
+            "1314-P2-007"
+          ],
+          "visualHint": null
+        }
+      ],
+      "edges": [
+        {
+          "edgeId": "610b70ab-d199-43db-a64c-13156c2ebcca-edge-01",
+          "sourceNodeId": "formal-relation",
+          "targetNodeId": "land-assets",
+          "relationType": "RESEARCH_SCOPE_ONLY",
+          "relationDescription": "RESEARCH_SCOPE_ONLY",
+          "evidenceStatus": "INFERENCE",
+          "evidenceRefs": [
+            "1314-P2-003",
+            "1314-P2-005",
+            "1314-P2-007"
+          ]
+        }
+      ],
+      "evidence": [
+        {
+          "evidenceId": "1314-P2-003",
+          "title": "官方轉型說明",
+          "claim": "公司說明石化本業與土地開發雙軸方向。",
+          "evidenceType": "OFFICIAL_TRANSFORMATION_NEWS",
+          "sourceRef": "1314-P2-003",
+          "sourceDate": null,
+          "documentTitle": "官方轉型說明",
+          "documentLocator": "中國石油化學工業開發股份有限公司",
+          "sourceUrl": "https://www.cpdc.com.tw/cn/news_detail/2/119",
+          "evidenceStatus": "FACT",
+          "limitations": "未證明住宅建案或收入。"
+        },
+        {
+          "evidenceId": "1314-P2-005",
+          "title": "2025 年度年報",
+          "claim": "揭露土地、長期發展與資產相關資訊。",
+          "evidenceType": "OFFICIAL_ANNUAL_REPORT",
+          "sourceRef": "1314-P2-005",
+          "sourceDate": "2026-03-31",
+          "documentTitle": "2025 年度年報",
+          "documentLocator": "中國石油化學工業開發股份有限公司",
+          "sourceUrl": "https://www.cpdc.com.tw/uploads/2026_AGM/2025_1314_20260522F04_AR%20(CH)01.pdf",
+          "evidenceStatus": "FACT",
+          "limitations": "未拆住宅專案財務。"
+        },
+        {
+          "evidenceId": "1314-P2-007",
+          "title": "2026 年第二季合併財報",
+          "claim": "揭露投資性不動產、部門收入與損益。",
+          "evidenceType": "OFFICIAL_Q2_FINANCIAL_REPORT",
+          "sourceRef": "1314-P2-007",
+          "sourceDate": "2026-08-14",
+          "documentTitle": "2026 年第二季合併財報",
+          "documentLocator": "臺灣證券交易所電子資料查詢作業／中國石油化學工業開發股份有限公司",
+          "sourceUrl": "https://doc.twse.com.tw/server-java/t57sb01?co_id=1314&colorchg=1&mtype=A&step=1&year=115",
+          "evidenceStatus": "FACT",
+          "limitations": "其他部門不能視為住宅營建。"
+        }
+      ],
+      "financialImpact": [
+        {
+          "metricName": "題材層級財務貢獻",
+          "metricValue": null,
+          "unit": null,
+          "period": null,
+          "scope": "topic",
+          "scopeLabel": "題材層級",
+          "sourceRef": "1314-P2-003",
+          "evidenceStatus": "UNDISCLOSED",
+          "attributionLimitations": "不把其他部門 -1,989,399 仟元視為住宅營建損益。"
+        }
+      ],
+      "timeline": [
+        {
+          "eventId": "610b70ab-d199-43db-a64c-13156c2ebcca-event-01",
+          "eventDate": null,
+          "datePrecision": "UNDISCLOSED",
+          "eventTitle": "官方轉型說明",
+          "eventType": "OFFICIAL_DISCLOSURE",
+          "milestoneStatus": "已公開揭露",
+          "evidenceRefs": [
+            "1314-P2-003"
+          ],
+          "description": "公司說明石化本業與土地開發雙軸方向。"
+        },
+        {
+          "eventId": "610b70ab-d199-43db-a64c-13156c2ebcca-event-02",
+          "eventDate": "2026-03-31",
+          "datePrecision": "DAY",
+          "eventTitle": "2025 年度年報",
+          "eventType": "OFFICIAL_DISCLOSURE",
+          "milestoneStatus": "已公開揭露",
+          "evidenceRefs": [
+            "1314-P2-005"
+          ],
+          "description": "揭露土地、長期發展與資產相關資訊。"
+        },
+        {
+          "eventId": "610b70ab-d199-43db-a64c-13156c2ebcca-event-03",
+          "eventDate": "2026-08-14",
+          "datePrecision": "DAY",
+          "eventTitle": "2026 年第二季合併財報",
+          "eventType": "OFFICIAL_DISCLOSURE",
+          "milestoneStatus": "已公開揭露",
+          "evidenceRefs": [
+            "1314-P2-007"
+          ],
+          "description": "揭露投資性不動產、部門收入與損益。"
+        }
+      ],
+      "limitations": [
+        "沒有直接住宅建案證據",
+        "沒有住宅營收、毛利或去化數字",
+        "正式關聯與研究證據存在落差"
+      ],
+      "watchIndicators": [
+        "住宅專案名稱與核准",
+        "推案／預售／交屋公告",
+        "住宅收入與毛利附註",
+        "投資性不動產及子公司揭露"
+      ],
+      "formalTopicMutation": "NO"
+    },
+    {
+      "schemaVersion": "stock-topic-evidence-view.v1",
+      "stockId": "1314",
+      "stockName": "中石化",
+      "topicId": "b5978f65-7a56-4491-83e7-06adc1ed3b7c",
+      "canonicalTopicName": "商辦／都市更新",
+      "formalAssociationReference": {
+        "relationId": "ee0017ac-4878-5cb6-b559-37c8d28d4a00",
+        "relationType": "SECONDARY",
+        "approvalState": "APPROVED",
+        "referenceSource": "2026_REVISED_MARKET_UPDATE"
+      },
+      "formalAuthorityVersion": "topic-authority-lifecycle-formal-scope.20260911.v2",
+      "effectiveDate": "2026-08-24",
+      "structuralRoleReference": {
+        "relationId": "ee0017ac-4878-5cb6-b559-37c8d28d4a00",
+        "structuralRole": "CORE",
+        "relationType": "SECONDARY",
+        "authorityVersion": "structural-role-authority-20260912.v4",
+        "effectiveDate": "2026-08-24"
+      },
+      "researchAsOfDate": "2026-10-10",
+      "researchStatus": "READY_WITH_LIMITATIONS",
+      "storyPattern": "ASSET_PROJECT_TIMELINE",
+      "storyTitle": "商辦／都市更新",
+      "storySummary": "商辦／都市更新是正式核准且 structural role 為 CORE 的關聯；公司官方資料與法說支持土地、港區與資產活化計畫，但沒有確認特定商辦／都更專案的收入或毛利。故事以資產活化進度時間軸為主，不把計畫寫成已實現價值。",
+      "companyParticipationSummary": "FORMAL_RELATION_WITH_ASSET_ACTIVATION_EVIDENCE",
+      "sections": [
+        {
+          "sectionId": "relationship_summary",
+          "title": "正式關聯與公司角色",
+          "summary": "商辦／都市更新是正式核准且 structural role 為 CORE 的關聯；公司官方資料與法說支持土地、港區與資產活化計畫，但沒有確認特定商辦／都更專案的收入或毛利。故事以資產活化進度時間軸為主，不把計畫寫成已實現價值。",
+          "evidenceRefs": [
+            "1314-P2-003",
+            "1314-P2-005",
+            "1314-P2-006",
+            "1314-P2-007"
+          ]
+        },
+        {
+          "sectionId": "investment_relationship",
+          "title": "資產與投資關係",
+          "summary": "詳見節點、證據與限制欄位。",
+          "evidenceRefs": [
+            "1314-P2-003",
+            "1314-P2-005",
+            "1314-P2-006",
+            "1314-P2-007"
+          ]
+        },
+        {
+          "sectionId": "evidence_timeline",
+          "title": "事件與時間軸",
+          "summary": "詳見節點、證據與限制欄位。",
+          "evidenceRefs": [
+            "1314-P2-003",
+            "1314-P2-005",
+            "1314-P2-006",
+            "1314-P2-007"
+          ]
+        },
+        {
+          "sectionId": "financial_impact",
+          "title": "營運與財務影響",
+          "summary": "詳見節點、證據與限制欄位。",
+          "evidenceRefs": [
+            "1314-P2-003",
+            "1314-P2-005",
+            "1314-P2-006",
+            "1314-P2-007"
+          ]
+        },
+        {
+          "sectionId": "support_vs_uncertainty",
+          "title": "已確認與資料缺口",
+          "summary": "詳見節點、證據與限制欄位。",
+          "evidenceRefs": [
+            "1314-P2-003",
+            "1314-P2-005",
+            "1314-P2-006",
+            "1314-P2-007"
+          ]
+        },
+        {
+          "sectionId": "watch_indicators",
+          "title": "後續觀察重點",
+          "summary": "詳見節點、證據與限制欄位。",
+          "evidenceRefs": [
+            "1314-P2-003",
+            "1314-P2-005",
+            "1314-P2-006",
+            "1314-P2-007"
+          ]
+        },
+        {
+          "sectionId": "source_evidence",
+          "title": "研究來源",
+          "summary": "詳見節點、證據與限制欄位。",
+          "evidenceRefs": [
+            "1314-P2-003",
+            "1314-P2-005",
+            "1314-P2-006",
+            "1314-P2-007"
+          ]
+        }
+      ],
+      "nodes": [
+        {
+          "nodeId": "land-port-assets",
+          "label": "土地／港區資產",
+          "nodeType": "ASSET_OR_PROJECT",
+          "description": "土地／港區資產",
+          "companyParticipation": "ASSET_RELATION_CONFIRMED",
+          "evidenceStatus": "FACT",
+          "evidenceRefs": [
+            "1314-P2-003",
+            "1314-P2-006"
+          ],
+          "visualHint": null
+        },
+        {
+          "nodeId": "activation-plan",
+          "label": "資產活化與開發計畫",
+          "nodeType": "ASSET_OR_PROJECT",
+          "description": "資產活化與開發計畫",
+          "companyParticipation": "ASSET_RELATION_CONFIRMED",
+          "evidenceStatus": "FACT",
+          "evidenceRefs": [
+            "1314-P2-003",
+            "1314-P2-005",
+            "1314-P2-006"
+          ],
+          "visualHint": null
+        },
+        {
+          "nodeId": "commercial-urban-renewal",
+          "label": "商辦／都市更新可能用途",
+          "nodeType": "APPLICATION_OR_MARKET",
+          "description": "商辦／都市更新可能用途",
+          "companyParticipation": "ASSET_RELATION_CONFIRMED",
+          "evidenceStatus": "FACT",
+          "evidenceRefs": [
+            "1314-P2-005",
+            "1314-P2-006"
+          ],
+          "visualHint": null
+        }
+      ],
+      "edges": [
+        {
+          "edgeId": "b5978f65-7a56-4491-83e7-06adc1ed3b7c-edge-01",
+          "sourceNodeId": "land-port-assets",
+          "targetNodeId": "activation-plan",
+          "relationType": "DIRECT_MANAGEMENT_PLAN",
+          "relationDescription": "DIRECT_MANAGEMENT_PLAN",
+          "evidenceStatus": "FACT",
+          "evidenceRefs": [
+            "1314-P2-003",
+            "1314-P2-006"
+          ]
+        },
+        {
+          "edgeId": "b5978f65-7a56-4491-83e7-06adc1ed3b7c-edge-02",
+          "sourceNodeId": "activation-plan",
+          "targetNodeId": "commercial-urban-renewal",
+          "relationType": "RESEARCH_INFERENCE_NOT_FINANCIAL_FACT",
+          "relationDescription": "RESEARCH_INFERENCE_NOT_FINANCIAL_FACT",
+          "evidenceStatus": "INFERENCE",
+          "evidenceRefs": [
+            "1314-P2-005",
+            "1314-P2-006"
+          ]
+        }
+      ],
+      "evidence": [
+        {
+          "evidenceId": "1314-P2-003",
+          "title": "官方轉型說明",
+          "claim": "公司說明土地開發與資產活化方向，並提及港區據點。",
+          "evidenceType": "OFFICIAL_TRANSFORMATION_NEWS",
+          "sourceRef": "1314-P2-003",
+          "sourceDate": null,
+          "documentTitle": "官方轉型說明",
+          "documentLocator": "中國石油化學工業開發股份有限公司",
+          "sourceUrl": "https://www.cpdc.com.tw/cn/news_detail/2/119",
+          "evidenceStatus": "FACT",
+          "limitations": "不等於商辦／都更已開工。"
+        },
+        {
+          "evidenceId": "1314-P2-005",
+          "title": "2025 年度年報",
+          "claim": "揭露長期發展、土地與主要資產相關資訊。",
+          "evidenceType": "OFFICIAL_ANNUAL_REPORT",
+          "sourceRef": "1314-P2-005",
+          "sourceDate": "2026-03-31",
+          "documentTitle": "2025 年度年報",
+          "documentLocator": "中國石油化學工業開發股份有限公司",
+          "sourceUrl": "https://www.cpdc.com.tw/uploads/2026_AGM/2025_1314_20260522F04_AR%20(CH)01.pdf",
+          "evidenceStatus": "FACT",
+          "limitations": "未拆單一專案收入與毛利。"
+        },
+        {
+          "evidenceId": "1314-P2-006",
+          "title": "2026 年 9 月 11 日法說簡報",
+          "claim": "說明土地資產活化、洲際碼頭與相關計畫進度。",
+          "evidenceType": "OFFICIAL_IR_CONFERENCE",
+          "sourceRef": "1314-P2-006",
+          "sourceDate": "2026-09-11",
+          "documentTitle": "2026 年 9 月 11 日法說簡報",
+          "documentLocator": "中國石油化學工業開發股份有限公司／公開資訊觀測站",
+          "sourceUrl": "https://mopsov.twse.com.tw/nas/STR/131420260911M001.pdf",
+          "evidenceStatus": "INFERENCE",
+          "limitations": "計畫不等於已實現財務成果。"
+        },
+        {
+          "evidenceId": "1314-P2-007",
+          "title": "2026 年第二季合併財報",
+          "claim": "揭露投資性不動產及土地開發相關會計資訊。",
+          "evidenceType": "OFFICIAL_Q2_FINANCIAL_REPORT",
+          "sourceRef": "1314-P2-007",
+          "sourceDate": "2026-08-14",
+          "documentTitle": "2026 年第二季合併財報",
+          "documentLocator": "臺灣證券交易所電子資料查詢作業／中國石油化學工業開發股份有限公司",
+          "sourceUrl": "https://doc.twse.com.tw/server-java/t57sb01?co_id=1314&colorchg=1&mtype=A&step=1&year=115",
+          "evidenceStatus": "FACT",
+          "limitations": "不能把其他部門損益歸因於商辦／都更。"
+        }
+      ],
+      "financialImpact": [
+        {
+          "metricName": "題材層級財務貢獻",
+          "metricValue": null,
+          "unit": null,
+          "period": null,
+          "scope": "topic",
+          "scopeLabel": "題材層級",
+          "sourceRef": "1314-P2-003",
+          "evidenceStatus": "UNDISCLOSED",
+          "attributionLimitations": "目前只能呈現資產與計畫進度；專案收入、毛利與現金流尚未量化。"
+        }
+      ],
+      "timeline": [
+        {
+          "eventId": "b5978f65-7a56-4491-83e7-06adc1ed3b7c-event-01",
+          "eventDate": null,
+          "datePrecision": "UNDISCLOSED",
+          "eventTitle": "官方轉型說明",
+          "eventType": "OFFICIAL_DISCLOSURE",
+          "milestoneStatus": "已公開揭露",
+          "evidenceRefs": [
+            "1314-P2-003"
+          ],
+          "description": "公司說明土地開發與資產活化方向，並提及港區據點。"
+        },
+        {
+          "eventId": "b5978f65-7a56-4491-83e7-06adc1ed3b7c-event-02",
+          "eventDate": "2026-03-31",
+          "datePrecision": "DAY",
+          "eventTitle": "2025 年度年報",
+          "eventType": "OFFICIAL_DISCLOSURE",
+          "milestoneStatus": "已公開揭露",
+          "evidenceRefs": [
+            "1314-P2-005"
+          ],
+          "description": "揭露長期發展、土地與主要資產相關資訊。"
+        },
+        {
+          "eventId": "b5978f65-7a56-4491-83e7-06adc1ed3b7c-event-03",
+          "eventDate": "2026-09-11",
+          "datePrecision": "DAY",
+          "eventTitle": "2026 年 9 月 11 日法說簡報",
+          "eventType": "MANAGEMENT_PLAN",
+          "milestoneStatus": "管理層計畫／待驗證",
+          "evidenceRefs": [
+            "1314-P2-006"
+          ],
+          "description": "說明土地資產活化、洲際碼頭與相關計畫進度。"
+        },
+        {
+          "eventId": "b5978f65-7a56-4491-83e7-06adc1ed3b7c-event-04",
+          "eventDate": "2026-08-14",
+          "datePrecision": "DAY",
+          "eventTitle": "2026 年第二季合併財報",
+          "eventType": "OFFICIAL_DISCLOSURE",
+          "milestoneStatus": "已公開揭露",
+          "evidenceRefs": [
+            "1314-P2-007"
+          ],
+          "description": "揭露投資性不動產及土地開發相關會計資訊。"
+        }
+      ],
+      "limitations": [
+        "未確認特定商辦／都更專案",
+        "未取得收入、毛利與開發權資料",
+        "管理層計畫不等於已實現成果"
+      ],
+      "watchIndicators": [
+        "專案核准與施工進度",
+        "出租／出售公告",
+        "投資性不動產變動",
+        "其他部門財務附註與專案現金流"
+      ],
+      "formalTopicMutation": "NO"
+    }
+  ]
+}

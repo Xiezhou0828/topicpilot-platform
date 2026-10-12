@@ -13,6 +13,7 @@ export type StockEodRead = components["schemas"]["StockEodRead"];
 export type StockApiRelation = components["schemas"]["StockTopicRelationRead"];
 export type StockHistoryRead = components["schemas"]["HistoricalPriceHistoryResponse"];
 export type StockHistoryPoint = components["schemas"]["HistoricalPricePoint"];
+export type StockTechnicalPublicationRead = components["schemas"]["StockTechnicalPublicationRead"];
 
 export type StockHistoryResource = {
   source: "api" | "unavailable";
@@ -33,6 +34,31 @@ export type StockApiItem = Omit<FormalStockRead, "topicRelations" | "historyCove
   historyCoverage: Record<string, unknown>;
   mainTopic: StockApiMainTopic;
 };
+
+/** Presentation-only labels. The API enums remain unchanged. */
+export function listingLabel(value: string | null | undefined): string | null {
+  if (!value) return null;
+  const normalized = value.trim().toUpperCase().replace(/[_-]+/g, " ");
+  if (normalized.includes("TWSE") || normalized === "TSE" || normalized.includes("LISTED")) return "上市";
+  if (normalized.includes("TPEX") || normalized.includes("OTC")) return "上櫃";
+  return value;
+}
+
+export function marketLabel(value: string | null | undefined): string | null {
+  if (!value) return null;
+  const normalized = value.trim().toUpperCase().replace(/[_-]+/g, " ");
+  if (normalized === "TWSE" || normalized === "TSE" || normalized === "TPE") return "上市";
+  if (normalized === "TPEX" || normalized === "OTC") return "上櫃";
+  return value;
+}
+
+export function topicRoleLabel(value: string | null | undefined): string | null {
+  if (!value) return null;
+  const normalized = value.trim().toUpperCase();
+  if (normalized === "PRIMARY") return "主要關聯";
+  if (normalized === "SECONDARY") return "次要關聯";
+  return value;
+}
 
 export type StockApiResource = {
   source: StockApiSource;
@@ -167,7 +193,13 @@ export async function fetchFormalStock(
 
 export async function fetchFormalStockHistory(
   symbol: string,
-  options: { market?: string | null; signal?: AbortSignal } = {},
+  options: {
+    market?: string | null;
+    from?: string;
+    to?: string;
+    limit?: number;
+    signal?: AbortSignal;
+  } = {},
 ): Promise<StockHistoryResource> {
   const base = getFormalApiBaseUrl();
   if (!base) {
@@ -180,9 +212,9 @@ export async function fetchFormalStockHistory(
   }
 
   const params = new URLSearchParams({
-    from: "2000-01-01",
-    to: "2100-01-01",
-    limit: "200",
+    from: options.from ?? "2000-01-01",
+    to: options.to ?? "2100-01-01",
+    limit: String(options.limit ?? 200),
   });
   if (options.market) params.set("market", options.market);
 
@@ -204,6 +236,42 @@ export async function fetchFormalStockHistory(
       data: null,
       error: error instanceof Error ? error.message : "Formal stock price history request failed.",
       state: "ERROR",
+    };
+  }
+}
+
+export async function fetchFormalStockTechnical(
+  symbol: string,
+  options: { market?: string | null; signal?: AbortSignal } = {},
+): Promise<{ source: "api" | "unavailable"; data: StockTechnicalPublicationRead | null; error: string | null }> {
+  const base = getFormalApiBaseUrl();
+  if (!base) {
+    return {
+      source: "unavailable",
+      data: null,
+      error: "Formal FastAPI origin is not configured; technical evidence is unavailable.",
+    };
+  }
+
+  const params = new URLSearchParams({ from: "2000-01-01", to: "2100-01-01", limit: "200" });
+  if (options.market) params.set("market", options.market);
+
+  try {
+    const response = await fetch(
+      `${base}/api/v2/stocks/${encodeURIComponent(symbol)}/technical?${params.toString()}`,
+      { cache: "no-store", signal: options.signal },
+    );
+    if (!response.ok) throw new Error(`FastAPI stock technical returned HTTP ${response.status}`);
+    return {
+      source: "api",
+      data: await response.json() as StockTechnicalPublicationRead,
+      error: null,
+    };
+  } catch (error) {
+    return {
+      source: "unavailable",
+      data: null,
+      error: error instanceof Error ? error.message : "Formal stock technical request failed.",
     };
   }
 }

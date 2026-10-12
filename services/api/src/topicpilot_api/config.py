@@ -39,6 +39,22 @@ class Settings(BaseSettings):
         validation_alias="FORWARD_OBSERVATION_DIR",
         description="Authorized diagnostic JSON artifact store; no database schema is implied.",
     )
+    real_financial_preview: bool = Field(
+        default=False,
+        validation_alias="REAL_FINANCIAL_PREVIEW",
+        description=(
+            "Explicit non-Production MOPS financial Preview read model; "
+            "never a public source."
+        ),
+    )
+    research_read_model_path: str | None = Field(
+        default=None,
+        validation_alias="RESEARCH_READ_MODEL_PATH",
+        description=(
+            "Optional read-only, versioned Company Research V3 JSON model. "
+            "No writer or publication mutation is implied."
+        ),
+    )
 
     @field_validator("cors_origins", mode="before")
     @classmethod

@@ -32,12 +32,13 @@ From the repository root, use the bounded review runner when a human needs to
 review the product locally:
 
 ```bash
-npm run preview:review -- --mode iterative
+npm run preview:review
 ```
 
-`ITERATIVE_LOCAL` is the fast hot-reload mode. It may run from a dirty working
-tree and uses the clearly labelled representative synthetic snapshot unless an
-explicit read-only API origin is supplied.
+The zero-argument command starts `ITERATIVE_LOCAL` on `http://localhost:4317`
+with real formal data through the fixed read-only proxy and diagnostics off. It
+may run from a dirty working tree. The proxy rejects mutations and forwards no
+credentials.
 
 For a reproducible candidate using the current formal read API, run:
 
@@ -48,7 +49,24 @@ npm run preview:review -- --mode exact-sha \
 ```
 
 `EXACT_SHA_CANDIDATE` requires `HEAD` to equal the requested commit and the
-working tree to be clean. The local server listens on `http://localhost:3000`.
+working tree to be clean. The local server listens on `http://localhost:4317`
+by default.
 The optional local proxy accepts only `GET`/`HEAD` requests for the fixed
 read-only API prefixes, strips credential-like headers, and never grants
-writer or Production mutation authority. Stop either mode with `Ctrl+C`.
+writer or Production mutation authority. Use `npm run preview:review -- --help`
+for advanced overrides. Stop either mode with `Ctrl+C`.
+
+When the selected read API does not yet expose the Company Research V3
+financial routes, keep stock/topic reads on the selected read API and point the
+financial readout at an isolated local API instead:
+
+```bash
+npm run preview:review -- --mode iterative \
+  --read-api-origin https://topicpilot-api.onrender.com \
+  --financial-api-origin http://127.0.0.1:8001 \
+  --port 4320
+```
+
+The financial origin is used only by the five GET/HEAD financial read calls;
+it does not replace the formal stock API, does not write to a database, and
+does not turn Preview research into published data.

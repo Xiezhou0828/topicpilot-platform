@@ -6,6 +6,11 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 import { parseArgs } from "node:util";
 
 import { normalizeReadOnlyApiOrigin } from "../../apps/web/preview_proxy.mjs";
+import {
+  DEFAULT_PREVIEW_REVIEW_PORT,
+  DEFAULT_READ_ONLY_API_ORIGIN,
+  PREVIEW_REVIEW_USAGE,
+} from "./preview_review_config.mjs";
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(SCRIPT_DIR, "../..");
@@ -67,11 +72,14 @@ export function parseReviewConfig(argv = process.argv.slice(2)) {
       mode: { type: "string", default: "iterative" },
       "candidate-ref": { type: "string" },
       "read-api-origin": { type: "string" },
-      port: { type: "string", default: "3000" },
+      "financial-api-origin": { type: "string" },
+      port: { type: "string", default: String(DEFAULT_PREVIEW_REVIEW_PORT) },
       "skip-install": { type: "boolean", default: false },
+      help: { type: "boolean", default: false },
     },
   });
   if (positionals.length > 0) fail(`UNEXPECTED_ARGUMENT=${positionals[0]}`);
+  if (values.help) return { help: true };
 
   const mode = values.mode === "exact-sha" ? "EXACT_SHA_CANDIDATE" : values.mode === "iterative" ? "ITERATIVE_LOCAL" : null;
   if (!mode) fail("MODE_MUST_BE_ITERATIVE_OR_EXACT_SHA");
@@ -79,8 +87,13 @@ export function parseReviewConfig(argv = process.argv.slice(2)) {
   const port = Number(values.port);
   if (!Number.isInteger(port) || port < 1 || port > 65535) fail("PORT_MUST_BE_1_TO_65535");
 
-  const readApiOrigin = values["read-api-origin"]
-    ? normalizeReadOnlyApiOrigin(values["read-api-origin"])
+  const configuredReadApiOrigin = values["read-api-origin"] ?? DEFAULT_READ_ONLY_API_ORIGIN;
+  const readApiOrigin = configuredReadApiOrigin
+    ? normalizeReadOnlyApiOrigin(configuredReadApiOrigin)
+    : null;
+  const configuredFinancialApiOrigin = values["financial-api-origin"] ?? "";
+  const financialApiOrigin = configuredFinancialApiOrigin
+    ? normalizeReadOnlyApiOrigin(configuredFinancialApiOrigin)
     : null;
   if (mode === "EXACT_SHA_CANDIDATE" && !values["candidate-ref"]) {
     fail("EXACT_SHA_CANDIDATE_REQUIRES_CANDIDATE_REF");
@@ -90,6 +103,7 @@ export function parseReviewConfig(argv = process.argv.slice(2)) {
     mode,
     candidateRef: values["candidate-ref"] ?? null,
     readApiOrigin,
+    financialApiOrigin,
     port,
     skipInstall: values["skip-install"] === true,
     dataMode: readApiOrigin ? "REAL_READ_ONLY" : "REPRESENTATIVE_SYNTHETIC",
@@ -118,6 +132,7 @@ function runtimeEnvironment(config) {
     NEXT_PUBLIC_ENABLE_DEMO_FALLBACK: config.readApiOrigin ? "false" : "true",
     NEXT_PUBLIC_PREVIEW_MODE: "true",
     NEXT_PUBLIC_ENABLE_TOPIC_PREVIEW: "true",
+    NEXT_PUBLIC_FINANCIAL_RESEARCH_API_BASE_URL: config.financialApiOrigin ?? "",
     NEXT_PUBLIC_AI_STUDIO_ORCHESTRATION_URL: "",
     TOPICPILOT_PREVIEW_READ_API_ORIGIN: config.readApiOrigin ?? "",
   };
@@ -201,6 +216,10 @@ async function stopChild(child) {
 
 async function main() {
   const config = parseReviewConfig();
+  if (config.help) {
+    console.log(PREVIEW_REVIEW_USAGE);
+    return;
+  }
   const env = runtimeEnvironment(config);
   let candidateSha = "UNBOUND_DIRTY_WORKTREE";
   let child = null;
@@ -238,6 +257,7 @@ async function main() {
     console.log(`PREVIEW_CANDIDATE_SHA=${candidateSha}`);
     console.log(`DATA_MODE=${config.dataMode}`);
     console.log(`DATA_TARGET=${config.readApiOrigin ?? "SYNTHETIC_SNAPSHOT"}`);
+    console.log(`FINANCIAL_DATA_TARGET=${config.financialApiOrigin ?? config.readApiOrigin ?? "UNAVAILABLE"}`);
     console.log("LOCAL_PROXY_USED=" + (config.readApiOrigin ? "YES" : "NO"));
     console.log("DIAGNOSTICS_DEFAULT=OFF");
     console.log(`PREVIEW_URL=http://localhost:${config.port}`);

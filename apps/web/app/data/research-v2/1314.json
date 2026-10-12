@@ -1,0 +1,2611 @@
+{
+  "schemaVersion": "company-research-view.v2",
+  "inputSchemaVersion": "stock-research-bootstrap.v1",
+  "researchId": "SRD-1314-20261009-001",
+  "stock": {
+    "code": "1314",
+    "nameZh": "中石化",
+    "market": "TPE"
+  },
+  "researchVersion": "v1.2-official-ir-refresh",
+  "researchAsOf": "2026-10-10",
+  "coverageStatus": "PARTIAL",
+  "publicationStatus": "UNPUBLISHED",
+  "summary": "中石化是台灣上市石化原料公司，研究定位為 AN／CPL 本業與資產／土地開發轉型並行的觀察標的。",
+  "groups": [
+    {
+      "id": "company_overview",
+      "title": "公司研究概況",
+      "summary": "中石化是台灣上市石化原料公司，研究定位為 AN／CPL 本業與資產／土地開發轉型並行的觀察標的。",
+      "positioning": "中石化是台灣上市石化原料公司，核心業務涵蓋 AN、CPL、尼龍材料與相關產品，營運結果受產品報價、原料與產能循環影響；公司同時推動土地與既有資產活化轉型。理解公司時，應將石化本業的產品與事業群損益，和資產／土地策略可能帶來的中期影響分開驗證，不能把尚未揭露的專案收入視為已實現獲利。",
+      "facts": [
+        "官方公司資料列示主要產品 CPL 與 AN。",
+        "2025 年度年報列示 AN、CPL、尼龍粒與鄰苯基苯酚為主要產品，並描述石化本業與土地開發雙軸。"
+      ],
+      "operatingModel": null,
+      "coreBusiness": null,
+      "products": "2025 年度年報列示四項主要產品；產品營業比重為 AN 及其附屬產品 40.14%、CPL 及其附屬產品 46.81%、鄰苯基苯酚 0.77%、其他部門 12.28%。",
+      "industryRole": "公司官方資料將中石化定位於塑膠原料產業；官方年報稱其為台灣唯一 CPL 生產廠家，並列示 AN、CPL、尼龍粒與鄰苯基苯酚的國內市占。",
+      "coreObservation": "資產活化與轉型可能是中期估值驅動，但仍需以公司公告、財報及專案進度持續驗證。",
+      "fullResearch": {
+        "summary": "中石化是台灣上市石化原料公司，研究定位為 AN／CPL 本業與資產／土地開發轉型並行的觀察標的。",
+        "facts": [
+          "官方公司資料列示主要產品 CPL 與 AN。",
+          "2025 年度年報列示 AN、CPL、尼龍粒與鄰苯基苯酚為主要產品，並描述石化本業與土地開發雙軸。"
+        ],
+        "inference": "資產活化與轉型可能是中期估值驅動，但仍需以公司公告、財報及專案進度持續驗證。",
+        "v2": {
+          "summary": {
+            "text": "中石化是台灣上市石化原料公司，AN／CPL 本業與資產／土地開發轉型並行。",
+            "sourceEvidenceIds": [
+              "1314-P2-001",
+              "1314-P2-003",
+              "1314-P2-005"
+            ],
+            "status": "READY"
+          },
+          "positioning": {
+            "text": "台灣上市石化原料公司，AN／CPL 本業與資產／土地開發轉型並行。",
+            "sourceEvidenceIds": [
+              "1314-P2-001",
+              "1314-P2-003",
+              "1314-P2-005"
+            ],
+            "status": "READY"
+          },
+          "operatingModel": {
+            "text": "石化產品製造與資產／土地開發雙軸；產品循環與資產活化分開觀察。",
+            "sourceEvidenceIds": [
+              "1314-P2-003",
+              "1314-P2-005",
+              "1314-P2-006"
+            ],
+            "status": "READY"
+          },
+          "coreBusiness": {
+            "text": "AN、CPL 及附屬產品，另有尼龍粒、OPP 與資產活化相關業務。",
+            "sourceEvidenceIds": [
+              "1314-P2-001",
+              "1314-P2-005",
+              "1314-P2-006"
+            ],
+            "status": "READY"
+          },
+          "products": {
+            "text": "丙烯腈（AN）、己內醯胺（CPL）、尼龍粒、鄰苯基苯酚（OPP）。",
+            "sourceEvidenceIds": [
+              "1314-P2-001",
+              "1314-P2-005"
+            ],
+            "status": "READY"
+          },
+          "industryRole": {
+            "text": "塑膠原料與 CPL／AN 產業鏈中的台灣生產者。",
+            "sourceEvidenceIds": [
+              "1314-P2-001",
+              "1314-P2-003",
+              "1314-P2-005"
+            ],
+            "status": "READY"
+          },
+          "coreObservation": {
+            "text": "本業循環與土地／資產活化計畫必須分開驗證，不能把策略敘事直接視為已實現獲利。",
+            "sourceEvidenceIds": [
+              "1314-P2-003",
+              "1314-P2-005",
+              "1314-P2-006"
+            ],
+            "status": "READY"
+          }
+        }
+      },
+      "sourceSection": [
+        "company_positioning",
+        "products_services"
+      ],
+      "evidenceIds": [
+        "1314-P2-001",
+        "1314-P2-003",
+        "1314-P2-005",
+        "1314-P2-001",
+        "1314-P2-003",
+        "1314-P2-005"
+      ]
+    },
+    {
+      "id": "business_structure",
+      "title": "產品與營收結構",
+      "summary": "2026 年上半年可同時保留官方財報部門收入與法說會產品營收，但兩者口徑不同，不互相加總或混作同一張圖。",
+      "businessGroups": [
+        {
+          "id": "an",
+          "name": "丙烯腈（AN）",
+          "summary": "AN 及醋酸與附屬產品的製造與銷售。",
+          "products": [
+            "product-an",
+            "product-acetic"
+          ],
+          "applications": [
+            "ABS",
+            "丙烯腈纖維（AF）",
+            "丙烯醯胺（AM）",
+            "丁腈橡膠（NBR）"
+          ],
+          "sourceEvidenceIds": [
+            "1314-P2-001",
+            "1314-P2-005",
+            "1314-P2-007"
+          ],
+          "status": "READY"
+        },
+        {
+          "id": "cpl",
+          "name": "己內醯胺（CPL）",
+          "summary": "CPL 及附屬產品，連結尼龍聚合與紡織材料需求。",
+          "products": [
+            "product-cpl"
+          ],
+          "applications": [
+            "尼龍聚合",
+            "尼龍纖維與工程塑料"
+          ],
+          "sourceEvidenceIds": [
+            "1314-P2-001",
+            "1314-P2-005",
+            "1314-P2-006"
+          ],
+          "status": "READY"
+        },
+        {
+          "id": "nylon",
+          "name": "尼龍粒",
+          "summary": "年報列示的主要產品，主要應用於尼龍相關材料。",
+          "products": [
+            "product-nylon"
+          ],
+          "applications": [
+            "抽絲",
+            "尼龍材料"
+          ],
+          "sourceEvidenceIds": [
+            "1314-P2-005"
+          ],
+          "status": "PARTIAL"
+        },
+        {
+          "id": "opp",
+          "name": "鄰苯基苯酚（OPP）",
+          "summary": "年報列示的主要產品；本包未將其拆成獨立財報部門。",
+          "products": [
+            "product-opp"
+          ],
+          "applications": [],
+          "sourceEvidenceIds": [
+            "1314-P2-005",
+            "1314-P2-006"
+          ],
+          "status": "PARTIAL"
+        },
+        {
+          "id": "asset-activation",
+          "name": "資產活化／土地開發",
+          "summary": "非單一製造產品，不與 AN／CPL 產品營收混列。",
+          "products": [],
+          "applications": [
+            "土地資產活化",
+            "港區與開發計畫"
+          ],
+          "sourceEvidenceIds": [
+            "1314-P2-003",
+            "1314-P2-005",
+            "1314-P2-006",
+            "1314-P2-007"
+          ],
+          "status": "PARTIAL"
+        }
+      ],
+      "products": [
+        {
+          "id": "product-an",
+          "name": "丙烯腈（AN）",
+          "summary": "AN 及其附屬產品。",
+          "businessGroupId": "an",
+          "applications": [
+            "ABS",
+            "AF",
+            "AM",
+            "NBR"
+          ],
+          "sourceEvidenceIds": [
+            "1314-P2-001",
+            "1314-P2-005",
+            "1314-P2-007"
+          ],
+          "status": "READY"
+        },
+        {
+          "id": "product-acetic",
+          "name": "醋酸及附屬產品",
+          "summary": "與 AN 部門共同揭露的產品群。",
+          "businessGroupId": "an",
+          "applications": [],
+          "sourceEvidenceIds": [
+            "1314-P2-007"
+          ],
+          "status": "PARTIAL"
+        },
+        {
+          "id": "product-cpl",
+          "name": "己內醯胺（CPL）",
+          "summary": "CPL 及其附屬產品。",
+          "businessGroupId": "cpl",
+          "applications": [
+            "尼龍聚合",
+            "尼龍纖維與工程塑料"
+          ],
+          "sourceEvidenceIds": [
+            "1314-P2-001",
+            "1314-P2-005",
+            "1314-P2-006",
+            "1314-P2-007"
+          ],
+          "status": "READY"
+        },
+        {
+          "id": "product-nylon",
+          "name": "尼龍粒",
+          "summary": "年報列示的主要產品。",
+          "businessGroupId": "nylon",
+          "applications": [
+            "抽絲",
+            "尼龍材料"
+          ],
+          "sourceEvidenceIds": [
+            "1314-P2-005"
+          ],
+          "status": "PARTIAL"
+        },
+        {
+          "id": "product-opp",
+          "name": "鄰苯基苯酚（OPP）",
+          "summary": "年報列示的主要產品。",
+          "businessGroupId": "opp",
+          "applications": [],
+          "sourceEvidenceIds": [
+            "1314-P2-005",
+            "1314-P2-006"
+          ],
+          "status": "PARTIAL"
+        }
+      ],
+      "revenue": {
+        "datasets": [
+          {
+            "id": "revenue-h1-2026-segment",
+            "name": "2026 上半年合併財報部門收入",
+            "period": "2026-H1",
+            "periodType": "HALF_YEAR",
+            "reportingBasis": "CONSOLIDATED_EXTERNAL_CUSTOMER_REVENUE_BY_OPERATING_DEPARTMENT",
+            "currency": "TWD",
+            "unit": "TWD_1000",
+            "total": 7979691,
+            "items": [
+              {
+                "id": "revenue-an",
+                "name": "丙烯腈／醋酸及附屬產品",
+                "value": 3588430,
+                "share": 0.449695,
+                "businessGroupId": "an",
+                "sourceEvidenceIds": [
+                  "1314-P2-007"
+                ]
+              },
+              {
+                "id": "revenue-cpl",
+                "name": "己內醯胺及附屬產品",
+                "value": 3789882,
+                "share": 0.474941,
+                "businessGroupId": "cpl",
+                "sourceEvidenceIds": [
+                  "1314-P2-007"
+                ]
+              },
+              {
+                "id": "revenue-other",
+                "name": "其他部門",
+                "value": 601379,
+                "share": 0.075364,
+                "businessGroupId": null,
+                "sourceEvidenceIds": [
+                  "1314-P2-007"
+                ]
+              }
+            ],
+            "sourceEvidenceIds": [
+              "1314-P2-007"
+            ],
+            "chartEligible": true,
+            "status": "READY",
+            "notes": "此為財報部門／外部客戶收入，不是法說會逐項產品營收。"
+          },
+          {
+            "id": "revenue-h1-2026-ir-products",
+            "name": "2026 上半年法說會產品營收",
+            "period": "2026-H1",
+            "periodType": "HALF_YEAR",
+            "reportingBasis": "IR_PRODUCT_REVENUE_APPROXIMATE",
+            "currency": "TWD",
+            "unit": "TWD_100_MILLION_APPROX",
+            "total": 79,
+            "items": [
+              {
+                "id": "ir-cpl",
+                "name": "CPL",
+                "value": 20,
+                "sourceEvidenceIds": [
+                  "1314-P2-006"
+                ]
+              },
+              {
+                "id": "ir-pa6",
+                "name": "PA6",
+                "value": 6,
+                "sourceEvidenceIds": [
+                  "1314-P2-006"
+                ]
+              },
+              {
+                "id": "ir-an",
+                "name": "AN",
+                "value": 35,
+                "sourceEvidenceIds": [
+                  "1314-P2-006"
+                ]
+              },
+              {
+                "id": "ir-opp",
+                "name": "OPP",
+                "value": 0,
+                "sourceEvidenceIds": [
+                  "1314-P2-006"
+                ]
+              },
+              {
+                "id": "ir-wei-ming",
+                "name": "威名",
+                "value": 7,
+                "sourceEvidenceIds": [
+                  "1314-P2-006"
+                ]
+              },
+              {
+                "id": "ir-subsidiaries-other",
+                "name": "子公司及其他",
+                "value": 11,
+                "sourceEvidenceIds": [
+                  "1314-P2-006"
+                ]
+              }
+            ],
+            "sourceEvidenceIds": [
+              "1314-P2-006"
+            ],
+            "chartEligible": false,
+            "status": "PARTIAL",
+            "notes": "簡報以約數呈現；不得與財報部門收入混列，也不作精確比例圖。"
+          }
+        ],
+        "metrics": [],
+        "narrative": "2026 年 9 月法說會揭露 2026 年上半年產品營收：約 CPL 20 億元、PA6 6 億元、AN 35 億元、OPP 0 億元、威名 7 億元、子公司及其他 11 億元，合計約 80 億元。2026 年第二季合併財報另揭露 2026 年上半年外部客戶收入與部門損益：丙烯腈／醋酸及附屬產品收入 3,588,430 仟元、部門損益 -348,965 仟元；己內醯胺及附屬產品收入 3,789,882 仟元、部門損益 352,725 仟元；其他部門收入 601,379 仟元、部門損益 -1,989,399 仟元。",
+        "basis": "原研究包提供的事業群／產品文字說明；未將文字自行解析成未經驗證的數字。",
+        "status": "PARTIAL"
+      },
+      "profit": {
+        "datasets": [
+          {
+            "id": "profit-h1-2026-segment",
+            "name": "2026 上半年合併財報部門損益",
+            "period": "2026-H1",
+            "periodType": "HALF_YEAR",
+            "reportingBasis": "CONSOLIDATED_SEGMENT_PROFIT_LOSS",
+            "currency": "TWD",
+            "unit": "TWD_1000",
+            "total": -1985639,
+            "items": [
+              {
+                "id": "profit-an",
+                "name": "丙烯腈／醋酸及附屬產品",
+                "value": -348965,
+                "businessGroupId": "an",
+                "sourceEvidenceIds": [
+                  "1314-P2-007"
+                ]
+              },
+              {
+                "id": "profit-cpl",
+                "name": "己內醯胺及附屬產品",
+                "value": 352725,
+                "businessGroupId": "cpl",
+                "sourceEvidenceIds": [
+                  "1314-P2-007"
+                ]
+              },
+              {
+                "id": "profit-other",
+                "name": "其他部門",
+                "value": -1989399,
+                "businessGroupId": null,
+                "sourceEvidenceIds": [
+                  "1314-P2-007"
+                ]
+              }
+            ],
+            "sourceEvidenceIds": [
+              "1314-P2-007"
+            ],
+            "chartEligible": false,
+            "status": "PARTIAL",
+            "notes": "其他部門不是土地開發單一獲利；本欄只保留部門損益，不推導產品毛利率。"
+          }
+        ],
+        "metrics": [],
+        "narrative": null,
+        "basis": "部門損益與產品別獲利分開保留；不得把其他部門或權益法收益視為單一產品獲利。",
+        "status": "MISSING"
+      },
+      "investments": {
+        "items": [
+          {
+            "id": "investment-china-engineering",
+            "name": "中華工程",
+            "stockCode": "2515",
+            "relationshipType": "權益法投資",
+            "materiality": "FINANCIAL",
+            "materialityReason": "2026 年上半年合併財報／公告揭露依 IAS 28 第 22 段認列 1,803,750 仟元投資損失，已達財務重大性。",
+            "businessDescription": "工程建設與土地開發相關業務；本次只保留已揭露投資損失，不延伸推導完整業務獲利。",
+            "financialImpact": "2026 年上半年認列投資損失 1,803,750 仟元。",
+            "strategicImpact": null,
+            "accountingTreatment": "依 IAS 28 第 22 段認列投資損失；完整會計處理以正式財報附註為準。",
+            "sourceEvidenceIds": [
+              "1314-P2-007"
+            ],
+            "status": "PARTIAL"
+          }
+        ],
+        "summary": null,
+        "materialityBasis": "財務＋策略重大性；本次 v1 內容仍以文字研究為主，未臆造持股或貢獻數字。",
+        "limitations": [
+          "土地開發專案獨立收入與毛利拆分",
+          "其他部門內土地開發／投資性不動產與其他業務的單獨獲利橋接"
+        ],
+        "status": "PARTIAL",
+        "reason": "已能確認中華工程的重大投資損失，但尚未取得完整轉投資清冊與各公司別獲利貢獻。"
+      },
+      "fullResearch": {
+        "known": "2026 年 9 月法說會揭露 2026 年上半年產品營收：約 CPL 20 億元、PA6 6 億元、AN 35 億元、OPP 0 億元、威名 7 億元、子公司及其他 11 億元，合計約 80 億元。2026 年第二季合併財報另揭露 2026 年上半年外部客戶收入與部門損益：丙烯腈／醋酸及附屬產品收入 3,588,430 仟元、部門損益 -348,965 仟元；己內醯胺及附屬產品收入 3,789,882 仟元、部門損益 352,725 仟元；其他部門收入 601,379 仟元、部門損益 -1,989,399 仟元。",
+        "geography": "2026 年上半年外部客戶收入：國內 4,810,292 仟元、亞洲 2,864,955 仟元、其他地區 304,444 仟元。",
+        "notEstablished": [
+          "土地開發專案獨立收入與毛利拆分",
+          "其他部門內土地開發／投資性不動產與其他業務的單獨獲利橋接"
+        ],
+        "reason": "最新法說會與季報已補足產品群／營運部門及地區層級資料，但沒有把土地開發獨立收入、成本或毛利拆出；部門損益也不是單一產品毛利率。",
+        "v2": {
+          "summary": "2026 年上半年可同時保留官方財報部門收入與法說會產品營收，但兩者口徑不同，不互相加總或混作同一張圖。",
+          "revenueDatasets": [
+            {
+              "id": "revenue-h1-2026-segment",
+              "name": "2026 上半年合併財報部門收入",
+              "period": "2026-H1",
+              "periodType": "HALF_YEAR",
+              "reportingBasis": "CONSOLIDATED_EXTERNAL_CUSTOMER_REVENUE_BY_OPERATING_DEPARTMENT",
+              "currency": "TWD",
+              "unit": "TWD_1000",
+              "total": 7979691,
+              "items": [
+                {
+                  "id": "revenue-an",
+                  "name": "丙烯腈／醋酸及附屬產品",
+                  "value": 3588430,
+                  "share": 0.449695,
+                  "businessGroupId": "an",
+                  "sourceEvidenceIds": [
+                    "1314-P2-007"
+                  ]
+                },
+                {
+                  "id": "revenue-cpl",
+                  "name": "己內醯胺及附屬產品",
+                  "value": 3789882,
+                  "share": 0.474941,
+                  "businessGroupId": "cpl",
+                  "sourceEvidenceIds": [
+                    "1314-P2-007"
+                  ]
+                },
+                {
+                  "id": "revenue-other",
+                  "name": "其他部門",
+                  "value": 601379,
+                  "share": 0.075364,
+                  "businessGroupId": null,
+                  "sourceEvidenceIds": [
+                    "1314-P2-007"
+                  ]
+                }
+              ],
+              "sourceEvidenceIds": [
+                "1314-P2-007"
+              ],
+              "chartEligible": true,
+              "status": "READY",
+              "notes": "此為財報部門／外部客戶收入，不是法說會逐項產品營收。"
+            },
+            {
+              "id": "revenue-h1-2026-ir-products",
+              "name": "2026 上半年法說會產品營收",
+              "period": "2026-H1",
+              "periodType": "HALF_YEAR",
+              "reportingBasis": "IR_PRODUCT_REVENUE_APPROXIMATE",
+              "currency": "TWD",
+              "unit": "TWD_100_MILLION_APPROX",
+              "total": 79,
+              "items": [
+                {
+                  "id": "ir-cpl",
+                  "name": "CPL",
+                  "value": 20,
+                  "sourceEvidenceIds": [
+                    "1314-P2-006"
+                  ]
+                },
+                {
+                  "id": "ir-pa6",
+                  "name": "PA6",
+                  "value": 6,
+                  "sourceEvidenceIds": [
+                    "1314-P2-006"
+                  ]
+                },
+                {
+                  "id": "ir-an",
+                  "name": "AN",
+                  "value": 35,
+                  "sourceEvidenceIds": [
+                    "1314-P2-006"
+                  ]
+                },
+                {
+                  "id": "ir-opp",
+                  "name": "OPP",
+                  "value": 0,
+                  "sourceEvidenceIds": [
+                    "1314-P2-006"
+                  ]
+                },
+                {
+                  "id": "ir-wei-ming",
+                  "name": "威名",
+                  "value": 7,
+                  "sourceEvidenceIds": [
+                    "1314-P2-006"
+                  ]
+                },
+                {
+                  "id": "ir-subsidiaries-other",
+                  "name": "子公司及其他",
+                  "value": 11,
+                  "sourceEvidenceIds": [
+                    "1314-P2-006"
+                  ]
+                }
+              ],
+              "sourceEvidenceIds": [
+                "1314-P2-006"
+              ],
+              "chartEligible": false,
+              "status": "PARTIAL",
+              "notes": "簡報以約數呈現；不得與財報部門收入混列，也不作精確比例圖。"
+            }
+          ],
+          "profitDatasets": [
+            {
+              "id": "profit-h1-2026-segment",
+              "name": "2026 上半年合併財報部門損益",
+              "period": "2026-H1",
+              "periodType": "HALF_YEAR",
+              "reportingBasis": "CONSOLIDATED_SEGMENT_PROFIT_LOSS",
+              "currency": "TWD",
+              "unit": "TWD_1000",
+              "total": -1985639,
+              "items": [
+                {
+                  "id": "profit-an",
+                  "name": "丙烯腈／醋酸及附屬產品",
+                  "value": -348965,
+                  "businessGroupId": "an",
+                  "sourceEvidenceIds": [
+                    "1314-P2-007"
+                  ]
+                },
+                {
+                  "id": "profit-cpl",
+                  "name": "己內醯胺及附屬產品",
+                  "value": 352725,
+                  "businessGroupId": "cpl",
+                  "sourceEvidenceIds": [
+                    "1314-P2-007"
+                  ]
+                },
+                {
+                  "id": "profit-other",
+                  "name": "其他部門",
+                  "value": -1989399,
+                  "businessGroupId": null,
+                  "sourceEvidenceIds": [
+                    "1314-P2-007"
+                  ]
+                }
+              ],
+              "sourceEvidenceIds": [
+                "1314-P2-007"
+              ],
+              "chartEligible": false,
+              "status": "PARTIAL",
+              "notes": "其他部門不是土地開發單一獲利；本欄只保留部門損益，不推導產品毛利率。"
+            }
+          ],
+          "financialMetrics": [
+            {
+              "id": "metric-revenue-h1-2026",
+              "label": "2026 上半年合併營業收入／外部客戶收入",
+              "value": 7979691,
+              "unit": "TWD_1000",
+              "currency": "TWD",
+              "period": "2026-H1",
+              "periodType": "HALF_YEAR",
+              "reportingBasis": "CONSOLIDATED_EXTERNAL_CUSTOMER_REVENUE_BY_OPERATING_DEPARTMENT",
+              "metricDefinition": "三個官方部門收入加總；僅代表此部門口徑，不等同法說會產品營收。",
+              "sourceEvidenceIds": [
+                "1314-P2-007"
+              ],
+              "status": "READY",
+              "type": "FACT",
+              "derivedFromDatasetId": "revenue-h1-2026-segment"
+            },
+            {
+              "id": "metric-gross-profit-h1-2026",
+              "label": "2026 上半年合併營業毛利（損）",
+              "value": -89641,
+              "unit": "TWD_1000",
+              "currency": "TWD",
+              "period": "2026-H1",
+              "periodType": "HALF_YEAR",
+              "reportingBasis": "CONSOLIDATED",
+              "metricDefinition": "合併營業毛利（損）；負值代表營業毛損。",
+              "sourceEvidenceIds": [
+                "1314-P2-007"
+              ],
+              "status": "READY",
+              "type": "FACT"
+            },
+            {
+              "id": "metric-operating-profit-h1-2026",
+              "label": "2026 上半年合併營業利益（損）",
+              "value": -758749,
+              "unit": "TWD_1000",
+              "currency": "TWD",
+              "period": "2026-H1",
+              "periodType": "HALF_YEAR",
+              "reportingBasis": "CONSOLIDATED",
+              "metricDefinition": "合併營業利益（損）；負值代表營業損失。",
+              "sourceEvidenceIds": [
+                "1314-P2-007"
+              ],
+              "status": "READY",
+              "type": "FACT"
+            },
+            {
+              "id": "metric-pretax-profit-h1-2026",
+              "label": "2026 上半年合併稅前淨利（損）",
+              "value": -1985639,
+              "unit": "TWD_1000",
+              "currency": "TWD",
+              "period": "2026-H1",
+              "periodType": "HALF_YEAR",
+              "reportingBasis": "CONSOLIDATED",
+              "metricDefinition": "合併稅前淨利（損）；負值代表稅前損失。",
+              "sourceEvidenceIds": [
+                "1314-P2-007"
+              ],
+              "status": "READY",
+              "type": "FACT"
+            },
+            {
+              "id": "metric-net-profit-h1-2026",
+              "label": "2026 上半年合併本期淨利（損）",
+              "value": -1994090,
+              "unit": "TWD_1000",
+              "currency": "TWD",
+              "period": "2026-H1",
+              "periodType": "HALF_YEAR",
+              "reportingBasis": "CONSOLIDATED",
+              "metricDefinition": "合併本期淨利（損）；負值代表本期淨損。",
+              "sourceEvidenceIds": [
+                "1314-P2-007"
+              ],
+              "status": "READY",
+              "type": "FACT"
+            },
+            {
+              "id": "metric-attributable-profit-h1-2026",
+              "label": "2026 上半年歸屬母公司業主淨利（損）",
+              "value": -1986324,
+              "unit": "TWD_1000",
+              "currency": "TWD",
+              "period": "2026-H1",
+              "periodType": "HALF_YEAR",
+              "reportingBasis": "CONSOLIDATED_ATTRIBUTABLE_TO_PARENT",
+              "metricDefinition": "歸屬母公司業主之本期淨利（損）；負值代表歸屬母公司業主淨損。",
+              "sourceEvidenceIds": [
+                "1314-P2-007"
+              ],
+              "status": "READY",
+              "type": "FACT"
+            },
+            {
+              "id": "metric-eps-h1-2026",
+              "label": "2026 上半年基本每股盈餘（損）",
+              "value": -0.52,
+              "unit": "TWD_PER_SHARE",
+              "currency": "TWD",
+              "period": "2026-H1",
+              "periodType": "HALF_YEAR",
+              "reportingBasis": "CONSOLIDATED",
+              "metricDefinition": "合併基本每股盈餘（損）；負值代表每股損失。",
+              "sourceEvidenceIds": [
+                "1314-P2-007"
+              ],
+              "status": "READY",
+              "type": "FACT"
+            },
+            {
+              "id": "metric-assets-2026-06-30",
+              "label": "2026 年 6 月 30 日期末資產總額",
+              "value": 124897130,
+              "unit": "TWD_1000",
+              "currency": "TWD",
+              "period": "2026-06-30",
+              "periodType": "AS_OF_DATE",
+              "reportingBasis": "CONSOLIDATED_BALANCE_SHEET",
+              "metricDefinition": "合併資產負債表期末資產總額。",
+              "sourceEvidenceIds": [
+                "1314-P2-007"
+              ],
+              "status": "READY",
+              "type": "FACT"
+            },
+            {
+              "id": "metric-liabilities-2026-06-30",
+              "label": "2026 年 6 月 30 日期末負債總額",
+              "value": 49484140,
+              "unit": "TWD_1000",
+              "currency": "TWD",
+              "period": "2026-06-30",
+              "periodType": "AS_OF_DATE",
+              "reportingBasis": "CONSOLIDATED_BALANCE_SHEET",
+              "metricDefinition": "合併資產負債表期末負債總額。",
+              "sourceEvidenceIds": [
+                "1314-P2-007"
+              ],
+              "status": "READY",
+              "type": "FACT"
+            },
+            {
+              "id": "metric-parent-equity-2026-06-30",
+              "label": "2026 年 6 月 30 日歸屬母公司業主權益",
+              "value": 75364344,
+              "unit": "TWD_1000",
+              "currency": "TWD",
+              "period": "2026-06-30",
+              "periodType": "AS_OF_DATE",
+              "reportingBasis": "CONSOLIDATED_BALANCE_SHEET",
+              "metricDefinition": "合併資產負債表期末歸屬母公司業主之權益。",
+              "sourceEvidenceIds": [
+                "1314-P2-007"
+              ],
+              "status": "READY",
+              "type": "FACT"
+            },
+            {
+              "id": "metric-equity-method-loss-zhonghua-engineering-h1-2026",
+              "label": "2026 上半年中華工程股權投資損失",
+              "value": -1803750,
+              "unit": "TWD_1000",
+              "currency": "TWD",
+              "period": "2026-H1",
+              "periodType": "HALF_YEAR",
+              "reportingBasis": "OTHER_INVESTMENT_LOSS",
+              "metricDefinition": "依 IAS 28 第 22 段認列中華工程股權投資損失；不等同中華工程完整年度淨損。",
+              "sourceEvidenceIds": [
+                "1314-P2-007"
+              ],
+              "status": "PARTIAL",
+              "type": "FACT"
+            }
+          ],
+          "investmentItems": [
+            {
+              "id": "investment-china-engineering",
+              "name": "中華工程",
+              "stockCode": "2515",
+              "relationshipType": "權益法投資",
+              "materiality": "FINANCIAL",
+              "materialityReason": "2026 年上半年合併財報／公告揭露依 IAS 28 第 22 段認列 1,803,750 仟元投資損失，已達財務重大性。",
+              "businessDescription": "工程建設與土地開發相關業務；本次只保留已揭露投資損失，不延伸推導完整業務獲利。",
+              "financialImpact": "2026 年上半年認列投資損失 1,803,750 仟元。",
+              "strategicImpact": null,
+              "accountingTreatment": "依 IAS 28 第 22 段認列投資損失；完整會計處理以正式財報附註為準。",
+              "sourceEvidenceIds": [
+                "1314-P2-007"
+              ],
+              "status": "PARTIAL"
+            }
+          ],
+          "investmentStatus": "PARTIAL",
+          "investmentReason": "已能確認中華工程的重大投資損失，但尚未取得完整轉投資清冊與各公司別獲利貢獻。",
+          "managementTopics": [
+            {
+              "id": "management-h1-2026-product-mix",
+              "topic": "上半年產品營收與產能利用率",
+              "summary": "法說會揭露 CPL、PA6、AN、OPP、威名及子公司／其他的上半年產品營收與主要工廠產能利用率。",
+              "statementDate": "2026-09-11",
+              "sourceEvidenceIds": [
+                "1314-P2-006"
+              ],
+              "status": "READY"
+            },
+            {
+              "id": "management-asset-activation",
+              "topic": "資產活化與高值化／新材料",
+              "summary": "公司說明土地資產活化、港區相關計畫、精細化工與新材料進度；這些屬管理層計畫，尚不等於已實現財務成果。",
+              "statementDate": "2026-09-11",
+              "sourceEvidenceIds": [
+                "1314-P2-005",
+                "1314-P2-006"
+              ],
+              "status": "READY"
+            }
+          ]
+        }
+      },
+      "sourceSection": [
+        "products_services",
+        "revenue_structure"
+      ],
+      "evidenceIds": [
+        "1314-P2-001",
+        "1314-P2-003",
+        "1314-P2-005",
+        "1314-P2-005",
+        "1314-P2-006",
+        "1314-P2-007"
+      ]
+    },
+    {
+      "id": "industry_position",
+      "title": "產業鏈與競爭位置",
+      "summary": "公司官方資料將中石化定位於塑膠原料產業；官方年報稱其為台灣唯一 CPL 生產廠家，並列示 AN、CPL、尼龍粒與鄰苯基苯酚的國內市占。",
+      "chains": [
+        {
+          "id": "chain-an",
+          "name": "AN／丙烯腈鏈",
+          "businessGroupId": "an",
+          "upstream": "石化原料與能源成本；本包未建立供應商級名單。",
+          "companyRole": "生產 AN 及醋酸與附屬產品，官方揭露 AN 產能與部門收入。",
+          "downstream": "ABS、AF、AM、NBR 等下游應用。",
+          "competitiveAdvantages": [
+            "具既有 AN 生產與產能基礎"
+          ],
+          "competitiveConstraints": [
+            "受原料價格、供需與新增產能影響"
+          ],
+          "competitors": [],
+          "sourceEvidenceIds": [
+            "1314-P2-003",
+            "1314-P2-005",
+            "1314-P2-006",
+            "1314-P2-007"
+          ],
+          "status": "PARTIAL",
+          "evidenceIds": [
+            "1314-P2-003",
+            "1314-P2-005",
+            "1314-P2-006",
+            "1314-P2-007"
+          ]
+        },
+        {
+          "id": "chain-cpl",
+          "name": "CPL／尼龍材料鏈",
+          "businessGroupId": "cpl",
+          "upstream": "石化原料與能源成本；本包未建立供應商級名單。",
+          "companyRole": "生產 CPL 及附屬產品，連結尼龍聚合與材料需求。",
+          "downstream": "台灣尼龍聚合業者、尼龍纖維與工程塑料應用。",
+          "competitiveAdvantages": [
+            "公司年報稱為台灣 CPL 生產者，並揭露產品與市占資料"
+          ],
+          "competitiveConstraints": [
+            "受 CPL／PA6 價差、需求循環與產線調整影響"
+          ],
+          "competitors": [],
+          "sourceEvidenceIds": [
+            "1314-P2-003",
+            "1314-P2-005",
+            "1314-P2-006",
+            "1314-P2-007"
+          ],
+          "status": "PARTIAL",
+          "evidenceIds": [
+            "1314-P2-003",
+            "1314-P2-005",
+            "1314-P2-006",
+            "1314-P2-007"
+          ]
+        },
+        {
+          "id": "chain-asset-activation",
+          "name": "資產活化／土地開發鏈",
+          "businessGroupId": "asset-activation",
+          "upstream": "土地、港區與開發條件；非製造供應鏈。",
+          "companyRole": "持有並推進資產活化與開發計畫，財務成果尚未拆分。",
+          "downstream": "開發／出租／處分成果需依各專案公告與財報驗證。",
+          "competitiveAdvantages": [],
+          "competitiveConstraints": [
+            "法規、時程、資金與去化風險"
+          ],
+          "competitors": [],
+          "sourceEvidenceIds": [
+            "1314-P2-003",
+            "1314-P2-005",
+            "1314-P2-006",
+            "1314-P2-007"
+          ],
+          "status": "TEXT_ONLY",
+          "evidenceIds": [
+            "1314-P2-003",
+            "1314-P2-005",
+            "1314-P2-006",
+            "1314-P2-007"
+          ]
+        }
+      ],
+      "customers": [],
+      "competitors": [],
+      "competitivePosition": "公司官方資料將中石化定位於塑膠原料產業；官方年報稱其為台灣唯一 CPL 生產廠家，並列示 AN、CPL、尼龍粒與鄰苯基苯酚的國內市占。",
+      "limitations": [
+        "同業可比成本曲線",
+        "長約覆蓋率",
+        "單一產品別毛利率或獲利"
+      ],
+      "fullResearch": {
+        "supplyChain": {
+          "upstream": "石化原料價格與供需為重要外部變數，但本包未建立供應商級名單。",
+          "operations": [
+            "官方年報列示台北辦公室、頭份、大社、小港、橋頭與斗六據點。",
+            "官方年報揭露 AN 產能約 23 萬噸；CPL 年產能約 20 萬噸。"
+          ],
+          "downstream": "CPL 主要供應台灣尼龍聚合業者；AN 下游包括 ABS、AF、AM 與 NBR，需求與價格循環仍需持續追蹤。",
+          "v2": {
+            "chains": [
+              {
+                "id": "chain-an",
+                "name": "AN／丙烯腈鏈",
+                "businessGroupId": "an",
+                "upstream": "石化原料與能源成本；本包未建立供應商級名單。",
+                "companyRole": "生產 AN 及醋酸與附屬產品，官方揭露 AN 產能與部門收入。",
+                "downstream": "ABS、AF、AM、NBR 等下游應用。",
+                "competitiveAdvantages": [
+                  "具既有 AN 生產與產能基礎"
+                ],
+                "competitiveConstraints": [
+                  "受原料價格、供需與新增產能影響"
+                ],
+                "competitors": [],
+                "sourceEvidenceIds": [
+                  "1314-P2-003",
+                  "1314-P2-005",
+                  "1314-P2-006",
+                  "1314-P2-007"
+                ],
+                "status": "PARTIAL"
+              },
+              {
+                "id": "chain-cpl",
+                "name": "CPL／尼龍材料鏈",
+                "businessGroupId": "cpl",
+                "upstream": "石化原料與能源成本；本包未建立供應商級名單。",
+                "companyRole": "生產 CPL 及附屬產品，連結尼龍聚合與材料需求。",
+                "downstream": "台灣尼龍聚合業者、尼龍纖維與工程塑料應用。",
+                "competitiveAdvantages": [
+                  "公司年報稱為台灣 CPL 生產者，並揭露產品與市占資料"
+                ],
+                "competitiveConstraints": [
+                  "受 CPL／PA6 價差、需求循環與產線調整影響"
+                ],
+                "competitors": [],
+                "sourceEvidenceIds": [
+                  "1314-P2-003",
+                  "1314-P2-005",
+                  "1314-P2-006",
+                  "1314-P2-007"
+                ],
+                "status": "PARTIAL"
+              },
+              {
+                "id": "chain-asset-activation",
+                "name": "資產活化／土地開發鏈",
+                "businessGroupId": "asset-activation",
+                "upstream": "土地、港區與開發條件；非製造供應鏈。",
+                "companyRole": "持有並推進資產活化與開發計畫，財務成果尚未拆分。",
+                "downstream": "開發／出租／處分成果需依各專案公告與財報驗證。",
+                "competitiveAdvantages": [],
+                "competitiveConstraints": [
+                  "法規、時程、資金與去化風險"
+                ],
+                "competitors": [],
+                "sourceEvidenceIds": [
+                  "1314-P2-003",
+                  "1314-P2-005",
+                  "1314-P2-006",
+                  "1314-P2-007"
+                ],
+                "status": "TEXT_ONLY"
+              }
+            ]
+          }
+        },
+        "competition": {
+          "positioning": "公司官方資料將中石化定位於塑膠原料產業；官方年報稱其為台灣唯一 CPL 生產廠家，並列示 AN、CPL、尼龍粒與鄰苯基苯酚的國內市占。",
+          "marketShare": "2025 年度年報列示：CPL 約 55%、AN 約 40%、尼龍粒約 70%、鄰苯基苯酚約 90%。",
+          "customerStructure": "尼龍粒內銷以主要抽絲客戶合作為主，年報提及以長約與固定出貨量提升訂單穩定度，但沒有長約占營收或出貨量比例。",
+          "latestOperatingData": "2026 年 9 月法說會補充產品營收、產能利用率與產業價差／原物料趨勢；2026 年第二季季報補充產品群部門損益。",
+          "peerCurveStatus": "目前取得的是官方產業價格／價差曲線與原物料趨勢，不是同業公司成本曲線。雖可辨識台灣 AN 同業台塑，但尚未取得同期間、同產品、同成本口徑的每噸成本或產品毛利資料，因此不形成可比成本曲線。",
+          "unresolved": [
+            "同業可比成本曲線",
+            "長約覆蓋率",
+            "單一產品別毛利率或獲利"
+          ]
+        }
+      },
+      "sourceSection": [
+        "supply_chain",
+        "competitive_position"
+      ],
+      "evidenceIds": [
+        "1314-P2-003",
+        "1314-P2-005",
+        "1314-P3-001",
+        "1314-P2-001",
+        "1314-P2-003",
+        "1314-P2-005",
+        "1314-P2-006",
+        "1314-P2-007"
+      ]
+    },
+    {
+      "id": "growth_and_risks",
+      "title": "成長驅動與主要風險",
+      "summary": "AN 產能與產品供需較接近營運驅動；土地開發與高值化轉型屬公司策略，需逐案驗證。",
+      "growthFactors": [
+        {
+          "id": "growth-an-demand",
+          "name": "AN 產能與需求改善",
+          "mechanism": "AN 產能利用率、下游需求與新增產能共同影響銷量與部門損益。",
+          "affectedBusinesses": [
+            "an"
+          ],
+          "indicators": [
+            "AN 產能利用率",
+            "AN／下游產品價差",
+            "部門收入與損益"
+          ],
+          "horizon": "NEAR_TO_MEDIUM_TERM",
+          "relatedRiskIds": [
+            "risk-petrochemical-cycle",
+            "risk-new-capacity"
+          ],
+          "sourceEvidenceIds": [
+            "1314-P2-005",
+            "1314-P2-006",
+            "1314-P2-007"
+          ],
+          "status": "READY"
+        },
+        {
+          "id": "growth-cpl-spread",
+          "name": "CPL／AN 供需與價差循環改善",
+          "mechanism": "CPL、PA6、AN 價格與原料成本的價差改善，可能帶動本業獲利。",
+          "affectedBusinesses": [
+            "an",
+            "cpl"
+          ],
+          "indicators": [
+            "CPL／PA6 價差",
+            "AN 價格與原料成本",
+            "部門損益"
+          ],
+          "horizon": "CYCLICAL",
+          "relatedRiskIds": [
+            "risk-petrochemical-cycle",
+            "risk-new-capacity"
+          ],
+          "sourceEvidenceIds": [
+            "1314-P2-005",
+            "1314-P2-006"
+          ],
+          "status": "READY"
+        },
+        {
+          "id": "growth-asset-activation",
+          "name": "資產活化與土地開發進度",
+          "mechanism": "土地、港區與其他資產若完成開發或處分，可能形成非本業價值釋放；現階段未拆出獨立收入與毛利。",
+          "affectedBusinesses": [
+            "asset-activation"
+          ],
+          "indicators": [
+            "專案核准與施工進度",
+            "出租／處分公告",
+            "投資性不動產與其他部門財務揭露"
+          ],
+          "horizon": "MEDIUM_TO_LONG_TERM",
+          "relatedRiskIds": [
+            "risk-asset-execution",
+            "risk-liquidity"
+          ],
+          "sourceEvidenceIds": [
+            "1314-P2-003",
+            "1314-P2-005",
+            "1314-P2-006",
+            "1314-P2-007"
+          ],
+          "status": "PARTIAL"
+        },
+        {
+          "id": "growth-high-value-materials",
+          "name": "高值化／新材料轉型",
+          "mechanism": "精細化工、新材料與高值化產品若形成量產與穩定客戶，可能降低單一石化循環依賴；目前仍需以專案進度與實際收入驗證。",
+          "affectedBusinesses": [
+            "an",
+            "cpl",
+            "nylon",
+            "opp"
+          ],
+          "indicators": [
+            "產品開發與量產進度",
+            "新材料收入與毛利",
+            "客戶導入與出貨"
+          ],
+          "horizon": "MEDIUM_TO_LONG_TERM",
+          "relatedRiskIds": [
+            "risk-transition-execution",
+            "risk-profitability-gap"
+          ],
+          "sourceEvidenceIds": [
+            "1314-P2-005",
+            "1314-P2-006",
+            "1314-P3-003"
+          ],
+          "status": "PARTIAL"
+        }
+      ],
+      "riskFactors": [
+        {
+          "id": "risk-petrochemical-cycle",
+          "name": "石化價格與原料循環",
+          "mechanism": "原料、能源與產品價格波動會直接影響 AN／CPL 部門收入與損益。",
+          "affectedBusinesses": [
+            "an",
+            "cpl",
+            "nylon"
+          ],
+          "indicators": [
+            "產品與原料價差",
+            "部門收入與損益",
+            "產能利用率"
+          ],
+          "horizon": "ONGOING_CYCLICAL",
+          "relatedGrowthIds": [
+            "growth-an-demand",
+            "growth-cpl-spread"
+          ],
+          "sourceEvidenceIds": [
+            "1314-P2-005",
+            "1314-P2-006",
+            "1314-P2-007"
+          ],
+          "status": "READY"
+        },
+        {
+          "id": "risk-new-capacity",
+          "name": "同業新增產能與供過於求",
+          "mechanism": "大陸及區域新增產能可能壓低產品價格與利用率。",
+          "affectedBusinesses": [
+            "an",
+            "cpl"
+          ],
+          "indicators": [
+            "區域新增產能",
+            "產品價格與價差",
+            "公司產能利用率"
+          ],
+          "horizon": "MEDIUM_TERM",
+          "relatedGrowthIds": [
+            "growth-an-demand",
+            "growth-cpl-spread"
+          ],
+          "sourceEvidenceIds": [
+            "1314-P2-005",
+            "1314-P2-006"
+          ],
+          "status": "READY"
+        },
+        {
+          "id": "risk-transition-execution",
+          "name": "產線調整與轉型執行",
+          "mechanism": "CPL 產線調整、升級與高值化／新材料投資可能帶來停工、時程與投資執行風險。",
+          "affectedBusinesses": [
+            "an",
+            "cpl",
+            "nylon",
+            "opp"
+          ],
+          "indicators": [
+            "工程進度與停工時間",
+            "資本支出",
+            "新產品量產與收入"
+          ],
+          "horizon": "MEDIUM_TERM",
+          "relatedGrowthIds": [
+            "growth-high-value-materials"
+          ],
+          "sourceEvidenceIds": [
+            "1314-P2-003",
+            "1314-P2-005",
+            "1314-P2-006"
+          ],
+          "status": "READY"
+        },
+        {
+          "id": "risk-asset-execution",
+          "name": "土地開發法規、時程與去化",
+          "mechanism": "開發案可能受到法規、核准、資金、施工與去化條件影響，且目前無獨立收入／毛利拆分。",
+          "affectedBusinesses": [
+            "asset-activation"
+          ],
+          "indicators": [
+            "法規與核准進度",
+            "專案支出",
+            "出租／處分與財報揭露"
+          ],
+          "horizon": "MEDIUM_TO_LONG_TERM",
+          "relatedGrowthIds": [
+            "growth-asset-activation"
+          ],
+          "sourceEvidenceIds": [
+            "1314-P2-003",
+            "1314-P2-005",
+            "1314-P2-006",
+            "1314-P2-007"
+          ],
+          "status": "READY"
+        },
+        {
+          "id": "risk-liquidity",
+          "name": "轉型投資與流動性壓力",
+          "mechanism": "非本業投資與開發支出可能提高資金需求；本包未建立完整專案現金流模型。",
+          "affectedBusinesses": [
+            "asset-activation",
+            "an",
+            "cpl"
+          ],
+          "indicators": [
+            "資本支出與借款",
+            "營運現金流",
+            "投資性不動產與其他部門項目"
+          ],
+          "horizon": "MEDIUM_TO_LONG_TERM",
+          "relatedGrowthIds": [
+            "growth-asset-activation"
+          ],
+          "sourceEvidenceIds": [
+            "1314-P2-005",
+            "1314-P2-007"
+          ],
+          "status": "PARTIAL"
+        },
+        {
+          "id": "risk-profitability-gap",
+          "name": "市場敘事與實際獲利落差",
+          "mechanism": "土地開發、新材料或市場題材若未轉化為可驗證收入與損益，估值敘事可能先於獲利實現。",
+          "affectedBusinesses": [
+            "asset-activation",
+            "an",
+            "cpl",
+            "nylon",
+            "opp"
+          ],
+          "indicators": [
+            "產品／部門收入與損益",
+            "專案收入與毛利",
+            "正式財報與管理層揭露"
+          ],
+          "horizon": "ONGOING",
+          "relatedGrowthIds": [
+            "growth-asset-activation",
+            "growth-high-value-materials"
+          ],
+          "sourceEvidenceIds": [
+            "1314-P2-005",
+            "1314-P2-006",
+            "1314-P2-007",
+            "1314-P3-003"
+          ],
+          "status": "READY"
+        }
+      ],
+      "fullResearch": {
+        "growth": {
+          "drivers": [
+            "AN 去瓶頸後產能與需求改善",
+            "CPL／AN 供需與價格循環改善",
+            "資產活化與土地開發進度",
+            "石化本業高值化／新材料轉型"
+          ],
+          "classification": "AN 產能與產品供需較接近營運驅動；土地開發與高值化轉型屬公司策略，需逐案驗證。",
+          "v2": {
+            "growthFactors": [
+              {
+                "id": "growth-an-demand",
+                "name": "AN 產能與需求改善",
+                "mechanism": "AN 產能利用率、下游需求與新增產能共同影響銷量與部門損益。",
+                "affectedBusinesses": [
+                  "an"
+                ],
+                "indicators": [
+                  "AN 產能利用率",
+                  "AN／下游產品價差",
+                  "部門收入與損益"
+                ],
+                "horizon": "NEAR_TO_MEDIUM_TERM",
+                "relatedRiskIds": [
+                  "risk-petrochemical-cycle",
+                  "risk-new-capacity"
+                ],
+                "sourceEvidenceIds": [
+                  "1314-P2-005",
+                  "1314-P2-006",
+                  "1314-P2-007"
+                ],
+                "status": "READY"
+              },
+              {
+                "id": "growth-cpl-spread",
+                "name": "CPL／AN 供需與價差循環改善",
+                "mechanism": "CPL、PA6、AN 價格與原料成本的價差改善，可能帶動本業獲利。",
+                "affectedBusinesses": [
+                  "an",
+                  "cpl"
+                ],
+                "indicators": [
+                  "CPL／PA6 價差",
+                  "AN 價格與原料成本",
+                  "部門損益"
+                ],
+                "horizon": "CYCLICAL",
+                "relatedRiskIds": [
+                  "risk-petrochemical-cycle",
+                  "risk-new-capacity"
+                ],
+                "sourceEvidenceIds": [
+                  "1314-P2-005",
+                  "1314-P2-006"
+                ],
+                "status": "READY"
+              },
+              {
+                "id": "growth-asset-activation",
+                "name": "資產活化與土地開發進度",
+                "mechanism": "土地、港區與其他資產若完成開發或處分，可能形成非本業價值釋放；現階段未拆出獨立收入與毛利。",
+                "affectedBusinesses": [
+                  "asset-activation"
+                ],
+                "indicators": [
+                  "專案核准與施工進度",
+                  "出租／處分公告",
+                  "投資性不動產與其他部門財務揭露"
+                ],
+                "horizon": "MEDIUM_TO_LONG_TERM",
+                "relatedRiskIds": [
+                  "risk-asset-execution",
+                  "risk-liquidity"
+                ],
+                "sourceEvidenceIds": [
+                  "1314-P2-003",
+                  "1314-P2-005",
+                  "1314-P2-006",
+                  "1314-P2-007"
+                ],
+                "status": "PARTIAL"
+              },
+              {
+                "id": "growth-high-value-materials",
+                "name": "高值化／新材料轉型",
+                "mechanism": "精細化工、新材料與高值化產品若形成量產與穩定客戶，可能降低單一石化循環依賴；目前仍需以專案進度與實際收入驗證。",
+                "affectedBusinesses": [
+                  "an",
+                  "cpl",
+                  "nylon",
+                  "opp"
+                ],
+                "indicators": [
+                  "產品開發與量產進度",
+                  "新材料收入與毛利",
+                  "客戶導入與出貨"
+                ],
+                "horizon": "MEDIUM_TO_LONG_TERM",
+                "relatedRiskIds": [
+                  "risk-transition-execution",
+                  "risk-profitability-gap"
+                ],
+                "sourceEvidenceIds": [
+                  "1314-P2-005",
+                  "1314-P2-006",
+                  "1314-P3-003"
+                ],
+                "status": "PARTIAL"
+              }
+            ]
+          }
+        },
+        "risks": {
+          "risks": [
+            "石化原料與產品價格循環造成毛利波動",
+            "大陸新增產能與供過於求造成價格壓力",
+            "產線調整或升級的執行與停工風險",
+            "土地開發的法規、時程、資金與去化風險",
+            "轉型投資與流動性壓力",
+            "市場敘事與實際獲利落差"
+          ],
+          "riskPolicy": "本節為研究風險清單，不代表已完成法律或財務盡職調查。",
+          "v2": {
+            "riskFactors": [
+              {
+                "id": "risk-petrochemical-cycle",
+                "name": "石化價格與原料循環",
+                "mechanism": "原料、能源與產品價格波動會直接影響 AN／CPL 部門收入與損益。",
+                "affectedBusinesses": [
+                  "an",
+                  "cpl",
+                  "nylon"
+                ],
+                "indicators": [
+                  "產品與原料價差",
+                  "部門收入與損益",
+                  "產能利用率"
+                ],
+                "horizon": "ONGOING_CYCLICAL",
+                "relatedGrowthIds": [
+                  "growth-an-demand",
+                  "growth-cpl-spread"
+                ],
+                "sourceEvidenceIds": [
+                  "1314-P2-005",
+                  "1314-P2-006",
+                  "1314-P2-007"
+                ],
+                "status": "READY"
+              },
+              {
+                "id": "risk-new-capacity",
+                "name": "同業新增產能與供過於求",
+                "mechanism": "大陸及區域新增產能可能壓低產品價格與利用率。",
+                "affectedBusinesses": [
+                  "an",
+                  "cpl"
+                ],
+                "indicators": [
+                  "區域新增產能",
+                  "產品價格與價差",
+                  "公司產能利用率"
+                ],
+                "horizon": "MEDIUM_TERM",
+                "relatedGrowthIds": [
+                  "growth-an-demand",
+                  "growth-cpl-spread"
+                ],
+                "sourceEvidenceIds": [
+                  "1314-P2-005",
+                  "1314-P2-006"
+                ],
+                "status": "READY"
+              },
+              {
+                "id": "risk-transition-execution",
+                "name": "產線調整與轉型執行",
+                "mechanism": "CPL 產線調整、升級與高值化／新材料投資可能帶來停工、時程與投資執行風險。",
+                "affectedBusinesses": [
+                  "an",
+                  "cpl",
+                  "nylon",
+                  "opp"
+                ],
+                "indicators": [
+                  "工程進度與停工時間",
+                  "資本支出",
+                  "新產品量產與收入"
+                ],
+                "horizon": "MEDIUM_TERM",
+                "relatedGrowthIds": [
+                  "growth-high-value-materials"
+                ],
+                "sourceEvidenceIds": [
+                  "1314-P2-003",
+                  "1314-P2-005",
+                  "1314-P2-006"
+                ],
+                "status": "READY"
+              },
+              {
+                "id": "risk-asset-execution",
+                "name": "土地開發法規、時程與去化",
+                "mechanism": "開發案可能受到法規、核准、資金、施工與去化條件影響，且目前無獨立收入／毛利拆分。",
+                "affectedBusinesses": [
+                  "asset-activation"
+                ],
+                "indicators": [
+                  "法規與核准進度",
+                  "專案支出",
+                  "出租／處分與財報揭露"
+                ],
+                "horizon": "MEDIUM_TO_LONG_TERM",
+                "relatedGrowthIds": [
+                  "growth-asset-activation"
+                ],
+                "sourceEvidenceIds": [
+                  "1314-P2-003",
+                  "1314-P2-005",
+                  "1314-P2-006",
+                  "1314-P2-007"
+                ],
+                "status": "READY"
+              },
+              {
+                "id": "risk-liquidity",
+                "name": "轉型投資與流動性壓力",
+                "mechanism": "非本業投資與開發支出可能提高資金需求；本包未建立完整專案現金流模型。",
+                "affectedBusinesses": [
+                  "asset-activation",
+                  "an",
+                  "cpl"
+                ],
+                "indicators": [
+                  "資本支出與借款",
+                  "營運現金流",
+                  "投資性不動產與其他部門項目"
+                ],
+                "horizon": "MEDIUM_TO_LONG_TERM",
+                "relatedGrowthIds": [
+                  "growth-asset-activation"
+                ],
+                "sourceEvidenceIds": [
+                  "1314-P2-005",
+                  "1314-P2-007"
+                ],
+                "status": "PARTIAL"
+              },
+              {
+                "id": "risk-profitability-gap",
+                "name": "市場敘事與實際獲利落差",
+                "mechanism": "土地開發、新材料或市場題材若未轉化為可驗證收入與損益，估值敘事可能先於獲利實現。",
+                "affectedBusinesses": [
+                  "asset-activation",
+                  "an",
+                  "cpl",
+                  "nylon",
+                  "opp"
+                ],
+                "indicators": [
+                  "產品／部門收入與損益",
+                  "專案收入與毛利",
+                  "正式財報與管理層揭露"
+                ],
+                "horizon": "ONGOING",
+                "relatedGrowthIds": [
+                  "growth-asset-activation",
+                  "growth-high-value-materials"
+                ],
+                "sourceEvidenceIds": [
+                  "1314-P2-005",
+                  "1314-P2-006",
+                  "1314-P2-007",
+                  "1314-P3-003"
+                ],
+                "status": "READY"
+              }
+            ]
+          }
+        }
+      },
+      "sourceSection": [
+        "growth_drivers",
+        "risks"
+      ],
+      "evidenceIds": [
+        "1314-P2-003",
+        "1314-P2-005",
+        "1314-P3-001",
+        "1314-P3-003",
+        "1314-P2-003",
+        "1314-P2-004",
+        "1314-P2-005",
+        "1314-P3-003"
+      ]
+    },
+    {
+      "id": "financial_commentary",
+      "title": "財報與法說會補充",
+      "summary": "2026 年 9 月法說會揭露 2026 年上半年產品營收：約 CPL 20 億元、PA6 6 億元、AN 35 億元、OPP 0 億元、威名 7 億元、子公司及其他 11 億元，合計約 80 億元。2026 年第二季合併財報另揭露 2026 年上半年外部客戶收入與部門損益：丙烯腈／醋酸及附屬產品收入 3,588,430 仟元、部門損益 -348,965 仟元；己內醯胺及附屬產品收入 3,789,882 仟元、部門損益 352,725 仟元；其他部門收入 601,379 仟元、部門損益 -1,989,399 仟元。",
+      "metrics": [
+        {
+          "id": "metric-revenue-h1-2026",
+          "label": "2026 上半年合併營業收入／外部客戶收入",
+          "value": 7979691,
+          "unit": "TWD_1000",
+          "currency": "TWD",
+          "period": "2026-H1",
+          "periodType": "HALF_YEAR",
+          "reportingBasis": "CONSOLIDATED_EXTERNAL_CUSTOMER_REVENUE_BY_OPERATING_DEPARTMENT",
+          "metricDefinition": "三個官方部門收入加總；僅代表此部門口徑，不等同法說會產品營收。",
+          "sourceEvidenceIds": [
+            "1314-P2-007"
+          ],
+          "status": "READY",
+          "type": "FACT",
+          "derivedFromDatasetId": "revenue-h1-2026-segment"
+        },
+        {
+          "id": "metric-gross-profit-h1-2026",
+          "label": "2026 上半年合併營業毛利（損）",
+          "value": -89641,
+          "unit": "TWD_1000",
+          "currency": "TWD",
+          "period": "2026-H1",
+          "periodType": "HALF_YEAR",
+          "reportingBasis": "CONSOLIDATED",
+          "metricDefinition": "合併營業毛利（損）；負值代表營業毛損。",
+          "sourceEvidenceIds": [
+            "1314-P2-007"
+          ],
+          "status": "READY",
+          "type": "FACT"
+        },
+        {
+          "id": "metric-operating-profit-h1-2026",
+          "label": "2026 上半年合併營業利益（損）",
+          "value": -758749,
+          "unit": "TWD_1000",
+          "currency": "TWD",
+          "period": "2026-H1",
+          "periodType": "HALF_YEAR",
+          "reportingBasis": "CONSOLIDATED",
+          "metricDefinition": "合併營業利益（損）；負值代表營業損失。",
+          "sourceEvidenceIds": [
+            "1314-P2-007"
+          ],
+          "status": "READY",
+          "type": "FACT"
+        },
+        {
+          "id": "metric-pretax-profit-h1-2026",
+          "label": "2026 上半年合併稅前淨利（損）",
+          "value": -1985639,
+          "unit": "TWD_1000",
+          "currency": "TWD",
+          "period": "2026-H1",
+          "periodType": "HALF_YEAR",
+          "reportingBasis": "CONSOLIDATED",
+          "metricDefinition": "合併稅前淨利（損）；負值代表稅前損失。",
+          "sourceEvidenceIds": [
+            "1314-P2-007"
+          ],
+          "status": "READY",
+          "type": "FACT"
+        },
+        {
+          "id": "metric-net-profit-h1-2026",
+          "label": "2026 上半年合併本期淨利（損）",
+          "value": -1994090,
+          "unit": "TWD_1000",
+          "currency": "TWD",
+          "period": "2026-H1",
+          "periodType": "HALF_YEAR",
+          "reportingBasis": "CONSOLIDATED",
+          "metricDefinition": "合併本期淨利（損）；負值代表本期淨損。",
+          "sourceEvidenceIds": [
+            "1314-P2-007"
+          ],
+          "status": "READY",
+          "type": "FACT"
+        },
+        {
+          "id": "metric-attributable-profit-h1-2026",
+          "label": "2026 上半年歸屬母公司業主淨利（損）",
+          "value": -1986324,
+          "unit": "TWD_1000",
+          "currency": "TWD",
+          "period": "2026-H1",
+          "periodType": "HALF_YEAR",
+          "reportingBasis": "CONSOLIDATED_ATTRIBUTABLE_TO_PARENT",
+          "metricDefinition": "歸屬母公司業主之本期淨利（損）；負值代表歸屬母公司業主淨損。",
+          "sourceEvidenceIds": [
+            "1314-P2-007"
+          ],
+          "status": "READY",
+          "type": "FACT"
+        },
+        {
+          "id": "metric-eps-h1-2026",
+          "label": "2026 上半年基本每股盈餘（損）",
+          "value": -0.52,
+          "unit": "TWD_PER_SHARE",
+          "currency": "TWD",
+          "period": "2026-H1",
+          "periodType": "HALF_YEAR",
+          "reportingBasis": "CONSOLIDATED",
+          "metricDefinition": "合併基本每股盈餘（損）；負值代表每股損失。",
+          "sourceEvidenceIds": [
+            "1314-P2-007"
+          ],
+          "status": "READY",
+          "type": "FACT"
+        },
+        {
+          "id": "metric-assets-2026-06-30",
+          "label": "2026 年 6 月 30 日期末資產總額",
+          "value": 124897130,
+          "unit": "TWD_1000",
+          "currency": "TWD",
+          "period": "2026-06-30",
+          "periodType": "AS_OF_DATE",
+          "reportingBasis": "CONSOLIDATED_BALANCE_SHEET",
+          "metricDefinition": "合併資產負債表期末資產總額。",
+          "sourceEvidenceIds": [
+            "1314-P2-007"
+          ],
+          "status": "READY",
+          "type": "FACT"
+        },
+        {
+          "id": "metric-liabilities-2026-06-30",
+          "label": "2026 年 6 月 30 日期末負債總額",
+          "value": 49484140,
+          "unit": "TWD_1000",
+          "currency": "TWD",
+          "period": "2026-06-30",
+          "periodType": "AS_OF_DATE",
+          "reportingBasis": "CONSOLIDATED_BALANCE_SHEET",
+          "metricDefinition": "合併資產負債表期末負債總額。",
+          "sourceEvidenceIds": [
+            "1314-P2-007"
+          ],
+          "status": "READY",
+          "type": "FACT"
+        },
+        {
+          "id": "metric-parent-equity-2026-06-30",
+          "label": "2026 年 6 月 30 日歸屬母公司業主權益",
+          "value": 75364344,
+          "unit": "TWD_1000",
+          "currency": "TWD",
+          "period": "2026-06-30",
+          "periodType": "AS_OF_DATE",
+          "reportingBasis": "CONSOLIDATED_BALANCE_SHEET",
+          "metricDefinition": "合併資產負債表期末歸屬母公司業主之權益。",
+          "sourceEvidenceIds": [
+            "1314-P2-007"
+          ],
+          "status": "READY",
+          "type": "FACT"
+        },
+        {
+          "id": "metric-equity-method-loss-zhonghua-engineering-h1-2026",
+          "label": "2026 上半年中華工程股權投資損失",
+          "value": -1803750,
+          "unit": "TWD_1000",
+          "currency": "TWD",
+          "period": "2026-H1",
+          "periodType": "HALF_YEAR",
+          "reportingBasis": "OTHER_INVESTMENT_LOSS",
+          "metricDefinition": "依 IAS 28 第 22 段認列中華工程股權投資損失；不等同中華工程完整年度淨損。",
+          "sourceEvidenceIds": [
+            "1314-P2-007"
+          ],
+          "status": "PARTIAL",
+          "type": "FACT"
+        }
+      ],
+      "items": [
+        {
+          "id": "financial-fact-01",
+          "type": "FACT",
+          "label": "營收與收入結構",
+          "summary": "2026 年 9 月法說會揭露 2026 年上半年產品營收：約 CPL 20 億元、PA6 6 億元、AN 35 億元、OPP 0 億元、威名 7 億元、子公司及其他 11 億元，合計約 80 億元。2026 年第二季合併財報另揭露 2026 年上半年外部客戶收入與部門損益：丙烯腈／醋酸及附屬產品收入 3,588,430 仟元、部門損益 -348,965 仟元；己內醯胺及附屬產品收入 3,789,882 仟元、部門損益 352,725 仟元；其他部門收入 601,379 仟元、部門損益 -1,989,399 仟元。",
+          "period": null,
+          "periodType": null,
+          "reportingBasis": null,
+          "unit": null,
+          "baseline": null,
+          "definition": null
+        },
+        {
+          "id": "financial-fact-03",
+          "type": "FACT",
+          "label": "地區別收入",
+          "summary": "2026 年上半年外部客戶收入：國內 4,810,292 仟元、亞洲 2,864,955 仟元、其他地區 304,444 仟元。",
+          "period": null,
+          "periodType": null,
+          "reportingBasis": null,
+          "unit": null,
+          "baseline": null,
+          "definition": null
+        },
+        {
+          "id": "financial-method-01",
+          "type": "ANALYSIS",
+          "label": "研究解讀範圍",
+          "summary": "以公司官方年報、最新法人說明會簡報、最新季報與公開公告優先，搭配第二級來源交叉佐證",
+          "period": null,
+          "periodType": null,
+          "reportingBasis": null,
+          "unit": null,
+          "baseline": null,
+          "definition": null
+        }
+      ],
+      "managementTopics": [
+        {
+          "id": "management-h1-2026-product-mix",
+          "topic": "上半年產品營收與產能利用率",
+          "summary": "法說會揭露 CPL、PA6、AN、OPP、威名及子公司／其他的上半年產品營收與主要工廠產能利用率。",
+          "statementDate": "2026-09-11",
+          "sourceEvidenceIds": [
+            "1314-P2-006"
+          ],
+          "status": "READY"
+        },
+        {
+          "id": "management-asset-activation",
+          "topic": "資產活化與高值化／新材料",
+          "summary": "公司說明土地資產活化、港區相關計畫、精細化工與新材料進度；這些屬管理層計畫，尚不等於已實現財務成果。",
+          "statementDate": "2026-09-11",
+          "sourceEvidenceIds": [
+            "1314-P2-005",
+            "1314-P2-006"
+          ],
+          "status": "READY"
+        }
+      ],
+      "fullResearch": {
+        "revenueStructure": {
+          "known": "2026 年 9 月法說會揭露 2026 年上半年產品營收：約 CPL 20 億元、PA6 6 億元、AN 35 億元、OPP 0 億元、威名 7 億元、子公司及其他 11 億元，合計約 80 億元。2026 年第二季合併財報另揭露 2026 年上半年外部客戶收入與部門損益：丙烯腈／醋酸及附屬產品收入 3,588,430 仟元、部門損益 -348,965 仟元；己內醯胺及附屬產品收入 3,789,882 仟元、部門損益 352,725 仟元；其他部門收入 601,379 仟元、部門損益 -1,989,399 仟元。",
+          "geography": "2026 年上半年外部客戶收入：國內 4,810,292 仟元、亞洲 2,864,955 仟元、其他地區 304,444 仟元。",
+          "notEstablished": [
+            "土地開發專案獨立收入與毛利拆分",
+            "其他部門內土地開發／投資性不動產與其他業務的單獨獲利橋接"
+          ],
+          "reason": "最新法說會與季報已補足產品群／營運部門及地區層級資料，但沒有把土地開發獨立收入、成本或毛利拆出；部門損益也不是單一產品毛利率。",
+          "v2": {
+            "summary": "2026 年上半年可同時保留官方財報部門收入與法說會產品營收，但兩者口徑不同，不互相加總或混作同一張圖。",
+            "revenueDatasets": [
+              {
+                "id": "revenue-h1-2026-segment",
+                "name": "2026 上半年合併財報部門收入",
+                "period": "2026-H1",
+                "periodType": "HALF_YEAR",
+                "reportingBasis": "CONSOLIDATED_EXTERNAL_CUSTOMER_REVENUE_BY_OPERATING_DEPARTMENT",
+                "currency": "TWD",
+                "unit": "TWD_1000",
+                "total": 7979691,
+                "items": [
+                  {
+                    "id": "revenue-an",
+                    "name": "丙烯腈／醋酸及附屬產品",
+                    "value": 3588430,
+                    "share": 0.449695,
+                    "businessGroupId": "an",
+                    "sourceEvidenceIds": [
+                      "1314-P2-007"
+                    ]
+                  },
+                  {
+                    "id": "revenue-cpl",
+                    "name": "己內醯胺及附屬產品",
+                    "value": 3789882,
+                    "share": 0.474941,
+                    "businessGroupId": "cpl",
+                    "sourceEvidenceIds": [
+                      "1314-P2-007"
+                    ]
+                  },
+                  {
+                    "id": "revenue-other",
+                    "name": "其他部門",
+                    "value": 601379,
+                    "share": 0.075364,
+                    "businessGroupId": null,
+                    "sourceEvidenceIds": [
+                      "1314-P2-007"
+                    ]
+                  }
+                ],
+                "sourceEvidenceIds": [
+                  "1314-P2-007"
+                ],
+                "chartEligible": true,
+                "status": "READY",
+                "notes": "此為財報部門／外部客戶收入，不是法說會逐項產品營收。"
+              },
+              {
+                "id": "revenue-h1-2026-ir-products",
+                "name": "2026 上半年法說會產品營收",
+                "period": "2026-H1",
+                "periodType": "HALF_YEAR",
+                "reportingBasis": "IR_PRODUCT_REVENUE_APPROXIMATE",
+                "currency": "TWD",
+                "unit": "TWD_100_MILLION_APPROX",
+                "total": 79,
+                "items": [
+                  {
+                    "id": "ir-cpl",
+                    "name": "CPL",
+                    "value": 20,
+                    "sourceEvidenceIds": [
+                      "1314-P2-006"
+                    ]
+                  },
+                  {
+                    "id": "ir-pa6",
+                    "name": "PA6",
+                    "value": 6,
+                    "sourceEvidenceIds": [
+                      "1314-P2-006"
+                    ]
+                  },
+                  {
+                    "id": "ir-an",
+                    "name": "AN",
+                    "value": 35,
+                    "sourceEvidenceIds": [
+                      "1314-P2-006"
+                    ]
+                  },
+                  {
+                    "id": "ir-opp",
+                    "name": "OPP",
+                    "value": 0,
+                    "sourceEvidenceIds": [
+                      "1314-P2-006"
+                    ]
+                  },
+                  {
+                    "id": "ir-wei-ming",
+                    "name": "威名",
+                    "value": 7,
+                    "sourceEvidenceIds": [
+                      "1314-P2-006"
+                    ]
+                  },
+                  {
+                    "id": "ir-subsidiaries-other",
+                    "name": "子公司及其他",
+                    "value": 11,
+                    "sourceEvidenceIds": [
+                      "1314-P2-006"
+                    ]
+                  }
+                ],
+                "sourceEvidenceIds": [
+                  "1314-P2-006"
+                ],
+                "chartEligible": false,
+                "status": "PARTIAL",
+                "notes": "簡報以約數呈現；不得與財報部門收入混列，也不作精確比例圖。"
+              }
+            ],
+            "profitDatasets": [
+              {
+                "id": "profit-h1-2026-segment",
+                "name": "2026 上半年合併財報部門損益",
+                "period": "2026-H1",
+                "periodType": "HALF_YEAR",
+                "reportingBasis": "CONSOLIDATED_SEGMENT_PROFIT_LOSS",
+                "currency": "TWD",
+                "unit": "TWD_1000",
+                "total": -1985639,
+                "items": [
+                  {
+                    "id": "profit-an",
+                    "name": "丙烯腈／醋酸及附屬產品",
+                    "value": -348965,
+                    "businessGroupId": "an",
+                    "sourceEvidenceIds": [
+                      "1314-P2-007"
+                    ]
+                  },
+                  {
+                    "id": "profit-cpl",
+                    "name": "己內醯胺及附屬產品",
+                    "value": 352725,
+                    "businessGroupId": "cpl",
+                    "sourceEvidenceIds": [
+                      "1314-P2-007"
+                    ]
+                  },
+                  {
+                    "id": "profit-other",
+                    "name": "其他部門",
+                    "value": -1989399,
+                    "businessGroupId": null,
+                    "sourceEvidenceIds": [
+                      "1314-P2-007"
+                    ]
+                  }
+                ],
+                "sourceEvidenceIds": [
+                  "1314-P2-007"
+                ],
+                "chartEligible": false,
+                "status": "PARTIAL",
+                "notes": "其他部門不是土地開發單一獲利；本欄只保留部門損益，不推導產品毛利率。"
+              }
+            ],
+            "financialMetrics": [
+              {
+                "id": "metric-revenue-h1-2026",
+                "label": "2026 上半年合併營業收入／外部客戶收入",
+                "value": 7979691,
+                "unit": "TWD_1000",
+                "currency": "TWD",
+                "period": "2026-H1",
+                "periodType": "HALF_YEAR",
+                "reportingBasis": "CONSOLIDATED_EXTERNAL_CUSTOMER_REVENUE_BY_OPERATING_DEPARTMENT",
+                "metricDefinition": "三個官方部門收入加總；僅代表此部門口徑，不等同法說會產品營收。",
+                "sourceEvidenceIds": [
+                  "1314-P2-007"
+                ],
+                "status": "READY",
+                "type": "FACT",
+                "derivedFromDatasetId": "revenue-h1-2026-segment"
+              },
+              {
+                "id": "metric-gross-profit-h1-2026",
+                "label": "2026 上半年合併營業毛利（損）",
+                "value": -89641,
+                "unit": "TWD_1000",
+                "currency": "TWD",
+                "period": "2026-H1",
+                "periodType": "HALF_YEAR",
+                "reportingBasis": "CONSOLIDATED",
+                "metricDefinition": "合併營業毛利（損）；負值代表營業毛損。",
+                "sourceEvidenceIds": [
+                  "1314-P2-007"
+                ],
+                "status": "READY",
+                "type": "FACT"
+              },
+              {
+                "id": "metric-operating-profit-h1-2026",
+                "label": "2026 上半年合併營業利益（損）",
+                "value": -758749,
+                "unit": "TWD_1000",
+                "currency": "TWD",
+                "period": "2026-H1",
+                "periodType": "HALF_YEAR",
+                "reportingBasis": "CONSOLIDATED",
+                "metricDefinition": "合併營業利益（損）；負值代表營業損失。",
+                "sourceEvidenceIds": [
+                  "1314-P2-007"
+                ],
+                "status": "READY",
+                "type": "FACT"
+              },
+              {
+                "id": "metric-pretax-profit-h1-2026",
+                "label": "2026 上半年合併稅前淨利（損）",
+                "value": -1985639,
+                "unit": "TWD_1000",
+                "currency": "TWD",
+                "period": "2026-H1",
+                "periodType": "HALF_YEAR",
+                "reportingBasis": "CONSOLIDATED",
+                "metricDefinition": "合併稅前淨利（損）；負值代表稅前損失。",
+                "sourceEvidenceIds": [
+                  "1314-P2-007"
+                ],
+                "status": "READY",
+                "type": "FACT"
+              },
+              {
+                "id": "metric-net-profit-h1-2026",
+                "label": "2026 上半年合併本期淨利（損）",
+                "value": -1994090,
+                "unit": "TWD_1000",
+                "currency": "TWD",
+                "period": "2026-H1",
+                "periodType": "HALF_YEAR",
+                "reportingBasis": "CONSOLIDATED",
+                "metricDefinition": "合併本期淨利（損）；負值代表本期淨損。",
+                "sourceEvidenceIds": [
+                  "1314-P2-007"
+                ],
+                "status": "READY",
+                "type": "FACT"
+              },
+              {
+                "id": "metric-attributable-profit-h1-2026",
+                "label": "2026 上半年歸屬母公司業主淨利（損）",
+                "value": -1986324,
+                "unit": "TWD_1000",
+                "currency": "TWD",
+                "period": "2026-H1",
+                "periodType": "HALF_YEAR",
+                "reportingBasis": "CONSOLIDATED_ATTRIBUTABLE_TO_PARENT",
+                "metricDefinition": "歸屬母公司業主之本期淨利（損）；負值代表歸屬母公司業主淨損。",
+                "sourceEvidenceIds": [
+                  "1314-P2-007"
+                ],
+                "status": "READY",
+                "type": "FACT"
+              },
+              {
+                "id": "metric-eps-h1-2026",
+                "label": "2026 上半年基本每股盈餘（損）",
+                "value": -0.52,
+                "unit": "TWD_PER_SHARE",
+                "currency": "TWD",
+                "period": "2026-H1",
+                "periodType": "HALF_YEAR",
+                "reportingBasis": "CONSOLIDATED",
+                "metricDefinition": "合併基本每股盈餘（損）；負值代表每股損失。",
+                "sourceEvidenceIds": [
+                  "1314-P2-007"
+                ],
+                "status": "READY",
+                "type": "FACT"
+              },
+              {
+                "id": "metric-assets-2026-06-30",
+                "label": "2026 年 6 月 30 日期末資產總額",
+                "value": 124897130,
+                "unit": "TWD_1000",
+                "currency": "TWD",
+                "period": "2026-06-30",
+                "periodType": "AS_OF_DATE",
+                "reportingBasis": "CONSOLIDATED_BALANCE_SHEET",
+                "metricDefinition": "合併資產負債表期末資產總額。",
+                "sourceEvidenceIds": [
+                  "1314-P2-007"
+                ],
+                "status": "READY",
+                "type": "FACT"
+              },
+              {
+                "id": "metric-liabilities-2026-06-30",
+                "label": "2026 年 6 月 30 日期末負債總額",
+                "value": 49484140,
+                "unit": "TWD_1000",
+                "currency": "TWD",
+                "period": "2026-06-30",
+                "periodType": "AS_OF_DATE",
+                "reportingBasis": "CONSOLIDATED_BALANCE_SHEET",
+                "metricDefinition": "合併資產負債表期末負債總額。",
+                "sourceEvidenceIds": [
+                  "1314-P2-007"
+                ],
+                "status": "READY",
+                "type": "FACT"
+              },
+              {
+                "id": "metric-parent-equity-2026-06-30",
+                "label": "2026 年 6 月 30 日歸屬母公司業主權益",
+                "value": 75364344,
+                "unit": "TWD_1000",
+                "currency": "TWD",
+                "period": "2026-06-30",
+                "periodType": "AS_OF_DATE",
+                "reportingBasis": "CONSOLIDATED_BALANCE_SHEET",
+                "metricDefinition": "合併資產負債表期末歸屬母公司業主之權益。",
+                "sourceEvidenceIds": [
+                  "1314-P2-007"
+                ],
+                "status": "READY",
+                "type": "FACT"
+              },
+              {
+                "id": "metric-equity-method-loss-zhonghua-engineering-h1-2026",
+                "label": "2026 上半年中華工程股權投資損失",
+                "value": -1803750,
+                "unit": "TWD_1000",
+                "currency": "TWD",
+                "period": "2026-H1",
+                "periodType": "HALF_YEAR",
+                "reportingBasis": "OTHER_INVESTMENT_LOSS",
+                "metricDefinition": "依 IAS 28 第 22 段認列中華工程股權投資損失；不等同中華工程完整年度淨損。",
+                "sourceEvidenceIds": [
+                  "1314-P2-007"
+                ],
+                "status": "PARTIAL",
+                "type": "FACT"
+              }
+            ],
+            "investmentItems": [
+              {
+                "id": "investment-china-engineering",
+                "name": "中華工程",
+                "stockCode": "2515",
+                "relationshipType": "權益法投資",
+                "materiality": "FINANCIAL",
+                "materialityReason": "2026 年上半年合併財報／公告揭露依 IAS 28 第 22 段認列 1,803,750 仟元投資損失，已達財務重大性。",
+                "businessDescription": "工程建設與土地開發相關業務；本次只保留已揭露投資損失，不延伸推導完整業務獲利。",
+                "financialImpact": "2026 年上半年認列投資損失 1,803,750 仟元。",
+                "strategicImpact": null,
+                "accountingTreatment": "依 IAS 28 第 22 段認列投資損失；完整會計處理以正式財報附註為準。",
+                "sourceEvidenceIds": [
+                  "1314-P2-007"
+                ],
+                "status": "PARTIAL"
+              }
+            ],
+            "investmentStatus": "PARTIAL",
+            "investmentReason": "已能確認中華工程的重大投資損失，但尚未取得完整轉投資清冊與各公司別獲利貢獻。",
+            "managementTopics": [
+              {
+                "id": "management-h1-2026-product-mix",
+                "topic": "上半年產品營收與產能利用率",
+                "summary": "法說會揭露 CPL、PA6、AN、OPP、威名及子公司／其他的上半年產品營收與主要工廠產能利用率。",
+                "statementDate": "2026-09-11",
+                "sourceEvidenceIds": [
+                  "1314-P2-006"
+                ],
+                "status": "READY"
+              },
+              {
+                "id": "management-asset-activation",
+                "topic": "資產活化與高值化／新材料",
+                "summary": "公司說明土地資產活化、港區相關計畫、精細化工與新材料進度；這些屬管理層計畫，尚不等於已實現財務成果。",
+                "statementDate": "2026-09-11",
+                "sourceEvidenceIds": [
+                  "1314-P2-005",
+                  "1314-P2-006"
+                ],
+                "status": "READY"
+              }
+            ]
+          }
+        },
+        "researchHistory": {
+          "version": "v1.2-official-ir-refresh",
+          "asOf": "2026-10-10",
+          "method": "以公司官方年報、最新法人說明會簡報、最新季報與公開公告優先，搭配第二級來源交叉佐證",
+          "publication": "UNPUBLISHED",
+          "nextReview": "完成 Owner 審查後，再決定是否發布研究內容。"
+        }
+      },
+      "sourceSection": [
+        "revenue_structure",
+        "research_history"
+      ],
+      "evidenceIds": [
+        "1314-P2-005",
+        "1314-P2-006",
+        "1314-P2-007",
+        "1314-P2-001",
+        "1314-P2-003",
+        "1314-P2-005",
+        "1314-P2-006",
+        "1314-P2-007",
+        "1314-P3-001",
+        "1314-P4-001"
+      ]
+    },
+    {
+      "id": "sources_and_limitations",
+      "title": "研究來源與資料限制",
+      "summary": "保留研究包實際使用的來源、日期、原始連結與資料缺口。",
+      "updatedAt": "2026-10-10",
+      "periods": [
+        "2026-10-10"
+      ],
+      "sources": [
+        {
+          "id": "1314-P2-001",
+          "title": "P2 official company profile.",
+          "documentTitle": "P2 official company profile.",
+          "type": "OFFICIAL_COMPANY_PROFILE",
+          "publisher": "中國石油化學工業開發股份有限公司",
+          "publishedAt": null,
+          "documentDate": null,
+          "retrievedAt": "2026-10-09",
+          "url": "https://www.cpdc.com.tw/cn/about_profile",
+          "status": "AVAILABLE",
+          "claim": "公司官方資料確認公司名稱、中石化股票代號 1314、塑膠原料產業、主要產品 CPL 與 AN、成立與上市資訊及總部所在地。",
+          "tier": "P2"
+        },
+        {
+          "id": "1314-P2-002",
+          "title": "P2 official IR page.",
+          "documentTitle": "P2 official IR page.",
+          "type": "OFFICIAL_IR_FAQ",
+          "publisher": "中國石油化學工業開發股份有限公司",
+          "publishedAt": null,
+          "documentDate": null,
+          "retrievedAt": "2026-10-09",
+          "url": "https://www.cpdc.com.tw/cn/ir_faq",
+          "status": "AVAILABLE",
+          "claim": "公司官方投資人問答頁面可交叉確認 1314 上市識別。",
+          "tier": "P2"
+        },
+        {
+          "id": "1314-P2-003",
+          "title": "Company-authored strategy evidence; does not by itself establish a formal Topic membership.",
+          "documentTitle": "Company-authored strategy evidence; does not by itself establish a formal Topic membership.",
+          "type": "OFFICIAL_TRANSFORMATION_NEWS",
+          "publisher": "中國石油化學工業開發股份有限公司",
+          "publishedAt": null,
+          "documentDate": null,
+          "retrievedAt": "2026-10-09",
+          "url": "https://www.cpdc.com.tw/cn/news_detail/2/119",
+          "status": "AVAILABLE",
+          "claim": "公司官方轉型說明呈現石化本業與土地開發雙軸方向，並提及 CPL 產線調整升級、頭份與高雄小港據點。",
+          "tier": "P2"
+        },
+        {
+          "id": "1314-P2-004",
+          "title": "Current page is an index; individual attachments require separate review.",
+          "documentTitle": "Current page is an index; individual attachments require separate review.",
+          "type": "OFFICIAL_CURRENT_NEWS_INDEX",
+          "publisher": "中國石油化學工業開發股份有限公司",
+          "publishedAt": null,
+          "documentDate": null,
+          "retrievedAt": "2026-10-09",
+          "url": "https://www.cpdc.com.tw/tw/",
+          "status": "AVAILABLE",
+          "claim": "官方首頁可作為近期公告與事件索引，研究包未將首頁事件直接轉換成財務或題材定論。",
+          "tier": "P2"
+        },
+        {
+          "id": "1314-P2-005",
+          "title": "Official annual report published by the issuer; 2025 financial and operating information, retrieved 2026-10-10.",
+          "documentTitle": "Official annual report published by the issuer; 2025 financial and operating information, retrieved 2026-10-10.",
+          "type": "OFFICIAL_ANNUAL_REPORT",
+          "publisher": "中國石油化學工業開發股份有限公司",
+          "publishedAt": "2026-03-31",
+          "documentDate": "2026-03-31",
+          "retrievedAt": "2026-10-10",
+          "url": "https://www.cpdc.com.tw/uploads/2026_AGM/2025_1314_20260522F04_AR%20(CH)01.pdf",
+          "status": "AVAILABLE",
+          "claim": "公司 2025 年度年報揭露產品營業比重、主要產品產銷量、國內市場占有率、AN 與 CPL 產能及市場供需、長期業務發展計畫與高值化研發方向。",
+          "tier": "P2"
+        },
+        {
+          "id": "1314-P2-006",
+          "title": "Official Chinese IR presentation; 30 pages; the issuer IR conference page also links the 2026/09/11 conference video.",
+          "documentTitle": "Official Chinese IR presentation; 30 pages; the issuer IR conference page also links the 2026/09/11 conference video.",
+          "type": "OFFICIAL_IR_CONFERENCE",
+          "publisher": "中國石油化學工業開發股份有限公司／公開資訊觀測站",
+          "publishedAt": "2026-09-11",
+          "documentDate": "2026-09-11",
+          "retrievedAt": "2026-10-10",
+          "url": "https://mopsov.twse.com.tw/nas/STR/131420260911M001.pdf",
+          "status": "AVAILABLE",
+          "claim": "2026 年 9 月 11 日法人說明會揭露 2026 年上半年產品營收、主要工廠產能利用率、CPL／PA6／AN 產業市況與原物料趨勢，並說明土地資產活化、洲際碼頭、精細化工與新材料進度。",
+          "tier": "P2"
+        },
+        {
+          "id": "1314-P2-007",
+          "title": "Official TWSE electronic filing; file 202602_1314_AI1.pdf; segment information is in pages 93-96.",
+          "documentTitle": "Official TWSE electronic filing; file 202602_1314_AI1.pdf; segment information is in pages 93-96.",
+          "type": "OFFICIAL_Q2_FINANCIAL_REPORT",
+          "publisher": "臺灣證券交易所電子資料查詢作業／中國石油化學工業開發股份有限公司",
+          "publishedAt": "2026-08-14",
+          "documentDate": "2026-08-14",
+          "retrievedAt": "2026-10-10",
+          "url": "https://doc.twse.com.tw/server-java/t57sb01?co_id=1314&colorchg=1&mtype=A&step=1&year=115",
+          "status": "AVAILABLE",
+          "claim": "2026 年第二季合併財報揭露截至 2026 年 6 月 30 日的產品群部門收入與部門損益、地區別收入、合約負債、投資性不動產及土地開發相關會計資訊。",
+          "tier": "P2"
+        }
+      ],
+      "gaps": [
+        {
+          "fieldPath": "revenue_structure.landDevelopmentRevenueSplit",
+          "status": "NOT_DISCLOSED",
+          "reason": "已查最新法說會與第二季季報；公司揭露土地資產、投資性不動產與其他部門資訊，但未拆出土地開發專案的獨立收入、成本或毛利。此欄位為非強制補充資料。",
+          "evidenceIds": [
+            "1314-P2-005",
+            "1314-P2-006",
+            "1314-P2-007"
+          ]
+        },
+        {
+          "fieldPath": "competitive_position.comparableCostCurve",
+          "status": "NOT_DISCLOSED",
+          "reason": "最新法說會有產業價格／價差與原物料趨勢，但未提供中石化與同業同口徑的每噸成本或產品毛利；本次不形成估算成本曲線，改列為可選比較資料。",
+          "evidenceIds": [
+            "1314-P2-005",
+            "1314-P2-006",
+            "1314-P2-007"
+          ]
+        },
+        {
+          "fieldPath": "competitive_position.longTermContractCoverage",
+          "status": "NOT_DISCLOSED",
+          "reason": "年報只支持長期合作／固定出貨的質性描述；最新法說會與第二季季報未揭露長約占營收、出貨量或產能的比例。",
+          "evidenceIds": [
+            "1314-P2-005",
+            "1314-P2-006",
+            "1314-P2-007"
+          ]
+        },
+        {
+          "fieldPath": "competitive_position.productLevelProfitability",
+          "status": "NOT_DISCLOSED",
+          "reason": "最新第二季季報已揭露 AN／醋酸及附屬產品、CPL及附屬產品等產品群的部門損益，但未揭露 AN、CPL、PA6、OPP 各單一產品的毛利或營業利益；不能由產品營收占比反推。",
+          "evidenceIds": [
+            "1314-P2-006",
+            "1314-P2-007"
+          ]
+        },
+        {
+          "fieldPath": "topic_research.landDevelopmentFormalTopicId",
+          "status": "AUTHORITY_MISMATCH",
+          "reason": "研究候選尚未對應到 active 132-topic authority，保持 suggestedTopicId 為 null。",
+          "evidenceIds": [
+            "1314-P2-003",
+            "1314-P2-005",
+            "1314-P3-003"
+          ]
+        }
+      ],
+      "conflicts": [],
+      "uncertainties": [
+        "土地開發專案獨立收入與毛利拆分",
+        "其他部門內土地開發／投資性不動產與其他業務的單獨獲利橋接",
+        "同業可比成本曲線",
+        "長約覆蓋率",
+        "單一產品別毛利率或獲利"
+      ],
+      "sourceSection": [
+        "company_positioning",
+        "products_services",
+        "revenue_structure",
+        "supply_chain",
+        "competitive_position",
+        "growth_drivers",
+        "risks",
+        "topic_research",
+        "research_history"
+      ],
+      "evidenceIds": [
+        "1314-P2-001",
+        "1314-P2-003",
+        "1314-P2-005",
+        "1314-P2-001",
+        "1314-P2-003",
+        "1314-P2-005",
+        "1314-P2-005",
+        "1314-P2-006",
+        "1314-P2-007",
+        "1314-P2-003",
+        "1314-P2-005",
+        "1314-P3-001",
+        "1314-P2-001",
+        "1314-P2-003",
+        "1314-P2-005",
+        "1314-P2-006",
+        "1314-P2-007",
+        "1314-P2-003",
+        "1314-P2-005",
+        "1314-P3-001",
+        "1314-P3-003",
+        "1314-P2-003",
+        "1314-P2-004",
+        "1314-P2-005",
+        "1314-P3-003",
+        "1314-P2-003",
+        "1314-P2-005",
+        "1314-P3-001",
+        "1314-P3-003",
+        "1314-P2-001",
+        "1314-P2-003",
+        "1314-P2-005",
+        "1314-P2-006",
+        "1314-P2-007",
+        "1314-P3-001",
+        "1314-P4-001"
+      ]
+    }
+  ],
+  "topicBoundary": {
+    "formalTopics": [
+      "化工原料／塑化報價"
+    ],
+    "researchObservations": [
+      "土地開發",
+      "新材料／高值化轉型"
+    ],
+    "formalTopicMutation": "NO",
+    "fullResearch": {
+      "formalTopicBoundary": "正式題材只引用目前唯一權威題材名單；本包不建立、不更名、不寫入正式題材。",
+      "formalCandidates": [
+        "化工原料／塑化報價"
+      ],
+      "reviewCandidates": [
+        "土地開發",
+        "新材料／高值化轉型"
+      ],
+      "note": "待審核候選只是研究觀察，須經 Owner 審查後才可進入正式題材關聯流程。"
+    }
+  },
+  "limitations": [
+    {
+      "fieldPath": "revenue_structure.landDevelopmentRevenueSplit",
+      "status": "NOT_DISCLOSED",
+      "reason": "已查最新法說會與第二季季報；公司揭露土地資產、投資性不動產與其他部門資訊，但未拆出土地開發專案的獨立收入、成本或毛利。此欄位為非強制補充資料。",
+      "evidenceIds": [
+        "1314-P2-005",
+        "1314-P2-006",
+        "1314-P2-007"
+      ]
+    },
+    {
+      "fieldPath": "competitive_position.comparableCostCurve",
+      "status": "NOT_DISCLOSED",
+      "reason": "最新法說會有產業價格／價差與原物料趨勢，但未提供中石化與同業同口徑的每噸成本或產品毛利；本次不形成估算成本曲線，改列為可選比較資料。",
+      "evidenceIds": [
+        "1314-P2-005",
+        "1314-P2-006",
+        "1314-P2-007"
+      ]
+    },
+    {
+      "fieldPath": "competitive_position.longTermContractCoverage",
+      "status": "NOT_DISCLOSED",
+      "reason": "年報只支持長期合作／固定出貨的質性描述；最新法說會與第二季季報未揭露長約占營收、出貨量或產能的比例。",
+      "evidenceIds": [
+        "1314-P2-005",
+        "1314-P2-006",
+        "1314-P2-007"
+      ]
+    },
+    {
+      "fieldPath": "competitive_position.productLevelProfitability",
+      "status": "NOT_DISCLOSED",
+      "reason": "最新第二季季報已揭露 AN／醋酸及附屬產品、CPL及附屬產品等產品群的部門損益，但未揭露 AN、CPL、PA6、OPP 各單一產品的毛利或營業利益；不能由產品營收占比反推。",
+      "evidenceIds": [
+        "1314-P2-006",
+        "1314-P2-007"
+      ]
+    },
+    {
+      "fieldPath": "topic_research.landDevelopmentFormalTopicId",
+      "status": "AUTHORITY_MISMATCH",
+      "reason": "研究候選尚未對應到 active 132-topic authority，保持 suggestedTopicId 為 null。",
+      "evidenceIds": [
+        "1314-P2-003",
+        "1314-P2-005",
+        "1314-P3-003"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,605 @@
+{
+  "schemaVersion": "stock-topic-evidence-collection.v1",
+  "stockId": "1319",
+  "stockName": "東陽",
+  "formalAuthorityVersion": "topic-authority-lifecycle-formal-scope.20260911.v2",
+  "structuralRoleAuthorityVersion": "structural-role-authority-20260912.v4",
+  "researchAsOfDate": "2026-10-10",
+  "formalTopicMutation": "NO",
+  "stories": [
+    {
+      "schemaVersion": "stock-topic-evidence-view.v1",
+      "stockId": "1319",
+      "stockName": "東陽",
+      "topicId": "1f0d1fd6-a41b-4baa-836b-d0461d30e11e",
+      "canonicalTopicName": "電動車／EV",
+      "formalAssociationReference": {
+        "relationId": "f27b58fe-805b-5fff-b323-234ec8107dfc",
+        "relationType": "SECONDARY",
+        "approvalState": "APPROVED",
+        "referenceSource": "2026_REVISED_MARKET_UPDATE"
+      },
+      "formalAuthorityVersion": "topic-authority-lifecycle-formal-scope.20260911.v2",
+      "effectiveDate": "2026-08-24",
+      "structuralRoleReference": {
+        "relationId": "f27b58fe-805b-5fff-b323-234ec8107dfc",
+        "structuralRole": "RELATED",
+        "relationType": "SECONDARY",
+        "authorityVersion": "structural-role-authority-20260912.v4",
+        "effectiveDate": "2026-08-24"
+      },
+      "researchAsOfDate": "2026-10-10",
+      "researchStatus": "READY_WITH_LIMITATIONS",
+      "storyPattern": "PRODUCT_SUPPLY_CHAIN",
+      "storyTitle": "電動車／EV",
+      "storySummary": "年報與法說揭露電動車前端發光格柵、發光保險桿、輕量化與新產品研發方向；目前可呈現產品開發與車用供應鏈關係，但尚未取得 EV 題材獨立營收或獲利。",
+      "companyParticipationSummary": "FORMAL_RELATION_WITH_PRODUCT_DEVELOPMENT_EVIDENCE",
+      "sections": [
+        {
+          "sectionId": "relationship_summary",
+          "title": "正式關聯與公司角色",
+          "summary": "年報與法說揭露電動車前端發光格柵、發光保險桿、輕量化與新產品研發方向；目前可呈現產品開發與車用供應鏈關係，但尚未取得 EV 題材獨立營收或獲利。",
+          "evidenceRefs": [
+            "1319-P1-002",
+            "1319-P3-005"
+          ]
+        },
+        {
+          "sectionId": "product_technology_evidence",
+          "title": "產品與技術證據",
+          "summary": "詳見節點、證據與限制欄位。",
+          "evidenceRefs": [
+            "1319-P1-002",
+            "1319-P3-005"
+          ]
+        },
+        {
+          "sectionId": "supply_chain_flow",
+          "title": "產業鏈與曝險路徑",
+          "summary": "詳見節點、證據與限制欄位。",
+          "evidenceRefs": [
+            "1319-P1-002",
+            "1319-P3-005"
+          ]
+        },
+        {
+          "sectionId": "financial_impact",
+          "title": "營運與財務影響",
+          "summary": "詳見節點、證據與限制欄位。",
+          "evidenceRefs": [
+            "1319-P1-002",
+            "1319-P3-005"
+          ]
+        },
+        {
+          "sectionId": "support_vs_uncertainty",
+          "title": "已確認與資料缺口",
+          "summary": "詳見節點、證據與限制欄位。",
+          "evidenceRefs": [
+            "1319-P1-002",
+            "1319-P3-005"
+          ]
+        },
+        {
+          "sectionId": "watch_indicators",
+          "title": "後續觀察重點",
+          "summary": "詳見節點、證據與限制欄位。",
+          "evidenceRefs": [
+            "1319-P1-002",
+            "1319-P3-005"
+          ]
+        },
+        {
+          "sectionId": "source_evidence",
+          "title": "研究來源",
+          "summary": "詳見節點、證據與限制欄位。",
+          "evidenceRefs": [
+            "1319-P1-002",
+            "1319-P3-005"
+          ]
+        }
+      ],
+      "nodes": [
+        {
+          "nodeId": "ev-front-end",
+          "label": "電動車前端產品",
+          "nodeType": "PRODUCT_OR_RELATION",
+          "description": "電動車前端產品",
+          "companyParticipation": "CONFIRMED",
+          "evidenceStatus": "FACT",
+          "evidenceRefs": [
+            "1319-P1-002"
+          ],
+          "visualHint": null
+        },
+        {
+          "nodeId": "lightweight-material",
+          "label": "輕量化材料與製程",
+          "nodeType": "PRODUCT_OR_RELATION",
+          "description": "輕量化材料與製程",
+          "companyParticipation": "CONFIRMED",
+          "evidenceStatus": "FACT",
+          "evidenceRefs": [
+            "1319-P1-002",
+            "1319-P3-005"
+          ],
+          "visualHint": null
+        },
+        {
+          "nodeId": "vehicle-oem",
+          "label": "車廠與 OEM 供應鏈",
+          "nodeType": "PRODUCT_OR_RELATION",
+          "description": "車廠與 OEM 供應鏈",
+          "companyParticipation": "CONFIRMED",
+          "evidenceStatus": "FACT",
+          "evidenceRefs": [
+            "1319-P1-002",
+            "1319-P3-005"
+          ],
+          "visualHint": null
+        }
+      ],
+      "edges": [
+        {
+          "edgeId": "1f0d1fd6-a41b-4baa-836b-d0461d30e11e-edge-01",
+          "sourceNodeId": "ev-front-end",
+          "targetNodeId": "lightweight-material",
+          "relationType": "DIRECT",
+          "relationDescription": "DIRECT",
+          "evidenceStatus": "FACT",
+          "evidenceRefs": [
+            "1319-P1-002"
+          ]
+        },
+        {
+          "edgeId": "1f0d1fd6-a41b-4baa-836b-d0461d30e11e-edge-02",
+          "sourceNodeId": "lightweight-material",
+          "targetNodeId": "vehicle-oem",
+          "relationType": "SUPPORTED_OPERATING_MECHANISM",
+          "relationDescription": "SUPPORTED_OPERATING_MECHANISM",
+          "evidenceStatus": "INFERENCE",
+          "evidenceRefs": [
+            "1319-P1-002",
+            "1319-P3-005"
+          ]
+        }
+      ],
+      "evidence": [
+        {
+          "evidenceId": "1319-P1-002",
+          "title": "2025 年報：電動車與新產品研發",
+          "claim": "年報揭露輕量化、智慧座艙、發光格柵與發光保險桿等車用產品研發。",
+          "evidenceType": "OFFICIAL_ANNUAL_REPORT",
+          "sourceRef": "1319-P1-002",
+          "sourceDate": "2026-05-28",
+          "documentTitle": "2025 年報：電動車與新產品研發",
+          "documentLocator": "東陽實業廠股份有限公司",
+          "sourceUrl": "https://www.tyg.com.tw/?sdm_process_download=1&download_id=3637",
+          "evidenceStatus": "FACT",
+          "limitations": "不等於 EV 題材獨立營收或獲利。"
+        },
+        {
+          "evidenceId": "1319-P3-005",
+          "title": "2026 年 9 月法說簡報",
+          "claim": "法說簡報列示發光前端、模具與 OEM 產品升級方向。",
+          "evidenceType": "OFFICIAL_IR_CONFERENCE",
+          "sourceRef": "1319-P3-005",
+          "sourceDate": "2026-09-15",
+          "documentTitle": "2026 年 9 月法說簡報",
+          "documentLocator": "東陽實業廠／公開資訊文件鏡像",
+          "sourceUrl": "https://cdn.financialreports.eu/financialreports/media/filings/51775/2026/RNS/51775_rns_2026-09-15_521638c6-144c-4640-b708-4dc5f6f765df.pdf",
+          "evidenceStatus": "INFERENCE",
+          "limitations": "法說說法需以後續量產、出貨與財報持續驗證。"
+        }
+      ],
+      "financialImpact": [
+        {
+          "metricName": "題材層級財務貢獻",
+          "metricValue": null,
+          "unit": null,
+          "period": null,
+          "scope": "topic",
+          "scopeLabel": "題材層級",
+          "sourceRef": "1319-P1-002",
+          "evidenceStatus": "UNDISCLOSED",
+          "attributionLimitations": "公司只揭露 AM/OEM 或公司層級財務資料，未將 EV 相關產品獨立拆分。"
+        }
+      ],
+      "timeline": [],
+      "limitations": [
+        "EV 題材獨立營收未揭露",
+        "EV 題材獨立獲利未揭露",
+        "研發方向不等於已量產貢獻"
+      ],
+      "watchIndicators": [
+        "EV 產品量產與客戶導入",
+        "發光前端／輕量化產品出貨",
+        "題材相關產品是否出現正式營收揭露"
+      ],
+      "formalTopicMutation": "NO"
+    },
+    {
+      "schemaVersion": "stock-topic-evidence-view.v1",
+      "stockId": "1319",
+      "stockName": "東陽",
+      "topicId": "8ab347f8-2ab4-4d68-bbf0-bc026d8bec8e",
+      "canonicalTopicName": "其他車用電子",
+      "formalAssociationReference": {
+        "relationId": "8c410476-f5e0-5744-9d7e-ae2d1362f2b9",
+        "relationType": "PRIMARY",
+        "approvalState": "APPROVED",
+        "referenceSource": "2026_REVISED_MARKET_UPDATE"
+      },
+      "formalAuthorityVersion": "topic-authority-lifecycle-formal-scope.20260911.v2",
+      "effectiveDate": "2026-08-24",
+      "structuralRoleReference": {
+        "relationId": "8c410476-f5e0-5744-9d7e-ae2d1362f2b9",
+        "structuralRole": "REPRESENTATIVE",
+        "relationType": "PRIMARY",
+        "authorityVersion": "structural-role-authority-20260912.v4",
+        "effectiveDate": "2026-08-24"
+      },
+      "researchAsOfDate": "2026-10-10",
+      "researchStatus": "READY_WITH_LIMITATIONS",
+      "storyPattern": "PRODUCT_SUPPLY_CHAIN",
+      "storyTitle": "其他車用電子",
+      "storySummary": "年報揭露智慧座艙、觸控與聲控介面、發光格柵及電子控制等研發方向；故事可呈現產品與技術關係，但不把研發項目直接視為已實現的電子產品收入。",
+      "companyParticipationSummary": "FORMAL_RELATION_WITH_SMART_VEHICLE_PRODUCT_EVIDENCE",
+      "sections": [
+        {
+          "sectionId": "relationship_summary",
+          "title": "正式關聯與公司角色",
+          "summary": "年報揭露智慧座艙、觸控與聲控介面、發光格柵及電子控制等研發方向；故事可呈現產品與技術關係，但不把研發項目直接視為已實現的電子產品收入。",
+          "evidenceRefs": [
+            "1319-P1-002",
+            "1319-P3-005"
+          ]
+        },
+        {
+          "sectionId": "product_technology_evidence",
+          "title": "產品與技術證據",
+          "summary": "詳見節點、證據與限制欄位。",
+          "evidenceRefs": [
+            "1319-P1-002",
+            "1319-P3-005"
+          ]
+        },
+        {
+          "sectionId": "supply_chain_flow",
+          "title": "產業鏈與曝險路徑",
+          "summary": "詳見節點、證據與限制欄位。",
+          "evidenceRefs": [
+            "1319-P1-002",
+            "1319-P3-005"
+          ]
+        },
+        {
+          "sectionId": "financial_impact",
+          "title": "營運與財務影響",
+          "summary": "詳見節點、證據與限制欄位。",
+          "evidenceRefs": [
+            "1319-P1-002",
+            "1319-P3-005"
+          ]
+        },
+        {
+          "sectionId": "support_vs_uncertainty",
+          "title": "已確認與資料缺口",
+          "summary": "詳見節點、證據與限制欄位。",
+          "evidenceRefs": [
+            "1319-P1-002",
+            "1319-P3-005"
+          ]
+        },
+        {
+          "sectionId": "watch_indicators",
+          "title": "後續觀察重點",
+          "summary": "詳見節點、證據與限制欄位。",
+          "evidenceRefs": [
+            "1319-P1-002",
+            "1319-P3-005"
+          ]
+        },
+        {
+          "sectionId": "source_evidence",
+          "title": "研究來源",
+          "summary": "詳見節點、證據與限制欄位。",
+          "evidenceRefs": [
+            "1319-P1-002",
+            "1319-P3-005"
+          ]
+        }
+      ],
+      "nodes": [
+        {
+          "nodeId": "smart-cockpit",
+          "label": "智慧座艙與觸控裝飾",
+          "nodeType": "PRODUCT_OR_RELATION",
+          "description": "智慧座艙與觸控裝飾",
+          "companyParticipation": "CONFIRMED",
+          "evidenceStatus": "FACT",
+          "evidenceRefs": [
+            "1319-P1-002"
+          ],
+          "visualHint": null
+        },
+        {
+          "nodeId": "led-optical-control",
+          "label": "LED、光學與電子控制",
+          "nodeType": "PRODUCT_OR_RELATION",
+          "description": "LED、光學與電子控制",
+          "companyParticipation": "CONFIRMED",
+          "evidenceStatus": "FACT",
+          "evidenceRefs": [
+            "1319-P1-002",
+            "1319-P3-005"
+          ],
+          "visualHint": null
+        },
+        {
+          "nodeId": "vehicle-interior-front-end",
+          "label": "車內裝與車輛前端應用",
+          "nodeType": "APPLICATION_OR_MARKET",
+          "description": "車內裝與車輛前端應用",
+          "companyParticipation": "CONFIRMED",
+          "evidenceStatus": "FACT",
+          "evidenceRefs": [
+            "1319-P1-002",
+            "1319-P3-005"
+          ],
+          "visualHint": null
+        }
+      ],
+      "edges": [
+        {
+          "edgeId": "8ab347f8-2ab4-4d68-bbf0-bc026d8bec8e-edge-01",
+          "sourceNodeId": "smart-cockpit",
+          "targetNodeId": "led-optical-control",
+          "relationType": "DIRECT",
+          "relationDescription": "DIRECT",
+          "evidenceStatus": "FACT",
+          "evidenceRefs": [
+            "1319-P1-002"
+          ]
+        },
+        {
+          "edgeId": "8ab347f8-2ab4-4d68-bbf0-bc026d8bec8e-edge-02",
+          "sourceNodeId": "led-optical-control",
+          "targetNodeId": "vehicle-interior-front-end",
+          "relationType": "SUPPORTED_OPERATING_MECHANISM",
+          "relationDescription": "SUPPORTED_OPERATING_MECHANISM",
+          "evidenceStatus": "INFERENCE",
+          "evidenceRefs": [
+            "1319-P1-002",
+            "1319-P3-005"
+          ]
+        }
+      ],
+      "evidence": [
+        {
+          "evidenceId": "1319-P1-002",
+          "title": "2025 年報：智慧座艙與電子化產品",
+          "claim": "年報揭露 3D 半透膜、觸控、手勢、聲控、發光格柵及 LED／電子控制等研發內容。",
+          "evidenceType": "OFFICIAL_ANNUAL_REPORT",
+          "sourceRef": "1319-P1-002",
+          "sourceDate": "2026-05-28",
+          "documentTitle": "2025 年報：智慧座艙與電子化產品",
+          "documentLocator": "東陽實業廠股份有限公司",
+          "sourceUrl": "https://www.tyg.com.tw/?sdm_process_download=1&download_id=3637",
+          "evidenceStatus": "FACT",
+          "limitations": "沒有獨立電子產品營收與獲利數字。"
+        },
+        {
+          "evidenceId": "1319-P3-005",
+          "title": "2026 年 9 月法說簡報：產品升級",
+          "claim": "法說簡報列示智慧化、發光前端與 OEM 高值化產品方向。",
+          "evidenceType": "OFFICIAL_IR_CONFERENCE",
+          "sourceRef": "1319-P3-005",
+          "sourceDate": "2026-09-15",
+          "documentTitle": "2026 年 9 月法說簡報：產品升級",
+          "documentLocator": "東陽實業廠／公開資訊文件鏡像",
+          "sourceUrl": "https://cdn.financialreports.eu/financialreports/media/filings/51775/2026/RNS/51775_rns_2026-09-15_521638c6-144c-4640-b708-4dc5f6f765df.pdf",
+          "evidenceStatus": "INFERENCE",
+          "limitations": "策略方向不等於已完成量產。"
+        }
+      ],
+      "financialImpact": [
+        {
+          "metricName": "題材層級財務貢獻",
+          "metricValue": null,
+          "unit": null,
+          "period": null,
+          "scope": "topic",
+          "scopeLabel": "題材層級",
+          "sourceRef": "1319-P1-002",
+          "evidenceStatus": "UNDISCLOSED",
+          "attributionLimitations": "公司財報以 AM/OEM、地區或公司層級揭露，沒有其他車用電子的獨立收入或獲利。"
+        }
+      ],
+      "timeline": [],
+      "limitations": [
+        "產品仍有研發到量產轉換風險",
+        "題材獨立財務貢獻未揭露",
+        "無法由公司總營收反推題材收入"
+      ],
+      "watchIndicators": [
+        "智慧座艙或發光前端量產車型",
+        "客戶導入與出貨",
+        "電子／智慧化產品收入是否被正式拆分"
+      ],
+      "formalTopicMutation": "NO"
+    },
+    {
+      "schemaVersion": "stock-topic-evidence-view.v1",
+      "stockId": "1319",
+      "stockName": "東陽",
+      "topicId": "9828f439-2ced-4b49-9d9e-8016b5676e1c",
+      "canonicalTopicName": "ADAS",
+      "formalAssociationReference": {
+        "relationId": "54ec9d39-155f-520b-9c94-699a2a41e0fa",
+        "relationType": "SECONDARY",
+        "approvalState": "APPROVED",
+        "referenceSource": "2026_NEW_TOPIC_ADDITION"
+      },
+      "formalAuthorityVersion": "topic-authority-lifecycle-formal-scope.20260911.v2",
+      "effectiveDate": "2026-08-24",
+      "structuralRoleReference": {
+        "relationId": "54ec9d39-155f-520b-9c94-699a2a41e0fa",
+        "structuralRole": "RELATED",
+        "relationType": "SECONDARY",
+        "authorityVersion": "structural-role-authority-20260912.v4",
+        "effectiveDate": "2026-08-24"
+      },
+      "researchAsOfDate": "2026-10-10",
+      "researchStatus": "READY_WITH_LIMITATIONS",
+      "storyPattern": "GENERAL_OPERATING_RELATIONSHIP",
+      "storyTitle": "ADAS",
+      "storySummary": "目前可確認公司有智慧化、電子控制與車用產品開發，但沒有取得雷達、鏡頭感知、影像處理或 ADAS 系統的直接產品與收入證據；故事以正式關聯與證據缺口呈現，不把一般車用電子研發擴寫成 ADAS 事實。",
+      "companyParticipationSummary": "FORMAL_RELATION_WITH_INSUFFICIENT_DIRECT_EVIDENCE",
+      "sections": [
+        {
+          "sectionId": "relationship_summary",
+          "title": "正式關聯與公司角色",
+          "summary": "目前可確認公司有智慧化、電子控制與車用產品開發，但沒有取得雷達、鏡頭感知、影像處理或 ADAS 系統的直接產品與收入證據；故事以正式關聯與證據缺口呈現，不把一般車用電子研發擴寫成 ADAS 事實。",
+          "evidenceRefs": [
+            "1319-P1-002",
+            "1319-P3-005"
+          ]
+        },
+        {
+          "sectionId": "support_vs_uncertainty",
+          "title": "已確認與資料缺口",
+          "summary": "詳見節點、證據與限制欄位。",
+          "evidenceRefs": [
+            "1319-P1-002",
+            "1319-P3-005"
+          ]
+        },
+        {
+          "sectionId": "financial_impact",
+          "title": "營運與財務影響",
+          "summary": "詳見節點、證據與限制欄位。",
+          "evidenceRefs": [
+            "1319-P1-002",
+            "1319-P3-005"
+          ]
+        },
+        {
+          "sectionId": "watch_indicators",
+          "title": "後續觀察重點",
+          "summary": "詳見節點、證據與限制欄位。",
+          "evidenceRefs": [
+            "1319-P1-002",
+            "1319-P3-005"
+          ]
+        },
+        {
+          "sectionId": "source_evidence",
+          "title": "研究來源",
+          "summary": "詳見節點、證據與限制欄位。",
+          "evidenceRefs": [
+            "1319-P1-002",
+            "1319-P3-005"
+          ]
+        }
+      ],
+      "nodes": [
+        {
+          "nodeId": "smart-vehicle-development",
+          "label": "智慧化車用產品開發",
+          "nodeType": "PRODUCT_OR_RELATION",
+          "description": "智慧化車用產品開發",
+          "companyParticipation": "NOT_CONFIRMED",
+          "evidenceStatus": "FACT",
+          "evidenceRefs": [
+            "1319-P1-002",
+            "1319-P3-005"
+          ],
+          "visualHint": null
+        },
+        {
+          "nodeId": "adas-system",
+          "label": "ADAS 系統",
+          "nodeType": "PRODUCT_OR_RELATION",
+          "description": "ADAS 系統",
+          "companyParticipation": "NOT_CONFIRMED",
+          "evidenceStatus": "FACT",
+          "evidenceRefs": [
+            "1319-P1-002",
+            "1319-P3-005"
+          ],
+          "visualHint": null
+        }
+      ],
+      "edges": [
+        {
+          "edgeId": "9828f439-2ced-4b49-9d9e-8016b5676e1c-edge-01",
+          "sourceNodeId": "smart-vehicle-development",
+          "targetNodeId": "adas-system",
+          "relationType": "RESEARCH_SCOPE_ONLY",
+          "relationDescription": "RESEARCH_SCOPE_ONLY",
+          "evidenceStatus": "INFERENCE",
+          "evidenceRefs": [
+            "1319-P1-002",
+            "1319-P3-005"
+          ]
+        }
+      ],
+      "evidence": [
+        {
+          "evidenceId": "1319-P1-002",
+          "title": "2025 年報：智慧化與車用產品研發",
+          "claim": "年報揭露自動化、智慧化、智慧座艙及電子控制相關方向，但未明確列示 ADAS 系統產品。",
+          "evidenceType": "OFFICIAL_ANNUAL_REPORT",
+          "sourceRef": "1319-P1-002",
+          "sourceDate": "2026-05-28",
+          "documentTitle": "2025 年報：智慧化與車用產品研發",
+          "documentLocator": "東陽實業廠股份有限公司",
+          "sourceUrl": "https://www.tyg.com.tw/?sdm_process_download=1&download_id=3637",
+          "evidenceStatus": "FACT",
+          "limitations": "不能直接視為 ADAS 產品或收入。"
+        },
+        {
+          "evidenceId": "1319-P3-005",
+          "title": "2026 年 9 月法說簡報",
+          "claim": "法說簡報以車用產品升級與智慧化方向為主，未提供 ADAS 獨立收入或量產清單。",
+          "evidenceType": "OFFICIAL_IR_CONFERENCE",
+          "sourceRef": "1319-P3-005",
+          "sourceDate": "2026-09-15",
+          "documentTitle": "2026 年 9 月法說簡報",
+          "documentLocator": "東陽實業廠／公開資訊文件鏡像",
+          "sourceUrl": "https://cdn.financialreports.eu/financialreports/media/filings/51775/2026/RNS/51775_rns_2026-09-15_521638c6-144c-4640-b708-4dc5f6f765df.pdf",
+          "evidenceStatus": "UNDISCLOSED",
+          "limitations": "正式 ADAS 應用、客戶、量產與財務資料未取得。"
+        }
+      ],
+      "financialImpact": [
+        {
+          "metricName": "題材層級財務貢獻",
+          "metricValue": null,
+          "unit": null,
+          "period": null,
+          "scope": "topic",
+          "scopeLabel": "題材層級",
+          "sourceRef": "1319-P1-002",
+          "evidenceStatus": "UNDISCLOSED",
+          "attributionLimitations": "目前未揭露可歸因於 ADAS 的收入、毛利、營業利益或訂單數字。"
+        }
+      ],
+      "timeline": [],
+      "limitations": [
+        "正式關聯與直接產品證據存在落差",
+        "沒有 ADAS 獨立財務數字",
+        "不得以智慧座艙或一般電子研發代替 ADAS 證據"
+      ],
+      "watchIndicators": [
+        "ADAS 產品名稱與量產車型",
+        "雷達／鏡頭／影像處理相關合作或客戶",
+        "正式財報或法說是否新增 ADAS 拆分"
+      ],
+      "formalTopicMutation": "NO"
+    }
+  ]
+}
+
+
