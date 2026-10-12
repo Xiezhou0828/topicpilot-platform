@@ -14,5 +14,5 @@ The integrated candidate has a local checkpoint commit on the new E-drive Task B
 Delivery Preflight is run against the final clean local head with this report set, the verified preservation marker, source mapping, generated-artifact receipt, and secret-scan receipt.
 
 - Delivery Preflight result: `DELIVERY_PREFLIGHT_PASS`.
-- Validated head: `213427d142b3ea614db3b3a71962941aa3759a6f`.
+- The final clean head is revalidated after the receipt-only metadata commit; the exact SHA is emitted by the final Delivery Preflight receipt.
 - All required checks passed: branch, clean worktree, source inventory, preservation, validation, secret scan, generated artifacts, source mapping, and source/head match.
