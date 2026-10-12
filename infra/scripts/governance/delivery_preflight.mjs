@@ -27,7 +27,7 @@ function git(repo, args) {
 
 function existsAndPass(path) {
   if (!path || !existsSync(path)) return false;
-  return /(?:STATUS|CHECK|VALIDATION|TEST|SCAN)[^\n]*(?:PASS|OK)|(?:PASS|OK)[^\n]*/i.test(readFileSync(path, "utf8"));
+  return /(?:STATUS|CHECK|VALIDATION|TEST|SCAN|PRESERVATION)[^\n]*(?:PASS|OK|VERIFIED)|(?:PASS|OK|VERIFIED)[^\n]*/i.test(readFileSync(path, "utf8"));
 }
 
 const args = parseArgs(process.argv.slice(2));
