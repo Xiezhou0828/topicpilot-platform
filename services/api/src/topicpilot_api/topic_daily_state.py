@@ -491,7 +491,7 @@ _PRICE_FACTS_SQL = text(
           )
     ), candidates AS (
         SELECT co.id, co.instrument_id, co.observed_at, co.retrieved_at,
-               co.content_hash, cp.close, source.source_code,
+               co.content_hash, co.quality_state, cp.close, source.source_code,
                (co.observed_at AT TIME ZONE m.timezone)::date AS trading_date,
                ROW_NUMBER() OVER (
                    PARTITION BY co.instrument_id,

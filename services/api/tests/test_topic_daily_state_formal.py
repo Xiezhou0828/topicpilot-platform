@@ -8,6 +8,7 @@ import pytest
 from topicpilot_api.orm import TopicSnapshot, TopicSnapshotMemberFact
 from topicpilot_api.production_read_model import TOPIC_ROWS_SQL
 from topicpilot_api.topic_daily_state import (
+    _PRICE_FACTS_SQL,
     FORMAL_MAPPING_EARLIEST_DATE,
     FormalAuthorityUnavailable,
     MembershipMember,
@@ -90,6 +91,10 @@ def test_formal_membership_source_filters_to_approved_structural_relations():
         / "src/topicpilot_api/topic_daily_state.py"
     ).read_text(encoding="utf-8")
     assert 'InstrumentTopicRelation.approval_state == "APPROVED"' in source
+
+
+def test_price_fact_query_preserves_quality_state_for_previous_close_authority():
+    assert "co.quality_state" in _PRICE_FACTS_SQL.text
 
 
 def test_correction_values_are_immutable_and_explicitly_superseding():
