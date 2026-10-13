@@ -103,6 +103,7 @@ class LiveRuntimeConfig:
     tracking_refresh_batch_size: int = 50
     tracking_refresh_lock_timeout_seconds: float = 30.0
     tracking_refresh_statement_timeout_seconds: float = 120.0
+    session_claim_lock_timeout_seconds: float = 30.0
     closed_dates: frozenset[date] = frozenset()
 
     def __post_init__(self) -> None:
@@ -147,8 +148,9 @@ class LiveRuntimeConfig:
             self.tracking_refresh_batch_size < 1
             or self.tracking_refresh_lock_timeout_seconds <= 0
             or self.tracking_refresh_statement_timeout_seconds <= 0
+            or self.session_claim_lock_timeout_seconds <= 0
         ):
-            raise ValueError("tracking refresh timeout/batch configuration is invalid")
+            raise ValueError("tracking and session-claim timeout/batch configuration is invalid")
         if self.circuit_failure_threshold < 1 or self.circuit_open_seconds <= 0:
             raise ValueError("circuit breaker configuration is invalid")
         if (
@@ -335,6 +337,9 @@ class LiveRuntimeConfig:
             tracking_refresh_statement_timeout_seconds=_float(
                 "TOPICPILOT_LIVE_TRACKING_REFRESH_STATEMENT_TIMEOUT_SECONDS", 120.0, minimum=0.1
             ),
+            session_claim_lock_timeout_seconds=_float(
+                "TOPICPILOT_LIVE_SESSION_CLAIM_LOCK_TIMEOUT_SECONDS", 30.0, minimum=0.1
+            ),
             closed_dates=_closed_dates("TOPICPILOT_LIVE_CLOSED_DATES"),
         )
 
@@ -392,6 +397,7 @@ class LiveRuntimeConfig:
             "trackingRefreshStatementTimeoutSeconds": (
                 self.tracking_refresh_statement_timeout_seconds
             ),
+            "sessionClaimLockTimeoutSeconds": self.session_claim_lock_timeout_seconds,
             "closedDates": sorted(item.isoformat() for item in self.closed_dates),
         }
 
