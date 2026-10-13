@@ -63,6 +63,11 @@ def build_parser() -> argparse.ArgumentParser:
         help="explicitly rerun a terminal FAILED/PARTIAL POST_CLOSE date",
     )
     parser.add_argument(
+        "--owner-reauth",
+        action="store_true",
+        help="record explicit Owner reauthorization for a governed recovery re-entry",
+    )
+    parser.add_argument(
         "--symbols",
         "--codes",
         dest="symbols",
@@ -126,6 +131,8 @@ def main(argv: list[str] | None = None) -> int:
         raise SystemExit("--recover requires --run-date YYYY-MM-DD")
     if args.recover and args.mode != "post-close":
         raise SystemExit("--recover requires --mode post-close")
+    if args.owner_reauth and not args.recover:
+        raise SystemExit("--owner-reauth requires --recover")
     logging.basicConfig(level=logging.INFO, format="%(message)s")
     config = LiveRuntimeConfig.from_environment()
     scheduler_clock = MarketSessionClock(
@@ -164,6 +171,7 @@ def main(argv: list[str] | None = None) -> int:
                 return post_close.run_once(
                     run_date=args.run_date,
                     allow_terminal_recovery=args.recover,
+                    owner_reauth=args.owner_reauth,
                     target_symbols=args.symbols,
                     execution_mode="RECOVERY" if args.recover else "MANUAL",
                 )

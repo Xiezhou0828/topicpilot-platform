@@ -682,10 +682,13 @@ class PostCloseUpdater:
         *,
         allow_terminal_recovery: bool,
         execution_mode: str,
+        owner_reauth: bool = False,
     ) -> str | None:
         """Fail closed unless an existing recovery has a durable re-entry contract."""
 
         if not allow_terminal_recovery or execution_mode != "RECOVERY":
+            return None
+        if owner_reauth:
             return None
         contract = metadata.get("reentryContract")
         if not isinstance(contract, Mapping):
@@ -707,6 +710,7 @@ class PostCloseUpdater:
         now: datetime,
         *,
         recovery_authorization_consumed: bool = False,
+        owner_reauth_approved: bool = False,
     ) -> None:
         metadata = dict(run.metadata_payload or {})
         metadata["resumeCount"] = int(metadata.get("resumeCount", 0) or 0) + 1
@@ -723,6 +727,8 @@ class PostCloseUpdater:
         reentry_contract["operatorActionRequired"] = False
         if recovery_authorization_consumed:
             reentry_contract["recoveryAuthorizationConsumed"] = True
+        if owner_reauth_approved:
+            reentry_contract["ownerReauthApproved"] = True
         metadata["reentryContract"] = reentry_contract
         run.status = "RUNNING"
         run.completed_at = None
@@ -1407,6 +1413,7 @@ class PostCloseUpdater:
         is_targeted: bool,
         allow_terminal_recovery: bool,
         execution_mode: str,
+        owner_reauth: bool,
         context: Any,
     ) -> tuple[LiveCollectorRun, bool, dict[str, int]]:
         """Claim the session run and return durable progress totals.
@@ -1464,6 +1471,7 @@ class PostCloseUpdater:
                 metadata,
                 allow_terminal_recovery=allow_terminal_recovery,
                 execution_mode=execution_mode,
+                owner_reauth=owner_reauth,
             )
             if reentry_block_reason is not None:
                 raise PostClosePreconditionError(reentry_block_reason)
@@ -1479,6 +1487,7 @@ class PostCloseUpdater:
                 existing_run,
                 now,
                 recovery_authorization_consumed=(execution_mode == "RECOVERY"),
+                owner_reauth_approved=owner_reauth,
             )
             self._active_failure_stage = "POST_CLOSE_ORCHESTRATION"
             return (
@@ -1507,6 +1516,7 @@ class PostCloseUpdater:
                     metadata,
                     allow_terminal_recovery=allow_terminal_recovery,
                     execution_mode=execution_mode,
+                    owner_reauth=owner_reauth,
                 )
                 if reentry_block_reason is not None:
                     raise PostClosePreconditionError(reentry_block_reason)
@@ -1515,6 +1525,7 @@ class PostCloseUpdater:
                     run,
                     now,
                     recovery_authorization_consumed=(execution_mode == "RECOVERY"),
+                    owner_reauth_approved=owner_reauth,
                 )
                 self._active_failure_stage = "POST_CLOSE_ORCHESTRATION"
                 return run, True, self._completed_market_checkpoint_totals(run.id)
@@ -1527,6 +1538,7 @@ class PostCloseUpdater:
         *,
         run_date: date | None = None,
         allow_terminal_recovery: bool = False,
+        owner_reauth: bool = False,
         target_symbols: Collection[str] | None = None,
         execution_mode: str = "MANUAL",
     ) -> PostCloseRunResult:
@@ -1541,6 +1553,7 @@ class PostCloseUpdater:
             return self._run_once(
                 run_date=run_date,
                 allow_terminal_recovery=allow_terminal_recovery,
+                owner_reauth=owner_reauth,
                 target_symbols=target_symbols,
                 execution_mode=execution_mode,
             )
@@ -1564,6 +1577,7 @@ class PostCloseUpdater:
         *,
         run_date: date | None = None,
         allow_terminal_recovery: bool = False,
+        owner_reauth: bool = False,
         target_symbols: Collection[str] | None = None,
         execution_mode: str = "MANUAL",
     ) -> PostCloseRunResult:
@@ -1621,6 +1635,7 @@ class PostCloseUpdater:
             is_targeted=is_targeted,
             allow_terminal_recovery=allow_terminal_recovery,
             execution_mode=execution_mode,
+            owner_reauth=owner_reauth,
             context=context,
         )
         if reused and run.status not in {"RUNNING"}:

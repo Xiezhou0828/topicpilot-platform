@@ -198,8 +198,11 @@ def test_post_close_explicit_recovery_is_date_bound_and_auditable():
     ).read_text(encoding="utf-8")
 
     assert '"--recover"' in cli_source
+    assert '"--owner-reauth"' in cli_source
     assert '"--recover requires --run-date YYYY-MM-DD"' in cli_source
+    assert '"--owner-reauth requires --recover"' in cli_source
     assert "allow_terminal_recovery=args.recover" in cli_source
+    assert "owner_reauth=args.owner_reauth" in cli_source
     assert "allow_terminal_recovery: bool = False" in post_close_source
     assert '"recoveryOfRunId"' in post_close_source
     assert "if recovery_of_run_id is None:" in post_close_source
@@ -209,6 +212,18 @@ def test_post_close_explicit_recovery_is_date_bound_and_auditable():
     assert "target_symbols: Collection[str] | None = None" in post_close_source
     assert "--symbols" in cli_source
     assert "TARGETED" in post_close_source
+
+
+def test_reentry_contract_accepts_explicit_owner_reauth():
+    assert (
+        PostCloseUpdater._reentry_block_reason(
+            {},
+            allow_terminal_recovery=True,
+            execution_mode="RECOVERY",
+            owner_reauth=True,
+        )
+        is None
+    )
 
 
 def test_post_close_finalization_metadata_is_json_safe():
