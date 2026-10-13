@@ -422,6 +422,36 @@ def _market_code(value: str) -> str:
     return normalized
 
 
+def _history_derivative_values(components: Any) -> dict[str, Any] | None:
+    """Extract structural history from the current formal component shape.
+
+    Older formal score rows stored ``components`` as an array and do not carry
+    the structural derivative payload.  They remain valid historical rows, but
+    must not be treated as mappings while building the new derivative history.
+    """
+
+    if not isinstance(components, Mapping):
+        return None
+    derivatives = components.get("derivatives")
+    if not isinstance(derivatives, Mapping):
+        return None
+    dimensions = derivatives.get("dimensions")
+    if not isinstance(dimensions, Mapping):
+        return None
+    values: dict[str, Any] = {}
+    for key in (
+        "absoluteStrength",
+        "relativeStrength",
+        "coreParticipation",
+        "breadth",
+        "relatedDiffusion",
+        "leadershipConcentration",
+    ):
+        dimension = dimensions.get(key)
+        values[key] = dimension.get("currentLevel") if isinstance(dimension, Mapping) else None
+    return values
+
+
 def _topic_history(session: Session, topic_id: UUID, evaluation_date: date) -> list[dict[str, Any]]:
     successor = aliased(TopicScoreFormalResult)
     rows = list(
@@ -440,20 +470,9 @@ def _topic_history(session: Session, topic_id: UUID, evaluation_date: date) -> l
     )
     result: list[dict[str, Any]] = []
     for row in rows:
-        components = row.components or {}
-        derivatives = components.get("derivatives") or {}
-        values = {
-            key: derivatives.get("dimensions", {}).get(key, {}).get("currentLevel")
-            for key in (
-                "absoluteStrength",
-                "relativeStrength",
-                "coreParticipation",
-                "breadth",
-                "relatedDiffusion",
-                "leadershipConcentration",
-            )
-        }
-        result.append(values)
+        values = _history_derivative_values(row.components)
+        if values is not None:
+            result.append(values)
     return result
 
 

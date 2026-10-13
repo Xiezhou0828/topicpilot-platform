@@ -2,6 +2,7 @@ from datetime import date
 
 from topicpilot_api.formal_lifecycle_evaluator import evaluate_formal_structural_lifecycle
 from topicpilot_api.formal_strength_publication import (
+    _history_derivative_values,
     build_market_context,
     build_structural_derivatives,
 )
@@ -128,6 +129,16 @@ def test_structural_derivatives_expose_six_independent_dimensions():
         for dimension in result["dimensions"].values()
     )
     assert result["doubleCountingGuard"]
+
+
+def test_history_ignores_legacy_component_arrays_without_failing():
+    assert _history_derivative_values([{"name": "breadth", "value": 50.0}]) is None
+    assert _history_derivative_values({"absolute": {"strength": 70.0}}) is None
+
+
+def test_history_extracts_current_derivative_levels_from_new_shape():
+    components = _derivatives(interpretation="EXPANDING")
+    assert _history_derivative_values({"derivatives": components})["absoluteStrength"] == 70.0
 
 
 def test_strong_absolute_relative_signal_can_enter_sprouting_immediately():
