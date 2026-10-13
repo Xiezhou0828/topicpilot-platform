@@ -188,13 +188,6 @@ def _formal_gate(
     if lineage is None:
         return FormalLifecycleGate(False, lineage_reason, {}, None)
 
-    if snapshot.data_status != "COMPLETE":
-        return FormalLifecycleGate(
-            False,
-            f"INSUFFICIENT_FORMAL_INPUT:SNAPSHOT_DATA_STATUS_{snapshot.data_status}",
-            lineage,
-            input_snapshot_hash(snapshot, facts),
-        )
     if snapshot.stock_count <= 0:
         return FormalLifecycleGate(
             False,
@@ -202,7 +195,19 @@ def _formal_gate(
             lineage,
             input_snapshot_hash(snapshot, facts),
         )
-    if snapshot.observed_stock_count != snapshot.stock_count:
+    non_observed_count = sum(fact.fact_state != "OBSERVED" for fact in facts)
+    allowed = max(0, allowed_non_observed_members)
+    tolerated_partial = (
+        snapshot.data_status == "PARTIAL" and 0 < non_observed_count <= allowed
+    )
+    if snapshot.data_status != "COMPLETE" and not tolerated_partial:
+        return FormalLifecycleGate(
+            False,
+            f"INSUFFICIENT_FORMAL_INPUT:SNAPSHOT_DATA_STATUS_{snapshot.data_status}",
+            lineage,
+            input_snapshot_hash(snapshot, facts),
+        )
+    if snapshot.observed_stock_count + non_observed_count != snapshot.stock_count:
         return FormalLifecycleGate(
             False,
             "INSUFFICIENT_FORMAL_INPUT:OBSERVED_COUNT_MISMATCH",
@@ -216,8 +221,7 @@ def _formal_gate(
             lineage,
             input_snapshot_hash(snapshot, facts),
         )
-    non_observed_count = sum(fact.fact_state != "OBSERVED" for fact in facts)
-    if non_observed_count > max(0, allowed_non_observed_members):
+    if non_observed_count > allowed:
         return FormalLifecycleGate(
             False,
             "INSUFFICIENT_FORMAL_INPUT:NON_OBSERVED_MEMBER_FACT",

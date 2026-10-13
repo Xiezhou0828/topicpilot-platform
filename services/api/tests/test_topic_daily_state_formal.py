@@ -1,10 +1,12 @@
 from datetime import UTC, date, datetime
 from decimal import Decimal
 from pathlib import Path
+from types import SimpleNamespace
 from uuid import uuid4
 
 import pytest
 
+from topicpilot_api.formal_strength_publication import _gate
 from topicpilot_api.orm import TopicSnapshot, TopicSnapshotMemberFact
 from topicpilot_api.production_read_model import TOPIC_ROWS_SQL
 from topicpilot_api.topic_daily_state import (
@@ -95,6 +97,44 @@ def test_formal_membership_source_filters_to_approved_structural_relations():
 
 def test_price_fact_query_preserves_quality_state_for_previous_close_authority():
     assert "co.quality_state" in _PRICE_FACTS_SQL.text
+
+
+def test_formal_strength_gate_allows_bounded_partial_member_evidence():
+    snapshot = SimpleNamespace(
+        snapshot_identity="snapshot:partial",
+        membership_snapshot_id="membership:partial",
+        membership_snapshot_hash="membership-hash",
+        relation_version="relations:v1",
+        source_artifact_hash="artifact-hash",
+        lineage_hash="lineage-hash",
+        correction_sequence=0,
+        data_status="PARTIAL",
+        stock_count=2,
+    )
+    facts = [
+        SimpleNamespace(
+            instrument_id=uuid4(),
+            fact_hash="fact-observed",
+            fact_state="OBSERVED",
+            change_pct=Decimal("1"),
+            raw_fact_payload={},
+            structural_role="CORE",
+            role_source="FORMAL_ROLE_AUTHORITY",
+        ),
+        SimpleNamespace(
+            instrument_id=uuid4(),
+            fact_hash="fact-unknown",
+            fact_state="UNKNOWN",
+            change_pct=None,
+            raw_fact_payload={},
+            structural_role="RELATED",
+            role_source="FORMAL_ROLE_AUTHORITY",
+        ),
+    ]
+
+    gate = _gate(snapshot, facts, allowed_non_observed_members=9)
+
+    assert gate.passed is True
 
 
 def test_correction_values_are_immutable_and_explicitly_superseding():

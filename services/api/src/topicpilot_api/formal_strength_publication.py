@@ -355,12 +355,16 @@ def _gate(
     )
     if any(value is None for value in required):
         return FormalStrengthGate(False, "MISSING_FORMAL_SNAPSHOT_LINEAGE", input_hash)
-    if snapshot.data_status != "COMPLETE":
-        return FormalStrengthGate(False, f"SNAPSHOT_DATA_STATUS_{snapshot.data_status}", input_hash)
     if snapshot.stock_count <= 0 or len(facts) != snapshot.stock_count:
         return FormalStrengthGate(False, "FORMAL_MEMBER_COUNT_MISMATCH", input_hash)
     non_observed_count = sum(fact.fact_state != "OBSERVED" for fact in facts)
-    if non_observed_count > max(0, allowed_non_observed_members):
+    allowed = max(0, allowed_non_observed_members)
+    tolerated_partial = (
+        snapshot.data_status == "PARTIAL" and 0 < non_observed_count <= allowed
+    )
+    if snapshot.data_status != "COMPLETE" and not tolerated_partial:
+        return FormalStrengthGate(False, f"SNAPSHOT_DATA_STATUS_{snapshot.data_status}", input_hash)
+    if non_observed_count > allowed:
         return FormalStrengthGate(False, "FORMAL_MEMBER_OBSERVATION_UNAVAILABLE", input_hash)
     for fact in facts:
         if fact.fact_state != "OBSERVED":

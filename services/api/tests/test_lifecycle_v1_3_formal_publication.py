@@ -157,7 +157,12 @@ def test_missing_formal_observation_fails_closed_even_with_previous_stage():
     assert result.transition_reason == "INSUFFICIENT_FORMAL_INPUT:INSUFFICIENT_DATA"
 
 
-def _snapshot(*, data_status: str = "COMPLETE", topic_id: UUID | None = None):
+def _snapshot(
+    *,
+    data_status: str = "COMPLETE",
+    topic_id: UUID | None = None,
+    observed_stock_count: int = 3,
+):
     snapshot_id = uuid4()
     return SimpleNamespace(
         id=snapshot_id,
@@ -175,7 +180,7 @@ def _snapshot(*, data_status: str = "COMPLETE", topic_id: UUID | None = None):
         superseded_by_snapshot_id=None,
         data_status=data_status,
         stock_count=3,
-        observed_stock_count=3,
+        observed_stock_count=observed_stock_count,
         reference_registry_version="reference:v1",
         mapping_policy_version="mapping:v1",
         session_code="TWSE_REGULAR",
@@ -186,14 +191,14 @@ def _snapshot(*, data_status: str = "COMPLETE", topic_id: UUID | None = None):
     )
 
 
-def _facts(snapshot, *, missing_role: bool = False):
+def _facts(snapshot, *, missing_role: bool = False, unknown_index: int | None = None):
     return [
         SimpleNamespace(
             snapshot_id=snapshot.id,
             instrument_id=uuid4(),
             fact_identity=f"fact-{index}",
             fact_hash=f"fact-hash-{index}",
-            fact_state="OBSERVED",
+            fact_state="UNKNOWN" if index == unknown_index else "OBSERVED",
             structural_role=None if missing_role else "CORE",
             role_source=None if missing_role else "FORMAL_ROLE_AUTHORITY",
         )
@@ -213,6 +218,18 @@ def test_formal_input_gate_rejects_partial_snapshot_and_role_gap():
     assert role_gate.reason == (
         "INSUFFICIENT_FORMAL_INPUT:STRUCTURAL_ROLE_AUTHORITY_INCOMPLETE"
     )
+
+
+def test_formal_input_gate_allows_bounded_partial_snapshot_with_tolerance():
+    partial = _snapshot(data_status="PARTIAL", observed_stock_count=2)
+    facts = _facts(partial, unknown_index=2)
+
+    tolerated = _formal_gate(partial, facts, allowed_non_observed_members=9)
+    assert tolerated.passed is True
+
+    strict = _formal_gate(partial, facts, allowed_non_observed_members=0)
+    assert strict.passed is False
+    assert strict.reason == "INSUFFICIENT_FORMAL_INPUT:SNAPSHOT_DATA_STATUS_PARTIAL"
 
 
 def test_formal_input_hash_is_order_independent():
