@@ -2315,14 +2315,32 @@ class PostCloseUpdater:
         selected = [item for item in market_batches if item[1] == market_code]
         if not selected:
             return True
+        unresolved = 0
         for index, code, _batch in selected:
             checkpoint = self._latest_checkpoint(
                 run_id,
                 self._checkpoint_key("FORMAL_MARKET_FACTS", f"{code}:{index}"),
             )
-            if checkpoint is None or checkpoint.status != "COMPLETED":
+            if checkpoint is None or checkpoint.status == "IN_PROGRESS":
                 return False
-        return True
+            if checkpoint.status == "COMPLETED":
+                continue
+            if checkpoint.status not in {"PARTIAL", "FAILED"}:
+                return False
+            unresolved += self._market_batch_unresolved_count(checkpoint)
+            if unresolved > self.config.market_batch_failure_tolerance:
+                return False
+        return unresolved <= self.config.market_batch_failure_tolerance
+
+    @staticmethod
+    def _market_batch_unresolved_count(checkpoint: Any) -> int:
+        """Count terminal instrument misses without treating them as prices."""
+
+        failed = int(getattr(checkpoint, "failed_count", 0) or 0)
+        skipped = int(getattr(checkpoint, "skipped_count", 0) or 0)
+        processed = int(getattr(checkpoint, "processed_count", 0) or 0)
+        succeeded = int(getattr(checkpoint, "succeeded_count", 0) or 0)
+        return max(failed + skipped, processed - succeeded, 0)
 
     def _market_stage_readback(
         self,
@@ -2391,13 +2409,29 @@ class PostCloseUpdater:
             for instrument_id, resolution in status_resolutions.items()
             if instrument_id in market_instrument_ids
         )
+        current_now = now
+        if current_now is None:
+            now_factory = getattr(self, "_now", None)
+            current_now = now_factory() if callable(now_factory) else None
+        market_ready = self._market_batches_ready(run_id, market_batches, market_code)
+        retry_window_pending = (
+            market_code == TPEX_MARKET
+            and current_now is not None
+            and local_time(current_now, self.config)
+            < clock_time.fromisoformat(self.config.tpex_retry_start)
+            and any(
+                checkpoint.status in {"PARTIAL", "FAILED"}
+                for _key, checkpoint, _metadata in checkpoint_metadata
+            )
+        )
         status = (
             "READY"
-            if selected and completed == len(selected)
+            if selected and market_ready and not retry_window_pending
             else "WAITING_SOURCE_DATA"
             if rows
             else "NOT_STARTED"
         )
+        unavailable = max(0, expected - covered)
         source_identity = (
             "TWSE_OFFICIAL_DAILY" if market_code == TWSE_MARKET else "TPEX_OFFICIAL_DAILY"
         )
@@ -2444,10 +2478,6 @@ class PostCloseUpdater:
                 if value
             }
         )
-        current_now = now
-        if current_now is None:
-            now_factory = getattr(self, "_now", None)
-            current_now = now_factory() if callable(now_factory) else None
         next_eligible_retry: str | None = None
         if status != "READY" and resolved_trading_date is not None and current_now is not None:
             current_local = local_time(current_now, self.config)
@@ -2498,7 +2528,9 @@ class PostCloseUpdater:
             "acceptedPriceCount": priced,
             "acceptedTradingStatusCount": accepted_trading_status,
             "acceptedCoverageCount": covered,
-            "unavailableCount": max(0, expected - covered),
+            "unavailableCount": unavailable,
+            "marketBatchFailureTolerance": self.config.market_batch_failure_tolerance,
+            "toleratedFailureCount": unavailable if status == "READY" else 0,
             "validationFailureCount": failed,
             "skippedCount": skipped,
             "retryCount": retry_count,
@@ -2506,7 +2538,13 @@ class PostCloseUpdater:
             "nextEligibleRetry": next_eligible_retry,
             "errorCategory": error_categories or None,
             "coverageResult": (
-                "COMPLETE" if status == "READY" else "PARTIAL" if rows else "NOT_STARTED"
+                "COMPLETE"
+                if status == "READY" and unavailable == 0
+                else "COMPLETE_WITHIN_TOLERANCE"
+                if status == "READY"
+                else "PARTIAL"
+                if rows
+                else "NOT_STARTED"
             ),
             "completedBatchCount": completed,
             "batchCount": len(selected),

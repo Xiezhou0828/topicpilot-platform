@@ -63,3 +63,14 @@ def test_status_resolution_budget_is_separate_and_environment_configurable(monke
         != config.status_resolution_max_total_wait_seconds
     )
     assert config.as_dict()["statusResolutionMaxAttempts"] == 4
+
+
+def test_market_batch_failure_tolerance_is_bounded_and_environment_configurable(
+    monkeypatch,
+) -> None:
+    monkeypatch.setenv("TOPICPILOT_LIVE_MARKET_BATCH_FAILURE_TOLERANCE", "7")
+
+    config = LiveRuntimeConfig.from_environment()
+
+    assert config.market_batch_failure_tolerance == 7
+    assert config.as_dict()["marketBatchFailureTolerance"] == 7

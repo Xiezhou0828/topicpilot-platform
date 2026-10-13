@@ -290,3 +290,64 @@ def test_market_readback_exposes_bounded_retry_and_error_provenance():
             "checkpointHash": "checkpoint-hash",
         }
     ]
+
+
+def test_market_readiness_allows_fewer_than_ten_terminal_misses():
+    config = LiveRuntimeConfig()
+    now = _utc(8, 5)  # 16:05 Taipei, after the TPEx retry window.
+    checkpoint = SimpleNamespace(
+        status="PARTIAL",
+        processed_count=1,
+        succeeded_count=0,
+        failed_count=0,
+        skipped_count=1,
+        retry_count=1,
+        attempt_number=2,
+        checkpoint_hash="checkpoint-hash",
+        created_at=now,
+        metadata_payload={
+            "sessionDate": now.date().isoformat(),
+            "pricedCount": 0,
+            "coveredCount": 0,
+        },
+    )
+    updater = PostCloseUpdater.__new__(PostCloseUpdater)
+    updater.config = config
+    updater._latest_checkpoint = lambda _run_id, _key: checkpoint
+    updater._now = lambda: now
+
+    assert updater._market_batches_ready(
+        "simulated-run", [(1, TPEX_MARKET, ["tpex-1"])], TPEX_MARKET
+    )
+    readback = updater._market_stage_readback(
+        "simulated-run",
+        [(1, TPEX_MARKET, ["tpex-1"])],
+        TPEX_MARKET,
+        trading_date=now.date(),
+        now=now,
+    )
+
+    assert readback["readinessState"] == "READY"
+    assert readback["coverageResult"] == "COMPLETE_WITHIN_TOLERANCE"
+    assert readback["unavailableCount"] == 1
+    assert readback["marketBatchFailureTolerance"] == 9
+
+
+def test_market_readiness_rejects_ten_terminal_misses():
+    config = LiveRuntimeConfig()
+    checkpoints = {
+        f"FORMAL_MARKET_FACTS:TWO:{index}": SimpleNamespace(
+            status="PARTIAL",
+            processed_count=1,
+            succeeded_count=0,
+            failed_count=0,
+            skipped_count=1,
+        )
+        for index in range(1, 11)
+    }
+    updater = PostCloseUpdater.__new__(PostCloseUpdater)
+    updater.config = config
+    updater._latest_checkpoint = lambda _run_id, key: checkpoints[key]
+
+    batches = [(index, TPEX_MARKET, [f"tpex-{index}"]) for index in range(1, 11)]
+    assert not updater._market_batches_ready("simulated-run", batches, TPEX_MARKET)

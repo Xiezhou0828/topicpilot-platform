@@ -95,6 +95,9 @@ class LiveRuntimeConfig:
     history_readiness_max_attempts: int = 3
     history_readiness_max_total_wait_seconds: float = 90.0
     history_readiness_backoff_seconds: float = 30.0
+    # A small number of terminal per-instrument misses must not block the
+    # market stage.  The threshold is exclusive: 9 means fewer than 10.
+    market_batch_failure_tolerance: int = 9
     # Status authority resolution is a separate bounded window.  It is only
     # entered for instruments whose same-session price remains unavailable.
     status_resolution_max_attempts: int = 3
@@ -137,6 +140,8 @@ class LiveRuntimeConfig:
             or self.history_readiness_max_attempts < 1
             or self.history_readiness_max_total_wait_seconds < 0
             or self.history_readiness_backoff_seconds < 0
+            or self.market_batch_failure_tolerance < 0
+            or self.market_batch_failure_tolerance > 9
         ):
             raise ValueError("historical provider configuration is invalid")
         if (
@@ -321,6 +326,9 @@ class LiveRuntimeConfig:
             history_readiness_backoff_seconds=_float(
                 "TOPICPILOT_HISTORY_READINESS_BACKOFF_SECONDS", 30.0, minimum=0.0
             ),
+            market_batch_failure_tolerance=_int(
+                "TOPICPILOT_LIVE_MARKET_BATCH_FAILURE_TOLERANCE", 9, minimum=0
+            ),
             status_resolution_max_attempts=_int(
                 "TOPICPILOT_STATUS_RESOLUTION_MAX_ATTEMPTS", 3, minimum=1
             ),
@@ -394,6 +402,7 @@ class LiveRuntimeConfig:
             "historyReadinessMaxAttempts": self.history_readiness_max_attempts,
             "historyReadinessMaxTotalWaitSeconds": self.history_readiness_max_total_wait_seconds,
             "historyReadinessBackoffSeconds": self.history_readiness_backoff_seconds,
+            "marketBatchFailureTolerance": self.market_batch_failure_tolerance,
             "statusResolutionMaxAttempts": self.status_resolution_max_attempts,
             "statusResolutionMaxTotalWaitSeconds": self.status_resolution_max_total_wait_seconds,
             "statusResolutionBackoffSeconds": self.status_resolution_backoff_seconds,
