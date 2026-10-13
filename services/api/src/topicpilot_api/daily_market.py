@@ -556,7 +556,9 @@ def reconcile_daily_market(
     duplicate_filter = ""
     params: dict[str, Any] = {"trade_date": trade_date}
     if expected_instrument_ids is not None:
-        duplicate_filter = "\n                      AND instrument_id IN :expected_instrument_ids"
+        duplicate_filter = (
+            "\n                      AND co.instrument_id IN :expected_instrument_ids"
+        )
         params["expected_instrument_ids"] = tuple(expected_instrument_ids)
     rows = read_daily_market_rows(
         session, trade_date, expected_instrument_ids=expected_instrument_ids
@@ -593,15 +595,29 @@ def reconcile_daily_market(
         covered_by_market[market] = covered_by_market.get(market, 0) + priced_by_market.get(
             market, 0
         )
+    # A retry can deliver the exact same official observation more than once
+    # while preserving the same content hash.  That is an idempotent delivery
+    # duplicate, not a conflicting stable key.  Keep the gate fail-closed for
+    # conflicting payloads (different hashes) or any duplicate without a hash.
     duplicate_query = text(
         f"""
                 SELECT count(*) FROM (
-                    SELECT stable_key
-                    FROM topicpilot.vw_daily_market_observations
-                    WHERE trade_date = :trade_date
+                    SELECT co.instrument_id
+                    FROM topicpilot.canonical_observations co
+                    JOIN topicpilot.canonical_price_observations cp
+                      ON cp.canonical_observation_id = co.id
+                    JOIN topicpilot.instruments i ON i.id = co.instrument_id
+                    JOIN topicpilot.markets m ON m.id = i.market_id
+                    JOIN topicpilot.market_data_sources source
+                      ON source.id = co.source_id
+                    WHERE co.family_code = 'PRICE'
+                      AND co.quality_state = 'ACCEPTED'
+                      AND source.observation_semantics = 'DAILY_BAR'
+                      AND (co.observed_at AT TIME ZONE m.timezone)::date = :trade_date
                       {duplicate_filter}
-                      AND candidate_count > 1
-                    GROUP BY stable_key
+                    GROUP BY co.instrument_id
+                    HAVING COUNT(*) FILTER (WHERE co.content_hash IS NULL) > 0
+                        OR COUNT(DISTINCT co.content_hash) > 1
                 ) duplicates
                 """
     )
