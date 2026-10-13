@@ -1965,6 +1965,11 @@ class PostCloseUpdater:
                 ):
                     provider_error_code = str(provider_exception.code)
                     provider_error_message = str(provider_exception)
+                    reset_transient_failure = getattr(
+                        registration.adapter, "reset_transient_failure", None
+                    )
+                    if callable(reset_transient_failure):
+                        reset_transient_failure()
                     readiness = self._provider_readiness_decision(
                         provider_exception,
                         registration.adapter,

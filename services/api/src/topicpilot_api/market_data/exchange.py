@@ -467,6 +467,28 @@ class TpexOfficialDailyProvider:
         self._market_failure: HistoricalProviderError | None = None
         self.response_evidence: dict[str, Any] = {}
 
+    def reset_transient_failure(self) -> None:
+        """Allow the next market batch to retry a transient provider failure.
+
+        The market-level endpoint is shared by every instrument in a batch
+        run.  A temporary transport/readiness failure must not poison the
+        provider instance for all remaining instruments in that run.  Keep
+        non-transient payload/contract failures sticky so they still fail
+        closed without repeatedly hammering the endpoint.
+        """
+
+        if self.last_market_failure_code not in {
+            "PROVIDER_REQUEST_FAILED",
+            "EXCHANGE_NOT_READY",
+            "EXCHANGE_EMPTY_PAYLOAD",
+        }:
+            return
+        self._market_failure = None
+        self.last_market_failure_code = None
+        self.readiness_attempt_count = 0
+        self.readiness_retry_count = 0
+        self.readiness_wait_seconds = 0.0
+
     def _fetch_market_day_once(self) -> tuple[datetime, dict[str, HistoricalBar]]:
         if self.start_date != self.end_date:
             raise HistoricalProviderError(
