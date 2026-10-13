@@ -306,6 +306,7 @@ def resolve_formal_membership(
                 Topic.status.not_in(("DISABLED", "RETIRED")),
                 Instrument.instrument_type == "EQUITY",
                 Market.code.in_(("TPE", "TWO")),
+                InstrumentTopicRelation.approval_state == "APPROVED",
             )
             .order_by(
                 Market.code,

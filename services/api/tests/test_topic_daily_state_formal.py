@@ -84,6 +84,14 @@ def test_formal_topic_read_model_filters_to_published_rows():
     assert "successor.supersedes_snapshot_id = topic_snapshots.id" in sql
 
 
+def test_formal_membership_source_filters_to_approved_structural_relations():
+    source = (
+        Path(__file__).resolve().parents[1]
+        / "src/topicpilot_api/topic_daily_state.py"
+    ).read_text(encoding="utf-8")
+    assert 'InstrumentTopicRelation.approval_state == "APPROVED"' in source
+
+
 def test_correction_values_are_immutable_and_explicitly_superseding():
     instrument_id = uuid4()
     superseded_id = uuid4()

@@ -1,5 +1,6 @@
 from datetime import date
 from decimal import Decimal
+from pathlib import Path
 
 import pytest
 from sqlalchemy import inspect
@@ -147,6 +148,14 @@ def test_relation_and_projection_models_expose_formal_read_model_fields():
         "structural_role_authority_id",
         "structural_role_authority_version",
     }
+
+
+def test_live_structural_role_reader_requires_approved_authority():
+    source = (
+        Path(__file__).resolve().parents[1]
+        / "src/topicpilot_api/topic_engine/structural_role_authority.py"
+    ).read_text(encoding="utf-8")
+    assert "InstrumentTopicRelation.approval_state == AUTHORITY_APPROVED" in source
 
 
 def test_approved_effective_core_resolves_and_related_resolves_but_projection_rejects_related():

@@ -189,6 +189,7 @@ def resolve_structural_role(
         select(InstrumentTopicRelation).where(
             InstrumentTopicRelation.topic_id == topic_id,
             InstrumentTopicRelation.instrument_id == instrument_id,
+            InstrumentTopicRelation.approval_state == AUTHORITY_APPROVED,
             InstrumentTopicRelation.structural_role.is_not(None),
         )
     ).all()
