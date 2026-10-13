@@ -4147,6 +4147,7 @@ class PostCloseUpdater:
                             "status": "FAIL_CLOSED",
                             "unavailableRows": 0,
                             "error": type(exc).__name__,
+                            "errorDetail": str(exc)[:256],
                         }
                         result["formalStrengthReadback"] = self._formal_strength_readback(
                             snapshot_date
