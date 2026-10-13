@@ -2230,7 +2230,21 @@ class PostCloseUpdater:
 
         tpex_ready = self._market_batches_ready(run_id, market_batches, TPEX_MARKET)
         both_markets_eligible = is_targeted or TPEX_MARKET in eligible_market_codes
-        stage_wait_reasons = list(waiting_reason_codes)
+        # A recovery run can resume after an earlier attempt persisted a
+        # market wait reason.  Recompute those market-local gates from the
+        # current checkpoints instead of carrying a stale blocker forward;
+        # otherwise a now-ready market exits before Formal materialization.
+        stage_wait_reasons = [
+            reason
+            for reason in waiting_reason_codes
+            if reason
+            not in {
+                "WAITING_TWSE_WINDOW",
+                "WAITING_TPEX_WINDOW",
+                "TWSE_DATA_NOT_READY",
+                "TPEX_DATA_NOT_READY",
+            }
+        ]
         if not both_markets_eligible and not is_targeted:
             stage_wait_reasons.append("WAITING_TPEX_WINDOW")
         elif not tpex_ready and not is_targeted:
