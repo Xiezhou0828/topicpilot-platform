@@ -518,6 +518,35 @@ class PostCloseUpdater:
             .limit(1)
         )
 
+    def _latest_bounded_checkpoint(
+        self,
+        run_id: Any,
+        batch_key: str,
+    ) -> LiveCollectorCheckpoint | None:
+        """Find the newest prior bounded result without erasing append-only history."""
+
+        checkpoints = self.session.scalars(
+            select(LiveCollectorCheckpoint)
+            .where(
+                LiveCollectorCheckpoint.run_id == run_id,
+                LiveCollectorCheckpoint.batch_key == batch_key,
+                LiveCollectorCheckpoint.status.in_(("PARTIAL", "FAILED")),
+            )
+            .order_by(
+                LiveCollectorCheckpoint.attempt_number.desc(),
+                LiveCollectorCheckpoint.created_at.desc(),
+                LiveCollectorCheckpoint.id.desc(),
+            )
+        ).all()
+        for checkpoint in checkpoints:
+            if (
+                int(checkpoint.succeeded_count or 0) > 0
+                and self._market_batch_unresolved_count(checkpoint)
+                <= self.config.market_batch_failure_tolerance
+            ):
+                return checkpoint
+        return None
+
     def _checkpoint_event(
         self,
         *,
@@ -1978,6 +2007,48 @@ class PostCloseUpdater:
                     )
                     if readiness.state is OperationalReadiness.WAIT:
                         waiting_reason_codes.append(readiness.reason_code)
+
+                    preserved_checkpoint = previous_checkpoint
+                    if not (
+                        preserved_checkpoint is not None
+                        and preserved_checkpoint.status in {"PARTIAL", "FAILED"}
+                        and int(preserved_checkpoint.succeeded_count or 0) > 0
+                        and self._market_batch_unresolved_count(preserved_checkpoint)
+                        <= self.config.market_batch_failure_tolerance
+                    ):
+                        preserved_checkpoint = self._latest_bounded_checkpoint(run_id, batch_key)
+                    preserve_bounded_checkpoint = (
+                        preserved_checkpoint is not None
+                    )
+                    if preserve_bounded_checkpoint:
+                        preserved_metadata = dict(preserved_checkpoint.metadata_payload or {})
+                        preserved_metadata.update(
+                            {
+                                "providerRetryErrorCode": provider_error_code,
+                                "providerRetryPreserved": True,
+                                "providerRetryActualFailureCount": len(batch),
+                                "providerRetryActualFailureClassification": (
+                                    "PROVIDER_INGESTION_FAILURE"
+                                ),
+                            }
+                        )
+                        self._checkpoint_event(
+                            run_id=run_id,
+                            batch_key=batch_key,
+                            batch_number=100 + batch_index,
+                            status="PARTIAL",
+                            processed_count=preserved_checkpoint.processed_count,
+                            succeeded_count=preserved_checkpoint.succeeded_count,
+                            failed_count=preserved_checkpoint.failed_count,
+                            skipped_count=preserved_checkpoint.skipped_count,
+                            retry_count=batch_retry_count,
+                            provider_request_count=0,
+                            provider_failure_count=1,
+                            metadata=preserved_metadata,
+                        )
+                        self._heartbeat(run_id, self._now())
+                        continue
+
                     fallback_failure_count = 0
                     with self.session.begin():
                         completed = self._now()
@@ -2891,6 +2962,9 @@ class PostCloseUpdater:
             local_date,
             expected_instrument_ids=eligible_instrument_ids,
             status_resolutions=getattr(self, "_status_resolution_by_instrument_id", {}),
+            allowed_unexplained_missing=getattr(
+                getattr(self, "config", None), "market_batch_failure_tolerance", 0
+            ),
         )
         final_failure_codes = tuple(dict.fromkeys(failure_codes)) or (
             "WAIT_PROVIDER_PUBLICATION_LAG",
@@ -2981,6 +3055,9 @@ class PostCloseUpdater:
                 local_date,
                 expected_instrument_ids=eligible_instrument_ids,
                 status_resolutions=getattr(self, "_status_resolution_by_instrument_id", {}),
+                allowed_unexplained_missing=getattr(
+                    getattr(self, "config", None), "market_batch_failure_tolerance", 0
+                ),
             )
             if failure_count or skipped_count:
                 status = "PARTIAL" if success_count else "FAILED"

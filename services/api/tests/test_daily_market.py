@@ -77,6 +77,37 @@ def test_unknown_missing_is_not_covered_even_when_observed_row_exists():
     assert "UNEXPLAINED_MISSING_DATA" in result.reason_codes
 
 
+def test_bounded_missing_is_ready_only_when_explicitly_allowed():
+    result = assess_daily_coverage(
+        trade_date=date(2026, 8, 12),
+        expected_by_market={"TPE": 507},
+        observed_by_market={"TPE": 507},
+        priced_by_market={"TPE": 506},
+        covered_by_market={"TPE": 506},
+        allowed_unexplained_missing=9,
+    )
+
+    assert result.covered_count == 506
+    assert result.priced_count == 506
+    assert result.unexplained_missing_count == 1
+    assert result.status == "READY"
+    assert result.downstream_ready is True
+    assert "BOUNDED_UNEXPLAINED_MISSING_DATA" in result.reason_codes
+    assert "INCOMPLETE_COVERAGE" not in result.reason_codes
+
+
+def test_bounded_missing_default_remains_fail_closed():
+    result = assess_daily_coverage(
+        trade_date=date(2026, 8, 12),
+        expected_by_market={"TPE": 507},
+        observed_by_market={"TPE": 507},
+        priced_by_market={"TPE": 506},
+        covered_by_market={"TPE": 506},
+    )
+
+    assert result.downstream_ready is False
+
+
 def test_null_close_is_unavailable_and_never_coerced_to_zero():
     result = assess_daily_coverage(
         trade_date=date(2026, 8, 12),

@@ -140,6 +140,7 @@ def assess_daily_coverage(
     duplicate_key_count: int = 0,
     market_closed: bool = False,
     unavailable_instruments: Sequence[UnavailableInstrument] = (),
+    allowed_unexplained_missing: int = 0,
 ) -> DailyMarketReconciliation:
     """Apply the fail-closed production coverage policy.
 
@@ -148,6 +149,9 @@ def assess_daily_coverage(
     count as covered but remain unpriced. Unknown/provider-missing instruments
     remain unexplained and fail closed.
     """
+
+    if allowed_unexplained_missing < 0:
+        raise ValueError("allowed_unexplained_missing must be non-negative")
 
     markets = sorted(set(expected_by_market) | set(observed_by_market))
     priced_by_market = observed_by_market if priced_by_market is None else priced_by_market
@@ -159,6 +163,7 @@ def assess_daily_coverage(
     unavailable = max(0, expected - priced)
     unexplained = max(0, expected - covered)
     unavailable_instruments = tuple(unavailable_instruments)
+    bounded_missing = 0 < unexplained <= allowed_unexplained_missing
     pipeline_failure_count = sum(
         item.blocks_formal_publication
         and not item.is_legitimate_unavailable
@@ -178,26 +183,34 @@ def assess_daily_coverage(
     if expected == 0:
         reasons.append("EMPTY_FORMAL_UNIVERSE")
     if covered != expected:
-        reasons.append("INCOMPLETE_COVERAGE")
+        reasons.append("BOUNDED_INCOMPLETE_COVERAGE" if bounded_missing else "INCOMPLETE_COVERAGE")
     if priced != expected:
-        reasons.append("UNAVAILABLE_DAILY_CLOSE")
+        reasons.append(
+            "BOUNDED_UNAVAILABLE_DAILY_CLOSE" if bounded_missing else "UNAVAILABLE_DAILY_CLOSE"
+        )
     if any(item.is_legitimate_unavailable for item in unavailable_instruments):
         reasons.append("LEGITIMATE_UNAVAILABLE_INSTRUMENTS")
     if pipeline_failure_count:
-        reasons.append("PIPELINE_FAILURE")
+        reasons.append("BOUNDED_PIPELINE_FAILURE" if bounded_missing else "PIPELINE_FAILURE")
     if unknown_count:
-        reasons.append("UNKNOWN_UNAVAILABLE_STATE")
+        reasons.append(
+            "BOUNDED_UNKNOWN_UNAVAILABLE_STATE" if bounded_missing else "UNKNOWN_UNAVAILABLE_STATE"
+        )
     if covered > priced:
         reasons.append("APPROVED_NO_TRADE_COVERAGE")
     if unexplained:
-        reasons.append("UNEXPLAINED_MISSING_DATA")
+        reasons.append(
+            "BOUNDED_UNEXPLAINED_MISSING_DATA" if bounded_missing else "UNEXPLAINED_MISSING_DATA"
+        )
     if wrong_date_count:
         reasons.append("DATA_DATE_MISMATCH")
     if duplicate_key_count:
         reasons.append("DUPLICATE_STABLE_KEY")
     for market in markets:
         if covered_by_market.get(market, 0) != expected_by_market.get(market, 0):
-            reasons.append(f"{market}_INCOMPLETE")
+            reasons.append(
+                f"{market}_BOUNDED_INCOMPLETE" if bounded_missing else f"{market}_INCOMPLETE"
+            )
 
     blocking_reasons = {
         "MARKET_CLOSED",
@@ -210,7 +223,9 @@ def assess_daily_coverage(
         "UNKNOWN_UNAVAILABLE_STATE",
     }
     ready = not any(
-        reason in blocking_reasons or reason.endswith("_INCOMPLETE") for reason in reasons
+        reason in blocking_reasons
+        or (reason.endswith("_INCOMPLETE") and not reason.endswith("_BOUNDED_INCOMPLETE"))
+        for reason in reasons
     )
     status = "MARKET_CLOSED" if market_closed else "READY" if ready else "PARTIAL"
     return DailyMarketReconciliation(
@@ -534,6 +549,7 @@ def reconcile_daily_market(
     market_closed: bool = False,
     expected_instrument_ids: Collection[Any] | None = None,
     status_resolutions: Mapping[Any, TradingStatusResolution] | None = None,
+    allowed_unexplained_missing: int = 0,
 ) -> DailyMarketReconciliation:
     """Reconcile the canonical daily projection against a date-effective universe."""
 
@@ -603,6 +619,7 @@ def reconcile_daily_market(
         duplicate_key_count=duplicate_count,
         market_closed=market_closed,
         unavailable_instruments=unavailable_instruments,
+        allowed_unexplained_missing=allowed_unexplained_missing,
     )
 
 
