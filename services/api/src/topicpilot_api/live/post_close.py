@@ -781,10 +781,56 @@ class PostCloseUpdater:
         self._active_failure_stage = stage
 
     def _acquire_session_claim_lock(self, run_date: date) -> None:
-        """Serialize first-claim races without adding a second lock table."""
+        """Serialize first-claim races without waiting indefinitely.
+
+        The advisory lock is held by the transaction that claims the session.
+        A blocking lock with no timeout can strand the whole recovery runner
+        before it reaches either official quote provider.  Bound the wait and
+        translate PostgreSQL's lock-timeout SQLSTATE into the same durable
+        concurrency precondition used by the run-row lease.
+        """
 
         if self.session.get_bind().dialect.name != "postgresql":
             return
+        previous_timeout = self.session.execute(
+            text("SELECT current_setting('lock_timeout')")
+        ).scalar_one()
+        self.session.execute(
+            text("SELECT set_config('lock_timeout', :lock_timeout, true)"),
+            {
+                "lock_timeout": (
+                    f"{max(1, int(self.config.session_claim_lock_timeout_seconds * 1000))}ms"
+                )
+            },
+        )
+        lock_acquired = False
+        try:
+            self.session.execute(
+                text("SELECT pg_advisory_xact_lock(hashtext(:lock_key)::bigint)"),
+                {
+                    "lock_key": (
+                        f"topicpilot:post-close-session:{self.config.reference_data_version}:"
+                        f"{self.config.calendar_code}:{run_date.isoformat()}"
+                    )
+                },
+            )
+            lock_acquired = True
+        except DBAPIError as exc:
+            orig = getattr(exc, "orig", None)
+            sqlstate = getattr(orig, "sqlstate", None) or getattr(orig, "pgcode", None)
+            if sqlstate == "55P03":
+                self.session.rollback()
+                raise PostClosePreconditionError("POST_CLOSE_RUN_IN_PROGRESS") from exc
+            raise
+        finally:
+            # A successful claim may continue in this transaction; restore the
+            # caller's setting so the bounded claim wait does not leak into
+            # unrelated persistence work.
+            if lock_acquired and self.session.is_active:
+                self.session.execute(
+                    text("SELECT set_config('lock_timeout', :lock_timeout, true)"),
+                    {"lock_timeout": previous_timeout},
+                )
         self.session.execute(
             text("SELECT pg_advisory_xact_lock(hashtext(:lock_key)::bigint)"),
             {
