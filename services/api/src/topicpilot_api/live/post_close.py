@@ -1780,6 +1780,7 @@ class PostCloseUpdater:
             end_date=local_date,
             exchange_transport=transport,
             market_batch=True,
+            tpex_target_date_batch=self._active_execution_scope == HISTORY_RECOVERY,
             readiness_max_attempts=self.config.history_readiness_max_attempts,
             readiness_max_total_wait_seconds=self.config.history_readiness_max_total_wait_seconds,
             readiness_backoff_seconds=self.config.history_readiness_backoff_seconds,
