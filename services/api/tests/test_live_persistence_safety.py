@@ -77,11 +77,14 @@ def test_tracking_refresh_safety_settings_are_environment_configurable(monkeypat
 
 def test_session_claim_lock_timeout_is_environment_configurable(monkeypatch):
     monkeypatch.setenv("TOPICPILOT_LIVE_SESSION_CLAIM_LOCK_TIMEOUT_SECONDS", "6.5")
+    monkeypatch.setenv("TOPICPILOT_LIVE_SESSION_CLAIM_STATEMENT_TIMEOUT_SECONDS", "7.5")
 
     config = LiveRuntimeConfig.from_environment()
 
     assert config.session_claim_lock_timeout_seconds == 6.5
+    assert config.session_claim_statement_timeout_seconds == 7.5
     assert config.as_dict()["sessionClaimLockTimeoutSeconds"] == 6.5
+    assert config.as_dict()["sessionClaimStatementTimeoutSeconds"] == 7.5
 
 
 class _LockTimeoutOriginal:
@@ -102,7 +105,11 @@ class _ClaimSession:
         sql = str(statement)
         self.statements.append((sql, parameters))
         if "current_setting" in sql:
-            return SimpleNamespace(scalar_one=lambda: "0")
+            return SimpleNamespace(
+                mappings=lambda: SimpleNamespace(
+                    one=lambda: {"lock_timeout": "0", "statement_timeout": "0"}
+                )
+            )
         if "pg_advisory_xact_lock" in sql:
             raise DBAPIError(sql, parameters, _LockTimeoutOriginal())
         return SimpleNamespace()

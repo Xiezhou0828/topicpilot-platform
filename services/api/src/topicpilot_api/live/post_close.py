@@ -792,18 +792,22 @@ class PostCloseUpdater:
 
         if self.session.get_bind().dialect.name != "postgresql":
             return
-        previous_timeout = self.session.execute(
-            text("SELECT current_setting('lock_timeout')")
-        ).scalar_one()
         self.session.execute(
-            text("SELECT set_config('lock_timeout', :lock_timeout, true)"),
+            text(
+                """
+                SELECT set_config('lock_timeout', :lock_timeout, true),
+                       set_config('statement_timeout', :statement_timeout, true)
+                """
+            ),
             {
                 "lock_timeout": (
                     f"{max(1, int(self.config.session_claim_lock_timeout_seconds * 1000))}ms"
-                )
+                ),
+                "statement_timeout": (
+                    f"{max(1, int(self.config.session_claim_statement_timeout_seconds * 1000))}ms"
+                ),
             },
         )
-        lock_acquired = False
         try:
             self.session.execute(
                 text("SELECT pg_advisory_xact_lock(hashtext(:lock_key)::bigint)"),
@@ -814,7 +818,6 @@ class PostCloseUpdater:
                     )
                 },
             )
-            lock_acquired = True
         except DBAPIError as exc:
             orig = getattr(exc, "orig", None)
             sqlstate = getattr(orig, "sqlstate", None) or getattr(orig, "pgcode", None)
@@ -822,15 +825,6 @@ class PostCloseUpdater:
                 self.session.rollback()
                 raise PostClosePreconditionError("POST_CLOSE_RUN_IN_PROGRESS") from exc
             raise
-        finally:
-            # A successful claim may continue in this transaction; restore the
-            # caller's setting so the bounded claim wait does not leak into
-            # unrelated persistence work.
-            if lock_acquired and self.session.is_active:
-                self.session.execute(
-                    text("SELECT set_config('lock_timeout', :lock_timeout, true)"),
-                    {"lock_timeout": previous_timeout},
-                )
         self.session.execute(
             text("SELECT pg_advisory_xact_lock(hashtext(:lock_key)::bigint)"),
             {
