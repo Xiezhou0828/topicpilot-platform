@@ -181,6 +181,8 @@ def _facts_for_snapshot(session: Session, snapshot_id: UUID) -> list[TopicSnapsh
 def _formal_gate(
     snapshot: TopicSnapshot,
     facts: list[TopicSnapshotMemberFact],
+    *,
+    allowed_non_observed_members: int = 0,
 ) -> FormalLifecycleGate:
     lineage, lineage_reason = _formal_snapshot_lineage(snapshot, facts)
     if lineage is None:
@@ -214,7 +216,8 @@ def _formal_gate(
             lineage,
             input_snapshot_hash(snapshot, facts),
         )
-    if any(fact.fact_state != "OBSERVED" for fact in facts):
+    non_observed_count = sum(fact.fact_state != "OBSERVED" for fact in facts)
+    if non_observed_count > max(0, allowed_non_observed_members):
         return FormalLifecycleGate(
             False,
             "INSUFFICIENT_FORMAL_INPUT:NON_OBSERVED_MEMBER_FACT",
@@ -615,6 +618,7 @@ class FormalLifecyclePublisher:
         eligible_topic_ids: Collection[UUID] | None = None,
         market_index_facts: Iterable[Any] = (),
         persist: bool = True,
+        allowed_non_observed_members: int = 0,
     ) -> FormalLifecycleRun:
         if evaluation_date < A9_FORMAL_TOPIC_SNAPSHOT_START:
             raise ValueError(
@@ -645,7 +649,11 @@ class FormalLifecyclePublisher:
             elif len(candidates) > 1:
                 gate = FormalLifecycleGate(False, "AMBIGUOUS_FORMAL_SNAPSHOT", {}, None)
             else:
-                gate = _formal_gate(snapshot, facts)
+                gate = _formal_gate(
+                    snapshot,
+                    facts,
+                    allowed_non_observed_members=allowed_non_observed_members,
+                )
 
             reason = gate.reason
             if gate.passed and snapshot is not None:

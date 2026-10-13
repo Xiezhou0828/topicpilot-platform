@@ -4113,6 +4113,7 @@ class PostCloseUpdater:
                         strength_run = FormalStrengthPublisher(self.session).run_once(
                             evaluation_date=snapshot_date,
                             market_index_facts=tuple(market_index_facts),
+                            allowed_non_observed_members=self.config.market_batch_failure_tolerance,
                         )
                         result["formalStrength"] = strength_run.as_dict()
                         result["formalStrengthReadback"] = self._formal_strength_readback(
@@ -4135,6 +4136,7 @@ class PostCloseUpdater:
                         lifecycle_run = FormalLifecyclePublisher(self.session).run_once(
                             evaluation_date=snapshot_date,
                             market_index_facts=tuple(market_index_facts),
+                            allowed_non_observed_members=self.config.market_batch_failure_tolerance,
                         )
                         result["lifecycle"] = lifecycle_run.as_dict()
                         result["formalLifecycle"] = result["lifecycle"]

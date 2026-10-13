@@ -337,7 +337,10 @@ def _input_hash(snapshot: TopicSnapshot, facts: Iterable[TopicSnapshotMemberFact
 
 
 def _gate(
-    snapshot: TopicSnapshot | None, facts: list[TopicSnapshotMemberFact]
+    snapshot: TopicSnapshot | None,
+    facts: list[TopicSnapshotMemberFact],
+    *,
+    allowed_non_observed_members: int = 0,
 ) -> FormalStrengthGate:
     if snapshot is None:
         return FormalStrengthGate(False, "FORMAL_TOPIC_SNAPSHOT_NOT_PUBLISHED", None)
@@ -356,9 +359,12 @@ def _gate(
         return FormalStrengthGate(False, f"SNAPSHOT_DATA_STATUS_{snapshot.data_status}", input_hash)
     if snapshot.stock_count <= 0 or len(facts) != snapshot.stock_count:
         return FormalStrengthGate(False, "FORMAL_MEMBER_COUNT_MISMATCH", input_hash)
-    if any(fact.fact_state != "OBSERVED" for fact in facts):
+    non_observed_count = sum(fact.fact_state != "OBSERVED" for fact in facts)
+    if non_observed_count > max(0, allowed_non_observed_members):
         return FormalStrengthGate(False, "FORMAL_MEMBER_OBSERVATION_UNAVAILABLE", input_hash)
     for fact in facts:
+        if fact.fact_state != "OBSERVED":
+            continue
         if fact.change_pct is not None:
             continue
         eligibility = (fact.raw_fact_payload or {}).get("dimensionEligibility") or {}
@@ -500,6 +506,7 @@ class FormalStrengthPublisher:
         eligible_topic_ids: Collection[UUID] | None = None,
         market_index_facts: Iterable[Any] = (),
         persist: bool = True,
+        allowed_non_observed_members: int = 0,
     ) -> FormalStrengthRun:
         if evaluation_date < FORMAL_STRENGTH_START:
             raise ValueError(
@@ -519,7 +526,11 @@ class FormalStrengthPublisher:
             candidates = snapshots.get(topic.id, [])
             snapshot = candidates[0] if len(candidates) == 1 else None
             facts = _facts(self.session, snapshot.id) if snapshot else []
-            gate = _gate(snapshot, facts)
+            gate = _gate(
+                snapshot,
+                facts,
+                allowed_non_observed_members=allowed_non_observed_members,
+            )
             if len(candidates) > 1:
                 gate = FormalStrengthGate(False, "AMBIGUOUS_FORMAL_SNAPSHOT", None)
             values: dict[str, Any]
