@@ -1360,6 +1360,11 @@ class PostCloseUpdater:
                 for run in self._runs_for_date(run_date)
                 if run.status == "RUNNING"
                 and (existing_run is None or run.id != existing_run.id)
+                and self._is_recent_run(
+                    run,
+                    now,
+                    stale_after=self._stale_after_seconds(),
+                )
             ),
             None,
         )
