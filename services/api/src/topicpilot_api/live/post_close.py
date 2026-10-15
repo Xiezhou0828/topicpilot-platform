@@ -91,6 +91,7 @@ POST_CLOSE_PHASE_MODEL = (
 )
 NORMAL_CURRENT_DAY = "NORMAL_CURRENT_DAY"
 HISTORY_RECOVERY = "HISTORY_RECOVERY"
+LATEST_CLOSED_SESSION = "LATEST_CLOSED_SESSION"
 _CHECKPOINT_BATCH_NUMBERS = {
     "SESSION_VALIDATION": 0,
     "INPUT_READINESS": 1,
@@ -103,7 +104,7 @@ _CHECKPOINT_BATCH_NUMBERS = {
 def _execution_scope(execution_mode: str) -> str:
     if execution_mode == "RECOVERY":
         return HISTORY_RECOVERY
-    if execution_mode in {"SCHEDULED", "MANUAL"}:
+    if execution_mode in {"SCHEDULED", "MANUAL", LATEST_CLOSED_SESSION}:
         return NORMAL_CURRENT_DAY
     raise ValueError("invalid POST_CLOSE execution_mode")
 
@@ -1501,8 +1502,9 @@ class PostCloseUpdater:
         if allow_terminal_recovery and run_date is None:
             raise ValueError("POST_CLOSE_RECOVERY_REQUIRES_EXPLICIT_RUN_DATE")
         now = self._now()
-        if execution_mode not in {"SCHEDULED", "MANUAL", "RECOVERY"}:
+        if execution_mode not in {"SCHEDULED", "MANUAL", "RECOVERY", LATEST_CLOSED_SESSION}:
             raise ValueError("invalid POST_CLOSE execution_mode")
+        is_latest_closed = execution_mode == LATEST_CLOSED_SESSION
         local_date = resolve_post_close_run_date(
             now,
             self.config.timezone_name,
@@ -1539,7 +1541,7 @@ class PostCloseUpdater:
         eligible_instrument_ids = tuple(instrument.id for instrument, _market in instruments)
         idempotent = (
             None
-            if is_targeted or execution_mode == "RECOVERY"
+            if is_targeted or execution_mode in {"RECOVERY", LATEST_CLOSED_SESSION}
             else self._idempotent_result(local_date)
         )
         if idempotent is not None:
@@ -1660,7 +1662,7 @@ class PostCloseUpdater:
         # until the first market-specific eligibility window.
         current_now = self._now()
         eligible_market_codes = set(eligible_markets(current_now, self.config))
-        if not is_targeted and not eligible_market_codes:
+        if not is_targeted and not is_latest_closed and not eligible_market_codes:
             self._update_publication_stage(
                 run_id,
                 "preflight",
@@ -1762,7 +1764,11 @@ class PostCloseUpdater:
             )
 
         for batch_index, market_code, batch in market_batches:
-            if not is_targeted and market_code not in eligible_market_codes:
+            if (
+                not is_targeted
+                and not is_latest_closed
+                and market_code not in eligible_market_codes
+            ):
                 continue
             market = batch[0][1]
             batch_key = self._checkpoint_key("FORMAL_MARKET_FACTS", f"{market.code}:{batch_index}")
@@ -1771,6 +1777,7 @@ class PostCloseUpdater:
                 continue
             if (
                 not is_targeted
+                and not is_latest_closed
                 and market_code == TPEX_MARKET
                 and previous_checkpoint is not None
                 and not tpex_retry_window_open(current_now, self.config)
@@ -2113,7 +2120,9 @@ class PostCloseUpdater:
             failure_codes.append(twse_safe_failure)
 
         tpex_ready = self._market_batches_ready(run_id, market_batches, TPEX_MARKET)
-        both_markets_eligible = is_targeted or TPEX_MARKET in eligible_market_codes
+        both_markets_eligible = (
+            is_targeted or is_latest_closed or TPEX_MARKET in eligible_market_codes
+        )
         stage_wait_reasons = list(waiting_reason_codes)
         if not both_markets_eligible and not is_targeted:
             stage_wait_reasons.append("WAITING_TPEX_WINDOW")

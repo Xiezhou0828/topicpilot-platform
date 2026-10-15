@@ -5,7 +5,11 @@ from types import SimpleNamespace
 
 from topicpilot_api.live.config import LiveRuntimeConfig
 from topicpilot_api.live.daily_forward import DailyForwardRunner
-from topicpilot_api.live.post_close import PostCloseRunResult, PostCloseUpdater
+from topicpilot_api.live.post_close import (
+    LATEST_CLOSED_SESSION,
+    PostCloseRunResult,
+    PostCloseUpdater,
+)
 from topicpilot_api.live.session import MarketSessionClock
 
 
@@ -78,6 +82,17 @@ def test_daily_forward_waits_until_configured_post_close_start():
     assert result.target_date == date(2026, 8, 28)
     assert result.next_session_date == date(2026, 8, 31)
     assert updater.calls == []
+
+
+def test_latest_closed_session_runs_before_current_day_post_close_window():
+    runner, updater = _runner(datetime(2026, 10, 15, 20, 0, tzinfo=UTC))
+
+    result = runner.run_once(execution_mode=LATEST_CLOSED_SESSION)
+
+    assert result.status == "SUCCESS"
+    assert result.target_date == date(2026, 10, 15)
+    assert result.replay is True
+    assert updater.calls == [(date(2026, 10, 15), LATEST_CLOSED_SESSION)]
 
 
 def test_daily_forward_uses_inclusive_1345_asia_taipei_boundary():

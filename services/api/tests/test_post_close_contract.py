@@ -12,6 +12,7 @@ from topicpilot_api.instrument_universe import InstrumentLifecycle, InstrumentUn
 from topicpilot_api.live.cli import _symbols_argument, build_parser
 from topicpilot_api.live.post_close import (
     HISTORY_RECOVERY,
+    LATEST_CLOSED_SESSION,
     NORMAL_CURRENT_DAY,
     PostClosePreconditionError,
     PostCloseUpdater,
@@ -85,6 +86,17 @@ def test_targeted_symbol_argument_accepts_codes_and_market_qualified_codes():
         ]
     )
     assert args.symbols == ("1584", "TWO:6129")
+
+
+def test_latest_closed_cli_mode_is_explicit_and_not_recovery():
+    args = build_parser().parse_args(
+        ["--mode", "post-close", "--once", "--latest-closed"]
+    )
+
+    assert args.latest_closed is True
+    assert args.recover is False
+    assert args.run_date is None
+    assert LATEST_CLOSED_SESSION == "LATEST_CLOSED_SESSION"
 
 
 @pytest.mark.parametrize("value", ["", ":1584", "TWO:", "TWO:15:84"])
