@@ -1301,13 +1301,18 @@ class PostCloseUpdater:
         )
 
     def _stale_after_seconds(self) -> int:
-        """Use the existing bounded provider/worker budget as the lease bound."""
+        """Bound an abandoned lease by the worker heartbeat cadence.
+
+        A cross-scope lease must only block while its owner is still emitting
+        heartbeats.  The full history batch budget can be substantially longer
+        than the heartbeat gap, which would make a dead recovery lease block a
+        later latest-closed run for tens of minutes.
+        """
 
         return max(
             self.config.poll_interval_seconds * 2,
             int(self.config.provider_timeout_seconds)
-            * max(1, self.config.history_batch_size)
-            * (self.config.history_max_retries + 1),
+            * max(1, self.config.history_max_retries + 1),
         )
 
     def _ensure_completed_checkpoint(
