@@ -374,6 +374,38 @@ def test_post_close_execution_key_is_session_and_scope_bound():
         "HISTORY_RECOVERY:FULL"
     )
     assert recovery != full
+    latest_closed = updater._execution_key(
+        date(2026, 9, 3), execution_mode=LATEST_CLOSED_SESSION
+    )
+    assert latest_closed == (
+        "latest-closed:tw-reference-v1:TW_MARKET:2026-09-03:"
+        "NORMAL_CURRENT_DAY:FULL"
+    )
+    assert latest_closed != full
+    assert latest_closed != recovery
+
+
+def test_latest_closed_does_not_reuse_legacy_normal_current_day_run():
+    updater = PostCloseUpdater.__new__(PostCloseUpdater)
+    updater.config = SimpleNamespace(
+        reference_data_version="tw-reference-v1",
+        calendar_code="TW_MARKET",
+    )
+    legacy_normal_run = SimpleNamespace(
+        metadata_payload={
+            "executionKey": "post-close:tw-reference-v1:TW_MARKET:2026-09-03:FULL",
+            "executionScope": NORMAL_CURRENT_DAY,
+            "scope": "FULL",
+        }
+    )
+    updater._runs_for_date = lambda _run_date: [legacy_normal_run]
+
+    assert (
+        updater._find_existing_run(
+            date(2026, 9, 3), execution_mode=LATEST_CLOSED_SESSION
+        )
+        is None
+    )
 
 
 def test_history_recovery_checkpoint_namespace_is_distinct_without_schema_change():

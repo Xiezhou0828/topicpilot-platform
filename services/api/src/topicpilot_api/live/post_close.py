@@ -486,7 +486,12 @@ class PostCloseUpdater:
         scope_suffix = (
             "" if target_symbols is None else f":{stable_hash(tuple(target_symbols))[:32]}"
         )
-        prefix = "history-recovery" if execution_scope == HISTORY_RECOVERY else "post-close"
+        if execution_mode == LATEST_CLOSED_SESSION:
+            # The latest closed session is a normal-current-day provider route,
+            # but it must not reuse the scheduled/manual run for the same date.
+            prefix = "latest-closed"
+        else:
+            prefix = "history-recovery" if execution_scope == HISTORY_RECOVERY else "post-close"
         return (
             f"{prefix}:{self.config.reference_data_version}:"
             f"{self.config.calendar_code}:{run_date.isoformat()}:"
@@ -851,6 +856,7 @@ class PostCloseUpdater:
             f"{wanted_run_scope}"
             f"{'' if target_symbols is None else ':' + stable_hash(wanted_symbols)[:32]}"
             if execution_scope == NORMAL_CURRENT_DAY
+            and execution_mode != LATEST_CLOSED_SESSION
             else None
         )
         for run in self._runs_for_date(run_date):
