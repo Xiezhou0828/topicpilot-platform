@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+from datetime import date
+
+from topicpilot_api import production_read_model
 from topicpilot_api.main import create_app
 from topicpilot_api.production_read_model import STOCK_ROWS_SQL, normalize_stock_search
 
@@ -26,3 +29,41 @@ def test_stock_list_openapi_exposes_search_as_a_formal_query_parameter() -> None
     search = next(item for item in parameters if item["name"] == "search")
     assert search["in"] == "query"
     assert "code or name" in search["description"]
+
+
+def test_strength_read_serializes_snapshot_date_for_string_contract(monkeypatch) -> None:
+    monkeypatch.setattr(
+        production_read_model,
+        "build_topic_strength_lifecycle_read",
+        lambda *_: {
+            "ownerSeededV0": {
+                "status": "WAITING_FOR_CANONICAL_ACTIVATION",
+                "policyId": "policy",
+                "policyVersion": "v1",
+                "policyHash": "hash",
+                "implementationSha": None,
+                "asOfDate": None,
+                "formalDailyGrade": None,
+                "absolute": {},
+                "relative": {},
+                "lifecycle": {},
+                "observationFlags": [],
+                "observationFlagCopy": {},
+                "qualityFlags": {},
+                "diagnosticOnly": True,
+            }
+        },
+    )
+
+    result = production_read_model._strength_read(
+        None,
+        {
+            "slug": "topic",
+            "snapshot_date": date(2026, 10, 13),
+            "formal_strength_publication_status": "PUBLISHED",
+            "formal_strength_components": {},
+        },
+        None,
+    )
+
+    assert result["ownerSeededV0"]["asOfDate"] == "2026-10-13"

@@ -24,6 +24,17 @@ def test_lifecycle_result_is_separate_shadow_fact_with_policy_lineage():
     )
 
 
+def test_lifecycle_result_maps_migration_0034_identity_state_columns():
+    assert {
+        "main_rise_segment",
+        "segment_entry_date",
+        "segment_anchor_date",
+        "days_since_meaningful_expansion",
+        "drawdown_from_peak_pct",
+        "state_memory",
+    } <= {column.name for column in TopicLifecycleResult.__table__.columns}
+
+
 def test_api_contract_keeps_lifecycle_evidence_backend_owned():
     value = TopicLifecycleRead(
         currentStage="MAIN_RISE",

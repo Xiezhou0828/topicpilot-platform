@@ -17,7 +17,7 @@ from typing import Any
 from uuid import UUID
 
 from sqlalchemy import select
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, aliased
 
 from topicpilot_api.orm import (
     TopicLifecycleResult,
@@ -439,6 +439,7 @@ evaluate_lifecycle = evaluate_lifecycle_v1  # noqa: F811
 
 
 def _date_rows(session: Session, evaluation_date: date) -> list[TopicSnapshot]:
+    successor = aliased(TopicSnapshot)
     return list(
         session.scalars(
             select(TopicSnapshot)
@@ -448,7 +449,9 @@ def _date_rows(session: Session, evaluation_date: date) -> list[TopicSnapshot]:
                 TopicSnapshot.membership_mode == "PIT_FORMAL",
                 TopicSnapshot.publication_state == "PUBLISHED",
                 TopicSnapshot.finality_state == "FINAL",
-                TopicSnapshot.superseded_by_snapshot_id.is_(None),
+                ~select(successor.id)
+                .where(successor.supersedes_snapshot_id == TopicSnapshot.id)
+                .exists(),
             )
             .order_by(TopicSnapshot.topic_slug)
         )
