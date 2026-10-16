@@ -1729,6 +1729,14 @@ class PostCloseUpdater:
             end_date=local_date,
             exchange_transport=transport,
             market_batch=True,
+            # The current-day path must use the TPEx OpenAPI snapshot, while
+            # an explicit completed session (latest-closed or recovery) must
+            # use the dated official TPEx endpoint.  The snapshot has no
+            # target-date parameter and therefore fails closed with
+            # PROVIDER_DATE_MISMATCH when it is asked to backfill a prior day.
+            tpex_target_date_batch=(
+                is_targeted or execution_mode in {"RECOVERY", LATEST_CLOSED_SESSION}
+            ),
             readiness_max_attempts=self.config.history_readiness_max_attempts,
             readiness_max_total_wait_seconds=self.config.history_readiness_max_total_wait_seconds,
             readiness_backoff_seconds=self.config.history_readiness_backoff_seconds,
