@@ -1,7 +1,10 @@
 from datetime import date
+from types import SimpleNamespace
+from uuid import uuid4
 
 from topicpilot_api.formal_lifecycle_evaluator import evaluate_formal_structural_lifecycle
 from topicpilot_api.formal_strength_publication import (
+    _topic_history,
     build_market_context,
     build_structural_derivatives,
 )
@@ -99,6 +102,38 @@ def test_market_context_requires_current_published_benchmarks_without_zero_fill(
     shock = build_market_context((_index("TPE", -3.0), _index("TWO", -3.1)), TARGET)
     assert shock.status == "SYSTEMIC_SHOCK"
     assert shock.benchmark_ready is True
+
+
+def test_topic_history_ignores_legacy_list_components():
+    class Session:
+        def scalars(self, _statement):
+            return iter(
+                (
+                    SimpleNamespace(components=["legacy-v1"]),
+                    SimpleNamespace(
+                        components={
+                            "derivatives": {
+                                "dimensions": {
+                                    "absoluteStrength": {"currentLevel": 70.0},
+                                }
+                            }
+                        }
+                    ),
+                )
+            )
+
+    history = _topic_history(Session(), uuid4(), TARGET)
+
+    assert history == [
+        {
+            "absoluteStrength": 70.0,
+            "relativeStrength": None,
+            "coreParticipation": None,
+            "breadth": None,
+            "relatedDiffusion": None,
+            "leadershipConcentration": None,
+        }
+    ]
 
 
 def test_structural_derivatives_expose_six_independent_dimensions():

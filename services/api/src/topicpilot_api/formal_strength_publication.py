@@ -431,7 +431,14 @@ def _topic_history(session: Session, topic_id: UUID, evaluation_date: date) -> l
     result: list[dict[str, Any]] = []
     for row in rows:
         components = row.components or {}
+        # Historical V1 rows may store ``components`` as a list.  They do
+        # not carry the V2 derivative envelope and must not abort the current
+        # formal run; simply omit them from the derivative baseline.
+        if not isinstance(components, Mapping):
+            continue
         derivatives = components.get("derivatives") or {}
+        if not isinstance(derivatives, Mapping):
+            continue
         values = {
             key: derivatives.get("dimensions", {}).get(key, {}).get("currentLevel")
             for key in (
