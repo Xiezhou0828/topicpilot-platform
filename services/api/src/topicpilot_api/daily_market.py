@@ -21,6 +21,7 @@ from topicpilot_api.market_data.availability import (
     PIPELINE_FAILURE_CODES,
     classify_availability,
 )
+from topicpilot_api.market_data.exchange import TPEX_OPENAPI_DAILY_ADAPTER_VERSION
 from topicpilot_api.market_data.history import is_internal_missing_price_status
 from topicpilot_api.trading_status_authority import (
     CANONICAL_STATUS_SOURCES,
@@ -580,14 +581,40 @@ def reconcile_daily_market(
     duplicate_query = text(
         f"""
                 SELECT count(*) FROM (
-                    SELECT stable_key
-                    FROM topicpilot.vw_daily_market_observations
-                    WHERE trade_date = :trade_date
+                    SELECT co.instrument_id,
+                           (co.observed_at AT TIME ZONE m.timezone)::date AS trade_date
+                    FROM topicpilot.canonical_observations co
+                    JOIN topicpilot.canonical_price_observations cp
+                      ON cp.canonical_observation_id = co.id
+                    JOIN topicpilot.instruments i ON i.id = co.instrument_id
+                    JOIN topicpilot.markets m ON m.id = i.market_id
+                    JOIN topicpilot.market_data_sources source
+                      ON source.id = co.source_id
+                    WHERE co.family_code = 'PRICE'
+                      AND co.quality_state IN ('ACCEPTED', 'INCOMPLETE')
+                      AND source.source_code IN (
+                          'TWSE_OFFICIAL_DAILY', 'TPEX_OFFICIAL_DAILY'
+                      )
+                      AND NOT (
+                          source.source_code = 'TPEX_OFFICIAL_DAILY'
+                          AND source.adapter_version = :legacy_tpex_openapi_adapter
+                      )
+                      AND (co.observed_at AT TIME ZONE m.timezone)::date = :trade_date
                       {duplicate_filter}
-                      AND candidate_count > 1
-                    GROUP BY stable_key
+                      AND NOT EXISTS (
+                          SELECT 1
+                          FROM topicpilot.canonical_observations successor
+                          WHERE successor.supersedes_id = co.id
+                            AND successor.family_code = 'PRICE'
+                            AND successor.quality_state IN ('ACCEPTED', 'INCOMPLETE')
+                      )
+                    GROUP BY co.instrument_id,
+                             (co.observed_at AT TIME ZONE m.timezone)::date
+                    HAVING count(*) > 1
                 ) duplicates
                 """
+    ).bindparams(
+        legacy_tpex_openapi_adapter=TPEX_OPENAPI_DAILY_ADAPTER_VERSION
     )
     if expected_instrument_ids is not None:
         duplicate_query = duplicate_query.bindparams(
