@@ -297,6 +297,12 @@ def resolve_formal_membership(
                 InstrumentTopicRelation.topic_id == topic_id,
                 InstrumentTopicRelation.valid_from <= trading_date,
                 _end_filter(InstrumentTopicRelation.valid_to, trading_date),
+                # Formal PIT membership is carried only by explicitly
+                # approved Structural Role authority rows. Legacy relation
+                # rows remain available to legacy/research consumers but must
+                # not make the formal resolver fail closed as if authority
+                # were incomplete.
+                InstrumentTopicRelation.structural_role.is_not(None),
                 _effective_filter(Instrument.valid_from, trading_date),
                 _end_filter(Instrument.valid_to, trading_date),
                 _effective_filter(Market.valid_from, trading_date),
