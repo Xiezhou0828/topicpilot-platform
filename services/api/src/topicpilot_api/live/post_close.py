@@ -3487,7 +3487,13 @@ class PostCloseUpdater:
 
         now = self._now()
         current = local_time(now, self.config)
-        if current < clock_time.fromisoformat(self.config.late_data_target):
+        current_local_date = now.astimezone(
+            ZoneInfo(self.config.timezone_name)
+        ).date()
+        if (
+            local_date >= current_local_date
+            and current < clock_time.fromisoformat(self.config.late_data_target)
+        ):
             next_target = f"{local_date.isoformat()}T{self.config.late_data_target}:00"
             self._checkpoint_event(
                 run_id=run_id,
