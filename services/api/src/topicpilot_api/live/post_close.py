@@ -16,7 +16,7 @@ from zoneinfo import ZoneInfo
 
 from sqlalchemy import and_, or_, select, text
 from sqlalchemy.exc import DBAPIError, IntegrityError, SQLAlchemyError
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, aliased
 
 from topicpilot_api.daily_market import DailyMarketReconciliation, reconcile_daily_market
 from topicpilot_api.formal_strength_publication import FormalStrengthPublisher
@@ -3621,6 +3621,7 @@ class PostCloseUpdater:
         return (snapshot_result.get("formalStrengthReadback") or {}).get("status") == "PASS"
 
     def _formal_snapshot_readback(self, snapshot_date: date) -> dict[str, Any]:
+        successor = aliased(TopicSnapshot)
         rows = self.session.scalars(
             select(TopicSnapshot).where(
                 TopicSnapshot.snapshot_date == snapshot_date,
@@ -3631,6 +3632,9 @@ class PostCloseUpdater:
                 TopicSnapshot.finality_state == "FINAL",
                 TopicSnapshot.publication_state == "PUBLISHED",
                 TopicSnapshot.superseded_by_snapshot_id.is_(None),
+                ~select(successor.id)
+                .where(successor.supersedes_snapshot_id == TopicSnapshot.id)
+                .exists(),
             )
         ).all()
         topic_ids = [row.topic_id for row in rows]
