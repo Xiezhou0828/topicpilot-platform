@@ -66,7 +66,8 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help=(
             "run the normal official close-data chain for the latest completed "
-            "trading session, independent of the current clock window"
+            "trading session, independent of the current clock window; "
+            "combine with --run-date for an explicit completed session"
         ),
     )
     parser.add_argument(
@@ -142,8 +143,6 @@ def main(argv: list[str] | None = None) -> int:
         raise SystemExit("--latest-closed requires --mode post-close or --mode daily-forward")
     if args.latest_closed and not args.once:
         raise SystemExit("--latest-closed requires --once")
-    if args.latest_closed and args.run_date is not None:
-        raise SystemExit("--latest-closed resolves the date automatically; omit --run-date")
     if args.latest_closed and (args.recover or args.symbols is not None):
         raise SystemExit("--latest-closed cannot be combined with recovery or symbols")
     logging.basicConfig(level=logging.INFO, format="%(message)s")
@@ -182,6 +181,7 @@ def main(argv: list[str] | None = None) -> int:
         if args.latest_closed:
             def post_close_runner() -> object:
                 return daily_forward.run_once(
+                    run_date=args.run_date,
                     execution_mode=LATEST_CLOSED_SESSION,
                 )
         elif args.recover or args.symbols is not None:

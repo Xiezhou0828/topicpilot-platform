@@ -99,6 +99,23 @@ def test_latest_closed_cli_mode_is_explicit_and_not_recovery():
     assert LATEST_CLOSED_SESSION == "LATEST_CLOSED_SESSION"
 
 
+def test_latest_closed_cli_mode_accepts_an_explicit_completed_session():
+    args = build_parser().parse_args(
+        [
+            "--mode",
+            "post-close",
+            "--once",
+            "--latest-closed",
+            "--run-date",
+            "2026-10-15",
+        ]
+    )
+
+    assert args.latest_closed is True
+    assert args.run_date == date(2026, 10, 15)
+    assert args.recover is False
+
+
 @pytest.mark.parametrize("value", ["", ":1584", "TWO:", "TWO:15:84"])
 def test_targeted_symbol_argument_rejects_malformed_values(value):
     with pytest.raises(argparse.ArgumentTypeError):
