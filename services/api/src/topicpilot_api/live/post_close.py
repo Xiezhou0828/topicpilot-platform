@@ -2139,11 +2139,45 @@ class PostCloseUpdater:
         both_markets_eligible = (
             is_targeted or is_latest_closed or TPEX_MARKET in eligible_market_codes
         )
+
+        # A provider batch can be PARTIAL when an instrument is legitimately
+        # unavailable (for example, an exchange-authorized capital-reduction
+        # suspension).  Resolve those missing-price candidates before applying
+        # the provider wait gate; otherwise the gate returns early and the
+        # status-authority evidence can never unlock the Formal chain.
+        bounded_status_resolution = self._resolve_missing_statuses(
+            run_id=run_id,
+            trading_date=local_date,
+            candidates=status_resolution_candidates,
+        )
+        if bounded_status_resolution is not None:
+            legitimate_count = bounded_status_resolution.metrics.legitimate_unavailable_count
+            success_count += legitimate_count
+            skipped_count = max(0, skipped_count - legitimate_count)
+            if legitimate_count:
+                failure_codes = [code for code in failure_codes if code != "MISSING_MARKET_DATA"]
+
+        coverage_after_status_resolution = reconcile_daily_market(
+            self.session,
+            local_date,
+            expected_instrument_ids=eligible_instrument_ids,
+            status_resolutions=getattr(self, "_status_resolution_by_instrument_id", {}),
+        )
         stage_wait_reasons = list(waiting_reason_codes)
         if not both_markets_eligible and not is_targeted:
             stage_wait_reasons.append("WAITING_TPEX_WINDOW")
-        elif not tpex_ready and not is_targeted:
+        elif (
+            not tpex_ready
+            and not coverage_after_status_resolution.downstream_ready
+            and not is_targeted
+        ):
             stage_wait_reasons.append("TPEX_DATA_NOT_READY")
+
+        # Once the canonical reconciliation is downstream-ready, transient
+        # provider-lag reasons are superseded by the explicit status authority
+        # evidence.  Keep the normal market-window gate above intact.
+        if both_markets_eligible and coverage_after_status_resolution.downstream_ready:
+            stage_wait_reasons = []
 
         if stage_wait_reasons and not is_targeted:
             twse_stage_ready = self._market_batches_ready(
@@ -2194,18 +2228,6 @@ class PostCloseUpdater:
                 ),
                 snapshot_status="WAITING_FOR_TPEX",
             )
-
-        bounded_status_resolution = self._resolve_missing_statuses(
-            run_id=run_id,
-            trading_date=local_date,
-            candidates=status_resolution_candidates,
-        )
-        if bounded_status_resolution is not None:
-            legitimate_count = bounded_status_resolution.metrics.legitimate_unavailable_count
-            success_count += legitimate_count
-            skipped_count = max(0, skipped_count - legitimate_count)
-            if legitimate_count:
-                failure_codes = [code for code in failure_codes if code != "MISSING_MARKET_DATA"]
 
         if is_targeted:
             return self._finalize_targeted_run(
