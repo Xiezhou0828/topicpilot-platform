@@ -17,6 +17,10 @@ from topicpilot_api.previous_close_authority import (
     ComparatorStatus,
 )
 
+_OFFICIAL_CORPORATE_ACTION_SOURCES = frozenset(
+    {"TWSE_OFFICIAL_REDUCTION", "TPEX_OFFICIAL_REDUCTION"}
+)
+
 
 class Dimension(StrEnum):
     EOD_PRICE = "EOD_PRICE"
@@ -52,11 +56,35 @@ def is_authorized_accounted_unavailable_fact(fact: Any) -> bool:
     if getattr(fact, "change_pct", None) is not None:
         return False
     payload = getattr(fact, "raw_fact_payload", None) or {}
-    daily_return = (payload.get("dimensionEligibility") or {}).get("DAILY_RETURN") or {}
+    eligibility = payload.get("dimensionEligibility") or {}
+    daily_return = eligibility.get("DAILY_RETURN") or {}
+    comparator = payload.get("comparatorAuthority") or {}
+    if daily_return.get("status") != DimensionStatus.ACCOUNTED_UNAVAILABLE.value:
+        return False
+
+    reason_code = daily_return.get("reasonCode")
+    if reason_code == AUTHORIZED_CORPORATE_ACTION_COMPARATOR_UNAVAILABLE:
+        return True
+    if comparator.get("status") != DimensionStatus.ACCOUNTED_UNAVAILABLE.value:
+        return False
+
+    # Canonical member facts carry the concrete official corporate-action
+    # reason (for example CAPITAL_REDUCTION_TRADING_SUSPENSION), while the
+    # comparator resolver uses the generic reason above.  Accept the concrete
+    # form only when both projections carry the same official authority and
+    # independently verifiable source reference.
+    source = daily_return.get("authoritySource")
+    reference = daily_return.get("sourceReference")
     return (
-        daily_return.get("status") == DimensionStatus.ACCOUNTED_UNAVAILABLE.value
-        and daily_return.get("reasonCode")
-        == AUTHORIZED_CORPORATE_ACTION_COMPARATOR_UNAVAILABLE
+        getattr(fact, "trading_status_observation_id", None) is not None
+        and
+        reason_code
+        and source in _OFFICIAL_CORPORATE_ACTION_SOURCES
+        and source == comparator.get("authoritySource")
+        and reference
+        and reference == comparator.get("sourceReference")
+        and str(reference).startswith(("https://", "http://"))
+        and reason_code == comparator.get("reasonCode")
     )
 
 

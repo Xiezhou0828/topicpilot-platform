@@ -15,6 +15,7 @@ from topicpilot_api.previous_close_authority import (
 def _fact(*, state: str, authorized_unavailable: bool = False):
     return SimpleNamespace(
         instrument_id=uuid4(),
+        trading_status_observation_id=uuid4(),
         fact_identity="fact-identity",
         fact_hash="fact-hash",
         fact_state=state,
@@ -61,6 +62,50 @@ def test_authorized_no_trade_fact_is_the_only_accounted_unavailable_exception():
 
     assert is_authorized_accounted_unavailable_fact(allowed) is True
     assert is_authorized_accounted_unavailable_fact(unknown) is False
+
+
+def test_official_corporate_action_reason_is_accepted_with_matching_provenance():
+    fact = _fact(state="NO_TRADE")
+    fact.raw_fact_payload = {
+        "dimensionEligibility": {
+            "DAILY_RETURN": {
+                "status": DimensionStatus.ACCOUNTED_UNAVAILABLE.value,
+                "reasonCode": "CAPITAL_REDUCTION_TRADING_SUSPENSION",
+                "authoritySource": "TWSE_OFFICIAL_REDUCTION",
+                "sourceReference": "https://www.twse.com.tw/official/6142",
+            }
+        },
+        "comparatorAuthority": {
+            "status": DimensionStatus.ACCOUNTED_UNAVAILABLE.value,
+            "reasonCode": "CAPITAL_REDUCTION_TRADING_SUSPENSION",
+            "authoritySource": "TWSE_OFFICIAL_REDUCTION",
+            "sourceReference": "https://www.twse.com.tw/official/6142",
+        },
+    }
+
+    assert is_authorized_accounted_unavailable_fact(fact) is True
+
+
+def test_official_reason_without_matching_authority_stays_blocked():
+    fact = _fact(state="NO_TRADE")
+    fact.raw_fact_payload = {
+        "dimensionEligibility": {
+            "DAILY_RETURN": {
+                "status": DimensionStatus.ACCOUNTED_UNAVAILABLE.value,
+                "reasonCode": "CAPITAL_REDUCTION_TRADING_SUSPENSION",
+                "authoritySource": "UNVERIFIED_SOURCE",
+                "sourceReference": "https://example.invalid/action",
+            }
+        },
+        "comparatorAuthority": {
+            "status": DimensionStatus.ACCOUNTED_UNAVAILABLE.value,
+            "reasonCode": "CAPITAL_REDUCTION_TRADING_SUSPENSION",
+            "authoritySource": "UNVERIFIED_SOURCE",
+            "sourceReference": "https://example.invalid/action",
+        },
+    }
+
+    assert is_authorized_accounted_unavailable_fact(fact) is False
 
 
 def test_formal_strength_and_lifecycle_gates_accept_authorized_no_trade_member():
