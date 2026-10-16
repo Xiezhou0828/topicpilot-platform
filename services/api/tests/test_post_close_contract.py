@@ -16,6 +16,7 @@ from topicpilot_api.live.post_close import (
     NORMAL_CURRENT_DAY,
     PostClosePreconditionError,
     PostCloseUpdater,
+    _hard_deadline_blocks_price_run,
     _json_safe,
     resolve_post_close_run_date,
 )
@@ -423,6 +424,24 @@ def test_latest_closed_does_not_reuse_legacy_normal_current_day_run():
         )
         is None
     )
+
+
+def test_latest_closed_bypasses_live_hard_deadline_guard():
+    common = {
+        "is_targeted": False,
+        "current_local_time": datetime(2026, 10, 16, 22, 30).time(),
+        "hard_deadline": datetime(2026, 10, 16, 22, 0).time(),
+        "market_batches_ready": False,
+    }
+
+    assert _hard_deadline_blocks_price_run(
+        is_latest_closed=False,
+        **common,
+    ) is True
+    assert _hard_deadline_blocks_price_run(
+        is_latest_closed=True,
+        **common,
+    ) is False
 
 
 def test_history_recovery_checkpoint_namespace_is_distinct_without_schema_change():

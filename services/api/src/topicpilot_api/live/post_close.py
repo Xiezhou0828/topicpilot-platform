@@ -109,6 +109,24 @@ def _execution_scope(execution_mode: str) -> str:
     raise ValueError("invalid POST_CLOSE execution_mode")
 
 
+def _hard_deadline_blocks_price_run(
+    *,
+    is_targeted: bool,
+    is_latest_closed: bool,
+    current_local_time: clock_time,
+    hard_deadline: clock_time,
+    market_batches_ready: bool,
+) -> bool:
+    """Keep the live deadline guard out of explicit completed-session runs."""
+
+    return (
+        not is_targeted
+        and not is_latest_closed
+        and current_local_time >= hard_deadline
+        and not market_batches_ready
+    )
+
+
 def _metadata_execution_scope(metadata: Mapping[str, Any]) -> str:
     recorded = metadata.get("executionScope")
     if recorded in {NORMAL_CURRENT_DAY, HISTORY_RECOVERY}:
@@ -1764,14 +1782,15 @@ class PostCloseUpdater:
                     )
                 )
 
-        if (
-            not is_targeted
-            and local_time(current_now, self.config)
-            >= clock_time.fromisoformat(self.config.hard_deadline)
-            and not (
+        if _hard_deadline_blocks_price_run(
+            is_targeted=is_targeted,
+            is_latest_closed=is_latest_closed,
+            current_local_time=local_time(current_now, self.config),
+            hard_deadline=clock_time.fromisoformat(self.config.hard_deadline),
+            market_batches_ready=(
                 self._market_batches_ready(run_id, market_batches, TWSE_MARKET)
                 and self._market_batches_ready(run_id, market_batches, TPEX_MARKET)
-            )
+            ),
         ):
             return self._finalize_waiting_run(
                 run_id=run_id,
