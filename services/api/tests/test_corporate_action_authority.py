@@ -40,6 +40,29 @@ def test_sanitized_official_twse_reduction_record_is_generic_and_date_effective(
     ) == ()
 
 
+@pytest.mark.parametrize(
+    ("symbol", "market", "effective_date", "resume_date"),
+    [
+        ("6142", "TPE", date(2026, 10, 15), date(2026, 10, 27)),
+        ("6173", "TWO", date(2026, 10, 16), date(2026, 10, 19)),
+    ],
+)
+def test_missing_rows_are_covered_by_official_reduction_authority(
+    symbol: str, market: str, effective_date: date, resume_date: date
+) -> None:
+    records = corporate_action_authorities_for(
+        symbol=symbol, market=market, trading_date=effective_date
+    )
+
+    assert len(records) == 1
+    record = records[0]
+    assert record.status_mapping == MarketAvailability.SUSPENDED.value
+    assert record.source_authority.endswith("_OFFICIAL_REDUCTION")
+    assert corporate_action_authorities_for(
+        symbol=symbol, market=market, trading_date=resume_date
+    ) == ()
+
+
 def test_corporate_action_input_requires_official_provenance_and_safe_dates():
     payload = {
         "symbol": "1234",
