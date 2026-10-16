@@ -23,7 +23,10 @@ from uuid import UUID
 from sqlalchemy import select
 from sqlalchemy.orm import Session, aliased
 
-from topicpilot_api.formal_eligibility import Dimension
+from topicpilot_api.formal_eligibility import (
+    Dimension,
+    is_authorized_accounted_unavailable_fact,
+)
 from topicpilot_api.orm import (
     Instrument,
     Market,
@@ -356,9 +359,13 @@ def _gate(
         return FormalStrengthGate(False, f"SNAPSHOT_DATA_STATUS_{snapshot.data_status}", input_hash)
     if snapshot.stock_count <= 0 or len(facts) != snapshot.stock_count:
         return FormalStrengthGate(False, "FORMAL_MEMBER_COUNT_MISMATCH", input_hash)
-    if any(fact.fact_state != "OBSERVED" for fact in facts):
-        return FormalStrengthGate(False, "FORMAL_MEMBER_OBSERVATION_UNAVAILABLE", input_hash)
     for fact in facts:
+        if fact.fact_state != "OBSERVED":
+            if not is_authorized_accounted_unavailable_fact(fact):
+                return FormalStrengthGate(
+                    False, "FORMAL_MEMBER_OBSERVATION_UNAVAILABLE", input_hash
+                )
+            continue
         if fact.change_pct is not None:
             continue
         eligibility = (fact.raw_fact_payload or {}).get("dimensionEligibility") or {}

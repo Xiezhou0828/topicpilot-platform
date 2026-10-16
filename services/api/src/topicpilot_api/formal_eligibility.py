@@ -12,6 +12,7 @@ from enum import StrEnum
 from typing import Any
 
 from topicpilot_api.previous_close_authority import (
+    AUTHORIZED_CORPORATE_ACTION_COMPARATOR_UNAVAILABLE,
     ComparatorResolution,
     ComparatorStatus,
 )
@@ -35,6 +36,28 @@ class DimensionStatus(StrEnum):
     READY = "READY"
     ACCOUNTED_UNAVAILABLE = "ACCOUNTED_UNAVAILABLE"
     ERROR = "ERROR"
+
+
+def is_authorized_accounted_unavailable_fact(fact: Any) -> bool:
+    """Return whether a formal member fact is an authority-backed no-trade gap.
+
+    A company-action suspension can be covered by the formal universe without
+    fabricating a close or return.  Only the explicit ``NO_TRADE`` fact state
+    with the canonical comparator reason is eligible for this exception;
+    ordinary ``UNKNOWN`` or missing-data facts remain fail-closed.
+    """
+
+    if getattr(fact, "fact_state", None) != "NO_TRADE":
+        return False
+    if getattr(fact, "change_pct", None) is not None:
+        return False
+    payload = getattr(fact, "raw_fact_payload", None) or {}
+    daily_return = (payload.get("dimensionEligibility") or {}).get("DAILY_RETURN") or {}
+    return (
+        daily_return.get("status") == DimensionStatus.ACCOUNTED_UNAVAILABLE.value
+        and daily_return.get("reasonCode")
+        == AUTHORIZED_CORPORATE_ACTION_COMPARATOR_UNAVAILABLE
+    )
 
 
 @dataclass(frozen=True)
@@ -173,5 +196,6 @@ __all__ = [
     "DimensionEligibility",
     "DimensionStatus",
     "dimension_payload",
+    "is_authorized_accounted_unavailable_fact",
     "project_return_dimensions",
 ]
