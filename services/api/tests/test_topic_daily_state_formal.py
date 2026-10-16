@@ -8,6 +8,7 @@ import pytest
 from topicpilot_api.orm import TopicSnapshot, TopicSnapshotMemberFact
 from topicpilot_api.production_read_model import TOPIC_ROWS_SQL
 from topicpilot_api.topic_daily_state import (
+    _PRICE_FACTS_SQL,
     FORMAL_MAPPING_EARLIEST_DATE,
     FormalAuthorityUnavailable,
     MembershipMember,
@@ -18,6 +19,14 @@ from topicpilot_api.topic_daily_state import (
     _snapshot_values,
     resolve_formal_membership,
 )
+
+
+def test_formal_price_fact_query_preserves_previous_close_quality_provenance():
+    """The previous formal close must carry its accepted-quality evidence."""
+
+    assert "co.content_hash, co.quality_state, cp.close, source.source_code" in (
+        _PRICE_FACTS_SQL.text
+    )
 
 
 def test_pre_boundary_membership_is_fail_closed_without_database_access():
