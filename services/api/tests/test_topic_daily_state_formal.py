@@ -8,16 +8,53 @@ import pytest
 from topicpilot_api.orm import TopicSnapshot, TopicSnapshotMemberFact
 from topicpilot_api.production_read_model import TOPIC_ROWS_SQL
 from topicpilot_api.topic_daily_state import (
+    _PRICE_FACTS_SQL,
     FORMAL_MAPPING_EARLIEST_DATE,
     FormalAuthorityUnavailable,
     MembershipMember,
     MembershipSnapshot,
     SelectedMemberFact,
     TopicMaterializationPlan,
+    _effective_member_status,
     _hash_payload,
     _snapshot_values,
     resolve_formal_membership,
 )
+
+
+def test_formal_price_fact_query_preserves_previous_close_quality_provenance():
+    """The previous formal close must carry its accepted-quality evidence."""
+
+    assert "co.content_hash, co.quality_state, cp.close, source.source_code" in (
+        _PRICE_FACTS_SQL.text
+    )
+
+
+@pytest.mark.parametrize(
+    ("symbol", "market", "source"),
+    [
+        ("6142", "TPE", "TWSE_OFFICIAL_REDUCTION"),
+        ("6173", "TWO", "TPEX_OFFICIAL_REDUCTION"),
+    ],
+)
+def test_internal_missing_price_uses_effective_corporate_action_status(
+    symbol: str, market: str, source: str
+):
+    status = {
+        "status_code": "UNKNOWN",
+        "status_reason": "MISSING_MARKET_DATA: no priced bar for active instrument",
+        "source_code": "TPEX_OFFICIAL_DAILY" if market == "TWO" else "TWSE_OFFICIAL_DAILY",
+        "id": uuid4(),
+        "observed_at": datetime(2026, 10, 15, tzinfo=UTC),
+    }
+    resolved = _effective_member_status(
+        MembershipMember(uuid4(), symbol, market, "RELATED", "v1", "BOUNDED"),
+        date(2026, 10, 15),
+        status,
+    )
+    assert resolved[0] == "SUSPENDED"
+    assert resolved[1] == "CAPITAL_REDUCTION_TRADING_SUSPENSION"
+    assert resolved[2] == source
 
 
 def test_pre_boundary_membership_is_fail_closed_without_database_access():

@@ -16,7 +16,7 @@ from zoneinfo import ZoneInfo
 
 from sqlalchemy import and_, or_, select, text
 from sqlalchemy.exc import DBAPIError, IntegrityError, SQLAlchemyError
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, aliased
 
 from topicpilot_api.daily_market import DailyMarketReconciliation, reconcile_daily_market
 from topicpilot_api.formal_strength_publication import FormalStrengthPublisher
@@ -91,6 +91,7 @@ POST_CLOSE_PHASE_MODEL = (
 )
 NORMAL_CURRENT_DAY = "NORMAL_CURRENT_DAY"
 HISTORY_RECOVERY = "HISTORY_RECOVERY"
+LATEST_CLOSED_SESSION = "LATEST_CLOSED_SESSION"
 _CHECKPOINT_BATCH_NUMBERS = {
     "SESSION_VALIDATION": 0,
     "INPUT_READINESS": 1,
@@ -103,9 +104,27 @@ _CHECKPOINT_BATCH_NUMBERS = {
 def _execution_scope(execution_mode: str) -> str:
     if execution_mode == "RECOVERY":
         return HISTORY_RECOVERY
-    if execution_mode in {"SCHEDULED", "MANUAL"}:
+    if execution_mode in {"SCHEDULED", "MANUAL", LATEST_CLOSED_SESSION}:
         return NORMAL_CURRENT_DAY
     raise ValueError("invalid POST_CLOSE execution_mode")
+
+
+def _hard_deadline_blocks_price_run(
+    *,
+    is_targeted: bool,
+    is_latest_closed: bool,
+    current_local_time: clock_time,
+    hard_deadline: clock_time,
+    market_batches_ready: bool,
+) -> bool:
+    """Keep the live deadline guard out of explicit completed-session runs."""
+
+    return (
+        not is_targeted
+        and not is_latest_closed
+        and current_local_time >= hard_deadline
+        and not market_batches_ready
+    )
 
 
 def _metadata_execution_scope(metadata: Mapping[str, Any]) -> str:
@@ -485,7 +504,12 @@ class PostCloseUpdater:
         scope_suffix = (
             "" if target_symbols is None else f":{stable_hash(tuple(target_symbols))[:32]}"
         )
-        prefix = "history-recovery" if execution_scope == HISTORY_RECOVERY else "post-close"
+        if execution_mode == LATEST_CLOSED_SESSION:
+            # The latest closed session is a normal-current-day provider route,
+            # but it must not reuse the scheduled/manual run for the same date.
+            prefix = "latest-closed"
+        else:
+            prefix = "history-recovery" if execution_scope == HISTORY_RECOVERY else "post-close"
         return (
             f"{prefix}:{self.config.reference_data_version}:"
             f"{self.config.calendar_code}:{run_date.isoformat()}:"
@@ -850,6 +874,7 @@ class PostCloseUpdater:
             f"{wanted_run_scope}"
             f"{'' if target_symbols is None else ':' + stable_hash(wanted_symbols)[:32]}"
             if execution_scope == NORMAL_CURRENT_DAY
+            and execution_mode != LATEST_CLOSED_SESSION
             else None
         )
         for run in self._runs_for_date(run_date):
@@ -1300,13 +1325,18 @@ class PostCloseUpdater:
         )
 
     def _stale_after_seconds(self) -> int:
-        """Use the existing bounded provider/worker budget as the lease bound."""
+        """Bound an abandoned lease by the worker heartbeat cadence.
+
+        A cross-scope lease must only block while its owner is still emitting
+        heartbeats.  The full history batch budget can be substantially longer
+        than the heartbeat gap, which would make a dead recovery lease block a
+        later latest-closed run for tens of minutes.
+        """
 
         return max(
             self.config.poll_interval_seconds * 2,
             int(self.config.provider_timeout_seconds)
-            * max(1, self.config.history_batch_size)
-            * (self.config.history_max_retries + 1),
+            * max(1, self.config.history_max_retries + 1),
         )
 
     def _ensure_completed_checkpoint(
@@ -1359,6 +1389,11 @@ class PostCloseUpdater:
                 for run in self._runs_for_date(run_date)
                 if run.status == "RUNNING"
                 and (existing_run is None or run.id != existing_run.id)
+                and self._is_recent_run(
+                    run,
+                    now,
+                    stale_after=self._stale_after_seconds(),
+                )
             ),
             None,
         )
@@ -1501,8 +1536,9 @@ class PostCloseUpdater:
         if allow_terminal_recovery and run_date is None:
             raise ValueError("POST_CLOSE_RECOVERY_REQUIRES_EXPLICIT_RUN_DATE")
         now = self._now()
-        if execution_mode not in {"SCHEDULED", "MANUAL", "RECOVERY"}:
+        if execution_mode not in {"SCHEDULED", "MANUAL", "RECOVERY", LATEST_CLOSED_SESSION}:
             raise ValueError("invalid POST_CLOSE execution_mode")
+        is_latest_closed = execution_mode == LATEST_CLOSED_SESSION
         local_date = resolve_post_close_run_date(
             now,
             self.config.timezone_name,
@@ -1539,7 +1575,7 @@ class PostCloseUpdater:
         eligible_instrument_ids = tuple(instrument.id for instrument, _market in instruments)
         idempotent = (
             None
-            if is_targeted or execution_mode == "RECOVERY"
+            if is_targeted or execution_mode in {"RECOVERY", LATEST_CLOSED_SESSION}
             else self._idempotent_result(local_date)
         )
         if idempotent is not None:
@@ -1660,7 +1696,7 @@ class PostCloseUpdater:
         # until the first market-specific eligibility window.
         current_now = self._now()
         eligible_market_codes = set(eligible_markets(current_now, self.config))
-        if not is_targeted and not eligible_market_codes:
+        if not is_targeted and not is_latest_closed and not eligible_market_codes:
             self._update_publication_stage(
                 run_id,
                 "preflight",
@@ -1711,6 +1747,14 @@ class PostCloseUpdater:
             end_date=local_date,
             exchange_transport=transport,
             market_batch=True,
+            # The current-day path must use the TPEx OpenAPI snapshot, while
+            # an explicit completed session (latest-closed or recovery) must
+            # use the dated official TPEx endpoint.  The snapshot has no
+            # target-date parameter and therefore fails closed with
+            # PROVIDER_DATE_MISMATCH when it is asked to backfill a prior day.
+            tpex_target_date_batch=(
+                is_targeted or execution_mode in {"RECOVERY", LATEST_CLOSED_SESSION}
+            ),
             readiness_max_attempts=self.config.history_readiness_max_attempts,
             readiness_max_total_wait_seconds=self.config.history_readiness_max_total_wait_seconds,
             readiness_backoff_seconds=self.config.history_readiness_backoff_seconds,
@@ -1738,14 +1782,15 @@ class PostCloseUpdater:
                     )
                 )
 
-        if (
-            not is_targeted
-            and local_time(current_now, self.config)
-            >= clock_time.fromisoformat(self.config.hard_deadline)
-            and not (
+        if _hard_deadline_blocks_price_run(
+            is_targeted=is_targeted,
+            is_latest_closed=is_latest_closed,
+            current_local_time=local_time(current_now, self.config),
+            hard_deadline=clock_time.fromisoformat(self.config.hard_deadline),
+            market_batches_ready=(
                 self._market_batches_ready(run_id, market_batches, TWSE_MARKET)
                 and self._market_batches_ready(run_id, market_batches, TPEX_MARKET)
-            )
+            ),
         ):
             return self._finalize_waiting_run(
                 run_id=run_id,
@@ -1762,7 +1807,11 @@ class PostCloseUpdater:
             )
 
         for batch_index, market_code, batch in market_batches:
-            if not is_targeted and market_code not in eligible_market_codes:
+            if (
+                not is_targeted
+                and not is_latest_closed
+                and market_code not in eligible_market_codes
+            ):
                 continue
             market = batch[0][1]
             batch_key = self._checkpoint_key("FORMAL_MARKET_FACTS", f"{market.code}:{batch_index}")
@@ -1771,6 +1820,7 @@ class PostCloseUpdater:
                 continue
             if (
                 not is_targeted
+                and not is_latest_closed
                 and market_code == TPEX_MARKET
                 and previous_checkpoint is not None
                 and not tpex_retry_window_open(current_now, self.config)
@@ -2113,12 +2163,48 @@ class PostCloseUpdater:
             failure_codes.append(twse_safe_failure)
 
         tpex_ready = self._market_batches_ready(run_id, market_batches, TPEX_MARKET)
-        both_markets_eligible = is_targeted or TPEX_MARKET in eligible_market_codes
+        both_markets_eligible = (
+            is_targeted or is_latest_closed or TPEX_MARKET in eligible_market_codes
+        )
+
+        # A provider batch can be PARTIAL when an instrument is legitimately
+        # unavailable (for example, an exchange-authorized capital-reduction
+        # suspension).  Resolve those missing-price candidates before applying
+        # the provider wait gate; otherwise the gate returns early and the
+        # status-authority evidence can never unlock the Formal chain.
+        bounded_status_resolution = self._resolve_missing_statuses(
+            run_id=run_id,
+            trading_date=local_date,
+            candidates=status_resolution_candidates,
+        )
+        if bounded_status_resolution is not None:
+            legitimate_count = bounded_status_resolution.metrics.legitimate_unavailable_count
+            success_count += legitimate_count
+            skipped_count = max(0, skipped_count - legitimate_count)
+            if legitimate_count:
+                failure_codes = [code for code in failure_codes if code != "MISSING_MARKET_DATA"]
+
+        coverage_after_status_resolution = reconcile_daily_market(
+            self.session,
+            local_date,
+            expected_instrument_ids=eligible_instrument_ids,
+            status_resolutions=getattr(self, "_status_resolution_by_instrument_id", {}),
+        )
         stage_wait_reasons = list(waiting_reason_codes)
         if not both_markets_eligible and not is_targeted:
             stage_wait_reasons.append("WAITING_TPEX_WINDOW")
-        elif not tpex_ready and not is_targeted:
+        elif (
+            not tpex_ready
+            and not coverage_after_status_resolution.downstream_ready
+            and not is_targeted
+        ):
             stage_wait_reasons.append("TPEX_DATA_NOT_READY")
+
+        # Once the canonical reconciliation is downstream-ready, transient
+        # provider-lag reasons are superseded by the explicit status authority
+        # evidence.  Keep the normal market-window gate above intact.
+        if both_markets_eligible and coverage_after_status_resolution.downstream_ready:
+            stage_wait_reasons = []
 
         if stage_wait_reasons and not is_targeted:
             twse_stage_ready = self._market_batches_ready(
@@ -2169,18 +2255,6 @@ class PostCloseUpdater:
                 ),
                 snapshot_status="WAITING_FOR_TPEX",
             )
-
-        bounded_status_resolution = self._resolve_missing_statuses(
-            run_id=run_id,
-            trading_date=local_date,
-            candidates=status_resolution_candidates,
-        )
-        if bounded_status_resolution is not None:
-            legitimate_count = bounded_status_resolution.metrics.legitimate_unavailable_count
-            success_count += legitimate_count
-            skipped_count = max(0, skipped_count - legitimate_count)
-            if legitimate_count:
-                failure_codes = [code for code in failure_codes if code != "MISSING_MARKET_DATA"]
 
         if is_targeted:
             return self._finalize_targeted_run(
@@ -3413,7 +3487,13 @@ class PostCloseUpdater:
 
         now = self._now()
         current = local_time(now, self.config)
-        if current < clock_time.fromisoformat(self.config.late_data_target):
+        current_local_date = now.astimezone(
+            ZoneInfo(self.config.timezone_name)
+        ).date()
+        if (
+            local_date >= current_local_date
+            and current < clock_time.fromisoformat(self.config.late_data_target)
+        ):
             next_target = f"{local_date.isoformat()}T{self.config.late_data_target}:00"
             self._checkpoint_event(
                 run_id=run_id,
@@ -3547,6 +3627,7 @@ class PostCloseUpdater:
         return (snapshot_result.get("formalStrengthReadback") or {}).get("status") == "PASS"
 
     def _formal_snapshot_readback(self, snapshot_date: date) -> dict[str, Any]:
+        successor = aliased(TopicSnapshot)
         rows = self.session.scalars(
             select(TopicSnapshot).where(
                 TopicSnapshot.snapshot_date == snapshot_date,
@@ -3557,6 +3638,9 @@ class PostCloseUpdater:
                 TopicSnapshot.finality_state == "FINAL",
                 TopicSnapshot.publication_state == "PUBLISHED",
                 TopicSnapshot.superseded_by_snapshot_id.is_(None),
+                ~select(successor.id)
+                .where(successor.supersedes_snapshot_id == TopicSnapshot.id)
+                .exists(),
             )
         ).all()
         topic_ids = [row.topic_id for row in rows]

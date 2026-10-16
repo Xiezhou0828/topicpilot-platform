@@ -17,7 +17,11 @@ from topicpilot_api.live.daily_forward import DailyForwardRunner
 from topicpilot_api.live.logging import log_event
 from topicpilot_api.live.orchestrator import PersistentQuoteWorker
 from topicpilot_api.live.persistence import LiveRepository
-from topicpilot_api.live.post_close import PostClosePreconditionError, PostCloseUpdater
+from topicpilot_api.live.post_close import (
+    LATEST_CLOSED_SESSION,
+    PostClosePreconditionError,
+    PostCloseUpdater,
+)
 from topicpilot_api.live.scheduler import LiveScheduler, decide_runtime_mode
 from topicpilot_api.live.session import MarketSessionClock
 from topicpilot_api.market_data.registry import build_live_provider_router
@@ -55,6 +59,15 @@ def build_parser() -> argparse.ArgumentParser:
         help=(
             "override the official POST_CLOSE trading date (ISO date; "
             "required for targeted symbols)"
+        ),
+    )
+    parser.add_argument(
+        "--latest-closed",
+        action="store_true",
+        help=(
+            "run the normal official close-data chain for the latest completed "
+            "trading session, independent of the current clock window; "
+            "combine with --run-date for an explicit completed session"
         ),
     )
     parser.add_argument(
@@ -126,6 +139,12 @@ def main(argv: list[str] | None = None) -> int:
         raise SystemExit("--recover requires --run-date YYYY-MM-DD")
     if args.recover and args.mode != "post-close":
         raise SystemExit("--recover requires --mode post-close")
+    if args.latest_closed and args.mode not in {"post-close", "daily-forward"}:
+        raise SystemExit("--latest-closed requires --mode post-close or --mode daily-forward")
+    if args.latest_closed and not args.once:
+        raise SystemExit("--latest-closed requires --once")
+    if args.latest_closed and (args.recover or args.symbols is not None):
+        raise SystemExit("--latest-closed cannot be combined with recovery or symbols")
     logging.basicConfig(level=logging.INFO, format="%(message)s")
     config = LiveRuntimeConfig.from_environment()
     scheduler_clock = MarketSessionClock(
@@ -159,7 +178,13 @@ def main(argv: list[str] | None = None) -> int:
         post_close = PostCloseUpdater(session, config)
         daily_forward = DailyForwardRunner(session, config, updater=post_close)
         worker = PersistentQuoteWorker(provider_router, config=config)
-        if args.recover or args.symbols is not None:
+        if args.latest_closed:
+            def post_close_runner() -> object:
+                return daily_forward.run_once(
+                    run_date=args.run_date,
+                    execution_mode=LATEST_CLOSED_SESSION,
+                )
+        elif args.recover or args.symbols is not None:
             def post_close_runner() -> object:
                 return post_close.run_once(
                     run_date=args.run_date,

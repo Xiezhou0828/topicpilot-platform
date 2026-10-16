@@ -12,9 +12,11 @@ from topicpilot_api.instrument_universe import InstrumentLifecycle, InstrumentUn
 from topicpilot_api.live.cli import _symbols_argument, build_parser
 from topicpilot_api.live.post_close import (
     HISTORY_RECOVERY,
+    LATEST_CLOSED_SESSION,
     NORMAL_CURRENT_DAY,
     PostClosePreconditionError,
     PostCloseUpdater,
+    _hard_deadline_blocks_price_run,
     _json_safe,
     resolve_post_close_run_date,
 )
@@ -85,6 +87,34 @@ def test_targeted_symbol_argument_accepts_codes_and_market_qualified_codes():
         ]
     )
     assert args.symbols == ("1584", "TWO:6129")
+
+
+def test_latest_closed_cli_mode_is_explicit_and_not_recovery():
+    args = build_parser().parse_args(
+        ["--mode", "post-close", "--once", "--latest-closed"]
+    )
+
+    assert args.latest_closed is True
+    assert args.recover is False
+    assert args.run_date is None
+    assert LATEST_CLOSED_SESSION == "LATEST_CLOSED_SESSION"
+
+
+def test_latest_closed_cli_mode_accepts_an_explicit_completed_session():
+    args = build_parser().parse_args(
+        [
+            "--mode",
+            "post-close",
+            "--once",
+            "--latest-closed",
+            "--run-date",
+            "2026-10-15",
+        ]
+    )
+
+    assert args.latest_closed is True
+    assert args.run_date == date(2026, 10, 15)
+    assert args.recover is False
 
 
 @pytest.mark.parametrize("value", ["", ":1584", "TWO:", "TWO:15:84"])
@@ -362,6 +392,56 @@ def test_post_close_execution_key_is_session_and_scope_bound():
         "HISTORY_RECOVERY:FULL"
     )
     assert recovery != full
+    latest_closed = updater._execution_key(
+        date(2026, 9, 3), execution_mode=LATEST_CLOSED_SESSION
+    )
+    assert latest_closed == (
+        "latest-closed:tw-reference-v1:TW_MARKET:2026-09-03:"
+        "NORMAL_CURRENT_DAY:FULL"
+    )
+    assert latest_closed != full
+    assert latest_closed != recovery
+
+
+def test_latest_closed_does_not_reuse_legacy_normal_current_day_run():
+    updater = PostCloseUpdater.__new__(PostCloseUpdater)
+    updater.config = SimpleNamespace(
+        reference_data_version="tw-reference-v1",
+        calendar_code="TW_MARKET",
+    )
+    legacy_normal_run = SimpleNamespace(
+        metadata_payload={
+            "executionKey": "post-close:tw-reference-v1:TW_MARKET:2026-09-03:FULL",
+            "executionScope": NORMAL_CURRENT_DAY,
+            "scope": "FULL",
+        }
+    )
+    updater._runs_for_date = lambda _run_date: [legacy_normal_run]
+
+    assert (
+        updater._find_existing_run(
+            date(2026, 9, 3), execution_mode=LATEST_CLOSED_SESSION
+        )
+        is None
+    )
+
+
+def test_latest_closed_bypasses_live_hard_deadline_guard():
+    common = {
+        "is_targeted": False,
+        "current_local_time": datetime(2026, 10, 16, 22, 30).time(),
+        "hard_deadline": datetime(2026, 10, 16, 22, 0).time(),
+        "market_batches_ready": False,
+    }
+
+    assert _hard_deadline_blocks_price_run(
+        is_latest_closed=False,
+        **common,
+    ) is True
+    assert _hard_deadline_blocks_price_run(
+        is_latest_closed=True,
+        **common,
+    ) is False
 
 
 def test_history_recovery_checkpoint_namespace_is_distinct_without_schema_change():

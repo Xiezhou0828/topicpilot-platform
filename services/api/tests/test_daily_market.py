@@ -124,6 +124,45 @@ def test_twse_corporate_action_is_consumed_by_unavailable_read_model(trade_date)
     assert result[0].last_valid_close is None
 
 
+@pytest.mark.parametrize(
+    ("symbol", "market", "trade_date", "source"),
+    [
+        ("6142", "TPE", date(2026, 10, 15), "TWSE_OFFICIAL_REDUCTION"),
+        ("6173", "TWO", date(2026, 10, 15), "TPEX_OFFICIAL_REDUCTION"),
+    ],
+)
+def test_20261015_reduction_rows_are_legitimate_unavailable(
+    symbol: str, market: str, trade_date: date, source: str
+) -> None:
+    result = build_unavailable_instruments(
+        [
+            {
+                "instrument_id": f"instrument-{symbol}",
+                "symbol": symbol,
+                "name": symbol,
+                "market": market,
+                "close": None,
+                "status_observation_id": None,
+                "status_source": None,
+                "status_code": None,
+                "status_reason": None,
+                "source_code": source.replace("_REDUCTION", "_DAILY"),
+                "last_valid_price_date": None,
+                "last_valid_close": None,
+                "formal_topic_membership_count": 1,
+                "affected_topic_slugs": [],
+            }
+        ],
+        trade_date=trade_date,
+    )
+
+    assert len(result) == 1
+    assert result[0].status == "SUSPENDED"
+    assert result[0].source == source
+    assert result[0].is_legitimate_unavailable is True
+    assert result[0].blocks_formal_publication is False
+
+
 def test_date_or_stable_key_conflict_blocks_handoff():
     result = assess_daily_coverage(
         trade_date=date(2026, 8, 12),

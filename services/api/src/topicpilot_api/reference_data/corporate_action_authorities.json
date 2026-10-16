@@ -16,6 +16,32 @@
       "publishedAt": "2026-09-22T00:00:00+08:00",
       "reductionRatioPct": "16.2949753",
       "expectedClose": false
+    },
+    {
+      "symbol": "6142",
+      "market": "TPE",
+      "actionType": "CAPITAL_REDUCTION_SHARE_EXCHANGE",
+      "effectiveFrom": "2026-10-15",
+      "effectiveTo": "2026-10-26",
+      "resumeDate": "2026-10-27",
+      "sourceAuthority": "TWSE_OFFICIAL_REDUCTION",
+      "sourceReference": "https://wwwc.twse.com.tw/zh/announcement/announcement/detail.html?5E8AEB36BC8211F19A80005056BE3760",
+      "statusMapping": "SUSPENDED",
+      "reasonCode": "CAPITAL_REDUCTION_TRADING_SUSPENSION",
+      "expectedClose": false
+    },
+    {
+      "symbol": "6173",
+      "market": "TWO",
+      "actionType": "CAPITAL_REDUCTION_SHARE_EXCHANGE",
+      "effectiveFrom": "2026-10-07",
+      "effectiveTo": "2026-10-16",
+      "resumeDate": "2026-10-19",
+      "sourceAuthority": "TPEX_OFFICIAL_REDUCTION",
+      "sourceReference": "https://www.tpex.org.tw/www/zh-tw/bulletin/revivt",
+      "statusMapping": "SUSPENDED",
+      "reasonCode": "CAPITAL_REDUCTION_TRADING_SUSPENSION",
+      "expectedClose": false
     }
   ]
 }

@@ -5,7 +5,11 @@ from types import SimpleNamespace
 
 from topicpilot_api.live.config import LiveRuntimeConfig
 from topicpilot_api.live.daily_forward import DailyForwardRunner
-from topicpilot_api.live.post_close import PostCloseRunResult, PostCloseUpdater
+from topicpilot_api.live.post_close import (
+    LATEST_CLOSED_SESSION,
+    PostCloseRunResult,
+    PostCloseUpdater,
+)
 from topicpilot_api.live.session import MarketSessionClock
 
 
@@ -78,6 +82,17 @@ def test_daily_forward_waits_until_configured_post_close_start():
     assert result.target_date == date(2026, 8, 28)
     assert result.next_session_date == date(2026, 8, 31)
     assert updater.calls == []
+
+
+def test_latest_closed_session_runs_before_current_day_post_close_window():
+    runner, updater = _runner(datetime(2026, 10, 15, 20, 0, tzinfo=UTC))
+
+    result = runner.run_once(execution_mode=LATEST_CLOSED_SESSION)
+
+    assert result.status == "SUCCESS"
+    assert result.target_date == date(2026, 10, 15)
+    assert result.replay is True
+    assert updater.calls == [(date(2026, 10, 15), LATEST_CLOSED_SESSION)]
 
 
 def test_daily_forward_uses_inclusive_1345_asia_taipei_boundary():
@@ -237,3 +252,70 @@ def test_formal_snapshot_gate_requires_published_pit_readback():
 
     assert PostCloseUpdater._formal_snapshot_ready(ready) is True
     assert PostCloseUpdater._formal_snapshot_ready(blocked) is False
+
+
+class RollbackSession:
+    def __init__(self):
+        self.rollback_calls = 0
+
+    def rollback(self):
+        self.rollback_calls += 1
+
+
+def _failing_context(_session, **_kwargs):
+    raise RuntimeError("first database error")
+
+
+def test_daily_forward_rolls_back_shared_session_on_target_preflight_failure():
+    session = RollbackSession()
+    config = LiveRuntimeConfig()
+    updater = FakeUpdater(config)
+    runner = DailyForwardRunner(
+        session,
+        config,
+        clock=lambda: datetime(2026, 8, 31, 9, 0, tzinfo=UTC),
+        updater=updater,
+        context_loader=_failing_context,
+    )
+
+    result = runner.run_once(
+        run_date=date(2026, 8, 31),
+        execution_mode="SCHEDULED",
+    )
+
+    assert result.status == "BLOCKED"
+    assert result.reason_codes == ("REFERENCE_PREFLIGHT_RuntimeError",)
+    assert session.rollback_calls == 1
+
+
+def test_daily_forward_rolls_back_shared_session_on_next_session_preflight_failure():
+    session = RollbackSession()
+    config = LiveRuntimeConfig()
+    runner = DailyForwardRunner(
+        session,
+        config,
+        updater=FakeUpdater(config),
+        context_loader=_failing_context,
+    )
+
+    assert runner._next_session(date(2026, 8, 31)) is None
+    assert session.rollback_calls == 1
+
+
+def test_daily_forward_rolls_back_shared_session_on_latest_closed_preflight_failure():
+    session = RollbackSession()
+    config = LiveRuntimeConfig()
+    runner = DailyForwardRunner(
+        session,
+        config,
+        updater=FakeUpdater(config),
+        context_loader=_failing_context,
+    )
+
+    next_session, reasons = runner._latest_closed_session(
+        datetime(2026, 8, 31, 9, 0, tzinfo=UTC)
+    )
+
+    assert next_session is None
+    assert reasons == ("REFERENCE_PREFLIGHT_RuntimeError",)
+    assert session.rollback_calls == 1
