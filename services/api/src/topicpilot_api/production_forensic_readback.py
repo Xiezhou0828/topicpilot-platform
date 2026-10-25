@@ -722,6 +722,8 @@ def _connection_failure_class(exc: Exception) -> str:
         return "AUTHENTICATION_FAILED"
     if "ssl" in message or "certificate" in message:
         return "SSL_FAILED"
+    if "no pg_hba.conf entry" in message or "not allowed to connect" in message:
+        return "NETWORK_ACCESS_REJECTED"
     if (
         "could not translate host name" in message
         or "name or service not known" in message
@@ -729,6 +731,16 @@ def _connection_failure_class(exc: Exception) -> str:
         or "temporary failure in name resolution" in message
     ):
         return "DNS_FAILED"
+    if "database" in message and "does not exist" in message:
+        return "DATABASE_NOT_FOUND"
+    if "role" in message and "does not exist" in message:
+        return "ROLE_NOT_FOUND"
+    if "connection refused" in message:
+        return "CONNECTION_REFUSED"
+    if "timed out" in message or "timeout expired" in message:
+        return "CONNECTION_TIMEOUT"
+    if "connection reset" in message or "server closed the connection" in message:
+        return "CONNECTION_TERMINATED"
     if "invalid dsn" in message or "malformed" in message or "no such file" in message:
         return "CONNECTION_FAILED"
     return "OTHER_CONNECTION_FAILED"
@@ -1259,6 +1271,11 @@ def read_post_close_date(
             diagnostics={
                 "failureStage": failure_stage,
                 "sqlState": _safe_sqlstate(exc),
+                "failureClass": (
+                    _connection_failure_class(exc)
+                    if failure_stage == "DATABASE_CONNECT"
+                    else None
+                ),
             },
         ) from exc
     finally:
@@ -1386,7 +1403,7 @@ def main(argv: list[str] | None = None) -> int:
         safe_diagnostics = {
             key: value
             for key, value in exc.diagnostics.items()
-            if key in {"failureStage", "sqlState"} and value is not None
+            if key in {"failureStage", "sqlState", "failureClass"} and value is not None
         }
         print(
             json.dumps(
