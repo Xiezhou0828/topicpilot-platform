@@ -20,6 +20,7 @@ from topicpilot_api.production_forensic_readback import (
     RUN_QUERY,
     UNAVAILABLE_ATTEMPT_QUERY,
     ForensicReadbackError,
+    _connection_failure_class,
     _read_only_identity,
     _safe_attempt,
     _safe_checkpoint,
@@ -130,6 +131,27 @@ def test_sqlstate_diagnostic_is_safe_and_strictly_validated() -> None:
         orig = InvalidDriverError("sensitive detail")
 
     assert _safe_sqlstate(InvalidWrappedError()) is None
+
+
+@pytest.mark.parametrize(
+    ("message", "expected"),
+    [
+        ("password authentication failed", "AUTHENTICATION_FAILED"),
+        ("certificate verify failed", "SSL_FAILED"),
+        ("could not translate host name", "DNS_FAILED"),
+        ("no pg_hba.conf entry for host", "NETWORK_ACCESS_REJECTED"),
+        ("database target does not exist", "DATABASE_NOT_FOUND"),
+        ("role target does not exist", "ROLE_NOT_FOUND"),
+        ("connection refused", "CONNECTION_REFUSED"),
+        ("connection timed out", "CONNECTION_TIMEOUT"),
+        ("server closed the connection unexpectedly", "CONNECTION_TERMINATED"),
+        ("unclassified driver detail", "OTHER_CONNECTION_FAILED"),
+    ],
+)
+def test_connection_failure_class_never_returns_driver_text(
+    message: str, expected: str
+) -> None:
+    assert _connection_failure_class(Exception(message)) == expected
 
 
 def test_grouped_result_formation_is_deterministic() -> None:
