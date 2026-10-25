@@ -337,7 +337,7 @@ def _minimal(code: str, status: str, note: str) -> CompanyResearchV4PublicRespon
     )  # type: ignore[arg-type]
 
 
-class FileCompanyResearchV4ReadStore:
+class FileCompanyProfileV4ReadStore:
     """Read-only adapter for owner-approved V4 files; never mutates source files."""
 
     def __init__(self, path: str | None) -> None:
@@ -418,4 +418,4 @@ class FileCompanyResearchV4ReadStore:
             return _minimal(code, "BLOCKED", "研究資料欄位未符合公開契約; 暫不公開。")
 
 
-__all__ = ["FileCompanyResearchV4ReadStore"]
+__all__ = ["FileCompanyProfileV4ReadStore"]

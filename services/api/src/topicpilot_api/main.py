@@ -10,6 +10,8 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from topicpilot_api.admin import router as admin_router
+from topicpilot_api.company_profile_v4.api import router as company_research_v4_router
+from topicpilot_api.company_profile_v4.store import FileCompanyProfileV4ReadStore
 from topicpilot_api.config import Settings, get_settings
 from topicpilot_api.constants import STRATEGY_HORIZONS, STRATEGY_KEYS
 from topicpilot_api.database import get_db
@@ -32,8 +34,6 @@ from topicpilot_api.repository import (
     strategy_performance,
     topic_rotation,
 )
-from topicpilot_api.research_package_v4.api import router as company_research_v4_router
-from topicpilot_api.research_package_v4.store import FileCompanyResearchV4ReadStore
 from topicpilot_api.schemas import (
     CandidateResponse,
     DataStatus,
@@ -76,8 +76,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         ),
     )
     application.state.settings = app_settings
-    application.state.company_research_v4_read_store = FileCompanyResearchV4ReadStore(
-        app_settings.research_package_v4_read_model_path
+    application.state.company_profile_v4_read_store = FileCompanyProfileV4ReadStore(
+        app_settings.company_profile_v4_read_model_path
     )
     application.add_middleware(
         CORSMiddleware,

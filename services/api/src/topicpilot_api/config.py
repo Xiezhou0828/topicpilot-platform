@@ -39,9 +39,9 @@ class Settings(BaseSettings):
         validation_alias="FORWARD_OBSERVATION_DIR",
         description="Authorized diagnostic JSON artifact store; no database schema is implied.",
     )
-    research_package_v4_read_model_path: str | None = Field(
+    company_profile_v4_read_model_path: str | None = Field(
         default=None,
-        validation_alias="RESEARCH_PACKAGE_V4_READ_MODEL_PATH",
+        validation_alias="COMPANY_PROFILE_V4_READ_MODEL_PATH",
         description=(
             "Optional read-only path to owner-approved Company Research V4 packages; "
             "this projection is not stock-master or Topic authority."

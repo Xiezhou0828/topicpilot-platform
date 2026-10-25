@@ -24,7 +24,7 @@ Topic relations, the reference universe, or market-data collection is ready.
 
 ## Runtime configuration
 
-Set `RESEARCH_PACKAGE_V4_READ_MODEL_PATH` to either one package file or a
+Set `COMPANY_PROFILE_V4_READ_MODEL_PATH` to either one package file or a
 read-only directory containing stock subdirectories with
 `research_package.json` files. When the setting is absent or the path has no
 matching package, the route returns `NOT_CONNECTED`; the UI does not substitute

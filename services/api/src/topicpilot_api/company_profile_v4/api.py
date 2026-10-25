@@ -3,10 +3,10 @@ from __future__ import annotations
 from fastapi import APIRouter, Request
 
 from .contract import CompanyResearchV4PublicResponse
-from .store import FileCompanyResearchV4ReadStore
+from .store import FileCompanyProfileV4ReadStore
 
 router = APIRouter(prefix="/api/v2", tags=["company-research-v4"])
-_EMPTY_STORE = FileCompanyResearchV4ReadStore(None)
+_EMPTY_STORE = FileCompanyProfileV4ReadStore(None)
 
 
 @router.get(
@@ -15,7 +15,7 @@ _EMPTY_STORE = FileCompanyResearchV4ReadStore(None)
     summary="Read owner-approved Company Research V4 projection",
 )
 def company_research_v4(symbol: str, request: Request) -> CompanyResearchV4PublicResponse:
-    store = getattr(request.app.state, "company_research_v4_read_store", _EMPTY_STORE)
+    store = getattr(request.app.state, "company_profile_v4_read_store", _EMPTY_STORE)
     return store.get_public(symbol)
 
 

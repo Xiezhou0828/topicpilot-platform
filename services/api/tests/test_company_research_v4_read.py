@@ -5,9 +5,9 @@ import json
 
 from fastapi.testclient import TestClient
 
+from topicpilot_api.company_profile_v4.store import FileCompanyProfileV4ReadStore
 from topicpilot_api.config import Settings
 from topicpilot_api.main import create_app
-from topicpilot_api.research_package_v4.store import FileCompanyResearchV4ReadStore
 
 
 def package(*, owner_status: str = "APPROVED") -> dict:
@@ -126,7 +126,7 @@ def test_public_projection_is_allowlisted_and_keeps_numeric_values(tmp_path) -> 
     path = tmp_path / "research_package.json"
     path.write_text(json.dumps(package()), encoding="utf-8")
 
-    result = FileCompanyResearchV4ReadStore(str(path)).get_public("2468")
+    result = FileCompanyProfileV4ReadStore(str(path)).get_public("2468")
     payload = result.model_dump(by_alias=True, mode="json")
     encoded = json.dumps(payload, ensure_ascii=False)
 
@@ -153,7 +153,7 @@ def test_unapproved_package_returns_no_research_content(tmp_path) -> None:
     path = tmp_path / "research_package.json"
     path.write_text(json.dumps(package(owner_status="PENDING")), encoding="utf-8")
 
-    result = FileCompanyResearchV4ReadStore(str(path)).get_public("2468")
+    result = FileCompanyProfileV4ReadStore(str(path)).get_public("2468")
 
     assert result.publication_status == "UNPUBLISHED"
     assert result.overview_data is None
@@ -167,14 +167,14 @@ def test_content_changed_after_owner_hash_approval_is_blocked(tmp_path) -> None:
     path = tmp_path / "research_package.json"
     path.write_text(json.dumps(approved), encoding="utf-8")
 
-    result = FileCompanyResearchV4ReadStore(str(path)).get_public("2468")
+    result = FileCompanyProfileV4ReadStore(str(path)).get_public("2468")
 
     assert result.publication_status == "BLOCKED"
     assert result.overview_data is None
 
 
 def test_missing_and_duplicate_packages_fail_closed(tmp_path) -> None:
-    store = FileCompanyResearchV4ReadStore(str(tmp_path))
+    store = FileCompanyProfileV4ReadStore(str(tmp_path))
     assert store.get_public("2468").publication_status == "NOT_CONNECTED"
 
     (tmp_path / "first" / "research_package.json").parent.mkdir()
@@ -194,7 +194,7 @@ def test_read_endpoint_is_get_only_and_fail_closed(tmp_path) -> None:
     app = create_app(
         Settings(
             database_url="sqlite+pysqlite:///:memory:",
-            research_package_v4_read_model_path=str(path),
+            company_profile_v4_read_model_path=str(path),
         )
     )
 
