@@ -2,7 +2,7 @@
 
 ## Purpose and boundary
 
-`stock-add-authority-readback.yml` is a manually dispatched, Owner-reviewed,
+`stock-add-authority-readback.yml` is a manually dispatched, Owner-approved,
 read-only path for the live `topicpilot.instruments` and Topic catalog. It
 exists because the public Render API identifies its public dataset as
 synthetic, while the maintenance workbook is a timestamped review bridge and
@@ -56,8 +56,8 @@ target identity fails closed. These expected values and the connection secret
 must be provisioned from the authorized Production database configuration; do
 not copy them from a local/test connection.
 
-Create the `production-catalog-readonly` Environment with at least one
-required Owner reviewer, self-review disabled, and an explicit custom
+Create the `production-catalog-readonly` Environment with the Owner as a
+required reviewer, self-review allowed for a solo creator, and an explicit custom
 deployment branch allow-list containing only canonical `main`. The workflow verifies that exact setting and
 also allows dispatch from `main` only. Its first job checks that this
 Environment already exists and has the required safeguards without referencing

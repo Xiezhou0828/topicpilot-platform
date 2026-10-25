@@ -117,6 +117,147 @@
         "title": "CandidateResponse",
         "type": "object"
       },
+      "CompanyResearchV4PublicResponse": {
+        "additionalProperties": false,
+        "description": "Explicit public envelope; evidence ledgers and authority IDs are excluded.",
+        "properties": {
+          "contractVersion": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Contractversion"
+          },
+          "displayName": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Displayname"
+          },
+          "finance": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Finance"
+          },
+          "investmentThemes": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Investmentthemes",
+            "type": "array"
+          },
+          "limitationsZhTw": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Limitationszhtw",
+            "type": "array"
+          },
+          "operatingMatrix": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Operatingmatrix",
+            "type": "array"
+          },
+          "overviewData": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Overviewdata"
+          },
+          "packageVersion": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Packageversion"
+          },
+          "publicationStatus": {
+            "enum": [
+              "PUBLISHED",
+              "UNPUBLISHED",
+              "NOT_CONNECTED",
+              "BLOCKED"
+            ],
+            "title": "Publicationstatus",
+            "type": "string"
+          },
+          "researchAsOf": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Researchasof"
+          },
+          "researchGovernance": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Researchgovernance"
+          },
+          "sections": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sections"
+          },
+          "stockCode": {
+            "title": "Stockcode",
+            "type": "string"
+          }
+        },
+        "required": [
+          "stockCode",
+          "publicationStatus"
+        ],
+        "title": "CompanyResearchV4PublicResponse",
+        "type": "object"
+      },
       "Constituent": {
         "properties": {
           "code": {
@@ -3698,6 +3839,7 @@
           "buy": {
             "anyOf": [
               {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
                 "type": "string"
               },
               {
@@ -3709,6 +3851,7 @@
           "net": {
             "anyOf": [
               {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
                 "type": "string"
               },
               {
@@ -3731,6 +3874,7 @@
           "sell": {
             "anyOf": [
               {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
                 "type": "string"
               },
               {
@@ -3757,6 +3901,7 @@
           "value": {
             "anyOf": [
               {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
                 "type": "string"
               },
               {
@@ -3786,6 +3931,7 @@
           "dealerNet": {
             "anyOf": [
               {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
                 "type": "string"
               },
               {
@@ -3797,6 +3943,7 @@
           "foreignNet": {
             "anyOf": [
               {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
                 "type": "string"
               },
               {
@@ -3808,6 +3955,7 @@
           "investmentTrustNet": {
             "anyOf": [
               {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
                 "type": "string"
               },
               {
@@ -3838,6 +3986,7 @@
           "totalNet": {
             "anyOf": [
               {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
                 "type": "string"
               },
               {
@@ -4177,6 +4326,7 @@
           "flowNet": {
             "anyOf": [
               {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
                 "type": "string"
               },
               {
@@ -4188,6 +4338,7 @@
           "indexChange": {
             "anyOf": [
               {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
                 "type": "string"
               },
               {
@@ -7911,6 +8062,7 @@
           "value": {
             "anyOf": [
               {
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
                 "type": "string"
               },
               {
@@ -13768,6 +13920,48 @@
         "summary": "Read bounded canonical daily price history",
         "tags": [
           "production-read-model"
+        ]
+      }
+    },
+    "/api/v2/stocks/{symbol}/research-v4": {
+      "get": {
+        "operationId": "company_research_v4_api_v2_stocks__symbol__research_v4_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "symbol",
+            "required": true,
+            "schema": {
+              "title": "Symbol",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompanyResearchV4PublicResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Read owner-approved Company Research V4 projection",
+        "tags": [
+          "company-research-v4"
         ]
       }
     },

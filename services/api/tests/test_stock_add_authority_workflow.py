@@ -22,8 +22,8 @@ def test_unconfigured_environment_fails_before_any_environment_job_can_start() -
     assert not re.search(r"(?m)^\s+environment:", preflight)
     assert '"$GITHUB_REF" == "refs/heads/main"' in preflight
     assert 'rule.get("type") == "required_reviewers"' in preflight
-    assert 'rule.get("prevent_self_review") is True' in preflight
-    assert "prevent self-review" in preflight
+    assert 'rule.get("prevent_self_review") is False' in preflight
+    assert "allow that Owner to self-approve" in preflight
     assert 'names != ["main"]' in preflight
     assert "needs: validate_environment" in readback
     assert "environment: production-catalog-readonly" in readback

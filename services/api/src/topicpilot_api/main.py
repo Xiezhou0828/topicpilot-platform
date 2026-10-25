@@ -32,6 +32,8 @@ from topicpilot_api.repository import (
     strategy_performance,
     topic_rotation,
 )
+from topicpilot_api.research_package_v4.api import router as company_research_v4_router
+from topicpilot_api.research_package_v4.store import FileCompanyResearchV4ReadStore
 from topicpilot_api.schemas import (
     CandidateResponse,
     DataStatus,
@@ -74,6 +76,9 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         ),
     )
     application.state.settings = app_settings
+    application.state.company_research_v4_read_store = FileCompanyResearchV4ReadStore(
+        app_settings.research_package_v4_read_model_path
+    )
     application.add_middleware(
         CORSMiddleware,
         allow_origins=list(app_settings.cors_origins),
@@ -87,6 +92,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     application.include_router(topic_catalog_router)
     application.include_router(recommendation_router)
     application.include_router(production_read_model_router)
+    application.include_router(company_research_v4_router)
     application.include_router(topic_snapshot_router)
     application.include_router(opportunity_shadow_router)
     application.include_router(live_router)
