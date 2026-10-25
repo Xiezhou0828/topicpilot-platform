@@ -14,6 +14,106 @@ export type StockApiRelation = components["schemas"]["StockTopicRelationRead"];
 export type StockHistoryRead = components["schemas"]["HistoricalPriceHistoryResponse"];
 export type StockHistoryPoint = components["schemas"]["HistoricalPricePoint"];
 
+export type CompanyResearchV4 = {
+  stockCode: string;
+  displayName: string | null;
+  researchAsOf: string | null;
+  publicationStatus: "PUBLISHED" | "UNPUBLISHED" | "NOT_CONNECTED" | "BLOCKED";
+  overviewData?: Record<string, { shortDesc?: string | null } | undefined> | null;
+  sections?: Record<string, { summary?: string | null } | undefined> & {
+    customersAndChannels?: {
+      summary?: string | null;
+      customerConcentration?: {
+        period?: string | null;
+        largestCustomerRevenueShare?: number | null;
+        unit?: string | null;
+        statusNote?: string | null;
+      };
+    };
+    financialPerformance?: {
+      summary?: string | null;
+      annualSnapshot?: {
+        period?: string | null;
+        unit?: string | null;
+        revenue?: number | null;
+        operatingIncome?: number | null;
+        pretaxIncome?: number | null;
+        netIncome?: number | null;
+        operatingCashFlow?: number | null;
+        statusNote?: string | null;
+      };
+    };
+    productsAndMarket?: {
+      summary?: string | null;
+      revenueMixPeriod?: string | null;
+      revenueMix?: Array<{ category: string; value: number | null; unit: string | null; share: number | null }>;
+      currentProductsAndServices?: string[];
+    };
+  } | null;
+  investmentThemes: Array<{
+    themeTitle: string;
+    timeHorizon: string | null;
+    opportunity?: { summary: string | null; metrics: string[] };
+    risk?: { summary: string | null; metrics: string[] };
+  }>;
+  operatingMatrix: Array<{
+    name: string;
+    revenue?: { value: number | null; unit: string | null; period: string | null; statusNote: string | null; share?: number | null };
+    profit?: { value: number | null; unit: string | null; period: string | null; statusNote: string | null; share?: number | null };
+    products?: Array<{
+      name: string;
+      lifecycle?: string | null;
+      specification?: string | null;
+      generation?: string | null;
+      qualificationStatus?: string | null;
+      contributionTimeline?: string | null;
+      applications?: string[];
+    }>;
+    applications?: string[];
+  }>;
+  finance?: {
+    forecast?: {
+      forwardEps: number | null;
+      unit: string | null;
+      epsTrend: string | null;
+      forecastStatus: string | null;
+      modelMethod: string | null;
+      statusNote: string | null;
+    };
+    valuation?: {
+      valuationMethod: string | null;
+      currentPrice: number | null;
+      valuationStatus: string | null;
+      valuationDisplay: string | null;
+      peBands: { cheap: number | null; fair: number | null; expensive: number | null };
+      statusNote: string | null;
+    };
+    historicalTable?: {
+      unitNote?: string | null;
+      headers?: Array<{ key: string | null; label: string | null }>;
+      rows?: Array<{
+        metricKey: string | null;
+        label: string | null;
+        unit: string | null;
+        values: Record<string, number | null>;
+        statusNote?: string | null;
+      }>;
+    };
+    segmentPerformanceTable?: {
+      period?: string | null;
+      basis?: string | null;
+      rows?: Array<{ segmentName: string; metricValue: number | null; unit: string | null; isNegative: boolean }>;
+    };
+  } | null;
+  limitationsZhTw: string[];
+};
+
+export type CompanyResearchV4Resource = {
+  source: "api" | "unavailable";
+  data: CompanyResearchV4 | null;
+  error: string | null;
+};
+
 export type StockHistoryResource = {
   source: "api" | "unavailable";
   data: StockHistoryRead | null;
@@ -161,6 +261,33 @@ export async function fetchFormalStock(
       source: "unavailable",
       data: null,
       error: error instanceof Error ? error.message : "Formal stock detail request failed.",
+    };
+  }
+}
+
+export async function fetchFormalCompanyResearchV4(
+  symbol: string,
+): Promise<CompanyResearchV4Resource> {
+  const base = getFormalApiBaseUrl();
+  if (!base) {
+    return {
+      source: "unavailable",
+      data: null,
+      error: "Formal FastAPI origin is not configured.",
+    };
+  }
+  try {
+    const response = await fetch(
+      `${base}/api/v2/stocks/${encodeURIComponent(symbol)}/research-v4`,
+      { cache: "no-store" },
+    );
+    if (!response.ok) throw new Error(`Company Research V4 returned HTTP ${response.status}`);
+    return { source: "api", data: await response.json() as CompanyResearchV4, error: null };
+  } catch (error) {
+    return {
+      source: "unavailable",
+      data: null,
+      error: error instanceof Error ? error.message : "Company Research V4 request failed.",
     };
   }
 }

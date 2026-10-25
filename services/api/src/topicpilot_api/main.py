@@ -10,6 +10,8 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from topicpilot_api.admin import router as admin_router
+from topicpilot_api.company_profile_v4.api import router as company_research_v4_router
+from topicpilot_api.company_profile_v4.store import FileCompanyProfileV4ReadStore
 from topicpilot_api.config import Settings, get_settings
 from topicpilot_api.constants import STRATEGY_HORIZONS, STRATEGY_KEYS
 from topicpilot_api.database import get_db
@@ -74,6 +76,9 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         ),
     )
     application.state.settings = app_settings
+    application.state.company_profile_v4_read_store = FileCompanyProfileV4ReadStore(
+        app_settings.company_profile_v4_read_model_path
+    )
     application.add_middleware(
         CORSMiddleware,
         allow_origins=list(app_settings.cors_origins),
@@ -87,6 +92,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     application.include_router(topic_catalog_router)
     application.include_router(recommendation_router)
     application.include_router(production_read_model_router)
+    application.include_router(company_research_v4_router)
     application.include_router(topic_snapshot_router)
     application.include_router(opportunity_shadow_router)
     application.include_router(live_router)

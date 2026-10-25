@@ -706,6 +706,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v2/stocks/{symbol}/research-v4": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Read owner-approved Company Research V4 projection */
+        get: operations["company_research_v4_api_v2_stocks__symbol__research_v4_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v2/stocks/{symbol}/technical": {
         parameters: {
             query?: never;
@@ -911,6 +928,53 @@ export interface components {
             supportPrice: number | null;
             /** Triggerprice */
             triggerPrice: number | null;
+        };
+        /**
+         * CompanyResearchV4PublicResponse
+         * @description Explicit public envelope; evidence ledgers and authority IDs are excluded.
+         */
+        CompanyResearchV4PublicResponse: {
+            /** Contractversion */
+            contractVersion?: string | null;
+            /** Displayname */
+            displayName?: string | null;
+            /** Finance */
+            finance?: {
+                [key: string]: unknown;
+            } | null;
+            /** Investmentthemes */
+            investmentThemes?: {
+                [key: string]: unknown;
+            }[];
+            /** Limitationszhtw */
+            limitationsZhTw?: string[];
+            /** Operatingmatrix */
+            operatingMatrix?: {
+                [key: string]: unknown;
+            }[];
+            /** Overviewdata */
+            overviewData?: {
+                [key: string]: unknown;
+            } | null;
+            /** Packageversion */
+            packageVersion?: string | null;
+            /**
+             * Publicationstatus
+             * @enum {string}
+             */
+            publicationStatus: "PUBLISHED" | "UNPUBLISHED" | "NOT_CONNECTED" | "BLOCKED";
+            /** Researchasof */
+            researchAsOf?: string | null;
+            /** Researchgovernance */
+            researchGovernance?: {
+                [key: string]: unknown;
+            } | null;
+            /** Sections */
+            sections?: {
+                [key: string]: unknown;
+            } | null;
+            /** Stockcode */
+            stockCode: string;
         };
         /** Constituent */
         Constituent: {
@@ -5376,6 +5440,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HistoricalPriceHistoryResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    company_research_v4_api_v2_stocks__symbol__research_v4_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                symbol: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CompanyResearchV4PublicResponse"];
                 };
             };
             /** @description Validation Error */

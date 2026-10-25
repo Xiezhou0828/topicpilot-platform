@@ -8,9 +8,8 @@ import json
 import re
 import subprocess
 import tempfile
-from pathlib import Path
-
 import tomllib
+from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 CONFIG_PATH = ROOT / ".gitleaks.toml"

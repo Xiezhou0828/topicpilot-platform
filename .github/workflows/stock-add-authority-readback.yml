@@ -1,0 +1,235 @@
+name: Production stock-add authority readback
+
+on:
+  workflow_dispatch:
+    inputs:
+      stock_code:
+        description: Taiwan listed/OTC stock code to check
+        required: true
+        type: string
+      market:
+        description: Formal market code for the stock identity
+        required: true
+        type: choice
+        options:
+          - TPE
+          - TWO
+      source_ref:
+        description: Exact canonical commit SHA that dispatched this workflow
+        required: true
+        type: string
+
+permissions:
+  actions: read
+  contents: read
+
+concurrency:
+  group: topicpilot-production-stock-add-authority-readback
+  cancel-in-progress: false
+
+jobs:
+  validate_environment:
+    name: Verify read-only Environment safeguards
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require pre-provisioned Owner-approved Environment and canonical main dispatch
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          [[ "$GITHUB_REF" == "refs/heads/main" ]] || {
+            echo "Dispatch this workflow from canonical main only" >&2
+            exit 2
+          }
+          environment_json="$(curl --fail --silent --show-error \
+            --header "Authorization: Bearer $GH_TOKEN" \
+            --header "Accept: application/vnd.github+json" \
+            --header "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/$GITHUB_REPOSITORY/environments/production-catalog-readonly")"
+          ENVIRONMENT_JSON="$environment_json" python - <<'PY'
+          import json
+          import os
+
+          payload = json.loads(os.environ["ENVIRONMENT_JSON"])
+          rules = payload.get("protection_rules", [])
+          has_reviewer = any(
+              rule.get("type") == "required_reviewers"
+              and bool(rule.get("reviewers"))
+              and rule.get("prevent_self_review") is False
+              for rule in rules
+          )
+          if not has_reviewer:
+              raise SystemExit(
+                  "production-catalog-readonly must require an Owner reviewer and allow that Owner to self-approve"
+              )
+          policy = payload.get("deployment_branch_policy") or {}
+          if (
+              policy.get("protected_branches") is not False
+              or policy.get("custom_branch_policies") is not True
+          ):
+              raise SystemExit("Environment must use an explicit main-only branch allow-list")
+          PY
+          branch_json="$(curl --fail --silent --show-error \
+            --header "Authorization: Bearer $GH_TOKEN" \
+            --header "Accept: application/vnd.github+json" \
+            --header "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/$GITHUB_REPOSITORY/environments/production-catalog-readonly/deployment-branch-policies")"
+          ENVIRONMENT_BRANCHES_JSON="$branch_json" python - <<'PY'
+          import json
+          import os
+
+          payload = json.loads(os.environ["ENVIRONMENT_BRANCHES_JSON"])
+          names = sorted(item.get("name", "") for item in payload.get("branch_policies", []))
+          if names != ["main"]:
+              raise SystemExit("Environment custom branch allow-list must contain only main")
+          PY
+  readback:
+    name: Read-only Production stock and Topic authority
+    needs: validate_environment
+    runs-on: ubuntu-latest
+    environment: production-catalog-readonly
+    steps:
+      - name: Validate inputs and exact dispatch revision
+        env:
+          STOCK_CODE: ${{ inputs.stock_code }}
+          MARKET: ${{ inputs.market }}
+          SOURCE_REF: ${{ inputs.source_ref }}
+        run: |
+          set -euo pipefail
+          [[ "$STOCK_CODE" =~ ^[0-9]{4}([0-9]{2})?$ ]] || {
+            echo "stock_code must contain exactly 4 or 6 digits" >&2
+            exit 2
+          }
+          [[ "$MARKET" == "TPE" || "$MARKET" == "TWO" ]] || {
+            echo "market must be TPE or TWO" >&2
+            exit 2
+          }
+          [[ "$SOURCE_REF" =~ ^[0-9a-f]{40}$ ]] || {
+            echo "source_ref must be an exact lowercase 40-character commit SHA" >&2
+            exit 2
+          }
+          source_ref_lc="$(printf '%s' "$SOURCE_REF" | tr '[:upper:]' '[:lower:]')"
+          github_sha_lc="$(printf '%s' "$GITHUB_SHA" | tr '[:upper:]' '[:lower:]')"
+          [[ "$source_ref_lc" == "$github_sha_lc" ]] || {
+            echo "source_ref must match the exact commit that dispatched this workflow" >&2
+            exit 2
+          }
+
+      - name: Checkout reviewed canonical source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.source_ref }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Require source revision to be in canonical main history
+        env:
+          SOURCE_REF: ${{ inputs.source_ref }}
+        run: |
+          set -euo pipefail
+          [[ "$(git rev-parse HEAD)" == "$SOURCE_REF" ]] || {
+            echo "checkout does not match source_ref" >&2
+            exit 2
+          }
+          git merge-base --is-ancestor "$SOURCE_REF" origin/main || {
+            echo "source_ref is not an ancestor of canonical origin/main" >&2
+            exit 2
+          }
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install the API readback package
+        run: python -m pip install ./services/api
+
+      - name: Read live authorities without loading or exposing catalog rows
+        env:
+          STOCK_CODE: ${{ inputs.stock_code }}
+          MARKET: ${{ inputs.market }}
+          SOURCE_REF: ${{ inputs.source_ref }}
+          TOPICPILOT_PRODUCTION_CATALOG_READONLY_DATABASE_URL: ${{ secrets.TOPICPILOT_PRODUCTION_CATALOG_READONLY_DATABASE_URL }}
+          TOPICPILOT_PRODUCTION_CATALOG_READONLY_ROLE: ${{ vars.TOPICPILOT_PRODUCTION_CATALOG_READONLY_ROLE }}
+          TOPICPILOT_PRODUCTION_CATALOG_READONLY_EXPECTED_HOST: ${{ vars.TOPICPILOT_PRODUCTION_CATALOG_READONLY_EXPECTED_HOST }}
+          TOPICPILOT_PRODUCTION_CATALOG_READONLY_EXPECTED_DATABASE: ${{ vars.TOPICPILOT_PRODUCTION_CATALOG_READONLY_EXPECTED_DATABASE }}
+        run: |
+          set -euo pipefail
+          report="$RUNNER_TEMP/stock-add-authority-readback.json"
+          PYTHONPATH=services/api/src python -m topicpilot_api.stock_add_authority_cli \
+            "$STOCK_CODE" \
+            --market "$MARKET" \
+            --source-revision "$SOURCE_REF" > "$report"
+          REPORT_PATH="$report" SOURCE_REF="$SOURCE_REF" STOCK_CODE="$STOCK_CODE" MARKET="$MARKET" python - <<'PY'
+          import hashlib
+          import json
+          import os
+          import re
+          from pathlib import Path
+
+          report = json.loads(Path(os.environ["REPORT_PATH"]).read_text(encoding="utf-8"))
+          master = report.get("stockMaster", {})
+          topics = report.get("topicCatalog", {})
+          controls = report.get("readControls") or {}
+          digest = report.pop("authorityReadbackSha256", "")
+          canonical = json.dumps(
+              report, ensure_ascii=False, sort_keys=True, separators=(",", ":"), allow_nan=False
+          ).encode("utf-8")
+          if not re.fullmatch(r"[0-9a-f]{64}", digest) or hashlib.sha256(canonical).hexdigest() != digest:
+              raise SystemExit("authority readback digest is invalid")
+          if report.get("schemaVersion") != "topicpilot-stock-add-authority-readback.v1":
+              raise SystemExit("authority readback schema is unsupported")
+          if report.get("identity") != {
+              "stockCode": os.environ["STOCK_CODE"],
+              "market": os.environ["MARKET"],
+          }:
+              raise SystemExit("readback target identity differs from requested identity")
+          if master.get("status") not in {"MATCH_FOUND", "NO_MATCH_CONFIRMED"}:
+              raise SystemExit("stock master readback did not prove a complete result")
+          if master.get("complete") is not True or master.get("targetMatchCount") not in {0, 1}:
+              raise SystemExit("stock master readback is incomplete or ambiguous")
+          if (master["status"] == "MATCH_FOUND") != (master["targetMatchCount"] == 1):
+              raise SystemExit("stock master status does not match the target result")
+          if topics.get("status") != "READY" or topics.get("complete") is not True:
+              raise SystemExit("formal Topic catalog readback is incomplete")
+          if (
+              controls.get("databaseRole") != "topicpilot_catalog_readonly"
+              or controls.get("databaseTargetVerified") is not True
+              or controls.get("sessionUser") != "topicpilot_catalog_readonly"
+              or controls.get("transactionReadOnly") is not True
+              or controls.get("transactionIsolation") != "repeatable read"
+              or controls.get("mutationPrivilegesObserved") is not False
+              or controls.get("directDatabaseMutationPrivilegeObserved") is not False
+              or controls.get("activeMarketCodes") != ["TPE", "TWO"]
+              or not controls.get("migrationHead")
+          ):
+              raise SystemExit("read-only role or transaction assertion failed")
+          if report.get("producerRevision") != os.environ["SOURCE_REF"].lower():
+              raise SystemExit("report producer revision does not match checked-out source")
+          if report.get("productionMutation") is not False or report.get("writesPerformed") != []:
+              raise SystemExit("readback report unexpectedly claims a write")
+          report["authorityReadbackSha256"] = digest
+          PY
+
+      - name: Write compact job summary
+        env:
+          STOCK_CODE: ${{ inputs.stock_code }}
+          MARKET: ${{ inputs.market }}
+          SOURCE_REF: ${{ inputs.source_ref }}
+          REPORT_PATH: ${{ runner.temp }}/stock-add-authority-readback.json
+        run: |
+          REPORT_PATH="$REPORT_PATH" STOCK_CODE="$STOCK_CODE" MARKET="$MARKET" SOURCE_REF="$SOURCE_REF" python - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import json
+          import os
+          from pathlib import Path
+
+          report = json.loads(Path(os.environ["REPORT_PATH"]).read_text(encoding="utf-8"))
+          print("## Production stock-add authority readback")
+          print(f"- Stock identity: `{os.environ['STOCK_CODE']} / {os.environ['MARKET']}`")
+          print(f"- Source revision: `{os.environ['SOURCE_REF']}`")
+          print(f"- Stock-master result: `{report['stockMaster']['status']}`")
+          print(f"- Formal Topic catalog: `{report['topicCatalog']['status']}` as of `{report['topicCatalog']['asOf']}`")
+          print(f"- Authority readback SHA-256: `{report['authorityReadbackSha256']}`")
+          print("- Production writes: `NONE`")
+          print("- Research/topic matching, reference-universe activation, post-close, and scheduler are separate gates.")
+          PY

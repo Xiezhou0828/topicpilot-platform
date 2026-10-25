@@ -23,6 +23,7 @@ from topicpilot_api.production_forensic_readback import (
     _read_only_identity,
     _safe_attempt,
     _safe_checkpoint,
+    _safe_sqlstate,
     _sanitize_text,
     select_date_bound_run,
     summarize_attempt_rows,
@@ -111,6 +112,24 @@ def test_error_text_is_bounded_and_secret_safe() -> None:
     assert len(sanitized) == 512
     assert "topsecret" not in sanitized
     assert "postgres://user:pass@example.invalid/db" not in sanitized
+
+
+def test_sqlstate_diagnostic_is_safe_and_strictly_validated() -> None:
+    class DriverError(Exception):
+        sqlstate = "08001"
+
+    class WrappedError(Exception):
+        orig = DriverError("postgres://user:secret@db.invalid/private connection detail")
+
+    assert _safe_sqlstate(WrappedError()) == "08001"
+
+    class InvalidDriverError(Exception):
+        pgcode = "08001; host=db.invalid password=secret"
+
+    class InvalidWrappedError(Exception):
+        orig = InvalidDriverError("sensitive detail")
+
+    assert _safe_sqlstate(InvalidWrappedError()) is None
 
 
 def test_grouped_result_formation_is_deterministic() -> None:

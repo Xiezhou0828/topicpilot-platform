@@ -3,7 +3,12 @@
 import Link from "next/link";
 import { X } from "lucide-react";
 import { useEffect, useState } from "react";
-import { fetchFormalStock, type StockApiItem } from "../../lib/stock-api";
+import {
+  fetchFormalCompanyResearchV4,
+  fetchFormalStock,
+  type CompanyResearchV4,
+  type StockApiItem,
+} from "../../lib/stock-api";
 import type { StockEodRead } from "../../lib/stock-api";
 import { selectStockQuote } from "../../lib/stock-eod-presenter";
 import { useFavoritesState } from "../FavoriteButton";
@@ -100,6 +105,71 @@ function displayNumber(value: number | null | undefined): string {
     : value.toLocaleString("zh-TW", { maximumFractionDigits: 4 });
 }
 
+function researchUnit(unit: string | null | undefined): string {
+  if (unit === "TWD_100_MILLION") return " 億元";
+  if (unit === "TWD_PER_SHARE") return " 元";
+  if (unit === "PERCENT") return "%";
+  return "";
+}
+
+function researchMetric(metric: { value: number | null; unit: string | null; statusNote: string | null } | undefined): string {
+  if (!metric || metric.value === null) return metric?.statusNote ?? "—";
+  return `${displayNumber(metric.value)}${researchUnit(metric.unit)}`;
+}
+
+function researchShare(value: number | null): string {
+  if (value === null) return "";
+  const percent = Math.abs(value) <= 1 ? value * 100 : value;
+  return `${displayNumber(percent)}%`;
+}
+
+function CompanyResearchSection({ data, loading, error }: { data: CompanyResearchV4 | null; loading: boolean; error: string | null }) {
+  const published = data?.publicationStatus === "PUBLISHED";
+  const businessSummary = data?.overviewData?.businessModel?.shortDesc
+    ?? data?.overviewData?.coreBusiness?.shortDesc
+    ?? data?.sections?.companyAndBusiness?.summary;
+  const products = data?.sections?.productsAndMarket;
+  const finance = data?.finance;
+  const historical = finance?.historicalTable;
+  const historicalHeaders = historical?.headers ?? [];
+  const historicalRows = historical?.rows ?? [];
+  const segments = finance?.segmentPerformanceTable?.rows ?? [];
+  const operatingGroups = data?.operatingMatrix ?? [];
+  const annualSnapshot = data?.sections?.financialPerformance?.annualSnapshot;
+  const customerConcentration = data?.sections?.customersAndChannels?.customerConcentration;
+
+  return <section className="tp-stock-encyclopedia-section tp-company-research" aria-label="公司研究">
+    <div className="tp-stock-encyclopedia-section-heading"><h3>公司研究</h3><span>{published ? `研究截至 ${data?.researchAsOf ?? "日期未提供"}` : "正式研究內容"}</span></div>
+    {loading ? <p className="tp-stock-encyclopedia-muted">正在讀取已核准的公司研究內容。</p>
+      : error ? <p className="tp-stock-encyclopedia-muted">公司研究資料暫時無法讀取。</p>
+        : !published ? <p className="tp-stock-encyclopedia-muted">研究內容尚未公開；完成核准後才會顯示。</p>
+          : <div className="tp-company-research-content">
+            {businessSummary && <p className="tp-company-research-summary">{businessSummary}</p>}
+            {products?.summary && <p className="tp-stock-encyclopedia-muted">{products.summary}</p>}
+            {products?.revenueMix?.length ? <div className="tp-company-research-list" aria-label="營收結構">
+              {products.revenueMix.map((row) => <div key={row.category}><strong>{row.category}</strong><span>{row.value === null ? "—" : `${displayNumber(row.value)}${researchUnit(row.unit)}`}{row.share === null ? "" : ` · ${researchShare(row.share)}`}</span></div>)}
+            </div> : null}
+            {customerConcentration && <p className="tp-stock-encyclopedia-muted">客戶集中度{customerConcentration.period ? ` · ${customerConcentration.period}` : ""}：{customerConcentration.largestCustomerRevenueShare === null || customerConcentration.largestCustomerRevenueShare === undefined ? customerConcentration.statusNote ?? "—" : `${displayNumber(customerConcentration.largestCustomerRevenueShare)}${researchUnit(customerConcentration.unit)}`}</p>}
+            {operatingGroups.length ? <div className="tp-company-research-list" aria-label="主要產品與事業群">
+              {operatingGroups.map((group) => <div className="tp-company-research-group" key={group.name}><strong>{group.name}{group.revenue && ` · 營收 ${researchMetric(group.revenue)}`}{group.profit && ` · 損益 ${researchMetric(group.profit)}`}</strong><span>{group.products?.map((product) => product.lifecycle ? `${product.name}（${product.lifecycle}）` : product.name).filter(Boolean).join("、") || group.applications?.join("、") || "產品資訊未提供"}</span>{group.products?.some((product) => product.specification || product.generation || product.qualificationStatus || product.contributionTimeline) && <small>{group.products.map((product) => [product.specification, product.generation, product.qualificationStatus, product.contributionTimeline].filter(Boolean).join(" · ")).filter(Boolean).join("；")}</small>}</div>)}
+            </div> : null}
+            {data?.investmentThemes?.length ? <div className="tp-company-research-themes">
+              {data.investmentThemes.map((theme) => <article key={theme.themeTitle}><div><strong>{theme.themeTitle}</strong>{theme.timeHorizon && <span>{theme.timeHorizon}</span>}</div>{theme.opportunity?.summary && <p><b>機會</b>{theme.opportunity.summary}</p>}{theme.risk?.summary && <p><b>風險</b>{theme.risk.summary}</p>}</article>)}
+            </div> : null}
+            {(finance?.forecast || finance?.valuation || annualSnapshot) && <dl className="tp-company-research-metrics">
+              {finance?.forecast?.forwardEps !== null && finance?.forecast?.forwardEps !== undefined && <div><dt>預估 Forward EPS</dt><dd>{researchMetric({ value: finance.forecast.forwardEps, unit: finance.forecast.unit, statusNote: finance.forecast.statusNote })}</dd></div>}
+              {finance?.valuation?.valuationStatus && <div><dt>估值判讀</dt><dd>{finance.valuation.valuationStatus}</dd></div>}
+              {finance?.valuation?.peBands?.fair !== null && finance?.valuation?.peBands?.fair !== undefined && <div><dt>合理價參考</dt><dd>{displayNumber(finance.valuation.peBands.fair)}</dd></div>}
+              {annualSnapshot?.revenue !== null && annualSnapshot?.revenue !== undefined && <div><dt>{annualSnapshot.period ?? "年度"}營收</dt><dd>{researchMetric({ value: annualSnapshot.revenue, unit: annualSnapshot.unit, statusNote: annualSnapshot.statusNote ?? null })}</dd></div>}
+              {annualSnapshot?.operatingIncome !== null && annualSnapshot?.operatingIncome !== undefined && <div><dt>營業利益</dt><dd>{researchMetric({ value: annualSnapshot.operatingIncome, unit: annualSnapshot.unit, statusNote: annualSnapshot.statusNote ?? null })}</dd></div>}
+            </dl>}
+            {historicalRows.length ? <div className="tp-company-research-table-wrap"><table className="tp-company-research-table"><thead><tr>{historicalHeaders.map((header) => <th key={header.key ?? header.label}>{header.label ?? "—"}</th>)}</tr></thead><tbody>{historicalRows.map((row) => <tr key={row.metricKey ?? row.label}>{historicalHeaders.map((header) => <td key={`${row.metricKey}-${header.key}`}>{header.key === "metric" ? row.label ?? "—" : displayNumber(row.values[header.key ?? ""])}{header.key === "metric" ? "" : researchUnit(row.unit)}</td>)}</tr>)}</tbody></table>{historical?.unitNote && <small>{historical.unitNote}</small>}</div> : null}
+            {segments.length ? <div className="tp-company-research-list" aria-label="分部績效">{segments.map((segment) => <div key={segment.segmentName}><strong>{segment.segmentName}</strong><span className={segment.isNegative ? "is-negative" : ""}>{segment.metricValue === null ? "—" : `${displayNumber(segment.metricValue)}${researchUnit(segment.unit)}`}</span></div>)}</div> : null}
+            {data?.limitationsZhTw?.length ? <p className="tp-company-research-limitations">{data.limitationsZhTw.join("；")}</p> : null}
+          </div>}
+  </section>;
+}
+
 function displaySigned(value: number | null | undefined): string {
   return value === null || value === undefined ? "—" : `${value >= 0 ? "+" : ""}${displayNumber(value)}`;
 }
@@ -135,6 +205,7 @@ function EvidenceGrid({ rows }: { rows: Array<[string, string | number | boolean
 export function StockEncyclopediaDrawer({ stock, onClose, presentation = "overlay", isClosing = false }: { stock: StockDrawerItem; onClose: () => void; presentation?: "overlay" | "inline" | "push"; isClosing?: boolean }) {
   const { isFavorite, toggle: toggleFavorite } = useFavoritesState();
   const [formalDetailState, setFormalDetailState] = useState<{ symbol: string; data: StockApiItem | null; status: "available" | "unavailable"; error: string | null } | null>(null);
+  const [researchState, setResearchState] = useState<{ symbol: string; data: CompanyResearchV4 | null; status: "available" | "unavailable"; error: string | null } | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -152,9 +223,27 @@ export function StockEncyclopediaDrawer({ stock, onClose, presentation = "overla
     return () => { active = false; };
   }, [stock.code, stock.isPreview]);
 
+  useEffect(() => {
+    let active = true;
+    if (stock.isPreview === true) return () => { active = false; };
+    fetchFormalCompanyResearchV4(stock.code).then((result) => {
+      if (!active) return;
+      setResearchState({
+        symbol: stock.code,
+        data: result.data,
+        status: result.source === "api" ? "available" : "unavailable",
+        error: result.error,
+      });
+    });
+    return () => { active = false; };
+  }, [stock.code, stock.isPreview]);
+
   const formalDetail = formalDetailState?.symbol === stock.code ? formalDetailState.data : null;
   const detailState = stock.isPreview === true ? "idle" : formalDetailState?.symbol === stock.code ? formalDetailState.status : "loading";
   const detailError = formalDetailState?.symbol === stock.code ? formalDetailState.error : null;
+  const researchDetail = researchState?.symbol === stock.code ? researchState.data : null;
+  const researchStatus = stock.isPreview === true ? "unavailable" : researchState?.symbol === stock.code ? researchState.status : "loading";
+  const researchError = researchState?.symbol === stock.code ? researchState.error : null;
   const displayStock = formalDetail ? formalDrawerItem(stock, formalDetail) : stock;
   const quote = selectStockQuote(displayStock);
   const tone = quote.changePct === null ? "flat" : quote.changePct >= 0 ? "up" : "down";
@@ -185,6 +274,7 @@ export function StockEncyclopediaDrawer({ stock, onClose, presentation = "overla
       <section className="tp-stock-encyclopedia-section"><div className="tp-stock-encyclopedia-section-heading"><h3>題材歸屬</h3><span>{displayStock.topics.length} 個關係</span></div>{displayStock.topics.length ? <div className="tp-stock-encyclopedia-topics">{displayStock.topics.map((topic) => <div className="tp-stock-encyclopedia-topic" key={`${topic.name}-${topic.role ?? "unknown"}`}><strong>{topic.name}</strong><RoleChip>{label(topic.role)}</RoleChip></div>)}</div> : <p className="tp-stock-encyclopedia-muted">正式題材關係尚未提供</p>}</section>
       <section className="tp-stock-encyclopedia-section"><div className="tp-stock-encyclopedia-section-heading"><h3>主要題材</h3><span>正式欄位優先</span></div>{displayStock.mainTopic ? <div className="tp-stock-encyclopedia-main-topic"><div><strong>{displayStock.mainTopic.name}</strong><p>{displayStock.mainTopic.state ?? "狀態尚未提供"}{displayStock.mainTopic.lifecycle ? ` · ${displayStock.mainTopic.lifecycle}` : ""}</p></div>{displayStock.mainTopic.grade && <RoleChip>{displayStock.mainTopic.grade}</RoleChip>}</div> : <p className="tp-stock-encyclopedia-muted">正式主題欄位尚未提供</p>}</section>
       <section className="tp-stock-encyclopedia-section"><div className="tp-stock-encyclopedia-section-heading"><h3>摘要</h3><span>正式 read model</span></div><p className="tp-stock-encyclopedia-muted">{displayStock.summary ?? "正式摘要尚未提供；未由前端生成。"}</p></section>
+      {!displayStock.isPreview && <CompanyResearchSection data={researchDetail} loading={researchStatus === "loading"} error={researchError} />}
       <section className="tp-stock-encyclopedia-section"><div className="tp-stock-encyclopedia-section-heading"><h3>技術證據</h3><span>20MA / 60MA</span></div>{technical ? <EvidenceGrid rows={[["站上 20MA", technical.above20MA], ["站上 60MA", technical.above60MA], ["20MA", technical.ma20], ["60MA", technical.ma60], ["突破狀態", technical.breakoutState], ["技術狀態", technical.technicalState]]} /> : <p className="tp-stock-encyclopedia-muted">正式 technical read model 尚未提供</p>}</section>
       <section className="tp-stock-encyclopedia-section"><div className="tp-stock-encyclopedia-section-heading"><h3>法人流向</h3><span>provider evidence</span></div>{institutionEntries.length ? <EvidenceGrid rows={institutionEntries.map(([key, value]) => [key, typeof value === "object" ? JSON.stringify(value) : value as string | number | boolean])} /> : <p className="tp-stock-encyclopedia-muted">正式法人資料尚未提供</p>}</section>
       <div className="tp-stock-encyclopedia-note">{displayStock.isPreview ? "此區塊目前為 Preview；正式 API 可用時才顯示正式欄位。" : "沒有正式 evidence 的欄位保持尚未提供，不由前端推導。"}</div>
