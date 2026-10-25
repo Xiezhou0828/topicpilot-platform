@@ -33,6 +33,49 @@ topicpilot.topics
 topicpilot.topic_hierarchy
 ```
 
+### Neon-specific provisioning
+
+Create this role with SQL on the verified Production branch, not through the
+Neon Console role-creation form, CLI, or API. Neon documents that roles created
+through those interfaces receive `neon_superuser` membership; that membership
+is far broader than this workflow allows and includes read/write access. A role
+created with SQL is not given that membership and can be granted only the
+specific privileges below. See [Neon role management](https://neon.tech/docs/manage/roles)
+and [Neon database access](https://neon.tech/docs/manage/database-access).
+
+Run this from the Neon SQL Editor or an authenticated SQL client while
+connected to the verified Production database as an authorized database
+administrator. Replace the database placeholder with the exact database name
+from the Production connection configuration:
+
+```sql
+CREATE ROLE topicpilot_catalog_readonly
+  WITH LOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION
+       NOBYPASSRLS NOINHERIT;
+
+GRANT CONNECT ON DATABASE <EXACT_PRODUCTION_DATABASE>
+  TO topicpilot_catalog_readonly;
+GRANT USAGE ON SCHEMA topicpilot TO topicpilot_catalog_readonly;
+GRANT SELECT ON TABLE
+  public.alembic_version,
+  topicpilot.markets,
+  topicpilot.instruments,
+  topicpilot.topics,
+  topicpilot.topic_hierarchy
+  TO topicpilot_catalog_readonly;
+```
+
+Do not add role memberships, schema-wide/default-table grants, sequence
+privileges, or any write grants. Set the login password separately with the
+hidden `psql` prompt (`\password topicpilot_catalog_readonly`) so the real
+password is not embedded in SQL history, a file, or chat. Put the resulting
+TLS-enabled URL for this role and database only in the GitHub Environment
+secret named below. Never reveal or read back the secret value. PostgreSQL's
+default `PUBLIC` `TEMPORARY` privilege may still appear as an effective
+privilege; this readback checks direct grants and uses a read-only transaction,
+so do not revoke a database-wide `PUBLIC` grant to satisfy it. See
+[PostgreSQL privileges](https://www.postgresql.org/docs/current/ddl-priv.html).
+
 The role must have no table mutation privileges, no `CREATE` privilege on the
 `public` or `topicpilot` schemas, and no privileges on other relations or
 sequences in those schemas, no column-level `INSERT`/`UPDATE`/`REFERENCES`
