@@ -36,7 +36,11 @@ topicpilot.topic_hierarchy
 The role must have no table mutation privileges, no `CREATE` privilege on the
 `public` or `topicpilot` schemas, and no privileges on other relations or
 sequences in those schemas, no column-level `INSERT`/`UPDATE`/`REFERENCES`
-grants, and no database `CREATE` or `TEMPORARY` privilege. Do not reuse
+grants, and no directly granted database `CREATE` or `TEMPORARY` privilege.
+PostgreSQL may expose its default `TEMPORARY` grant through `PUBLIC`; the reader
+reports that effective state separately and starts every catalog read in a
+`READ ONLY` transaction. Do not revoke a database-wide `PUBLIC` grant just for
+this workflow. Do not reuse
 `DATABASE_URL`, `MIGRATION_DATABASE_URL`, `TOPICPILOT_PRODUCTION_DATABASE_URL`,
 the workbook import role, or the narrow forensic-readback role. Store the
 connection URL only as the protected GitHub

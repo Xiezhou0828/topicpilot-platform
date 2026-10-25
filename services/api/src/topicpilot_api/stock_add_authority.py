@@ -430,7 +430,17 @@ def _verify_protected_read_connection(
                has_database_privilege(current_user, current_database(), 'CREATE')
                    AS can_create_database_objects,
                has_database_privilege(current_user, current_database(), 'TEMPORARY')
-                   AS can_create_temporary_objects
+                   AS effective_temporary_privilege,
+               COALESCE((
+                   SELECT bool_or(acl.privilege_type IN ('CREATE', 'TEMPORARY'))
+                     FROM pg_catalog.pg_database db_catalog
+                     CROSS JOIN LATERAL pg_catalog.aclexplode(
+                         COALESCE(db_catalog.datacl,
+                                  pg_catalog.acldefault('d', db_catalog.datdba))
+                     ) acl
+                    WHERE db_catalog.datname = current_database()
+                      AND acl.grantee = role_record.oid
+               ), FALSE) AS direct_database_mutation_privilege
           FROM pg_catalog.pg_roles role_record
          WHERE role_record.rolname = current_user
         """,
@@ -452,7 +462,7 @@ def _verify_protected_read_connection(
         or row.get("granted_role_count") != 0
         or row.get("is_database_owner") is not False
         or row.get("can_create_database_objects") is not False
-        or row.get("can_create_temporary_objects") is not False
+        or row.get("direct_database_mutation_privilege") is not False
         or transaction_read_only not in {"on", "true", "1"}
         or isolation != "repeatable read"
     ):
@@ -570,7 +580,8 @@ def _verify_protected_read_connection(
         "transactionIsolation": isolation,
         "allowedTables": list(_CATALOG_TABLES),
         "mutationPrivilegesObserved": False,
-        "temporaryDatabasePrivilegeObserved": False,
+        "directDatabaseMutationPrivilegeObserved": False,
+        "effectiveTemporaryPrivilegeObserved": (row.get("effective_temporary_privilege") is True),
     }
 
 

@@ -187,7 +187,8 @@ class _ProtectedConnection:
                         "granted_role_count": 0,
                         "is_database_owner": False,
                         "can_create_database_objects": False,
-                        "can_create_temporary_objects": False,
+                        "effective_temporary_privilege": True,
+                        "direct_database_mutation_privilege": False,
                         **self.identity_overrides,
                     }
                 ]
@@ -259,10 +260,26 @@ def test_protected_database_role_with_column_level_mutation_privilege_is_blocked
         )
 
 
-def test_protected_database_role_with_temporary_database_privilege_is_blocked() -> None:
+def test_protected_database_role_allows_public_default_temp_privilege() -> None:
+    controls = authority._verify_protected_read_connection(
+        _ProtectedConnection(
+            identity_overrides={
+                "effective_temporary_privilege": True,
+                "direct_database_mutation_privilege": False,
+            }
+        ),
+        "topicpilot_catalog_readonly",
+        "topicpilot_test",
+    )
+
+    assert controls["effectiveTemporaryPrivilegeObserved"] is True
+    assert controls["directDatabaseMutationPrivilegeObserved"] is False
+
+
+def test_protected_database_role_with_direct_temporary_database_grant_is_blocked() -> None:
     with pytest.raises(FormalAuthorityReadError, match="READ_ONLY_IDENTITY_CHECK_FAILED"):
         authority._verify_protected_read_connection(
-            _ProtectedConnection(identity_overrides={"can_create_temporary_objects": True}),
+            _ProtectedConnection(identity_overrides={"direct_database_mutation_privilege": True}),
             "topicpilot_catalog_readonly",
             "topicpilot_test",
         )
