@@ -114,9 +114,26 @@ _SECRET_TEXT_PATTERNS = (
 class ForensicReadbackError(RuntimeError):
     """A fail-closed readback validation or execution error."""
 
-    def __init__(self, code: str, message: str | None = None) -> None:
+    def __init__(
+        self,
+        code: str,
+        message: str | None = None,
+        *,
+        diagnostics: Mapping[str, str | None] | None = None,
+    ) -> None:
         self.code = code
+        self.diagnostics = dict(diagnostics or {})
         super().__init__(message or code)
+
+
+def _safe_sqlstate(exc: Exception) -> str | None:
+    """Return a PostgreSQL SQLSTATE only; never expose driver messages."""
+
+    original = getattr(exc, "orig", None)
+    value = getattr(original, "sqlstate", None) or getattr(original, "pgcode", None)
+    if isinstance(value, str) and re.fullmatch(r"[0-9A-Z]{5}", value):
+        return value
+    return None
 
 
 def validate_command(value: str) -> str:
@@ -1202,11 +1219,14 @@ def read_post_close_date(
     local_start = datetime.combine(parsed_date, time.min, tzinfo=timezone).astimezone(UTC)
     local_end = local_start + timedelta(days=1)
     engine = (engine_factory or create_engine)(database_url, pool_pre_ping=True)
+    failure_stage = "DATABASE_CONNECT"
     try:
         with engine.connect() as connection, connection.begin():
+            failure_stage = "READONLY_IDENTITY_CHECK"
             current_user, session_user, transaction_read_only = _read_only_identity(
                 connection, expected_role
             )
+            failure_stage = "DATE_BOUND_RUN_LOOKUP"
             try:
                 candidate_rows = _execute_mappings(
                     connection,
@@ -1214,11 +1234,18 @@ def read_post_close_date(
                     {"local_start": local_start, "local_end": local_end},
                 )
             except Exception as exc:
-                raise ForensicReadbackError("CURRENT_DAY_RUN_LOCATOR_QUERY_FAILED") from exc
+                raise ForensicReadbackError(
+                    "CURRENT_DAY_RUN_LOCATOR_QUERY_FAILED",
+                    diagnostics={"sqlState": _safe_sqlstate(exc)},
+                ) from exc
+            failure_stage = "PRIVILEGE_READBACK"
             try:
                 privilege_rows = _execute_mappings(connection, PRIVILEGE_QUERY)
             except Exception as exc:
-                raise ForensicReadbackError("CURRENT_DAY_PRIVILEGE_READBACK_FAILED") from exc
+                raise ForensicReadbackError(
+                    "CURRENT_DAY_PRIVILEGE_READBACK_FAILED",
+                    diagnostics={"sqlState": _safe_sqlstate(exc)},
+                ) from exc
             privileges, mutation_status = _privilege_status(privilege_rows)
             selected, selection_basis, safe_candidates = select_date_bound_run(
                 candidate_rows, parsed_date
@@ -1226,7 +1253,14 @@ def read_post_close_date(
     except ForensicReadbackError:
         raise
     except Exception as exc:
-        raise ForensicReadbackError("FORENSIC_QUERY_FAILED", type(exc).__name__) from exc
+        raise ForensicReadbackError(
+            "FORENSIC_QUERY_FAILED",
+            type(exc).__name__,
+            diagnostics={
+                "failureStage": failure_stage,
+                "sqlState": _safe_sqlstate(exc),
+            },
+        ) from exc
     finally:
         engine.dispose()
 
@@ -1349,12 +1383,18 @@ def main(argv: list[str] | None = None) -> int:
         )
         return 0
     except ForensicReadbackError as exc:
+        safe_diagnostics = {
+            key: value
+            for key, value in exc.diagnostics.items()
+            if key in {"failureStage", "sqlState"} and value is not None
+        }
         print(
             json.dumps(
                 {
                     "status": "BLOCKED",
                     "code": exc.code,
                     "message": _sanitize_text(str(exc)),
+                    **safe_diagnostics,
                 },
                 ensure_ascii=False,
             ),
