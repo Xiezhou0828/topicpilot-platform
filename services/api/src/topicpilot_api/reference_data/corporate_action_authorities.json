@@ -16,6 +16,21 @@
       "publishedAt": "2026-09-22T00:00:00+08:00",
       "reductionRatioPct": "16.2949753",
       "expectedClose": false
+    },
+    {
+      "symbol": "6173",
+      "market": "TWO",
+      "actionType": "CAPITAL_REDUCTION_SHARE_EXCHANGE",
+      "effectiveFrom": "2026-10-07",
+      "effectiveTo": "2026-10-16",
+      "resumeDate": "2026-10-19",
+      "sourceAuthority": "TPEX_OFFICIAL_REDUCTION",
+      "sourceReference": "https://mops.twse.com.tw/mops/web/t05st01",
+      "statusMapping": "SUSPENDED",
+      "reasonCode": "CAPITAL_REDUCTION_TRADING_SUSPENSION",
+      "publishedAt": "2026-09-24T00:00:00+08:00",
+      "reductionRatioPct": "6",
+      "expectedClose": false
     }
   ]
 }

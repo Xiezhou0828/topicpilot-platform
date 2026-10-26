@@ -24,6 +24,7 @@ from sqlalchemy.orm import Session, aliased
 from topicpilot_api.formal_lifecycle_evaluator import evaluate_formal_structural_lifecycle
 from topicpilot_api.formal_strength_publication import (
     build_market_context,
+    is_authorized_return_unavailable_fact,
     read_formal_strength,
 )
 from topicpilot_api.orm import (
@@ -200,7 +201,10 @@ def _formal_gate(
             lineage,
             input_snapshot_hash(snapshot, facts),
         )
-    if snapshot.observed_stock_count != snapshot.stock_count:
+    authorized_unavailable_count = sum(
+        is_authorized_return_unavailable_fact(fact) for fact in facts
+    )
+    if snapshot.observed_stock_count + authorized_unavailable_count != snapshot.stock_count:
         return FormalLifecycleGate(
             False,
             "INSUFFICIENT_FORMAL_INPUT:OBSERVED_COUNT_MISMATCH",
@@ -214,7 +218,10 @@ def _formal_gate(
             lineage,
             input_snapshot_hash(snapshot, facts),
         )
-    if any(fact.fact_state != "OBSERVED" for fact in facts):
+    if any(
+        fact.fact_state != "OBSERVED" and not is_authorized_return_unavailable_fact(fact)
+        for fact in facts
+    ):
         return FormalLifecycleGate(
             False,
             "INSUFFICIENT_FORMAL_INPUT:NON_OBSERVED_MEMBER_FACT",
@@ -665,7 +672,7 @@ class FormalLifecyclePublisher:
                     lifecycle_input = LifecycleInput(
                         topic_id=str(topic.id),
                         trading_date=evaluation_date,
-                        expected_member_count=int(snapshot.stock_count),
+                        expected_member_count=len(observations),
                         observations=observations,
                         previous_stage=prior["final_stage"],
                         previous_stage_entered_at=prior["stage_entered_at"],

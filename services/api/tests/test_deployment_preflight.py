@@ -77,7 +77,7 @@ def test_provider_lineage_reports_current_adapters_and_authority_without_http():
     assert result["postClose"]["marketBatch"] is True
     official = {item["sourceCode"]: item for item in result["providers"]}
     assert official["TWSE_OFFICIAL_DAILY"]["adapterVersion"] == "twse-official-daily.v2"
-    assert official["TPEX_OFFICIAL_DAILY"]["adapterVersion"] == "tpex-official-openapi-daily.v1"
+    assert official["TPEX_OFFICIAL_DAILY"]["adapterVersion"] == "tpex-official-daily.v2"
     assert official["TWSE_OFFICIAL_DAILY"]["marketBatch"] is True
     assert official["TPEX_OFFICIAL_DAILY"]["marketBatch"] is True
     assert official["YAHOO_CHART_DAILY"]["role"] == "VERIFICATION_ONLY"

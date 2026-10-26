@@ -336,6 +336,19 @@ def _input_hash(snapshot: TopicSnapshot, facts: Iterable[TopicSnapshotMemberFact
     )
 
 
+def is_authorized_return_unavailable_fact(fact: Any) -> bool:
+    """Return whether one formal member is valid but unavailable for returns."""
+
+    if _value(fact, "fact_state") != "NO_TRADE":
+        return False
+    eligibility = (_value(fact, "raw_fact_payload") or {}).get("dimensionEligibility") or {}
+    daily_return = eligibility.get(Dimension.DAILY_RETURN.value) or {}
+    return (
+        daily_return.get("status") == "ACCOUNTED_UNAVAILABLE"
+        and daily_return.get("reasonCode") == AUTHORIZED_CORPORATE_ACTION_COMPARATOR_UNAVAILABLE
+    )
+
+
 def _gate(
     snapshot: TopicSnapshot | None, facts: list[TopicSnapshotMemberFact]
 ) -> FormalStrengthGate:
@@ -356,7 +369,10 @@ def _gate(
         return FormalStrengthGate(False, f"SNAPSHOT_DATA_STATUS_{snapshot.data_status}", input_hash)
     if snapshot.stock_count <= 0 or len(facts) != snapshot.stock_count:
         return FormalStrengthGate(False, "FORMAL_MEMBER_COUNT_MISMATCH", input_hash)
-    if any(fact.fact_state != "OBSERVED" for fact in facts):
+    if any(
+        fact.fact_state != "OBSERVED" and not is_authorized_return_unavailable_fact(fact)
+        for fact in facts
+    ):
         return FormalStrengthGate(False, "FORMAL_MEMBER_OBSERVATION_UNAVAILABLE", input_hash)
     for fact in facts:
         if fact.change_pct is not None:

@@ -180,14 +180,13 @@ def test_multi_day_window_cannot_fall_back_to_monthly_history():
     assert calls == []
 
 
-def test_registry_separates_normal_openapi_and_original_comparator_lineage():
+def test_registry_uses_date_addressable_official_source_for_normal_and_comparator_lineage():
     normal = build_historical_provider_registry(start_date=DAY, end_date=DAY, market_batch=True)
     prior = build_historical_provider_registry(
         start_date=PRIOR, end_date=PRIOR, market_batch=True, tpex_target_date_batch=True,
     )
     history = build_historical_provider_registry(start_date=PRIOR, end_date=DAY)
-    assert type(normal.for_market("TWO")[0].adapter) is TpexOpenApiDailyProvider
-    for registry in (prior, history):
+    for registry in (normal, prior, history):
         adapter = registry.for_market("TWO")[0].adapter
         assert type(adapter) is TpexOfficialDailyProvider
         assert adapter.adapter_version == COMPARATOR_PROVIDER_VERSION_BY_MARKET["TWO"]
@@ -200,12 +199,29 @@ def gate(*, changes=None, omit=None, prior_changes=None, status_kind="official")
     """Real registry/adapter -> unchanged G2 with exact-prior synthetic authority."""
     codes = {"TPE": (*[str(6000 + i) for i in range(346)], "2601"),
              "TWO": tuple(str(7000 + i) for i in range(206))}
+    tpex_fields = [
+        "代號", "名稱", "收盤", "漲跌", "開盤", "最高", "最低", "均價", "成交股數",
+        "成交金額(元)", "成交筆數", "最後買價", "最後買量(張數)", "最後賣價",
+        "最後賣量(張數)", "發行股數", "次日參考價", "次日漲停價", "次日跌停價",
+    ]
+
+    def tpex_row(code):
+        value = row(code, **(changes or {})) if code == "7000" else row(code)
+        return [
+            value["SecuritiesCompanyCode"], value["CompanyName"], value["Close"], value["Change"],
+            value["Open"], value["High"], value["Low"], value.get("Average", "50"),
+            value["TradingShares"], "0", "0", "0", "0", "0", "0", "0",
+            value["NextReferencePrice"], "0", "0",
+        ]
+
     payloads = {
         "TPE": {"stat": "OK", "date": "20261002", "tables": [{"fields": ["證券代號"],
                 "data": [[c, "Synthetic fixture", "1000", "1", "100000", "100", "105", "99", "104"]
                          for c in codes["TPE"] if c != "2601"]}]},
-        "TWO": [row(c, **(changes or {})) if c == "7000" else row(c)
-                for c in codes["TWO"] if c != omit],
+        "TWO": {"stat": "ok", "date": "20261002", "tables": [{
+            "title": "上櫃股票行情", "fields": tpex_fields,
+            "data": [tpex_row(c) for c in codes["TWO"] if c != omit],
+        }]},
     }
     registry = build_historical_provider_registry(
         start_date=DAY, end_date=DAY, market_batch=True,

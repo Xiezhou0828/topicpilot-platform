@@ -21,6 +21,11 @@ from uuid import UUID
 from sqlalchemy import bindparam, func, or_, select, text
 from sqlalchemy.orm import Session, aliased
 
+from topicpilot_api.corporate_action_authority import (
+    CorporateActionAuthorityError,
+    CorporateActionAuthorityRecord,
+    corporate_action_authorities_for,
+)
 from topicpilot_api.formal_eligibility import (
     Dimension,
     DimensionStatus,
@@ -42,6 +47,7 @@ from topicpilot_api.orm import (
     TopicSnapshotMemberFact,
 )
 from topicpilot_api.previous_close_authority import (
+    AUTHORIZED_CORPORATE_ACTION_COMPARATOR_UNAVAILABLE,
     ComparatorResolution,
     ComparatorStatus,
     ComparatorType,
@@ -616,6 +622,33 @@ def read_canonical_member_facts(
         previous = date_rows.get(2)
         volume = volume_by_instrument.get(member.instrument_id)
         status = status_by_instrument.get(member.instrument_id)
+        corporate_action: CorporateActionAuthorityRecord | None = None
+        if status is None:
+            try:
+                authorities = corporate_action_authorities_for(
+                    symbol=member.instrument_code,
+                    market=member.market_code,
+                    trading_date=trading_date,
+                )
+            except CorporateActionAuthorityError as exc:
+                raise FormalAuthorityUnavailable(str(exc)) from exc
+            if len(authorities) > 1:
+                raise FormalAuthorityUnavailable(
+                    f"CORPORATE_ACTION_AUTHORITY_CONFLICT:{member.market_code}:{member.instrument_code}"
+                )
+            if authorities:
+                corporate_action = authorities[0]
+                status = {
+                    "id": None,
+                    "observed_at": corporate_action.observed_at
+                    or corporate_action.published_at,
+                    "retrieved_at": corporate_action.observed_at
+                    or corporate_action.published_at,
+                    "content_hash": None,
+                    "status_code": corporate_action.status_mapping,
+                    "status_reason": corporate_action.reason_code,
+                    "source_code": corporate_action.source_authority,
+                }
         close = price["close"] if price is not None else None
         previous_close = previous["close"] if previous is not None else None
         formal_previous_session = (
@@ -628,13 +661,30 @@ def read_canonical_member_facts(
         comparator: ComparatorResolution
         status_code = status["status_code"] if status is not None else None
         if close is None and status_code in NO_TRADE_STATUS_CODES:
-            comparator = ComparatorResolution(
-                ComparatorStatus.ACCOUNTED_UNAVAILABLE,
-                None,
-                str(status.get("status_reason") or status_code),
-                str(status.get("source_code") or ""),
-                str(status.get("id") or ""),
-            )
+            if corporate_action is not None:
+                if corporate_action.action_type != "CAPITAL_REDUCTION_SHARE_EXCHANGE":
+                    raise FormalAuthorityUnavailable(
+                        f"CORPORATE_ACTION_COMPARATOR_TYPE_UNSUPPORTED:{corporate_action.action_type}"
+                    )
+                comparator = ComparatorResolution(
+                    ComparatorStatus.ACCOUNTED_UNAVAILABLE,
+                    ComparatorType.CAPITAL_REDUCTION_REFERENCE,
+                    AUTHORIZED_CORPORATE_ACTION_COMPARATOR_UNAVAILABLE,
+                    corporate_action.source_authority,
+                    corporate_action.source_reference,
+                    corporate_action.action_type,
+                    corporate_action.effective_from,
+                    corporate_action.effective_to,
+                    corporate_action.resume_date,
+                )
+            else:
+                comparator = ComparatorResolution(
+                    ComparatorStatus.ACCOUNTED_UNAVAILABLE,
+                    None,
+                    str(status.get("status_reason") or status_code),
+                    str(status.get("source_code") or ""),
+                    str(status.get("id") or ""),
+                )
         elif close is None:
             comparator = ComparatorResolution(
                 ComparatorStatus.ERROR,

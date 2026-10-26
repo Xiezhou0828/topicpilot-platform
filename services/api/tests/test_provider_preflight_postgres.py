@@ -141,15 +141,8 @@ def test_provider_preflight_is_select_only_and_leaves_all_write_tables_unchanged
             return _twse_payload(
                 next(m.instrument_codes for m in context.markets if m.market_code == "TPE")
             )
-        if "tpex_mainboard_daily_close_quotes" in url:
-            return json.dumps([
-                {
-                    "Date": "1150807", "SecuritiesCompanyCode": code,
-                    "Open": "49", "High": "51", "Low": "48", "Close": "50",
-                    "TradingShares": "3000",
-                }
-                for code in codes["TWO"]
-            ]).encode()
+        if "dailyQuotes" in url:
+            return _tpex_payload(codes["TWO"])
         raise AssertionError(f"unexpected provider URL: {url}")
 
     with Session(postgres_engine, expire_on_commit=False) as session:

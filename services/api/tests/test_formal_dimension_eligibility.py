@@ -11,7 +11,8 @@ from topicpilot_api.formal_eligibility import (
     DimensionStatus,
     project_return_dimensions,
 )
-from topicpilot_api.formal_strength_publication import _return_eligible_facts
+from topicpilot_api.formal_strength_publication import _gate, _return_eligible_facts
+from topicpilot_api.lifecycle_formal_publication import _formal_gate
 from topicpilot_api.previous_close_authority import (
     ComparatorResolution,
     ComparatorStatus,
@@ -24,7 +25,11 @@ from topicpilot_api.provider_preflight import (
     G2PreflightContext,
     evaluate_provider_preflight,
 )
-from topicpilot_api.topic_daily_state import _calculate_daily_change_pct
+from topicpilot_api.topic_daily_state import (
+    MembershipMember,
+    _calculate_daily_change_pct,
+    read_canonical_member_facts,
+)
 
 
 def _resume_authority(symbol: str = "9999"):
@@ -320,3 +325,130 @@ def test_topic_projection_excludes_only_accounted_return_unavailable_facts():
         }
     )
     assert _return_eligible_facts((allowed, excluded)) == (allowed,)
+
+
+class _EmptyCanonicalSession:
+    """Minimal read-only session fixture for the authority fallback test."""
+
+    def execute(self, _statement, _params):
+        return self
+
+    def mappings(self):
+        return self
+
+    def all(self):
+        return []
+
+    def __iter__(self):
+        return iter(())
+
+
+def test_6173_suspension_authority_is_formally_accounted_without_a_fake_price():
+    from uuid import uuid4
+
+    member = MembershipMember(
+        instrument_id=uuid4(),
+        instrument_code="6173",
+        market_code="TWO",
+        relation_type="RELATED",
+        relation_version="test-v1",
+        identity_continuity="FORMAL_TEST",
+    )
+    fact = read_canonical_member_facts(
+        _EmptyCanonicalSession(), date(2026, 10, 7), (member,)
+    )[0]
+
+    assert fact.fact_state == "NO_TRADE"
+    assert fact.close is None
+    assert fact.change_pct is None
+    assert fact.raw_fact_payload["tradingStatus"] == "SUSPENDED"
+    assert fact.raw_fact_payload["tradingStatusReason"] == "CAPITAL_REDUCTION_TRADING_SUSPENSION"
+    assert fact.raw_fact_payload["dimensionEligibility"]["DAILY_RETURN"] == {
+        "dimension": "DAILY_RETURN",
+        "status": "ACCOUNTED_UNAVAILABLE",
+        "reasonCode": "AUTHORIZED_CORPORATE_ACTION_COMPARATOR_UNAVAILABLE",
+        "authoritySource": "TPEX_OFFICIAL_REDUCTION",
+        "sourceReference": "https://mops.twse.com.tw/mops/web/t05st01",
+        "comparatorType": "CAPITAL_REDUCTION_REFERENCE",
+    }
+    assert fact.raw_fact_payload["close"] is None
+
+
+def _authorized_no_trade_fact(instrument_id: str = "no-trade"):
+    return SimpleNamespace(
+        instrument_id=instrument_id,
+        fact_state="NO_TRADE",
+        change_pct=None,
+        fact_identity="fact:no-trade",
+        fact_hash="f" * 64,
+        structural_role="RELATED",
+        role_source="FORMAL_TEST",
+        raw_fact_payload={
+            "dimensionEligibility": {
+                "DAILY_RETURN": {
+                    "status": "ACCOUNTED_UNAVAILABLE",
+                    "reasonCode": "AUTHORIZED_CORPORATE_ACTION_COMPARATOR_UNAVAILABLE",
+                }
+            }
+        },
+    )
+
+
+def _formal_snapshot(stock_count: int = 2):
+    return SimpleNamespace(
+        id="snapshot-6173",
+        snapshot_identity="formal:test:2026-10-07:hash",
+        lineage_hash="l" * 64,
+        correction_sequence=0,
+        membership_snapshot_id="membership:test",
+        membership_snapshot_hash="m" * 64,
+        relation_version="test-v1",
+        source_artifact_id="artifact:test",
+        source_artifact_hash="a" * 64,
+        supersedes_snapshot_id=None,
+        superseded_by_snapshot_id=None,
+        data_status="COMPLETE",
+        stock_count=stock_count,
+        observed_stock_count=stock_count - 1,
+    )
+
+
+def test_strength_and_lifecycle_gates_accept_authorized_no_trade_dimension_gap():
+    observed = SimpleNamespace(
+        instrument_id="observed",
+        fact_state="OBSERVED",
+        change_pct=Decimal("1"),
+        fact_identity="fact:observed",
+        fact_hash="o" * 64,
+        structural_role="RELATED",
+        role_source="FORMAL_TEST",
+        raw_fact_payload={"dimensionEligibility": {"DAILY_RETURN": {"status": "READY"}}},
+    )
+    no_trade = _authorized_no_trade_fact()
+    snapshot = _formal_snapshot()
+
+    assert _gate(snapshot, [observed, no_trade]).passed is True
+    assert _formal_gate(snapshot, [observed, no_trade]).passed is True
+
+
+def test_unexplained_no_trade_does_not_pass_formal_gates():
+    observed = SimpleNamespace(
+        instrument_id="observed",
+        fact_state="OBSERVED",
+        change_pct=Decimal("1"),
+        fact_identity="fact:observed",
+        fact_hash="o" * 64,
+        structural_role="RELATED",
+        role_source="FORMAL_TEST",
+        raw_fact_payload={"dimensionEligibility": {"DAILY_RETURN": {"status": "READY"}}},
+    )
+    unexplained = SimpleNamespace(
+        **{
+            **_authorized_no_trade_fact().__dict__,
+            "raw_fact_payload": {"dimensionEligibility": {}},
+        }
+    )
+    snapshot = _formal_snapshot()
+
+    assert _gate(snapshot, [observed, unexplained]).passed is False
+    assert _formal_gate(snapshot, [observed, unexplained]).passed is False
