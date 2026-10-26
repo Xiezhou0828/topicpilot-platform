@@ -1,4 +1,4 @@
-from datetime import UTC, datetime
+from datetime import UTC, date, datetime
 from types import SimpleNamespace
 
 from topicpilot_api.live.config import LiveRuntimeConfig
@@ -100,6 +100,35 @@ def test_price_formal_completion_does_not_hide_pending_late_data():
         )
         == RECEIPT_DEADLINE_EXCEEDED
     )
+
+
+def test_previous_session_late_data_does_not_wait_for_same_day_window():
+    config = LiveRuntimeConfig()
+    now = datetime(2026, 10, 17, 20, 0, tzinfo=UTC)  # 04:00 Taipei on 10/18
+    updater = PostCloseUpdater.__new__(PostCloseUpdater)
+    updater.config = config
+    updater.session_clock = MarketSessionClock(
+        config.timezone_name,
+        config.session_open,
+        config.session_close,
+        config.closed_dates,
+    )
+    updater._now = lambda: now
+    updater._latest_checkpoint = lambda _run_id, _key: None
+    updater._checkpoint_event = lambda **_kwargs: None
+    updater._update_publication_stage = lambda *_args, **_kwargs: None
+    updater._institutional_flow_readback = lambda _date: {
+        "status": "PASS",
+        "tradingDate": "2026-10-16",
+    }
+
+    result = updater._late_data_enrichment(
+        run_id="simulated-run",
+        local_date=date(2026, 10, 16),
+    )
+
+    assert result["status"] == "PASS"
+    assert result["execution"] == "REUSED_CANONICAL_FACTS"
 
 
 def test_simulated_e2e_keeps_partial_stages_out_of_formal_publication():

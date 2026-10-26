@@ -12,8 +12,13 @@ from enum import StrEnum
 from typing import Any
 
 from topicpilot_api.previous_close_authority import (
+    AUTHORIZED_CORPORATE_ACTION_COMPARATOR_UNAVAILABLE,
     ComparatorResolution,
     ComparatorStatus,
+)
+
+_OFFICIAL_CORPORATE_ACTION_SOURCES = frozenset(
+    {"TWSE_OFFICIAL_REDUCTION", "TPEX_OFFICIAL_REDUCTION"}
 )
 
 
@@ -35,6 +40,52 @@ class DimensionStatus(StrEnum):
     READY = "READY"
     ACCOUNTED_UNAVAILABLE = "ACCOUNTED_UNAVAILABLE"
     ERROR = "ERROR"
+
+
+def is_authorized_accounted_unavailable_fact(fact: Any) -> bool:
+    """Return whether a formal member fact is an authority-backed no-trade gap.
+
+    A company-action suspension can be covered by the formal universe without
+    fabricating a close or return.  Only the explicit ``NO_TRADE`` fact state
+    with the canonical comparator reason is eligible for this exception;
+    ordinary ``UNKNOWN`` or missing-data facts remain fail-closed.
+    """
+
+    if getattr(fact, "fact_state", None) != "NO_TRADE":
+        return False
+    if getattr(fact, "change_pct", None) is not None:
+        return False
+    payload = getattr(fact, "raw_fact_payload", None) or {}
+    eligibility = payload.get("dimensionEligibility") or {}
+    daily_return = eligibility.get("DAILY_RETURN") or {}
+    comparator = payload.get("comparatorAuthority") or {}
+    if daily_return.get("status") != DimensionStatus.ACCOUNTED_UNAVAILABLE.value:
+        return False
+
+    reason_code = daily_return.get("reasonCode")
+    if reason_code == AUTHORIZED_CORPORATE_ACTION_COMPARATOR_UNAVAILABLE:
+        return True
+    if comparator.get("status") != DimensionStatus.ACCOUNTED_UNAVAILABLE.value:
+        return False
+
+    # Canonical member facts carry the concrete official corporate-action
+    # reason (for example CAPITAL_REDUCTION_TRADING_SUSPENSION), while the
+    # comparator resolver uses the generic reason above.  Accept the concrete
+    # form only when both projections carry the same official authority and
+    # independently verifiable source reference.
+    source = daily_return.get("authoritySource")
+    reference = daily_return.get("sourceReference")
+    return (
+        getattr(fact, "trading_status_observation_id", None) is not None
+        and
+        reason_code
+        and source in _OFFICIAL_CORPORATE_ACTION_SOURCES
+        and source == comparator.get("authoritySource")
+        and reference
+        and reference == comparator.get("sourceReference")
+        and str(reference).startswith(("https://", "http://"))
+        and reason_code == comparator.get("reasonCode")
+    )
 
 
 @dataclass(frozen=True)
@@ -173,5 +224,6 @@ __all__ = [
     "DimensionEligibility",
     "DimensionStatus",
     "dimension_payload",
+    "is_authorized_accounted_unavailable_fact",
     "project_return_dimensions",
 ]

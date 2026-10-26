@@ -21,6 +21,7 @@ from uuid import UUID
 from sqlalchemy import bindparam, func, or_, select, text
 from sqlalchemy.orm import Session, aliased
 
+from topicpilot_api.corporate_action_authority import corporate_action_authorities_for
 from topicpilot_api.formal_eligibility import (
     Dimension,
     DimensionStatus,
@@ -53,6 +54,11 @@ from topicpilot_api.topic_engine.structural_role_authority import (
     StructuralRoleAuthorityError,
     StructuralRoleResolution,
     resolve_structural_role,
+)
+from topicpilot_api.trading_status_authority import (
+    AuthorityClass,
+    TradingStatusAuthorityRecord,
+    resolve_effective_trading_status,
 )
 
 FORMAL_MAPPING_EARLIEST_DATE = date(2026, 8, 7)
@@ -143,6 +149,74 @@ class DateMaterializationPlan:
     status: str
     reason: str | None
     topics: tuple[TopicMaterializationPlan, ...]
+
+
+def _effective_member_status(
+    member: MembershipMember,
+    trading_date: date,
+    status: Any,
+) -> tuple[str | None, str | None, str | None, str | None]:
+    """Resolve a member's status with date-effective corporate-action authority.
+
+    The daily provider can persist an internal ``UNKNOWN`` observation when a
+    suspended instrument has no priced bar.  That diagnostic is not exchange
+    authority and must not outrank an explicit, date-effective corporate
+    action record.  Untagged/other UNKNOWN values remain fail-closed.
+    """
+
+    raw_status = str(status["status_code"] or "") if status is not None else None
+    raw_reason = str(status.get("status_reason") or "") if status is not None else ""
+    corporate_actions = tuple(
+        item.to_trading_status_record()
+        for item in corporate_action_authorities_for(
+            symbol=member.instrument_code,
+            market=member.market_code,
+            trading_date=trading_date,
+        )
+    )
+    if not corporate_actions:
+        return (
+            raw_status,
+            raw_reason or None,
+            str(status.get("source_code") or "") if status is not None else None,
+            str(status.get("id") or "") if status is not None else None,
+        )
+
+    official: tuple[TradingStatusAuthorityRecord, ...] = ()
+    internal_missing = raw_status == "UNKNOWN" and raw_reason.startswith(
+        "MISSING_MARKET_DATA:"
+    )
+    if status is not None and not internal_missing:
+        official = (
+            TradingStatusAuthorityRecord(
+                status_code=raw_status or "UNKNOWN",
+                effective_from=trading_date,
+                effective_to=trading_date,
+                source=str(status.get("source_code") or "CANONICAL_STATUS_AUTHORITY"),
+                source_reference=str(status.get("id") or "canonical-status"),
+                reason_code=raw_reason or raw_status or "UNKNOWN",
+                observed_at=status.get("observed_at"),
+                authority_class=AuthorityClass.OFFICIAL_EXCHANGE.value,
+            ),
+        )
+    resolution = resolve_effective_trading_status(
+        member.instrument_id,
+        trading_date,
+        official_authority=(*official, *corporate_actions),
+    )
+    if resolution.resolved:
+        return (
+            resolution.status,
+            resolution.reason_code,
+            resolution.authority_source,
+            resolution.source_reference,
+        )
+    return (
+        raw_status,
+        raw_reason or None,
+        str(status.get("source_code") or "") if status is not None else None,
+        str(status.get("id") or "") if status is not None else None,
+    )
 
 
 def _hash_payload(payload: Any) -> str:
@@ -297,6 +371,12 @@ def resolve_formal_membership(
                 InstrumentTopicRelation.topic_id == topic_id,
                 InstrumentTopicRelation.valid_from <= trading_date,
                 _end_filter(InstrumentTopicRelation.valid_to, trading_date),
+                # Formal PIT membership is carried only by explicitly
+                # approved Structural Role authority rows. Legacy relation
+                # rows remain available to legacy/research consumers but must
+                # not make the formal resolver fail closed as if authority
+                # were incomplete.
+                InstrumentTopicRelation.structural_role.is_not(None),
                 _effective_filter(Instrument.valid_from, trading_date),
                 _end_filter(Instrument.valid_to, trading_date),
                 _effective_filter(Market.valid_from, trading_date),
@@ -490,7 +570,7 @@ _PRICE_FACTS_SQL = text(
           )
     ), candidates AS (
         SELECT co.id, co.instrument_id, co.observed_at, co.retrieved_at,
-               co.content_hash, cp.close, source.source_code,
+               co.content_hash, co.quality_state, cp.close, source.source_code,
                (co.observed_at AT TIME ZONE m.timezone)::date AS trading_date,
                ROW_NUMBER() OVER (
                    PARTITION BY co.instrument_id,
@@ -626,14 +706,18 @@ def read_canonical_member_facts(
             else None
         )
         comparator: ComparatorResolution
-        status_code = status["status_code"] if status is not None else None
+        status_code, status_reason, status_source, status_reference = _effective_member_status(
+            member,
+            trading_date,
+            status,
+        )
         if close is None and status_code in NO_TRADE_STATUS_CODES:
             comparator = ComparatorResolution(
                 ComparatorStatus.ACCOUNTED_UNAVAILABLE,
                 None,
-                str(status.get("status_reason") or status_code),
-                str(status.get("source_code") or ""),
-                str(status.get("id") or ""),
+                str(status_reason or status_code),
+                str(status_source or ""),
+                str(status_reference or ""),
             )
         elif close is None:
             comparator = ComparatorResolution(
@@ -731,7 +815,6 @@ def read_canonical_member_facts(
             classification = "NEGATIVE"
         else:
             classification = "FLAT"
-        status_code = status["status_code"] if status is not None else None
         fact_state = (
             "OBSERVED"
             if close is not None
@@ -774,7 +857,7 @@ def read_canonical_member_facts(
             "changePct": _json_value(change_pct),
             "observedClassification": classification,
             "tradingStatus": status_code,
-            "tradingStatusReason": status["status_reason"] if status is not None else None,
+            "tradingStatusReason": status_reason,
             "priceContentHash": price["content_hash"] if price is not None else None,
             "volumeContentHash": volume["content_hash"] if volume is not None else None,
             "statusContentHash": status["content_hash"] if status is not None else None,

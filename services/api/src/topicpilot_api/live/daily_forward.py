@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Callable
+from contextlib import suppress
 from dataclasses import dataclass
 from datetime import UTC, date, datetime, time, timedelta
 from typing import Any
@@ -12,7 +13,11 @@ from sqlalchemy.orm import Session
 from topicpilot_api.provider_preflight import load_g2_preflight_context
 
 from .config import LiveRuntimeConfig
-from .post_close import PostCloseRunResult, PostCloseUpdater
+from .post_close import (
+    LATEST_CLOSED_SESSION,
+    PostCloseRunResult,
+    PostCloseUpdater,
+)
 from .receipt import (
     RECEIPT_COMPLETE,
     RECEIPT_CORRECTION_COMPLETE,
@@ -96,6 +101,8 @@ class DailyForwardRunner:
             try:
                 context = self._context(candidate)
             except Exception:
+                with suppress(Exception):
+                    self.session.rollback()
                 return None
             if self._context_ready(context) and context.target_date_is_session:
                 return candidate
@@ -220,6 +227,8 @@ class DailyForwardRunner:
             try:
                 context = self._context(candidate)
             except Exception as exc:
+                with suppress(Exception):
+                    self.session.rollback()
                 return None, (f"REFERENCE_PREFLIGHT_{type(exc).__name__}",)
             if not self._context_ready(context):
                 return None, ("REFERENCE_PREFLIGHT_FAILED",)
@@ -236,8 +245,18 @@ class DailyForwardRunner:
     ) -> DailyForwardRunResult:
         now = self._now()
         local_date = now.astimezone(self.updater.session_clock.timezone).date()
+        latest_closed_session = execution_mode == LATEST_CLOSED_SESSION
         if run_date is None:
-            if execution_mode == "SCHEDULED":
+            if latest_closed_session:
+                target_date, resolution_reasons = self._latest_closed_session(now)
+                if target_date is None:
+                    return DailyForwardRunResult(
+                        "BLOCKED",
+                        None,
+                        None,
+                        resolution_reasons,
+                    )
+            elif execution_mode == "SCHEDULED":
                 # The scheduler owns wake-up timing only.  The current local
                 # date is passed to G2 so a canonical holiday becomes a
                 # successful MARKET_CLOSED no-op rather than silently running
@@ -254,11 +273,17 @@ class DailyForwardRunner:
                     )
         else:
             target_date = run_date
-        is_replay = replay or (run_date is not None and target_date != local_date)
+        is_replay = (
+            replay
+            or latest_closed_session
+            or (run_date is not None and target_date != local_date)
+        )
 
         try:
             context = self._context(target_date)
         except Exception as exc:
+            with suppress(Exception):
+                self.session.rollback()
             return DailyForwardRunResult(
                 "BLOCKED",
                 target_date,

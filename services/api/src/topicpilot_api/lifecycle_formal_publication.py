@@ -21,6 +21,7 @@ from uuid import UUID
 from sqlalchemy import select
 from sqlalchemy.orm import Session, aliased
 
+from topicpilot_api.formal_eligibility import is_authorized_accounted_unavailable_fact
 from topicpilot_api.formal_lifecycle_evaluator import evaluate_formal_structural_lifecycle
 from topicpilot_api.formal_strength_publication import (
     build_market_context,
@@ -200,13 +201,6 @@ def _formal_gate(
             lineage,
             input_snapshot_hash(snapshot, facts),
         )
-    if snapshot.observed_stock_count != snapshot.stock_count:
-        return FormalLifecycleGate(
-            False,
-            "INSUFFICIENT_FORMAL_INPUT:OBSERVED_COUNT_MISMATCH",
-            lineage,
-            input_snapshot_hash(snapshot, facts),
-        )
     if len(facts) != snapshot.stock_count:
         return FormalLifecycleGate(
             False,
@@ -214,7 +208,25 @@ def _formal_gate(
             lineage,
             input_snapshot_hash(snapshot, facts),
         )
-    if any(fact.fact_state != "OBSERVED" for fact in facts):
+    accounted_unavailable = sum(
+        is_authorized_accounted_unavailable_fact(fact) for fact in facts
+    )
+    covered_member_count = sum(fact.fact_state == "OBSERVED" for fact in facts)
+    if (
+        snapshot.observed_stock_count != snapshot.stock_count
+        and covered_member_count + accounted_unavailable != snapshot.stock_count
+    ):
+        return FormalLifecycleGate(
+            False,
+            "INSUFFICIENT_FORMAL_INPUT:OBSERVED_COUNT_MISMATCH",
+            lineage,
+            input_snapshot_hash(snapshot, facts),
+        )
+    if any(
+        fact.fact_state != "OBSERVED"
+        and not is_authorized_accounted_unavailable_fact(fact)
+        for fact in facts
+    ):
         return FormalLifecycleGate(
             False,
             "INSUFFICIENT_FORMAL_INPUT:NON_OBSERVED_MEMBER_FACT",
