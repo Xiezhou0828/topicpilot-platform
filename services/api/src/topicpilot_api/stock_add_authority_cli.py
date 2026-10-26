@@ -112,7 +112,7 @@ def main(argv: list[str] | None = None) -> int:
         or controls.get("transactionReadOnly") is not True
         or controls.get("transactionIsolation") != "repeatable read"
         or controls.get("mutationPrivilegesObserved") is not False
-        or controls.get("temporaryDatabasePrivilegeObserved") is not False
+        or controls.get("directDatabaseMutationPrivilegeObserved") is not False
         or controls.get("activeMarketCodes") != ["TPE", "TWO"]
         or not controls.get("migrationHead")
     ):
