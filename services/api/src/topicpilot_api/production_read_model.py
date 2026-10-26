@@ -899,6 +899,9 @@ def _strength_read(session: Session, topic_row: Any, observation_dir: str | None
     owner = dict(result.get("ownerSeededV0") or {})
     absolute = dict(components.get("absolute") or {})
     relative = dict(components.get("relative") or {})
+    snapshot_date = topic_row.get("snapshot_date")
+    if isinstance(snapshot_date, date):
+        snapshot_date = snapshot_date.isoformat()
     owner.update(
         {
             "status": (
@@ -906,7 +909,7 @@ def _strength_read(session: Session, topic_row: Any, observation_dir: str | None
                 if topic_row.get("formal_strength_publication_status") == "PUBLISHED"
                 else "UNAVAILABLE"
             ),
-            "asOfDate": topic_row.get("snapshot_date"),
+            "asOfDate": snapshot_date,
             "formalDailyGrade": components.get("formalDailyGrade") or absolute.get("grade"),
             "absolute": {
                 **absolute,
