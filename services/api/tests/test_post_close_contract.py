@@ -1089,13 +1089,24 @@ def test_official_flow_persistence_skips_a_second_write_after_readback(monkeypat
     assert updater.session.commits == 1
 
 
-def test_publication_readback_reuses_committed_output_after_checkpoint_interrupt(monkeypatch):
+@pytest.mark.parametrize(
+    ("tolerated_missing_count", "failure_count", "skipped_count", "failure_codes"),
+    [
+        (0, 0, 0, ()),
+        (1, 1, 1, ("MISSING_MARKET_DATA",)),
+    ],
+)
+def test_publication_readback_reuses_committed_output_after_checkpoint_interrupt(
+    monkeypatch, tolerated_missing_count, failure_count, skipped_count, failure_codes
+):
+    reconciliation = SimpleNamespace(
+        downstream_ready=True,
+        reason_codes=(),
+        tolerated_missing_count=tolerated_missing_count,
+    )
     monkeypatch.setattr(
         "topicpilot_api.live.post_close.reconcile_daily_market",
-        lambda *_args, **_kwargs: SimpleNamespace(
-            downstream_ready=True,
-            reason_codes=(),
-        ),
+        lambda *_args, **_kwargs: reconciliation,
     )
     captured: dict[str, object] = {}
     snapshot = {
@@ -1141,15 +1152,17 @@ def test_publication_readback_reuses_committed_output_after_checkpoint_interrupt
         local_date=date(2026, 9, 3),
         eligible_instrument_ids=(uuid4(),),
         success_count=1,
-        failure_count=0,
-        skipped_count=0,
+        failure_count=failure_count,
+        skipped_count=skipped_count,
         retry_count=0,
         point_count=1,
-        failure_codes=(),
+        failure_codes=failure_codes,
     )
 
     assert result.status == "SUCCESS"
     assert captured["snapshot_result"]["formalPublicationReadback"]["status"] == "PASS"
+    if tolerated_missing_count:
+        assert captured["failure_codes"] == ()
 
 
 def test_completed_checkpoint_with_missing_publication_fails_closed(monkeypatch):

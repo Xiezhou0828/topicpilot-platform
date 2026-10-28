@@ -577,6 +577,11 @@ class TpexOfficialDailyProvider:
     ) -> HistoricalFetchResult:
         retrieved_at, bars = self._fetch_market_day()
         bar = bars.get(instrument_code)
+        explicit_no_trade = bool(
+            bar is not None
+            and all(value is None for value in (bar.open, bar.high, bar.low, bar.close))
+            and bar.volume == 0
+        )
         return _result(
             instrument_code=instrument_code,
             market_code=market_code,
@@ -584,13 +589,21 @@ class TpexOfficialDailyProvider:
             adapter_version=self.adapter_version,
             bars=[bar] if bar is not None else [],
             retrieved_at=retrieved_at,
-            instrument_status=("AVAILABLE" if bar is not None else "EXCHANGE_CONFIRMED_NO_DATA"),
+            instrument_status=(
+                "NO_TRADE"
+                if explicit_no_trade
+                else "AVAILABLE"
+                if bar is not None
+                else "EXCHANGE_CONFIRMED_NO_DATA"
+            ),
             status_reason=(
-                None
+                "official TPEx dailyQuotes row has no OHLC values and zero trading volume"
+                if explicit_no_trade
+                else None
                 if bar is not None
                 else "official TPEx market dataset contained no row for requested instrument/date"
             ),
-            status_explicit=bar is None,
+            status_explicit=bar is None or explicit_no_trade,
         )
 
     def fetch_market_day(self) -> tuple[datetime, dict[str, HistoricalBar]]:

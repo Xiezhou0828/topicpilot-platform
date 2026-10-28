@@ -250,6 +250,21 @@ def classify_authoritative_no_trade_result(
 
     if trading_date is None:
         return result
+    if (
+        result.source_code == "TPEX_OFFICIAL_DAILY"
+        and result.status_explicit
+        and result.instrument_status == "NO_TRADE"
+        and result.bars
+        and all(
+            all(value is None for value in (bar.open, bar.high, bar.low, bar.close))
+            and bar.volume == 0
+            for bar in result.bars
+        )
+    ):
+        # TPEx's official daily row explicitly identifies an active security
+        # with zero volume and no traded prices. Preserve that evidence as
+        # NO_TRADE instead of downgrading it to an unexplained missing quote.
+        return result
     if lifecycle_status in {"SUSPENDED", "DELISTED", "TERMINATED"}:
         if result.bars:
             raise HistoricalIngestionError(

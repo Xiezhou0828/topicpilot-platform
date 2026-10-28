@@ -255,6 +255,7 @@ def replay_market(
         priced_by_market={market: len(accepted_price_codes)},
         covered_by_market={market: covered},
         unavailable_instruments=unavailable,
+        allow_limited_missing_quotes=False,
     )
     context = G2MarketContext(
         market,

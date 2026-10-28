@@ -2899,7 +2899,21 @@ class PostCloseUpdater:
                 expected_instrument_ids=eligible_instrument_ids,
                 status_resolutions=getattr(self, "_status_resolution_by_instrument_id", {}),
             )
-            if failure_count or skipped_count:
+            limited_quote_gaps = int(
+                getattr(reconciliation, "tolerated_missing_count", 0) or 0
+            )
+            failure_code_set = set(failure_codes)
+            only_tolerated_quote_gaps = (
+                limited_quote_gaps > 0
+                and failure_code_set.issubset({"MISSING_MARKET_DATA"})
+                and max(failure_count, skipped_count) <= limited_quote_gaps
+            )
+            if only_tolerated_quote_gaps:
+                # Keep the collection counters truthful, while allowing the
+                # formal downstream chain to publish under the explicit
+                # per-symbol tolerance recorded by reconciliation.
+                status = "SUCCESS"
+            elif failure_count or skipped_count:
                 status = "PARTIAL" if success_count else "FAILED"
             else:
                 status = "SUCCESS"
@@ -3129,7 +3143,10 @@ class PostCloseUpdater:
                         state="PRICE_BASED_FINAL_LATE_DATA_INCOMPLETE",
                         lateDataState=late_data["state"],
                     )
-            final_failure_codes = tuple(sorted(set(failure_codes)))
+            final_failure_code_set = set(failure_codes)
+            if only_tolerated_quote_gaps:
+                final_failure_code_set.discard("MISSING_MARKET_DATA")
+            final_failure_codes = tuple(sorted(final_failure_code_set))
             if formal_ready and formal_publication_ready and snapshot_result.get(
                 "lateDataEnrichment", {}
             ).get("status") == "WAITING":
@@ -3159,7 +3176,11 @@ class PostCloseUpdater:
                     )
                 )
             final_failure_codes = final_failure_codes or reconciliation.reason_codes
-            if not final_failure_codes and skipped_count:
+            if (
+                not final_failure_codes
+                and skipped_count
+                and not only_tolerated_quote_gaps
+            ):
                 final_failure_codes = ("NO_TRADING_DAY_DATA",)
             self._finish_with_retry(
                 run_id,

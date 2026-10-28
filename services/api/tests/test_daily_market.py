@@ -3,7 +3,32 @@ from pathlib import Path
 
 import pytest
 
-from topicpilot_api.daily_market import assess_daily_coverage, build_unavailable_instruments
+from topicpilot_api.daily_market import (
+    UnavailableInstrument,
+    assess_daily_coverage,
+    build_unavailable_instruments,
+)
+
+
+def _missing_quote_items(count: int, *, reason_code: str = "MISSING_MARKET_DATA"):
+    return tuple(
+        UnavailableInstrument(
+            trading_date=date(2026, 8, 12),
+            symbol=f"9{index:03d}",
+            name=None,
+            market="TPE",
+            status="UNKNOWN",
+            reason_code=reason_code,
+            source="TWSE_OFFICIAL_DAILY",
+            last_valid_price_date=None,
+            last_valid_close=None,
+            formal_topic_membership_count=0,
+            affected_topic_slugs=(),
+            is_legitimate_unavailable=False,
+            blocks_formal_publication=True,
+        )
+        for index in range(count)
+    )
 
 MIGRATION = (
     Path(__file__).parents[1]
@@ -75,6 +100,61 @@ def test_unknown_missing_is_not_covered_even_when_observed_row_exists():
     assert result.status == "PARTIAL"
     assert result.downstream_ready is False
     assert "UNEXPLAINED_MISSING_DATA" in result.reason_codes
+
+
+def test_nine_per_instrument_quote_gaps_are_published_with_explicit_tolerance():
+    result = assess_daily_coverage(
+        trade_date=date(2026, 8, 12),
+        expected_by_market={"TPE": 12},
+        observed_by_market={"TPE": 12},
+        priced_by_market={"TPE": 3},
+        covered_by_market={"TPE": 3},
+        unavailable_instruments=_missing_quote_items(9),
+    )
+
+    assert result.status == "READY_WITH_LIMITED_GAPS"
+    assert result.downstream_ready is True
+    assert result.unexplained_missing_count == 9
+    assert result.tolerated_missing_count == 9
+    assert result.to_dict()["missingToleranceLimit"] == 9
+    assert "LIMITED_GAPS_WITHIN_TOLERANCE" in result.reason_codes
+    assert all(
+        item.publication_tolerance_applied
+        and not item.blocks_formal_publication
+        for item in result.unavailable_instruments
+    )
+
+
+def test_ten_per_instrument_quote_gaps_remain_blocked():
+    result = assess_daily_coverage(
+        trade_date=date(2026, 8, 12),
+        expected_by_market={"TPE": 12},
+        observed_by_market={"TPE": 12},
+        priced_by_market={"TPE": 2},
+        covered_by_market={"TPE": 2},
+        unavailable_instruments=_missing_quote_items(10),
+    )
+
+    assert result.status == "PARTIAL"
+    assert result.downstream_ready is False
+    assert result.unexplained_missing_count == 10
+    assert result.tolerated_missing_count == 0
+    assert "MISSING_QUOTE_TOLERANCE_EXCEEDED" in result.reason_codes
+
+
+def test_provider_failure_is_not_hidden_by_the_missing_quote_tolerance():
+    result = assess_daily_coverage(
+        trade_date=date(2026, 8, 12),
+        expected_by_market={"TPE": 12},
+        observed_by_market={"TPE": 12},
+        priced_by_market={"TPE": 11},
+        covered_by_market={"TPE": 11},
+        unavailable_instruments=_missing_quote_items(1, reason_code="PROVIDER_ERROR"),
+    )
+
+    assert result.status == "PARTIAL"
+    assert result.downstream_ready is False
+    assert result.tolerated_missing_count == 0
 
 
 def test_null_close_is_unavailable_and_never_coerced_to_zero():

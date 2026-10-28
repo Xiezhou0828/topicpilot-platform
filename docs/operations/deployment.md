@@ -132,12 +132,22 @@ The job uses official TWSE daily data for TPE and official TPEx daily data for
 TWO, writes through the existing canonical observation pipeline, then records
 separate priced/covered coverage and `downstreamReady` in the `POST_CLOSE`
 collector-run metadata. Exit zero is not sufficient acceptance evidence:
-operators must confirm the run is `SUCCESS`,
-`dailyMarketReconciliation.status=READY`, `coveredCount=expectedCount`,
-`unexplainedMissingCount=0`, and `downstreamReady=true`. An approved
-`SUSPENDED`, `NO_TRADE`, or `EXCHANGE_CONFIRMED_NO_DATA` row may make the run
-covered while its close remains null; it must never be zero-filled or
-forward-filled. `PARTIAL`, `FAILED`, and `MARKET_CLOSED` must not trigger
+operators must confirm the run is `SUCCESS`, its reconciliation is
+downstream-ready, and the formal readbacks pass. An approved `SUSPENDED`,
+`NO_TRADE`, or `EXCHANGE_CONFIRMED_NO_DATA` row may make the run covered while
+its close remains null; it must never be zero-filled or forward-filled. An
+official TPEx daily row with no OHLC values and zero volume is recorded as
+`NO_TRADE`; absence of a row is not upgraded to that status.
+
+The only coverage exception is fewer than ten unresolved, per-instrument quote
+gaps (`1`–`9`) when every gap is individually identified, no provider-wide or
+date-integrity failure exists, and market totals reconcile exactly. Such a run
+is `READY_WITH_LIMITED_GAPS`, remains downstream-ready, and records the
+affected instruments plus `publicationToleranceApplied=true`; their close and
+volume remain null. Ten or more gaps, provider errors, wrong dates, duplicate
+keys, market closure, or an empty formal universe remain blocking. Operators
+must verify `toleratedMissingCount` and `missingToleranceLimit` alongside the
+formal readbacks. `PARTIAL`, `FAILED`, and `MARKET_CLOSED` must not trigger
 Lifecycle processing. Re-running the same date is safe and reuses canonical
 idempotency keys.
 
