@@ -213,6 +213,9 @@ def test_tpex_market_batch_fetches_once_and_resolves_multiple_symbols():
     assert second.bars[0].close == Decimal("60")
     missing = provider.fetch_daily("6806", "TWO")
     assert missing.bars[0].close is None
+    assert missing.bars[0].volume == Decimal("0")
+    assert missing.instrument_status == "NO_TRADE"
+    assert missing.status_explicit is True
 
 
 def test_market_batch_rejects_wrong_provider_date():
@@ -471,6 +474,39 @@ def test_active_missing_bar_is_mapped_to_unexplained_market_data():
     assert result.status_explicit is True
     assert result.status_reason.startswith("MISSING_MARKET_DATA:")
     assert result.covered_no_trade is False
+
+
+def test_official_tpex_zero_volume_row_is_preserved_as_no_trade():
+    observed = HistoricalFetchResult(
+        "6806",
+        "TWO",
+        "6806",
+        "TPEX_OFFICIAL_DAILY",
+        "tpex-official-daily.v2",
+        datetime(2026, 8, 25, tzinfo=UTC),
+        (
+            HistoricalBar(
+                date(2026, 8, 25),
+                None,
+                None,
+                None,
+                None,
+                Decimal("0"),
+            ),
+        ),
+        1,
+        instrument_status="NO_TRADE",
+        status_reason="official TPEx dailyQuotes row has no OHLC values and zero trading volume",
+        status_explicit=True,
+    )
+
+    result = classify_authoritative_no_trade_result(
+        observed, lifecycle_status=None, trading_date=date(2026, 8, 25)
+    )
+
+    assert result.instrument_status == "NO_TRADE"
+    assert result.covered_no_trade is True
+    assert result.status_reason.startswith("official TPEx")
 
 
 def test_suspended_missing_bar_is_auditable_approved_no_trade():

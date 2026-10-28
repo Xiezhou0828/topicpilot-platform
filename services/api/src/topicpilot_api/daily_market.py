@@ -8,7 +8,7 @@ decides whether a trading date is safe for downstream consumers.
 from __future__ import annotations
 
 from collections.abc import Collection, Mapping, Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import date
 from typing import Any
 
@@ -30,6 +30,10 @@ from topicpilot_api.trading_status_authority import (
     resolve_effective_trading_status,
 )
 
+MAX_TOLERATED_MISSING_QUOTES = 9
+_TOLERABLE_MISSING_REASON_CODES = frozenset({"MISSING_MARKET_DATA", "UNKNOWN"})
+_HARD_PIPELINE_FAILURE_CODES = frozenset({"PROVIDER_ERROR", "DATE_MISMATCH"})
+
 
 @dataclass(frozen=True)
 class UnavailableInstrument:
@@ -48,6 +52,7 @@ class UnavailableInstrument:
     affected_topic_slugs: tuple[str, ...]
     is_legitimate_unavailable: bool
     blocks_formal_publication: bool
+    publication_tolerance_applied: bool = False
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -68,6 +73,7 @@ class UnavailableInstrument:
             "affectedTopicSlugs": list(self.affected_topic_slugs),
             "isLegitimateUnavailable": self.is_legitimate_unavailable,
             "blocksFormalPublication": self.blocks_formal_publication,
+            "publicationToleranceApplied": self.publication_tolerance_applied,
         }
 
 
@@ -89,6 +95,8 @@ class DailyMarketReconciliation:
     pipeline_failure_count: int = 0
     unknown_count: int = 0
     unavailable_instruments: tuple[UnavailableInstrument, ...] = ()
+    tolerated_missing_count: int = 0
+    missing_tolerance_limit: int = MAX_TOLERATED_MISSING_QUOTES
 
     @property
     def coverage_pct(self) -> float:
@@ -119,6 +127,8 @@ class DailyMarketReconciliation:
             "eligibleUniverse": self.expected_count,
             "pipelineFailureCount": self.pipeline_failure_count,
             "unknownCount": self.unknown_count,
+            "toleratedMissingCount": self.tolerated_missing_count,
+            "missingToleranceLimit": self.missing_tolerance_limit,
             "unavailableInstruments": [
                 item.to_dict() for item in self.unavailable_instruments
             ],
@@ -140,13 +150,15 @@ def assess_daily_coverage(
     duplicate_key_count: int = 0,
     market_closed: bool = False,
     unavailable_instruments: Sequence[UnavailableInstrument] = (),
+    allow_limited_missing_quotes: bool = True,
 ) -> DailyMarketReconciliation:
-    """Apply the fail-closed production coverage policy.
+    """Apply the bounded production coverage policy.
 
     An observation with a null close is retained and counted as unavailable,
     never coerced to zero. Canonical exchange-confirmed unavailable statuses
-    count as covered but remain unpriced. Unknown/provider-missing instruments
-    remain unexplained and fail closed.
+    count as covered but remain unpriced. Fewer than ten unresolved per-symbol
+    quote gaps may be published with explicit disclosure; structural failures,
+    provider/date errors, and ten or more gaps remain blocking.
     """
 
     markets = sorted(set(expected_by_market) | set(observed_by_market))
@@ -159,19 +171,55 @@ def assess_daily_coverage(
     unavailable = max(0, expected - priced)
     unexplained = max(0, expected - covered)
     unavailable_instruments = tuple(unavailable_instruments)
-    pipeline_failure_count = sum(
-        item.blocks_formal_publication
-        and not item.is_legitimate_unavailable
-        and item.reason_code in PIPELINE_FAILURE_CODES
+    unresolved_items = tuple(
+        item
         for item in unavailable_instruments
+        if item.blocks_formal_publication and not item.is_legitimate_unavailable
+    )
+    pipeline_failure_count = sum(
+        item.reason_code in PIPELINE_FAILURE_CODES for item in unresolved_items
     )
     unknown_count = sum(
-        item.blocks_formal_publication
-        and not item.is_legitimate_unavailable
-        and item.status == "UNKNOWN"
-        and item.reason_code not in PIPELINE_FAILURE_CODES
-        for item in unavailable_instruments
+        item.status == "UNKNOWN" and item.reason_code not in PIPELINE_FAILURE_CODES
+        for item in unresolved_items
     )
+    hard_pipeline_failure = any(
+        item.reason_code in _HARD_PIPELINE_FAILURE_CODES for item in unresolved_items
+    )
+    market_gaps = sum(
+        max(
+            0,
+            expected_by_market.get(market, 0) - covered_by_market.get(market, 0),
+        )
+        for market in markets
+    )
+    tolerated_missing_count = unexplained if (
+        allow_limited_missing_quotes
+        and 0 < unexplained <= MAX_TOLERATED_MISSING_QUOTES
+        and len(unresolved_items) == unexplained
+        and market_gaps == unexplained
+        and all(
+            item.reason_code in _TOLERABLE_MISSING_REASON_CODES
+            for item in unresolved_items
+        )
+        and not hard_pipeline_failure
+        and not market_closed
+        and expected > 0
+        and wrong_date_count == 0
+        and duplicate_key_count == 0
+    ) else 0
+    tolerance_applied = tolerated_missing_count > 0
+    if tolerance_applied:
+        unavailable_instruments = tuple(
+            replace(
+                item,
+                blocks_formal_publication=False,
+                publication_tolerance_applied=True,
+            )
+            if item in unresolved_items
+            else item
+            for item in unavailable_instruments
+        )
     reasons: list[str] = []
     if market_closed:
         reasons.append("MARKET_CLOSED")
@@ -191,6 +239,10 @@ def assess_daily_coverage(
         reasons.append("APPROVED_NO_TRADE_COVERAGE")
     if unexplained:
         reasons.append("UNEXPLAINED_MISSING_DATA")
+    if tolerance_applied:
+        reasons.append("LIMITED_GAPS_WITHIN_TOLERANCE")
+    elif unexplained:
+        reasons.append("MISSING_QUOTE_TOLERANCE_EXCEEDED")
     if wrong_date_count:
         reasons.append("DATA_DATE_MISMATCH")
     if duplicate_key_count:
@@ -199,20 +251,24 @@ def assess_daily_coverage(
         if covered_by_market.get(market, 0) != expected_by_market.get(market, 0):
             reasons.append(f"{market}_INCOMPLETE")
 
-    blocking_reasons = {
-        "MARKET_CLOSED",
-        "EMPTY_FORMAL_UNIVERSE",
-        "INCOMPLETE_COVERAGE",
-        "DATA_DATE_MISMATCH",
-        "DUPLICATE_STABLE_KEY",
-        "UNEXPLAINED_MISSING_DATA",
-        "PIPELINE_FAILURE",
-        "UNKNOWN_UNAVAILABLE_STATE",
-    }
-    ready = not any(
-        reason in blocking_reasons or reason.endswith("_INCOMPLETE") for reason in reasons
+    ready = not (
+        market_closed
+        or expected == 0
+        or wrong_date_count > 0
+        or duplicate_key_count > 0
+        or hard_pipeline_failure
+        or (unexplained > 0 and not tolerance_applied)
+        or market_gaps != unexplained
     )
-    status = "MARKET_CLOSED" if market_closed else "READY" if ready else "PARTIAL"
+    status = (
+        "MARKET_CLOSED"
+        if market_closed
+        else "READY_WITH_LIMITED_GAPS"
+        if ready and tolerance_applied
+        else "READY"
+        if ready
+        else "PARTIAL"
+    )
     return DailyMarketReconciliation(
         trade_date=trade_date,
         expected_count=expected,
@@ -240,7 +296,7 @@ def assess_daily_coverage(
                     and item.blocks_formal_publication
                     and item.reason_code
                     in PIPELINE_FAILURE_CODES
-                    for item in unavailable_instruments
+                    for item in unresolved_items
                 ),
                 "unknown": sum(
                     item.market == market
@@ -248,7 +304,7 @@ def assess_daily_coverage(
                     and item.status == "UNKNOWN"
                     and item.reason_code
                     not in PIPELINE_FAILURE_CODES
-                    for item in unavailable_instruments
+                    for item in unresolved_items
                 ),
             }
             for market in markets
@@ -259,6 +315,8 @@ def assess_daily_coverage(
         pipeline_failure_count=pipeline_failure_count,
         unknown_count=unknown_count,
         unavailable_instruments=unavailable_instruments,
+        tolerated_missing_count=tolerated_missing_count,
+        missing_tolerance_limit=MAX_TOLERATED_MISSING_QUOTES,
     )
 
 

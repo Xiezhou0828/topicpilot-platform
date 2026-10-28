@@ -160,8 +160,8 @@ function CompanyResearchSection({ data, loading, error }: { data: CompanyResearc
               {finance?.forecast?.forwardEps !== null && finance?.forecast?.forwardEps !== undefined && <div><dt>預估 Forward EPS</dt><dd>{researchMetric({ value: finance.forecast.forwardEps, unit: finance.forecast.unit, statusNote: finance.forecast.statusNote })}</dd></div>}
               {finance?.valuation?.valuationStatus && <div><dt>估值判讀</dt><dd>{finance.valuation.valuationStatus}</dd></div>}
               {finance?.valuation?.peBands?.fair !== null && finance?.valuation?.peBands?.fair !== undefined && <div><dt>合理價參考</dt><dd>{displayNumber(finance.valuation.peBands.fair)}</dd></div>}
-              {annualSnapshot?.revenue !== null && annualSnapshot?.revenue !== undefined && <div><dt>{annualSnapshot.period ?? "年度"}營收</dt><dd>{researchMetric({ value: annualSnapshot.revenue, unit: annualSnapshot.unit, statusNote: annualSnapshot.statusNote ?? null })}</dd></div>}
-              {annualSnapshot?.operatingIncome !== null && annualSnapshot?.operatingIncome !== undefined && <div><dt>營業利益</dt><dd>{researchMetric({ value: annualSnapshot.operatingIncome, unit: annualSnapshot.unit, statusNote: annualSnapshot.statusNote ?? null })}</dd></div>}
+              {annualSnapshot?.revenue !== null && annualSnapshot?.revenue !== undefined && <div><dt>{annualSnapshot.period ?? "年度"}營收</dt><dd>{researchMetric({ value: annualSnapshot.revenue, unit: annualSnapshot.unit ?? null, statusNote: annualSnapshot.statusNote ?? null })}</dd></div>}
+              {annualSnapshot?.operatingIncome !== null && annualSnapshot?.operatingIncome !== undefined && <div><dt>營業利益</dt><dd>{researchMetric({ value: annualSnapshot.operatingIncome, unit: annualSnapshot.unit ?? null, statusNote: annualSnapshot.statusNote ?? null })}</dd></div>}
             </dl>}
             {historicalRows.length ? <div className="tp-company-research-table-wrap"><table className="tp-company-research-table"><thead><tr>{historicalHeaders.map((header) => <th key={header.key ?? header.label}>{header.label ?? "—"}</th>)}</tr></thead><tbody>{historicalRows.map((row) => <tr key={row.metricKey ?? row.label}>{historicalHeaders.map((header) => <td key={`${row.metricKey}-${header.key}`}>{header.key === "metric" ? row.label ?? "—" : displayNumber(row.values[header.key ?? ""])}{header.key === "metric" ? "" : researchUnit(row.unit)}</td>)}</tr>)}</tbody></table>{historical?.unitNote && <small>{historical.unitNote}</small>}</div> : null}
             {segments.length ? <div className="tp-company-research-list" aria-label="分部績效">{segments.map((segment) => <div key={segment.segmentName}><strong>{segment.segmentName}</strong><span className={segment.isNegative ? "is-negative" : ""}>{segment.metricValue === null ? "—" : `${displayNumber(segment.metricValue)}${researchUnit(segment.unit)}`}</span></div>)}</div> : null}
@@ -181,8 +181,8 @@ function displayPercent(value: number | null | undefined): string {
 const EOD_STATUS_LABEL: Record<string, string> = {
   AVAILABLE: "可用",
   PARTIAL: "部分可用",
-  UNAVAILABLE: "不可用",
-  NO_TRADE: "無交易",
+  UNAVAILABLE: "暫時無法更新股價",
+  NO_TRADE: "當日無成交・暫無股價",
   SUSPENDED: "停牌",
   ADJUSTMENT_UNKNOWN: "除權息狀態未知",
   SOURCE_CONFLICT: "來源衝突",

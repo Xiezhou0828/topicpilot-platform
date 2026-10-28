@@ -8,6 +8,7 @@ import pytest
 from topicpilot_api.orm import TopicSnapshot, TopicSnapshotMemberFact
 from topicpilot_api.production_read_model import TOPIC_ROWS_SQL
 from topicpilot_api.topic_daily_state import (
+    _PRICE_FACTS_SQL,
     FORMAL_MAPPING_EARLIEST_DATE,
     FormalAuthorityUnavailable,
     MembershipMember,
@@ -156,3 +157,10 @@ def test_formal_authority_migration_is_additive_and_single_head():
     assert "uq_topic_snapshots_topic_date" in migration
     assert "snapshot_identity" in migration
     assert "publication_mode" in migration
+
+
+def test_price_fact_query_projects_quality_state_for_comparator_authority():
+    sql = str(_PRICE_FACTS_SQL)
+    select_list = sql.split("FROM topicpilot.canonical_observations", 1)[0]
+    assert "co.quality_state" in select_list
+    assert "co.quality_state = 'ACCEPTED'" in sql

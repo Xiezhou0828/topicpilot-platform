@@ -86,6 +86,16 @@ class TopicLifecycleResult(Base, IdentityMixin, UpdatedAtMixin):
     supersession_state: Mapped[str | None] = mapped_column(String(32))
     average_change: Mapped[Decimal | None] = mapped_column(Numeric(12, 4))
     coverage_pct: Mapped[Decimal | None] = mapped_column(Numeric(7, 3))
+    # These columns were added to the shadow result table by migration 0034.
+    # Keep the ORM contract aligned with the append-only table so the shadow
+    # engine can persist the lifecycle identity-state fields without routing
+    # formal-only data into another table.
+    main_rise_segment: Mapped[int | None] = mapped_column(Integer)
+    segment_entry_date: Mapped[date | None] = mapped_column(Date)
+    segment_anchor_date: Mapped[date | None] = mapped_column(Date)
+    days_since_meaningful_expansion: Mapped[int | None] = mapped_column(Integer)
+    drawdown_from_peak_pct: Mapped[Decimal | None] = mapped_column(Numeric(12, 4))
+    state_memory: Mapped[dict[str, Any] | None] = mapped_column(JSONB)
 
 
 __all__ = ["TopicLifecycleResult"]
