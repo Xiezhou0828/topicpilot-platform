@@ -1559,6 +1559,14 @@ class PostCloseUpdater:
         run_id = run.id
         run_metadata = run.metadata_payload or {}
         self._active_execution_scope = _metadata_execution_scope(run_metadata)
+        historical_recovery = self._active_execution_scope == HISTORY_RECOVERY
+        if historical_recovery:
+            run_metadata = dict(run_metadata)
+            run_metadata["executionWindowPolicy"] = (
+                "HISTORICAL_RECOVERY_BYPASSES_CURRENT_TIME_GATES"
+            )
+            run.metadata_payload = _json_safe(run_metadata)
+            self.session.commit()
         self._active_execution_key = str(
             run_metadata.get("executionKey") or self._active_execution_key
         )
@@ -1659,7 +1667,13 @@ class PostCloseUpdater:
         # persistent worker keeps polling; no exchange endpoint is touched
         # until the first market-specific eligibility window.
         current_now = self._now()
-        eligible_market_codes = set(eligible_markets(current_now, self.config))
+        eligible_market_codes = set(
+            eligible_markets(
+                current_now,
+                self.config,
+                historical_recovery=historical_recovery,
+            )
+        )
         if not is_targeted and not eligible_market_codes:
             self._update_publication_stage(
                 run_id,
@@ -1740,6 +1754,7 @@ class PostCloseUpdater:
 
         if (
             not is_targeted
+            and not historical_recovery
             and local_time(current_now, self.config)
             >= clock_time.fromisoformat(self.config.hard_deadline)
             and not (
@@ -1771,9 +1786,14 @@ class PostCloseUpdater:
                 continue
             if (
                 not is_targeted
+                and not historical_recovery
                 and market_code == TPEX_MARKET
                 and previous_checkpoint is not None
-                and not tpex_retry_window_open(current_now, self.config)
+                and not tpex_retry_window_open(
+                    current_now,
+                    self.config,
+                    historical_recovery=historical_recovery,
+                )
             ):
                 continue
             self._update_publication_stage(
@@ -2113,7 +2133,9 @@ class PostCloseUpdater:
             failure_codes.append(twse_safe_failure)
 
         tpex_ready = self._market_batches_ready(run_id, market_batches, TPEX_MARKET)
-        both_markets_eligible = is_targeted or TPEX_MARKET in eligible_market_codes
+        both_markets_eligible = (
+            is_targeted or historical_recovery or TPEX_MARKET in eligible_market_codes
+        )
         stage_wait_reasons = list(waiting_reason_codes)
         if not both_markets_eligible and not is_targeted:
             stage_wait_reasons.append("WAITING_TPEX_WINDOW")
@@ -2148,7 +2170,11 @@ class PostCloseUpdater:
                     f"{local_date.isoformat()}T{self.config.tpex_ingestion_start}:00"
                     if not both_markets_eligible
                     else f"{local_date.isoformat()}T{self.config.tpex_retry_start}:00"
-                    if not tpex_retry_window_open(current_now, self.config)
+                    if not tpex_retry_window_open(
+                        current_now,
+                        self.config,
+                        historical_recovery=historical_recovery,
+                    )
                     else None
                 ),
         )
@@ -2224,6 +2250,7 @@ class PostCloseUpdater:
             retry_count=retry_count,
             point_count=point_count,
             failure_codes=tuple(sorted(set(failure_codes))),
+            historical_recovery=historical_recovery,
         )
 
     def _heartbeat(self, run_id: Any, now: datetime) -> None:
@@ -2891,6 +2918,7 @@ class PostCloseUpdater:
         retry_count: int,
         point_count: int,
         failure_codes: Collection[str],
+        historical_recovery: bool = False,
     ) -> PostCloseRunResult:
         try:
             reconciliation = reconcile_daily_market(
@@ -3124,6 +3152,7 @@ class PostCloseUpdater:
                     self._late_data_enrichment(
                         run_id=run_id,
                         local_date=local_date,
+                        historical_recovery=historical_recovery,
                     )
                     if hasattr(self, "config")
                     else {"status": "NOT_APPLICABLE", "state": "TEST_FIXTURE"}
@@ -3383,6 +3412,7 @@ class PostCloseUpdater:
         *,
         run_id: Any,
         local_date: date,
+        historical_recovery: bool = False,
     ) -> dict[str, Any]:
         """Run the late institutional-flow lane independently of Formal.
 
@@ -3434,7 +3464,10 @@ class PostCloseUpdater:
 
         now = self._now()
         current = local_time(now, self.config)
-        if current < clock_time.fromisoformat(self.config.late_data_target):
+        if (
+            not historical_recovery
+            and current < clock_time.fromisoformat(self.config.late_data_target)
+        ):
             next_target = f"{local_date.isoformat()}T{self.config.late_data_target}:00"
             self._checkpoint_event(
                 run_id=run_id,
@@ -3514,7 +3547,7 @@ class PostCloseUpdater:
             stage_status = "READY"
         else:
             deadline = clock_time.fromisoformat(self.config.late_data_hard_deadline)
-            terminal = current >= deadline
+            terminal = not historical_recovery and current >= deadline
             result = {
                 "status": "DEADLINE_EXCEEDED" if terminal else "WAITING",
                 "state": "LATE_DATA_DEADLINE" if terminal else "LATE_DATA_WAITING",

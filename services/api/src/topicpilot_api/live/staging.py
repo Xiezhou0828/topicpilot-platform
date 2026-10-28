@@ -27,13 +27,22 @@ def local_time(now: datetime, config: LiveRuntimeConfig) -> time:
     return now.astimezone(ZoneInfo(config.timezone_name)).time()
 
 
-def eligible_markets(now: datetime, config: LiveRuntimeConfig) -> tuple[str, ...]:
+def eligible_markets(
+    now: datetime,
+    config: LiveRuntimeConfig,
+    *,
+    historical_recovery: bool = False,
+) -> tuple[str, ...]:
     """Return market providers eligible in this polling cycle.
 
     TPE is eligible from the TWSE target onward.  TWO is independently
     eligible from the TPEx target onward, even when TPE is still waiting.
     """
 
+    if historical_recovery:
+        # A date-bound historical replay targets already-closed exchange data.
+        # Its eligibility must not depend on today's wall-clock ingestion window.
+        return (TWSE_MARKET, TPEX_MARKET)
     current = local_time(now, config)
     if current < _clock(config.twse_ingestion_start):
         return ()
@@ -42,10 +51,15 @@ def eligible_markets(now: datetime, config: LiveRuntimeConfig) -> tuple[str, ...
     return (TWSE_MARKET, TPEX_MARKET)
 
 
-def tpex_retry_window_open(now: datetime, config: LiveRuntimeConfig) -> bool:
+def tpex_retry_window_open(
+    now: datetime,
+    config: LiveRuntimeConfig,
+    *,
+    historical_recovery: bool = False,
+) -> bool:
     """Return whether the bounded early TPEx retry window has opened."""
 
-    return local_time(now, config) >= _clock(config.tpex_retry_start)
+    return historical_recovery or local_time(now, config) >= _clock(config.tpex_retry_start)
 
 
 def stage_for(now: datetime, config: LiveRuntimeConfig) -> str:

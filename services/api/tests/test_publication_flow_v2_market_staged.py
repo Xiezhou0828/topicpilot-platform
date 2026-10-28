@@ -34,6 +34,16 @@ def test_market_windows_are_poll_eligible_and_independent():
     assert tpex_retry_window_open(_utc(7, 52), config)
 
 
+def test_historical_recovery_bypasses_current_market_ingestion_windows():
+    config = LiveRuntimeConfig()
+
+    assert eligible_markets(_utc(0, 0), config, historical_recovery=True) == (
+        TWSE_MARKET,
+        TPEX_MARKET,
+    )
+    assert tpex_retry_window_open(_utc(0, 0), config, historical_recovery=True)
+
+
 def test_stage_timeline_covers_required_boundaries():
     config = LiveRuntimeConfig()
 
@@ -245,6 +255,43 @@ def test_simulated_e2e_runs_real_stage_helpers_without_production_state(monkeypa
     )
     assert ready["status"] == "PASS"
     assert checkpoints["LATE_DATA_ENRICHMENT"].status == "COMPLETED"
+
+
+def test_historical_recovery_bypasses_late_data_wall_clock_window(monkeypatch):
+    config = LiveRuntimeConfig()
+    now = _utc(0, 0)  # 08:00 Taipei, before the ordinary late-data window.
+    checkpoints = []
+    updater = PostCloseUpdater.__new__(PostCloseUpdater)
+    updater.config = config
+    updater._now = lambda: now
+    updater._latest_checkpoint = lambda *_args: None
+    readback_calls = 0
+
+    def readback(_date):
+        nonlocal readback_calls
+        readback_calls += 1
+        return {"status": "FAIL"} if readback_calls == 1 else {"status": "PASS"}
+
+    updater._institutional_flow_readback = readback
+    updater._checkpoint_event = lambda **event: checkpoints.append(event)
+    updater._update_publication_stage = lambda *_args, **_kwargs: None
+    updater._persist_official_institutional_flow = lambda *_args, **_kwargs: {
+        "status": "SUCCESS",
+        "persisted": 2,
+    }
+    monkeypatch.setattr(
+        "topicpilot_api.live.post_close.fetch_official_market_institutional_flows",
+        lambda **_kwargs: ("official-flow-fact",),
+    )
+
+    result = updater._late_data_enrichment(
+        run_id="history-recovery-run",
+        local_date=now.date(),
+        historical_recovery=True,
+    )
+
+    assert result["status"] == "PASS"
+    assert any(event.get("batch_key") == "LATE_DATA_ENRICHMENT" for event in checkpoints)
 
 
 def test_market_readback_exposes_bounded_retry_and_error_provenance():
