@@ -31,7 +31,7 @@ Read-only API evidence on 2026-10-29 Asia/Taipei:
 - Offline target-universe diagnostics remain strict; the limited tolerance is for the formal production daily publication path.
 - Successful tolerated runs preserve raw failure/skip counters while allowing downstream formal readbacks, and do not invent a `NO_TRADING_DAY_DATA` state for tolerated gaps.
 - Stock surfaces distinguish `NO_TRADE` from `UNAVAILABLE` with Traditional Chinese labels.
-- Backend suite: 1,467 passed, 79 skipped because the PostgreSQL integration test database is not configured. Frontend production build and 206 tests passed. Ruff, TypeScript, lint, and whitespace checks passed; lint emitted one pre-existing `FavoriteButton.tsx` hook-dependency warning.
+- Backend suite on the reconciled production lineage: 1,470 passed, 79 skipped because the PostgreSQL integration test database is not configured. Frontend production build and 206 tests passed. Ruff, TypeScript, lint, and whitespace checks passed; lint emitted one pre-existing `FavoriteButton.tsx` hook-dependency warning.
 
 ## Promotion and recovery ledger
 
