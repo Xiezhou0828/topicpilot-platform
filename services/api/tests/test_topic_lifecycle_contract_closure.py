@@ -68,7 +68,8 @@ def test_formal_snapshot_selection_is_published_and_non_superseded():
     assert "membership_mode" in sql
     assert "publication_state" in sql
     assert "finality_state" in sql
-    assert "superseded_by_snapshot_id" in sql
+    assert "supersedes_snapshot_id" in sql
+    assert "NOT (EXISTS" in sql or "NOT EXISTS" in sql
 
 
 def test_missing_formal_lineage_fails_closed_before_shadow_result_creation():
