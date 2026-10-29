@@ -430,10 +430,24 @@ def _topic_history(session: Session, topic_id: UUID, evaluation_date: date) -> l
     )
     result: list[dict[str, Any]] = []
     for row in rows:
-        components = row.components or {}
-        derivatives = components.get("derivatives") or {}
+        components = row.components
+        if not isinstance(components, Mapping):
+            # Earlier persisted rows may contain a legacy JSON array rather
+            # than the current component object. They are not usable history,
+            # but must not prevent publication for the current trading date.
+            continue
+        derivatives = components.get("derivatives")
+        if not isinstance(derivatives, Mapping):
+            continue
+        dimensions = derivatives.get("dimensions")
+        if not isinstance(dimensions, Mapping):
+            continue
         values = {
-            key: derivatives.get("dimensions", {}).get(key, {}).get("currentLevel")
+            key: (
+                dimensions[key].get("currentLevel")
+                if isinstance(dimensions.get(key), Mapping)
+                else None
+            )
             for key in (
                 "absoluteStrength",
                 "relativeStrength",

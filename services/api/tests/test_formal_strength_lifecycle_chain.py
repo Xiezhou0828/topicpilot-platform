@@ -1,7 +1,10 @@
 from datetime import date
+from types import SimpleNamespace
+from uuid import UUID
 
 from topicpilot_api.formal_lifecycle_evaluator import evaluate_formal_structural_lifecycle
 from topicpilot_api.formal_strength_publication import (
+    _topic_history,
     build_market_context,
     build_structural_derivatives,
 )
@@ -16,6 +19,35 @@ from topicpilot_api.topic_lifecycle_v1 import (
 )
 
 TARGET = date(2026, 9, 3)
+
+
+def test_topic_history_ignores_legacy_non_object_component_shapes():
+    topic_id = UUID("9d3a9ddc-43fb-4b7a-a1a2-17dbbde5fdf8")
+
+    class HistorySession:
+        def scalars(self, _statement):
+            return iter(
+                (
+                    SimpleNamespace(components=[{"legacy": "array"}]),
+                    SimpleNamespace(components={"derivatives": []}),
+                    SimpleNamespace(components={"derivatives": {"dimensions": []}}),
+                    SimpleNamespace(
+                        components={
+                            "derivatives": {
+                                "dimensions": {
+                                    "absoluteStrength": {"currentLevel": 71.5}
+                                }
+                            }
+                        }
+                    ),
+                )
+            )
+
+    history = _topic_history(HistorySession(), topic_id, TARGET)
+
+    assert len(history) == 1
+    assert history[0]["absoluteStrength"] == 71.5
+    assert history[0]["relativeStrength"] is None
 
 
 def _index(market: str, change_pct: float, *, trading_date: date = TARGET, status="AVAILABLE"):
