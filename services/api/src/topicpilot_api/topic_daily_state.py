@@ -49,6 +49,7 @@ from topicpilot_api.previous_close_authority import (
     resolve_missing_daily_comparator,
 )
 from topicpilot_api.topic_engine.structural_role_authority import (
+    AUTHORITY_APPROVED,
     AUTHORITY_READ_HISTORICAL,
     StructuralRoleAuthorityError,
     StructuralRoleResolution,
@@ -297,6 +298,10 @@ def resolve_formal_membership(
                 InstrumentTopicRelation.topic_id == topic_id,
                 InstrumentTopicRelation.valid_from <= trading_date,
                 _end_filter(InstrumentTopicRelation.valid_to, trading_date),
+                # Formal membership is defined by approved, date-effective
+                # relation authority. Legacy/unapproved rows remain available
+                # to non-formal consumers but must not expand this member set.
+                InstrumentTopicRelation.approval_state == AUTHORITY_APPROVED,
                 _effective_filter(Instrument.valid_from, trading_date),
                 _end_filter(Instrument.valid_to, trading_date),
                 _effective_filter(Market.valid_from, trading_date),
