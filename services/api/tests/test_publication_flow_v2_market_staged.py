@@ -337,3 +337,132 @@ def test_market_readback_exposes_bounded_retry_and_error_provenance():
             "checkpointHash": "checkpoint-hash",
         }
     ]
+
+
+def test_market_batches_allow_only_bounded_skipped_quote_gaps():
+    config = LiveRuntimeConfig()
+    now = _utc(7, 45)
+    market_batches = []
+
+    for missing_count in (1, 9, 10):
+        expected_count = 10
+        covered_count = expected_count - missing_count
+        checkpoint = SimpleNamespace(
+            status="PARTIAL",
+            succeeded_count=covered_count,
+            failed_count=0,
+            skipped_count=missing_count,
+            retry_count=0,
+            attempt_number=1,
+            checkpoint_hash=f"tpex-{missing_count}",
+            created_at=now,
+            metadata_payload={
+                "sessionDate": now.date().isoformat(),
+                "pricedCount": covered_count,
+                "coveredCount": covered_count,
+            },
+        )
+        updater = PostCloseUpdater.__new__(PostCloseUpdater)
+        updater.config = config
+        updater._now = lambda: now
+        updater._latest_checkpoint = lambda _run_id, _key, value=checkpoint: value
+        market_batches = [(1, TPEX_MARKET, list(range(expected_count)))]
+
+        readback = updater._market_stage_readback(
+            "simulated-run",
+            market_batches,
+            TPEX_MARKET,
+            now=now,
+        )
+
+        expected_readiness = (
+            "READY_WITH_LIMITED_GAPS" if missing_count <= 9 else "WAITING_SOURCE_DATA"
+        )
+        assert readback["readinessState"] == expected_readiness
+        assert readback["unavailableCount"] == missing_count
+        assert readback["coverageResult"] == "PARTIAL"
+        if missing_count <= 9:
+            assert readback["nextEligibleRetry"] is None
+        assert updater._market_batches_ready(
+            "simulated-run", market_batches, TPEX_MARKET, trading_date=now.date()
+        ) is (missing_count <= 9)
+
+
+def test_market_batches_do_not_tolerate_failed_or_unvalidated_checkpoints():
+    config = LiveRuntimeConfig()
+    now = _utc(7, 45)
+    market_batches = [(1, TPEX_MARKET, list(range(10)))]
+    for checkpoint in (
+        SimpleNamespace(
+            status="FAILED",
+            succeeded_count=9,
+            failed_count=1,
+            skipped_count=1,
+            retry_count=1,
+            attempt_number=2,
+            checkpoint_hash="provider-failure",
+            created_at=now,
+            metadata_payload={
+                "sessionDate": now.date().isoformat(),
+                "pricedCount": 9,
+                "coveredCount": 9,
+                "providerErrorCode": "PROVIDER_REQUEST_FAILED",
+            },
+        ),
+        SimpleNamespace(
+            status="PARTIAL",
+            succeeded_count=9,
+            failed_count=1,
+            skipped_count=1,
+            retry_count=0,
+            attempt_number=1,
+            checkpoint_hash="validation-failure",
+            created_at=now,
+            metadata_payload={
+                "sessionDate": now.date().isoformat(),
+                "pricedCount": 9,
+                "coveredCount": 9,
+            },
+        ),
+    ):
+        updater = PostCloseUpdater.__new__(PostCloseUpdater)
+        updater.config = config
+        updater._now = lambda: now
+        updater._latest_checkpoint = lambda _run_id, _key, value=checkpoint: value
+
+        assert not updater._market_batches_ready(
+            "simulated-run", market_batches, TPEX_MARKET, trading_date=now.date()
+        )
+
+
+def test_market_batches_do_not_tolerate_missing_checkpoints_or_wrong_dates():
+    config = LiveRuntimeConfig()
+    now = _utc(7, 45)
+    market_batches = [(1, TPEX_MARKET, list(range(10)))]
+    checkpoints = {
+        "missing": None,
+        "wrong-date": SimpleNamespace(
+            status="PARTIAL",
+            succeeded_count=9,
+            failed_count=0,
+            skipped_count=1,
+            retry_count=0,
+            attempt_number=1,
+            checkpoint_hash="wrong-date",
+            created_at=now,
+            metadata_payload={
+                "sessionDate": "2026-10-07",
+                "pricedCount": 9,
+                "coveredCount": 9,
+            },
+        ),
+    }
+    for checkpoint in checkpoints.values():
+        updater = PostCloseUpdater.__new__(PostCloseUpdater)
+        updater.config = config
+        updater._now = lambda: now
+        updater._latest_checkpoint = lambda _run_id, _key, value=checkpoint: value
+
+        assert not updater._market_batches_ready(
+            "simulated-run", market_batches, TPEX_MARKET, trading_date=now.date()
+        )

@@ -18,7 +18,11 @@ from sqlalchemy import and_, or_, select, text
 from sqlalchemy.exc import DBAPIError, IntegrityError, SQLAlchemyError
 from sqlalchemy.orm import Session
 
-from topicpilot_api.daily_market import DailyMarketReconciliation, reconcile_daily_market
+from topicpilot_api.daily_market import (
+    MAX_TOLERATED_MISSING_QUOTES,
+    DailyMarketReconciliation,
+    reconcile_daily_market,
+)
 from topicpilot_api.formal_strength_publication import FormalStrengthPublisher
 from topicpilot_api.home_v2_publication import materialize_home_v2
 from topicpilot_api.instrument_universe import (
@@ -1758,8 +1762,12 @@ class PostCloseUpdater:
             and local_time(current_now, self.config)
             >= clock_time.fromisoformat(self.config.hard_deadline)
             and not (
-                self._market_batches_ready(run_id, market_batches, TWSE_MARKET)
-                and self._market_batches_ready(run_id, market_batches, TPEX_MARKET)
+                self._market_batches_ready(
+                    run_id, market_batches, TWSE_MARKET, trading_date=local_date
+                )
+                and self._market_batches_ready(
+                    run_id, market_batches, TPEX_MARKET, trading_date=local_date
+                )
             )
         ):
             return self._finalize_waiting_run(
@@ -2123,7 +2131,9 @@ class PostCloseUpdater:
         )
         twse_safe_tracking_count = 0
         twse_safe_failure = None
-        if not is_targeted and self._market_batches_ready(run_id, market_batches, TWSE_MARKET):
+        if not is_targeted and self._market_batches_ready(
+            run_id, market_batches, TWSE_MARKET, trading_date=local_date
+        ):
             twse_safe_tracking_count, twse_safe_failure = self._run_twse_safe_computation(
                 run_id=run_id,
                 local_date=local_date,
@@ -2132,7 +2142,9 @@ class PostCloseUpdater:
         if twse_safe_failure:
             failure_codes.append(twse_safe_failure)
 
-        tpex_ready = self._market_batches_ready(run_id, market_batches, TPEX_MARKET)
+        tpex_ready = self._market_batches_ready(
+            run_id, market_batches, TPEX_MARKET, trading_date=local_date
+        )
         both_markets_eligible = (
             is_targeted or historical_recovery or TPEX_MARKET in eligible_market_codes
         )
@@ -2144,7 +2156,7 @@ class PostCloseUpdater:
 
         if stage_wait_reasons and not is_targeted:
             twse_stage_ready = self._market_batches_ready(
-                run_id, market_batches, TWSE_MARKET
+                run_id, market_batches, TWSE_MARKET, trading_date=local_date
             )
             twse_readback = self._market_stage_readback(
                 run_id, market_batches, TWSE_MARKET, trading_date=local_date
@@ -2152,19 +2164,37 @@ class PostCloseUpdater:
             tpex_readback = self._market_stage_readback(
                 run_id, market_batches, TPEX_MARKET, trading_date=local_date
             )
+            twse_readiness = twse_readback["readinessState"]
+            tpex_readiness = tpex_readback["readinessState"]
             self._update_publication_stage(
                 run_id,
                 "twse",
-                "READY" if twse_stage_ready else "WAITING_SOURCE_DATA",
-                state="TWSE_SOURCE_READY" if twse_stage_ready else "TWSE_WAITING",
+                twse_readiness
+                if twse_readiness in {"READY", "READY_WITH_LIMITED_GAPS"}
+                else "WAITING_SOURCE_DATA",
+                state=(
+                    "TWSE_SOURCE_READY_WITH_LIMITED_GAPS"
+                    if twse_readiness == "READY_WITH_LIMITED_GAPS"
+                    else "TWSE_SOURCE_READY"
+                    if twse_stage_ready
+                    else "TWSE_WAITING"
+                ),
                 trackingCount=twse_safe_tracking_count,
                 readback=twse_readback,
             )
             self._update_publication_stage(
                 run_id,
                 "tpex",
-                "READY" if tpex_ready else "WAITING_SOURCE_DATA",
-                state="TPEX_SOURCE_READY" if tpex_ready else "TPEX_WAITING",
+                tpex_readiness
+                if tpex_readiness in {"READY", "READY_WITH_LIMITED_GAPS"}
+                else "WAITING_SOURCE_DATA",
+                state=(
+                    "TPEX_SOURCE_READY_WITH_LIMITED_GAPS"
+                    if tpex_readiness == "READY_WITH_LIMITED_GAPS"
+                    else "TPEX_SOURCE_READY"
+                    if tpex_ready
+                    else "TPEX_WAITING"
+                ),
                 readback=tpex_readback,
                 nextEligibleAt=(
                     f"{local_date.isoformat()}T{self.config.tpex_ingestion_start}:00"
@@ -2221,24 +2251,34 @@ class PostCloseUpdater:
                 failure_codes=tuple(sorted(set(failure_codes))),
             )
 
+        twse_readback = self._market_stage_readback(
+            run_id, market_batches, TWSE_MARKET, trading_date=local_date
+        )
+        tpex_readback = self._market_stage_readback(
+            run_id, market_batches, TPEX_MARKET, trading_date=local_date
+        )
         self._update_publication_stage(
             run_id,
             "twse",
-            "READY",
-            state="TWSE_SOURCE_READY",
-            trackingCount=twse_safe_tracking_count,
-            readback=self._market_stage_readback(
-                run_id, market_batches, TWSE_MARKET, trading_date=local_date
+            twse_readback["readinessState"],
+            state=(
+                "TWSE_SOURCE_READY_WITH_LIMITED_GAPS"
+                if twse_readback["readinessState"] == "READY_WITH_LIMITED_GAPS"
+                else "TWSE_SOURCE_READY"
             ),
+            trackingCount=twse_safe_tracking_count,
+            readback=twse_readback,
         )
         self._update_publication_stage(
             run_id,
             "tpex",
-            "READY",
-            state="TPEX_SOURCE_READY",
-            readback=self._market_stage_readback(
-                run_id, market_batches, TPEX_MARKET, trading_date=local_date
+            tpex_readback["readinessState"],
+            state=(
+                "TPEX_SOURCE_READY_WITH_LIMITED_GAPS"
+                if tpex_readback["readinessState"] == "READY_WITH_LIMITED_GAPS"
+                else "TPEX_SOURCE_READY"
             ),
+            readback=tpex_readback,
         )
         return self._finalize_collected_run(
             run_id=run_id,
@@ -2293,18 +2333,16 @@ class PostCloseUpdater:
         run_id: Any,
         market_batches: Collection[tuple[int, str, Collection[tuple[Instrument, Market]]]],
         market_code: str,
+        *,
+        trading_date: date | None = None,
     ) -> bool:
         selected = [item for item in market_batches if item[1] == market_code]
         if not selected:
             return True
-        for index, code, _batch in selected:
-            checkpoint = self._latest_checkpoint(
-                run_id,
-                self._checkpoint_key("FORMAL_MARKET_FACTS", f"{code}:{index}"),
-            )
-            if checkpoint is None or checkpoint.status != "COMPLETED":
-                return False
-        return True
+        readback = self._market_stage_readback(
+            run_id, market_batches, market_code, trading_date=trading_date
+        )
+        return readback["readinessState"] in {"READY", "READY_WITH_LIMITED_GAPS"}
 
     def _market_stage_readback(
         self,
@@ -2373,13 +2411,6 @@ class PostCloseUpdater:
             for instrument_id, resolution in status_resolutions.items()
             if instrument_id in market_instrument_ids
         )
-        status = (
-            "READY"
-            if selected and completed == len(selected)
-            else "WAITING_SOURCE_DATA"
-            if rows
-            else "NOT_STARTED"
-        )
         source_identity = (
             "TWSE_OFFICIAL_DAILY" if market_code == TWSE_MARKET else "TPEX_OFFICIAL_DAILY"
         )
@@ -2426,12 +2457,52 @@ class PostCloseUpdater:
                 if value
             }
         )
+        all_checkpoints_present = bool(selected) and len(rows) == len(selected)
+        checkpoint_statuses_allow_limited_gaps = all(
+            checkpoint.status == "COMPLETED"
+            or (
+                checkpoint.status == "PARTIAL"
+                and int(checkpoint.failed_count or 0) == 0
+                and int(checkpoint.skipped_count or 0) > 0
+            )
+            for _key, checkpoint, _metadata in checkpoint_metadata
+        )
+        unavailable_count = max(0, expected - covered)
+        complete_ready = (
+            all_checkpoints_present
+            and completed == len(selected)
+            and failed == 0
+            and not error_categories
+        )
+        limited_gap_ready = (
+            all_checkpoints_present
+            and checkpoint_statuses_allow_limited_gaps
+            and 0 < unavailable_count <= MAX_TOLERATED_MISSING_QUOTES
+            and skipped == unavailable_count
+            and failed == 0
+            and not error_categories
+            and len(session_dates) == 1
+            and source_data_date in session_dates
+        )
+        status = (
+            "READY"
+            if complete_ready
+            else "READY_WITH_LIMITED_GAPS"
+            if limited_gap_ready
+            else "WAITING_SOURCE_DATA"
+            if rows
+            else "NOT_STARTED"
+        )
         current_now = now
         if current_now is None:
             now_factory = getattr(self, "_now", None)
             current_now = now_factory() if callable(now_factory) else None
         next_eligible_retry: str | None = None
-        if status != "READY" and resolved_trading_date is not None and current_now is not None:
+        if (
+            status not in {"READY", "READY_WITH_LIMITED_GAPS"}
+            and resolved_trading_date is not None
+            and current_now is not None
+        ):
             current_local = local_time(current_now, self.config)
             if market_code == TWSE_MARKET and current_local < clock_time.fromisoformat(
                 self.config.twse_ingestion_start
@@ -2480,7 +2551,7 @@ class PostCloseUpdater:
             "acceptedPriceCount": priced,
             "acceptedTradingStatusCount": accepted_trading_status,
             "acceptedCoverageCount": covered,
-            "unavailableCount": max(0, expected - covered),
+            "unavailableCount": unavailable_count,
             "validationFailureCount": failed,
             "skippedCount": skipped,
             "retryCount": retry_count,
