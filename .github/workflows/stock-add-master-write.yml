@@ -130,6 +130,17 @@ jobs:
               ("requiredConfirmation", "Exact confirmation"),
           ):
               print(f"- {label}: `{result.get(key)}`")
+          authorization = result.get("publicationAuthorization") or {}
+          mode = authorization.get("authorizationMode")
+          if mode == "OWNER_STANDING_POLICY":
+              print(
+                  "- Research content authorization: `"
+                  f"{authorization.get('policyId')} · score "
+                  f"{authorization.get('dataCompletenessScore')} > "
+                  f"{authorization.get('threshold')} · owner review remains pending`"
+              )
+          elif mode:
+              print(f"- Research content authorization: `{mode}`")
           if os.environ["MODE"] == "dry-run":
               print("- Production writes: `NONE` (dry-run only)")
           else:
@@ -178,4 +189,15 @@ jobs:
               ("planSha256", "Plan SHA-256"),
           ):
               print(f"- {label}: `{result.get(key)}`")
+          authorization = result.get("publicationAuthorization") or {}
+          mode = authorization.get("authorizationMode")
+          if mode == "OWNER_STANDING_POLICY":
+              print(
+                  "- Research content authorization: `"
+                  f"{authorization.get('policyId')} · score "
+                  f"{authorization.get('dataCompletenessScore')} > "
+                  f"{authorization.get('threshold')} · owner review remains pending`"
+              )
+          elif mode:
+              print(f"- Research content authorization: `{mode}`")
           PY
