@@ -2,7 +2,10 @@ from datetime import UTC, datetime, timedelta
 
 import pytest
 
-from topicpilot_api.company_profile_v4.store import approval_content_sha256
+from topicpilot_api.company_profile_v4.store import (
+    approval_content_sha256,
+    prepare_research_publication,
+)
 from topicpilot_api.stock_add_master_writer import (
     PLAN_SCHEMA,
     StockAddWriterError,
@@ -205,8 +208,62 @@ def test_partial_research_package_cannot_be_written():
         {key: value for key, value in plan.items() if key != "planSha256"}
     )
 
-    with pytest.raises(StockAddWriterError, match="RESEARCH_PACKAGE_NOT_OWNER_APPROVED"):
+    with pytest.raises(StockAddWriterError, match="RESEARCH_PACKAGE_NOT_PUBLICATION_AUTHORIZED"):
         validate_master_plan(plan)
+
+
+def test_policy_authorized_package_must_be_sealed_into_the_plan():
+    plan = _plan()
+    package = plan["researchPackage"]
+    publication = package["frontendProjection"]["researchGovernance"]["publication"]
+    publication.update(
+        {
+            "publicationStatus": "UNPUBLISHED",
+            "ownerReviewStatus": "PENDING",
+            "approvalEvidence": None,
+        }
+    )
+    package["frontendProjection"]["researchGovernance"]["dataCompletenessScore"] = 0.72
+    package["sourceRegister"] = [
+        {"evidenceId": "SOURCE-2468", "url": "https://company.example/annual-report.pdf"}
+    ]
+    publication["blockingIssues"] = []
+    _reseal(plan)
+
+    with pytest.raises(
+        StockAddWriterError, match="RESEARCH_PACKAGE_POLICY_ATTESTATION_NOT_SEALED_IN_PLAN"
+    ):
+        validate_master_plan(plan)
+
+    plan["researchPackage"] = prepare_research_publication(package)
+    _reseal(plan)
+    payload, _, _ = validate_master_plan(plan)
+    policy = payload["researchPackage"]["frontendProjection"]["researchGovernance"][
+        "publication"
+    ]["authorizationEvidence"]
+
+    assert policy["policyId"] == "RESEARCH_COMPLETENESS_GT_0_70_V1"
+    assert policy["comparison"] == "GT"
+    assert policy["dataCompletenessScore"] == 0.72
+
+
+def test_completeness_policy_rejects_exact_point_seven():
+    package = _approved_package()
+    publication = package["frontendProjection"]["researchGovernance"]["publication"]
+    publication.update(
+        {
+            "publicationStatus": "UNPUBLISHED",
+            "ownerReviewStatus": "PENDING",
+            "approvalEvidence": None,
+        }
+    )
+    package["frontendProjection"]["researchGovernance"]["dataCompletenessScore"] = 0.70
+    package["sourceRegister"] = [
+        {"evidenceId": "SOURCE-2468", "url": "https://company.example/annual-report.pdf"}
+    ]
+    publication["blockingIssues"] = []
+
+    assert prepare_research_publication(package) is None
 
 
 def test_stale_master_readback_cannot_authorize_a_write():

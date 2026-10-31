@@ -39,7 +39,13 @@ class _FakeSession:
         return next(self.results)
 
 
-def package(*, owner_status: str = "APPROVED") -> dict:
+def package(
+    *,
+    owner_status: str = "APPROVED",
+    completeness: float = 0.72,
+    source_rights: str = "APPROVED",
+    publication_status: str = "PUBLISHED",
+) -> dict:
     result = {
         "packageVersion": "topicpilot-stock-research.v4",
         "company": {"stockCode": "2468", "displayName": "華經"},
@@ -92,13 +98,14 @@ def package(*, owner_status: str = "APPROVED") -> dict:
         "frontendProjection": {
             "contractVersion": "company-research-frontend.v4",
             "researchGovernance": {
-                "dataCompletenessScore": 0.72,
+                "dataCompletenessScore": completeness,
                 "confidenceLevel": "MEDIUM",
                 "hasUnresolvedGaps": True,
                 "publication": {
-                    "publicationStatus": "PUBLISHED",
+                    "publicationStatus": publication_status,
                     "ownerReviewStatus": owner_status,
-                    "sourceRightsStatus": "APPROVED",
+                    "sourceRightsStatus": source_rights,
+                    "blockingIssues": [],
                     "approvalEvidence": {
                         "decisionId": "PRIVATE-DECISION",
                         "reviewer": "owner",
@@ -178,16 +185,52 @@ def test_public_projection_is_allowlisted_and_keeps_numeric_values(tmp_path) -> 
     assert "sourceEvidenceIds" not in encoded
 
 
-def test_unapproved_package_returns_no_research_content(tmp_path) -> None:
+def test_score_above_policy_threshold_publishes_without_claiming_owner_review(tmp_path) -> None:
     path = tmp_path / "research_package.json"
     path.write_text(json.dumps(package(owner_status="PENDING")), encoding="utf-8")
+
+    result = FileCompanyProfileV4ReadStore(str(path)).get_public("2468")
+    payload = result.model_dump(by_alias=True, mode="json")
+    encoded = json.dumps(payload, ensure_ascii=False)
+
+    assert result.publication_status == "PUBLISHED"
+    assert result.overview_data["businessModel"]["shortDesc"] == "企業資訊系統整合與服務。"
+    assert payload["researchGovernance"]["dataCompletenessScore"] == 0.72
+    assert "OWNER_STANDING_POLICY" not in encoded
+    assert "PRIVATE-EVIDENCE" not in encoded
+    assert "authorizationEvidence" not in encoded
+
+
+def test_completeness_threshold_is_strictly_greater_than_point_seven(tmp_path) -> None:
+    path = tmp_path / "research_package.json"
+    path.write_text(
+        json.dumps(package(owner_status="PENDING", completeness=0.70)), encoding="utf-8"
+    )
 
     result = FileCompanyProfileV4ReadStore(str(path)).get_public("2468")
 
     assert result.publication_status == "UNPUBLISHED"
     assert result.overview_data is None
-    assert result.investment_themes == []
-    assert result.finance is None
+
+
+def test_policy_does_not_bypass_source_rights_or_explicit_block(tmp_path) -> None:
+    for source_rights, status in (("UNVERIFIED", "UNPUBLISHED"), ("BLOCKED", "BLOCKED")):
+        path = tmp_path / f"{source_rights}.json"
+        path.write_text(
+            json.dumps(
+                package(
+                    owner_status="PENDING",
+                    source_rights=source_rights,
+                    publication_status="PUBLISHED" if source_rights == "UNVERIFIED" else "BLOCKED",
+                )
+            ),
+            encoding="utf-8",
+        )
+
+        result = FileCompanyProfileV4ReadStore(str(path)).get_public("2468")
+
+        assert result.publication_status == status
+        assert result.overview_data is None
 
 
 def test_content_changed_after_owner_hash_approval_is_blocked(tmp_path) -> None:
@@ -217,7 +260,7 @@ def test_missing_and_duplicate_packages_fail_closed(tmp_path) -> None:
     assert store.get_public("2468").publication_status == "BLOCKED"
 
 
-def test_read_endpoint_is_get_only_and_fail_closed(tmp_path) -> None:
+def test_read_endpoint_accepts_policy_publication_but_remains_get_only(tmp_path) -> None:
     path = tmp_path / "research_package.json"
     path.write_text(json.dumps(package(owner_status="PENDING")), encoding="utf-8")
     app = create_app(
@@ -230,8 +273,9 @@ def test_read_endpoint_is_get_only_and_fail_closed(tmp_path) -> None:
     response = TestClient(app).get("/api/v2/stocks/2468/research-v4")
 
     assert response.status_code == 200
-    assert response.json()["publicationStatus"] == "UNPUBLISHED"
-    assert response.json()["investmentThemes"] == []
+    assert response.json()["publicationStatus"] == "PUBLISHED"
+    assert response.json()["investmentThemes"]
+    assert "authorizationEvidence" not in response.text
     assert not any(
         getattr(route, "path", "").endswith("/research-v4")
         and "POST" in getattr(route, "methods", set())

@@ -34,6 +34,21 @@ test("the V2 route tree keeps shared providers and explicit surface owners", asy
   assert.match(quality, /useQualityPanel/);
 });
 
+test("direct stock routes use the formal stock, EOD, and company research read models", async () => {
+  const [route, page, drawer] = await Promise.all([
+    read("components/v2/StockDetailRoute.tsx"),
+    read("stocks/[code]/page.tsx"),
+    read("components/v2/StockEncyclopediaDrawer.tsx"),
+  ]);
+  assert.match(page, /StockDetailRoute/);
+  assert.match(route, /presentation="page"/);
+  assert.match(route, /stockSeed\(code\)/);
+  assert.match(drawer, /fetchFormalStock\(stock\.code\)/);
+  assert.match(drawer, /fetchFormalCompanyResearchV4\(stock\.code\)/);
+  assert.match(drawer, /EOD 行情/);
+  assert.match(drawer, /CompanyResearchSection/);
+});
+
 test("V2 Home keeps research content separate from the scan-only Stock Explorer", async () => {
   const [home, stocks] = await Promise.all([
     read("components/v2/TodayMarketPage.tsx"),

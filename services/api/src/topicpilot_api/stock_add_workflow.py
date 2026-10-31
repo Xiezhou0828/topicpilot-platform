@@ -13,6 +13,8 @@ from dataclasses import asdict, dataclass, field
 from datetime import UTC, datetime, timedelta
 from typing import Any
 
+from topicpilot_api.company_profile_v4.store import project_approved_package
+
 MASTER_MATCH_FOUND = "MATCH_FOUND"
 MASTER_NO_MATCH = "NO_MATCH_CONFIRMED"
 MASTER_RETRIEVAL_BLOCKED = "RETRIEVAL_BLOCKED"
@@ -155,21 +157,11 @@ def canonical_sha256(value: Any) -> str:
 
 
 def _publication_ready(package: dict[str, Any]) -> bool:
-    projection = package.get("frontendProjection")
-    if not isinstance(projection, dict):
+    try:
+        project_approved_package(package)
+    except ValueError:
         return False
-    governance = projection.get("researchGovernance")
-    publication = governance.get("publication") if isinstance(governance, dict) else None
-    if not isinstance(publication, dict):
-        return False
-    evidence = publication.get("approvalEvidence")
-    return (
-        publication.get("publicationStatus") == "PUBLISHED"
-        and publication.get("ownerReviewStatus") == "APPROVED"
-        and publication.get("sourceRightsStatus") == "APPROVED"
-        and isinstance(evidence, dict)
-        and all(evidence.get(key) for key in ("decisionId", "reviewer", "approvedAt"))
-    )
+    return True
 
 
 def classify_topic(assessment: TopicAssessment) -> TopicDecision:
