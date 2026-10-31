@@ -10,8 +10,8 @@ on:
         options:
           - dry-run
           - apply
-      plan_json:
-        description: Reviewed plan JSON for this private repository; never include credentials
+      plan_sha256:
+        description: Lowercase SHA-256 of the reviewed plan stored in the protected Environment secret
         required: true
         type: string
       confirmation:
@@ -46,17 +46,45 @@ jobs:
       - name: Install the exact stock-add writer
         run: python -m pip install -e services/api
 
-      - name: Write non-secret plan to runner temporary storage
+      - name: Validate and stage hash-bound protected plan
         env:
-          PLAN_JSON: ${{ inputs.plan_json }}
+          PLAN_JSON: ${{ secrets.TOPICPILOT_PRODUCTION_STOCK_ADD_PLAN_JSON }}
+          REQUESTED_PLAN_SHA256: ${{ inputs.plan_sha256 }}
         run: |
           python - <<'PY'
-          import json, os
+          import json, os, re
           from pathlib import Path
-          plan = json.loads(os.environ["PLAN_JSON"])
+          from topicpilot_api.stock_add_master_writer import canonical_sha256
+
+          requested_sha256 = os.environ["REQUESTED_PLAN_SHA256"]
+          if not re.fullmatch(r"[0-9a-f]{64}", requested_sha256):
+              raise SystemExit("The requested plan SHA-256 must be 64 lowercase hexadecimal characters.")
+
+          raw_plan = os.environ.get("PLAN_JSON", "")
+          if not raw_plan:
+              raise SystemExit("The protected stock-add plan Environment secret is required.")
+          try:
+              plan = json.loads(raw_plan)
+          except json.JSONDecodeError as exc:
+              raise SystemExit("The protected stock-add plan is not valid JSON.") from exc
+          if not isinstance(plan, dict):
+              raise SystemExit("The protected stock-add plan must be a JSON object.")
+          if plan.get("schemaVersion") != "topicpilot-stock-add-master-plan.v1":
+              raise SystemExit("The protected stock-add plan schema is not supported.")
+
+          declared_sha256 = plan.get("planSha256")
+          computed_sha256 = canonical_sha256(
+              {key: value for key, value in plan.items() if key != "planSha256"}
+          )
+          if declared_sha256 != requested_sha256 or computed_sha256 != requested_sha256:
+              raise SystemExit("The protected plan does not match the requested plan SHA-256.")
+
           path = Path(os.environ["RUNNER_TEMP"]) / "stock-add-master-plan.json"
-          path.write_text(json.dumps(plan, ensure_ascii=False), encoding="utf-8")
-          print(f"Plan staged in runner temporary storage; bytes={path.stat().st_size}")
+          path.write_text(raw_plan, encoding="utf-8")
+          print(
+              "Protected plan validated and staged; "
+              f"bytes={path.stat().st_size}; sha256={requested_sha256}"
+          )
           PY
 
       - name: Recheck Production target and show write dry-run

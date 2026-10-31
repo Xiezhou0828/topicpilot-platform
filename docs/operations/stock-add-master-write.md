@@ -21,10 +21,13 @@ the post-close scheduler. Those remain separately governed steps.
 
 ## Package and plan
 
-The non-secret plan uses schema `topicpilot-stock-add-master-plan.v1` and
-includes the complete reviewed v4 package, official stock identity, fresh
-Production master readback, and a canonical `planSha256`. The research package
-must have a valid frontend contract, `PUBLISHED` publication status, Owner
+The sealed plan uses schema `topicpilot-stock-add-master-plan.v1` and includes
+the reviewed frontend v4 projection, official stock identity, fresh Production
+master readback, and a canonical `planSha256`. The plan is not a database
+credential, but its research projection must not be placed in public workflow
+inputs, issue text, logs, or artifacts. Keep it in the protected
+`production-db-maintenance` Environment secret described below. The research
+package must have a valid frontend contract, `PUBLISHED` publication status, Owner
 review and source rights set to `APPROVED`, and approval evidence whose digest
 matches the approved package content. The API writer derives the public field
 allowlist itself; it never stores the source register, evidence IDs, or other
@@ -90,6 +93,11 @@ In the existing protected `production-db-maintenance` GitHub Environment,
 configure:
 
 - Secret `TOPICPILOT_PRODUCTION_STOCK_ADD_DATABASE_URL` for the dedicated role.
+- Secret `TOPICPILOT_PRODUCTION_STOCK_ADD_PLAN_JSON` for the current sealed,
+  Owner-reviewed plan. Update it to the latest approved plan before each
+  dispatch; the public workflow input accepts only the plan's lowercase
+  `planSha256`, which the runner verifies against both the declared and
+  recomputed canonical digest before staging it.
 - Variable `TOPICPILOT_PRODUCTION_STOCK_ADD_EXPECTED_HOST` with the exact host.
 - Variable `TOPICPILOT_PRODUCTION_STOCK_ADD_EXPECTED_DATABASE` as `neondb`.
 - Variable `TOPICPILOT_PRODUCTION_STOCK_ADD_EXPECTED_ROLE` as
@@ -109,10 +117,12 @@ migration workflow.
 3. Grant the deployed API role `SELECT` on the publication table, then deploy
    the API from the exact reviewed `main` SHA. Confirm `/readyz`, the migration
    endpoint, and the research-v4 route.
-4. Provision the restricted writer role and the four GitHub Environment
+4. Provision the restricted writer role and the five GitHub Environment
    settings above.
 5. Produce a fresh authority readback and a sealed plan from the reviewed v4
-   package. Run **Production stock-add master writer** in `dry-run` mode.
+   package. Update the protected plan secret, then run **Production stock-add
+   master writer** in `dry-run` mode using only the plan SHA-256 as a dispatch
+   input.
 6. Review the dry-run action, stock identity, research date, plan SHA, and
    publication version. Run the same plan in `apply` mode with the exact hash
    confirmation and approve the protected Environment gate.
