@@ -54,7 +54,10 @@ def _snapshot() -> FormalAuthoritySnapshot:
             "transactionReadOnly": True,
             "transactionIsolation": "repeatable read",
             "mutationPrivilegesObserved": False,
-            "temporaryDatabasePrivilegeObserved": False,
+            # Effective TEMP may be inherited from the standard PUBLIC grant;
+            # the protected check is that the role has no direct DB mutation grant.
+            "directDatabaseMutationPrivilegeObserved": False,
+            "effectiveTemporaryPrivilegeObserved": True,
             "activeMarketCodes": ["TPE", "TWO"],
             "migrationHead": "0099",
         },
@@ -121,3 +124,23 @@ def test_authority_readback_cli_rejects_stale_authority(monkeypatch, capsys) -> 
 
     assert result == 2
     assert capsys.readouterr().err.strip() == "PRODUCTION_CATALOG_READBACK_NOT_CURRENT"
+
+
+def test_authority_readback_cli_rejects_unverified_direct_database_privileges(
+    monkeypatch, capsys
+) -> None:
+    revision = "a" * 40
+    monkeypatch.setenv("GITHUB_SHA", revision)
+    snapshot = _snapshot()
+    controls = dict(snapshot.read_controls or {})
+    controls["directDatabaseMutationPrivilegeObserved"] = True
+    monkeypatch.setattr(
+        cli,
+        "read_protected_database_authority_snapshot",
+        lambda **_: replace(snapshot, read_controls=controls),
+    )
+
+    result = cli.main(["2468", "--market", "TPE", "--source-revision", revision])
+
+    assert result == 2
+    assert capsys.readouterr().err.strip() == "PRODUCTION_CATALOG_READ_CONTROLS_INCOMPLETE"
