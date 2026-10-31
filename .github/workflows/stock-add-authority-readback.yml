@@ -18,6 +18,11 @@ on:
         description: Exact canonical commit SHA that dispatched this workflow
         required: true
         type: string
+      topic_search_terms:
+        description: Optional JSON array of up to 12 public business terms for a bounded Topic-name search, e.g. ["雲端","資安"]
+        required: false
+        type: string
+        default: "[]"
 
 permissions:
   actions: read
@@ -144,11 +149,12 @@ jobs:
       - name: Install the API readback package
         run: python -m pip install ./services/api
 
-      - name: Read live authorities without loading or exposing catalog rows
+      - name: Read live authorities and optional bounded Topic-name candidates
         env:
           STOCK_CODE: ${{ inputs.stock_code }}
           MARKET: ${{ inputs.market }}
           SOURCE_REF: ${{ inputs.source_ref }}
+          TOPIC_SEARCH_TERMS: ${{ inputs.topic_search_terms }}
           TOPICPILOT_PRODUCTION_CATALOG_READONLY_DATABASE_URL: ${{ secrets.TOPICPILOT_PRODUCTION_CATALOG_READONLY_DATABASE_URL }}
           TOPICPILOT_PRODUCTION_CATALOG_READONLY_ROLE: ${{ vars.TOPICPILOT_PRODUCTION_CATALOG_READONLY_ROLE }}
           TOPICPILOT_PRODUCTION_CATALOG_READONLY_EXPECTED_HOST: ${{ vars.TOPICPILOT_PRODUCTION_CATALOG_READONLY_EXPECTED_HOST }}
@@ -159,7 +165,8 @@ jobs:
           PYTHONPATH=services/api/src python -m topicpilot_api.stock_add_authority_cli \
             "$STOCK_CODE" \
             --market "$MARKET" \
-            --source-revision "$SOURCE_REF" > "$report"
+            --source-revision "$SOURCE_REF" \
+            --topic-search-terms "$TOPIC_SEARCH_TERMS" > "$report"
           REPORT_PATH="$report" SOURCE_REF="$SOURCE_REF" STOCK_CODE="$STOCK_CODE" MARKET="$MARKET" python - <<'PY'
           import hashlib
           import json
@@ -208,6 +215,21 @@ jobs:
               raise SystemExit("report producer revision does not match checked-out source")
           if report.get("productionMutation") is not False or report.get("writesPerformed") != []:
               raise SystemExit("readback report unexpectedly claims a write")
+          candidates = report.get("topicNameCandidateReadback")
+          if not isinstance(candidates, dict) or candidates.get("status") not in {
+              "NOT_REQUESTED", "MATCHES_RETURNED", "NO_NAME_MATCH", "TOO_BROAD"
+          }:
+              raise SystemExit("Topic name-candidate readback is invalid")
+          if not isinstance(candidates.get("matches"), list) or len(candidates["matches"]) > 20:
+              raise SystemExit("Topic name-candidate result exceeds the bounded output")
+          allowed_fields = {"slug", "name", "status", "parentNames", "matchedTerms", "decisionStatus"}
+          if any(
+              not isinstance(row, dict)
+              or set(row) != allowed_fields
+              or row.get("decisionStatus") != "NAME_MATCH_REQUIRES_EVIDENCE_REVIEW"
+              for row in candidates["matches"]
+          ):
+              raise SystemExit("Topic name-candidate output contains an unsupported field")
           report["authorityReadbackSha256"] = digest
           PY
 
@@ -216,12 +238,14 @@ jobs:
           STOCK_CODE: ${{ inputs.stock_code }}
           MARKET: ${{ inputs.market }}
           SOURCE_REF: ${{ inputs.source_ref }}
+          TOPIC_SEARCH_TERMS: ${{ inputs.topic_search_terms }}
           REPORT_PATH: ${{ runner.temp }}/stock-add-authority-readback.json
         run: |
           REPORT_PATH="$REPORT_PATH" STOCK_CODE="$STOCK_CODE" MARKET="$MARKET" SOURCE_REF="$SOURCE_REF" python - <<'PY' >> "$GITHUB_STEP_SUMMARY"
           import json
           import os
           from pathlib import Path
+          from topicpilot_api.stock_add_authority_cli import safe_github_summary_text
 
           report = json.loads(Path(os.environ["REPORT_PATH"]).read_text(encoding="utf-8"))
           print("## Production stock-add authority readback")
@@ -229,6 +253,20 @@ jobs:
           print(f"- Source revision: `{os.environ['SOURCE_REF']}`")
           print(f"- Stock-master result: `{report['stockMaster']['status']}`")
           print(f"- Formal Topic catalog: `{report['topicCatalog']['status']}` as of `{report['topicCatalog']['asOf']}`")
+          candidates = report["topicNameCandidateReadback"]
+          print(f"- Topic name search: `{candidates['status']}`")
+          if candidates.get("searchTerms"):
+              print(f"- Search terms: {safe_github_summary_text(', '.join(candidates['searchTerms']))}")
+          for row in candidates.get("matches", []):
+              parents = f" (上層：{'、'.join(row['parentNames'])})" if row["parentNames"] else ""
+              print(
+                  f"  - {safe_github_summary_text(row['slug'])} — "
+                  f"{safe_github_summary_text(row['name'])}"
+                  f"{safe_github_summary_text(parents)}; matched: "
+                  f"{safe_github_summary_text(', '.join(row['matchedTerms']))}"
+              )
+          if candidates["status"] == "TOO_BROAD":
+              print(f"- Candidate count `{candidates['matchCount']}` exceeds the safe display cap; narrow the search terms.")
           print(f"- Authority readback SHA-256: `{report['authorityReadbackSha256']}`")
           print("- Production writes: `NONE`")
           print("- Research/topic matching, reference-universe activation, post-close, and scheduler are separate gates.")

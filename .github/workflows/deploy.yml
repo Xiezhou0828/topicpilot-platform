@@ -171,7 +171,7 @@ jobs:
           PRODUCTION_API_ORIGIN: https://topicpilot-api.onrender.com
         run: |
           payload="$(curl --fail --silent --show-error "$PRODUCTION_API_ORIGIN/api/v1/admin/migration")"
-          python -c 'import json, sys; payload=json.loads(sys.argv[1]); allowed={"0049_task_daily_formal_publication_receipt", "0050_task_purge_retired_topics"}; actual=payload.get("alembicRevision"); sys.exit(f"Worker release requires migration 0049 or 0050, got {actual!r}") if actual not in allowed else print(f"Worker migration precondition: {actual}")' "$payload"
+          python -c 'import json, sys; payload=json.loads(sys.argv[1]); allowed={"0049_task_daily_formal_publication_receipt", "0050_task_purge_retired_topics", "0051_stock_add_operation_journal", "0052_company_research_publications"}; actual=payload.get("alembicRevision"); sys.exit(f"Worker release requires migration 0049 through 0052, got {actual!r}") if actual not in allowed else print(f"Worker migration precondition: {actual}")' "$payload"
       - name: Trigger protected Worker deploy hook with exact SHA
         env:
           RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
@@ -200,7 +200,7 @@ jobs:
           PRODUCTION_API_ORIGIN: https://topicpilot-api.onrender.com
         run: |
           payload="$(curl --fail --silent --show-error "$PRODUCTION_API_ORIGIN/api/v1/admin/migration")"
-          python -c 'import json, sys; payload=json.loads(sys.argv[1]); allowed={"0049_task_daily_formal_publication_receipt", "0050_task_purge_retired_topics"}; actual=payload.get("alembicRevision"); sys.exit(f"API release requires migration 0049 or 0050, got {actual!r}") if actual not in allowed else print(f"API migration precondition: {actual}")' "$payload"
+          python -c 'import json, sys; payload=json.loads(sys.argv[1]); allowed={"0049_task_daily_formal_publication_receipt", "0050_task_purge_retired_topics", "0051_stock_add_operation_journal", "0052_company_research_publications"}; actual=payload.get("alembicRevision"); sys.exit(f"API release requires migration 0049 through 0052, got {actual!r}") if actual not in allowed else print(f"API migration precondition: {actual}")' "$payload"
       - name: Trigger protected deploy hook
         env:
           RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}

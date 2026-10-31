@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "topicpilot-api"
 version = "0.1.0"
-description = "Read-only enterprise API and PostgreSQL read model for TopicPilot."
+description = "TopicPilot enterprise API, research publications, and guarded operations."
 requires-python = ">=3.12,<3.13"
 dependencies = [
   "alembic>=1.14,<2",
@@ -40,6 +40,8 @@ topicpilot-reference-bundle = "topicpilot_api.reference_bundle_cli:main"
 topicpilot-reference-bootstrap = "topicpilot_api.reference_bootstrap_cli:main"
 topicpilot-hist-002b-promotion = "topicpilot_api.market_data.historical_promotion:main"
 topicpilot-reference-transition = "topicpilot_api.reference_transition_cli:main"
+topicpilot-stock-add-apply = "topicpilot_api.stock_add_apply_cli:main"
+topicpilot-stock-add-master-plan = "topicpilot_api.stock_add_master_plan_cli:main"
 topicpilot-market-identity-remediation = "topicpilot_api.market_identity_remediation_cli:main"
 topicpilot-market-calendar-remediation = "topicpilot_api.market_calendar_remediation_cli:main"
 topicpilot-market-semantics-check = "topicpilot_api.market_semantics_cli:main"

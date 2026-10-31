@@ -25,6 +25,7 @@ def _snapshot() -> FormalAuthoritySnapshot:
                 "topicId": "internal-topic-id",
                 "slug": "formal-topic",
                 "name": "正式題材",
+                "enabled": True,
             },
         ),
         master_evidence=AuthorityReadEvidence(
@@ -81,6 +82,118 @@ def test_authority_readback_report_is_aggregate_and_hash_bound() -> None:
     assert "topicItems" not in report
     assert "internal-instrument-id" not in json.dumps(report)
     assert "internal-topic-id" not in json.dumps(report)
+    assert report["topicNameCandidateReadback"] == {
+        "status": "NOT_REQUESTED",
+        "searchTerms": [],
+        "matches": [],
+    }
+
+
+def test_topic_name_search_returns_only_bounded_public_fields() -> None:
+    snapshot = _snapshot()
+    report = cli.build_readback_report(
+        stock_code="2468",
+        market="TPE",
+        source_revision="a" * 40,
+        snapshot=snapshot,
+        topic_search_terms=("正式",),
+    )
+
+    result = report["topicNameCandidateReadback"]
+    assert result["status"] == "MATCHES_RETURNED"
+    assert result["matchCount"] == 1
+    assert result["matches"] == [
+        {
+            "slug": "formal-topic",
+            "name": "正式題材",
+            "status": None,
+            "parentNames": [],
+            "matchedTerms": ["正式"],
+            "decisionStatus": "NAME_MATCH_REQUIRES_EVIDENCE_REVIEW",
+        }
+    ]
+    assert "internal-topic-id" not in json.dumps(result)
+    assert result["matches"][0]["decisionStatus"] != "RELATION_CANDIDATE"
+
+
+def test_topic_name_search_fails_closed_when_too_broad() -> None:
+    snapshot = replace(
+        _snapshot(),
+        topic_items=tuple(
+            {
+                "topicId": f"private-{index}",
+                "slug": f"cloud-{index}",
+                "name": f"雲端服務{index}",
+                "enabled": True,
+            }
+            for index in range(cli.MAX_TOPIC_CANDIDATE_MATCHES + 1)
+        ),
+    )
+
+    result = cli._topic_name_candidates(snapshot, ("雲端",))
+
+    assert result["status"] == "TOO_BROAD"
+    assert result["matches"] == []
+    assert result["matchCount"] == cli.MAX_TOPIC_CANDIDATE_MATCHES + 1
+
+
+def test_topic_name_search_excludes_topics_without_current_effective_status() -> None:
+    snapshot = replace(
+        _snapshot(),
+        topic_items=(
+            {"topicId": "unknown", "slug": "cloud-unknown", "name": "雲端未知"},
+            {
+                "topicId": "inactive",
+                "slug": "cloud-inactive",
+                "name": "雲端停用",
+                "enabled": False,
+            },
+            {
+                "topicId": "active",
+                "slug": "cloud-active",
+                "name": "雲端有效",
+                "enabled": True,
+            },
+        ),
+    )
+
+    result = cli._topic_name_candidates(snapshot, ("雲端",))
+
+    assert result["status"] == "MATCHES_RETURNED"
+    assert [row["slug"] for row in result["matches"]] == ["cloud-active"]
+
+
+def test_topic_search_terms_are_validated_before_read(monkeypatch, capsys) -> None:
+    revision = "a" * 40
+    monkeypatch.setenv("GITHUB_SHA", revision)
+    monkeypatch.setattr(
+        cli,
+        "read_protected_database_authority_snapshot",
+        lambda **_: (_ for _ in ()).throw(AssertionError("database must not be read")),
+    )
+
+    result = cli.main(
+        [
+            "2468",
+            "--market",
+            "TPE",
+            "--source-revision",
+            revision,
+            "--topic-search-terms",
+            "not-json",
+        ]
+    )
+
+    assert result == 2
+    assert capsys.readouterr().err.strip() == "TOPIC_SEARCH_TERMS_MUST_BE_JSON_ARRAY"
+
+
+def test_github_summary_values_are_plain_text_and_single_line() -> None:
+    value = "雲端`**[名稱]**\n<script>|_~\\"
+
+    assert cli.safe_github_summary_text(value) == (
+        "雲端&#96;&#42;&#42;&#91;名稱&#93;&#42;&#42; &lt;script&gt;&#124;&#95;&#126;&#92;"
+    )
 
 
 def test_authority_readback_cli_does_not_require_a_research_package(monkeypatch, capsys) -> None:

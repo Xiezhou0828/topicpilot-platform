@@ -124,26 +124,36 @@ Taiwan date. It verifies role flags and membership, table/schema/database
 privileges, active market coverage, migration head, identity fields, duplicate
 keys, row counts, and stable digests.
 
-The workflow does not print or upload catalog rows or identifiers. This
-repository is public, so it deliberately avoids describing its job output as a
-private artifact. The job summary keeps only the requested stock's
+The workflow never prints or uploads the complete catalog or Topic UUIDs. This
+repository is public, so its job summary is explicitly public and is not
+described as a private artifact. By default it keeps only the requested stock's
 `MATCH_FOUND` / `NO_MATCH_CONFIRMED` result, Topic-catalog readiness/effective
-date, source revision, and an aggregate readback SHA-256. The detailed report
-exists only in the runner's temporary directory and is discarded at job end.
+date, source revision, and an aggregate readback SHA-256. An operator may
+optionally supply up to 12 public business search terms. In that mode the
+summary shows at most 20 active Topic name/slug matches and their parent names;
+over-broad searches return only a count and require narrower terms. These are
+name-search candidates, not relation matches: every result still requires
+official business-evidence review. The report, including the optional bounded
+candidate set, exists only in the runner's temporary directory and is
+discarded at job end.
 
 The check uses `(market, stock_code)` as the stock identity. A proven absence
 is `NO_MATCH_CONFIRMED` and a normal `ADD_INSTRUMENT` starting point; a partial
 or unsafe query is blocked rather than converted to absence. This step does
 not expose the complete Topic list to the public job log and does not perform
 business-evidence-to-Topic matching; that remains a separate reviewed stage.
+Search terms and matched names/slugs are visible in the public workflow summary;
+inputs must be limited to public, non-confidential business terms.
 Relation candidates remain separately evidence-reviewed, and relation weights
 do not become structural roles.
 
 ## Gates that remain separate
 
-- A successful readback does not authorize Production writes. A dedicated,
-  audited, idempotent write workflow and its operation journal are still
-  required, followed by the Owner's exact hash confirmation.
+- A successful readback does not authorize Production writes. The dedicated
+  writer implementation and setup are documented in
+  [Controlled Production stock-master add](stock-add-master-write.md). It
+  requires the Owner's exact hash confirmation and an Environment-approved
+  writer run; absence is the normal `ADD_INSTRUMENT` starting point.
 - A successful stock-master write would not add the stock to the active
   reference universe. A new immutable reference bundle must pass the existing
   G1 and date-effective G2 checks.
