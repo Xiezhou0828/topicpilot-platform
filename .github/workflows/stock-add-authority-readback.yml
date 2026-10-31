@@ -253,6 +253,8 @@ jobs:
           print(f"- Source revision: `{os.environ['SOURCE_REF']}`")
           print(f"- Stock-master result: `{report['stockMaster']['status']}`")
           print(f"- Formal Topic catalog: `{report['topicCatalog']['status']}` as of `{report['topicCatalog']['asOf']}`")
+          print(f"- Stock-master readback: complete=`{report['stockMaster']['complete']}`; readAt=`{report['stockMaster']['readAt']}`")
+          print(f"- Topic catalog readback: complete=`{report['topicCatalog']['complete']}`; readAt=`{report['topicCatalog']['readAt']}`")
           candidates = report["topicNameCandidateReadback"]
           print(f"- Topic name search: `{candidates['status']}`")
           if candidates.get("searchTerms"):
