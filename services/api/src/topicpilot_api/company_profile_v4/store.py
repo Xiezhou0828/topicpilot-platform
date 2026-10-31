@@ -44,6 +44,12 @@ def _approval_content_sha256(package: dict[str, Any]) -> str:
     return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
 
 
+def approval_content_sha256(package: dict[str, Any]) -> str:
+    """Return the exact content digest an Owner approves for publication."""
+
+    return _approval_content_sha256(package)
+
+
 def _metric(value: Any) -> dict[str, Any] | None:
     if not isinstance(value, dict):
         return None
@@ -247,6 +253,7 @@ def _project_published(package: dict[str, Any]) -> CompanyResearchV4PublicRespon
         "financialPerformance",
         "contractsAndBacklog",
     )
+
     for key in summary_keys:
         section = sections.get(key)
         if isinstance(section, dict) and _text(section.get("summary")):
@@ -331,6 +338,40 @@ def _project_published(package: dict[str, Any]) -> CompanyResearchV4PublicRespon
     )
 
 
+def project_approved_package(package: dict[str, Any]) -> CompanyResearchV4PublicResponse:
+    """Validate an Owner-approved V4 package and return only its public projection."""
+
+    if (
+        not isinstance(package, dict)
+        or package.get("packageVersion") != "topicpilot-stock-research.v4"
+    ):
+        raise ValueError("UNSUPPORTED_RESEARCH_PACKAGE")
+    frontend = package.get("frontendProjection")
+    governance = frontend.get("researchGovernance") if isinstance(frontend, dict) else None
+    publication = governance.get("publication") if isinstance(governance, dict) else None
+    approval = publication.get("approvalEvidence") if isinstance(publication, dict) else None
+    if (
+        not isinstance(frontend, dict)
+        or frontend.get("contractVersion") != "company-research-frontend.v4"
+        or not isinstance(publication, dict)
+        or publication.get("publicationStatus") != "PUBLISHED"
+        or publication.get("ownerReviewStatus") != "APPROVED"
+        or publication.get("sourceRightsStatus") != "APPROVED"
+        or not isinstance(approval, dict)
+        or not all(
+            _text(approval.get(key))
+            for key in ("decisionId", "reviewer", "approvedAt", "packageSha256")
+        )
+        or not re.fullmatch(r"[0-9a-f]{64}", str(approval.get("packageSha256", "")))
+        or approval.get("packageSha256") != _approval_content_sha256(package)
+    ):
+        raise ValueError("RESEARCH_PACKAGE_NOT_OWNER_APPROVED")
+    try:
+        return _project_published(package)
+    except (KeyError, TypeError, ValueError, ValidationError) as exc:
+        raise ValueError("RESEARCH_PACKAGE_PUBLIC_PROJECTION_INVALID") from exc
+
+
 def _minimal(code: str, status: str, note: str) -> CompanyResearchV4PublicResponse:
     return CompanyResearchV4PublicResponse(
         stockCode=code, publicationStatus=status, limitationsZhTw=[note]
@@ -387,35 +428,28 @@ class FileCompanyProfileV4ReadStore:
             or not isinstance(publication, dict)
         ):
             return _minimal(code, "UNPUBLISHED", "研究資料尚未完成 V4 發布審核。")
-        approval = publication.get("approvalEvidence")
-        approved = (
-            publication.get("publicationStatus") == "PUBLISHED"
-            and publication.get("ownerReviewStatus") == "APPROVED"
-            and publication.get("sourceRightsStatus") == "APPROVED"
-            and isinstance(approval, dict)
-            and all(
-                _text(approval.get(key))
-                for key in ("decisionId", "reviewer", "approvedAt", "packageSha256")
-            )
-            and bool(re.fullmatch(r"[0-9a-f]{64}", str(approval.get("packageSha256", ""))))
-            and approval.get("packageSha256") == _approval_content_sha256(package)
-        )
-        if not approved:
+        try:
+            return project_approved_package(package)
+        except ValueError:
             blocked = (
                 publication.get("sourceRightsStatus") == "BLOCKED"
                 or publication.get("ownerReviewStatus") == "REJECTED"
                 or (
-                    isinstance(approval, dict)
-                    and bool(_text(approval.get("packageSha256")))
-                    and approval.get("packageSha256") != _approval_content_sha256(package)
+                    publication.get("sourceRightsStatus") == "APPROVED"
+                    and isinstance(publication.get("approvalEvidence"), dict)
+                    and bool(_text(publication["approvalEvidence"].get("packageSha256")))
+                    and publication["approvalEvidence"].get("packageSha256")
+                    != _approval_content_sha256(package)
                 )
             )
             status = "BLOCKED" if blocked else "UNPUBLISHED"
             return _minimal(code, status, "研究內容尚未通過正式發布審核; 暫不公開。")
-        try:
-            return _project_published(package)
-        except (KeyError, TypeError, ValueError, ValidationError):
+        except (KeyError, TypeError, ValidationError):
             return _minimal(code, "BLOCKED", "研究資料欄位未符合公開契約; 暫不公開。")
 
 
-__all__ = ["FileCompanyProfileV4ReadStore"]
+__all__ = [
+    "FileCompanyProfileV4ReadStore",
+    "approval_content_sha256",
+    "project_approved_package",
+]

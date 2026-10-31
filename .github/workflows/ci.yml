@@ -190,7 +190,7 @@ jobs:
           assert (counts.total, counts.retired, revision) == (
               132,
               0,
-              "0050_task_purge_retired_topics",
+              "0052_company_research_publications",
           ), (counts, revision)
           PY
       - name: Production forensic disposable PostgreSQL privilege test

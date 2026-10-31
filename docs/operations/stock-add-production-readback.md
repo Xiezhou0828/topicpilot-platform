@@ -149,9 +149,11 @@ do not become structural roles.
 
 ## Gates that remain separate
 
-- A successful readback does not authorize Production writes. A dedicated,
-  audited, idempotent write workflow and its operation journal are still
-  required, followed by the Owner's exact hash confirmation.
+- A successful readback does not authorize Production writes. The dedicated
+  writer implementation and setup are documented in
+  [Controlled Production stock-master add](stock-add-master-write.md). It
+  requires the Owner's exact hash confirmation and an Environment-approved
+  writer run; absence is the normal `ADD_INSTRUMENT` starting point.
 - A successful stock-master write would not add the stock to the active
   reference universe. A new immutable reference bundle must pass the existing
   G1 and date-effective G2 checks.

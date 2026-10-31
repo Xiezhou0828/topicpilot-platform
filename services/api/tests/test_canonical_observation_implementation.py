@@ -15,7 +15,7 @@ def test_canonical_revision_is_linear_after_0018():
     config = Config(str(ROOT / "alembic.ini"))
     script = ScriptDirectory.from_config(config)
     assert [head.revision for head in script.get_revisions("heads")] == [
-        "0050_task_purge_retired_topics"
+        "0052_company_research_publications"
     ]
 
 
@@ -40,8 +40,7 @@ def test_orm_registry_exposes_canonical_models_and_structural_constraints():
     assert CanonicalObservation.__tablename__ == "canonical_observations"
     assert CanonicalPriceObservation.__tablename__ == "canonical_price_observations"
     assert any(
-        isinstance(c, UniqueConstraint)
-        and c.name == "uq_canonical_observations_idempotency"
+        isinstance(c, UniqueConstraint) and c.name == "uq_canonical_observations_idempotency"
         for c in CanonicalObservation.__table__.constraints
     )
     assert any(

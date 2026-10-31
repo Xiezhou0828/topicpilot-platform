@@ -2,12 +2,41 @@ from __future__ import annotations
 
 import hashlib
 import json
+from contextlib import nullcontext
 
 from fastapi.testclient import TestClient
 
+from topicpilot_api.company_profile_v4.contract import CompanyResearchV4PublicResponse
+from topicpilot_api.company_profile_v4.database_store import DatabaseCompanyProfileV4ReadStore
 from topicpilot_api.company_profile_v4.store import FileCompanyProfileV4ReadStore
 from topicpilot_api.config import Settings
 from topicpilot_api.main import create_app
+
+
+class _FakeResult:
+    def __init__(self, *, scalar=None, row=None):
+        self.scalar = scalar
+        self.row = row
+
+    def scalar_one(self):
+        return self.scalar
+
+    def mappings(self):
+        return self
+
+    def one(self):
+        return self.row
+
+    def first(self):
+        return self.row
+
+
+class _FakeSession:
+    def __init__(self, results):
+        self.results = iter(results)
+
+    def execute(self, statement, params=None):
+        return next(self.results)
 
 
 def package(*, owner_status: str = "APPROVED") -> dict:
@@ -208,3 +237,83 @@ def test_read_endpoint_is_get_only_and_fail_closed(tmp_path) -> None:
         and "POST" in getattr(route, "methods", set())
         for route in app.routes
     )
+
+
+def test_database_read_store_returns_latest_public_projection_without_private_fields() -> None:
+    payload = CompanyResearchV4PublicResponse(
+        stockCode="2468",
+        displayName="華經",
+        publicationStatus="PUBLISHED",
+        overviewData={"businessModel": {"shortDesc": "企業資訊系統整合與服務。"}},
+    ).model_dump(by_alias=True, mode="json")
+    session = _FakeSession(
+        [
+            _FakeResult(scalar=1),
+            _FakeResult(row={"id": "instrument-2468", "is_active": True}),
+            _FakeResult(row={"public_payload": payload}),
+        ]
+    )
+
+    result = DatabaseCompanyProfileV4ReadStore(session).get_public("2468")
+
+    assert result.publication_status == "PUBLISHED"
+    assert result.overview_data["businessModel"]["shortDesc"] == "企業資訊系統整合與服務。"
+    assert "evidenceId" not in result.model_dump_json()
+
+
+def test_read_endpoint_uses_database_publication_when_file_store_is_unconfigured(
+    monkeypatch,
+) -> None:
+    payload = CompanyResearchV4PublicResponse(
+        stockCode="2468",
+        displayName="華經",
+        publicationStatus="PUBLISHED",
+        overviewData={"businessModel": {"shortDesc": "企業資訊系統整合與服務。"}},
+    ).model_dump(by_alias=True, mode="json")
+    session = _FakeSession(
+        [
+            _FakeResult(scalar=1),
+            _FakeResult(row={"id": "instrument-2468", "is_active": True}),
+            _FakeResult(row={"public_payload": payload}),
+        ]
+    )
+    from topicpilot_api.company_profile_v4 import api as research_api
+
+    monkeypatch.setattr(
+        research_api,
+        "get_session_factory",
+        lambda: lambda: nullcontext(session),
+    )
+    app = create_app(Settings(company_profile_v4_read_model_path=None))
+
+    response = TestClient(app).get("/api/v2/stocks/2468/research-v4")
+
+    assert response.status_code == 200
+    assert response.json()["publicationStatus"] == "PUBLISHED"
+    assert (
+        response.json()["overviewData"]["businessModel"]["shortDesc"] == "企業資訊系統整合與服務。"
+    )
+
+
+def test_database_read_store_fails_closed_for_duplicate_master_identity() -> None:
+    session = _FakeSession([_FakeResult(scalar=2)])
+
+    result = DatabaseCompanyProfileV4ReadStore(session).get_public("2468")
+
+    assert result.publication_status == "BLOCKED"
+    assert result.overview_data is None
+
+
+def test_database_read_store_returns_unpublished_state_when_publication_is_absent() -> None:
+    session = _FakeSession(
+        [
+            _FakeResult(scalar=1),
+            _FakeResult(row={"id": "instrument-2468", "is_active": True}),
+            _FakeResult(row=None),
+        ]
+    )
+
+    result = DatabaseCompanyProfileV4ReadStore(session).get_public("2468")
+
+    assert result.publication_status == "NOT_CONNECTED"
+    assert result.overview_data is None
