@@ -4,6 +4,7 @@ from datetime import UTC, datetime, timedelta
 
 import pytest
 
+from topicpilot_api.company_profile_v4.store import approval_content_sha256
 from topicpilot_api.stock_add_workflow import (
     MASTER_MATCH_FOUND,
     MASTER_NO_MATCH,
@@ -38,16 +39,21 @@ def _read_evidence(digest_char: str) -> AuthorityReadEvidence:
 
 
 def _published_package(stock_code: str = "2468") -> dict:
-    return {
+    package = {
         "packageVersion": "topicpilot-stock-research.v4",
         "company": {"stockCode": stock_code, "displayName": "華經"},
+        "sourceRegister": [
+            {"evidenceId": "SOURCE-1", "url": "https://company.example/annual-report.pdf"}
+        ],
         "frontendProjection": {
             "contractVersion": "company-research-frontend.v4",
             "researchGovernance": {
+                "dataCompletenessScore": 0.72,
                 "publication": {
                     "publicationStatus": "PUBLISHED",
                     "ownerReviewStatus": "APPROVED",
                     "sourceRightsStatus": "APPROVED",
+                    "blockingIssues": [],
                     "approvalEvidence": {
                         "decisionId": "decision-1",
                         "reviewer": "owner",
@@ -58,6 +64,10 @@ def _published_package(stock_code: str = "2468") -> dict:
             "investmentThemes": [],
         },
     }
+    publication = package["frontendProjection"]["researchGovernance"]["publication"]
+    publication["approvalEvidence"]["packageSha256"] = ""
+    publication["approvalEvidence"]["packageSha256"] = approval_content_sha256(package)
+    return package
 
 
 def _assessment(
@@ -148,10 +158,32 @@ def test_confirmed_master_absence_is_expected_add_entry_and_runs_topic_compariso
     assert plan.topic_decisions[0].relation_type == "PRIMARY"
 
 
-def test_research_package_requires_owner_publication_gate() -> None:
+def test_research_score_above_threshold_uses_standing_publication_policy() -> None:
     package = _published_package()
-    package["frontendProjection"]["researchGovernance"]["publication"]["ownerReviewStatus"] = (
-        "PENDING"
+    publication = package["frontendProjection"]["researchGovernance"]["publication"]
+    publication.update(
+        {
+            "publicationStatus": "UNPUBLISHED",
+            "ownerReviewStatus": "PENDING",
+            "approvalEvidence": None,
+        }
+    )
+    plan = _ready_plan(package=package)
+    assert plan.research_status == "RESEARCH_READY"
+    assert plan.plan_status == "FINAL_APPROVAL_PENDING"
+
+
+def test_research_package_at_policy_threshold_still_requires_publication_review() -> None:
+    package = _published_package()
+    governance = package["frontendProjection"]["researchGovernance"]
+    publication = governance["publication"]
+    governance["dataCompletenessScore"] = 0.70
+    publication.update(
+        {
+            "publicationStatus": "UNPUBLISHED",
+            "ownerReviewStatus": "PENDING",
+            "approvalEvidence": None,
+        }
     )
     plan = _ready_plan(package=package)
     assert plan.research_status == "RESEARCH_REVIEW_REQUIRED"

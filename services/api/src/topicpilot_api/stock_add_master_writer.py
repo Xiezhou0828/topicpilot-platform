@@ -18,7 +18,11 @@ from uuid import uuid4
 
 from sqlalchemy import Connection, text
 
-from .company_profile_v4.store import project_approved_package
+from .company_profile_v4.store import (
+    prepare_research_publication,
+    project_approved_package,
+    publication_authorization_summary,
+)
 from .reference_data.bootstrap import canonical_instrument_id
 
 PLAN_SCHEMA = "topicpilot-stock-add-master-plan.v1"
@@ -43,6 +47,7 @@ class StockAddMasterResult:
     created: bool
     publication_version: int | None
     action: str
+    publication_authorization: dict[str, Any] | None = None
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -55,6 +60,7 @@ class StockAddMasterResult:
             "created": self.created,
             "publicationVersion": self.publication_version,
             "action": self.action,
+            "publicationAuthorization": self.publication_authorization,
             "requiredConfirmation": expected_confirmation(
                 self.market, self.stock_code, self.plan_sha256
             ),
@@ -181,6 +187,11 @@ def validate_master_plan(plan: dict[str, Any]) -> tuple[dict[str, Any], str, str
     if age < timedelta(0) or age > timedelta(minutes=15):
         raise StockAddWriterError("MASTER_READBACK_STALE")
 
+    prepared_package = prepare_research_publication(research_package)
+    if prepared_package is None:
+        raise StockAddWriterError("RESEARCH_PACKAGE_NOT_PUBLICATION_AUTHORIZED")
+    if prepared_package != research_package:
+        raise StockAddWriterError("RESEARCH_PACKAGE_POLICY_ATTESTATION_NOT_SEALED_IN_PLAN")
     try:
         project_approved_package(research_package)
     except ValueError as exc:
@@ -440,6 +451,7 @@ def dry_run_master_add(connection: Connection, plan: dict[str, Any]) -> StockAdd
         created=False,
         publication_version=publication_version,
         action=action,
+        publication_authorization=publication_authorization_summary(package),
     )
 
 
@@ -460,6 +472,9 @@ def apply_master_add(
     code = stock["stockCode"].strip()
     package_sha256 = canonical_sha256(package)
     public_response = project_approved_package(package)
+    authorization = publication_authorization_summary(package)
+    if authorization is None:
+        raise StockAddWriterError("RESEARCH_PACKAGE_NOT_PUBLICATION_AUTHORIZED")
     public_payload = public_response.model_dump(by_alias=True, mode="json")
     public_payload_sha256 = canonical_sha256(public_payload)
     research_as_of = date.fromisoformat(package["researchMetadata"]["researchAsOf"])
@@ -535,6 +550,7 @@ def apply_master_add(
                 if readback["status"] == "MATCH_FOUND"
                 else "ADD_INSTRUMENT_AND_PUBLISH"
             ),
+            publication_authorization=authorization,
         )
 
     existing = _existing_instrument(connection, market, code)
@@ -615,6 +631,7 @@ def apply_master_add(
         "publicPayloadSha256": public_payload_sha256,
         "masterReadbackSha256": readback["sha256"],
         "publicationVersion": publication_version,
+        "publicationAuthorization": authorization,
     }
     connection.execute(
         text(
@@ -686,4 +703,5 @@ def apply_master_add(
         created=created,
         publication_version=publication_version,
         action=("ADD_INSTRUMENT_AND_PUBLISH" if created else "PUBLISH_RESEARCH_UPDATE"),
+        publication_authorization=authorization,
     )

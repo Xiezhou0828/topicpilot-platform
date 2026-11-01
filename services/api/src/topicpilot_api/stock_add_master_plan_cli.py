@@ -7,6 +7,7 @@ import json
 import sys
 from pathlib import Path
 
+from topicpilot_api.company_profile_v4.store import prepare_research_publication
 from topicpilot_api.stock_add_master_writer import (
     StockAddWriterError,
     canonical_sha256,
@@ -28,6 +29,10 @@ def main(argv: list[str] | None = None) -> int:
         payload = json.loads(Path(args.plan_file).read_text(encoding="utf-8"))
         if not isinstance(payload, dict) or "planSha256" in payload:
             raise StockAddWriterError("PLAN_INPUT_MUST_BE_OBJECT_WITHOUT_PLAN_SHA256")
+        prepared_package = prepare_research_publication(payload.get("researchPackage"))
+        if prepared_package is None:
+            raise StockAddWriterError("RESEARCH_PACKAGE_NOT_PUBLICATION_AUTHORIZED")
+        payload["researchPackage"] = prepared_package
         plan = {**payload, "planSha256": canonical_sha256(payload)}
         _, digest, _ = validate_master_plan(plan)
         confirmation = expected_confirmation(

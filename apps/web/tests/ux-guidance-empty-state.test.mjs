@@ -38,7 +38,7 @@ test("legacy watchlist preserves its eight-column scan hierarchy", async () => {
   assert.doesNotMatch(page, /<th>Entry|<th>Gate|<th>Target/);
 });
 
-test("signal lamps retain positive, negative, neutral and missing states", async () => {
+test("signal lamps retain all states and direct stock routes use formal research", async () => {
   const [lamps, css, detail] = await Promise.all([
     read("components/StockSignalLamps.tsx"),
     read("globals.css"),
@@ -48,10 +48,12 @@ test("signal lamps retain positive, negative, neutral and missing states", async
     assert.match(lamps, new RegExp(`"${state}"`));
     assert.match(css, new RegExp(`\\.signalLamp\\.${state}`));
   }
-  assert.match(detail, /stockDetailGrid/);
-  assert.match(detail, /Evidence summary/);
-  assert.match(detail, /trigger-/);
-  assert.match(detail, /dataGapText/);
+  assert.match(detail, /StockDetailRoute/);
+  const route = await read("components/v2/StockDetailRoute.tsx");
+  const drawer = await read("components/v2/StockEncyclopediaDrawer.tsx");
+  assert.match(route, /presentation="page"/);
+  assert.match(drawer, /EOD 行情/);
+  assert.match(drawer, /CompanyResearchSection/);
 });
 
 test("V2 Topic Overview has explicit unavailable and Preview recovery states", async () => {

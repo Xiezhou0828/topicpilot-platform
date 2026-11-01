@@ -21,7 +21,7 @@ test("renders the approved V2 and retained workspace routes", async () => {
     ["/watchlist", "stockUniverseShell"],
     ["/guide", "guideShell"],
     ["/studio", "studioPage"],
-    ["/stocks/DEMO-A1", "stockDetailGrid"],
+    ["/stocks/DEMO-A1", "stock-encyclopedia-title"],
   ];
   for (const [path, marker, expectedStatus = 200] of routes) {
     const response = await render(path);

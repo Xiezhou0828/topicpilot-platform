@@ -202,7 +202,7 @@ function EvidenceGrid({ rows }: { rows: Array<[string, string | number | boolean
   return <dl className="tp-stock-encyclopedia-evidence-grid">{rows.map(([name, value]) => <div key={name}><dt>{name}</dt><dd>{displayValue(value)}</dd></div>)}</dl>;
 }
 
-export function StockEncyclopediaDrawer({ stock, onClose, presentation = "overlay", isClosing = false }: { stock: StockDrawerItem; onClose: () => void; presentation?: "overlay" | "inline" | "push"; isClosing?: boolean }) {
+export function StockEncyclopediaDrawer({ stock, onClose, presentation = "overlay", isClosing = false }: { stock: StockDrawerItem; onClose: () => void; presentation?: "overlay" | "inline" | "push" | "page"; isClosing?: boolean }) {
   const { isFavorite, toggle: toggleFavorite } = useFavoritesState();
   const [formalDetailState, setFormalDetailState] = useState<{ symbol: string; data: StockApiItem | null; status: "available" | "unavailable"; error: string | null } | null>(null);
   const [researchState, setResearchState] = useState<{ symbol: string; data: CompanyResearchV4 | null; status: "available" | "unavailable"; error: string | null } | null>(null);
@@ -254,8 +254,10 @@ export function StockEncyclopediaDrawer({ stock, onClose, presentation = "overla
     ? "tp-stock-encyclopedia-drawer--inline"
     : presentation === "push"
       ? `tp-stock-encyclopedia-drawer--push${isClosing ? " is-closing" : ""}`
-      : "";
-  const drawer = <aside className={`tp-stock-encyclopedia-drawer ${presentationClass}`} role="dialog" aria-modal={presentation === "overlay" ? true : undefined} aria-labelledby="stock-encyclopedia-title" onClick={(event) => event.stopPropagation()}>
+      : presentation === "page"
+        ? "tp-stock-encyclopedia-drawer--page"
+        : "";
+  const drawer = <aside className={`tp-stock-encyclopedia-drawer ${presentationClass}`} role={presentation === "page" ? "region" : "dialog"} aria-modal={presentation === "overlay" ? true : undefined} aria-label={presentation === "page" ? "個股研究資料" : undefined} aria-labelledby="stock-encyclopedia-title" onClick={(event) => event.stopPropagation()}>
     <header className="tp-stock-encyclopedia-header">
       <div>
         <p className="tp-eyebrow">股票圖鑑</p>

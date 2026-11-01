@@ -5,12 +5,17 @@ import json
 import math
 import re
 from copy import deepcopy
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlsplit
 
 from pydantic import ValidationError
 
 from .contract import CompanyResearchV4PublicResponse
+
+COMPLETENESS_PUBLICATION_POLICY_ID = "RESEARCH_COMPLETENESS_GT_0_70_V1"
+COMPLETENESS_PUBLICATION_THRESHOLD = 0.70
 
 
 def _text(value: Any) -> str | None:
@@ -40,14 +45,193 @@ def _approval_content_sha256(package: dict[str, Any]) -> str:
     publication = governance.get("publication") if isinstance(governance, dict) else None
     if isinstance(publication, dict):
         publication.pop("approvalEvidence", None)
+        publication.pop("authorizationEvidence", None)
     canonical = json.dumps(content, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
     return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
 
 
 def approval_content_sha256(package: dict[str, Any]) -> str:
-    """Return the exact content digest an Owner approves for publication."""
+    """Return the content digest used by human and standing-policy publication."""
 
     return _approval_content_sha256(package)
+
+
+def _manual_approval_valid(package: dict[str, Any], publication: dict[str, Any]) -> bool:
+    approval = publication.get("approvalEvidence")
+    return (
+        publication.get("publicationStatus") == "PUBLISHED"
+        and publication.get("ownerReviewStatus") == "APPROVED"
+        and publication.get("sourceRightsStatus") == "APPROVED"
+        and isinstance(approval, dict)
+        and all(
+            _text(approval.get(key))
+            for key in ("decisionId", "reviewer", "approvedAt", "packageSha256")
+        )
+        and re.fullmatch(r"[0-9a-f]{64}", str(approval.get("packageSha256", "")))
+        and approval.get("packageSha256") == _approval_content_sha256(package)
+    )
+
+
+def _traceable_source_register(package: dict[str, Any]) -> bool:
+    sources = package.get("sourceRegister")
+    if not isinstance(sources, list) or not sources:
+        return False
+    for source in sources:
+        if not isinstance(source, dict):
+            return False
+        source_id = next(
+            (
+                _text(source.get(key))
+                for key in ("evidenceId", "sourceId", "id")
+                if _text(source.get(key))
+            ),
+            None,
+        )
+        source_url = next(
+            (
+                _text(source.get(key))
+                for key in ("url", "sourceUrl", "documentUrl")
+                if _text(source.get(key))
+            ),
+            None,
+        )
+        if not source_id or not source_url:
+            return False
+        parsed = urlsplit(source_url)
+        if parsed.scheme != "https" or not parsed.netloc:
+            return False
+    return True
+
+
+def _publication_has_no_blocking_issues(publication: dict[str, Any]) -> bool:
+    issues = publication.get("blockingIssues")
+    return isinstance(issues, list) and not issues
+
+
+def _policy_authorization_valid(package: dict[str, Any], publication: dict[str, Any]) -> bool:
+    evidence = publication.get("authorizationEvidence")
+    frontend = package.get("frontendProjection")
+    governance = frontend.get("researchGovernance") if isinstance(frontend, dict) else None
+    score = (
+        _number(governance.get("dataCompletenessScore")) if isinstance(governance, dict) else None
+    )
+    if not isinstance(evidence, dict) or score is None:
+        return False
+    try:
+        authorized_at = datetime.fromisoformat(
+            str(evidence.get("authorizedAt", "")).replace("Z", "+00:00")
+        )
+    except ValueError:
+        return False
+    return (
+        evidence.get("policyId") == COMPLETENESS_PUBLICATION_POLICY_ID
+        and evidence.get("policyVersion") == 1
+        and evidence.get("authorizationMode") == "OWNER_STANDING_POLICY"
+        and evidence.get("threshold") == COMPLETENESS_PUBLICATION_THRESHOLD
+        and evidence.get("comparison") == "GT"
+        and evidence.get("dataCompletenessScore") == score
+        and score > COMPLETENESS_PUBLICATION_THRESHOLD
+        and score <= 1.0
+        and evidence.get("packageSha256") == _approval_content_sha256(package)
+        and bool(re.fullmatch(r"[0-9a-f]{64}", str(evidence.get("packageSha256", ""))))
+        and authorized_at.tzinfo is not None
+        and authorized_at.utcoffset() is not None
+        and publication.get("publicationStatus") == "PUBLISHED"
+        and publication.get("ownerReviewStatus") == "PENDING"
+        and publication.get("sourceRightsStatus") == "APPROVED"
+        and publication.get("approvalEvidence") is None
+        and _traceable_source_register(package)
+        and isinstance(governance, dict)
+        and _publication_has_no_blocking_issues(publication)
+    )
+
+
+def prepare_research_publication(package: dict[str, Any]) -> dict[str, Any] | None:
+    """Return an immutable copy authorized by manual review or the standing score policy."""
+    if (
+        not isinstance(package, dict)
+        or package.get("packageVersion") != "topicpilot-stock-research.v4"
+    ):
+        return None
+    frontend = package.get("frontendProjection")
+    company = package.get("company")
+    governance = frontend.get("researchGovernance") if isinstance(frontend, dict) else None
+    publication = governance.get("publication") if isinstance(governance, dict) else None
+    if (
+        not isinstance(frontend, dict)
+        or frontend.get("contractVersion") != "company-research-frontend.v4"
+        or not isinstance(company, dict)
+        or not _text(company.get("stockCode"))
+        or not isinstance(publication, dict)
+    ):
+        return None
+    if _manual_approval_valid(package, publication):
+        return deepcopy(package)
+    if _policy_authorization_valid(package, publication):
+        return deepcopy(package)
+    if (
+        publication.get("publicationStatus") not in {"PUBLISHED", "UNPUBLISHED"}
+        or publication.get("ownerReviewStatus") != "PENDING"
+        or publication.get("sourceRightsStatus") != "APPROVED"
+        or publication.get("approvalEvidence") is not None
+        or (
+            isinstance(publication.get("authorizationEvidence"), dict)
+            and publication["authorizationEvidence"].get("policyId")
+            != COMPLETENESS_PUBLICATION_POLICY_ID
+        )
+        or not _traceable_source_register(package)
+        or not isinstance(governance, dict)
+        or not _publication_has_no_blocking_issues(publication)
+    ):
+        return None
+    score = _number(governance.get("dataCompletenessScore"))
+    if score is None or score <= COMPLETENESS_PUBLICATION_THRESHOLD or score > 1.0:
+        return None
+
+    authorized = deepcopy(package)
+    authorized_publication = authorized["frontendProjection"]["researchGovernance"]["publication"]
+    authorized_publication["publicationStatus"] = "PUBLISHED"
+    authorized_publication["authorizationEvidence"] = {
+        "policyId": COMPLETENESS_PUBLICATION_POLICY_ID,
+        "policyVersion": 1,
+        "authorizationMode": "OWNER_STANDING_POLICY",
+        "threshold": COMPLETENESS_PUBLICATION_THRESHOLD,
+        "comparison": "GT",
+        "dataCompletenessScore": score,
+        "packageSha256": _approval_content_sha256(authorized),
+        "authorizedAt": datetime.now(UTC).isoformat(timespec="seconds").replace("+00:00", "Z"),
+    }
+    return authorized
+
+
+def publication_authorization_summary(package: dict[str, Any]) -> dict[str, Any] | None:
+    """Return the internal audit facts for the active publication authorization."""
+    authorized = prepare_research_publication(package)
+    if authorized is None:
+        return None
+    frontend = authorized["frontendProjection"]
+    governance = frontend["researchGovernance"]
+    publication = governance["publication"]
+    policy = publication.get("authorizationEvidence")
+    if isinstance(policy, dict):
+        return {
+            "authorizationMode": policy["authorizationMode"],
+            "policyId": policy["policyId"],
+            "policyVersion": policy["policyVersion"],
+            "threshold": policy["threshold"],
+            "comparison": policy["comparison"],
+            "dataCompletenessScore": policy["dataCompletenessScore"],
+            "packageSha256": policy["packageSha256"],
+            "authorizedAt": policy["authorizedAt"],
+        }
+    approval = publication["approvalEvidence"]
+    return {
+        "authorizationMode": "OWNER_REVIEW",
+        "decisionId": approval["decisionId"],
+        "reviewer": approval["reviewer"],
+        "approvedAt": approval["approvedAt"],
+        "packageSha256": approval["packageSha256"],
+    }
 
 
 def _metric(value: Any) -> dict[str, Any] | None:
@@ -339,35 +523,12 @@ def _project_published(package: dict[str, Any]) -> CompanyResearchV4PublicRespon
 
 
 def project_approved_package(package: dict[str, Any]) -> CompanyResearchV4PublicResponse:
-    """Validate an Owner-approved V4 package and return only its public projection."""
-
-    if (
-        not isinstance(package, dict)
-        or package.get("packageVersion") != "topicpilot-stock-research.v4"
-    ):
-        raise ValueError("UNSUPPORTED_RESEARCH_PACKAGE")
-    frontend = package.get("frontendProjection")
-    governance = frontend.get("researchGovernance") if isinstance(frontend, dict) else None
-    publication = governance.get("publication") if isinstance(governance, dict) else None
-    approval = publication.get("approvalEvidence") if isinstance(publication, dict) else None
-    if (
-        not isinstance(frontend, dict)
-        or frontend.get("contractVersion") != "company-research-frontend.v4"
-        or not isinstance(publication, dict)
-        or publication.get("publicationStatus") != "PUBLISHED"
-        or publication.get("ownerReviewStatus") != "APPROVED"
-        or publication.get("sourceRightsStatus") != "APPROVED"
-        or not isinstance(approval, dict)
-        or not all(
-            _text(approval.get(key))
-            for key in ("decisionId", "reviewer", "approvedAt", "packageSha256")
-        )
-        or not re.fullmatch(r"[0-9a-f]{64}", str(approval.get("packageSha256", "")))
-        or approval.get("packageSha256") != _approval_content_sha256(package)
-    ):
-        raise ValueError("RESEARCH_PACKAGE_NOT_OWNER_APPROVED")
+    """Validate a V4 publication authorization and return only its public projection."""
+    authorized = prepare_research_publication(package)
+    if authorized is None:
+        raise ValueError("RESEARCH_PACKAGE_NOT_PUBLICATION_AUTHORIZED")
     try:
-        return _project_published(package)
+        return _project_published(authorized)
     except (KeyError, TypeError, ValueError, ValidationError) as exc:
         raise ValueError("RESEARCH_PACKAGE_PUBLIC_PROJECTION_INVALID") from exc
 
@@ -432,7 +593,12 @@ class FileCompanyProfileV4ReadStore:
             return project_approved_package(package)
         except ValueError:
             blocked = (
-                publication.get("sourceRightsStatus") == "BLOCKED"
+                publication.get("publicationStatus") == "BLOCKED"
+                or (
+                    publication.get("authorizationEvidence") is not None
+                    and not _policy_authorization_valid(package, publication)
+                )
+                or publication.get("sourceRightsStatus") == "BLOCKED"
                 or publication.get("ownerReviewStatus") == "REJECTED"
                 or (
                     publication.get("sourceRightsStatus") == "APPROVED"
@@ -449,7 +615,11 @@ class FileCompanyProfileV4ReadStore:
 
 
 __all__ = [
+    "COMPLETENESS_PUBLICATION_POLICY_ID",
+    "COMPLETENESS_PUBLICATION_THRESHOLD",
     "FileCompanyProfileV4ReadStore",
     "approval_content_sha256",
+    "prepare_research_publication",
     "project_approved_package",
+    "publication_authorization_summary",
 ]

@@ -2,7 +2,7 @@
 
 ## Purpose
 
-After a v4 research package has passed Owner review, the protected writer checks
+After a v4 research package has passed its publication authorization, the protected writer checks
 the current Production stock master again and routes the package:
 
 - `MATCH_FOUND`: confirm that the existing instrument identity matches. Leave
@@ -22,16 +22,28 @@ the post-close scheduler. Those remain separately governed steps.
 ## Package and plan
 
 The sealed plan uses schema `topicpilot-stock-add-master-plan.v1` and includes
-the reviewed frontend v4 projection, official stock identity, fresh Production
+the authorized frontend v4 projection, official stock identity, fresh Production
 master readback, and a canonical `planSha256`. The plan is not a database
 credential, but its research projection must not be placed in public workflow
 inputs, issue text, logs, or artifacts. Keep it in the protected
 `production-db-maintenance` Environment secret described below. The research
-package must have a valid frontend contract, `PUBLISHED` publication status, Owner
-review and source rights set to `APPROVED`, and approval evidence whose digest
-matches the approved package content. The API writer derives the public field
-allowlist itself; it never stores the source register, evidence IDs, or other
-private review fields in the public projection.
+package must have a valid frontend contract, official instrument identity, a
+traceable HTTPS source register, `blockingIssues=[]`, and
+`sourceRightsStatus=APPROVED`. Packages
+with `dataCompletenessScore > 0.70` use the Owner's standing policy
+`RESEARCH_COMPLETENESS_GT_0_70_V1`: the plan records the strict threshold,
+score, authorization time, and package-content SHA-256 in
+`authorizationEvidence`. This is policy authorization, not a claim of human
+review; `ownerReviewStatus` remains `PENDING`. A score of exactly 0.70 does not
+qualify. Explicit `BLOCKED`/`REJECTED` states, a bad identity, invalid v4
+contract, missing source lineage, or non-approved source rights still stop
+publication. Existing valid Owner approval evidence remains accepted. The
+writer requires the policy attestation to be present inside the hash-sealed
+plan, so the authorization and content cannot change after dry-run. The API
+writer derives the public field allowlist itself; it never stores the source
+register, evidence IDs, policy evidence, or other private review fields in the
+public projection. The audit journal records the authorization mode, policy
+ID (when applicable), score, and package hash.
 
 The master readback must be complete, Production-only, and no more than
 15 minutes old. `MATCH_FOUND` and `NO_MATCH_CONFIRMED` are both valid results;
@@ -119,10 +131,12 @@ migration workflow.
    endpoint, and the research-v4 route.
 4. Provision the restricted writer role and the five GitHub Environment
    settings above.
-5. Produce a fresh authority readback and a sealed plan from the reviewed v4
-   package. Update the protected plan secret, then run **Production stock-add
-   master writer** in `dry-run` mode using only the plan SHA-256 as a dispatch
-   input.
+5. Produce a fresh authority readback and prepare the publication authorization
+   in the plan. Run `topicpilot-stock-add-master-plan` on the reviewed plan
+   before sealing it; this embeds the standing-policy attestation for eligible
+   scores and computes the canonical plan hash. Keep the sealed plan in the
+   protected plan secret, then run **Production stock-add master writer** in
+   `dry-run` mode using only the plan SHA-256 as a dispatch input.
 6. Review the dry-run action, stock identity, research date, plan SHA, and
    publication version. Run the same plan in `apply` mode with the exact hash
    confirmation and approve the protected Environment gate.
@@ -140,9 +154,14 @@ operation is rejected. Research versions and operation records are immutable.
 
 ## Current 2468 readiness
 
-The last reviewed 2468 package was `PARTIAL_REVIEW_REQUIRED` with Owner review
-pending. It cannot be published or used to add a Production instrument until
-the package is completed and explicitly approved. The previously confirmed
-`NO_MATCH_CONFIRMED` result only establishes the normal new-stock branch; it
-does not waive the package, effective-date, final-confirmation, or later
-reference-universe gates.
+The Production API currently returns 2468's v4 research publication with
+`researchAsOf=2026-10-25` and `dataCompletenessScore=0.72`. This means research
+content is readable under the standing completeness policy. The Production
+API also returned an accepted official 2026-10-30 close of 53.20, open 49.70,
+high 55.40, low 49.60, and volume 26,677,129 (`TWSE_OFFICIAL_DAILY`; collector
+run `08e77acc-8499-56c2-b734-e684320b745b`). The record's corporate-action
+adjustment state is `UNKNOWN`, so previous close, change, change percent, and
+turnover are intentionally not inferred. The targeted one-symbol run confirms
+that this close was collected; it does not by itself prove the next scheduled
+full-universe run or scheduler readiness. Keep reference-universe and
+full-scheduler verification statuses separate from the accepted daily bar.
