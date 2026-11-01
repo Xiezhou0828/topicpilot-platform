@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Callable
+from contextlib import suppress
 from dataclasses import dataclass
 from datetime import UTC, date, datetime, time, timedelta
 from typing import Any
@@ -96,6 +97,8 @@ class DailyForwardRunner:
             try:
                 context = self._context(candidate)
             except Exception:
+                with suppress(Exception):
+                    self.session.rollback()
                 return None
             if self._context_ready(context) and context.target_date_is_session:
                 return candidate
@@ -220,6 +223,8 @@ class DailyForwardRunner:
             try:
                 context = self._context(candidate)
             except Exception as exc:
+                with suppress(Exception):
+                    self.session.rollback()
                 return None, (f"REFERENCE_PREFLIGHT_{type(exc).__name__}",)
             if not self._context_ready(context):
                 return None, ("REFERENCE_PREFLIGHT_FAILED",)
@@ -259,6 +264,8 @@ class DailyForwardRunner:
         try:
             context = self._context(target_date)
         except Exception as exc:
+            with suppress(Exception):
+                self.session.rollback()
             return DailyForwardRunResult(
                 "BLOCKED",
                 target_date,
