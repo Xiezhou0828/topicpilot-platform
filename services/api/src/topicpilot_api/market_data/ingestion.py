@@ -125,6 +125,11 @@ class HistoricalIngestionResult:
         }
 
 
+FetchedHistoricalItem = tuple[
+    tuple[str, str], HistoricalFetchResult, tuple[HistoricalBar, ...]
+]
+
+
 def _as_utc_midnight(value: date | None) -> datetime | None:
     return datetime.combine(value, time.min, tzinfo=timezone.utc) if value is not None else None  # noqa: UP017
 
@@ -387,6 +392,40 @@ def _request_key(
     )
 
 
+def fetch_historical_results(
+    provider: HistoricalProvider,
+    instruments: Iterable[tuple[str, str]],
+    *,
+    requested_from: date | None = None,
+    requested_to: date | None = None,
+) -> tuple[FetchedHistoricalItem, ...]:
+    """Fetch and date-filter provider results without opening a DB transaction."""
+
+    if requested_from and requested_to and requested_to < requested_from:
+        raise HistoricalIngestionError(
+            "INVALID_DATE_WINDOW",
+            "requested_to precedes requested_from",
+        )
+    normalized_instruments = sorted(set(instruments), key=lambda item: (item[1], item[0]))
+    if not normalized_instruments:
+        raise HistoricalIngestionError(
+            "INSTRUMENTS_REQUIRED",
+            "at least one instrument is required",
+        )
+
+    fetched: list[FetchedHistoricalItem] = []
+    for code, market_code in normalized_instruments:
+        result = provider.fetch_daily(code, market_code)
+        selected = tuple(
+            bar
+            for bar in result.bars
+            if (requested_from is None or bar.trading_date >= requested_from)
+            and (requested_to is None or bar.trading_date <= requested_to)
+        )
+        fetched.append(((code, market_code), result, selected))
+    return tuple(fetched)
+
+
 def ingest_historical(
     session: Session,
     provider: HistoricalProvider,
@@ -397,13 +436,15 @@ def ingest_historical(
     requested_to: date | None = None,
     policy: MappingPolicy | None = None,
     registration: HistoricalSourceRegistration | None = None,
+    fetched_results: Sequence[FetchedHistoricalItem] | None = None,
     clock: Callable[[], datetime] | None = None,
 ) -> HistoricalIngestionResult:
-    """Fetch first, then persist and normalize in the caller's transaction.
+    """Persist and normalize fetched results in the caller's transaction.
 
-    The function never commits.  A caller can wrap it in ``session.begin()``
-    and any provider-shape, identity, reference, or normalization error will
-    roll back the entire raw/timeline/canonical write set.
+    If ``fetched_results`` is omitted, the provider is fetched before this
+    function performs its first database operation. Callers that need a
+    transaction around persistence can fetch with ``fetch_historical_results``
+    first, then pass those results here. The function never commits.
     """
 
     if not reference_data_version:
@@ -435,16 +476,22 @@ def ingest_historical(
             "provider and source registration differ",
         )
 
-    fetched: list[tuple[tuple[str, str], HistoricalFetchResult, tuple[HistoricalBar, ...]]] = []
-    for code, market_code in normalized_instruments:
-        result = provider.fetch_daily(code, market_code)
-        selected = tuple(
-            bar
-            for bar in result.bars
-            if (requested_from is None or bar.trading_date >= requested_from)
-            and (requested_to is None or bar.trading_date <= requested_to)
+    fetched = (
+        tuple(fetched_results)
+        if fetched_results is not None
+        else fetch_historical_results(
+            provider,
+            normalized_instruments,
+            requested_from=requested_from,
+            requested_to=requested_to,
         )
-        fetched.append(((code, market_code), result, selected))
+    )
+    fetched_instruments = tuple(item[0] for item in fetched)
+    if fetched_instruments != tuple(normalized_instruments):
+        raise HistoricalIngestionError(
+            "FETCHED_RESULTS_MISMATCH",
+            "fetched results do not match the requested instruments",
+        )
 
     source = _get_or_create_source(session, registration)
     request_key = _request_key(
