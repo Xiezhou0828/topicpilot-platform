@@ -35,8 +35,10 @@ from topicpilot_api.market_data.aggregate_contract import fetch_official_market_
 from topicpilot_api.market_data.availability import LEGITIMATE_UNAVAILABLE_CODES
 from topicpilot_api.market_data.index_contract import fetch_official_market_indexes
 from topicpilot_api.market_data.ingestion import (
+    FetchedHistoricalItem,
     HistoricalInstrumentResult,
     HistoricalSourceRegistration,
+    fetch_historical_results,
     ingest_historical,
 )
 from topicpilot_api.market_data.institutional_flow_contract import (
@@ -1838,19 +1840,29 @@ class PostCloseUpdater:
             batch_point_count = 0
             batch_priced_count = 0
             batch_covered_count = 0
+            batch_instruments = [
+                (instrument.instrument_code, item_market.code)
+                for instrument, item_market in batch
+            ]
+            fetched_batch_results: tuple[FetchedHistoricalItem, ...] | None = None
             try:
-                # One transaction covers the whole provider batch.  A single
-                # provider/normalizer failure falls back to savepoint-isolated
-                # single-instrument writes below, so one bad symbol cannot
-                # discard its neighbours' valid bars.
+                # Fetch all provider data before opening the write transaction.
+                # Network waits inside an open Neon transaction can trigger its
+                # idle-in-transaction timeout and prevent checkpoint finalization.
+                fetched_batch_results = fetch_historical_results(
+                    registration.adapter,
+                    batch_instruments,
+                    requested_from=local_date,
+                    requested_to=local_date,
+                )
+                # One transaction covers the whole persistence batch. A single
+                # normalization/write failure falls back to savepoint-isolated
+                # single-instrument writes using the already fetched data.
                 with self.session.begin():
                     result = ingest_historical(
                         self.session,
                         registration.adapter,
-                        [
-                            (instrument.instrument_code, item_market.code)
-                            for instrument, item_market in batch
-                        ],
+                        batch_instruments,
                         reference_data_version=self.config.reference_data_version,
                         requested_from=local_date,
                         requested_to=local_date,
@@ -1860,6 +1872,7 @@ class PostCloseUpdater:
                             registration.adapter.adapter_version,
                             licensing_classification="OFFICIAL_PUBLIC",
                         ),
+                        fetched_results=fetched_batch_results,
                     )
                     summaries = {
                         (item.instrument_code, item.market_code): item
@@ -2013,6 +2026,26 @@ class PostCloseUpdater:
                 fallback_priced_count = 0
                 fallback_covered_count = 0
                 fallback_trading_status_count = 0
+                fallback_fetches: dict[
+                    tuple[str, str], FetchedHistoricalItem | Exception
+                ] = {
+                    item[0]: item for item in (fetched_batch_results or ())
+                }
+                for instrument, item_market in batch:
+                    instrument_key = (instrument.instrument_code, item_market.code)
+                    if instrument_key in fallback_fetches:
+                        continue
+                    try:
+                        fallback_results = fetch_historical_results(
+                            registration.adapter,
+                            [instrument_key],
+                            requested_from=local_date,
+                            requested_to=local_date,
+                        )
+                        fallback_fetches[instrument_key] = fallback_results[0]
+                    except Exception as fallback_fetch_error:
+                        fallback_fetches[instrument_key] = fallback_fetch_error
+
                 with self.session.begin():
                     for instrument, item_market in batch:
                         item_started = self._now()
@@ -2025,12 +2058,16 @@ class PostCloseUpdater:
                         error_message: str | None = None
                         provider_status = "ERROR"
                         try:
+                            instrument_key = (instrument.instrument_code, item_market.code)
+                            fetched_item = fallback_fetches[instrument_key]
+                            if isinstance(fetched_item, Exception):
+                                raise fetched_item
                             savepoint = self.session.begin_nested()
                             try:
                                 single_result = ingest_historical(
                                     self.session,
                                     registration.adapter,
-                                    [(instrument.instrument_code, item_market.code)],
+                                    [instrument_key],
                                     reference_data_version=self.config.reference_data_version,
                                     requested_from=local_date,
                                     requested_to=local_date,
@@ -2040,6 +2077,7 @@ class PostCloseUpdater:
                                         registration.adapter.adapter_version,
                                         licensing_classification="OFFICIAL_PUBLIC",
                                     ),
+                                    fetched_results=(fetched_item,),
                                 )
                                 if len(single_result.instrument_results) != 1:
                                     raise RuntimeError("BATCH_RESULT_MISMATCH")
