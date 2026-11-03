@@ -160,8 +160,7 @@ class LiveScheduler:
                         self.worker.start()
                         worker_started = True
                     local_date = self.session_clock.status(self.clock()).local_time.date()
-                    if tracking_refresh_date != local_date:
-                        self._refresh_tracking()
+                    if tracking_refresh_date != local_date and self._refresh_tracking():
                         tracking_refresh_date = local_date
                     self.run_once("INTRADAY")
                 else:
@@ -174,16 +173,35 @@ class LiveScheduler:
             if worker_started and self.worker is not None:
                 self.worker.stop()
 
-    def _refresh_tracking(self) -> None:
+    def _refresh_tracking(self) -> bool:
         refresh = getattr(self.collector.repository, "refresh_tracking_universe", None)
         if not callable(refresh):
-            return
-        count = refresh(now=self.clock())
+            return True
         session = getattr(self.collector.repository, "session", None)
-        commit = getattr(session, "commit", None)
-        if callable(commit):
-            commit()
+        try:
+            count = refresh(now=self.clock())
+            commit = getattr(session, "commit", None)
+            if callable(commit):
+                commit()
+        except Exception as exc:
+            rollback = getattr(session, "rollback", None)
+            if callable(rollback):
+                try:
+                    rollback()
+                except Exception as rollback_exc:
+                    log_event(
+                        self.logger,
+                        "tracking_universe_rollback_failed",
+                        errorCode=getattr(rollback_exc, "code", type(rollback_exc).__name__),
+                    )
+            log_event(
+                self.logger,
+                "tracking_universe_refresh_failed",
+                errorCode=getattr(exc, "code", type(exc).__name__),
+            )
+            return False
         log_event(self.logger, "tracking_universe_refreshed", instrumentCount=count)
+        return True
 
 
 __all__ = ["LiveScheduler", "decide_runtime_mode"]
