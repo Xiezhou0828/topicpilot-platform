@@ -1359,17 +1359,47 @@ class PostCloseUpdater:
             target_symbols=target_symbols if is_targeted else None,
             execution_mode=execution_mode,
         )
-        active_other_scope = next(
-            (
-                run
-                for run in self._runs_for_date(run_date)
-                if run.status == "RUNNING"
-                and (existing_run is None or run.id != existing_run.id)
-            ),
-            None,
-        )
-        if active_other_scope is not None:
-            raise PostClosePreconditionError("POST_CLOSE_RUN_IN_PROGRESS")
+        stale_after = self._stale_after_seconds()
+        for candidate in self._runs_for_date(run_date):
+            if (
+                candidate.status != "RUNNING"
+                or (existing_run is not None and candidate.id == existing_run.id)
+            ):
+                continue
+            other_scope_run = self.session.scalar(
+                select(LiveCollectorRun)
+                .where(LiveCollectorRun.id == candidate.id)
+                .with_for_update()
+                .execution_options(populate_existing=True)
+            )
+            if other_scope_run is None or other_scope_run.status != "RUNNING":
+                continue
+            if self._is_recent_run(other_scope_run, now, stale_after=stale_after):
+                raise PostClosePreconditionError("POST_CLOSE_RUN_IN_PROGRESS")
+
+            # A different execution scope can leave a RUNNING row behind after
+            # its process dies. Expire it only after taking the row lock and
+            # rechecking its heartbeat; the date-scoped advisory lock above
+            # serializes competing claims while the stale row is closed.
+            stale_metadata = dict(other_scope_run.metadata_payload or {})
+            stale_metadata["leaseRecovery"] = {
+                "status": "EXPIRED",
+                "reason": "STALE_CROSS_SCOPE_LEASE",
+                "detectedAt": now.isoformat(),
+                "staleAfterSeconds": stale_after,
+                "originalExecutionScope": _metadata_execution_scope(stale_metadata),
+                "requestedExecutionScope": _execution_scope(execution_mode),
+                "lastHeartbeatAt": other_scope_run.heartbeat_at.isoformat(),
+            }
+            other_scope_run.status = "FAILED"
+            other_scope_run.failure_code = "STALE_CROSS_SCOPE_LEASE_EXPIRED"
+            other_scope_run.failure_message = (
+                "The post-close run heartbeat exceeded the bounded lease before a "
+                "different execution scope claimed the trading date."
+            )
+            other_scope_run.completed_at = now
+            other_scope_run.metadata_payload = _json_safe(stale_metadata)
+            self.session.flush()
 
         if existing_run is not None:
             existing_run = (
@@ -1394,7 +1424,7 @@ class PostCloseUpdater:
             if existing_run.status == "RUNNING" and self._is_recent_run(
                 existing_run,
                 now,
-                stale_after=self._stale_after_seconds(),
+                stale_after=stale_after,
             ):
                 raise PostClosePreconditionError("POST_CLOSE_RUN_IN_PROGRESS")
             reentry_block_reason = self._reentry_block_reason(
