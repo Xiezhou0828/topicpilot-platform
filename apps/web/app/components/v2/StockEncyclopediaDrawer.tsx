@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { X } from "lucide-react";
+import { Share2, Star, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import {
   fetchFormalCompanyResearchV4,
@@ -16,6 +16,7 @@ import { FavoriteStar, Freshness, RoleChip } from "./V2Foundation";
 import { StockPriceHistoryPanel } from "./StockPriceHistoryPanel";
 
 export type StockDrawerTopic = { name: string; role: string | null };
+export type StockDetailSection = "overview" | "technical" | "chip" | "company" | "topics";
 
 export type StockDrawerTechnicalEvidence = {
   above20MA: boolean | null;
@@ -202,10 +203,11 @@ function EvidenceGrid({ rows }: { rows: Array<[string, string | number | boolean
   return <dl className="tp-stock-encyclopedia-evidence-grid">{rows.map(([name, value]) => <div key={name}><dt>{name}</dt><dd>{displayValue(value)}</dd></div>)}</dl>;
 }
 
-export function StockEncyclopediaDrawer({ stock, onClose, presentation = "overlay", isClosing = false }: { stock: StockDrawerItem; onClose: () => void; presentation?: "overlay" | "inline" | "push" | "page"; isClosing?: boolean }) {
+export function StockEncyclopediaDrawer({ stock, onClose, presentation = "overlay", isClosing = false, activeSection = "overview" }: { stock: StockDrawerItem; onClose: () => void; presentation?: "overlay" | "inline" | "push" | "page"; isClosing?: boolean; activeSection?: StockDetailSection }) {
   const { isFavorite, toggle: toggleFavorite } = useFavoritesState();
   const [formalDetailState, setFormalDetailState] = useState<{ symbol: string; data: StockApiItem | null; status: "available" | "unavailable"; error: string | null } | null>(null);
   const [researchState, setResearchState] = useState<{ symbol: string; data: CompanyResearchV4 | null; status: "available" | "unavailable"; error: string | null } | null>(null);
+  const [shareLabel, setShareLabel] = useState("分享");
 
   useEffect(() => {
     let active = true;
@@ -247,9 +249,21 @@ export function StockEncyclopediaDrawer({ stock, onClose, presentation = "overla
   const displayStock = formalDetail ? formalDrawerItem(stock, formalDetail) : stock;
   const quote = selectStockQuote(displayStock);
   const tone = quote.changePct === null ? "flat" : quote.changePct >= 0 ? "up" : "down";
+  const stockIsFavorite = isFavorite(displayStock.code, displayStock.market);
   const eodStatus = displayStock.isPreview ? "PREVIEW" : displayStock.eod?.dataStatus ?? "UNAVAILABLE";
   const technical = displayStock.technicalEvidence;
   const institutionEntries = Object.entries(displayStock.institutionFlows ?? {}).filter(([, value]) => value !== null && value !== undefined);
+  const isPage = presentation === "page";
+  const showSection = (section: StockDetailSection) => !isPage || activeSection === section;
+  const shareStock = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      setShareLabel("連結已複製");
+    } catch {
+      setShareLabel("無法複製連結");
+    }
+    window.setTimeout(() => setShareLabel("分享"), 1800);
+  };
   const presentationClass = presentation === "inline"
     ? "tp-stock-encyclopedia-drawer--inline"
     : presentation === "push"
@@ -264,24 +278,31 @@ export function StockEncyclopediaDrawer({ stock, onClose, presentation = "overla
         <h2 id="stock-encyclopedia-title">{displayStock.name}</h2>
         <span>{displayStock.code}{displayStock.market ? ` · ${displayStock.market}` : ""}{displayStock.exchange ? ` · ${displayStock.exchange}` : ""}</span>
       </div>
-      <div className="tp-stock-encyclopedia-actions"><FavoriteStar active={isFavorite(displayStock.code, displayStock.market)} onClick={() => toggleFavorite(displayStock.code, { market: displayStock.market, displayLabel: displayStock.name })} /><button type="button" className="tp-stock-close" aria-label="Close stock drawer" title="Close" onClick={onClose}><X size={18} aria-hidden="true" /></button></div>
+      {isPage && <div className="tp-stock-page-quote"><strong>{quote.price === null ? "—" : quote.price.toLocaleString("zh-TW", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong>{quote.changePct === null ? <span className="tp-muted">漲跌資料待更新</span> : <span className={`tp-topic-change tp-topic-change--${tone}`}>{displayPercent(quote.changePct)}</span>}<small>{displayStock.eod?.tradingDate ?? displayStock.dataDate ?? "收盤日期待補"} 收盤</small></div>}
+      <div className="tp-stock-encyclopedia-actions">{isPage && <button type="button" className="tp-stock-share-action" onClick={() => void shareStock()}><Share2 size={16} aria-hidden="true" />{shareLabel}</button>}{isPage ? <button type="button" className={`tp-stock-favorite-action${stockIsFavorite ? " is-active" : ""}`} aria-label={stockIsFavorite ? "取消自選" : "加入自選"} aria-pressed={stockIsFavorite} onClick={() => toggleFavorite(displayStock.code, { market: displayStock.market, displayLabel: displayStock.name })}><Star size={17} fill={stockIsFavorite ? "currentColor" : "none"} aria-hidden="true" /><span>{stockIsFavorite ? "已加入自選" : "加入自選"}</span></button> : <FavoriteStar active={stockIsFavorite} onClick={() => toggleFavorite(displayStock.code, { market: displayStock.market, displayLabel: displayStock.name })} />}{!isPage && <button type="button" className="tp-stock-close" aria-label="Close stock drawer" title="Close" onClick={onClose}><X size={18} aria-hidden="true" /></button>}</div>
     </header>
     <div className="tp-stock-encyclopedia-body">
-      <StockPriceHistoryPanel symbol={displayStock.code} market={displayStock.market} isPreview={displayStock.isPreview === true} />
+      {showSection("overview") && <StockPriceHistoryPanel symbol={displayStock.code} market={displayStock.market} isPreview={displayStock.isPreview === true} />}
       <div className="tp-stock-encyclopedia-freshness"><Freshness state={fresh(displayStock.dataFreshness)} asOf={displayStock.updatedAt ?? displayStock.dataDate ?? "資料日期待補"} />{displayStock.isPreview && <span className="tp-stock-preview-label">Preview</span>}{detailState === "loading" && <span className="tp-muted">正在讀取正式 detail</span>}{detailState === "unavailable" && !displayStock.isPreview && <span className="tp-muted">正式 detail 暫不可用</span>}</div>
       {detailError && !displayStock.isPreview && <p className="tp-stock-encyclopedia-muted">{detailError}</p>}
-      <div className="tp-stock-encyclopedia-price"><strong>{quote.price === null ? "—" : quote.price.toLocaleString("zh-TW", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong>{quote.changePct === null ? <span className="tp-muted">漲跌資料待更新</span> : <span className={`tp-topic-change tp-topic-change--${tone}`}>{displayPercent(quote.changePct)}</span>}</div>
-      <section className="tp-stock-encyclopedia-section tp-stock-eod-read" data-eod-status={eodStatus} aria-label="正式 EOD 資料"><div className="tp-stock-encyclopedia-section-heading"><h3>EOD 行情</h3><span>{statusLabel(eodStatus)}</span></div>{displayStock.eod && !displayStock.isPreview ? <><EvidenceGrid rows={[["收盤價", displayNumber(displayStock.eod.close)], ["前收", displayNumber(displayStock.eod.previousClose)], ["漲跌", displaySigned(displayStock.eod.change)], ["漲跌幅", displayPercent(displayStock.eod.changePct)], ["開盤", displayNumber(displayStock.eod.open)], ["最高", displayNumber(displayStock.eod.high)], ["最低", displayNumber(displayStock.eod.low)], ["成交量", displayNumber(displayStock.eod.volume)], ["成交金額", displayNumber(displayStock.eod.turnover)], ["交易日", displayStock.eod.tradingDate]]} /><div className="tp-stock-eod-lineage"><span>價格來源：{sourceLabel(displayStock.eod.priceSource)}</span><span>成交量來源：{sourceLabel(displayStock.eod.volumeSource)}</span><span>除權息：{displayStock.eod.adjustmentState}</span><span>觀測：{displayStock.eod.observedAt ?? "尚未提供"}</span><span>讀取：{displayStock.eod.retrievedAt ?? "尚未提供"}</span></div></> : <p className="tp-stock-encyclopedia-muted">{displayStock.isPreview ? "Preview 不代表正式 EOD；正式 API 可用後才顯示。" : "正式 EOD 尚未提供；不以盤中值、歷史資料或 Preview 補值。"}</p>}</section>
-      <section className="tp-stock-encyclopedia-section"><div className="tp-stock-encyclopedia-section-heading"><h3>股票身份</h3><span>{displayStock.listing ?? displayStock.industry ?? "正式欄位待補"}</span></div><EvidenceGrid rows={[["市場", displayStock.market], ["交易所", displayStock.exchange], ["產業／類別", displayStock.industry], ["資料日期", displayStock.dataDate]]} /></section>
-      <section className="tp-stock-encyclopedia-section"><div className="tp-stock-encyclopedia-section-heading"><h3>題材歸屬</h3><span>{displayStock.topics.length} 個關係</span></div>{displayStock.topics.length ? <div className="tp-stock-encyclopedia-topics">{displayStock.topics.map((topic) => <div className="tp-stock-encyclopedia-topic" key={`${topic.name}-${topic.role ?? "unknown"}`}><strong>{topic.name}</strong><RoleChip>{label(topic.role)}</RoleChip></div>)}</div> : <p className="tp-stock-encyclopedia-muted">正式題材關係尚未提供</p>}</section>
-      <section className="tp-stock-encyclopedia-section"><div className="tp-stock-encyclopedia-section-heading"><h3>主要題材</h3><span>正式欄位優先</span></div>{displayStock.mainTopic ? <div className="tp-stock-encyclopedia-main-topic"><div><strong>{displayStock.mainTopic.name}</strong><p>{displayStock.mainTopic.state ?? "狀態尚未提供"}{displayStock.mainTopic.lifecycle ? ` · ${displayStock.mainTopic.lifecycle}` : ""}</p></div>{displayStock.mainTopic.grade && <RoleChip>{displayStock.mainTopic.grade}</RoleChip>}</div> : <p className="tp-stock-encyclopedia-muted">正式主題欄位尚未提供</p>}</section>
-      <section className="tp-stock-encyclopedia-section"><div className="tp-stock-encyclopedia-section-heading"><h3>摘要</h3><span>正式 read model</span></div><p className="tp-stock-encyclopedia-muted">{displayStock.summary ?? "正式摘要尚未提供；未由前端生成。"}</p></section>
-      {!displayStock.isPreview && <CompanyResearchSection data={researchDetail} loading={researchStatus === "loading"} error={researchError} />}
-      <section className="tp-stock-encyclopedia-section"><div className="tp-stock-encyclopedia-section-heading"><h3>技術證據</h3><span>20MA / 60MA</span></div>{technical ? <EvidenceGrid rows={[["站上 20MA", technical.above20MA], ["站上 60MA", technical.above60MA], ["20MA", technical.ma20], ["60MA", technical.ma60], ["突破狀態", technical.breakoutState], ["技術狀態", technical.technicalState]]} /> : <p className="tp-stock-encyclopedia-muted">正式 technical read model 尚未提供</p>}</section>
-      <section className="tp-stock-encyclopedia-section"><div className="tp-stock-encyclopedia-section-heading"><h3>法人流向</h3><span>provider evidence</span></div>{institutionEntries.length ? <EvidenceGrid rows={institutionEntries.map(([key, value]) => [key, typeof value === "object" ? JSON.stringify(value) : value as string | number | boolean])} /> : <p className="tp-stock-encyclopedia-muted">正式法人資料尚未提供</p>}</section>
+      {showSection("overview") && <>
+        {!isPage && <div className="tp-stock-encyclopedia-price"><strong>{quote.price === null ? "—" : quote.price.toLocaleString("zh-TW", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong>{quote.changePct === null ? <span className="tp-muted">漲跌資料待更新</span> : <span className={`tp-topic-change tp-topic-change--${tone}`}>{displayPercent(quote.changePct)}</span>}</div>}
+        <section className="tp-stock-encyclopedia-section tp-stock-eod-read" data-eod-status={eodStatus} aria-label="正式 EOD 資料"><div className="tp-stock-encyclopedia-section-heading"><h3>EOD 行情</h3><span>{statusLabel(eodStatus)}</span></div>{displayStock.eod && !displayStock.isPreview ? <><EvidenceGrid rows={[["收盤價", displayNumber(displayStock.eod.close)], ["前收", displayNumber(displayStock.eod.previousClose)], ["漲跌", displaySigned(displayStock.eod.change)], ["漲跌幅", displayPercent(displayStock.eod.changePct)], ["開盤", displayNumber(displayStock.eod.open)], ["最高", displayNumber(displayStock.eod.high)], ["最低", displayNumber(displayStock.eod.low)], ["成交量", displayNumber(displayStock.eod.volume)], ["成交金額", displayNumber(displayStock.eod.turnover)], ["交易日", displayStock.eod.tradingDate]]} /><div className="tp-stock-eod-lineage"><span>價格來源：{sourceLabel(displayStock.eod.priceSource)}</span><span>成交量來源：{sourceLabel(displayStock.eod.volumeSource)}</span><span>除權息：{displayStock.eod.adjustmentState}</span><span>觀測：{displayStock.eod.observedAt ?? "尚未提供"}</span><span>讀取：{displayStock.eod.retrievedAt ?? "尚未提供"}</span></div></> : <p className="tp-stock-encyclopedia-muted">{displayStock.isPreview ? "Preview 不代表正式 EOD；正式 API 可用後才顯示。" : "正式 EOD 尚未提供；不以盤中值、歷史資料或 Preview 補值。"}</p>}</section>
+        <section className="tp-stock-encyclopedia-section"><div className="tp-stock-encyclopedia-section-heading"><h3>股票身份</h3><span>{displayStock.listing ?? displayStock.industry ?? "正式欄位待補"}</span></div><EvidenceGrid rows={[["市場", displayStock.market], ["交易所", displayStock.exchange], ["產業／類別", displayStock.industry], ["資料日期", displayStock.dataDate]]} /></section>
+        <section className="tp-stock-encyclopedia-section"><div className="tp-stock-encyclopedia-section-heading"><h3>摘要</h3><span>正式 read model</span></div><p className="tp-stock-encyclopedia-muted">{displayStock.summary ?? "正式摘要尚未提供；未由前端生成。"}</p></section>
+      </>}
+      {showSection("topics") && <>
+        <section className="tp-stock-encyclopedia-section"><div className="tp-stock-encyclopedia-section-heading"><h3>題材歸屬</h3><span>{displayStock.topics.length} 個正式關係</span></div>{displayStock.topics.length ? <div className="tp-stock-encyclopedia-topics">{displayStock.topics.map((topic) => <div className="tp-stock-encyclopedia-topic" key={`${topic.name}-${topic.role ?? "unknown"}`}><strong>{topic.name}</strong><RoleChip>{label(topic.role)}</RoleChip></div>)}</div> : <p className="tp-stock-encyclopedia-muted">正式題材關係尚未提供</p>}</section>
+        <section className="tp-stock-encyclopedia-section"><div className="tp-stock-encyclopedia-section-heading"><h3>主要題材</h3><span>正式欄位優先</span></div>{displayStock.mainTopic ? <div className="tp-stock-encyclopedia-main-topic"><div><strong>{displayStock.mainTopic.name}</strong><p>{displayStock.mainTopic.state ?? "狀態尚未提供"}{displayStock.mainTopic.lifecycle ? ` · ${displayStock.mainTopic.lifecycle}` : ""}</p></div>{displayStock.mainTopic.grade && <RoleChip>{displayStock.mainTopic.grade}</RoleChip>}</div> : <p className="tp-stock-encyclopedia-muted">正式主題欄位尚未提供</p>}</section>
+      </>}
+      {showSection("technical") && <section className="tp-stock-encyclopedia-section"><div className="tp-stock-encyclopedia-section-heading"><h3>技術分析</h3><span>20MA / 60MA</span></div>{technical ? <EvidenceGrid rows={[["站上 20MA", technical.above20MA], ["站上 60MA", technical.above60MA], ["20MA", technical.ma20], ["60MA", technical.ma60], ["突破狀態", technical.breakoutState], ["技術狀態", technical.technicalState]]} /> : <p className="tp-stock-encyclopedia-muted">正式 technical read model 尚未提供</p>}</section>}
+      {showSection("chip") && <section className="tp-stock-encyclopedia-section"><div className="tp-stock-encyclopedia-section-heading"><h3>籌碼面</h3><span>法人流向</span></div>{institutionEntries.length ? <EvidenceGrid rows={institutionEntries.map(([key, value]) => [key, typeof value === "object" ? JSON.stringify(value) : value as string | number | boolean])} /> : <p className="tp-stock-encyclopedia-muted">正式法人與籌碼資料尚未提供</p>}</section>}
+      {showSection("company") && !displayStock.isPreview && <CompanyResearchSection data={researchDetail} loading={researchStatus === "loading"} error={researchError} />}
       <div className="tp-stock-encyclopedia-note">{displayStock.isPreview ? "此區塊目前為 Preview；正式 API 可用時才顯示正式欄位。" : "沒有正式 evidence 的欄位保持尚未提供，不由前端推導。"}</div>
-      {displayStock.opportunity ? <Link href="/opportunities" className="tp-button tp-button--secondary tp-stock-encyclopedia-cta">進入機會頁</Link> : <span className="tp-button tp-button--secondary tp-stock-encyclopedia-cta" aria-disabled="true">機會資料尚未提供</span>}
+      {showSection("overview") && (displayStock.opportunity ? <Link href="/opportunities" className="tp-button tp-button--secondary tp-stock-encyclopedia-cta">進入機會頁</Link> : <span className="tp-button tp-button--secondary tp-stock-encyclopedia-cta" aria-disabled="true">機會資料尚未提供</span>)}
     </div>
   </aside>;
-  return presentation === "inline" || presentation === "push" ? drawer : <div className="tp-stock-encyclopedia-layer" role="presentation" onClick={onClose}>{drawer}</div>;
+  return presentation === "inline" || presentation === "push" || presentation === "page"
+    ? drawer
+    : <div className="tp-stock-encyclopedia-layer" role="presentation" onClick={onClose}>{drawer}</div>;
 }
