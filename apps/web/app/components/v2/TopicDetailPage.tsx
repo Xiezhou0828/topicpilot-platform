@@ -6,8 +6,8 @@ import { useEffect, useState } from "react";
 import { useTopicFavoritesState } from "../FavoriteButton";
 import { fetchTopic, fetchTopicHistory, getTopicPublication, lifecycleStatusLabel, sourceLabel, type TopicDetail, type TopicHistoryPoint, type TopicLifecycle, type TopicPublicationDisclosure, type TopicResource, type TopicSource } from "../../lib/topic-api";
 import { getTopicKnowledge } from "../../lib/topic-knowledge";
-import { DETAIL_LIFECYCLE_STAGES, formalAbsoluteGrade, formalAbsoluteScore, formalRelativeGrade, formalRelativeScore, freshnessCopy, gradeCopy, lifecycleLabel, lifecycleStageForDetail, topicHasFormalCurrentState } from "../../lib/topic-presentation";
-import { AppShell, Card, DataState, EmptyState, PageContainer, RoleChip, Table } from "./V2Foundation";
+import { DETAIL_LIFECYCLE_STAGES, formalAbsoluteGrade, formalAbsoluteScore, formalRelativeGrade, formalRelativeScore, gradeCopy, lifecycleLabel, lifecycleStageForDetail, topicHasFormalCurrentState } from "../../lib/topic-presentation";
+import { AppShell, Card, DataState, EmptyState, PageContainer, Table } from "./V2Foundation";
 
 const PUBLICATION_FIELD_LABELS: Record<TopicPublicationDisclosure["field"], string> = {
   identity: "Identity", hierarchy: "Hierarchy", relations: "Relations", score: "Score", grade: "Grade", snapshot: "Snapshot", participation: "Participation", lifecycle: "Lifecycle", leaderCore: "Leader/Core", technicalRelative: "Technical/Relative", events: "Events", news: "News", heatmap: "Heatmap", summary: "Summary", opportunity: "Opportunity", source: "Source",
@@ -25,10 +25,6 @@ function TopicSectionHeading({ eyebrow, title, description }: { eyebrow?: string
   return <div className="tp-topic-v1-section-heading"><div>{eyebrow && <p className="tp-overline">{eyebrow}</p>}<h2>{title}</h2><p>{description}</p></div></div>;
 }
 
-function scoreDisplay(value: number | null): string {
-  return value === null ? "尚未提供" : Number.isInteger(value) ? String(value) : value.toFixed(1);
-}
-
 function changeCopy(value: number | null): string {
   return value === null ? "尚未提供" : `${value >= 0 ? "+" : ""}${value.toFixed(2)}%`;
 }
@@ -37,11 +33,18 @@ function changeTone(value: number | null): string {
   return value === null ? "unknown" : value > 0 ? "up" : value < 0 ? "down" : "flat";
 }
 
+function strengthCopy(topic: TopicDetail, view: "ABSOLUTE" | "RELATIVE"): string {
+  const score = view === "ABSOLUTE" ? formalAbsoluteScore(topic) : formalRelativeScore(topic);
+  const grade = view === "ABSOLUTE" ? formalAbsoluteGrade(topic) : formalRelativeGrade(topic);
+  const parts = [
+    score === null ? null : score.toFixed(1),
+    grade ? gradeCopy(grade, view).replace("｜", " ") : null,
+  ].filter((part): part is string => part !== null);
+  return parts.length > 0 ? parts.join(" · ") : "尚未提供";
+}
+
 function Hero({ topic, source, favorite, onToggle }: { topic: TopicDetail; source: TopicSource; favorite: boolean; onToggle: () => void }) {
-  const absoluteGrade = formalAbsoluteGrade(topic);
-  const relativeGrade = formalRelativeGrade(topic);
-  const currentLifecycle = lifecycleStageForDetail(topic.lifecycle?.currentStage);
-  return <header className="tp-topic-v1-detail-hero"><nav className="tp-topic-breadcrumb" aria-label="題材階層"><Link href="/topics">題材</Link><span aria-hidden="true">›</span>{topic.groupName && <><span>{topic.groupName}</span><span aria-hidden="true">›</span></>}<strong>{topic.name}</strong></nav><div className="tp-topic-v1-detail-title-row"><div><p className="tp-overline">Topic Detail · {sourceLabel(source)} {source === "synthetic-snapshot" && <PreviewBadge />}</p><h1>{topic.name}</h1><p className="tp-topic-v1-detail-subtitle">{topic.kind === "PARENT" ? "Parent Topic · canonical hierarchy node" : "Leaf Topic · formal market read model"}</p></div><button type="button" className={`tp-topic-favorite ${favorite ? "is-active" : ""}`} aria-label={favorite ? `取消收藏 ${topic.name}` : `收藏 ${topic.name}`} aria-pressed={favorite} onClick={onToggle}><Star size={18} fill={favorite ? "currentColor" : "none"} />{favorite ? "已收藏" : "收藏題材"}</button></div>{topic.kind === "PARENT" ? <div className="tp-topic-v1-detail-meta"><span>Parent children {topic.hierarchy.children.length}</span><span>不承擔 Leaf market state</span></div> : <div className="tp-topic-v1-detail-metrics"><div><span>絕對強度</span><strong>{absoluteGrade ? gradeCopy(absoluteGrade, "ABSOLUTE") : "尚未提供"}</strong><small>{scoreDisplay(formalAbsoluteScore(topic))}</small></div><div><span>相對市場</span><strong>{relativeGrade ? gradeCopy(relativeGrade, "RELATIVE") : "尚未提供"}</strong><small>{scoreDisplay(formalRelativeScore(topic))}</small></div><div><span>生命週期</span><strong>{lifecycleLabel(currentLifecycle)}</strong><small>{topic.lifecycle?.currentStageTradingDays == null ? "Day 尚未提供" : `Day ${topic.lifecycle.currentStageTradingDays}`}</small></div><div><span>題材成員</span><strong>{topic.constituentCount == null ? "尚未提供" : `${topic.constituentCount} 檔`}</strong><small>{freshnessCopy(topic)}</small></div></div>}</header>;
+  return <header className="tp-topic-v1-detail-hero"><nav className="tp-topic-breadcrumb" aria-label="題材階層"><Link href="/topics">題材</Link><span aria-hidden="true">›</span>{topic.groupName && <><span>{topic.groupName}</span><span aria-hidden="true">›</span></>}<strong>{topic.name}</strong></nav><div className="tp-topic-v1-detail-title-row"><div><p className="tp-overline">Topic Detail · {sourceLabel(source)} {source === "synthetic-snapshot" && <PreviewBadge />}</p><h1>{topic.name}</h1><p className="tp-topic-v1-detail-subtitle">{topic.kind === "PARENT" ? "Parent Topic · canonical hierarchy node" : "Leaf Topic · formal market read model"}</p></div><button type="button" className={`tp-topic-favorite ${favorite ? "is-active" : ""}`} aria-label={favorite ? `取消收藏 ${topic.name}` : `收藏 ${topic.name}`} aria-pressed={favorite} onClick={onToggle}><Star size={18} fill={favorite ? "currentColor" : "none"} />{favorite ? "已收藏" : "收藏題材"}</button></div>{topic.kind === "PARENT" && <div className="tp-topic-v1-detail-meta"><span>Parent children {topic.hierarchy.children.length}</span><span>不承擔 Leaf market state</span></div>}</header>;
 }
 
 function TodayJudgementSection({ topic, publication }: { topic: TopicDetail; publication: ReturnType<typeof getTopicPublication> }) {
@@ -62,10 +65,25 @@ function statusValue(topic: TopicDetail, key: string): string {
   return item?.state ?? "尚未提供";
 }
 
-function TopicStatusSection({ topic, publication }: { topic: TopicDetail; publication: ReturnType<typeof getTopicPublication> }) {
-  // Legacy "核心結構三格" is intentionally retired from the primary UI; the formal boundary is now four readable cards.
-  const cards = [["題材狀態", topic.readableState || "尚未提供"], ["族群表現", statusValue(topic, "族群表現")], ["領漲核心", statusValue(topic, "領漲核心")], ["動能擴散", statusValue(topic, "動能擴散")]];
-  return <section className="tp-topic-v1-section tp-topic-v1-status" aria-labelledby="topic-v1-status-title"><TopicSectionHeading eyebrow="Formal structure" title="強度與結構" description="只呈現 read model 已提供的狀態欄位，不把成員漲跌、排名或缺口在前端合成新分數。" /><div className="tp-topic-v1-status-grid">{cards.map(([label, value]) => <div className="tp-topic-v1-status-card" key={label}><span>{label}</span><strong>{value}</strong></div>)}</div><div className="tp-topic-v1-status-foot"><span>資料覆蓋率：{topic.coveragePct == null ? "尚未提供" : `${topic.coveragePct}%`}</span><span>角色語義：由正式 relation metadata 提供</span><PublicationDisclosure disclosure={publication.participation} /></div></section>;
+function TopicStatusSection({ topic }: { topic: TopicDetail }) {
+  const lifecycle = lifecycleStageForDetail(topic.lifecycle?.currentStage);
+  const groupState = topic.readableState && topic.readableState !== "—" ? topic.readableState : "尚未提供";
+  const rows = [
+    ["族群表現", statusValue(topic, "族群表現")],
+    ["領漲核心", statusValue(topic, "領漲核心")],
+    ["動能擴散", statusValue(topic, "動能擴散")],
+  ];
+  return <aside className="tp-topic-v1-short-status" aria-labelledby="topic-short-status-title" aria-label="短期狀態（強度與結構）">
+    <header><div><p className="tp-overline">短期觀察</p><h2 id="topic-short-status-title">短期狀態</h2></div><span>{topic.dataDate ? `截至 ${topic.dataDate}` : "資料日期待補"}</span></header>
+    <dl className="tp-topic-v1-short-status-primary">
+      <div><dt>技術生命週期</dt><dd>{lifecycle ?? "尚未提供"}<small>{topic.lifecycle?.currentStageTradingDays == null ? "第 — 日" : `第 ${topic.lifecycle.currentStageTradingDays} 日`}</small></dd></div>
+      <div><dt>自身強度</dt><dd>{strengthCopy(topic, "ABSOLUTE")}</dd></div>
+      <div><dt>相對市場</dt><dd>{strengthCopy(topic, "RELATIVE")}</dd></div>
+      <div><dt>當日族群狀態</dt><dd>{groupState}</dd></div>
+    </dl>
+    <div className="tp-topic-v1-short-status-watch"><h3>族群觀察</h3>{rows.map(([label, value]) => <div key={label}><span>{label}</span><strong>{value}</strong></div>)}</div>
+    <p className="tp-topic-v1-short-status-note">生命週期反映技術階段；族群觀察只呈現正式資料欄位，不由前端推算。</p>
+  </aside>;
 }
 
 function FormalLifecycle({ lifecycle, publication }: { lifecycle: TopicLifecycle; publication: TopicPublicationDisclosure }) {
@@ -102,8 +120,13 @@ function MemberDrawer({ topic, onClose }: { topic: TopicDetail; onClose: () => v
 }
 
 function ConstituentsSection({ topic, source, publication, onOpen }: { topic: TopicDetail; source: TopicSource; publication: ReturnType<typeof getTopicPublication>; onOpen: () => void }) {
-  const visible = topic.constituents.slice(0, 12);
-  return <section className="tp-topic-v1-section tp-topic-v1-constituents" aria-labelledby="topic-v1-members-title"><TopicSectionHeading eyebrow="Formal relation members" title="正式成分與關聯股票" description="角色直接沿用 relation API；不從漲幅推定代表股、核心股或排名。" /><div className="tp-topic-v1-member-heading"><div><h3 id="topic-v1-members-title">題材成員</h3><p>{source === "synthetic-snapshot" && <PreviewBadge />} {topic.constituents.length} 檔 relation rows</p></div>{topic.constituents.length > 12 && <button type="button" className="tp-topic-v1-more-button" onClick={onOpen}>查看全部 {topic.constituents.length} 檔</button>}</div><div className="tp-topic-v1-formal-boundary"><PublicationDisclosure disclosure={publication.relations} /><PublicationDisclosure disclosure={publication.leaderCore} /></div>{topic.constituents.length ? <Table><thead><tr><th>股號</th><th>股名</th><th>角色</th><th>今日漲跌幅</th></tr></thead><tbody>{visible.map((member) => <tr key={member.code}><td><Link href={`/stocks/${member.code}`}>{member.code}</Link></td><td><Link href={`/stocks/${member.code}`}>{member.name}</Link></td><td><RoleChip>{member.role ?? "角色尚未提供"}</RoleChip></td><td><span className={`tp-topic-v1-change--${changeTone(member.changePct)}`}>{changeCopy(member.changePct)}</span></td></tr>)}</tbody></Table> : <EmptyState title="目前沒有正式成分股資料" description="Topic read model 尚未回傳 constituent rows。" />}</section>;
+  const visible = topic.constituents.slice(0, 8);
+  return <section className="tp-topic-v1-section tp-topic-v1-constituents tp-topic-v1-firstfold-members" aria-labelledby="topic-v1-members-title" aria-label="正式成分與關聯股票">
+    <div className="tp-topic-v1-member-heading"><div><p className="tp-overline">正式題材關聯 · 角色直接沿用 relation API</p><h2 id="topic-v1-members-title">題材成分股 <small>{topic.constituents.length} 檔</small></h2></div>{topic.constituents.length > 8 && <button type="button" className="tp-topic-v1-more-button" onClick={onOpen}>查看全部 {topic.constituents.length} 檔</button>}</div>
+    {source === "synthetic-snapshot" && <p className="tp-topic-v1-member-source"><PreviewBadge /> Preview 關係僅供瀏覽，不代表正式名單。</p>}
+    <details className="tp-topic-v1-member-lineage"><summary>題材關聯資料說明</summary><div className="tp-topic-v1-formal-boundary"><PublicationDisclosure disclosure={publication.relations} /><PublicationDisclosure disclosure={publication.leaderCore} /></div></details>
+    {topic.constituents.length ? <Table><thead><tr><th>股號</th><th>股名</th><th>角色</th><th>今日漲跌幅</th></tr></thead><tbody>{visible.map((member) => <tr key={member.code}><td><Link href={`/stocks/${member.code}`}>{member.code}</Link></td><td><Link href={`/stocks/${member.code}`}>{member.name}</Link></td><td>{member.role ?? <span className="tp-topic-v1-muted">尚未提供</span>}</td><td><span className={`tp-topic-v1-change--${changeTone(member.changePct)}`}>{changeCopy(member.changePct)}</span></td></tr>)}</tbody></Table> : <EmptyState title="目前沒有正式成分股資料" description="Topic read model 尚未回傳 constituent rows。" />}
+  </section>;
 }
 
 function rawValue(value: unknown): string {
@@ -132,5 +155,5 @@ export default function TopicDetailPage({ slug }: { slug: string }) {
   const topic = resource?.data;
   const publication = topic && resource ? getTopicPublication(resource.source, topic) : null;
   const source = resource?.source ?? "unavailable";
-  return <AppShell currentPath="/topics"><PageContainer className="tp-topic-page tp-topic-v1-page" title={topic?.name ?? slug} hideHeader><div className="tp-topic-v1-detail-page">{!resource && <Card className="tp-topic-data-card"><DataState state="STALE" /><EmptyState title="正在載入題材資料" description="正在讀取 Topic read model。" /></Card>}{resource?.source === "unavailable" && <Card className="tp-topic-data-card"><DataState state="UNAVAILABLE" /><EmptyState title="題材資料目前無法取得" description={resource.error ?? "請確認正式 API 狀態。"} /></Card>}{topic && publication && <><Hero topic={topic} source={source} favorite={isFavorite(slug)} onToggle={() => toggleTopicFavorite(slug, { displayLabel: topic.name })} />{topic.kind === "PARENT" ? <div className="tp-topic-v1-parent-detail"><TodayJudgementSection topic={topic} publication={publication} /><section className="tp-topic-v1-section"><TopicSectionHeading title="題材階層" description="Parent Topic 保留 canonical children；請從下方入口進入 Leaf Detail。" /><div className="tp-topic-v1-child-links">{topic.hierarchy.children.map((child) => <Link href={`/topics/${child.slug}`} key={child.slug}>{child.name}<ChevronRight size={16} /></Link>)}</div></section></div> : <div className="tp-topic-v1-detail-content"><TodayJudgementSection topic={topic} publication={publication} /><TopicKnowledgeSection topic={topic} /><TopicStatusSection topic={topic} publication={publication} />{topic.lifecycle && <FormalLifecycle lifecycle={topic.lifecycle} publication={publication.lifecycle} />}<HistoricalSection slug={slug} source={source} /><ConstituentsSection topic={topic} source={source} publication={publication} onOpen={() => setMemberDrawer(true)} /><DiagnosticsSection topic={topic} source={source} publication={publication} /></div>}{memberDrawer && <MemberDrawer topic={topic} onClose={() => setMemberDrawer(false)} />}</>}</div></PageContainer></AppShell>;
+  return <AppShell currentPath="/topics"><PageContainer className="tp-topic-page tp-topic-v1-page" title={topic?.name ?? slug} hideHeader><div className="tp-topic-v1-detail-page">{!resource && <Card className="tp-topic-data-card"><DataState state="STALE" /><EmptyState title="正在載入題材資料" description="正在讀取 Topic read model。" /></Card>}{resource?.source === "unavailable" && <Card className="tp-topic-data-card"><DataState state="UNAVAILABLE" /><EmptyState title="題材資料目前無法取得" description={resource.error ?? "請確認正式 API 狀態。"} /></Card>}{topic && publication && <><Hero topic={topic} source={source} favorite={isFavorite(slug)} onToggle={() => toggleTopicFavorite(slug, { displayLabel: topic.name })} />{topic.kind === "PARENT" ? <div className="tp-topic-v1-parent-detail"><TodayJudgementSection topic={topic} publication={publication} /><section className="tp-topic-v1-section"><TopicSectionHeading title="題材階層" description="Parent Topic 保留 canonical children；請從下方入口進入 Leaf Detail。" /><div className="tp-topic-v1-child-links">{topic.hierarchy.children.map((child) => <Link href={`/topics/${child.slug}`} key={child.slug}>{child.name}<ChevronRight size={16} /></Link>)}</div></section></div> : <div className="tp-topic-v1-detail-content tp-topic-v1-leaf-content"><div className="tp-topic-v1-first-visual"><ConstituentsSection topic={topic} source={source} publication={publication} onOpen={() => setMemberDrawer(true)} /><TopicStatusSection topic={topic} /><TopicKnowledgeSection topic={topic} /></div>{topic.lifecycle && <div className="tp-topic-v1-leaf-lifecycle"><FormalLifecycle lifecycle={topic.lifecycle} publication={publication.lifecycle} /></div>}<div className="tp-topic-v1-leaf-history"><HistoricalSection slug={slug} source={source} /></div><div className="tp-topic-v1-leaf-diagnostics"><DiagnosticsSection topic={topic} source={source} publication={publication} /></div></div>}{memberDrawer && <MemberDrawer topic={topic} onClose={() => setMemberDrawer(false)} />}</>}</div></PageContainer></AppShell>;
 }

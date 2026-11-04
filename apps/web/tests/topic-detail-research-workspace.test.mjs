@@ -14,8 +14,9 @@ test("Topic Detail uses research-workspace reading order and formal identity bou
   assert.match(page, /publication\.hierarchy/);
   assert.match(page, /aria-labelledby="topic-v1-members-title"/);
   assert.ok(page.lastIndexOf("<TodayJudgementSection") < page.lastIndexOf("<TopicStatusSection"));
-  assert.ok(page.lastIndexOf("<TopicStatusSection") < page.lastIndexOf("<ConstituentsSection"));
-  assert.ok(page.lastIndexOf("<FormalLifecycle") < page.lastIndexOf("<ConstituentsSection"));
+  assert.ok(page.lastIndexOf("<ConstituentsSection") < page.lastIndexOf("<TopicStatusSection"));
+  assert.ok(page.lastIndexOf("<TopicStatusSection") < page.lastIndexOf("<TopicKnowledgeSection"));
+  assert.ok(page.lastIndexOf("<TopicKnowledgeSection") < page.lastIndexOf("<FormalLifecycle"));
 });
 
 test("Topic Detail preserves mixed formal/deferred structure fields without browser derivation", async () => {
