@@ -124,7 +124,7 @@ def test_real_official_parsers_pass_flow_and_formal_publication_readback():
         "unknown_two",
     ],
 )
-def test_flow_source_alignment_preserves_fail_closed_publication_gate(invalid):
+def test_flow_readback_preserves_diagnostics_without_blocking_publication(invalid):
     rows = _rows(_parsed_facts())
     if invalid == "swapped":
         rows[0]["source_identity"], rows[1]["source_identity"] = (
@@ -146,12 +146,17 @@ def test_flow_source_alignment_preserves_fail_closed_publication_gate(invalid):
     readback = updater._institutional_flow_readback(TARGET)
     assert readback["status"] == "FAIL"
     assert readback["reasonCode"] == "WHOLE_MARKET_INSTITUTIONAL_FLOW_NOT_READY"
-    assert updater._formal_publication_readback(TARGET, run_id="test-run")["status"] == "FAIL"
+    formal = updater._formal_publication_readback(TARGET, run_id="test-run")
+    assert formal["status"] == "PASS"
+    assert formal["institutionalFlowRequired"] is False
+    assert formal["institutionalFlow"]["status"] == "FAIL"
 
 
 @pytest.mark.parametrize("market", ["TPE", "TWO"])
 @pytest.mark.parametrize("failure", ["date", "transport"])
-def test_real_provider_failure_and_date_mismatch_remain_publication_blocking(market, failure):
+def test_real_provider_failure_and_date_mismatch_remain_diagnostic_only_for_publication(
+    market, failure
+):
     facts = _parsed_facts(invalid_market=market, failure=failure)
     invalid = next(fact for fact in facts if fact.market == market)
     assert invalid.availability == "SOURCE_UNAVAILABLE"
@@ -160,7 +165,9 @@ def test_real_provider_failure_and_date_mismatch_remain_publication_blocking(mar
     )
     updater = _updater(_ReadbackSession(_rows(facts)))
     assert updater._institutional_flow_readback(TARGET)["status"] == "FAIL"
-    assert updater._formal_publication_readback(TARGET, run_id="test-run")["status"] == "FAIL"
+    formal = updater._formal_publication_readback(TARGET, run_id="test-run")
+    assert formal["status"] == "PASS"
+    assert formal["institutionalFlowRequired"] is False
 
 
 def test_flow_database_read_failure_keeps_distinct_classification():

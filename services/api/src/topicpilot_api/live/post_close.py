@@ -180,13 +180,6 @@ def _readback_failure_metadata(
     formal_readback: Mapping[str, Any],
     market_facts_publication: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
-    flow = formal_readback.get("institutionalFlow") or {}
-    if formal_readback.get("lateDataRequired", True) and flow.get("status") != "PASS":
-        return {
-            "failureClassification": "INSTITUTIONAL_FLOW_READBACK_FAILURE",
-            "failedSection": "institutionalFlow",
-            "reasonCode": flow.get("reasonCode") or "INSTITUTIONAL_FLOW_READBACK_UNAVAILABLE",
-        }
     if market_facts_publication and market_facts_publication.get("status") != "SUCCESS":
         return {
             "failureClassification": "MARKET_FACTS_PERSISTENCE_FAILURE",
@@ -3072,7 +3065,7 @@ class PostCloseUpdater:
             failure_code_set = set(failure_codes)
             only_tolerated_quote_gaps = (
                 limited_quote_gaps > 0
-                and failure_code_set.issubset({"MISSING_MARKET_DATA"})
+                and failure_code_set.issubset({"MISSING_MARKET_DATA", "UNKNOWN"})
                 and max(failure_count, skipped_count) <= limited_quote_gaps
             )
             if only_tolerated_quote_gaps:
@@ -3298,36 +3291,24 @@ class PostCloseUpdater:
                 )
                 snapshot_result["lateDataEnrichment"] = late_data
                 if late_data["status"] == "WAITING":
-                    status = "WAITING_LIVE_VALIDATION"
+                    # Institutional flow is optional. Preserve its enrichment
+                    # checkpoint without holding up the price-based publication.
+                    pass
                 elif late_data["status"] == "DEADLINE_EXCEEDED":
-                    # The price-based Formal chain remains authoritative, but
-                    # the day is explicitly incomplete at the late-data
-                    # deadline.  Receipt logic exposes DEADLINE_EXCEEDED.
-                    status = "SUCCESS"
+                    # Keep the missing optional flow visible in the run record,
+                    # but do not downgrade an otherwise complete publication.
                     self._update_publication_stage(
                         run_id,
                         "formal",
                         "READY",
-                        state="PRICE_BASED_FINAL_LATE_DATA_INCOMPLETE",
+                        state="PRICE_BASED_FINAL_OPTIONAL_DATA_UNPUBLISHED",
                         lateDataState=late_data["state"],
                     )
             final_failure_code_set = set(failure_codes)
             if only_tolerated_quote_gaps:
                 final_failure_code_set.discard("MISSING_MARKET_DATA")
+                final_failure_code_set.discard("UNKNOWN")
             final_failure_codes = tuple(sorted(final_failure_code_set))
-            if formal_ready and formal_publication_ready and snapshot_result.get(
-                "lateDataEnrichment", {}
-            ).get("status") == "WAITING":
-                final_failure_codes = tuple(
-                    sorted(set(final_failure_codes) | {"LATE_DATA_NOT_READY"})
-                )
-            elif snapshot_result.get("lateDataEnrichment", {}).get("status") == "DEADLINE_EXCEEDED":
-                final_failure_codes = tuple(
-                    sorted(
-                        set(final_failure_codes)
-                        | {"LATE_DATA_HARD_DEADLINE_EXCEEDED"}
-                    )
-                )
             if not (formal_ready and formal_publication_ready):
                 if status == "SUCCESS":
                     status = "PARTIAL"
@@ -3343,13 +3324,14 @@ class PostCloseUpdater:
                         }
                     )
                 )
-            final_failure_codes = final_failure_codes or reconciliation.reason_codes
             if (
                 not final_failure_codes
                 and skipped_count
                 and not only_tolerated_quote_gaps
             ):
                 final_failure_codes = ("NO_TRADING_DAY_DATA",)
+            if not final_failure_codes and not only_tolerated_quote_gaps:
+                final_failure_codes = reconciliation.reason_codes
             self._finish_with_retry(
                 run_id,
                 status=status,
@@ -3382,8 +3364,6 @@ class PostCloseUpdater:
                     status=(
                         "COMPLETED"
                         if status == "SUCCESS"
-                        and snapshot_result.get("lateDataEnrichment", {}).get("status")
-                        in {"PASS", "NOT_APPLICABLE", "DEADLINE_EXCEEDED"}
                         else "PARTIAL"
                     ),
                     metadata={
@@ -3396,12 +3376,7 @@ class PostCloseUpdater:
             self._mark_finalization_failure(run_id, exc)
             raise
 
-        result_status = (
-            "DEADLINE_EXCEEDED"
-            if snapshot_result.get("lateDataEnrichment", {}).get("status")
-            == "DEADLINE_EXCEEDED"
-            else status
-        )
+        result_status = status
         return PostCloseRunResult(
             str(run_id),
             result_status,
@@ -3434,11 +3409,11 @@ class PostCloseUpdater:
     ) -> dict[str, Any]:
         """Publish formal exchange-level facts without bypassing stock gates.
 
-        A missing stock bar blocks stock-dependent topic work, but it must not
-        suppress independently sourced whole-market index, breadth, turnover,
-        or institutional facts.  Each of those inputs remains typed and
-        fail-closed, so an unavailable provider fact cannot become a zero or a
-        single-market Taiwan total.
+        A stock-bar gap blocks stock-dependent work only when it exceeds the
+        explicit daily reconciliation tolerance. Missing optional market
+        aggregates or institutional flow leave those fields unavailable; they
+        never become zeroes or single-market Taiwan totals, and do not suppress
+        an otherwise valid partial Home publication.
         """
 
         result: dict[str, Any] = {
@@ -3870,9 +3845,9 @@ class PostCloseUpdater:
         *,
         run_id: Any | None = None,
         execution_scope: str | None = None,
-        require_late_data: bool = True,
+        require_late_data: bool = False,
     ) -> dict[str, Any]:
-        """Read authoritative outputs with an explicit late-data boundary."""
+        """Read authoritative outputs; late institutional flow is informational only."""
 
         topic = self._formal_snapshot_readback(snapshot_date)
         resolved_scope = execution_scope or getattr(
@@ -3907,7 +3882,6 @@ class PostCloseUpdater:
         base_ready = (
             topic["status"] == "PASS"
             and (history_recovery or home_status == "PASS")
-            and (not require_late_data or institutional_flow["status"] == "PASS")
         )
         return {
             "status": (
@@ -3933,7 +3907,8 @@ class PostCloseUpdater:
                 ),
             },
             "institutionalFlow": institutional_flow,
-            "lateDataRequired": require_late_data,
+            "lateDataRequired": False,
+            "institutionalFlowRequired": False,
             "formalStrength": strength,
             "formalLifecycle": lifecycle,
         }
@@ -4301,11 +4276,6 @@ class PostCloseUpdater:
         is_market_closed = status == "MARKET_CLOSED"
         execution_scope = _metadata_execution_scope(metadata)
         publication_readback = snapshot_payload.get("formalPublicationReadback") or {}
-        late_data_payload = snapshot_payload.get("lateDataEnrichment")
-        late_data_ready = late_data_payload is None or late_data_payload.get("status") in {
-            "PASS",
-            "NOT_APPLICABLE",
-        }
         formal_chain_ready = (
             self._formal_snapshot_ready(snapshot_payload)
             and publication_readback.get("status") == "PASS"
@@ -4344,10 +4314,8 @@ class PostCloseUpdater:
                     if status == "SUCCESS"
                     and reconciliation_payload.get("downstreamReady") is True
                     and formal_chain_ready
-                    and late_data_ready
                     else "WAIT"
                     if status == "WAITING_LIVE_VALIDATION"
-                    or (status == "SUCCESS" and formal_chain_ready and not late_data_ready)
                     else "MARKET_CLOSED"
                     if status == "MARKET_CLOSED"
                     else "BLOCKED"

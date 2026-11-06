@@ -364,13 +364,14 @@ def test_wrong_date_or_nonformal_index_authority_stays_blocking(field, value):
         validate_market_facts(indices, aggregates)
 
 
-def test_official_pair_and_aggregates_are_required_without_policy_relaxation():
+def test_official_index_pair_and_tpe_aggregate_required_two_aggregate_optional():
     indices, aggregates = market_facts()
     validate_market_facts(indices, aggregates)
     for missing in ([], indices[:1], [indices[0], indices[0]]):
         with pytest.raises(PostClosePreconditionError):
             validate_market_facts(missing, aggregates)
-    aggregates[1].trading_date = date(2026, 10, 1)
+    validate_market_facts(indices, aggregates[:1])
+    aggregates[0].trading_date = date(2026, 10, 1)
     with pytest.raises(PostClosePreconditionError, match="AGGREGATE_NOT_READY"):
         validate_market_facts(indices, aggregates)
 
@@ -574,7 +575,11 @@ def test_real_preflight_checks_exact_context_comparator_and_formal_readback(monk
         rows[0][field] = value
     if invalid == "reference":
         completion.config = LiveRuntimeConfig(reference_data_version="wrong-ref")
-    if invalid:
+    if invalid == "flow":
+        result = completion.preflight()
+        assert result["status"] == "PASS"
+        assert result["formalReadback"]["institutionalFlow"]["status"] == "FAIL"
+    elif invalid:
         with pytest.raises(PostClosePreconditionError):
             completion.preflight()
     else:
@@ -584,7 +589,7 @@ def test_real_preflight_checks_exact_context_comparator_and_formal_readback(monk
 
 
 @pytest.mark.parametrize("in_scope_status", ["SUSPENDED", "UNKNOWN", "MISSING_MARKET_DATA"])
-def test_actual_home_writer_keeps_in_scope_failure_gate_and_excludes_only_execution_outsiders(
+def test_actual_home_writer_publishes_with_unavailable_quote_disclosure_and_excludes_outsiders(
     monkeypatch,
     in_scope_status,
 ):
@@ -640,6 +645,7 @@ def test_actual_home_writer_keeps_in_scope_failure_gate_and_excludes_only_execut
         market_index_facts=[fetch()[0]],
         market_aggregate_facts=[],
     )
-    assert result["publicationState"] == (
-        "PUBLISHED" if in_scope_status == "SUSPENDED" else "UNAVAILABLE"
+    assert result["publicationState"] == "PUBLISHED"
+    assert result["sectionStatuses"]["marketOverview"]["status"] == (
+        "AVAILABLE" if in_scope_status == "SUSPENDED" else "PARTIAL"
     )

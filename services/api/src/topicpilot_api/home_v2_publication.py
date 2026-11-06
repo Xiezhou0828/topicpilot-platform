@@ -1746,13 +1746,45 @@ def materialize_home_v2(
     total_eligible = sum(item["eligible"] for item in breadth_payload)
     total_observed = sum(item["observed"] for item in breadth_payload)
     total_unavailable = sum(item["unavailable"] for item in breadth_payload)
-    advance = sum(int(item.get("advance") or 0) for item in breadth_payload)
-    decline = sum(int(item.get("decline") or 0) for item in breadth_payload)
-    flat = sum(int(item.get("flat") or 0) for item in breadth_payload)
-    breadth_eligible = advance + decline + flat
+    market_coverage_incomplete = bool(
+        market_coverage["pipelineFailureCount"] or market_coverage["unknownCount"]
+    )
+    whole_market_breadth_complete = (
+        not market_coverage_incomplete
+        and all(
+            aggregate_by_market.get(market, {}).get("status") == "AVAILABLE"
+            for market in ("TPE", "TWO")
+        )
+        if aggregate_inputs
+        else not market_coverage_incomplete
+    )
+    advance = (
+        sum(int(item.get("advance") or 0) for item in breadth_payload)
+        if whole_market_breadth_complete
+        else None
+    )
+    decline = (
+        sum(int(item.get("decline") or 0) for item in breadth_payload)
+        if whole_market_breadth_complete
+        else None
+    )
+    flat = (
+        sum(int(item.get("flat") or 0) for item in breadth_payload)
+        if whole_market_breadth_complete
+        else None
+    )
+    breadth_eligible = (
+        advance + decline + flat
+        if advance is not None and decline is not None and flat is not None
+        else None
+    )
 
-    def _percentage(value: int) -> float | None:
-        return round(value / breadth_eligible * 100, 4) if breadth_eligible else None
+    def _percentage(value: int | None) -> float | None:
+        return (
+            round(value / breadth_eligible * 100, 4)
+            if value is not None and breadth_eligible
+            else None
+        )
 
     distribution_payload = build_market_distribution(
         breadth_observations,
@@ -1763,18 +1795,24 @@ def materialize_home_v2(
     )
     market_health = {
         "market": "TPE+TWO",
-        "status": "AVAILABLE" if total_observed else "UNAVAILABLE",
-        "totalStocks": total_eligible,
+        "status": (
+            "AVAILABLE"
+            if whole_market_breadth_complete and total_observed
+            else "PARTIAL"
+            if total_observed
+            else "UNAVAILABLE"
+        ),
+        "totalStocks": total_eligible if whole_market_breadth_complete else None,
         "observed": total_observed,
         "breadthEligible": breadth_eligible,
         "advance": advance,
         "decline": decline,
         "flat": flat,
-        "net": advance - decline if breadth_eligible else None,
+        "net": advance - decline if breadth_eligible is not None else None,
         "advancePct": _percentage(advance),
         "declinePct": _percentage(decline),
         "flatPct": _percentage(flat),
-        "unavailable": total_unavailable,
+        "unavailable": total_unavailable if whole_market_breadth_complete else None,
     }
     indices = [_market_index_payload(item) for item in index_inputs]
     by_market_index = {item.get("market"): item for item in indices}
@@ -1802,9 +1840,6 @@ def materialize_home_v2(
             },
         )
     indices = [by_market_index[market] for market in ("TPE", "TWO")]
-    market_data_blocked = bool(
-        market_coverage["pipelineFailureCount"] or market_coverage["unknownCount"]
-    )
     if aggregate_inputs:
         turnover_inputs = [
             {
@@ -1853,18 +1888,26 @@ def materialize_home_v2(
     available_indices = [item for item in indices if item.get("status") == "AVAILABLE" and item.get("value") is not None]
     available_turnover = [item for item in turnover if item.get("status") == "AVAILABLE" and item.get("value") is not None]
     if aggregate_inputs:
+        both_market_aggregates_available = all(
+            aggregate_by_market.get(market, {}).get("status") == "AVAILABLE"
+            for market in ("TPE", "TWO")
+        )
+        market_facts_available = bool(available_indices or available_turnover or total_observed)
         market_data_status = (
-            "UNAVAILABLE"
-            if market_data_blocked
-            else "AVAILABLE"
-            if all(aggregate_by_market.get(market, {}).get("status") == "AVAILABLE" for market in ("TPE", "TWO"))
+            "AVAILABLE"
+            if both_market_aggregates_available and not market_coverage_incomplete
             else "PARTIAL"
-            if aggregate_inputs and (available_indices or available_turnover or total_observed)
+            if market_facts_available
             else "UNAVAILABLE"
         )
     else:
+        market_facts_available = bool(available_indices or available_turnover or total_observed)
         market_data_status = (
-            "UNAVAILABLE" if market_data_blocked else "AVAILABLE" if total_observed else "UNAVAILABLE"
+            "AVAILABLE"
+            if total_observed and not market_coverage_incomplete
+            else "PARTIAL"
+            if market_facts_available
+            else "UNAVAILABLE"
         )
     aggregate_limits = [item for item in aggregate_inputs if item.get("status") == "AVAILABLE"]
     limit_up_values = [item.get("limitUpCount") for item in aggregate_limits]
