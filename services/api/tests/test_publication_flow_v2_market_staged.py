@@ -4,8 +4,7 @@ from types import SimpleNamespace
 from topicpilot_api.live.config import LiveRuntimeConfig
 from topicpilot_api.live.post_close import PostCloseUpdater
 from topicpilot_api.live.receipt import (
-    RECEIPT_DEADLINE_EXCEEDED,
-    RECEIPT_WAITING_FOR_DATA,
+    RECEIPT_COMPLETE,
     _receipt_status,
 )
 from topicpilot_api.live.scheduler import LiveScheduler
@@ -78,7 +77,7 @@ def test_twse_only_state_is_not_a_formal_ready_state():
     assert stage_for(_utc(7, 42), config) != "FORMAL_PUBLICATION_READY"
 
 
-def test_price_formal_completion_does_not_hide_pending_late_data():
+def test_price_formal_completion_does_not_wait_for_optional_late_data():
     config = LiveRuntimeConfig()
     metadata = {
         "dailyMarketReconciliation": {"downstreamReady": True},
@@ -97,7 +96,7 @@ def test_price_formal_completion_does_not_hide_pending_late_data():
             _utc(10, 0).date(),
             config,
         )
-        == RECEIPT_WAITING_FOR_DATA
+        == RECEIPT_COMPLETE
     )
     assert (
         _receipt_status(
@@ -108,7 +107,7 @@ def test_price_formal_completion_does_not_hide_pending_late_data():
             _utc(12, 10).date(),
             config,
         )
-        == RECEIPT_DEADLINE_EXCEEDED
+        == RECEIPT_COMPLETE
     )
 
 
