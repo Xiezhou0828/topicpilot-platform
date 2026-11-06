@@ -151,6 +151,17 @@ formal readbacks. `PARTIAL`, `FAILED`, and `MARKET_CLOSED` must not trigger
 Lifecycle processing. Re-running the same date is safe and reuses canonical
 idempotency keys.
 
+Institutional-flow facts are optional late enrichment. Their absence does not
+hold up an otherwise ready price, Topic, or Home publication; the public
+overview leaves the values null and labels them `尚未公布`. Home completion
+still requires both official market-index facts and the TWSE TPE daily
+aggregate. The TPEx TWO turnover aggregate and whole-market breadth are
+optional: if either market aggregate or the quote population needed for a
+complete breadth calculation is unavailable, publish the valid Home facts as
+`PARTIAL`, leave the affected turnover/breadth values null, and do not replace
+them with zero or TPE-only totals. These optional fields do not override the
+existing per-instrument quote tolerance or provider/date-integrity blockers.
+
 The checked-in Render blueprint still has no approved Cron resource. Until an
 operator provisions and verifies the scheduler, production scheduling remains
 `WAITING/BLOCKED`; the CLI is the supported manual execution boundary.

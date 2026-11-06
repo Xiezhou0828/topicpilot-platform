@@ -37,20 +37,31 @@ score, authorization time, and package-content SHA-256 in
 review; `ownerReviewStatus` remains `PENDING`. A score of exactly 0.70 does not
 qualify. Explicit `BLOCKED`/`REJECTED` states, a bad identity, invalid v4
 contract, missing source lineage, or non-approved source rights still stop
-publication. Existing valid Owner approval evidence remains accepted. The
-writer requires the policy attestation to be present inside the hash-sealed
-plan, so the authorization and content cannot change after dry-run. The API
-writer derives the public field allowlist itself; it never stores the source
-register, evidence IDs, policy evidence, or other private review fields in the
-public projection. The audit journal records the authorization mode, policy
-ID (when applicable), score, and package hash.
+publication. Existing valid Owner approval evidence remains accepted. For a
+`NO_MATCH_CONFIRMED` instrument, this standing authorization also permits the
+writer's atomic `ADD_INSTRUMENT_AND_PUBLISH` action; a separate per-stock chat
+confirmation is not required when the plan carries the valid standing-policy
+attestation. The protected `production-db-maintenance` Environment approval
+still gates every Production write. Plans using an individual Owner review
+continue to require the exact plan confirmation. The writer requires the policy
+attestation to be present inside the hash-sealed plan, so the authorization and
+content cannot change after dry-run. The API writer derives the public field
+allowlist itself; it never stores the source register, evidence IDs, policy
+evidence, or other private review fields in the public projection. The audit
+journal records the authorization mode, policy ID (when applicable), score,
+and package hash.
 
 The master readback must be complete, Production-only, and no more than
 15 minutes old. `MATCH_FOUND` and `NO_MATCH_CONFIRMED` are both valid results;
 the current database identity is rechecked inside the write transaction. A
 new instrument additionally requires an officially evidenced effective date.
 
-The exact final confirmation is:
+The writer always verifies the exact final confirmation against the sealed
+plan hash. For a valid `OWNER_STANDING_POLICY` package with score `> 0.70`, the
+protected workflow derives that confirmation from its own successful dry-run;
+the Owner does not need to copy a confirmation phrase for every eligible stock.
+The Environment's required reviewer still approves the Production run. For an
+individual Owner-reviewed package, supply the exact confirmation:
 
 ```text
 APPLY STOCK ADD <MARKET> <CODE> <PLAN_SHA256>
@@ -138,11 +149,16 @@ migration workflow.
    protected plan secret, then run **Production stock-add master writer** in
    `dry-run` mode using only the plan SHA-256 as a dispatch input.
 6. Review the dry-run action, stock identity, research date, plan SHA, and
-   publication version. Run the same plan in `apply` mode with the exact hash
-   confirmation and approve the protected Environment gate.
+   publication version. For a `> 0.70` standing-policy plan, the workflow
+   derives the internal confirmation from that dry-run; approve the protected
+   Environment gate. Individual-review plans still require the exact hash
+   confirmation in addition to Environment approval.
 7. Read the master, operation journal, publication version, and frontend API
    response back. Mark master/research publication complete only after all
-   readbacks agree.
+   readbacks agree. The research projection can be `PUBLISHED` when this
+   transaction succeeds. The first official closing quote is a separate
+   next-valid-session publication; it stays unavailable until exchange data or
+   an exchange-confirmed no-trade state is read back.
 8. For a genuinely new stock, separately complete Topic relation review,
    reference-universe versioning, G1/G2, and post-close verification before
    claiming that daily price collection is ready.

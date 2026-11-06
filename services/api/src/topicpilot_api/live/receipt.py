@@ -238,7 +238,6 @@ def _failure_stage(metadata: Mapping[str, Any]) -> str | None:
     readback = (metadata.get("topicSnapshot") or {}).get("formalPublicationReadback") or {}
     for key in (
         "topicSnapshot",
-        "institutionalFlow",
         "formalStrength",
         "formalLifecycle",
         "homePublication",
@@ -348,33 +347,17 @@ def _receipt_status(
         return RECEIPT_MARKET_CLOSED
     formal_ready = readback.get("status") == "PASS"
     data_ready = reconciliation.get("downstreamReady") is True
-    late_data = snapshot.get("lateDataEnrichment")
-    late_data_pending = (
-        isinstance(late_data, Mapping)
-        and late_data.get("status") not in {"PASS", "NOT_APPLICABLE"}
-    )
     if run_status == "SUCCESS" and data_ready and formal_ready:
-        if late_data_pending:
-            return (
-                RECEIPT_DEADLINE_EXCEEDED
-                if _as_utc(now) >= late_data_hard_deadline_at(trading_date, config)
-                else RECEIPT_WAITING_FOR_DATA
-            )
         return (
             RECEIPT_CORRECTION_COMPLETE
             if execution_scope == "HISTORY_RECOVERY"
             else RECEIPT_COMPLETE
         )
     if run_status == "WAITING_LIVE_VALIDATION":
-        if late_data_pending and _as_utc(now) >= late_data_hard_deadline_at(
-            trading_date, config
-        ):
-            return RECEIPT_DEADLINE_EXCEEDED
         if not data_ready and _as_utc(now) >= hard_deadline_at(trading_date, config):
             return RECEIPT_DEADLINE_EXCEEDED
-        # WAIT is retryable.  The price and late-data alerts are operationally
-        # critical, but they must not become a permanent publication failure
-        # that prevents a later same-session readiness check.
+        # WAIT is retryable. Price readiness remains critical; optional
+        # enrichment must not become a permanent publication failure.
         return RECEIPT_WAITING_FOR_DATA
     if _as_utc(now) >= hard_deadline_at(trading_date, config) and not data_ready:
         return RECEIPT_DEADLINE_EXCEEDED
@@ -417,7 +400,7 @@ def _summary_payload(metadata: Mapping[str, Any]) -> dict[str, Any]:
             "historyRecovery": metadata.get("historyRecovery") or {},
             "publicationStages": metadata.get("publicationStages") or {},
             "dayCompletionState": (
-                "LATE_DATA_PENDING"
+                "COMPLETE_WITH_OPTIONAL_DATA_UNPUBLISHED"
                 if isinstance(snapshot.get("lateDataEnrichment"), Mapping)
                 and (snapshot.get("lateDataEnrichment") or {}).get("status")
                 not in {"PASS", "NOT_APPLICABLE"}
@@ -495,8 +478,8 @@ def append_receipt_for_run(
     if late_data_pending and current >= late_data_hard_deadline_at(trading_date, config):
         events.append(
             {
-                "code": "LATE_DATA_HARD_DEADLINE_EXCEEDED",
-                "severity": "CRITICAL",
+                "code": "OPTIONAL_INSTITUTIONAL_FLOW_NOT_PUBLISHED",
+                "severity": "WARNING",
                 "at": current.isoformat(),
             }
         )

@@ -89,7 +89,7 @@ export function formatTurnoverHundredMillionValue(
   unit: string | null | undefined,
   status: string | null | undefined,
 ): string {
-  if (!marketFactIsAvailable(status, value) || !finiteNumber(value)) return "尚未提供";
+  if (!marketFactIsAvailable(status, value) || !finiteNumber(value)) return "尚未公布";
   if (currency?.trim().toUpperCase() !== "TWD" || unit?.trim().toUpperCase() !== "TWD") return "單位尚未確認";
   return `${formatMarketNumber(value / 100_000_000)} 億`;
 }

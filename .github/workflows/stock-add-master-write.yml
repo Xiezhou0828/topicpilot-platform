@@ -15,7 +15,7 @@ on:
         required: true
         type: string
       confirmation:
-        description: Exact APPLY STOCK ADD confirmation for apply mode
+        description: Exact confirmation for individually reviewed plans; standing-policy plans may omit it
         required: false
         type: string
 
@@ -157,8 +157,42 @@ jobs:
           EXPECTED_DATABASE: ${{ vars.TOPICPILOT_PRODUCTION_STOCK_ADD_EXPECTED_DATABASE }}
           EXPECTED_ROLE: ${{ vars.TOPICPILOT_PRODUCTION_STOCK_ADD_EXPECTED_ROLE }}
           OPERATOR: ${{ github.actor }}
-          CONFIRMATION: ${{ inputs.confirmation }}
+          APPLY_CONFIRMATION_INPUT: ${{ inputs.confirmation }}
         run: |
+          CONFIRMATION="$(python - <<'PY'
+          import json, math, os
+          from pathlib import Path
+
+          result = json.loads((Path(os.environ["RUNNER_TEMP"]) / "stock-add-dry-run.json").read_text())
+          expected = (
+              f"APPLY STOCK ADD {result.get('market')} {result.get('stockCode')} "
+              f"{result.get('planSha256')}"
+          )
+          if result.get("requiredConfirmation") != expected:
+              raise SystemExit("Dry-run confirmation does not match the sealed plan identity.")
+
+          provided = os.environ.get("APPLY_CONFIRMATION_INPUT", "").strip()
+          authorization = result.get("publicationAuthorization") or {}
+          score = authorization.get("dataCompletenessScore")
+          threshold = authorization.get("threshold")
+          standing_policy_applies = (
+              authorization.get("authorizationMode") == "OWNER_STANDING_POLICY"
+              and authorization.get("policyId") == "RESEARCH_COMPLETENESS_GT_0_70_V1"
+              and authorization.get("policyVersion") == 1
+              and authorization.get("comparison") == "GT"
+              and isinstance(score, (int, float))
+              and not isinstance(score, bool)
+              and math.isfinite(score)
+              and threshold == 0.70
+              and score > threshold
+          )
+          if provided and provided != expected:
+              raise SystemExit("The supplied confirmation does not match the sealed plan.")
+          if not provided and not standing_policy_applies:
+              raise SystemExit("An exact Owner confirmation is required for this publication plan.")
+          print(expected)
+          PY
+          )"
           topicpilot-stock-add-apply \
             --plan-file "$RUNNER_TEMP/stock-add-master-plan.json" \
             --environment production \

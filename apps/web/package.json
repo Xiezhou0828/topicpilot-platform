@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "lucide-react": "^1.28.0",
-    "next": "16.2.12",
+    "next": "16.4.5",
     "react": "19.2.8",
     "react-dom": "19.2.8"
   },
@@ -31,7 +31,7 @@
     "@vitejs/plugin-rsc": "0.5.26",
     "cross-env": "^10.1.0",
     "eslint": "9.39.4",
-    "eslint-config-next": "16.2.12",
+    "eslint-config-next": "16.4.5",
     "react-server-dom-webpack": "19.2.8",
     "tailwindcss": "4.2.1",
     "typescript": "5.9.3",
@@ -41,7 +41,7 @@
   },
   "overrides": {
     "postcss": "8.5.25",
-    "sharp": "0.35.3"
+    "sharp": "0.35.5"
   },
   "type": "module"
 }

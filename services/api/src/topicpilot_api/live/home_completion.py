@@ -19,10 +19,7 @@ from sqlalchemy import select
 
 from topicpilot_api.daily_market import read_daily_market_rows, reconcile_daily_market
 from topicpilot_api.home_v2_publication import materialize_home_v2
-from topicpilot_api.market_data.aggregate_contract import (
-    TPEX_DAILY_AGGREGATE_SOURCE,
-    TWSE_DAILY_AGGREGATE_SOURCE,
-)
+from topicpilot_api.market_data.aggregate_contract import TWSE_DAILY_AGGREGATE_SOURCE
 from topicpilot_api.market_data.index_contract import IndexDataStatus
 from topicpilot_api.orm import HomePublication, LiveCollectorCheckpoint, LiveCollectorRun
 from topicpilot_api.provider_preflight import load_g2_preflight_context
@@ -179,18 +176,14 @@ def validate_market_facts(indices: Sequence[Any], aggregates: Sequence[Any]) -> 
             )
         ):
             raise PostClosePreconditionError("HOME_COMPLETION_INDEX_NOT_READY")
-    if (
-        len(aggregates) != 2
-        or {f.market for f in aggregates} != {"TPE", "TWO"}
-        or any(
-            f.trading_date != TARGET
-            or f.data_status != "AVAILABLE"
-            or f.source
-            != (TWSE_DAILY_AGGREGATE_SOURCE if f.market == "TPE" else TPEX_DAILY_AGGREGATE_SOURCE)
-            or not _valid_response_hash(f.response_content_hash)
-            or not f.lineage
-            for f in aggregates
-        )
+    required_aggregates = [fact for fact in aggregates if fact.market == "TPE"]
+    if len(required_aggregates) != 1 or any(
+        fact.trading_date != TARGET
+        or fact.data_status != "AVAILABLE"
+        or fact.source != TWSE_DAILY_AGGREGATE_SOURCE
+        or not _valid_response_hash(fact.response_content_hash)
+        or not fact.lineage
+        for fact in required_aggregates
     ):
         raise PostClosePreconditionError("HOME_COMPLETION_AGGREGATE_NOT_READY")
 
@@ -264,10 +257,7 @@ class OwnerHomeCompletion(PostCloseUpdater):
         readback = self._formal_publication_readback(
             TARGET, run_id=self.source_run_id, execution_scope=NORMAL_CURRENT_DAY
         )
-        if (
-            readback["topicSnapshot"]["status"] != "PASS"
-            or readback["institutionalFlow"]["status"] != "PASS"
-        ):
+        if readback["topicSnapshot"]["status"] != "PASS":
             raise PostClosePreconditionError("HOME_COMPLETION_FORMAL_OUTPUTS_NOT_READY")
         if readback["homePublication"]["status"] == "PASS":
             raise PostClosePreconditionError("HOME_COMPLETION_ALREADY_PUBLISHED")
