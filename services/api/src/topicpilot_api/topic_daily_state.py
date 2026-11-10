@@ -11,7 +11,7 @@ from __future__ import annotations
 import hashlib
 import json
 from collections import defaultdict
-from collections.abc import Iterable, Sequence
+from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
 from datetime import UTC, date, datetime
 from decimal import Decimal
@@ -21,6 +21,7 @@ from uuid import UUID
 from sqlalchemy import bindparam, func, or_, select, text
 from sqlalchemy.orm import Session, aliased
 
+from topicpilot_api.daily_market import MAX_TOLERATED_MISSING_QUOTES
 from topicpilot_api.formal_eligibility import (
     Dimension,
     DimensionStatus,
@@ -55,6 +56,12 @@ from topicpilot_api.topic_engine.structural_role_authority import (
     StructuralRoleResolution,
     resolve_structural_role,
 )
+from topicpilot_api.topic_member_eligibility import (
+    DAILY_MARKET_RECONCILIATION_AUTHORITY,
+    DAILY_RETURN_EXCLUSION_POLICY_VERSION,
+    TOLERATED_MISSING_QUOTE_REASON,
+    is_authorized_missing_quote,
+)
 
 FORMAL_MAPPING_EARLIEST_DATE = date(2026, 8, 7)
 FORMAL_PUBLICATION_MODE = "FORMAL"
@@ -62,8 +69,64 @@ FORMAL_MEMBERSHIP_MODE = "PIT_FORMAL"
 RESEARCH_PUBLICATION_MODE = "RESEARCH_ONLY"
 SHADOW_PUBLICATION_MODE = "SHADOW"
 MAPPING_POLICY_VERSION = "topic-membership-pit.v1"
-CALCULATION_VERSION = "topic-daily-state.v1"
+CALCULATION_VERSION = "topic-daily-state.v2"
 NO_TRADE_STATUS_CODES = LEGITIMATE_UNAVAILABLE_CODES
+
+
+def tolerated_missing_quote_context(
+    reconciliation: Any | None, trading_date: date
+) -> dict[tuple[str, str], dict[str, Any]]:
+    """Return only per-symbol gaps explicitly accepted by a ready market reconciliation."""
+
+    if reconciliation is None:
+        return {}
+    if (
+        getattr(reconciliation, "trade_date", None) != trading_date
+        or getattr(reconciliation, "downstream_ready", False) is not True
+    ):
+        return {}
+    tolerated_count = int(getattr(reconciliation, "tolerated_missing_count", 0) or 0)
+    tolerance_limit = int(
+        getattr(reconciliation, "missing_tolerance_limit", MAX_TOLERATED_MISSING_QUOTES) or 0
+    )
+    if not 0 < tolerated_count <= tolerance_limit <= MAX_TOLERATED_MISSING_QUOTES:
+        return {}
+    if (
+        int(getattr(reconciliation, "unexplained_missing_count", 0) or 0) != tolerated_count
+        or int(getattr(reconciliation, "pipeline_failure_count", 0) or 0) != 0
+        or int(getattr(reconciliation, "wrong_date_count", 0) or 0) != 0
+        or int(getattr(reconciliation, "duplicate_key_count", 0) or 0) != 0
+    ):
+        return {}
+
+    accepted = [
+        item
+        for item in getattr(reconciliation, "unavailable_instruments", ())
+        if getattr(item, "publication_tolerance_applied", False) is True
+    ]
+    if len(accepted) != tolerated_count:
+        return {}
+
+    context: dict[tuple[str, str], dict[str, Any]] = {}
+    for item in accepted:
+        reason_code = str(getattr(item, "reason_code", "")).upper()
+        market = str(getattr(item, "market", "")).upper()
+        symbol = str(getattr(item, "symbol", "")).strip()
+        if reason_code not in {"MISSING_MARKET_DATA", "UNKNOWN"} or not market or not symbol:
+            return {}
+        key = (market, symbol)
+        if key in context:
+            return {}
+        context[key] = {
+            "tradingDate": trading_date.isoformat(),
+            "market": market,
+            "symbol": symbol,
+            "reasonCode": reason_code,
+            "source": str(getattr(item, "source", "") or ""),
+            "toleratedMissingCount": tolerated_count,
+            "missingToleranceLimit": tolerance_limit,
+        }
+    return context if len(context) == tolerated_count else {}
 
 
 class FormalAuthorityUnavailable(ValueError):
@@ -595,7 +658,11 @@ _STATUS_FACTS_SQL = text(
 
 
 def read_canonical_member_facts(
-    session: Session, trading_date: date, members: Sequence[MembershipMember]
+    session: Session,
+    trading_date: date,
+    members: Sequence[MembershipMember],
+    *,
+    tolerated_missing_quotes: Mapping[tuple[str, str], Mapping[str, Any]] | None = None,
 ) -> tuple[SelectedMemberFact, ...]:
     """Select exact-date accepted facts; absence is never converted to zero."""
 
@@ -615,6 +682,7 @@ def read_canonical_member_facts(
         status_by_instrument.setdefault(row["instrument_id"], row)
 
     facts: list[SelectedMemberFact] = []
+    tolerated_missing_quotes = tolerated_missing_quotes or {}
     for member in sorted(members, key=_member_sort_key):
         date_rows = price_by_instrument.get(member.instrument_id, {})
         price = date_rows.get(1)
@@ -761,6 +829,8 @@ def read_canonical_member_facts(
         raw = {
             "instrumentId": str(member.instrument_id),
             "tradingDate": trading_date.isoformat(),
+            "marketCode": member.market_code,
+            "symbol": member.instrument_code,
             "factState": fact_state,
             "priceObservationId": str(price["id"]) if price is not None else None,
             "volumeObservationId": str(volume["id"]) if volume is not None else None,
@@ -791,6 +861,22 @@ def read_canonical_member_facts(
             "roleLineageHash": member.role_lineage_hash,
             "dimensionEligibility": dimension_payload(dimensions),
         }
+        quote_gap = tolerated_missing_quotes.get(
+            (member.market_code.upper(), member.instrument_code)
+        )
+        if fact_state == "UNKNOWN" and quote_gap is not None:
+            raw["calculationExclusion"] = {
+                "status": "EXCLUDED_FROM_DAILY_TOPIC_CALCULATION",
+                "reasonCode": TOLERATED_MISSING_QUOTE_REASON,
+                "authority": DAILY_MARKET_RECONCILIATION_AUTHORITY,
+                "tradingDate": quote_gap["tradingDate"],
+                "market": quote_gap["market"],
+                "symbol": quote_gap["symbol"],
+                "reconciliationReasonCode": quote_gap["reasonCode"],
+                "source": quote_gap["source"],
+                "toleratedMissingCount": quote_gap["toleratedMissingCount"],
+                "missingToleranceLimit": quote_gap["missingToleranceLimit"],
+            }
         fact_hash = _hash_payload(raw)
         facts.append(
             SelectedMemberFact(
@@ -855,7 +941,10 @@ def enumerate_formal_dates(
 
 
 def plan_formal_materialization(
-    session: Session, dates: Iterable[date]
+    session: Session,
+    dates: Iterable[date],
+    *,
+    tolerated_missing_quotes: Mapping[tuple[str, str], Mapping[str, Any]] | None = None,
 ) -> tuple[DateMaterializationPlan, ...]:
     """Dry-run the bounded authority gates without writing database rows."""
 
@@ -877,7 +966,12 @@ def plan_formal_materialization(
         for topic in topics:
             try:
                 membership = resolve_formal_membership(session, topic.id, trading_date)
-                facts = read_canonical_member_facts(session, trading_date, membership.members)
+                facts = read_canonical_member_facts(
+                    session,
+                    trading_date,
+                    membership.members,
+                    tolerated_missing_quotes=tolerated_missing_quotes,
+                )
             except FormalAuthorityUnavailable as exc:
                 topic_plans.append(
                     TopicMaterializationPlan(
@@ -892,7 +986,10 @@ def plan_formal_materialization(
                     )
                 )
                 continue
-            if not any(fact.fact_state in {"OBSERVED", "NO_TRADE"} for fact in facts):
+            if not any(
+                fact.fact_state in {"OBSERVED", "NO_TRADE"} or is_authorized_missing_quote(fact)
+                for fact in facts
+            ):
                 topic_plans.append(
                     TopicMaterializationPlan(
                         trading_date,
@@ -949,6 +1046,17 @@ def _snapshot_values(
     observed = [fact for fact in facts if fact.fact_state == "OBSERVED"]
     no_trade = [fact for fact in facts if fact.fact_state == "NO_TRADE"]
     unknown = [fact for fact in facts if fact.fact_state == "UNKNOWN"]
+    excluded_quote_gaps = [fact for fact in unknown if is_authorized_missing_quote(fact)]
+    daily_return_ready_count = sum(
+        (
+            (fact.raw_fact_payload.get("dimensionEligibility") or {}).get(
+                Dimension.DAILY_RETURN.value
+            )
+            or {}
+        ).get("status")
+        == DimensionStatus.READY
+        for fact in observed
+    )
     changes = [fact.change_pct for fact in observed if fact.change_pct is not None]
     average_change = sum(changes, Decimal("0")) / Decimal(len(changes)) if changes else None
     direction = (
@@ -996,7 +1104,10 @@ def _snapshot_values(
         "data_status": "COMPLETE" if not unknown else "PARTIAL",
         "score_status": "DEFERRED",
         "calculation_version": CALCULATION_VERSION,
-        "metadata_payload": {"authority": "FORMAL_PIT_TOPIC_DAILY_STATE"},
+        "metadata_payload": {
+            "authority": "FORMAL_PIT_TOPIC_DAILY_STATE",
+            "dailyReturnExclusionPolicyVersion": DAILY_RETURN_EXCLUSION_POLICY_VERSION,
+        },
         "publication_mode": FORMAL_PUBLICATION_MODE,
         "membership_mode": FORMAL_MEMBERSHIP_MODE,
         "relation_version": membership.relation_version,
@@ -1033,6 +1144,14 @@ def _snapshot_values(
             "lifecycle": "SHADOW_ONLY_UNPUBLISHED",
             "unknownSemantics": "ABSENCE_IS_UNKNOWN",
             "noTradeSemantics": "EXPLICIT_ACCEPTED_TRADING_STATUS_ONLY",
+            "dailyReturnCalculation": {
+                "pointInTimeMemberCount": len(facts),
+                "eligibleMemberCount": daily_return_ready_count,
+                "excludedNoTradeMemberCount": len(no_trade),
+                "excludedMissingQuoteMemberCount": len(excluded_quote_gaps),
+                "unknownMemberCount": len(unknown),
+                "missingQuotePolicyVersion": DAILY_RETURN_EXCLUSION_POLICY_VERSION,
+            },
             "identityAuthority": "IMMUTABLE_INSTRUMENT_ID",
             "excludedMembers": dict(membership.excluded_reasons),
             "strongWeak": "DEFERRED_NO_APPROVED_CLASSIFIER",
@@ -1152,6 +1271,7 @@ def materialize_bounded_formal_dates(
     dates: Iterable[date] | None = None,
     from_date: date = FORMAL_MAPPING_EARLIEST_DATE,
     to_date: date | None = None,
+    tolerated_missing_quotes: Mapping[tuple[str, str], Mapping[str, Any]] | None = None,
 ) -> dict[str, Any]:
     """Enumerate, dry-run, then write only bounded formal dates."""
 
@@ -1160,7 +1280,11 @@ def materialize_bounded_formal_dates(
         if dates is not None
         else enumerate_formal_dates(session, from_date=from_date, to_date=to_date)
     )
-    plans = plan_formal_materialization(session, materialization_dates)
+    plans = plan_formal_materialization(
+        session,
+        materialization_dates,
+        tolerated_missing_quotes=tolerated_missing_quotes,
+    )
     before = int(
         session.scalar(
             select(func.count())
@@ -1229,4 +1353,5 @@ __all__ = [
     "plan_formal_materialization",
     "read_canonical_member_facts",
     "resolve_formal_membership",
+    "tolerated_missing_quote_context",
 ]

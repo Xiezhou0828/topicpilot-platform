@@ -151,6 +151,19 @@ formal readbacks. `PARTIAL`, `FAILED`, and `MARKET_CLOSED` must not trigger
 Lifecycle processing. Re-running the same date is safe and reuses canonical
 idempotency keys.
 
+When a downstream-ready reconciliation explicitly applies this limited-gap
+tolerance, the formal Topic snapshot keeps the full point-in-time membership
+and preserves each missing quote as `UNKNOWN` with null price/change values.
+That member is excluded from the day's Strength and Lifecycle calculation
+sample; it is not removed from the Topic or treated as a zero return. The
+snapshot and derived-result audit retain the full membership count, effective
+calculation count, excluded count, and reconciliation authority. A Topic with
+remaining valid observations is calculated from those observations. If none
+remain, only that Topic's derived result is recorded as unavailable for the
+authorized exclusion; the rest of the formal publication chain may continue.
+Provider/date/structure failures and gaps outside the reconciliation tolerance
+remain blocking.
+
 Institutional-flow facts are optional late enrichment. Their absence does not
 hold up an otherwise ready price, Topic, or Home publication; the public
 overview leaves the values null and labels them `尚未公布`. Home completion
