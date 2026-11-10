@@ -33,9 +33,6 @@ from topicpilot_api.orm import (
     TopicSnapshot,
     TopicSnapshotMemberFact,
 )
-from topicpilot_api.previous_close_authority import (
-    AUTHORIZED_CORPORATE_ACTION_COMPARATOR_UNAVAILABLE,
-)
 from topicpilot_api.release_provenance import runtime_git_sha
 from topicpilot_api.topic_engine.owner_seeded_v0_policy import (
     CORE,
@@ -52,9 +49,15 @@ from topicpilot_api.topic_engine.score_projection import (
     ScoreProjectionError,
     resolve_score_projection,
 )
+from topicpilot_api.topic_member_eligibility import (
+    DAILY_RETURN_EXCLUSION_POLICY_VERSION,
+    excluded_member_counts,
+    is_authorized_comparator_unavailable,
+    validate_formal_calculation_members,
+)
 
 FORMAL_STRENGTH_CONTRACT_VERSION = "topic-strength-lifecycle.formal.v1"
-FORMAL_STRENGTH_CALCULATION_VERSION = "topic-strength-lifecycle.owner-seeded-v0.formal.v1"
+FORMAL_STRENGTH_CALCULATION_VERSION = "topic-strength-lifecycle.owner-seeded-v0.formal.v2"
 FORMAL_PUBLICATION_MODE = "FORMAL"
 FORMAL_PUBLICATION_STATUS_PUBLISHED = "PUBLISHED"
 FORMAL_PUBLICATION_STATUS_UNAVAILABLE = "UNAVAILABLE"
@@ -96,6 +99,7 @@ class FormalStrengthRun:
     expected_topic_rows: int
     published_rows: int
     unavailable_rows: int
+    accounted_unavailable_rows: int
     persisted_rows: int
     reason_breakdown: dict[str, int]
     topic_results: list[dict[str, Any]]
@@ -107,6 +111,7 @@ class FormalStrengthRun:
             "expectedTopicRows": self.expected_topic_rows,
             "publishedRows": self.published_rows,
             "unavailableRows": self.unavailable_rows,
+            "accountedUnavailableRows": self.accounted_unavailable_rows,
             "persistedRows": self.persisted_rows,
             "reasonBreakdown": self.reason_breakdown,
             "topicResults": self.topic_results,
@@ -352,23 +357,21 @@ def _gate(
     )
     if any(value is None for value in required):
         return FormalStrengthGate(False, "MISSING_FORMAL_SNAPSHOT_LINEAGE", input_hash)
-    if snapshot.data_status != "COMPLETE":
-        return FormalStrengthGate(False, f"SNAPSHOT_DATA_STATUS_{snapshot.data_status}", input_hash)
-    if snapshot.stock_count <= 0 or len(facts) != snapshot.stock_count:
-        return FormalStrengthGate(False, "FORMAL_MEMBER_COUNT_MISMATCH", input_hash)
-    if any(fact.fact_state != "OBSERVED" for fact in facts):
-        return FormalStrengthGate(False, "FORMAL_MEMBER_OBSERVATION_UNAVAILABLE", input_hash)
-    for fact in facts:
-        if fact.change_pct is not None:
-            continue
-        eligibility = (fact.raw_fact_payload or {}).get("dimensionEligibility") or {}
-        daily_return = eligibility.get(Dimension.DAILY_RETURN.value) or {}
-        if not (
-            daily_return.get("status") == "ACCOUNTED_UNAVAILABLE"
-            and daily_return.get("reasonCode")
-            == AUTHORIZED_CORPORATE_ACTION_COMPARATOR_UNAVAILABLE
+    input_reason = validate_formal_calculation_members(snapshot, facts)
+    if input_reason is not None:
+        if (
+            input_reason == "FORMAL_MEMBER_OBSERVATION_UNAVAILABLE"
+            and snapshot.data_status == "PARTIAL"
         ):
-            return FormalStrengthGate(False, "FORMAL_MEMBER_OBSERVATION_UNAVAILABLE", input_hash)
+            input_reason = "SNAPSHOT_DATA_STATUS_PARTIAL"
+        return FormalStrengthGate(False, input_reason, input_hash)
+    if any(
+        fact.fact_state == "OBSERVED"
+        and fact.change_pct is None
+        and not is_authorized_comparator_unavailable(fact)
+        for fact in facts
+    ):
+        return FormalStrengthGate(False, "FORMAL_MEMBER_OBSERVATION_UNAVAILABLE", input_hash)
     if any(not fact.structural_role or not fact.role_source for fact in facts):
         return FormalStrengthGate(False, "STRUCTURAL_ROLE_AUTHORITY_INCOMPLETE", input_hash)
     return FormalStrengthGate(True, None, input_hash)
@@ -528,7 +531,7 @@ class FormalStrengthPublisher:
         reasons: Counter[str] = Counter()
         payloads: list[dict[str, Any]] = []
         topic_results: list[dict[str, Any]] = []
-        published = unavailable = 0
+        published = unavailable = accounted_unavailable = 0
         for topic in leaves:
             candidates = snapshots.get(topic.id, [])
             snapshot = candidates[0] if len(candidates) == 1 else None
@@ -543,23 +546,39 @@ class FormalStrengthPublisher:
                 unavailable += 1
                 values = self._unavailable_values(topic, evaluation_date, snapshot, gate, reason)
             else:
-                try:
-                    values = self._evaluate_topic(
-                        topic,
-                        snapshot,
-                        facts,
-                        evaluation_date,
-                        context,
-                        _topic_history(self.session, topic.id, evaluation_date),
-                    )
-                    published += 1
-                except (ScoreProjectionError, ValueError, KeyError) as exc:
-                    reason = f"FORMAL_STRENGTH_UNAVAILABLE:{type(exc).__name__}:{str(exc)[:160]}"
+                if not _return_eligible_facts(facts):
+                    reason = "NO_CALCULATION_MEMBERS_AFTER_AUTHORIZED_EXCLUSIONS"
                     reasons[reason] += 1
                     unavailable += 1
                     values = self._unavailable_values(
-                        topic, evaluation_date, snapshot, gate, reason
+                        topic,
+                        evaluation_date,
+                        snapshot,
+                        gate,
+                        reason,
+                        facts=facts,
+                        accounted_unavailable=True,
                     )
+                    accounted_unavailable += 1
+                else:
+                    try:
+                        values = self._evaluate_topic(
+                            topic,
+                            snapshot,
+                            facts,
+                            evaluation_date,
+                            context,
+                            _topic_history(self.session, topic.id, evaluation_date),
+                        )
+                        published += 1
+                    except (ScoreProjectionError, ValueError, KeyError) as exc:
+                        detail = str(exc)[:160]
+                        reason = f"FORMAL_STRENGTH_UNAVAILABLE:{type(exc).__name__}:{detail}"
+                        reasons[reason] += 1
+                        unavailable += 1
+                        values = self._unavailable_values(
+                            topic, evaluation_date, snapshot, gate, reason, facts=facts
+                        )
             payloads.append(values)
             topic_results.append(self._payload(values))
         if persist:
@@ -568,10 +587,11 @@ class FormalStrengthPublisher:
             self.session.commit()
         return FormalStrengthRun(
             evaluation_date,
-            "SUCCESS" if unavailable == 0 else "FAIL_CLOSED",
+            "SUCCESS" if unavailable == accounted_unavailable else "FAIL_CLOSED",
             len(leaves),
             published,
             unavailable,
+            accounted_unavailable,
             len(payloads) if persist else 0,
             dict(sorted(reasons.items())),
             topic_results,
@@ -662,6 +682,8 @@ class FormalStrengthPublisher:
                 None if relative.status == "EVALUATED" else "BENCHMARK_FACTS_MISSING_OR_STALE"
             ),
             "smallFormalTopic": len(members) < 3,
+            "dailyReturnExclusionPolicyVersion": DAILY_RETURN_EXCLUSION_POLICY_VERSION,
+            "dailyCalculationMemberCount": len(eligible_facts),
             "formalDailyGradeAuthority": "ABSOLUTE",
             "marketContextDoesNotModifyStrength": True,
         }
@@ -689,6 +711,8 @@ class FormalStrengthPublisher:
                 "eligibleMemberCount": len(eligible_facts),
                 "accountedUnavailableMemberCount": len(facts) - len(eligible_facts),
                 "observedMemberCount": len(eligible_facts),
+                **excluded_member_counts(facts),
+                "dailyCalculationDenominator": len(eligible_facts),
                 "coveragePct": (
                     len(eligible_facts) * 100.0 / len(facts) if facts else 0.0
                 ),
@@ -733,7 +757,11 @@ class FormalStrengthPublisher:
         snapshot: TopicSnapshot | None,
         gate: FormalStrengthGate,
         reason: str,
+        *,
+        facts: Iterable[TopicSnapshotMemberFact] = (),
+        accounted_unavailable: bool = False,
     ) -> dict[str, Any]:
+        fact_rows = tuple(facts)
         return {
             "evaluation_date": evaluation_date,
             "topic_id": topic.id,
@@ -751,8 +779,14 @@ class FormalStrengthPublisher:
             "eligibility_audit": {
                 "formalGate": gate.reason,
                 "inputSnapshotHash": gate.input_snapshot_hash,
+                **excluded_member_counts(fact_rows),
+                "dailyCalculationDenominator": 0,
             },
-            "quality_flags": {"unavailableReason": reason},
+            "quality_flags": {
+                "unavailableReason": reason,
+                "accountedUnavailableInput": accounted_unavailable,
+                "dailyReturnExclusionPolicyVersion": DAILY_RETURN_EXCLUSION_POLICY_VERSION,
+            },
             "publication_status": FORMAL_PUBLICATION_STATUS_UNAVAILABLE,
             "publication_mode": FORMAL_PUBLICATION_MODE,
             "contract_version": FORMAL_STRENGTH_CONTRACT_VERSION,

@@ -27,6 +27,7 @@ from topicpilot_api.orm import (
 from topicpilot_api.topic_lifecycle_contract import (
     BACKEND_LIFECYCLE_STAGES,
 )
+from topicpilot_api.topic_member_eligibility import is_authorized_comparator_unavailable
 from topicpilot_api.topic_snapshot_engine import MemberPriceEvidence, read_price_evidence
 
 BASE, SPROUTING, FERMENTING, MAIN_RISE, MATURE, DECLINING = BACKEND_LIFECYCLE_STAGES
@@ -546,6 +547,8 @@ def _formal_observations(
         # Only an explicit caller restriction may narrow that set; the current
         # live-tracking table is not a substitute for the snapshot's PIT set.
         if eligible_ids is not None and fact.instrument_id not in eligible_ids:
+            continue
+        if fact.change_pct is None and is_authorized_comparator_unavailable(fact):
             continue
         if fact.price_observation_id is None or fact.change_pct is None:
             return None, "OBSERVED_MEMBER_FACT_MISSING_PRICE_EVIDENCE"

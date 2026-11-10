@@ -46,6 +46,11 @@ from topicpilot_api.topic_lifecycle_v1_3_formal import (
     LIFECYCLE_CONTRACT_VERSION,
     evaluate_formal_lifecycle,
 )
+from topicpilot_api.topic_member_eligibility import (
+    DAILY_RETURN_EXCLUSION_POLICY_VERSION,
+    excluded_member_counts,
+    validate_formal_calculation_members,
+)
 from topicpilot_api.topic_snapshot_engine import read_price_evidence
 
 A9_FORMAL_TOPIC_SNAPSHOT_START = date(2026, 8, 24)
@@ -70,6 +75,7 @@ class FormalLifecycleRun:
     expected_leaf_date_rows: int
     formal_rows: int
     unavailable_rows: int
+    accounted_unavailable_rows: int
     persisted_rows: int
     reason_breakdown: dict[str, int]
     backward_transitions: int
@@ -82,6 +88,7 @@ class FormalLifecycleRun:
             "expectedLeafDateRows": self.expected_leaf_date_rows,
             "formalLifecycleRows": self.formal_rows,
             "unavailableRows": self.unavailable_rows,
+            "accountedUnavailableRows": self.accounted_unavailable_rows,
             "persistedRows": self.persisted_rows,
             "reasonBreakdown": self.reason_breakdown,
             "backwardTransitions": self.backward_transitions,
@@ -186,13 +193,6 @@ def _formal_gate(
     if lineage is None:
         return FormalLifecycleGate(False, lineage_reason, {}, None)
 
-    if snapshot.data_status != "COMPLETE":
-        return FormalLifecycleGate(
-            False,
-            f"INSUFFICIENT_FORMAL_INPUT:SNAPSHOT_DATA_STATUS_{snapshot.data_status}",
-            lineage,
-            input_snapshot_hash(snapshot, facts),
-        )
     if snapshot.stock_count <= 0:
         return FormalLifecycleGate(
             False,
@@ -200,24 +200,16 @@ def _formal_gate(
             lineage,
             input_snapshot_hash(snapshot, facts),
         )
-    if snapshot.observed_stock_count != snapshot.stock_count:
+    input_reason = validate_formal_calculation_members(snapshot, facts)
+    if input_reason is not None:
+        if (
+            input_reason == "FORMAL_MEMBER_OBSERVATION_UNAVAILABLE"
+            and snapshot.data_status == "PARTIAL"
+        ):
+            input_reason = "SNAPSHOT_DATA_STATUS_PARTIAL"
         return FormalLifecycleGate(
             False,
-            "INSUFFICIENT_FORMAL_INPUT:OBSERVED_COUNT_MISMATCH",
-            lineage,
-            input_snapshot_hash(snapshot, facts),
-        )
-    if len(facts) != snapshot.stock_count:
-        return FormalLifecycleGate(
-            False,
-            "INSUFFICIENT_FORMAL_INPUT:MEMBER_FACT_COUNT_MISMATCH",
-            lineage,
-            input_snapshot_hash(snapshot, facts),
-        )
-    if any(fact.fact_state != "OBSERVED" for fact in facts):
-        return FormalLifecycleGate(
-            False,
-            "INSUFFICIENT_FORMAL_INPUT:NON_OBSERVED_MEMBER_FACT",
+            f"INSUFFICIENT_FORMAL_INPUT:{input_reason}",
             lineage,
             input_snapshot_hash(snapshot, facts),
         )
@@ -634,6 +626,7 @@ class FormalLifecyclePublisher:
         values_to_persist: list[dict[str, Any]] = []
         formal_rows = 0
         unavailable_rows = 0
+        accounted_unavailable_rows = 0
         backward_transitions = 0
 
         for topic in leaves:
@@ -658,6 +651,31 @@ class FormalLifecyclePublisher:
                 )
                 if observation_reason is not None or observations is None:
                     reason = observation_reason or "FORMAL_OBSERVATIONS_UNAVAILABLE"
+                elif not observations:
+                    reason = "NO_CALCULATION_MEMBERS_AFTER_AUTHORIZED_EXCLUSIONS"
+                    prior, _ = _prior_or_bootstrap(previous, topic.id, evaluation_date)
+                    values = _unavailable_values(
+                        topic=topic,
+                        evaluation_date=evaluation_date,
+                        snapshot=snapshot,
+                        facts=facts,
+                        gate=gate,
+                        reason=reason,
+                        prior_state=prior,
+                    )
+                    values["sample_confidence"] = {
+                        "status": "UNAVAILABLE",
+                        "accountedUnavailableInput": True,
+                        "calculationEligibleMemberCount": 0,
+                        "dailyReturnExclusionPolicyVersion": DAILY_RETURN_EXCLUSION_POLICY_VERSION,
+                        **excluded_member_counts(facts),
+                    }
+                    values_to_persist.append(values)
+                    topic_results.append(_topic_result_payload(values))
+                    unavailable_rows += 1
+                    accounted_unavailable_rows += 1
+                    reason_breakdown[reason] += 1
+                    continue
                 else:
                     prior, initialization_mode = _prior_or_bootstrap(
                         previous, topic.id, evaluation_date
@@ -665,7 +683,7 @@ class FormalLifecyclePublisher:
                     lifecycle_input = LifecycleInput(
                         topic_id=str(topic.id),
                         trading_date=evaluation_date,
-                        expected_member_count=int(snapshot.stock_count),
+                        expected_member_count=len(observations),
                         observations=observations,
                         previous_stage=prior["final_stage"],
                         previous_stage_entered_at=prior["stage_entered_at"],
@@ -718,6 +736,12 @@ class FormalLifecyclePublisher:
                         input_hash=input_hash,
                         initialization_mode=initialization_mode,
                     )
+                    values["sample_confidence"] = {
+                        **dict(values.get("sample_confidence") or {}),
+                        "dailyReturnExclusionPolicyVersion": DAILY_RETURN_EXCLUSION_POLICY_VERSION,
+                        "calculationEligibleMemberCount": len(observations),
+                        **excluded_member_counts(facts),
+                    }
                     values_to_persist.append(values)
                     payload = _topic_result_payload(values)
                     topic_results.append(payload)
@@ -760,10 +784,11 @@ class FormalLifecyclePublisher:
 
         return FormalLifecycleRun(
             evaluation_date,
-            "SUCCESS" if unavailable_rows == 0 else "FAIL_CLOSED",
+            "SUCCESS" if unavailable_rows == accounted_unavailable_rows else "FAIL_CLOSED",
             len(leaves),
             formal_rows,
             unavailable_rows,
+            accounted_unavailable_rows,
             len(values_to_persist) if persist else 0,
             dict(sorted(reason_breakdown.items())),
             backward_transitions,

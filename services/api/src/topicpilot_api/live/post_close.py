@@ -64,7 +64,10 @@ from topicpilot_api.orm import (
     TopicSnapshot,
 )
 from topicpilot_api.provider_preflight import load_g2_preflight_context
-from topicpilot_api.topic_daily_state import materialize_bounded_formal_dates
+from topicpilot_api.topic_daily_state import (
+    materialize_bounded_formal_dates,
+    tolerated_missing_quote_context,
+)
 from topicpilot_api.topic_snapshot_engine import TopicSnapshotEngine
 from topicpilot_api.trading_status_authority import (
     StatusResolutionMetrics,
@@ -3168,6 +3171,7 @@ class PostCloseUpdater:
                     snapshot_result = self._run_snapshot(
                         local_date,
                         eligible_instrument_ids=eligible_instrument_ids,
+                        daily_market_reconciliation=reconciliation,
                         source_run_id=str(run_id),
                         market_index_facts=market_index_facts,
                         market_aggregate_facts=market_aggregate_facts,
@@ -3919,7 +3923,7 @@ class PostCloseUpdater:
                 self.session.execute(
                     text(
                         """
-                    SELECT r.publication_status, r.evaluation_status
+                    SELECT r.publication_status, r.evaluation_status, r.quality_flags
                     FROM topicpilot.topic_score_formal_results r
                     WHERE r.evaluation_date = :snapshot_date
                       AND r.publication_mode = 'FORMAL'
@@ -3972,10 +3976,21 @@ class PostCloseUpdater:
         except Exception:
             return {"status": "NOT_CHECKED", "authority": "FORMAL_STRENGTH"}
         published = sum(row["publication_status"] == "PUBLISHED" for row in rows)
+        accounted_unavailable = sum(
+            row["publication_status"] == "UNAVAILABLE"
+            and row["evaluation_status"] == "UNAVAILABLE"
+            and isinstance(row["quality_flags"], Mapping)
+            and row["quality_flags"].get("accountedUnavailableInput") is True
+            and row["quality_flags"].get("unavailableReason")
+            == "NO_CALCULATION_MEMBERS_AFTER_AUTHORIZED_EXCLUSIONS"
+            for row in rows
+        )
         return {
             "status": (
                 "PASS"
-                if rows and expected_scope == len(rows) and published == len(rows)
+                if rows
+                and expected_scope == len(rows)
+                and published + accounted_unavailable == len(rows)
                 else "PARTIAL"
                 if published
                 else "FAIL"
@@ -3983,6 +3998,7 @@ class PostCloseUpdater:
             "rowCount": len(rows),
             "expectedScopeCount": expected_scope,
             "publishedRowCount": published,
+            "accountedUnavailableRowCount": accounted_unavailable,
             "authority": "topicpilot.topic_score_formal_results",
         }
 
@@ -3992,7 +4008,7 @@ class PostCloseUpdater:
                 self.session.execute(
                     text(
                         """
-                    SELECT r.publication_status
+                    SELECT r.publication_status, r.unavailable_reason, r.transition_reason
                     FROM topicpilot.topic_lifecycle_formal_results r
                     WHERE r.evaluation_date = :snapshot_date
                       AND r.evaluation_mode = 'FORMAL'
@@ -4044,10 +4060,18 @@ class PostCloseUpdater:
         except Exception:
             return {"status": "NOT_CHECKED", "authority": "FORMAL_LIFECYCLE"}
         published = sum(row["publication_status"] == "PUBLISHED" for row in rows)
+        accounted_unavailable = sum(
+            row["publication_status"] == "UNAVAILABLE"
+            and row["unavailable_reason"] == "NO_CALCULATION_MEMBERS_AFTER_AUTHORIZED_EXCLUSIONS"
+            and row["transition_reason"] == "NO_CALCULATION_MEMBERS_AFTER_AUTHORIZED_EXCLUSIONS"
+            for row in rows
+        )
         return {
             "status": (
                 "PASS"
-                if rows and expected_scope == len(rows) and published == len(rows)
+                if rows
+                and expected_scope == len(rows)
+                and published + accounted_unavailable == len(rows)
                 else "PARTIAL"
                 if published
                 else "FAIL"
@@ -4055,6 +4079,7 @@ class PostCloseUpdater:
             "rowCount": len(rows),
             "expectedScopeCount": expected_scope,
             "publishedRowCount": published,
+            "accountedUnavailableRowCount": accounted_unavailable,
             "authority": "topicpilot.topic_lifecycle_formal_results",
         }
 
@@ -4064,6 +4089,7 @@ class PostCloseUpdater:
         *,
         market_closed: bool = False,
         eligible_instrument_ids: Collection[Any] | None = None,
+        daily_market_reconciliation: DailyMarketReconciliation | None = None,
         source_run_id: str | None = None,
         market_index_facts: Collection[Any] = (),
         market_aggregate_facts: Collection[Any] = (),
@@ -4081,6 +4107,10 @@ class PostCloseUpdater:
                     formal_state = materialize_bounded_formal_dates(
                         self.session,
                         dates=(snapshot_date,),
+                        tolerated_missing_quotes=tolerated_missing_quote_context(
+                            daily_market_reconciliation,
+                            snapshot_date,
+                        ),
                     )
                     result["formalTopicDailyState"] = {
                         "status": "SUCCESS",

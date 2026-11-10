@@ -26,7 +26,7 @@ from topicpilot_api.topic_lifecycle_v1 import (
 )
 
 LIFECYCLE_CONTRACT_VERSION = "topic-lifecycle-v1.3-formal.v2"
-LIFECYCLE_CALCULATION_VERSION = "topic-lifecycle-v1.3-formal-evaluator.v1"
+LIFECYCLE_CALCULATION_VERSION = "topic-lifecycle-v1.3-formal-evaluator.v2"
 FORMAL_EVALUATION_MODE = "FORMAL"
 FORMAL_INITIALIZATION_CONTRACT_VERSION = "FORMAL_BASE_BOOTSTRAP_V1"
 
