@@ -783,19 +783,43 @@ class PostCloseUpdater:
         self._active_failure_stage = stage
 
     def _acquire_session_claim_lock(self, run_date: date) -> None:
-        """Serialize first-claim races without adding a second lock table."""
+        """Serialize session claims with bounded PostgreSQL wait/query times."""
 
         if self.session.get_bind().dialect.name != "postgresql":
             return
         self.session.execute(
-            text("SELECT pg_advisory_xact_lock(hashtext(:lock_key)::bigint)"),
+            text(
+                """
+                SELECT set_config('lock_timeout', :lock_timeout, true),
+                       set_config('statement_timeout', :statement_timeout, true)
+                """
+            ),
             {
-                "lock_key": (
-                    f"topicpilot:post-close-session:{self.config.reference_data_version}:"
-                    f"{self.config.calendar_code}:{run_date.isoformat()}"
-                )
+                "lock_timeout": (
+                    f"{max(1, int(self.config.session_claim_lock_timeout_seconds * 1000))}ms"
+                ),
+                "statement_timeout": (
+                    f"{max(1, int(self.config.session_claim_statement_timeout_seconds * 1000))}ms"
+                ),
             },
         )
+        try:
+            self.session.execute(
+                text("SELECT pg_advisory_xact_lock(hashtext(:lock_key)::bigint)"),
+                {
+                    "lock_key": (
+                        f"topicpilot:post-close-session:{self.config.reference_data_version}:"
+                        f"{self.config.calendar_code}:{run_date.isoformat()}"
+                    )
+                },
+            )
+        except DBAPIError as exc:
+            orig = getattr(exc, "orig", None)
+            sqlstate = getattr(orig, "sqlstate", None) or getattr(orig, "pgcode", None)
+            if sqlstate == "55P03":
+                self.session.rollback()
+                raise PostClosePreconditionError("POST_CLOSE_RUN_IN_PROGRESS") from exc
+            raise
 
     def _runs_for_date(self, run_date: date) -> list[LiveCollectorRun]:
         """Load POST_CLOSE runs for the requested market date.
@@ -1992,6 +2016,11 @@ class PostCloseUpdater:
                 ):
                     provider_error_code = str(provider_exception.code)
                     provider_error_message = str(provider_exception)
+                    reset_transient_failure = getattr(
+                        registration.adapter, "reset_transient_failure", None
+                    )
+                    if callable(reset_transient_failure):
+                        reset_transient_failure()
                     readiness = self._provider_readiness_decision(
                         provider_exception,
                         registration.adapter,
@@ -2212,7 +2241,7 @@ class PostCloseUpdater:
         both_markets_eligible = (
             is_targeted or historical_recovery or TPEX_MARKET in eligible_market_codes
         )
-        stage_wait_reasons = list(waiting_reason_codes)
+        stage_wait_reasons = self._current_market_wait_reasons(waiting_reason_codes)
         if not both_markets_eligible and not is_targeted:
             stage_wait_reasons.append("WAITING_TPEX_WINDOW")
         elif not tpex_ready and not is_targeted:
@@ -2407,6 +2436,20 @@ class PostCloseUpdater:
             run_id, market_batches, market_code, trading_date=trading_date
         )
         return readback["readinessState"] in {"READY", "READY_WITH_LIMITED_GAPS"}
+
+    @staticmethod
+    def _current_market_wait_reasons(waiting_reason_codes: Collection[str]) -> list[str]:
+        """Drop market readiness waits that are recomputed from current state."""
+
+        stale_market_wait_reasons = {
+            "WAITING_TWSE_WINDOW",
+            "WAITING_TPEX_WINDOW",
+            "TWSE_DATA_NOT_READY",
+            "TPEX_DATA_NOT_READY",
+        }
+        return [
+            reason for reason in waiting_reason_codes if reason not in stale_market_wait_reasons
+        ]
 
     def _market_stage_readback(
         self,

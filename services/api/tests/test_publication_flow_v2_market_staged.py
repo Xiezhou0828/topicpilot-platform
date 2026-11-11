@@ -465,3 +465,15 @@ def test_market_batches_do_not_tolerate_missing_checkpoints_or_wrong_dates():
         assert not updater._market_batches_ready(
             "simulated-run", market_batches, TPEX_MARKET, trading_date=now.date()
         )
+
+
+def test_recovery_recomputes_market_wait_reasons_from_current_checkpoints():
+    assert PostCloseUpdater._current_market_wait_reasons(
+        [
+            "WAITING_TWSE_WINDOW",
+            "WAITING_TPEX_WINDOW",
+            "TWSE_DATA_NOT_READY",
+            "TPEX_DATA_NOT_READY",
+            "REFERENCE_PREFLIGHT_FAILED",
+        ]
+    ) == ["REFERENCE_PREFLIGHT_FAILED"]

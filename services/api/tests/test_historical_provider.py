@@ -6,6 +6,7 @@ from decimal import Decimal
 
 import pytest
 
+from topicpilot_api.market_data.exchange import TpexOfficialDailyProvider
 from topicpilot_api.market_data.history import (
     HistoricalProviderError,
     YahooChartHistoricalProvider,
@@ -118,3 +119,55 @@ def test_provider_failure_is_machine_readable_and_no_network_fallback_is_used():
     assert results[0].status == "PROVIDER_ERROR"
     assert results[0].error_code == "PROVIDER_REQUEST_FAILED"
     assert results[0].available_close_count == 0
+
+
+def test_tpex_transient_market_failure_can_be_retried_for_next_batch():
+    payload = json.dumps(
+        {
+            "stat": "OK",
+            "date": "20261012",
+            "tables": [
+                {
+                    "title": "上櫃股票行情",
+                    "fields": [
+                        "代號",
+                        "名稱",
+                        "收盤價",
+                        "漲跌",
+                        "開盤",
+                        "最高",
+                        "最低",
+                        "成交金額",
+                        "成交股數",
+                    ],
+                    "data": [["6821", "Test", "10", "0", "10", "10", "10", "1000", "100"]],
+                }
+            ],
+        },
+        ensure_ascii=False,
+    ).encode()
+    calls = 0
+
+    def transport(_url: str, _timeout: float) -> bytes:
+        nonlocal calls
+        calls += 1
+        if calls == 1:
+            raise TimeoutError("temporary network failure")
+        return payload
+
+    provider = TpexOfficialDailyProvider(
+        start_date=datetime(2026, 10, 12).date(),
+        end_date=datetime(2026, 10, 12).date(),
+        market_batch=True,
+        transport=transport,
+        readiness_max_attempts=1,
+        readiness_max_total_wait_seconds=0,
+    )
+
+    with pytest.raises(HistoricalProviderError, match="PROVIDER_REQUEST_FAILED"):
+        provider.fetch_market_day()
+
+    provider.reset_transient_failure()
+    _retrieved_at, bars = provider.fetch_market_day()
+    assert calls == 2
+    assert list(bars) == ["6821"]
