@@ -656,6 +656,13 @@ def reconcile_daily_market(
                       AND co.quality_state = 'ACCEPTED'
                       AND source.observation_semantics = 'DAILY_BAR'
                       AND (co.observed_at AT TIME ZONE m.timezone)::date = :trade_date
+                      AND NOT EXISTS (
+                          SELECT 1
+                          FROM topicpilot.canonical_observations successor
+                          WHERE successor.supersedes_id = co.id
+                            AND successor.family_code = 'PRICE'
+                            AND successor.quality_state = 'ACCEPTED'
+                      )
                       {duplicate_filter}
                     GROUP BY co.instrument_id
                     HAVING COUNT(*) FILTER (WHERE co.content_hash IS NULL) > 0
