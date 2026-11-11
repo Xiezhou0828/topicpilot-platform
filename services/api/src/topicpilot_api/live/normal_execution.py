@@ -156,6 +156,8 @@ class OwnerNormalExecution(PostCloseUpdater):
     def _prepare_run(self, **kwargs):
         if kwargs["allow_terminal_recovery"] or kwargs["is_targeted"]:
             raise PostClosePreconditionError("OWNER_EXECUTION_IS_NOT_RECOVERY")
+        # The owner-only execution surface never authorizes recovery re-entry.
+        kwargs.setdefault("owner_reauth", False)
         self._acquire_session_claim_lock(kwargs["run_date"])
         report = self.identity_preflight(kwargs["run_date"])
         if report["status"] != "PASS":

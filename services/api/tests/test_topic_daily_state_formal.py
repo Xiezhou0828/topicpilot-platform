@@ -90,7 +90,7 @@ def test_formal_membership_source_filters_to_approved_structural_relations():
         Path(__file__).resolve().parents[1]
         / "src/topicpilot_api/topic_daily_state.py"
     ).read_text(encoding="utf-8")
-    assert 'InstrumentTopicRelation.approval_state == "APPROVED"' in source
+    assert "InstrumentTopicRelation.approval_state == AUTHORITY_APPROVED" in source
 
 
 def test_price_fact_query_preserves_quality_state_for_previous_close_authority():
