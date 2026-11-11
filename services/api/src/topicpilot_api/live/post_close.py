@@ -16,7 +16,7 @@ from zoneinfo import ZoneInfo
 
 from sqlalchemy import and_, or_, select, text
 from sqlalchemy.exc import DBAPIError, IntegrityError, SQLAlchemyError
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, aliased
 
 from topicpilot_api.daily_market import (
     MAX_TOLERATED_MISSING_QUOTES,
@@ -655,10 +655,13 @@ class PostCloseUpdater:
         *,
         allow_terminal_recovery: bool,
         execution_mode: str,
+        owner_reauth: bool = False,
     ) -> str | None:
         """Fail closed unless an existing recovery has a durable re-entry contract."""
 
         if not allow_terminal_recovery or execution_mode != "RECOVERY":
+            return None
+        if owner_reauth:
             return None
         contract = metadata.get("reentryContract")
         if not isinstance(contract, Mapping):
@@ -680,6 +683,7 @@ class PostCloseUpdater:
         now: datetime,
         *,
         recovery_authorization_consumed: bool = False,
+        owner_reauth_approved: bool = False,
     ) -> None:
         metadata = dict(run.metadata_payload or {})
         metadata["resumeCount"] = int(metadata.get("resumeCount", 0) or 0) + 1
@@ -696,6 +700,8 @@ class PostCloseUpdater:
         reentry_contract["operatorActionRequired"] = False
         if recovery_authorization_consumed:
             reentry_contract["recoveryAuthorizationConsumed"] = True
+        if owner_reauth_approved:
+            reentry_contract["ownerReauthApproved"] = True
         metadata["reentryContract"] = reentry_contract
         run.status = "RUNNING"
         run.completed_at = None
@@ -783,19 +789,43 @@ class PostCloseUpdater:
         self._active_failure_stage = stage
 
     def _acquire_session_claim_lock(self, run_date: date) -> None:
-        """Serialize first-claim races without adding a second lock table."""
+        """Serialize session claims with bounded PostgreSQL wait/query times."""
 
         if self.session.get_bind().dialect.name != "postgresql":
             return
         self.session.execute(
-            text("SELECT pg_advisory_xact_lock(hashtext(:lock_key)::bigint)"),
+            text(
+                """
+                SELECT set_config('lock_timeout', :lock_timeout, true),
+                       set_config('statement_timeout', :statement_timeout, true)
+                """
+            ),
             {
-                "lock_key": (
-                    f"topicpilot:post-close-session:{self.config.reference_data_version}:"
-                    f"{self.config.calendar_code}:{run_date.isoformat()}"
-                )
+                "lock_timeout": (
+                    f"{max(1, int(self.config.session_claim_lock_timeout_seconds * 1000))}ms"
+                ),
+                "statement_timeout": (
+                    f"{max(1, int(self.config.session_claim_statement_timeout_seconds * 1000))}ms"
+                ),
             },
         )
+        try:
+            self.session.execute(
+                text("SELECT pg_advisory_xact_lock(hashtext(:lock_key)::bigint)"),
+                {
+                    "lock_key": (
+                        f"topicpilot:post-close-session:{self.config.reference_data_version}:"
+                        f"{self.config.calendar_code}:{run_date.isoformat()}"
+                    )
+                },
+            )
+        except DBAPIError as exc:
+            orig = getattr(exc, "orig", None)
+            sqlstate = getattr(orig, "sqlstate", None) or getattr(orig, "pgcode", None)
+            if sqlstate == "55P03":
+                self.session.rollback()
+                raise PostClosePreconditionError("POST_CLOSE_RUN_IN_PROGRESS") from exc
+            raise
 
     def _runs_for_date(self, run_date: date) -> list[LiveCollectorRun]:
         """Load POST_CLOSE runs for the requested market date.
@@ -1340,6 +1370,7 @@ class PostCloseUpdater:
         is_targeted: bool,
         allow_terminal_recovery: bool,
         execution_mode: str,
+        owner_reauth: bool,
         context: Any,
     ) -> tuple[LiveCollectorRun, bool, dict[str, int]]:
         """Claim the session run and return durable progress totals.
@@ -1427,6 +1458,7 @@ class PostCloseUpdater:
                 metadata,
                 allow_terminal_recovery=allow_terminal_recovery,
                 execution_mode=execution_mode,
+                owner_reauth=owner_reauth,
             )
             if reentry_block_reason is not None:
                 raise PostClosePreconditionError(reentry_block_reason)
@@ -1442,6 +1474,7 @@ class PostCloseUpdater:
                 existing_run,
                 now,
                 recovery_authorization_consumed=(execution_mode == "RECOVERY"),
+                owner_reauth_approved=owner_reauth,
             )
             self._active_failure_stage = "POST_CLOSE_ORCHESTRATION"
             return (
@@ -1470,6 +1503,7 @@ class PostCloseUpdater:
                     metadata,
                     allow_terminal_recovery=allow_terminal_recovery,
                     execution_mode=execution_mode,
+                    owner_reauth=owner_reauth,
                 )
                 if reentry_block_reason is not None:
                     raise PostClosePreconditionError(reentry_block_reason)
@@ -1478,6 +1512,7 @@ class PostCloseUpdater:
                     run,
                     now,
                     recovery_authorization_consumed=(execution_mode == "RECOVERY"),
+                    owner_reauth_approved=owner_reauth,
                 )
                 self._active_failure_stage = "POST_CLOSE_ORCHESTRATION"
                 return run, True, self._completed_market_checkpoint_totals(run.id)
@@ -1490,6 +1525,7 @@ class PostCloseUpdater:
         *,
         run_date: date | None = None,
         allow_terminal_recovery: bool = False,
+        owner_reauth: bool = False,
         target_symbols: Collection[str] | None = None,
         execution_mode: str = "MANUAL",
     ) -> PostCloseRunResult:
@@ -1504,6 +1540,7 @@ class PostCloseUpdater:
             return self._run_once(
                 run_date=run_date,
                 allow_terminal_recovery=allow_terminal_recovery,
+                owner_reauth=owner_reauth,
                 target_symbols=target_symbols,
                 execution_mode=execution_mode,
             )
@@ -1527,6 +1564,7 @@ class PostCloseUpdater:
         *,
         run_date: date | None = None,
         allow_terminal_recovery: bool = False,
+        owner_reauth: bool = False,
         target_symbols: Collection[str] | None = None,
         execution_mode: str = "MANUAL",
     ) -> PostCloseRunResult:
@@ -1584,6 +1622,7 @@ class PostCloseUpdater:
             is_targeted=is_targeted,
             allow_terminal_recovery=allow_terminal_recovery,
             execution_mode=execution_mode,
+            owner_reauth=owner_reauth,
             context=context,
         )
         if reused and run.status not in {"RUNNING"}:
@@ -1757,6 +1796,7 @@ class PostCloseUpdater:
             end_date=local_date,
             exchange_transport=transport,
             market_batch=True,
+            tpex_target_date_batch=self._active_execution_scope == HISTORY_RECOVERY,
             readiness_max_attempts=self.config.history_readiness_max_attempts,
             readiness_max_total_wait_seconds=self.config.history_readiness_max_total_wait_seconds,
             readiness_backoff_seconds=self.config.history_readiness_backoff_seconds,
@@ -1992,6 +2032,11 @@ class PostCloseUpdater:
                 ):
                     provider_error_code = str(provider_exception.code)
                     provider_error_message = str(provider_exception)
+                    reset_transient_failure = getattr(
+                        registration.adapter, "reset_transient_failure", None
+                    )
+                    if callable(reset_transient_failure):
+                        reset_transient_failure()
                     readiness = self._provider_readiness_decision(
                         provider_exception,
                         registration.adapter,
@@ -2212,7 +2257,7 @@ class PostCloseUpdater:
         both_markets_eligible = (
             is_targeted or historical_recovery or TPEX_MARKET in eligible_market_codes
         )
-        stage_wait_reasons = list(waiting_reason_codes)
+        stage_wait_reasons = self._current_market_wait_reasons(waiting_reason_codes)
         if not both_markets_eligible and not is_targeted:
             stage_wait_reasons.append("WAITING_TPEX_WINDOW")
         elif not tpex_ready and not is_targeted:
@@ -2407,6 +2452,20 @@ class PostCloseUpdater:
             run_id, market_batches, market_code, trading_date=trading_date
         )
         return readback["readinessState"] in {"READY", "READY_WITH_LIMITED_GAPS"}
+
+    @staticmethod
+    def _current_market_wait_reasons(waiting_reason_codes: Collection[str]) -> list[str]:
+        """Drop market readiness waits that are recomputed from current state."""
+
+        stale_market_wait_reasons = {
+            "WAITING_TWSE_WINDOW",
+            "WAITING_TPEX_WINDOW",
+            "TWSE_DATA_NOT_READY",
+            "TPEX_DATA_NOT_READY",
+        }
+        return [
+            reason for reason in waiting_reason_codes if reason not in stale_market_wait_reasons
+        ]
 
     def _market_stage_readback(
         self,
@@ -3719,6 +3778,7 @@ class PostCloseUpdater:
         return (snapshot_result.get("formalStrengthReadback") or {}).get("status") == "PASS"
 
     def _formal_snapshot_readback(self, snapshot_date: date) -> dict[str, Any]:
+        successor = aliased(TopicSnapshot)
         rows = self.session.scalars(
             select(TopicSnapshot).where(
                 TopicSnapshot.snapshot_date == snapshot_date,
@@ -3728,7 +3788,9 @@ class PostCloseUpdater:
                 TopicSnapshot.generated_state == "GENERATED",
                 TopicSnapshot.finality_state == "FINAL",
                 TopicSnapshot.publication_state == "PUBLISHED",
-                TopicSnapshot.superseded_by_snapshot_id.is_(None),
+                ~select(successor.id)
+                .where(successor.supersedes_snapshot_id == TopicSnapshot.id)
+                .exists(),
             )
         ).all()
         topic_ids = [row.topic_id for row in rows]
