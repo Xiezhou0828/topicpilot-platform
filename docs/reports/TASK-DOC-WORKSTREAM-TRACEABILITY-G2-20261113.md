@@ -23,6 +23,28 @@
 - Canonical checkout codex/canonical-main-sync-20261112：HEAD 38eeeacc02a950d21d903d7c939d11c8492d6770，較 GitHub main ahead 6 / behind 0，33 個變更路徑。本機共有 39 個 branch refs，其中 26 個未附掛 worktree；未刪除任何 local 或 remote branch ref。
 - 已移除 8 個乾淨的一般 worktree，並封存 1 個乾淨、由 Codex 管理的 worktree。另保留 2 個乾淨 worktree：目前對話的 primary checkout（0b8d01731b9685b117cb59f2259a897ae6b809e2）及含 ignored preview fixture apps/web/public/__preview.json 的預覽工作目錄。14 個髒 worktree 全部保留，沒有以名稱推斷可刪除性。
 
+### Owner 授權的 worktree 清除範圍（以 2026-11-13 06:03 UTC 盤點為準）
+
+| ID | Branch / HEAD SHA | 狀態 | Owner 指示的處置 |
+|---|---|---|---|
+| CWT-01 | codex/canonical-main-sync-20261112 / 38eeeacc02a950d21d903d7c939d11c8492d6770 | DIRTY (33) | 保留：固定 canonical repository，不可移除。 |
+| CWT-02 | codex/governance-g0-g3-safe-integration / 0b8d01731b9685b117cb59f2259a897ae6b809e2 | CLEAN | 保留：目前對話的 primary checkout，Codex 保護不可移除。 |
+| CWT-03 | detached / 9a0fa7ea541302cd64e2f60f17e3adf94854bad5 | DIRTY (1 untracked) | 移除工作樹；保留 branch refs（無 branch）。 |
+| CWT-04 | codex/company-research-core-and-analysis-framework-20261019 / c22dae110572d3e0278f08cb21e42cc489d0d9ef | DIRTY (19; includes ignored .env.local) | 移除工作樹；分支保留。 |
+| CWT-05 | detached / 8ab2a7f69d359cb6fbf42682f573c2e1b536cb03 | DIRTY (224; 137 untracked) | 移除工作樹；保留 branch refs（無 branch）。 |
+| CWT-06 | codex/preview-production-release-candidate-001 / 0b32b7670c050dc793264859b2ab273d66a68d88 | CLEAN; ignored preview fixture present | 移除工作樹及該預覽副本；分支保留。 |
+| CWT-07 | codex/publication-flow-v2-canonical-gate-unblock-003-validation / 76d34cb21742b23cdf966f459f928e539ffdf3bc | DIRTY (2 untracked reports) | 移除工作樹；分支保留。 |
+| CWT-08 | codex/publication-flow-v2-end-to-end-production-recovery-008 / f9ee0bff1431fcbbdfa7127a6f396aa4fd4b7e95 | DIRTY (2) | 移除工作樹；分支保留。 |
+| CWT-09 | codex/selection-vnext-attack-outcome-research-001 / e97f590cad497c0a23fb027fce39ec5891ea4bc1 | DIRTY (4) | 移除工作樹；分支保留。 |
+| CWT-10 | codex/selection-vnext-benchmark-universe-executability-authority-001 / 4db4ec749ad1ab978573d1a326b4d28bdd9bbf6c | DIRTY (1) | 移除工作樹；分支保留。 |
+| CWT-11 | codex/selection-vnext-pit-entry-access-authority-001 / 4d5190346f8177677d5e76d5a407c59db82e7aec | DIRTY (1) | 移除工作樹；分支保留。 |
+| CWT-12 | codex/selection-vnext-pit-recovery-002 / 5ca32a2504cc8f54ea10cccda764090f77beb885 | DIRTY (2) | 移除工作樹；分支保留。 |
+| CWT-13 | codex/selection-vnext-broad-pit-threshold-research-001 / 3fe3975cda724c30391ac8112c5190b71d5d749e | DIRTY (1) | 移除工作樹；分支保留。 |
+| CWT-14 | codex/stock-research-bootstrap-v1 / 9852f03b4586572b13f744868b2aac4dbd33ff89 | DIRTY (22; includes untracked skill/research package) | 移除工作樹；分支保留。 |
+| CWT-15 | codex/stock-topic-impact-direction-evidence-ui-001 / b17355eaba3573ed43e48e25d98ffa89506327c1 | DIRTY (16) | 移除工作樹；分支保留。 |
+| CWT-16 | detached / 8383a5ee5d601e5da6a277a3ccf12f970c5342ec | DIRTY (2 untracked reports) | 移除工作樹；保留 branch refs（無 branch）。 |
+
+此清單保留分支與提交溯源；Owner 明確要求移除非必要工作樹，因此上述 14 個非 protected 工作樹將被移除。分支 refs 不在本次清理範圍。
 ### G2 / G3 結論
 
 - G2 出口仍 **BLOCKED**：14 個髒 worktree 與 26 個未附掛 refs 尚未完成逐項 owner、work order、來源 SHA、證據及處置對應。未解項目均維持保留；本檢查點不代表可清理。
