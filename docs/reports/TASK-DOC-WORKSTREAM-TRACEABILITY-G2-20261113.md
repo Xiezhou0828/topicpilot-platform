@@ -8,9 +8,30 @@
 **本次查核時間:** GitHub branches、main、open PR：2026-11-12 16:06:46Z（2026-11-13 00:06:46 Asia/Taipei）；全部 PR 歷史於 2026-11-12 16:16:03Z 前重查（2026-11-13 00:16:03 Asia/Taipei）；完整 Compare 核驗亦於該時間前完成。
 **本機 worktree audit 時間:** 2026-11-12 15:57:21.786Z（2026-11-12 23:57:21.786 Asia/Taipei）。
 
-> **最新狀態覆蓋（2026-11-13 06:32:08Z / 14:32:08 Asia/Taipei）：**本節是目前最新查核；下方 04:23 checkpoint 與清單保留為歷史證據。G2 仍 BLOCKED；Owner 已核准 G3 有界實作與 G2 並行，但 G3 尚未 canonicalize 或發布。
+> **最新狀態覆蓋（2026-11-13 07:03:25Z / 15:03:25 Asia/Taipei）：**Owner 要求移除所有工作樹。14 個目標的 Git 登記均已解除；13 個目標目錄已移除，CWT-14 目錄殘留。固定 canonical repo 與目前 primary checkout 受保護而保留。
 
-## 最新 G2 / G3 檢查點（2026-11-13 06:32 UTC）
+## 最終清理檢查點（2026-11-13 07:03 UTC）
+
+### GitHub 現況
+
+- 2026-11-13 07:03 UTC 即時查核：GitHub main 為 f27a0c4fa189810c6caa01ad3f2944d7fd4919e2；遠端分支包含 codex/integrate-worker-stock-add-branches-001 與本次 codex/g2-cleanup-inventory-20261113；open PR #108 為本次 G2 報告的 draft PR，尚未合併。
+- main branches API 回報 protected=false；可讀取的 repository rulesets 為空。Required-check 是否具合併阻擋效果仍未證實。
+
+### 工作樹清理結果
+
+- Git worktree registry 最終只列出 2 個受保護 checkout：canonical branch codex/canonical-main-sync-20261112，HEAD 38eeeacc02a950d21d903d7c939d11c8492d6770（DIRTY，33 paths）；目前 Codex primary branch codex/governance-g0-g3-safe-integration，HEAD 0b8d01731b9685b117cb59f2259a897ae6b809e2（CLEAN）。
+- 本次授權的 14 個非 protected worktree 登記均已解除；13 個目錄實際刪除。CWT-14（stock-research-bootstrap-v1）的登記已解除，但 Git 回報 Windows 無法刪除目錄；遞迴刪除命令遭自動安全審查拒絕，因此該目錄殘留，清理未能完整結案。
+- CWT-14 殘留內容中有 2 個指向共用 Codex runtime dependency 目錄的 node_modules junction。未刪除 junction 目標或共用套件。
+- 本機 branch refs 共 40 個、38 個未附掛任何 worktree；本次未刪除 local 或 remote branch。此報告保留被移除 worktree 的 branch/HEAD 對照與處置證據。
+
+### G2 / G3 狀態
+
+- G2 仍 **BLOCKED**：38 個未附掛 refs 尚未完成逐項 owner、work order、來源與最終處置對應；canonical checkout 仍有 33 個未提交路徑；required-check enforcement 未證實。
+- G3 bounded candidate 仍位於本機 primary checkout，SHA 0b8d01731b9685b117cb59f2259a897ae6b809e2，未 canonicalize。這次 push 僅更新 G2 報告分支；未合併、部署、變更 Production 或 NEXT_TASK。
+- **清理結果：部分完成。**如需消除唯一殘留目錄，需在 Windows 檔案總管手動刪除 CWT-14 的殘留目錄；不要刪除其 junction 指向的共用 Codex runtime dependency 目錄。
+> **前次狀態覆蓋（2026-11-13 06:32:08Z / 14:32:08 Asia/Taipei）：**本節是目前最新查核；下方 04:23 checkpoint 與清單保留為歷史證據。G2 仍 BLOCKED；Owner 已核准 G3 有界實作與 G2 並行，但 G3 尚未 canonicalize 或發布。
+
+## 前次 G2 / G3 檢查點（2026-11-13 06:32 UTC）
 
 ### 即時來源
 
